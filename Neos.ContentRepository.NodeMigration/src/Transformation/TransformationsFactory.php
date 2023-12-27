@@ -20,8 +20,7 @@ class TransformationsFactory
 
     public function __construct(
         private readonly ContentRepository $contentRepository
-    )
-    {
+    ) {
     }
 
     public function registerTransformation(string $transformationIdentifier, TransformationFactoryInterface $transformationFactory): self

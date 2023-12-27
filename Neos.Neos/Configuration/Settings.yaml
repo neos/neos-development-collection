@@ -271,12 +271,8 @@ Neos:
 
       defaultEditPreviewMode: inPlace
       editPreviewModes:
-        # Live mode is only configured here for consistency. You shouldn't change it.
-        live:
-          isEditingMode: false
-          isPreviewMode: false
-          fusionRenderingPath: ''
-          title: Live
+        # the system integrated rendering mode "frontend" cannot be configured
+        # frontend: {}
         inPlace:
           isEditingMode: true
           isPreviewMode: false
@@ -331,12 +327,6 @@ Neos:
             controller: 'Neos\Neos\Controller\Module\Management\WorkspacesController'
             description: 'Neos.Neos:Modules:workspaces.description'
             icon: fas fa-th-large
-            mainStylesheet: 'Lite'
-          history:
-            label: 'Neos.Neos:Modules:history.label'
-            controller: 'Neos\Neos\Controller\Module\Management\HistoryController'
-            description: 'Neos.Neos:Modules:history.description'
-            icon: fas fa-calendar-alt
             mainStylesheet: 'Lite'
       administration:
         label: 'Neos.Neos:Modules:administration.label'
@@ -398,18 +388,6 @@ Neos:
             icon: fas fa-user
             mainStylesheet: 'Lite'
 
-     # Settings for the Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
-    eventLog:
-      enabled: false
-      monitorEntities:
-        Neos\Flow\Security\Account:
-          events:
-            created: Account.Created
-            deleted: Account.Deleted
-          data:
-            accountIdentifier: '${entity.accountIdentifier}'
-            authenticationProviderName: '${entity.authenticationProviderName}'
-            name: '${entity.party.name.fullName}'
     transliterationRules:
       da:
         Å: Aa
@@ -472,14 +450,6 @@ Neos:
     session:
       name: Neos_Session
 
-    persistence:
-      doctrine:
-        eventListeners:
-          Neos\Neos\EventLog\Integrations\EntityIntegrationService:
-            events:
-              - onFlush
-            listener: Neos\Neos\EventLog\Integrations\EntityIntegrationService
-
     error:
       exceptionHandler:
         renderingGroups:
@@ -516,11 +486,6 @@ Neos:
         neos-plugin: Plugins
 
   ContentRepository:
-    # This instructs neos to fallback to the given type if a node type can't be found (because it was removed or has
-    # been renamed for example). The default "Neos.Neos:FallbackNode" renders a warning in backend and is ignored
-    # in frontend rendering
-    fallbackNodeType: 'Neos.Neos:FallbackNode'
-
     # Definition of available content dimensions. Additional content dimensions may be defined in third-party packages
     # or via global settings.
     #

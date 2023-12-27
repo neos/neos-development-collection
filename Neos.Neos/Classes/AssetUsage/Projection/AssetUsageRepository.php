@@ -9,10 +9,14 @@ use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\ForwardCompatibility\Result;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\Neos\AssetUsage\Dto\NodeAddress;
+use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\Neos\AssetUsage\Dto\AssetUsage;
@@ -42,54 +46,32 @@ final class AssetUsageRepository
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), self::databaseSchema($this->tableNamePrefix));
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [self::databaseSchema($this->tableNamePrefix)]);
+        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($this->dbal->getDatabasePlatform()) as $statement) {
             $this->dbal->executeStatement($statement);
         }
     }
 
-    private static function databaseSchema(string $tablePrefix): Schema
+    private static function databaseSchema(string $tablePrefix): Table
     {
-        $schema = new Schema();
+        $table = new Table($tablePrefix, [
+            (new Column('assetid', Type::getType(Types::STRING)))->setLength(40)->setNotnull(true)->setDefault(''),
+            (new Column('originalassetid', Type::getType(Types::STRING)))->setLength(40)->setNotnull(false)->setDefault(null),
+            DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotNull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotNull(true),
+            DbalSchemaFactory::columnForDimensionSpacePoint('origindimensionspacepoint')->setNotNull(false),
+            DbalSchemaFactory::columnForDimensionSpacePoint('origindimensionspacepointhash')->setNotNull(true),
+            (new Column('propertyname', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setDefault('')
+        ]);
 
-        $table = $schema->createTable($tablePrefix);
-        $table->addColumn('assetid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true)
-            ->setDefault('');
-        $table->addColumn('originalassetid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(false)
-            ->setDefault(null);
-        $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true)
-            ->setDefault('');
-        $table->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true)
-            ->setDefault('');
-        $table->addColumn('origindimensionspacepoint', Types::TEXT)
-            ->setNotnull(false);
-        $table->addColumn('origindimensionspacepointhash', Types::STRING)
-            // this is an MD5(...), so 32 chars long
-            ->setLength(32)
-            ->setNotnull(true)
-            ->setDefault('');
-        $table->addColumn('propertyname', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true)
-            ->setDefault('');
-
-        $table
+        return $table
             ->addUniqueIndex(['assetid', 'originalassetid', 'contentstreamid', 'nodeaggregateid', 'origindimensionspacepointhash', 'propertyname'], 'assetperproperty')
             ->addIndex(['assetid'])
             ->addIndex(['originalassetid'])
             ->addIndex(['contentstreamid'])
             ->addIndex(['nodeaggregateid'])
             ->addIndex(['origindimensionspacepointhash']);
-
-        return $schema;
     }
 
     public function findUsages(AssetUsageFilter $filter): AssetUsages
@@ -152,7 +134,7 @@ final class AssetUsageRepository
         });
     }
 
-    public function addUsagesForNode(NodeAddress $nodeAddress, AssetIdsByProperty $assetIdsByProperty): void
+    public function addUsagesForNode(AssetUsageNodeAddress $nodeAddress, AssetIdsByProperty $assetIdsByProperty): void
     {
         // Delete all asset usage entries for newly set properties to ensure that removed or replaced assets are reflected
         $this->dbal->executeStatement('DELETE FROM ' . $this->tableNamePrefix

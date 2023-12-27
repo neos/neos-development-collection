@@ -1,12 +1,10 @@
-@fixtures @contentrepository
+@flowEntities @contentrepository
 Feature: Low level tests covering the inner behavior of the routing projection
 
   Background:
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
-
     'Neos.Neos:Sites':
       superTypes:
         'Neos.ContentRepository:Root': true

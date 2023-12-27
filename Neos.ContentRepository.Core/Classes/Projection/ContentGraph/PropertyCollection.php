@@ -18,10 +18,13 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 
 /**
- * The property collection implementation
- * @internal
+ * The property collection that provides access to the serialized and deserialized properties of a node
+ *
+ * @implements \ArrayAccess<string,mixed>
+ * @implements \IteratorAggregate<string,mixed>
+ * @api This object should not be instantiated by 3rd parties, but it is part of the {@see Node} read model
  */
-final class PropertyCollection implements PropertyCollectionInterface
+final class PropertyCollection implements \ArrayAccess, \IteratorAggregate, \Countable
 {
     /**
      * Properties from Nodes
@@ -53,14 +56,16 @@ final class PropertyCollection implements PropertyCollectionInterface
 
     public function offsetGet($offset): mixed
     {
-        if (!isset($this->deserializedPropertyValuesRuntimeCache[$offset])) {
-            $serializedProperty = $this->serializedPropertyValues->getProperty($offset);
-            $this->deserializedPropertyValuesRuntimeCache[$offset] = $serializedProperty === null
-                ? null
-                : $this->propertyConverter->deserializePropertyValue($serializedProperty);
+        if (array_key_exists($offset, $this->deserializedPropertyValuesRuntimeCache)) {
+            return $this->deserializedPropertyValuesRuntimeCache[$offset];
         }
 
-        return $this->deserializedPropertyValuesRuntimeCache[$offset];
+        $serializedProperty = $this->serializedPropertyValues->getProperty($offset);
+        if ($serializedProperty === null) {
+            return null;
+        }
+        return $this->deserializedPropertyValuesRuntimeCache[$offset] =
+            $this->propertyConverter->deserializePropertyValue($serializedProperty);
     }
 
     public function offsetSet($offset, $value): never
@@ -86,5 +91,10 @@ final class PropertyCollection implements PropertyCollectionInterface
     public function serialized(): SerializedPropertyValues
     {
         return $this->serializedPropertyValues;
+    }
+
+    public function count(): int
+    {
+        return count($this->serializedPropertyValues);
     }
 }

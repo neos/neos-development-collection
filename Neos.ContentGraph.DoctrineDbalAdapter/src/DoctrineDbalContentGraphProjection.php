@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
@@ -46,7 +47,6 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
@@ -86,6 +86,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeFactory $nodeFactory,
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly string $tableNamePrefix,
@@ -121,7 +122,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
-        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
+        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
@@ -212,6 +213,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $this->contentGraph = new ContentGraph(
                 $this->dbalClient,
                 $this->nodeFactory,
+                $this->contentRepositoryId,
                 $this->nodeTypeManager,
                 $this->tableNamePrefix
             );
@@ -233,13 +235,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $originDimensionSpacePoint = OriginDimensionSpacePoint::fromArray([]);
+        $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $event->nodeAggregateId,
             $originDimensionSpacePoint->coordinates,
             $originDimensionSpacePoint->hash,
-            SerializedPropertyValues::fromArray([]),
+            SerializedPropertyValues::createEmpty(),
             $event->nodeTypeName,
             $event->nodeAggregateClassification,
             null,
@@ -272,7 +274,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                 $event->nodeAggregateId,
                 /** the origin DSP of the root node is always the empty dimension ({@see whenRootNodeAggregateWithNodeWasCreated}) */
-                OriginDimensionSpacePoint::fromArray([]),
+                OriginDimensionSpacePoint::createWithoutDimensions(),
                 $event->contentStreamId
             );
         if ($rootNodeAnchorPoint === null) {
@@ -517,12 +519,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     }
 
     /**
-     * @param NodeRelationAnchorPoint|null $parentAnchorPoint
-     * @param NodeRelationAnchorPoint|null $childAnchorPoint
-     * @param NodeRelationAnchorPoint|null $succeedingSiblingAnchorPoint
-     * @param ContentStreamId $contentStreamId
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return int
      * @throws \Doctrine\DBAL\DBALException
      */
     private function getRelationPosition(
@@ -589,6 +585,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $contentStreamId,
                 $dimensionSpacePoint
             );
+
+        usort(
+            $hierarchyRelations,
+            fn (HierarchyRelation $relationA, HierarchyRelation $relationB): int
+                => $relationA->position <=> $relationB->position
+        );
 
         foreach ($hierarchyRelations as $relation) {
             $offset += self::RELATION_DEFAULT_OFFSET;
@@ -805,7 +807,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                         'nodeanchorpoint' => $nodeAnchorPoint?->value,
                         'destinationnodeaggregateid' => $reference->targetNodeAggregateId->value,
                         'properties' => $reference->properties
-                            ? \json_encode($reference->properties, JSON_THROW_ON_ERROR)
+                            ? \json_encode($reference->properties, JSON_THROW_ON_ERROR & JSON_FORCE_OBJECT)
                             : null
                     ]);
                     $position++;

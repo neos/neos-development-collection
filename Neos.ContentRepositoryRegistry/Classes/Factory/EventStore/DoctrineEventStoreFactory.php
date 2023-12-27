@@ -13,10 +13,10 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
 {
     public function __construct(
         private readonly Connection $connection,
-    )
-    {
+    ) {
     }
 
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options, ClockInterface $clock): EventStoreInterface
     {
         return new DoctrineEventStore(

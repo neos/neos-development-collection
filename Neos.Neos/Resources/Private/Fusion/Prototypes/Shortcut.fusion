@@ -1,15 +1,96 @@
 # Neos.Neos.Shortcut is given a representation for editing purposes
 #
-prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Template) {
-  templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Shortcut.html'
+prototype(Neos.Neos:Shortcut) < prototype(Neos.Neos:Page) {
+  head.stylesheets {
+    shortcut = afx`
+        <link rel="stylesheet" href={StaticResource.uri('Neos.Neos', 'Public/Styles/Shortcut.css')} />
+    `
+  }
 
+  body = afx`
+    <div id="neos-shortcut">
+      <p>
+        <Neos.Neos:Shortcut.Link />
+      </p>
+    </div>
+  `
+}
+
+/** @internal */
+prototype(Neos.Neos:Shortcut.Link) < prototype(Neos.Fusion:Component) {
   targetMode = ${q(node).property('targetMode')}
   firstChildNode = ${q(node).children('[instanceof Neos.Neos:Document]').get(0)}
   target = ${q(node).property('target')}
   targetConverted = ${Neos.Link.hasSupportedScheme(this.target) ? Neos.Link.convertUriToObject(this.target, node) : null}
   targetSchema = ${Neos.Link.getScheme(this.target)}
 
-  node = ${node}
+  i18n = ${I18n.id(null).package('Neos.Neos').source('Main').locale(Neos.Backend.interfaceLanguage())}
+
+  renderer = Neos.Fusion:Match {
+    @subject = ${props.targetMode}
+
+    selectedTarget = Neos.Fusion:Join {
+      @glue = '<br/>'
+      mainMessage = ${props.i18n.id('shortcut.toSpecificTarget').translate()}
+      targetSelected = Neos.Fusion:Match {
+        @if.isTarget = ${props.target}
+
+        @subject = ${props.targetSchema}
+
+        node = Neos.Fusion:Value {
+          targetUriTag = Neos.Neos:NodeLink {
+            node = ${props.targetConverted}
+          }
+          value = ${props.i18n.id('shortcut.clickToContinueToPage').arguments([this.targetUriTag]).translate()}
+        }
+
+        asset = Neos.Fusion:Value {
+          targetUriTag = Neos.Fusion:Tag {
+            tagName = 'a'
+            attributes {
+              target = '_blank'
+              href = Neos.Fusion:ResourceUri {
+                resource = ${props.targetConverted.resource}
+              }
+            }
+            content = ${props.targetConverted.label}
+          }
+          value = ${props.i18n.id('shortcut.clickToContinueToAsset').arguments([this.targetUriTag]).translate()}
+        }
+
+        @default = Neos.Fusion:Value {
+          targetUriTag = afx`
+            <a href={props.target} target='_blank'>{props.target}</a>
+          `
+          value = ${props.i18n.id('shortcut.clickToContinueToExternalUrl').arguments([this.targetUriTag]).translate()}
+        }
+      }
+
+      noTargetSelected = ${props.i18n.id('shortcut.noTargetSelected').translate()}
+      noTargetSelected.@if.isNotTarget = ${!props.target}
+    }
+
+    firstChildNode = Neos.Fusion:Value {
+      targetUriTag = Neos.Neos:NodeLink {
+        node = ${props.firstChildNode}
+      }
+      value = ${props.i18n.id('shortcut.clickToContinueToFirstChildNode').arguments([this.targetUriTag]).translate()}
+    }
+
+    parentNode = Neos.Fusion:Value {
+      targetUriTag = Neos.Neos:NodeLink {
+        node = ${q(node).parent().get(0)}
+      }
+      value = ${props.i18n.id('shortcut.clickToContinueToParentNode').arguments([this.targetUriTag]).translate()}
+    }
+  }
+
+  @cache {
+    mode = "uncached"
+    context {
+      0 = "node"
+    }
+  }
 
   @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }

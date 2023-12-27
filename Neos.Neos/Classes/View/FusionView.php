@@ -15,16 +15,23 @@ declare(strict_types=1);
 namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\Message;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Security\Context;
+use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
+use Neos\Neos\Domain\Model\RenderingMode;
+use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
-use Neos\Neos\Domain\Service\SiteNodeUtility;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\Exception;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -33,18 +40,19 @@ use Psr\Http\Message\ResponseInterface;
 class FusionView extends AbstractView
 {
     use FusionViewI18nTrait;
+    use NodeTypeWithFallbackProvider;
 
-    /**
-     * @Flow\Inject
-     * @var SiteNodeUtility
-     */
-    protected $siteNodeUtility;
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
+    #[Flow\Inject]
+    protected RuntimeFactory $runtimeFactory;
+
+    #[Flow\Inject]
+    protected SiteRepository $siteRepository;
+
+    #[Flow\Inject]
+    protected RenderingModeService $renderingModeService;
 
     /**
      * Renders the view
@@ -57,7 +65,13 @@ class FusionView extends AbstractView
     {
         $currentNode = $this->getCurrentNode();
 
-        $currentSiteNode = $this->siteNodeUtility->findSiteNode($currentNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($currentNode);
+        $currentSiteNode = $subgraph->findClosestNode($currentNode->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
+
+        if (!$currentSiteNode) {
+            throw new \RuntimeException('No site node found!', 1697053346);
+        }
+
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         $fusionRuntime->pushContextArray([
@@ -87,6 +101,11 @@ class FusionView extends AbstractView
             null,
             'Flag to enable content caching inside Fusion (overriding the global setting).',
             'boolean'
+        ],
+        'renderingModeName' => [
+            RenderingMode::FRONTEND,
+            'Name of the user interface mode to use',
+            'string'
         ]
     ];
 
@@ -176,12 +195,8 @@ class FusionView extends AbstractView
 
     protected function getClosestDocumentNode(Node $node): ?Node
     {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        while ($node !== null && !$node->nodeType->isOfType('Neos.Neos:Document')) {
-            $node = $subgraph->findParentNode($node->nodeAggregateId);
-        }
-
-        return $node;
+        return $this->contentRepositoryRegistry->subgraphForNode($node)
+            ->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_DOCUMENT));
     }
 
     /**
@@ -217,7 +232,20 @@ class FusionView extends AbstractView
     protected function getFusionRuntime(Node $currentSiteNode)
     {
         if ($this->fusionRuntime === null) {
-            $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);
+            $site = $this->siteRepository->findSiteBySiteNode($currentSiteNode);
+            $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite($site);
+
+            $renderingMode = $this->renderingModeService->findByName($this->getOption('renderingModeName'));
+
+            $fusionGlobals = FusionGlobals::fromArray([
+                'request' => $this->controllerContext->getRequest(),
+                'renderingMode' => $renderingMode
+            ]);
+            $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
+                $fusionConfiguration,
+                $fusionGlobals
+            );
+            $this->fusionRuntime->setControllerContext($this->controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);

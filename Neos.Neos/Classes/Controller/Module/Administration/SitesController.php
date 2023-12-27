@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
@@ -186,7 +185,7 @@ class SitesController extends AbstractModuleController
             try {
                 $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
                     $liveWorkspace->currentContentStreamId,
-                    NodeTypeName::fromString('Neos.Neos:Sites')
+                    NodeTypeNameFactory::forSites()
                 );
             } catch (\Exception $exception) {
                 throw new \InvalidArgumentException(
@@ -214,7 +213,7 @@ class SitesController extends AbstractModuleController
                 );
 
                 foreach ($siteNodeAggregates as $siteNodeAggregate) {
-                    $contentRepository->handle(new ChangeNodeAggregateName(
+                    $contentRepository->handle(ChangeNodeAggregateName::create(
                         $workspace->currentContentStreamId,
                         $siteNodeAggregate->nodeAggregateId,
                         NodeName::fromString($newSiteNodeName),
@@ -234,7 +233,7 @@ class SitesController extends AbstractModuleController
             [],
             1412371798
         );
-        $this->unsetLastVisitedNodeAndRedirect('index');
+        $this->redirect('index');
     }
 
     /**
@@ -253,7 +252,7 @@ class SitesController extends AbstractModuleController
 
 
         $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');
-        $documentNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes('Neos.Neos:Document', false);
+        $documentNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes(NodeTypeNameFactory::forDocument(), false);
 
         $generatorServiceIsAvailable = $this->packageManager->isPackageAvailable('Neos.SiteKickstarter');
         $generatorServices = [];
@@ -394,12 +393,11 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-            return;
         } catch (SiteNodeTypeIsInvalid $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel(
                     'sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body',
-                    [$nodeType, NodeTypeNameFactory::forSite()]
+                    [$nodeType, NodeTypeNameFactory::NAME_SITE]
                 ),
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title'),
                 Message::SEVERITY_ERROR,
@@ -407,7 +405,6 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-            return;
         } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyOccupied $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$siteName]),
@@ -417,7 +414,6 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-            return;
         }
 
         $this->addFlashMessage(
@@ -430,7 +426,7 @@ class SitesController extends AbstractModuleController
             [],
             1412372266
         );
-        $this->unsetLastVisitedNodeAndRedirect('index');
+        $this->redirect('index');
     }
 
     /**
@@ -450,7 +446,7 @@ class SitesController extends AbstractModuleController
             [],
             1412372689
         );
-        $this->unsetLastVisitedNodeAndRedirect('index');
+        $this->redirect('index');
     }
 
     /**
@@ -470,7 +466,7 @@ class SitesController extends AbstractModuleController
             [],
             1412372881
         );
-        $this->unsetLastVisitedNodeAndRedirect('index');
+        $this->redirect('index');
     }
 
     /**
@@ -490,7 +486,7 @@ class SitesController extends AbstractModuleController
             [],
             1412372975
         );
-        $this->unsetLastVisitedNodeAndRedirect('index');
+        $this->redirect('index');
     }
 
     /**
@@ -525,7 +521,7 @@ class SitesController extends AbstractModuleController
             [],
             1412373069
         );
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
+        $this->redirect('edit', null, null, ['site' => $domain->getSite()]);
     }
 
     /**
@@ -562,7 +558,7 @@ class SitesController extends AbstractModuleController
             [],
             1412373192
         );
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
+        $this->redirect('edit', null, null, ['site' => $domain->getSite()]);
     }
 
     /**
@@ -587,7 +583,7 @@ class SitesController extends AbstractModuleController
             [],
             1412373310
         );
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $site]);
+        $this->redirect('edit', null, null, ['site' => $site]);
     }
 
     /**
@@ -608,7 +604,7 @@ class SitesController extends AbstractModuleController
             [],
             1412373539
         );
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
+        $this->redirect('edit', null, null, ['site' => $domain->getSite()]);
     }
 
     /**
@@ -629,31 +625,6 @@ class SitesController extends AbstractModuleController
             [],
             1412373425
         );
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
-    }
-
-    /**
-     * @param string $actionName Name of the action to forward to
-     * @param string $controllerName Unqualified object name of the controller to forward to.
- *                                   If not specified, the current controller is used.
-     * @param string $packageKey Key of the package containing the controller to forward to.
-     *                           If not specified, the current package is assumed.
-     * @param array<string,mixed> $arguments Array of arguments for the target action
-     * @param integer $delay (optional) The delay in seconds. Default is no delay.
-     * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @param string $format The format to use for the redirect URI
-     * @return void
-     */
-    protected function unsetLastVisitedNodeAndRedirect(
-        $actionName,
-        $controllerName = null,
-        $packageKey = null,
-        array $arguments = [],
-        $delay = 0,
-        $statusCode = 303,
-        $format = null
-    ) {
-        $this->session->putData('lastVisitedNode', null);
-        parent::redirect($actionName, $controllerName, $packageKey, $arguments, $delay, $statusCode, $format);
+        $this->redirect('edit', null, null, ['site' => $domain->getSite()]);
     }
 }

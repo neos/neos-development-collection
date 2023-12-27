@@ -64,9 +64,7 @@ final class NodeAggregateIds implements \IteratorAggregate
     public static function fromCollection(
         NodeAggregateIdCollection $collection
     ): self {
-        return new self(
-            $collection->getIterator()->getArrayCopy()
-        );
+        return new self(iterator_to_array($collection));
     }
 
     public function add(
@@ -99,8 +97,11 @@ final class NodeAggregateIds implements \IteratorAggregate
         return count($this->ids) === 0;
     }
 
+    /**
+     * @return \Traversable<string,NodeAggregateId>
+     */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->ids);
+        yield from $this->ids;
     }
 }

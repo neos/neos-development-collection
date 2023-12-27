@@ -33,6 +33,11 @@ final class PropertyValuesToWrite
     {
     }
 
+    public static function createEmpty(): self
+    {
+        return new self([]);
+    }
+
     /**
      * @param array<string,mixed> $values
      */

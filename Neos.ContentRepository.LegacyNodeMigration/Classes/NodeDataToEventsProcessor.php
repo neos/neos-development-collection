@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\LegacyNodeMigration;
 
 use Doctrine\DBAL\Platforms\PostgreSQL100Platform;
+use Doctrine\DBAL\Types\ConversionException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -45,20 +46,21 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Ramsey\Uuid\Uuid;
 use Webmozart\Assert\Assert;
 
 final class NodeDataToEventsProcessor implements ProcessorInterface
 {
-
+    /**
+     * @var array<\Closure>
+     */
     private array $callbacks = [];
     private NodeTypeName $sitesNodeTypeName;
     private ContentStreamId $contentStreamId;
@@ -78,6 +80,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
      */
     private $eventFileResource;
 
+    /**
+     * @param iterable<int, array<string, mixed>> $nodeDataRows
+     */
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly PropertyMapper $propertyMapper,
@@ -87,7 +92,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         private readonly Filesystem $files,
         private readonly iterable $nodeDataRows,
     ) {
-        $this->sitesNodeTypeName = NodeTypeName::fromString('Neos.Neos:Sites');
+        $this->sitesNodeTypeName = NodeTypeNameFactory::forSites();
         $this->contentStreamId = ContentStreamId::create();
         $this->visitedNodes = new VisitedNodeAggregates();
     }
@@ -99,6 +104,13 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
     public function setSitesNodeType(NodeTypeName $nodeTypeName): void
     {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType->isOfType(NodeTypeNameFactory::NAME_SITES)) {
+            throw new \InvalidArgumentException(
+                sprintf('Sites NodeType "%s" must be of type "%s"', $nodeTypeName->value, NodeTypeNameFactory::NAME_SITES),
+                1695802415
+            );
+        }
         $this->sitesNodeTypeName = $nodeTypeName;
     }
 
@@ -149,7 +161,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $this->nodeReferencesWereSetEvents = [];
         $this->numberOfExportedEvents = 0;
         $this->metaDataExported = false;
-        $this->eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+');
+        $this->eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+') ?: null;
         Assert::resource($this->eventFileResource, null, 'Failed to create temporary event file resource');
     }
 
@@ -161,10 +173,14 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             json_decode($this->eventNormalizer->getEventData($event)->value, true),
             []
         );
+        assert($this->eventFileResource !== null);
         fwrite($this->eventFileResource, $exportedEvent->toJson() . chr(10));
         $this->numberOfExportedEvents ++;
     }
 
+    /**
+     * @param array<string, mixed> $nodeDataRow
+     */
     private function exportMetaData(array $nodeDataRow): void
     {
         if ($this->files->fileExists('meta.json')) {
@@ -180,7 +196,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     }
 
     /**
-     * @param array $nodeDataRow
+     * @param array<string, mixed> $nodeDataRow
      */
     private function processNodeData(array $nodeDataRow): void
     {
@@ -222,10 +238,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
 
     /**
-     * @param NodePath $nodePath
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @param NodeAggregateId $nodeAggregateId
-     * @param array $nodeDataRow
+     * @param array<string, mixed> $nodeDataRow
      * @return NodeName[]|void
      * @throws \JsonException
      */
@@ -239,7 +254,23 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
         $pathParts = $nodePath->getParts();
         $nodeName = end($pathParts);
+        assert($nodeName !== false);
         $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
+
+        $nodeType = $this->nodeTypeManager->hasNodeType($nodeTypeName) ? $this->nodeTypeManager->getNodeType($nodeTypeName) : null;
+
+        $isSiteNode = $nodeDataRow['parentpath'] === '/sites';
+        if ($isSiteNode && !$nodeType?->isOfType(NodeTypeNameFactory::NAME_SITE)) {
+            throw new MigrationException(sprintf(
+                'The site node "%s" (type: "%s") must be of type "%s"', $nodeDataRow['identifier'], $nodeTypeName->value, NodeTypeNameFactory::NAME_SITE
+            ), 1695801620);
+        }
+
+        if (!$nodeType) {
+            $this->dispatch(Severity::ERROR, 'The node type "%s" is not available. Node: "%s"', $nodeTypeName->value, $nodeDataRow['identifier']);
+            return;
+        }
+
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
 
@@ -266,19 +297,31 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $this->visitedNodes->add($nodeAggregateId, new DimensionSpacePointSet([$originDimensionSpacePoint->toDimensionSpacePoint()]), $nodeTypeName, $nodePath, $parentNodeAggregate->nodeAggregateId);
     }
 
+    /**
+     * @param array<string, mixed> $nodeDataRow
+     */
     public function extractPropertyValuesAndReferences(array $nodeDataRow, NodeType $nodeType): SerializedPropertyValuesAndReferences
     {
         $properties = [];
         $references = [];
 
         // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
-        $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQL100Platform());
+        try {
+            $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQL100Platform());
+        } catch (ConversionException $exception) {
+            throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s"): %s', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeType->name->value, $exception->getMessage()), 1695391558, $exception);
+        }
         if (!is_array($decodedProperties)) {
             throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s")', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeType->name->value), 1656057035);
         }
 
         foreach ($decodedProperties as $propertyName => $propertyValue) {
-            $type = $nodeType->getPropertyType($propertyName);
+            try {
+                $type = $nodeType->getPropertyType($propertyName);
+            } catch (\InvalidArgumentException $exception) {
+                $this->dispatch(Severity::WARNING, 'Skipped node data processing for the property "%s". The property name is not part of the NodeType schema for the NodeType "%s". (Node: %s)', $propertyName, $nodeType->name->value, $nodeDataRow['identifier']);
+                continue;
+            }
 
             if ($type === 'reference' || $type === 'references') {
                 if (!empty($propertyValue)) {
@@ -357,7 +400,10 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
         // If the parent node aggregate id differs, we need to move the just created variant to the new location
         $nodeAggregate = $this->visitedNodes->getByNodeAggregateId($nodeAggregateId);
-        if (!$parentNodeAggregate->nodeAggregateId->equals($nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId)) {
+        if (
+            $variantSourceOriginDimensionSpacePoint &&
+            !$parentNodeAggregate->nodeAggregateId->equals($nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId)
+        ) {
             $this->exportEvent(new NodeAggregateWasMoved(
                 $this->contentStreamId,
                 $nodeAggregateId,
@@ -388,7 +434,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             return false;
         }
         $nodeTypeOfParent = $this->nodeTypeManager->getNodeType($parentNodeTypeName);
-        return $nodeTypeOfParent->hasAutoCreatedChildNode($nodeName);
+        return $nodeTypeOfParent->hasTetheredNode($nodeName);
     }
 
     private function dispatch(Severity $severity, string $message, mixed ...$args): void

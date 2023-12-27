@@ -1,0 +1,11 @@
+#
+# Root NodeType for a Neos.Neos content repository.
+# Any Neos Site node must be its direct child.
+#
+'Neos.Neos:Sites':
+  superTypes:
+    'Neos.ContentRepository:Root': true
+  constraints:
+    nodeTypes:
+      '*': false
+      'Neos.Neos:Site': true

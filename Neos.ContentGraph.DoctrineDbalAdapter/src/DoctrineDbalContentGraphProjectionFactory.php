@@ -41,7 +41,6 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
         );
 
         return new ContentGraphProjection(
-            // @phpstan-ignore-next-line
             new DoctrineDbalContentGraphProjection(
                 $this->dbalClient,
                 new NodeFactory(
@@ -49,6 +48,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
                     $projectionFactoryDependencies->nodeTypeManager,
                     $projectionFactoryDependencies->propertyConverter
                 ),
+                $projectionFactoryDependencies->contentRepositoryId,
                 $projectionFactoryDependencies->nodeTypeManager,
                 new ProjectionContentGraph(
                     $this->dbalClient,

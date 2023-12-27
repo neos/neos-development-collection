@@ -21,7 +21,9 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -51,6 +53,11 @@ trait CRTestSuiteRuntimeVariables
     protected ?Node $currentNode = null;
 
     protected ?NodeAggregate $currentNodeAggregate = null;
+
+    /**
+     * @var array<string,NodeAggregateId>
+     */
+    protected array $rememberedNodeAggregateIds = [];
 
     /**
      * @Given /^I am in content repository "([^"]*)"$/
@@ -148,6 +155,17 @@ trait CRTestSuiteRuntimeVariables
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints
         );
+    }
+
+    /**
+     * @Given /^I remember NodeAggregateId of node "([^"]*)"s child "([^"]*)" as "([^"]*)"$/
+     */
+    public function iRememberNodeAggregateIdOfNodesChildAs(string $parentNodeAggregateId, string $childNodeName, string $indexName): void
+    {
+        $this->rememberedNodeAggregateIds[$indexName] = $this->getCurrentSubgraph()->findNodeByPath(
+            NodePath::fromString($childNodeName),
+            NodeAggregateId::fromString($parentNodeAggregateId),
+        )->nodeAggregateId;
     }
 
     protected function getCurrentNodeAggregateId(): NodeAggregateId

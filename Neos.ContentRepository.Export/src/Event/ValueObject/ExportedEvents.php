@@ -13,6 +13,9 @@ final class ExportedEvents implements \IteratorAggregate
     ) {
     }
 
+    /**
+     * @param iterable<ExportedEvent> $events
+     */
     public static function fromIterable(iterable $events): self
     {
         return new self(function () use ($events) {

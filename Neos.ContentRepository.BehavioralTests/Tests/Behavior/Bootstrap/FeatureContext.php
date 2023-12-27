@@ -11,19 +11,16 @@ declare(strict_types=1);
  * source code.
  */
 
-require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+// @todo remove this require statement
 require_once(__DIR__ . '/../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
-require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
-require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use GuzzleHttp\Psr7\Uri;
-use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\Behat\FlowBootstrapTrait;
+use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
-use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
@@ -33,36 +30,26 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
-use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 
 /**
  * Features context
  */
 class FeatureContext implements BehatContext
 {
-    use FlowContextTrait;
-    use NodeAuthorizationTrait;
-    use SecurityOperationsTrait;
-    use IsolatedBehatStepsTrait;
+    use FlowBootstrapTrait;
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
     use ProjectionIntegrityViolationDetectionTrait;
     use StructureAdjustmentsTrait;
     use MigrationsTrait;
-
-    protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
@@ -70,24 +57,19 @@ class FeatureContext implements BehatContext
 
     public function __construct()
     {
-        if (self::$bootstrap === null) {
-            self::$bootstrap = $this->initializeFlow();
-        }
-        $this->objectManager = self::$bootstrap->getObjectManager();
+        self::bootstrapFlow();
 
-        $this->setupSecurity();
-        $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
-        $this->dbalClient = $this->getObjectManager()->get(DbalClientInterface::class);
+        $this->dbalClient = $this->getObject(DbalClientInterface::class);
         $this->setupCRTestSuiteTrait();
         $this->setUpInterleavingLogger();
-        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+        $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
     }
 
     private function setUpInterleavingLogger(): void
     {
         // prepare race tracking for debugging into the race log
         if (class_exists(RedisInterleavingLogger::class)) { // the class must exist (the package loaded)
-            $raceConditionTrackerConfig = $this->getObjectManager()->get(ConfigurationManager::class)
+            $raceConditionTrackerConfig = $this->getObject(ConfigurationManager::class)
                 ->getConfiguration(
                     ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
                     'Neos.ContentRepository.BehavioralTests.raceConditionTracker'
@@ -127,11 +109,6 @@ class FeatureContext implements BehatContext
     {
         GherkinTableNodeBasedContentDimensionSourceFactory::reset();
         GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
-    }
-
-    protected function getObjectManager(): ObjectManagerInterface
-    {
-        return $this->objectManager;
     }
 
     protected function getContentRepositoryService(

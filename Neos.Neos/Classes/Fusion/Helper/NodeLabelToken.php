@@ -15,10 +15,12 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\Helper;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\Helper\StringHelper;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * Provides a chainable interface to build a label for a nodetype
@@ -26,6 +28,11 @@ use Neos\Flow\I18n\EelHelper\TranslationHelper;
  */
 class NodeLabelToken implements ProtectedContextAwareInterface
 {
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     /**
      * @Flow\Inject
      * @var TranslationHelper
@@ -140,9 +147,9 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      */
     protected function resolveLabelFromNodeType(): void
     {
-        $this->label = $this->translationHelper->translate($this->node->nodeType->getLabel()) ?: '';
+        $this->label = $this->translationHelper->translate($this->getNodeType($this->node)->getLabel()) ?: '';
         if (empty($this->label)) {
-            $this->label = $this->node->nodeType->getName();
+            $this->label = $this->node->nodeTypeName->value;
         }
 
         if (empty($this->postfix) && $this->node->nodeName !== null && $this->node->classification->isTethered()) {

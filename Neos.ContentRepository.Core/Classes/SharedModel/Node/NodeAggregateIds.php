@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 
 /**
  * An immutable collection of NodeAggregateIds, indexed by their value
@@ -29,16 +30,10 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
      */
     private array $nodeAggregateIds;
 
-    /**
-     * @var \ArrayIterator<string,NodeAggregateId>
-     */
-    private \ArrayIterator $iterator;
-
     private function __construct(NodeAggregateId ...$nodeAggregateIds)
     {
         /** @var array<string,NodeAggregateId> $nodeAggregateIds */
         $this->nodeAggregateIds = $nodeAggregateIds;
-        $this->iterator = new \ArrayIterator($nodeAggregateIds);
     }
 
     public static function createEmpty(): self
@@ -46,12 +41,11 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
         return new self(...[]);
     }
 
-
-
     public static function create(NodeAggregateId ...$nodeAggregateIds): self
     {
         return self::fromArray($nodeAggregateIds);
     }
+
     /**
      * @param array<string|int,string|NodeAggregateId> $array
      */
@@ -74,13 +68,10 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
         return self::fromArray(\json_decode($jsonString, true));
     }
 
-    /**
-     * @param Node[] $nodes
-     */
-    public static function fromNodes(array $nodes): self
+    public static function fromNodes(Nodes $nodes): self
     {
         return self::fromArray(
-            array_map(fn(Node $node) => $node->nodeAggregateId, $nodes)
+            array_map(fn(Node $node) => $node->nodeAggregateId, iterator_to_array($nodes))
         );
     }
 
@@ -88,8 +79,13 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
     {
         return new self(...array_merge(
             $this->nodeAggregateIds,
-            $other->getIterator()->getArrayCopy()
+            $other->nodeAggregateIds
         ));
+    }
+
+    public function contain(NodeAggregateId $nodeAggregateId): bool
+    {
+        return array_key_exists($nodeAggregateId->value, $this->nodeAggregateIds);
     }
 
     /**
@@ -114,10 +110,10 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
     }
 
     /**
-     * @return \ArrayIterator<string,NodeAggregateId>
+     * @return \Traversable<string,NodeAggregateId>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        yield from $this->nodeAggregateIds;
     }
 }

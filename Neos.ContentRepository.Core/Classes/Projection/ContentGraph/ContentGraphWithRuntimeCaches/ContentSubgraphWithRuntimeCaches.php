@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRu
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
@@ -52,6 +53,11 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         $this->inMemoryCache = new InMemoryCache();
     }
 
+    public function getIdentity(): ContentSubgraphIdentity
+    {
+        return $this->wrappedContentSubgraph->getIdentity();
+    }
+
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
     {
         if (!self::isFilterEmpty($filter)) {
@@ -61,8 +67,8 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         $namedChildNodeCache = $this->inMemoryCache->getNamedChildNodeByNodeIdCache();
         $parentNodeIdCache = $this->inMemoryCache->getParentNodeIdByChildNodeIdCache();
         $nodeByIdCache = $this->inMemoryCache->getNodeByNodeAggregateIdCache();
-        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypeConstraints)) {
-            return $childNodesCache->findChildNodes($parentNodeAggregateId, $filter->nodeTypeConstraints);
+        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypes)) {
+            return $childNodesCache->findChildNodes($parentNodeAggregateId, $filter->nodeTypes);
         }
         $childNodes = $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter);
         foreach ($childNodes as $node) {
@@ -70,7 +76,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
             $parentNodeIdCache->add($node->nodeAggregateId, $parentNodeAggregateId);
             $nodeByIdCache->add($node->nodeAggregateId, $node);
         }
-        $childNodesCache->add($parentNodeAggregateId, $filter->nodeTypeConstraints, $childNodes);
+        $childNodesCache->add($parentNodeAggregateId, $filter->nodeTypes, $childNodes);
         return $childNodes;
     }
 
@@ -80,8 +86,8 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
             return $this->wrappedContentSubgraph->countChildNodes($parentNodeAggregateId, $filter);
         }
         $childNodesCache = $this->inMemoryCache->getAllChildNodesByNodeIdCache();
-        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypeConstraints)) {
-            return $childNodesCache->countChildNodes($parentNodeAggregateId, $filter->nodeTypeConstraints);
+        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypes)) {
+            return $childNodesCache->countChildNodes($parentNodeAggregateId, $filter->nodeTypes);
         }
         return $this->wrappedContentSubgraph->countChildNodes($parentNodeAggregateId, $filter);
     }
@@ -157,31 +163,16 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $parentNode;
     }
 
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
+    public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node
     {
-        // TODO implement runtime caches
+        // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->findNodeByPath($path, $startingNodeAggregateId);
     }
 
     public function findNodeByAbsolutePath(AbsoluteNodePath $path): ?Node
     {
-        // TODO implement runtime caches
+        // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->findNodeByAbsolutePath($path);
-    }
-
-    public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node
-    {
-        $namedChildNodeCache = $this->inMemoryCache->getNamedChildNodeByNodeIdCache();
-        if ($namedChildNodeCache->contains($parentNodeAggregateId, $edgeName)) {
-            return $namedChildNodeCache->get($parentNodeAggregateId, $edgeName);
-        }
-        $node = $this->wrappedContentSubgraph->findChildNodeConnectedThroughEdgeName($parentNodeAggregateId, $edgeName);
-        if ($node === null) {
-            return null;
-        }
-        $namedChildNodeCache->add($parentNodeAggregateId, $edgeName, $node);
-        $this->inMemoryCache->getNodeByNodeAggregateIdCache()->add($node->nodeAggregateId, $node);
-        return $node;
     }
 
     public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindSucceedingSiblingNodesFilter $filter): Nodes
@@ -225,6 +216,12 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
     {
         // TODO: Implement countAncestorNodes() method.
         return $this->wrappedContentSubgraph->countAncestorNodes($entryNodeAggregateId, $filter);
+    }
+
+    public function findClosestNode(NodeAggregateId $entryNodeAggregateId, Filter\FindClosestNodeFilter $filter): ?Node
+    {
+        // TODO: Implement findClosestNode() method.
+        return $this->wrappedContentSubgraph->findClosestNode($entryNodeAggregateId, $filter);
     }
 
     public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes

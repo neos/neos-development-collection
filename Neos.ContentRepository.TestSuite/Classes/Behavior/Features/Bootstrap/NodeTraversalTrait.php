@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFi
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
@@ -156,16 +157,16 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id :parentNodeIdSerialized and edge name :edgeNameSerialized I expect no node to be returned
-     * @When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id :parentNodeIdSerialized and edge name :edgeNameSerialized I expect the node :expectedNodeIdSerialized to be returned
+     * @When I execute the findNodeByPath query for parent node aggregate id :parentNodeIdSerialized and node name :edgeNameSerialized as path I expect no node to be returned
+     * @When I execute the findNodeByPath query for parent node aggregate id :parentNodeIdSerialized and node name :edgeNameSerialized as path I expect the node :expectedNodeIdSerialized to be returned
      */
-    public function iExecuteTheFindChildNodeConnectedThroughEdgeNameQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $edgeNameSerialized, string $expectedNodeIdSerialized = null): void
+    public function iExecuteTheFindChildNodeByNodeNameQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $edgeNameSerialized, string $expectedNodeIdSerialized = null): void
     {
         $parentNodeAggregateId = NodeAggregateId::fromString($parentNodeIdSerialized);
         $edgeName = NodeName::fromString($edgeNameSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        $actualNode = $this->getCurrentSubgraph()->findChildNodeConnectedThroughEdgeName($parentNodeAggregateId, $edgeName);
+        $actualNode = $this->getCurrentSubgraph()->findNodeByPath($edgeName, $parentNodeAggregateId);
         Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
     }
 
@@ -262,7 +263,8 @@ trait NodeTraversalTrait
         $subgraph = $this->getCurrentSubgraph();
 
         $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findDescendantNodes($entryNodeAggregateId, $filter)));
-        Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findDescendantNodes returned an unexpected result');
+        // Note: In contrast to other similar checks, in this case we use assertEqualsCanonicalizing() instead of assertSame() because the order of descendant nodes is not completely deterministic (@see https://github.com/neos/neos-development-collection/issues/4769)
+        Assert::assertEqualsCanonicalizing($expectedNodeIds, $actualNodeIds, 'findDescendantNodes returned an unexpected result');
         $actualCount = $subgraph->countDescendantNodes($entryNodeAggregateId, CountDescendantNodesFilter::fromFindDescendantNodesFilter($filter));
         Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countDescendantNodes returned an unexpected result');
     }
@@ -281,6 +283,19 @@ trait NodeTraversalTrait
         Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findAncestorNodes returned an unexpected result');
         $actualCount = $subgraph->countAncestorNodes($entryNodeAggregateId, CountAncestorNodesFilter::fromFindAncestorNodesFilter($filter));
         Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countAncestorNodes returned an unexpected result');
+    }
+
+    /**
+     * @When /^I execute the findClosestNode query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the node "(?<expectedNodeId>[^"]*)"|no node) to be returned?$/
+     */
+    public function iExecuteTheFindClosestNodeQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeId = null): void
+    {
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
+        $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
+        $filter = FindClosestNodeFilter::create(...$filterValues);
+        $subgraph = $this->getCurrentSubgraph();
+        $actualNodeId = $subgraph->findClosestNode($entryNodeAggregateId, $filter)?->nodeAggregateId->value;
+        Assert::assertSame($expectedNodeId, $actualNodeId, 'findClosestNode returned an unexpected result');
     }
 
     /**

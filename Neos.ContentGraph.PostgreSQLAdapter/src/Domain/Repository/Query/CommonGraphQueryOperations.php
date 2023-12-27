@@ -17,8 +17,8 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\ForwardCompatibility\Result as QueryResult;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 
 /**
  * @internal
@@ -52,13 +52,13 @@ trait CommonGraphQueryOperations
         $this->types = $types;
     }
 
-    final public function withNodeTypeConstraints(
-        NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraints,
+    final public function withNodeTypeCriteria(
+        ExpandedNodeTypeCriteria $nodeTypeCriteria,
         string $prefix
     ): self {
         $parameters = $this->parameters;
         $types = $this->types;
-        $query = $this->query . QueryUtility::getNodeTypeConstraintsClause($nodeTypeConstraints, $prefix, $parameters, $types);
+        $query = $this->query . QueryUtility::getNodeTypeCriteriaClause($nodeTypeCriteria, $prefix, $parameters, $types);
         return new self($query, $parameters, $this->tableNamePrefix, $types);
     }
 

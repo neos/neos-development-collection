@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNo
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 class AddNewPropertyTransformationFactory implements TransformationFactoryInterface
 {
@@ -60,7 +59,7 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
             ): ?CommandResult {
                 if (!$node->hasProperty($this->newPropertyName)) {
                     return $this->contentRepository->handle(
-                        new SetSerializedNodeProperties(
+                        SetSerializedNodeProperties::create(
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,

@@ -1,3 +1,4 @@
+@use 'sass:math';
 /*!
  *
 .||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||.
@@ -496,11 +497,13 @@ $dropcap-bg: transparent !default;
 // -------------------------------------//
 
 html {
+  font-weight: $font-weight;
+  font-size: math.percentage($font-size / 100);
+  line-height: $line-height;
   @if $custom-font-family {
-    font: $font-weight #{$font-size}%/#{$line-height} $custom-font-family,
-      $font-family;
+    font-family: $custom-font-family, $font-family;
   } @else {
-    font: $font-weight #{$font-size}%/#{$line-height} $font-family;
+    font-family: $font-family;
   }
 }
 

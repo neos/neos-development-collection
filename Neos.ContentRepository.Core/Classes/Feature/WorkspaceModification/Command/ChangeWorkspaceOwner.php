@@ -15,9 +15,22 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class ChangeWorkspaceOwner implements CommandInterface
 {
-    public function __construct(
+    /**
+     * @param WorkspaceName $workspaceName Name of the workspace to change the owner for
+     * @param string|null $newWorkspaceOwner The id of the new workspace owner or NULL to remove the owner
+     */
+    private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly ?string $newWorkspaceOwner,
     ) {
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName Name of the workspace to change the owner for
+     * @param string|null $newWorkspaceOwner The id of the new workspace owner or NULL to remove the owner
+     */
+    public static function create(WorkspaceName $workspaceName, ?string $newWorkspaceOwner): self
+    {
+        return new self($workspaceName, $newWorkspaceOwner);
     }
 }

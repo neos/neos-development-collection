@@ -41,6 +41,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\Neos\Domain\Model\SiteNodeName;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
 /**
@@ -54,6 +55,11 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private DoctrineCheckpointStorage $checkpointStorage;
     private ?DocumentUriPathFinder $stateAccessor = null;
+
+    /**
+     * @var array<string, array<string, bool>>
+     */
+    private array $nodeTypeImplementsRuntimeCache = [];
 
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
@@ -80,8 +86,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-
-        $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema();
+        $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
@@ -208,9 +213,15 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
 
         // Just to figure out current NodeTypeName. This is the same for the aggregate in all dimensionSpacePoints.
+        $pointHashes = $event->coveredDimensionSpacePoints->getPointHashes();
+        $anyPointHash = reset($pointHashes);
+        // There is always at least one dimension space point covered, even in a zero-dimensional cr.
+        // Zero-dimensional means DimensionSpacePoint::fromArray([])->hash
+        assert(is_string($anyPointHash));
+
         $nodeInSomeDimension = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $event->nodeAggregateId,
-            $event->coveredDimensionSpacePoints->getIterator()->current()->hash
+            $anyPointHash
         ));
 
         if ($nodeInSomeDimension === null) {
@@ -322,6 +333,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'succeedingNodeAggregateId' => $event->succeedingNodeAggregateId?->value,
                 'shortcutTarget' => $shortcutTarget,
                 'nodeTypeName' => $event->nodeTypeName->value,
+                'disabled' => $parentNode->getDisableLevel(),
             ]);
         }
     }
@@ -527,7 +539,10 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 $affectedDimensionSpacePoint->hash
             ));
 
-            if ($node === null) {
+            if (
+                $node === null
+                || $this->isSiteNodeType($node->getNodeTypeName())
+            ) {
                 // probably not a document node
                 continue;
             }
@@ -548,11 +563,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 continue;
             }
             $oldUriPath = $node->getUriPath();
-            // homepage -> TODO hacky?
-            if ($oldUriPath === '') {
-                continue;
-            }
-            /** @var string[] $uriPathSegments */
             $uriPathSegments = explode('/', $oldUriPath);
             $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
             $newUriPath = implode('/', $uriPathSegments);
@@ -699,20 +709,35 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         return $node->getDisableLevel() - $parentDisabledLevel !== 0;
     }
 
+    private function isSiteNodeType(NodeTypeName $nodeTypeName): bool
+    {
+        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forSite());
+    }
+
     private function isDocumentNodeType(NodeTypeName $nodeTypeName): bool
     {
-        // HACK: We consider the currently configured node type of the given node.
-        // This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType('Neos.Neos:Document');
+        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forDocument());
     }
 
     private function isShortcutNodeType(NodeTypeName $nodeTypeName): bool
     {
-        // HACK: We consider the currently configured node type of the given node.
-        // This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType('Neos.Neos:Shortcut');
+        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forShortcut());
+    }
+
+    private function isNodeTypeOfType(NodeTypeName $nodeTypeName, NodeTypeName $superNodeTypeName): bool
+    {
+        if (!array_key_exists($superNodeTypeName->value, $this->nodeTypeImplementsRuntimeCache)) {
+            $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value] = [];
+        }
+        if (!array_key_exists($nodeTypeName->value, $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value])) {
+            // HACK: We consider the currently configured node type of the given node.
+            // This is a deliberate side effect of this projector!
+            // Note: We could add some hash over all node type decisions to the projected read model
+            // to tell whether a replay is required (e.g. if a document node type was changed to a content type vice versa)
+            // With https://github.com/neos/neos-development-collection/issues/4468 this can be compared in the `getStatus()` implementation
+            $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value] = $this->nodeTypeManager->hasNodeType($nodeTypeName) && $this->nodeTypeManager->getNodeType($nodeTypeName)->isOfType($superNodeTypeName);
+        }
+        return $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value];
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo

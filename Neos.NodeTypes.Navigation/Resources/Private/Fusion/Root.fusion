@@ -1,7 +1,5 @@
 # Navigation Fusion Object - uses Neos.Neos:Menu and is rendering menus inserted as content elements
 prototype(Neos.NodeTypes.Navigation:Navigation) < prototype(Neos.Neos:Menu) {
-  templatePath = 'resource://Neos.NodeTypes.Navigation/Private/Templates/NodeTypes/Navigation.html'
-
   startingPoint = ${q(node).property('startingPoint') ? q(node).property('startingPoint') : documentNode}
 
   itemCollection = ${Array.isEmpty(q(node).property('selection') ? q(node).property('selection') : {}) ? null : q(node).property('selection')}
@@ -12,19 +10,29 @@ prototype(Neos.NodeTypes.Navigation:Navigation) < prototype(Neos.Neos:Menu) {
   maximumLevels = ${q(node).property('maximumLevels')}
   maximumLevels.@process.1 = ${String.toInteger(value)}
 
-  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeType.name, '/[[:^alnum:]]/', '-')))}
+  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeTypeName.value, '/[[:^alnum:]]/', '-')))}
 
-  active.attributes = Neos.Fusion:Attributes {
+  active.attributes = Neos.Fusion:DataStructure {
     class = 'active'
   }
-  current.attributes = Neos.Fusion:Attributes {
+  current.attributes = Neos.Fusion:DataStructure {
     class = 'current'
   }
-  normal.attributes = Neos.Fusion:Attributes {
+  normal.attributes = Neos.Fusion:DataStructure {
     class = 'normal'
   }
 
   node = ${node}
+
+  renderer >
+  renderer = afx`
+    <nav {...props.attributes}>
+      <p @if.showEditHint={!private.items && renderingMode.isEdit}>
+        {Translation.id('content.emptyMenu').package('Neos.NodeTypes.Navigation').source('NodeTypes/Navigation')}
+      </p>
+      <Neos.Neos:MenuItemListRenderer @if.hasItems={private.items} items={private.items} />
+    </nav>
+  `
 
   @process.contentElementWrapping = Neos.Neos:ContentElementWrapping
 

@@ -25,11 +25,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class RebaseWorkspace implements CommandInterface
 {
-    public function __construct(
+    /**
+     * @param WorkspaceName $workspaceName Name of the workspace that should be rebased
+     * @param ContentStreamId $rebasedContentStreamId The id of the new content stream which is created during the rebase
+     */
+    private function __construct(
         public readonly WorkspaceName $workspaceName,
-        /**
-         * Name of the new content stream which is created during the rebase
-         */
         public readonly ContentStreamId $rebasedContentStreamId
     ) {
     }
@@ -42,10 +43,8 @@ final class RebaseWorkspace implements CommandInterface
     /**
      * Call this method if you want to run this command fully deterministically, f.e. during test cases
      */
-    public static function createFullyDeterministic(
-        WorkspaceName $workspaceName,
-        ContentStreamId $newContentStreamId
-    ): self {
-        return new self($workspaceName, $newContentStreamId);
+    public function withRebasedContentStreamId(ContentStreamId $newContentStreamId): self
+    {
+        return new self($this->workspaceName, $newContentStreamId);
     }
 }

@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * Remove Node
@@ -86,7 +85,7 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface
                     return null;
                 }
 
-                return $this->contentRepository->handle(new RemoveNodeAggregate(
+                return $this->contentRepository->handle(RemoveNodeAggregate::create(
                     $contentStreamForWriting,
                     $node->nodeAggregateId,
                     $coveredDimensionSpacePoint,

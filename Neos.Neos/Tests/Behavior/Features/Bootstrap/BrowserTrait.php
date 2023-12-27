@@ -22,21 +22,29 @@ use Neos\Neos\FrontendRouting\NodeAddress;
 use PHPUnit\Framework\Assert;
 
 /**
- * Features context
+ * Browser related Behat steps
+ *
+ * Note this trait is impure see {@see self::setupBrowserForEveryScenario()}!
+ *  It sets up a {@see FunctionalTestRequestHandler} as {@see \Neos\Flow\Core\Bootstrap::getActiveRequestHandler()}.
+ *
+ * @internal only for behat tests within the Neos.Neos package
  */
 trait BrowserTrait
 {
     use CRTestSuiteRuntimeVariables;
 
     /**
-     * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
-     */
-    abstract protected function getObjectManager();
-
-    /**
      * @var \Neos\Flow\Http\Client\Browser
      */
     protected $browser;
+
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    abstract private function getObject(string $className): object;
 
     /**
      * @BeforeScenario
@@ -45,11 +53,11 @@ trait BrowserTrait
     {
         // we reset the security context at the beginning of every scenario; such that we start with a clean session at
         // every scenario and SHARE the session throughout the scenario!
-        $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->clearContext();
+        $this->getObject(\Neos\Flow\Security\Context::class)->clearContext();
 
         $this->browser = new \Neos\Flow\Http\Client\Browser();
         $this->browser->setRequestEngine(new \Neos\Neos\Testing\CustomizedInternalRequestEngine());
-        $bootstrap = $this->getObjectManager()->get(\Neos\Flow\Core\Bootstrap::class);
+        $bootstrap = $this->getObject(\Neos\Flow\Core\Bootstrap::class);
 
         $requestHandler = new \Neos\Flow\Tests\FunctionalTestRequestHandler($bootstrap);
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());
@@ -224,7 +232,7 @@ trait BrowserTrait
      */
     public function iSendTheFollowingChanges(TableNode $changeDefinition)
     {
-        $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
+        $this->getObject(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
 
         $changes = [];
         foreach ($changeDefinition->getHash() as $singleChange) {
@@ -239,7 +247,7 @@ trait BrowserTrait
         }
 
         $server = [
-            'HTTP_X_FLOW_CSRFTOKEN' => $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
+            'HTTP_X_FLOW_CSRFTOKEN' => $this->getObject(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
         ];
         $this->currentResponse = $this->browser->request('http://localhost/neos/ui-services/change', 'POST', ['changes' => $changes], [], $server);
         $this->currentResponseContents = $this->currentResponse->getBody()->getContents();
@@ -252,7 +260,7 @@ trait BrowserTrait
      */
     public function iPublishTheFollowingNodes(string $targetWorkspaceName, TableNode $nodesToPublish)
     {
-        $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
+        $this->getObject(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
 
         $nodeContextPaths = [];
         foreach ($nodesToPublish->getHash() as $singleChange) {
@@ -260,7 +268,7 @@ trait BrowserTrait
         }
 
         $server = [
-            'HTTP_X_FLOW_CSRFTOKEN' => $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
+            'HTTP_X_FLOW_CSRFTOKEN' => $this->getObject(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
         ];
         $payload = [
             'nodeContextPaths' => $nodeContextPaths,

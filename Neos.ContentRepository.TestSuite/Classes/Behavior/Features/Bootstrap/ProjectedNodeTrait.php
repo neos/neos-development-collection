@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReference
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -80,19 +81,18 @@ trait ProjectedNodeTrait
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodeFromContentGraph(function (ContentGraphInterface $contentGraph) use ($nodeDiscriminator) {
-            $currentNode = $contentGraph->findNodeByIdAndOriginDimensionSpacePoint(
+            $currentNodeAggregate = $contentGraph->findNodeAggregateById(
                 $nodeDiscriminator->contentStreamId,
-                $nodeDiscriminator->nodeAggregateId,
-                $nodeDiscriminator->originDimensionSpacePoint
+                $nodeDiscriminator->nodeAggregateId
             );
-            Assert::assertNotNull(
-                $currentNode,
+            Assert::assertTrue(
+                $currentNodeAggregate?->occupiesDimensionSpacePoint($nodeDiscriminator->originDimensionSpacePoint),
                 'Node with aggregate id "' . $nodeDiscriminator->nodeAggregateId->value
                 . '" and originating in dimension space point "' . $nodeDiscriminator->originDimensionSpacePoint->toJson()
                 . '" was not found in content stream "' . $nodeDiscriminator->contentStreamId->value . '"'
             );
 
-            return $currentNode;
+            return $currentNodeAggregate->getNodeByOccupiedDimensionSpacePoint($nodeDiscriminator->originDimensionSpacePoint);
         });
     }
 
@@ -456,7 +456,7 @@ trait ProjectedNodeTrait
             Assert::assertTrue($expectedParentDiscriminator->equals($actualParentDiscriminator), 'Parent discriminator does not match. Expected was ' . json_encode($expectedParentDiscriminator) . ', given was ' . json_encode($actualParentDiscriminator));
 
             $expectedChildDiscriminator = NodeDiscriminator::fromNode($currentNode);
-            $child = $subgraph->findChildNodeConnectedThroughEdgeName($parent->nodeAggregateId, $currentNode->nodeName);
+            $child = $subgraph->findNodeByPath($currentNode->nodeName, $parent->nodeAggregateId);
             $actualChildDiscriminator = NodeDiscriminator::fromNode($child);
             Assert::assertTrue($expectedChildDiscriminator->equals($actualChildDiscriminator), 'Child discriminator does not match. Expected was ' . json_encode($expectedChildDiscriminator) . ', given was ' . json_encode($actualChildDiscriminator));
         });

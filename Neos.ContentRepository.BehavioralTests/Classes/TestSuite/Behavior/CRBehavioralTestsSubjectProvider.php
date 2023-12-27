@@ -36,7 +36,7 @@ trait CRBehavioralTestsSubjectProvider
      * A runtime cache of all content repositories already set up, represented by their ID
      * @var array<ContentRepositoryId>
      */
-    protected array $alreadySetUpContentRepositories = [];
+    protected static array $alreadySetUpContentRepositories = [];
 
     protected ?ContentRepository $currentContentRepository = null;
 
@@ -74,16 +74,6 @@ trait CRBehavioralTestsSubjectProvider
     public function usingTheFollowingNodeTypes(PyStringNode $serializedNodeTypesConfiguration): void
     {
         GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode($serializedNodeTypesConfiguration);
-        GherkinPyStringNodeBasedNodeTypeManagerFactory::$fallbackNodeTypeName = null;
-    }
-
-    /**
-     * @Given /^using the following node types with fallback to "([^"]*)":$/
-     */
-    public function usingTheFollowingNodeTypesWithFallback(string $fallbackNodeTypeName, PyStringNode $serializedNodeTypesConfiguration): void
-    {
-        GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode($serializedNodeTypesConfiguration);
-        GherkinPyStringNodeBasedNodeTypeManagerFactory::$fallbackNodeTypeName = $fallbackNodeTypeName;
     }
 
     /**
@@ -136,30 +126,6 @@ trait CRBehavioralTestsSubjectProvider
         }
     }
 
-    /**
-     * @Given /^I change the node types in content repository "([^"]*)" with fallback "([^"]*)" to:$/
-     */
-    public function iChangeTheNodeTypesInContentRepositoryWithFallbackTo(
-        string $contentRepositoryId,
-        string $fallbackNodeTypeName,
-        PyStringNode $serializedNodeTypesConfiguration
-    ): void {
-        if (!array_key_exists($contentRepositoryId, $this->contentRepositories)) {
-            throw new \DomainException('undeclared content repository ' . $contentRepositoryId);
-        } else {
-            $contentRepository = $this->contentRepositories[$contentRepositoryId];
-            GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode(
-                $serializedNodeTypesConfiguration,
-                $fallbackNodeTypeName
-            );
-            GherkinTableNodeBasedContentDimensionSourceFactory::$contentDimensionsToUse = $contentRepository->getContentDimensionSource();
-            $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
-            if ($this->currentContentRepository->id->value === $contentRepositoryId) {
-                $this->currentContentRepository = $this->contentRepositories[$contentRepositoryId];
-            }
-        }
-    }
-
     protected function setUpContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository
     {
         /**
@@ -203,8 +169,9 @@ trait CRBehavioralTestsSubjectProvider
          * Catch Up process and the testcase reset.
          */
         $contentRepository = $this->createContentRepository($contentRepositoryId);
-        if (!in_array($contentRepository->id, $this->alreadySetUpContentRepositories)) {
+        if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
             $contentRepository->setUp();
+            self::$alreadySetUpContentRepositories[] = $contentRepository->id;
         }
         /** @var EventStoreInterface $eventStore */
         $eventStore = (new \ReflectionClass($contentRepository))->getProperty('eventStore')->getValue($contentRepository);

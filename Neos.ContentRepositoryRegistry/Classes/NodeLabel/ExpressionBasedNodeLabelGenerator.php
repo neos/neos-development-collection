@@ -26,13 +26,12 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
 {
     /**
      * @Flow\Inject
-     * @var EelEvaluatorInterface
      */
-    protected $eelEvaluator;
+    protected EelEvaluatorInterface $eelEvaluator;
 
     /**
      * @Flow\InjectConfiguration(package="Neos.ContentRepository", path="labelGenerator.eel.defaultContext")
-     * @var array
+     * @var array<string, string>
      */
     protected $defaultContextConfiguration;
 
@@ -49,22 +48,9 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
         return $this->expression;
     }
 
-    /**
-     * @param string $expression
-     */
-    public function setExpression($expression)
+    public function setExpression(string $expression): void
     {
         $this->expression = $expression;
-    }
-
-    /**
-     * @return void
-     */
-    public function initializeObject()
-    {
-        if ($this->eelEvaluator instanceof DependencyProxy) {
-            $this->eelEvaluator->_activateDependency();
-        }
     }
 
     /**

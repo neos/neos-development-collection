@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -159,12 +160,14 @@ trait ConstraintChecks
 
     /**
      * @param NodeType $nodeType
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFoundException the configured child nodeType doesnt exist
      */
     protected function requireTetheredDescendantNodeTypesToExist(NodeType $nodeType): void
     {
-        foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeType) {
-            $this->requireTetheredDescendantNodeTypesToExist($childNodeType);
+        // this getter throws if any of the child nodeTypes doesnt exist!
+        $tetheredNodeTypes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType);
+        foreach ($tetheredNodeTypes as $tetheredNodeType) {
+            $this->requireTetheredDescendantNodeTypesToExist($tetheredNodeType);
         }
     }
 
@@ -174,7 +177,7 @@ trait ConstraintChecks
      */
     protected function requireTetheredDescendantNodeTypesToNotBeOfTypeRoot(NodeType $nodeType): void
     {
-        foreach ($nodeType->getAutoCreatedChildNodes() as $tetheredChildNodeType) {
+        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $tetheredChildNodeType) {
             if ($tetheredChildNodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 throw new NodeTypeIsOfTypeRoot(
                     'Node type "' . $nodeType->name->value . '" for tethered descendant is of type root.',
@@ -214,18 +217,15 @@ trait ConstraintChecks
         if (is_null($propertyDeclaration)) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
         }
-        if (isset($propertyDeclaration['constraints']['nodeTypes'])) {
-            $nodeTypeConstraints = NodeTypeConstraintsWithSubNodeTypes::createFromNodeTypeDeclaration(
-                $propertyDeclaration['constraints']['nodeTypes'],
-                $this->getNodeTypeManager()
+
+        $constraints = $propertyDeclaration['constraints']['nodeTypes'] ?? [];
+
+        if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType)) {
+            throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
+                $referenceName,
+                $nodeTypeName,
+                $nodeTypeNameInQuestion
             );
-            if (!$nodeTypeConstraints->matches($nodeTypeNameInQuestion)) {
-                throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
-                    $referenceName,
-                    $nodeTypeName,
-                    $nodeTypeNameInQuestion
-                );
-            }
         }
     }
 
@@ -299,12 +299,12 @@ trait ConstraintChecks
         }
         if (
             $nodeName
-            && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
-            && !$parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name->equals($nodeType->name)
+            && $parentsNodeType->hasTetheredNode($nodeName)
+            && !$this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->equals($nodeType->name)
         ) {
             throw new NodeConstraintException(
                 'Node type "' . $nodeType->name->value . '" does not match configured "'
-                    . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name->value
+                    . $this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->value
                     . '" for auto created child nodes for parent type "' . $parentsNodeType->name->value
                     . '" with name "' . $nodeName->value . '"'
             );
@@ -322,8 +322,8 @@ trait ConstraintChecks
         }
         if (
             $nodeName
-            && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
-            && !$parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name->equals($nodeType->name)
+            && $parentsNodeType->hasTetheredNode($nodeName)
+            && !$this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->equals($nodeType->name)
         ) {
             return false;
         }
@@ -360,8 +360,8 @@ trait ConstraintChecks
     ): bool {
         if (
             $parentNodeName
-            && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)
-            && !$grandParentsNodeType->allowsGrandchildNodeType($parentNodeName->value, $nodeType)
+            && $grandParentsNodeType->hasTetheredNode($parentNodeName)
+            && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType, $parentNodeName, $nodeType)
         ) {
             return false;
         }

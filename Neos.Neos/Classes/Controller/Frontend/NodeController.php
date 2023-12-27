@@ -15,13 +15,12 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Frontend;
 
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -35,7 +34,9 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
-use Neos\Neos\Domain\Service\NodeSiteResolvingService;
+use Neos\Neos\Domain\Model\RenderingMode;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeAddress;
@@ -43,6 +44,7 @@ use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\View\FusionView;
 
 /**
@@ -50,11 +52,10 @@ use Neos\Neos\View\FusionView;
  */
 class NodeController extends ActionController
 {
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -102,11 +103,8 @@ class NodeController extends ActionController
      */
     protected $view;
 
-    /**
-     * @Flow\Inject
-     * @var NodeSiteResolvingService
-     */
-    protected $nodeSiteResolvingService;
+    #[Flow\Inject]
+    protected RenderingModeService $renderingModeService;
 
     /**
      * @param string $node Legacy name for backwards compatibility of route components
@@ -122,6 +120,9 @@ class NodeController extends ActionController
      */
     public function previewAction(string $node): void
     {
+        // @todo add $renderingModeName as parameter and append it for successive links again as get parameter to node uris
+        $renderingMode = $this->renderingModeService->findByCurrentUser();
+
         $visibilityConstraints = VisibilityConstraints::frontend();
         if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
@@ -138,10 +139,7 @@ class NodeController extends ActionController
             $visibilityConstraints
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
-            $nodeAddress,
-            $siteDetectionResult->contentRepositoryId
-        );
+        $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
@@ -157,9 +155,11 @@ class NodeController extends ActionController
             );
         }
 
-        if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
+        if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT) && $nodeAddress->isInLiveWorkspace()) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
+
+        $this->view->setOption('renderingModeName', $renderingMode->name);
 
         $this->view->assignMultiple([
             'value' => $nodeInstance,
@@ -171,10 +171,6 @@ class NodeController extends ActionController
             $this->response->setHttpHeader('Cache-Control', 'no-cache');
             if (!$this->view->canRenderWithNodeAndPath()) {
                 $this->view->setFusionPath('rawContent');
-            }
-
-            if ($this->session->isStarted()) {
-                $this->session->putData('lastVisitedNode', $nodeAddress);
             }
         }
     }
@@ -193,7 +189,7 @@ class NodeController extends ActionController
      * with unsafe requests from widgets or plugins that are rendered on the node
      * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function showAction(string $node, bool $showInvisible = false): void
+    public function showAction(string $node): void
     {
         $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
@@ -203,21 +199,13 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
-        $visibilityConstraints = VisibilityConstraints::frontend();
-        if ($showInvisible && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
-            $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        }
-
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
             $nodeAddress->contentStreamId,
             $nodeAddress->dimensionSpacePoint,
-            $visibilityConstraints
+            VisibilityConstraints::frontend()
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
-            $nodeAddress,
-            $siteDetectionResult->contentRepositoryId
-        );
+        $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
@@ -226,13 +214,15 @@ class NodeController extends ActionController
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
 
-        if (is_null($nodeInstance)) {
+        if ($nodeInstance === null) {
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);
         }
 
-        if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut')) {
+        if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
+
+        $this->view->setOption('renderingModeName', RenderingMode::FRONTEND);
 
         $this->view->assignMultiple([
             'value' => $nodeInstance,
@@ -331,7 +321,7 @@ class NodeController extends ActionController
 
         $subtree = $subgraph->findSubtree(
             $nodeAggregateId,
-            FindSubtreeFilter::create(nodeTypeConstraints: '!Neos.Neos:Document', maximumLevels: 20)
+            FindSubtreeFilter::create(nodeTypes: '!' . NodeTypeNameFactory::NAME_DOCUMENT, maximumLevels: 20)
         );
         if ($subtree === null) {
             return;

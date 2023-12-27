@@ -15,10 +15,24 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class ChangeBaseWorkspace implements CommandInterface
 {
-    public function __construct(
+    /**
+     * @param WorkspaceName $workspaceName Name of the affected workspace
+     * @param WorkspaceName $baseWorkspaceName Name of the new base workspace
+     * @param ContentStreamId $newContentStreamId The id of the new content stream id that will be assigned to the workspace
+     */
+    private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly WorkspaceName $baseWorkspaceName,
         public readonly ContentStreamId $newContentStreamId,
     ) {
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName Name of the affected workspace
+     * @param WorkspaceName $baseWorkspaceName Name of the new base workspace
+     */
+    public static function create(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName): self
+    {
+        return new self($workspaceName, $baseWorkspaceName, ContentStreamId::create());
     }
 }

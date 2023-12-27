@@ -11,7 +11,6 @@ Feature: Create node aggregate with node
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes':
       properties:
         defaultText:
@@ -191,7 +190,6 @@ Feature: Create node aggregate with node
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes': []
     """
     And using identifier "default", I define a content repository
@@ -257,7 +255,6 @@ Feature: Create node aggregate with node
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:SubSubNode':
       properties:
         text:
@@ -454,7 +451,6 @@ Feature: Create node aggregate with node
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:SubNode': []
     'Neos.ContentRepository.Testing:NodeWithTetheredChildNodes':
       childNodes:

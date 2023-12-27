@@ -71,7 +71,6 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
         $query =  $query->withDimensionSpacePoint($dimensionSpacePoint)
             ->withNodeAggregateId($nodeAggregateId);
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
@@ -89,7 +88,6 @@ final class ProjectionHypergraph
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
         $query = $query->withNodeAggregateId($nodeAggregateId);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
@@ -191,7 +189,6 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
         $query = $query->withNodeAggregateId($nodeAggregateId);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return array_map(function ($row) {

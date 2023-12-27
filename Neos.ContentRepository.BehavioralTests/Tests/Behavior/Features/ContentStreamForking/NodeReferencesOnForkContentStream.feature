@@ -10,7 +10,6 @@ Feature: On forking a content stream, node references should be copied as well.
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithReferences':
       properties:
         referenceProperty:

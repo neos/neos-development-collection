@@ -51,7 +51,7 @@ trait NodeDisabling
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->currentDimensionSpacePoint;
 
-        $command = new DisableNodeAggregate(
+        $command = DisableNodeAggregate::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
@@ -125,7 +125,7 @@ trait NodeDisabling
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->currentDimensionSpacePoint;
 
-        $command = new EnableNodeAggregate(
+        $command = EnableNodeAggregate::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,

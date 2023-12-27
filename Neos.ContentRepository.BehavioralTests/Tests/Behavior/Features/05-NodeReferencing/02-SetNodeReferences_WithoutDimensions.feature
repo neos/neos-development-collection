@@ -7,7 +7,6 @@ Feature: Node References without Dimensions
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithReferences':
       properties:
         referenceProperty:

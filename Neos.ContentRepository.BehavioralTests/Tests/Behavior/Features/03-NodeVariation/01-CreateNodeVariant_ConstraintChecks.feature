@@ -10,7 +10,6 @@ Feature: Create node variant
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         tethered:

@@ -24,8 +24,19 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class PublishWorkspace implements CommandInterface
 {
-    public function __construct(
+    /**
+     * @param WorkspaceName $workspaceName Name of the workspace to publish
+     */
+    private function __construct(
         public readonly WorkspaceName $workspaceName,
     ) {
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName Name of the workspace to publish
+     */
+    public static function create(WorkspaceName $workspaceName): self
+    {
+        return new self($workspaceName);
     }
 }

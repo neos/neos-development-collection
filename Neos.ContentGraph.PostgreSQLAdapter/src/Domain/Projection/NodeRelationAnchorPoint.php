@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
-use Neos\Flow\Utility\Algorithms;
+use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 
 /**
  * The node relation anchor value object
@@ -30,7 +30,7 @@ final class NodeRelationAnchorPoint implements \JsonSerializable, \Stringable
 
     public static function create(): self
     {
-        return new self(Algorithms::generateUUID());
+        return new self(UuidFactory::create());
     }
 
     public static function forRootHierarchyRelation(): self

@@ -47,13 +47,6 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected $currentNode;
 
     /**
-     * Internal cache for the currentLevel tsValue.
-     *
-     * @var integer
-     */
-    protected $currentLevel;
-
-    /**
      * Internal cache for the renderHiddenInIndex property.
      *
      * @var boolean
@@ -61,14 +54,27 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected $renderHiddenInIndex;
 
     /**
-     * Rootline of all nodes from the current node to the site root node, keys are depth of nodes.
+     * Internal cache for the calculateItemStates property.
      *
-     * @var array<Node>
+     * @var boolean
      */
-    protected $currentNodeRootline;
+    protected $calculateItemStates;
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    /**
+     * Whether the active/current state of menu items is calculated on the server side.
+     * This has an effect on performance and caching
+     */
+    public function isCalculateItemStatesEnabled(): bool
+    {
+        if ($this->calculateItemStates === null) {
+            $this->calculateItemStates = (bool)$this->fusionValue('calculateItemStates');
+        }
+
+        return $this->calculateItemStates;
+    }
 
     /**
      * Should nodes that have "hiddenInIndex" set still be visible in this menu.
@@ -85,6 +91,19 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     }
 
     /**
+     * The node the menu is built from, all relative specifications will
+     * use this as a base
+     */
+    public function getCurrentNode(): Node
+    {
+        if ($this->currentNode === null) {
+            $this->currentNode = $this->fusionValue('node');
+        }
+
+        return $this->currentNode;
+    }
+
+    /**
      * Main API method which sends the to-be-rendered data to Fluid
      *
      * @return array<int,MenuItem>
@@ -92,9 +111,6 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     public function getItems(): array
     {
         if ($this->items === null) {
-            $fusionContext = $this->runtime->getCurrentContext();
-            $this->currentNode = $fusionContext['activeNode'] ?? $fusionContext['documentNode'];
-            $this->currentLevel = 1;
             $this->items = $this->buildItems();
         }
 
@@ -143,30 +159,14 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
         return $node->getProperty('_hiddenInIndex');
     }
 
-    /**
-     * Get the rootline from the current node up to the site node.
-     *
-     * @return array<int,Node> nodes, indexed by depth
-     */
-    protected function getCurrentNodeRootline(): array
+    protected function buildUri(Node $node): string
     {
-        if ($this->currentNodeRootline === null) {
-            $rootline = [];
-            $ancestors = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode)
-                ->findAncestorNodes(
-                    $this->currentNode->nodeAggregateId,
-                    FindAncestorNodesFilter::create()
-                );
-            foreach ($ancestors->reverse() as $i => $ancestor) {
-                if (!$ancestor->classification->isRoot()) {
-                    $rootline[$i] = $ancestor;
-                }
-            }
-            $rootline[] = $this->currentNode;
-
-            $this->currentNodeRootline = $rootline;
-        }
-
-        return $this->currentNodeRootline;
+        $this->runtime->pushContextArray([
+            'itemNode' => $node,
+            'documentNode' => $node,
+        ]);
+        $uri = $this->runtime->render($this->path . '/itemUriRenderer');
+        $this->runtime->popContext();
+        return $uri;
     }
 }

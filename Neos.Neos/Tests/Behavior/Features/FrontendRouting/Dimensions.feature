@@ -1,4 +1,4 @@
-@fixtures @contentrepository
+@flowEntities @contentrepository
 Feature: Routing functionality with multiple content dimensions
 
   Background:
@@ -8,8 +8,6 @@ Feature: Routing functionality with multiple content dimensions
       | language   | en, de, gsw | gsw->de->en     |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
-
     'Neos.Neos:Sites':
       superTypes:
         'Neos.ContentRepository:Root': true

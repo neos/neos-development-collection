@@ -50,9 +50,12 @@ trait NodeModification
             $commandArguments['originDimensionSpacePoint'] = $this->currentDimensionSpacePoint->jsonSerialize();
         }
 
-        $command = new SetNodeProperties(
+        $rawNodeAggregateId = $commandArguments['nodeAggregateId'];
+        $command = SetNodeProperties::create(
             ContentStreamId::fromString($commandArguments['contentStreamId']),
-            NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
+            \str_starts_with($rawNodeAggregateId, '$')
+                ? $this->rememberedNodeAggregateIds[\mb_substr($rawNodeAggregateId, 1)]
+                : NodeAggregateId::fromString($rawNodeAggregateId),
             OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint']),
             $this->deserializeProperties($commandArguments['propertyValues']),
         );

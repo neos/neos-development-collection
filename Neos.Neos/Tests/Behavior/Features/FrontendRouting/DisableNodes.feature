@@ -1,11 +1,10 @@
-@fixtures @contentrepository
+@flowEntities @contentrepository
 Feature: Routing behavior of removed, disabled and re-enabled nodes
 
   Background:
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
     'Neos.Neos:Sites':
       superTypes:
         'Neos.ContentRepository:Root': true
@@ -32,10 +31,10 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                    |
-      | contentStreamId             | "cs-identifier"          |
-      | nodeAggregateId             | "lady-eleonode-rootford" |
-      | nodeTypeName                | "Neos.Neos:Sites"        |
+      | Key             | Value                    |
+      | contentStreamId | "cs-identifier"          |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
     And the graph projection is fully up to date
 
     # lady-eleonode-rootford
@@ -48,7 +47,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     #
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                          | initialPropertyValues                    | nodeName |
+      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                   | initialPropertyValues                    | nodeName |
       | shernode-homes         | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
       | sir-david-nodenborough | shernode-homes         | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
       | duke-of-contentshire   | sir-david-nodenborough | Neos.Neos:Test.Routing.Content | {"uriPathSegment": "ignore-me"}          | node3    |
@@ -263,3 +262,24 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The documenturipath projection is up to date
     Then No node should match URL "/nody/earl-document"
     And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/nody/earl-document/leaf"
+
+  Scenario: Add child node underneath disabled node and re-enable parent (see https://github.com/neos/neos-development-collection/issues/4639)
+    When the command "DisableNodeAggregate" is executed with payload:
+      | Key                          | Value              |
+      | contentStreamId              | "cs-identifier"    |
+      | nodeAggregateId              | "nody-mc-nodeface" |
+      | coveredDimensionSpacePoint   | {}                 |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+    And the graph projection is fully up to date
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId        | parentNodeAggregateId | nodeTypeName                | initialPropertyValues            |
+      | nody-mc-nodeface-child | nody-mc-nodeface      | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "nody-child"} |
+    And The documenturipath projection is up to date
+    When the command "EnableNodeAggregate" is executed with payload:
+      | Key                          | Value              |
+      | contentStreamId              | "cs-identifier"    |
+      | nodeAggregateId              | "nody-mc-nodeface" |
+      | coveredDimensionSpacePoint   | {}                 |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+    When I am on URL "/nody/nody-child"
+    Then the matched node should be "nody-mc-nodeface-child" in content stream "cs-identifier" and dimension "{}"

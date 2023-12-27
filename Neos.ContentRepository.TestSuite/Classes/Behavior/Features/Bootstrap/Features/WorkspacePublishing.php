@@ -41,20 +41,16 @@ trait WorkspacePublishing
         $commandArguments = $this->readPayloadTable($payloadTable);
         $nodesToPublish = NodeIdsToPublishOrDiscard::fromArray($commandArguments['nodesToPublish']);
 
-        $contentStreamIdForMatchingPart = isset($commandArguments['contentStreamIdForMatchingPart'])
-            ? ContentStreamId::fromString($commandArguments['contentStreamIdForMatchingPart'])
-            : ContentStreamId::create();
-
-        $contentStreamIdForRemainingPart = isset($commandArguments['contentStreamIdForRemainingPart'])
-            ? ContentStreamId::fromString($commandArguments['contentStreamIdForRemainingPart'])
-            : ContentStreamId::create();
-
-        $command = PublishIndividualNodesFromWorkspace::createFullyDeterministic(
+        $command = PublishIndividualNodesFromWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             $nodesToPublish,
-            $contentStreamIdForMatchingPart,
-            $contentStreamIdForRemainingPart
         );
+        if (isset($commandArguments['contentStreamIdForMatchingPart'])) {
+            $command = $command->withContentStreamIdForMatchingPart(ContentStreamId::fromString($commandArguments['contentStreamIdForMatchingPart']));
+        }
+        if (isset($commandArguments['contentStreamIdForRemainingPart'])) {
+            $command = $command->withContentStreamIdForRemainingPart(ContentStreamId::fromString($commandArguments['contentStreamIdForRemainingPart']));
+        }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
@@ -68,7 +64,7 @@ trait WorkspacePublishing
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $command = new PublishWorkspace(
+        $command = PublishWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
         );
 

@@ -7,7 +7,6 @@ Feature: Tethered Nodes Reordering Structure changes
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         'tethered-node':
@@ -57,7 +56,6 @@ Feature: Tethered Nodes Reordering Structure changes
   Scenario: re-ordering the tethered child nodes brings up wrongly sorted tethered nodes
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         'tethered-node':

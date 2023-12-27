@@ -40,13 +40,6 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 class CrCommandController extends CommandController
 {
-
-    /**
-     * @var array
-     */
-    #[Flow\InjectConfiguration(package: 'Neos.Flow')]
-    protected array $flowSettings;
-
     public function __construct(
         private readonly Connection $connection,
         private readonly Environment $environment,
@@ -96,6 +89,7 @@ class CrCommandController extends CommandController
 
         $siteRows = $connection->fetchAllAssociativeIndexed('SELECT nodename, name, siteresourcespackagekey FROM neos_neos_domain_model_site');
         $siteNodeName = $this->output->select('Which site to migrate?', array_map(static fn (array $siteRow) => $siteRow['name'] . ' (' . $siteRow['siteresourcespackagekey'] . ')', $siteRows));
+        assert(is_string($siteNodeName));
         $siteRow = $siteRows[$siteNodeName];
 
         $site = $this->siteRepository->findOneByNodeName($siteNodeName);

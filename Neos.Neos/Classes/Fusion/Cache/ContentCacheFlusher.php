@@ -255,7 +255,7 @@ class ContentCacheFlusher
             function (array $types, NodeType $superType) use ($self) {
                 return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
             },
-            [$nodeType->getName()]
+            [$nodeType->name->value]
         );
 
         $types = array_unique($types);

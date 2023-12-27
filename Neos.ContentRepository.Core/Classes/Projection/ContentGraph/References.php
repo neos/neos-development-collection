@@ -38,18 +38,17 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
  *
  * @api
  */
-final class References implements \IteratorAggregate, \ArrayAccess, \Countable
+final readonly class References implements \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
      * @var array<int,Reference>
      */
-    public readonly array $references;
+    public array $references;
 
     private function __construct(
         Reference ...$references
     ) {
-        /** @var array<int,Reference> $references */
-        $this->references = $references;
+        $this->references = array_values($references);
     }
 
     /**
@@ -69,11 +68,11 @@ final class References implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @return \ArrayIterator<int,Reference>
+     * @return \Traversable<int,Reference>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->references);
+        return yield from $this->references;
     }
 
     public function offsetExists(mixed $offset): bool

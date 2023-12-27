@@ -59,7 +59,7 @@ trait NodeModification
 
         $this->validateProperties($command->propertyValues, $nodeTypeName);
 
-        $lowLevelCommand = new SetSerializedNodeProperties(
+        $lowLevelCommand = SetSerializedNodeProperties::create(
             $command->contentStreamId,
             $command->nodeAggregateId,
             $command->originDimensionSpacePoint,
