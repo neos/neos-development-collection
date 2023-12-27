@@ -29,9 +29,6 @@
 			<trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
 				<source>Selected target</source>
 			</trans-unit>
-			<trans-unit id="properties.httpStatusCode" xml:space="preserve">
-        <source>HTTP Redirect status code</source>
-      </trans-unit>
 		</body>
 	</file>
 </xliff>

@@ -46,15 +46,3 @@
             setTargetModeIfNotEmpty:
               property: 'targetMode'
               handler: 'Neos.Neos/Inspector/Handlers/ShortcutHandler'
-
-    httpStatusCode:
-      type: int
-      defaultValue: 303
-      ui:
-        label: i18n
-        inspector:
-          # change this to edit the status code in the inspector
-          hidden: true
-          group: 'document'
-          editor: 'Neos.Neos/Inspector/Editors/TextFieldEditor'
-

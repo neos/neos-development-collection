@@ -20,8 +20,6 @@ Feature: Routing behavior of shortcut nodes
           type: string
         target:
           type: string
-        httpStatusCode:
-          type: int
     'Neos.Neos:Content': []
 
     'Neos.Neos:Test.Routing.Page':
