@@ -67,7 +67,7 @@ Feature: Filter - Node Name
 
 
   Scenario: Fixed newValue
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -

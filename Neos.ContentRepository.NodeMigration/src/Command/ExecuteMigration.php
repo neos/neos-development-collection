@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Command;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -22,75 +21,31 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class ExecuteMigration
 {
-    /**
-     * @var MigrationConfiguration
-     */
-    private $migrationConfiguration;
-
-    /**
-     * @var WorkspaceName
-     */
-    private $workspaceName;
-
-    /**
-     * This property exists mostly for testing, to make the command handler fully deterministic.
-     *
-     * A migration file is structured like this:
-     * migrations: [
-     *   {filters: ... transformations: ...},
-     *   {filters: ... transformations: ...}
-     * ]
-     * For every "submigration" (i.e. every "line" from above), we fork a new content stream,
-     * to make the migration roll-back-able.
-     * In the first "submigration", we use the base content stream identifier (of $workspaceName) for *reading*, and
-     * use the first content stream identifier of this list for writing.
-     * In the second "submigration", we use the content stream of the *first* submigration for reading, and the next one
-     * from this list for writing.
-     *
-     * This effectively makes all changes of the first submigration visible in the next submigration.
-     *
-     * @var ContentStreamId[]
-     */
-    private $contentStreamIdsForWriting;
-
-    /**
-     * ExecuteMigration constructor.
-     * @param MigrationConfiguration $migrationConfiguration
-     * @param WorkspaceName $workspaceName
-     * @param ContentStreamId[] $contentStreamIdsForWriting
-     */
     public function __construct(
-        MigrationConfiguration $migrationConfiguration,
-        WorkspaceName $workspaceName,
-        array $contentStreamIdsForWriting = []
+        private readonly MigrationConfiguration $migrationConfiguration,
+        private readonly WorkspaceName $sourceWorkspaceName,
+        private readonly WorkspaceName $targetWorkspaceName,
+        private readonly bool $publishOnSuccess,
     ) {
-        $this->migrationConfiguration = $migrationConfiguration;
-        $this->workspaceName = $workspaceName;
-        $this->contentStreamIdsForWriting = array_values($contentStreamIdsForWriting);
     }
 
-    /**
-     * @return MigrationConfiguration
-     */
     public function getMigrationConfiguration(): MigrationConfiguration
     {
         return $this->migrationConfiguration;
     }
 
-    /**
-     * @return WorkspaceName
-     */
-    public function getWorkspaceName(): WorkspaceName
+    public function getSourceWorkspaceName(): WorkspaceName
     {
-        return $this->workspaceName;
+        return $this->sourceWorkspaceName;
     }
 
-    public function getOrCreateContentStreamIdForWriting(int $index): ContentStreamId
+    public function getTargetWorkspaceName(): WorkspaceName
     {
-        if (isset($this->contentStreamIdsForWriting[$index])) {
-            return $this->contentStreamIdsForWriting[$index];
-        }
+        return $this->targetWorkspaceName;
+    }
 
-        return ContentStreamId::create();
+    public function getPublishOnSuccess(): bool
+    {
+        return $this->publishOnSuccess;
     }
 }

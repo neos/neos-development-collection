@@ -55,7 +55,7 @@ Feature: Remove Nodes
 
 
   Scenario: Remove nodes in a given dimension space point removes the node with all virtual specializations
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -98,7 +98,7 @@ Feature: Remove Nodes
 
 
   Scenario: Remove nodes in a given dimension space point removes the node without shine-throughs with strategy "allSpecializations"
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -144,7 +144,7 @@ Feature: Remove Nodes
 
 
   Scenario: allVariants is not supported in RemoveNode, as this would violate the filter configuration potentially
-    When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
     """yaml
     migration:
       -
@@ -168,7 +168,7 @@ Feature: Remove Nodes
 
 
   Scenario: Remove nodes in a virtual specialization (gsw)
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -214,7 +214,7 @@ Feature: Remove Nodes
 
 
   Scenario: Remove nodes in a shine-through dimension space point (gsw)
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -255,7 +255,7 @@ Feature: Remove Nodes
 
 
   Scenario: Remove nodes in a shine-through dimension space point (DE,gsw)
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -300,7 +300,7 @@ Feature: Remove Nodes
     Then I expect the integrity violation detection result to contain exactly 0 errors
 
   Scenario: Remove nodes in a shine-through dimension space point (DE,gsw) - variant 2
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -

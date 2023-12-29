@@ -59,7 +59,7 @@ Feature: Move dimension space point
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -109,7 +109,7 @@ Feature: Move dimension space point
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -144,7 +144,7 @@ Feature: Move dimension space point
       | Identifier | Values  | Generalizations |
       | language   | mul, ch | ch->mul         |
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
     """yaml
     migration:
       -
@@ -158,7 +158,7 @@ Feature: Move dimension space point
     Then the last command should have thrown an exception of type "DimensionSpacePointAlreadyExists"
 
   Scenario: Error case - the target dimension is not configured
-    When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
     """yaml
     migration:
       -

@@ -43,7 +43,7 @@ Feature: Change Property
 
 
   Scenario: Fixed newValue
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -74,7 +74,7 @@ Feature: Change Property
       | text | "fixed value" |
 
   Scenario: Ignoring transformation if property does not exist on node
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -98,7 +98,7 @@ Feature: Change Property
       | text | "Original text" |
 
   Scenario: replacement using default currentValuePlaceholder
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -121,7 +121,7 @@ Feature: Change Property
       | text | "bla Original text" |
 
   Scenario: replacement using alternative currentValuePlaceholder
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -145,7 +145,7 @@ Feature: Change Property
       | text | "bla Original text" |
 
   Scenario: using search/replace
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -169,7 +169,7 @@ Feature: Change Property
       | text | "alternative text" |
 
   Scenario: using search/replace including placeholder (all options)
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -

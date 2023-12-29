@@ -61,7 +61,7 @@ Feature: Add Dimension Specialization
     Given I change the content dimensions in content repository "default" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -156,7 +156,7 @@ Feature: Add Dimension Specialization
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -200,7 +200,7 @@ Feature: Add Dimension Specialization
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"en"}        |
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
     """yaml
     migration:
       -
@@ -214,7 +214,7 @@ Feature: Add Dimension Specialization
     Then the last command should have thrown an exception of type "DimensionSpacePointAlreadyExists"
 
   Scenario: Error case - the target dimension is not configured
-    When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
     """yaml
     migration:
       -
@@ -233,7 +233,7 @@ Feature: Add Dimension Specialization
       | Identifier | Values       | Generalizations |
       | language   | mul, de, foo | de->mul         |
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
     """yaml
     migration:
       -
@@ -252,7 +252,7 @@ Feature: Add Dimension Specialization
       | Identifier | Values       | Generalizations   |
       | language   | mul, de, foo | de->mul, foo->mul |
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
     """yaml
     migration:
       -

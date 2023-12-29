@@ -78,7 +78,7 @@ Feature: Filter - Property not empty
 
 
   Scenario: PropertyNotEmpty
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
