@@ -317,7 +317,12 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
 
         foreach ($decodedProperties as $propertyName => $propertyValue) {
-            $type = $nodeType->getPropertyType($propertyName);
+            try {
+                $type = $nodeType->getPropertyType($propertyName);
+            } catch (\InvalidArgumentException $exception) {
+                $this->dispatch(Severity::WARNING, 'Skipped node data processing for the property "%s". The property name is not part of the NodeType schema for the NodeType "%s". (Node: %s)', $propertyName, $nodeType->name->value, $nodeDataRow['identifier']);
+                continue;
+            }
 
             if ($type === 'reference' || $type === 'references') {
                 if (!empty($propertyValue)) {

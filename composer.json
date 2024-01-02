@@ -6,6 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
+        "neos/flow-development-collection": "9.0.x-dev",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
         "neos/eventstore": "~1.0.0",

@@ -45,6 +45,11 @@ final readonly class SubtreeTagsWithInherited implements \IteratorAggregate
         return $this->tags->contain($tag) || $this->inheritedTags->contain($tag);
     }
 
+    public function all(): SubtreeTags
+    {
+        return SubtreeTags::fromArray([...iterator_to_array($this->tags), ...iterator_to_array($this->inheritedTags)]);
+    }
+
     public function getIterator(): Traversable
     {
         foreach ($this->tags as $tag) {

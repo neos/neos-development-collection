@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
@@ -154,7 +155,19 @@ from tree
         $this->getDatabaseConnection()->executeStatement('
             UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
             INNER JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation ph ON ph.childnodeanchor = h.parentnodeanchor
-            SET h.subtreetags = IF(JSON_CONTAINS_PATH(ph.subtreetags, \'one\', :tagPath), JSON_SET(h.subtreetags, :tagPath, null), JSON_REMOVE(h.subtreetags, :tagPath))
+            SET h.subtreetags = IF((
+              SELECT
+                JSON_CONTAINS_PATH(ph.subtreetags, \'one\', :tagPath)
+              FROM
+                ' . $this->getTableNamePrefix() . '_hierarchyrelation ph
+                INNER JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation ch ON ch.parentnodeanchor = ph.childnodeanchor
+                INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = ch.childnodeanchor
+              WHERE
+                n.nodeaggregateid = :nodeAggregateId
+                AND ph.contentstreamid = :contentStreamId
+                AND ph.dimensionspacepointhash in (:dimensionSpacePointHashes)
+              LIMIT 1
+            ), JSON_SET(h.subtreetags, :tagPath, null), JSON_REMOVE(h.subtreetags, :tagPath))
             WHERE h.childnodeanchor IN (
               WITH RECURSIVE cte (id) AS (
                 SELECT ch.childnodeanchor
@@ -233,7 +246,7 @@ from tree
             'contentStreamId' => $contentStreamId->value,
             'nodeAggregateId' => $nodeAggregateId->value,
             'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-            'newParentTags' => json_encode($newSubtreeTags, JSON_THROW_ON_ERROR),
+            'newParentTags' => json_encode($newSubtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
         ]);
         $this->getDatabaseConnection()->executeStatement('
             UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
@@ -247,7 +260,7 @@ from tree
             'contentStreamId' => $contentStreamId->value,
             'nodeAggregateId' => $nodeAggregateId->value,
             'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-            'newParentTags' => json_encode($newSubtreeTags, JSON_THROW_ON_ERROR),
+            'newParentTags' => json_encode($newSubtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
         ]);
     }
 
@@ -265,8 +278,30 @@ from tree
             'contentStreamId' => $contentStreamId->value,
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
         ]);
-        if ($subtreeTagsJson === null) {
+        if (!is_string($subtreeTagsJson)) {
             throw new \RuntimeException(sprintf('Failed to fetch SubtreeTags for node "%s" in content subgraph "%s@%s"', $nodeAggregateId->value, $dimensionSpacePoint->toJson(), $contentStreamId->value), 1698838865);
+        }
+        return NodeFactory::extractSubtreeTagsWithInheritedFromJson($subtreeTagsJson);
+    }
+
+    private function subtreeTagsForHierarchyRelation(ContentStreamId $contentStreamId, NodeRelationAnchorPoint $parentNodeAnchorPoint, DimensionSpacePoint $dimensionSpacePoint): SubtreeTagsWithInherited
+    {
+        if ($parentNodeAnchorPoint->equals(NodeRelationAnchorPoint::forRootEdge())) {
+            return SubtreeTagsWithInherited::createEmpty();
+        }
+        $subtreeTagsJson = $this->getDatabaseConnection()->fetchOne('
+                SELECT h.subtreetags FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                WHERE
+                  h.childnodeanchor = :parentNodeAnchorPoint
+                  AND h.contentstreamid = :contentStreamId
+                  AND h.dimensionspacepointhash = :dimensionSpacePointHash
+            ', [
+            'parentNodeAnchorPoint' => $parentNodeAnchorPoint->value,
+            'contentStreamId' => $contentStreamId->value,
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+        ]);
+        if (!is_string($subtreeTagsJson)) {
+            throw new \RuntimeException(sprintf('Failed to fetch SubtreeTags for hierarchy parent anchor point "%s" in content subgraph "%s@%s"', $parentNodeAnchorPoint->value, $dimensionSpacePoint->toJson(), $contentStreamId->value), 1704199847);
         }
         return NodeFactory::extractSubtreeTagsWithInheritedFromJson($subtreeTagsJson);
     }

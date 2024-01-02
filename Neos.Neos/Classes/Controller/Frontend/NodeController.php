@@ -106,6 +106,9 @@ class NodeController extends ActionController
     #[Flow\Inject]
     protected RenderingModeService $renderingModeService;
 
+    #[Flow\InjectConfiguration(path: "frontend.shortcutRedirectHttpStatusCode", package: "Neos.Neos")]
+    protected int $shortcutRedirectHttpStatusCode;
+
     /**
      * @param string $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
@@ -299,7 +302,8 @@ class NodeController extends ActionController
         } else {
             $resolvedUri = $resolvedTarget;
         }
-        $this->redirectToUri($resolvedUri);
+
+        $this->redirectToUri($resolvedUri, statusCode: $this->shortcutRedirectHttpStatusCode);
     }
 
     private function fillCacheWithContentNodes(

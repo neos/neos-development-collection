@@ -42,11 +42,13 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SubtreeTagsWithInherited;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
@@ -504,6 +506,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $dimensionSpacePoint
             );
 
+            $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamId, $parentNodeAnchorPoint, $dimensionSpacePoint);
+            $inheritedSubtreeTags = SubtreeTagsWithInherited::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all());
+
             $hierarchyRelation = new HierarchyRelation(
                 $parentNodeAnchorPoint,
                 $childNodeAnchorPoint,
@@ -511,7 +516,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $contentStreamId,
                 $dimensionSpacePoint,
                 $dimensionSpacePoint->hash,
-                $position
+                $position,
+                $inheritedSubtreeTags,
             );
 
             $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
@@ -931,7 +937,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 null, // todo: find proper sibling
                 $contentStreamId,
                 $dimensionSpacePoint
-            )
+            ),
+            $sourceHierarchyRelation->subtreeTags,
         );
         $copy->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
