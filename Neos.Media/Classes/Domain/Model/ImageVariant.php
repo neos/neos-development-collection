@@ -32,7 +32,7 @@ use Neos\Utility\TypeHandling;
  *
  * @Flow\Entity
  */
-class ImageVariant extends Asset implements AssetVariantInterface, ImageInterface
+class ImageVariant extends Asset implements AssetVariantInterface, ImageInterface, AdjustmentCapableInterface, PresetVariantInterface
 {
     use DimensionsTrait;
 
