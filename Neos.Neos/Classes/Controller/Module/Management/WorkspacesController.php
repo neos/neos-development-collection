@@ -511,12 +511,10 @@ class WorkspacesController extends AbstractModuleController
                     // $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
                     if ($document !== null) {
                         $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
-                        $documentDimension = '';
-                        foreach ($document->getDimensions() as $dimension) {
-                            if (isset($dimension[0])) {
-                                $documentDimension .= $dimension[0];
-                            }
-                        }
+
+                        $dimensionValues = $document->getDimensions();
+                        $documentDimension = Utility::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
+
                         $relativePath = str_replace(sprintf(SiteService::SITES_ROOT_PATH . '/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
                         if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                             $siteChanges[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
