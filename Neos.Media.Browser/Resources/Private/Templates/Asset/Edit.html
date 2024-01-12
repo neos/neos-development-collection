@@ -78,7 +78,19 @@
                                         </f:if>
                                         <tr>
                                             <th>{neos:backend.translate(id: 'metadata.filename', package: 'Neos.Media.Browser')}</th>
-                                            <td><a href="#" target="_blank">{assetProxy.filename}</a></td>
+                                            <td>
+                                                <f:if condition="{assetContainsMaliciousContent}">
+                                                    <f:then>
+                                                        {assetProxy.filename}
+                                                        <div class="neos-badge neos-badge-important">
+                                                            {neos:backend.translate(id: 'message.assetContainsMaliciousContent', package: 'Neos.Media.Browser')}
+                                                        </div>
+                                                    </f:then>
+                                                    <f:else>
+                                                        <a href="{assetProxy.originalUri}" target="_blank">{assetProxy.filename}</a>
+                                                    </f:else>
+                                                </f:if>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>{neos:backend.translate(id: 'metadata.lastModified', package: 'Neos.Media.Browser')}</th>

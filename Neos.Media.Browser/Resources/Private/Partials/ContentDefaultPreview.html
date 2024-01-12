@@ -1,7 +1,14 @@
 {namespace m=Neos\Media\ViewHelpers}
 {namespace neos=Neos\Neos\ViewHelpers}
 <div class="neos-preview-image" id="neos-preview-image">
-    <a href="{assetProxy.originalUri}" target="_blank">
-        <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
-    </a>
+    <f:if condition="{assetContainsMaliciousContent}">
+        <f:then>
+            <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
+        </f:then>
+        <f:else>
+            <a href="{assetProxy.originalUri}" target="_blank">
+                <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
+            </a>
+        </f:else>
+    </f:if>
 </div>
