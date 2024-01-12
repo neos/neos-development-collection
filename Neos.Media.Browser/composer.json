@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": "^8.0",
+        "ext-libxml": "*",
         "neos/media": "self.version",
         "neos/content-repository": "self.version",
         "neos/neos": "self.version",
@@ -22,7 +23,8 @@
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
         "doctrine/common": "^2.7 || ^3.0",
-        "doctrine/orm": "^2.6"
+        "doctrine/orm": "^2.6",
+        "enshrined/svg-sanitize": "^0.16.0"
     },
     "autoload": {
         "psr-4": {
