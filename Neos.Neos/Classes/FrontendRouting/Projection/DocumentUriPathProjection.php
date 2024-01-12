@@ -541,9 +541,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
             if (
                 $node === null
-                || $this->isSiteNodeType($node->getNodeTypeName())
+                || $this->isNodeTypeWithUriPathSegment($node->getNodeTypeName())
             ) {
-                // probably not a document node
+                // probably the site node which doesn't have an uri path segment
                 continue;
             }
             if ((isset($newPropertyValues['targetMode']) || isset($newPropertyValues['target'])) && $node->isShortcut()) {
@@ -709,9 +709,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         return $node->getDisableLevel() - $parentDisabledLevel !== 0;
     }
 
-    private function isSiteNodeType(NodeTypeName $nodeTypeName): bool
+    private function isNodeTypeWithUriPathSegment(NodeTypeName $nodeTypeName): bool
     {
-        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forSite());
+        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeName::fromString('Neos.Neos:UriPathSegment'));
     }
 
     private function isDocumentNodeType(NodeTypeName $nodeTypeName): bool
