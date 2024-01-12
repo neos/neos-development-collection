@@ -8,3 +8,4 @@
   abstract: true
   superTypes:
     'Neos.Neos:Document': true
+    'Neos.Neos:UriPathSegment': false
