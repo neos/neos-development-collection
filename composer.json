@@ -30,7 +30,8 @@
         "neos/party": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
-        "neos/kickstarter": "~8.2.0"
+        "neos/kickstarter": "~8.2.0",
+        "enshrined/svg-sanitize": "^0.16.0"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
