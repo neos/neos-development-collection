@@ -570,6 +570,10 @@
 				<source>Create missing variants</source>
         <target state="translated">Crear las variantes que faltan</target>
       </trans-unit>
+      <trans-unit id="message.assetContainsMaliciousContent" xml:space="preserve">
+				<source>This asset might contain malicious content!</source>
+        <target state="needs-translation">¡Este activo puede tener contenido malicioso!</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
