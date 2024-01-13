@@ -21,6 +21,7 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Service\ContentElementWrappingService;
 
 /**
@@ -72,19 +73,20 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
         if (isset($currentContext['node'])) {
             /** @var Node $node */
             $node = $currentContext['node'];
-            $contentRepositoryId = $node->subgraphIdentity->contentRepositoryId;
-            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-                $node->subgraphIdentity->contentStreamId
-            );
+
+            $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
+            assert($renderingMode instanceof RenderingMode);
             $applicationContext = $this->environment->getContext();
 
-            if (
-                $applicationContext->isProduction()
-                && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
-                && !is_null($workspace)
-                && !$workspace->workspaceName->isLive()
-            ) {
+            if (!$renderingMode->isEdit) {
+                return $output;
+            }
+
+            if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+                return $output;
+            }
+
+            if ($applicationContext->isProduction()) {
                 $output = '<div class="neos-rendering-exception">
     <div class="neos-rendering-exception-title">Failed to render element' . $output . '</div>
 </div>';

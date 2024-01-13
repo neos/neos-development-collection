@@ -76,7 +76,7 @@ class CrCommandController extends CommandController
     /**
      * Import the events from the path into the specified content repository
      *
-     * @param string $path The path for storing the result
+     * @param string $path The path of the stored events like resource://Neos.Demo/Private/Content
      * @param string $contentRepository The content repository identifier
      * @param bool $verbose If set, all notices will be rendered
      * @throws \Exception

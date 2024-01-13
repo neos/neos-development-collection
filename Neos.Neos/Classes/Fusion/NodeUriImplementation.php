@@ -129,11 +129,11 @@ class NodeUriImplementation extends AbstractFusionObject
         } else {
             return '';
         }
-        /** @todo implement us
+        /* TODO implement us see https://github.com/neos/neos-development-collection/issues/4524 {@see \Neos\Neos\ViewHelpers\Uri\NodeViewHelper::resolveNodeAddressFromString} for an example implementation
         elseif ($node === '~') {
         $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
         $nodeAddress = $nodeAddress->withNodeAggregateId(
-        $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateId()
+        $siteNode->nodeAggregateId
         );
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
         $nodeAddress = $this->nodeAddressFactory->createFromNode($node);

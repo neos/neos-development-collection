@@ -56,7 +56,7 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     """
     And the Fusion context node is "a"
     And the Fusion context request URI is "http://localhost"
-
+    And the Fusion renderingMode is "frontend"
   Scenario: Default output
     When I execute the following Fusion code:
     """fusion
@@ -84,21 +84,20 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     Some value without URI
     """
 
-#  NOTE: This scenario currently breaks because it leads to an exception "Could not resolve a route and its corresponding URI for the given parameters"
-#  Scenario: URI to non-existing node
-#    When I execute the following Fusion code:
-#    """fusion
-#    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-#    include: resource://Neos.Neos/Private/Fusion/Root.fusion
-#
-#    test = Neos.Neos:ConvertUris {
-#      value = 'Some value with node URI to non-existing node: node://non-existing.'
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    Some value with node URI to non-existing node: .
-#    """
+  Scenario: URI to non-existing node
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'Some value with node URI to non-existing node: node://non-existing.'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    Some value with node URI to non-existing node: .
+    """
 
   Scenario: URI to existing node
     When I execute the following Fusion code:
@@ -115,37 +114,51 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     Some value with node URI: /a1.
     """
 
-#  NOTE: This scenario currently breaks because the rel attribute is just "noopener" instead of "noopener external"
-#  Scenario: Anchor tag without node or asset URI
-#    When I execute the following Fusion code:
-#    """fusion
-#    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-#    include: resource://Neos.Neos/Private/Fusion/Root.fusion
-#
-#    test = Neos.Neos:ConvertUris {
-#      value = 'some <a href="https://neos.io">Link</a>'
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    some <a target="_blank" rel="noopener external" href="https://neos.io">Link</a>
-#    """
+  Scenario: URI preserved in edit mode
+    Given the Fusion renderingMode is "inPlace"
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
 
-#  NOTE: This scenario currently breaks because it leads to an exception "Could not resolve a route and its corresponding URI for the given parameters"
-#  Scenario: Anchor tag with node URI to non-existing node
-#    When I execute the following Fusion code:
-#    """fusion
-#    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-#    include: resource://Neos.Neos/Private/Fusion/Root.fusion
-#
-#    test = Neos.Neos:ConvertUris {
-#      value = 'some <a href="node://non-existing">Link</a>'
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    some Link
-#    """
+    test = Neos.Neos:ConvertUris {
+      value = 'Some value with node URI: node://a1.'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    Some value with node URI: node://a1.
+    """
+
+  Scenario: Anchor tag without node or asset URI
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'some <a href="https://neos.io">Link</a>'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    some <a target="_blank" rel="noopener external" href="https://neos.io">Link</a>
+    """
+
+  Scenario: Anchor tag with node URI to non-existing node
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'some <a href="node://non-existing">Link</a>'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    some Link
+    """
 
   Scenario: Anchor tag with URI to existing node
     When I execute the following Fusion code:
@@ -177,18 +190,18 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     Some value with node URI to non-existing asset: .
     """
 
-#  Scenario: URI to existing asset
-#    When an asset exists with id "362f3049-b9bb-454d-8769-6b35167e471e"
-#    And I execute the following Fusion code:
-#    """fusion
-#    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-#    include: resource://Neos.Neos/Private/Fusion/Root.fusion
-#
-#    test = Neos.Neos:ConvertUris {
-#      value = 'Some value with node URI: asset://362f3049-b9bb-454d-8769-6b35167e471e.'
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    Some value with node URI: http://localhost/_Resources/Testing/Persistent/d0a1342bcb0e515bea83269427d8341d5f62a43d/test.svg.
-#    """
+  Scenario: URI to existing asset
+    When an asset exists with id "362f3049-b9bb-454d-8769-6b35167e471e"
+    And I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'Some value with node URI: asset://362f3049-b9bb-454d-8769-6b35167e471e.'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    Some value with node URI: http://localhost/_Resources/Testing/Persistent/d0a1342bcb0e515bea83269427d8341d5f62a43d/test.svg.
+    """

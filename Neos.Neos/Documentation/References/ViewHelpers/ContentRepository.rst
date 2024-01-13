@@ -3,6 +3,6 @@
 Content Repository ViewHelper Reference
 #######################################
 
-This reference was automatically generated from code on 2023-05-01
+This reference was automatically generated from code on 2024-01-12
 
 
