@@ -5,7 +5,7 @@ import {ImpersonateButton} from '../../Templates/ImpersonateButton'
 const BASE_PATH = '/neos/impersonate/'
 export default class UserManagement {
     constructor(_root) {
-        const csfrTokenField = document.querySelector('[data-csrf-token]')
+        const csfrTokenField = document.querySelector('.neos-user-menu[data-csrf-token]')
         this._root = _root
         this._csrfToken = !isNil(csfrTokenField) ? csfrTokenField.getAttribute('data-csrf-token') : ''
         this._apiService = new ApiService(BASE_PATH, this._csrfToken)

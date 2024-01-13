@@ -5,7 +5,7 @@ import { RestoreButton } from '../../Templates/RestoreButton'
 const BASE_PATH = '/neos/impersonate/'
 export default class UserMenu {
     constructor(_root) {
-        const csfrTokenField = document.querySelector('[data-csrf-token]')
+        const csfrTokenField = document.querySelector('.neos-user-menu[data-csrf-token]')
         this._csrfToken = !isNil(csfrTokenField)
             ? csfrTokenField.getAttribute('data-csrf-token')
             : ''
