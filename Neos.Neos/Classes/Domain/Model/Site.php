@@ -17,7 +17,6 @@ namespace Neos\Neos\Domain\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Utility\Arrays;
@@ -45,7 +44,7 @@ class Site
 
     /**
      * @var array
-     * @phpstan-var array<string,array<string,mixed>>
+     * @phpstan-var array<string,mixed>
      */
     #[Flow\InjectConfiguration(path: 'sitePresets')]
     protected $sitePresetsConfiguration = [];
