@@ -58,10 +58,10 @@ final class NodeAggregate
      * @param NodeTypeName $nodeTypeName name of the node type of this aggregate
      * @param NodeName|null $nodeName optional name of this aggregate
      * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints dimension space points this aggregate occupies
-     * @param array<string,Node> $nodesByOccupiedDimensionSpacePoint
+     * @param non-empty-array<string,Node> $nodesByOccupiedDimensionSpacePoint At least one node will be occupied.
      * @param CoverageByOrigin $coverageByOccupant
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
-     * @param array<string,Node> $nodesByCoveredDimensionSpacePoint
+     * @param DimensionSpacePointSet $coveredDimensionSpacePoints At least one node will be covered.
+     * @param non-empty-array<string,Node> $nodesByCoveredDimensionSpacePoint
      * @param OriginByCoverage $occupationByCovered
      * @param DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags dimension space points for every subtree tag this aggregate is *explicitly* tagged with (excluding inherited tags)
      */
@@ -79,6 +79,9 @@ final class NodeAggregate
         private readonly OriginByCoverage $occupationByCovered,
         private readonly DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
     ) {
+        // this nodeAggregate can only exist if it at least contains one node.
+        assert($this->nodesByOccupiedDimensionSpacePoint !== []);
+        assert($this->nodesByCoveredDimensionSpacePoint !== []);
     }
 
     public function occupiesDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): bool
@@ -94,6 +97,11 @@ final class NodeAggregate
     public function getNodes(): iterable
     {
         return array_values($this->nodesByOccupiedDimensionSpacePoint);
+    }
+
+    public function getSingleNodeIndependentOfItsDimension(): Node
+    {
+        return current($this->nodesByOccupiedDimensionSpacePoint);
     }
 
     public function getNodeByOccupiedDimensionSpacePoint(
