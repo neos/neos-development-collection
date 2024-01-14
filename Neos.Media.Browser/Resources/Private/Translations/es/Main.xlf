@@ -572,7 +572,7 @@
       </trans-unit>
       <trans-unit id="message.assetContainsMaliciousContent" xml:space="preserve">
 				<source>This asset might contain malicious content!</source>
-        <target state="needs-translation">¡Este activo puede tener contenido malicioso!</target>
+        <target state="translated">¡Este activo puede tener contenido malicioso!</target>
       </trans-unit>
     </body>
   </file>
