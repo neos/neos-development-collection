@@ -111,31 +111,6 @@ class ContentElementWrappingService
     }
 
     /**
-     * @param array<string,mixed> $additionalAttributes
-     * additional attributes in the form ['<attribute-name>' => '<attibute-value>', ...]
-     * to be rendered in the element wrapping
-     *
-     * @deprecated
-     */
-    public function wrapCurrentDocumentMetadata(
-        Node $node,
-        string $content,
-        string $fusionPath,
-        array $additionalAttributes = [],
-    ): string {
-        // TODO: reenable permissions
-        //if ($this->nodeAuthorizationService->isGrantedToEditNode($node) === false) {
-        //    return $content;
-        //}
-
-        $attributes = $additionalAttributes;
-        $attributes['data-__neos-fusion-path'] = $fusionPath;
-        $attributes = $this->addCssClasses($attributes, $node, []);
-
-        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', ['typeof']);
-    }
-
-    /**
      * Add required CSS classes to the attributes.
      *
      * @param array<string,mixed> $attributes

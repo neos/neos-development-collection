@@ -94,14 +94,6 @@ class PageHandler extends AbstractRenderingExceptionHandler
                 && $renderingMode->isEdit
             ) {
                 $isBackend = true;
-                $fluidView->assign(
-                    'metaData',
-                    $this->contentElementWrappingService->wrapCurrentDocumentMetadata(
-                        $documentNode,
-                        '<div id="neos-document-metadata"></div>',
-                        $fusionPath
-                    )
-                );
             }
         }
 
