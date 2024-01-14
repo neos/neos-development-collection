@@ -176,7 +176,7 @@ final class NodeFactory
         $rawNodeName = '';
         $rawNodeAggregateClassification = '';
         $occupiedDimensionSpacePoints = [];
-        $nodesByOccupiedDimensionSpacePoints = [];
+        $nodesByOccupiedDimensionSpacePoint = [];
         $coveredDimensionSpacePoints = [];
         $nodesByCoveredDimensionSpacePoints = [];
         $coverageByOccupants = [];
@@ -186,9 +186,9 @@ final class NodeFactory
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
             $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
-            if (!isset($nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash])) {
+            if (!isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])) {
                 // ... so we handle occupation exactly once ...
-                $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
+                $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
                     $workspaceName,
                     $contentStreamId,
@@ -211,7 +211,7 @@ final class NodeFactory
                 = $coveredDimensionSpacePoint;
             $occupationByCovering[$coveredDimensionSpacePoint->hash] = $occupiedDimensionSpacePoint;
             $nodesByCoveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash]
-                = $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash];
+                = $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash];
             // ... as we do for explicit subtree tags
             foreach (self::extractNodeTagsFromJson($nodeRow['subtreetags'])->withoutInherited() as $explicitTag) {
                 $dimensionSpacePointsBySubtreeTags = $dimensionSpacePointsBySubtreeTags->withSubtreeTagAndDimensionSpacePoint($explicitTag, $coveredDimensionSpacePoint);
@@ -220,8 +220,9 @@ final class NodeFactory
         ksort($occupiedDimensionSpacePoints);
         ksort($coveredDimensionSpacePoints);
 
-        /** @var Node $primaryNode  a nodeAggregate only exists if it at least contains one node. */
-        $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
+        // a nodeAggregate only exists if it at least contains one node
+        assert($nodesByOccupiedDimensionSpacePoint !== []);
+        $primaryNode = current($nodesByOccupiedDimensionSpacePoint);
 
         return new NodeAggregate(
             $primaryNode->subgraphIdentity->contentStreamId,
@@ -230,7 +231,7 @@ final class NodeFactory
             NodeTypeName::fromString($rawNodeTypeName),
             $rawNodeName ? NodeName::fromString($rawNodeName) : null,
             new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints),
-            $nodesByOccupiedDimensionSpacePoints,
+            $nodesByOccupiedDimensionSpacePoint,
             CoverageByOrigin::fromArray($coverageByOccupants),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoints,
