@@ -20,13 +20,13 @@ class TimeableNodeVisibilityCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $workspaceName = WorkspaceName::fromString('live');
 
-        $handlingResult = $this->timeableNodeVisibilityService->handleExeededNodeDates(
+        $handlingResult = $this->timeableNodeVisibilityService->handleExceededNodeDates(
             $contentRepositoryId,
             $workspaceName
         );
 
         if (!$quiet) {
-            $this->output->outputLine(sprintf('Enabled %d nodes with exeeded timed dates.', $handlingResult->countByResult(HandlingResult::RESULT_ENABLED)));
+            $this->output->outputLine(sprintf('Enabled %d nodes with exceeded timed dates.', $handlingResult->countByResult(HandlingResult::RESULT_ENABLED)));
             foreach ($handlingResult->getByResult(HandlingResult::RESULT_ENABLED) as $result) {
                 $this->output->outputLine(sprintf(
                         '- NodeAggregateId: %s, DimensionSpacePoint: %s, Label: %s',
@@ -37,7 +37,7 @@ class TimeableNodeVisibilityCommandController extends CommandController
                 );
             }
 
-            $this->output->outputLine(sprintf('Disabled %d nodes with exeeded timed dates.', $handlingResult->countByResult(HandlingResult::RESULT_DISABLED)));
+            $this->output->outputLine(sprintf('Disabled %d nodes with exceeded timed dates.', $handlingResult->countByResult(HandlingResult::RESULT_DISABLED)));
             foreach ($handlingResult->getByResult(HandlingResult::RESULT_DISABLED) as $result) {
                 $this->output->outputLine(sprintf(
                         '- NodeAggregateId: %s, DimensionSpacePoint: %s, Label: %s',
@@ -58,10 +58,10 @@ class TimeableNodeVisibilityCommandController extends CommandController
      * @param int $interval Interval in seconds, when the command has to get executed. (Default: '60')
      * @param bool $quiet Set to false if you need a more verbose output. (Default: 'true')
      */
-    public function runDaemonCommand(string $contentRepository = 'default', int $ttl = 900, int $interval = 60, bool $quiet = true)
+    public function runDaemonCommand(string $contentRepository = 'default', int $ttl = 900, int $interval = 60, bool $quiet = true): void
     {
         $startTime = microtime(true);
-        while(true) {
+        while (true) {
             $this->executeCommand($contentRepository, $quiet);
 
             $currentTime = microtime(true) - $startTime;

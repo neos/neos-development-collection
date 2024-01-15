@@ -35,7 +35,7 @@ class TimeableNodeVisibilityService
     #[Flow\Inject]
     protected LoggerInterface $logger;
 
-    public function handleExeededNodeDates(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): HandlingResultSet
+    public function handleExceededNodeDates(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): HandlingResultSet
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
@@ -145,7 +145,7 @@ class TimeableNodeVisibilityService
             );
     }
 
-    private function needsDisabling(mixed $node, \DateTimeImmutable $now)
+    private function needsDisabling(mixed $node, \DateTimeImmutable $now): bool
     {
         return $node->hasProperty('disableAfterDateTime')
             && $node->getProperty('disableAfterDateTime') != null
@@ -158,7 +158,7 @@ class TimeableNodeVisibilityService
             );
     }
 
-    private function logResult(HandlingResult $result)
+    private function logResult(HandlingResult $result): void
     {
         $this->logger->info(
             sprintf('Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]: %s',
