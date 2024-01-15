@@ -13,6 +13,6 @@ final readonly class AssetResourceReplaced
         public AssetInterface $asset,
         public PersistentResource $previousResource,
         public PersistentResource $newResource
-    )
-    {}
+    ) {
+    }
 }

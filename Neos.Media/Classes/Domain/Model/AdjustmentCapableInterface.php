@@ -5,7 +5,8 @@ use Neos\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 
 interface AdjustmentCapableInterface
 {
-    public function getAdjustments(): \IteratorAggregate;
+    /** @return iterable<ImageAdjustmentInterface> */
+    public function getAdjustments(): iterable;
 
     public function addAdjustment(ImageAdjustmentInterface $adjustment): void;
 
