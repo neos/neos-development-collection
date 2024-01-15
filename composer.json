@@ -43,6 +43,7 @@
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
         "neos/kickstarter": "~9.0.0",
+        "neos/timeable-node-visibility": "*",
         "enshrined/svg-sanitize": "^0.16.0"
     },
     "replace": {
@@ -80,7 +81,8 @@
         "neos/nodetypes-html": "self.version",
         "neos/nodetypes-navigation": "self.version",
         "neos/nodetypes": "self.version",
-        "neos/site-kickstarter": "self.version"
+        "neos/site-kickstarter": "self.version",
+        "neos/timeable-node-visibility": "self.version"
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
