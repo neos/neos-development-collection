@@ -19,18 +19,19 @@
         "gedmo/doctrine-extensions": "^3.5",
         "behat/transliterator": "~1.0",
         "neos/utility-unicode": "*",
+        "ext-libxml": "*",
         "neos/twitter-bootstrap": "^3.0.6",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
         "doctrine/common": "^2.7 || ^3.0",
+        "enshrined/svg-sanitize": "^0.16.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
         "doctrine/dbal": "^2.8",
         "neos/party": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
-        "neos/kickstarter": "~8.1.0",
-        "enshrined/svg-sanitize": "^0.16.0"
+        "neos/kickstarter": "~8.1.0"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
