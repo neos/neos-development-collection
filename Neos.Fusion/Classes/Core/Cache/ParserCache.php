@@ -15,10 +15,12 @@ namespace Neos\Fusion\Core\Cache;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Utility\Files;
+use Psr\Log\LoggerInterface;
 
 /**
  * Helper around the ParsePartials Cache.
@@ -43,6 +45,12 @@ class ParserCache
     protected $packageManager;
 
     /**
+     * @Flow\Inject
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @Flow\InjectConfiguration(path="enableParsePartialsCache")
      */
     protected $enableCache;
@@ -64,7 +72,18 @@ class ParserCache
             throw new \RuntimeException("Couldn't resolve realpath for: '$contextPathAndFilename'", 1705409467);
         }
         $identifier = $this->getCacheIdentifierForAbsoluteUnixStyleFilePathWithoutDirectoryTraversal($fusionFileRealPath);
-        return $this->cacheForIdentifier($identifier, $generateValueToCache);
+        $value = $this->cacheForIdentifier($identifier, $generateValueToCache);
+        if (!$value instanceof FusionFile) {
+            $this->logger->error(sprintf(
+                'Unexpected cache error in parser cache while retrieving identifier %s. Expected cache %s with backend %s to return `FusionFile` but got `%s`.',
+                $identifier,
+                $this->parsePartialsCache->getIdentifier(),
+                get_class($this->parsePartialsCache->getBackend()),
+                get_debug_type($value)
+            ), LogEnvironment::fromMethodName(__METHOD__));
+            return $generateValueToCache();
+        }
+        return $value;
     }
 
     public function cacheForDsl(string $identifier, string $code, \Closure $generateValueToCache): mixed
