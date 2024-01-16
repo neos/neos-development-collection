@@ -58,7 +58,12 @@ class ParserCache
         if (str_contains($contextPathAndFilename, '://')) {
             $contextPathAndFilename = $this->getAbsolutePathForPackageRessourceUri($contextPathAndFilename);
         }
-        $identifier = $this->getCacheIdentifierForFile($contextPathAndFilename);
+        $fusionFileRealPath = realpath($contextPathAndFilename);
+        if ($fusionFileRealPath === false) {
+            // should not happen as the file would not been able to be read in the first place.
+            throw new \RuntimeException("Couldn't resolve realpath for: '$contextPathAndFilename'", 1705409467);
+        }
+        $identifier = $this->getCacheIdentifierForAbsoluteUnixStyleFilePathWithoutDirectoryTraversal($fusionFileRealPath);
         return $this->cacheForIdentifier($identifier, $generateValueToCache);
     }
 
