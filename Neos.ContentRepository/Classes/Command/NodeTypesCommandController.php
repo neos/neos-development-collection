@@ -44,9 +44,14 @@ class NodeTypesCommandController extends CommandController
             $this->quit();
         }
 
-        $configuration = $path
-            ? self::truncateArrayAtLevel($nodeType->getConfiguration($path), $level)
-            : [$nodeTypeName => self::truncateArrayAtLevel($nodeType->getFullConfiguration(), $level)];
+        if (empty($path)) {
+            $configuration = [$nodeTypeName => self::truncateArrayAtLevel($nodeType->getFullConfiguration(), $level)];
+        } else {
+            $configuration = $nodeType->getConfiguration($path);
+            if (is_array($configuration)) {
+                $configuration = self::truncateArrayAtLevel($configuration, $level);
+            }
+        }
 
         $yaml = Yaml::dump($configuration, 99);
 
