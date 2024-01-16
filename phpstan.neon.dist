@@ -16,6 +16,7 @@ parameters:
         - Neos.ContentRepositoryRegistry/Classes
         - Neos.Neos/Classes
         - Neos.NodeTypes.Form/Classes
+        - Neos.TimeableNodeVisibility/Classes
     bootstrapFiles:
         - bootstrap-phpstan.php
 rules:

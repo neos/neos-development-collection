@@ -13,18 +13,21 @@ class HandlingResultSet
     {
     }
 
-    public function add(HandlingResult $handlingResult)
+    public function add(HandlingResult $handlingResult): void
     {
         $this->handlingResults[] = $handlingResult;
     }
 
-    public function countByResult(string $result)
+    public function countByResult(string $result): int
     {
-        return count(array_filter($this->handlingResults, fn($handlingResult) => $handlingResult->result === $result));
+        return count($this->getByResult($result));
     }
 
-    public function getByResult(string $result)
+    /**
+     * @return array<HandlingResult>
+     */
+    public function getByResult(string $result): array
     {
-        return array_filter($this->handlingResults, fn($handlingResult) => $handlingResult->result === $result);
+        return array_filter($this->handlingResults, fn ($handlingResult) => $handlingResult->result === $result);
     }
 }

@@ -25,6 +25,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\TimeableNodeVisibility\Domain\HandlingResult;
 use Neos\TimeableNodeVisibility\Domain\HandlingResultSet;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 
 #[Flow\Scope('singleton')]
 class TimeableNodeVisibilityService
@@ -39,6 +41,9 @@ class TimeableNodeVisibilityService
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        if ($liveWorkspace === null) {
+            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+        }
         $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateFinder::class);
 
         $now = new \DateTimeImmutable();
@@ -97,7 +102,11 @@ class TimeableNodeVisibilityService
                 VisibilityConstraints::withoutRestrictions()
             );
 
-            $rootNode = $subgraph->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'));
+            $sitesNodeTypeName = NodeTypeName::fromString('Neos.Neos:Sites');
+            $rootNode = $subgraph->findRootNodeByType($sitesNodeTypeName);
+            if ($rootNode === null) {
+                throw RootNodeAggregateDoesNotExist::butWasExpectedTo($sitesNodeTypeName);
+            }
 
             $nodes = $subgraph->findDescendantNodes(
                 $rootNode->nodeAggregateId,
@@ -123,7 +132,7 @@ class TimeableNodeVisibilityService
         }
     }
 
-    private function isHidden(Node $node, ProjectionStateInterface $nodeHiddenStateFinder): bool
+    private function isHidden(Node $node, NodeHiddenStateFinder $nodeHiddenStateFinder): bool
     {
         return $nodeHiddenStateFinder->findHiddenState(
             $node->subgraphIdentity->contentStreamId,
@@ -132,7 +141,7 @@ class TimeableNodeVisibilityService
         )->isHidden;
     }
 
-    private function needsEnabling(Node $node, \DateTimeImmutable $now)
+    private function needsEnabling(Node $node, \DateTimeImmutable $now): bool
     {
         return $node->hasProperty('enableAfterDateTime')
             && $node->getProperty('enableAfterDateTime') != null
@@ -145,7 +154,7 @@ class TimeableNodeVisibilityService
             );
     }
 
-    private function needsDisabling(mixed $node, \DateTimeImmutable $now): bool
+    private function needsDisabling(Node $node, \DateTimeImmutable $now): bool
     {
         return $node->hasProperty('disableAfterDateTime')
             && $node->getProperty('disableAfterDateTime') != null
