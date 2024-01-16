@@ -3,7 +3,7 @@
 TYPO3 Fluid ViewHelper Reference
 ################################
 
-This reference was automatically generated from code on 2023-12-01
+This reference was automatically generated from code on 2024-01-12
 
 
 .. _`TYPO3 Fluid ViewHelper Reference: f:alias`:
