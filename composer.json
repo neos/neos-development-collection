@@ -34,6 +34,12 @@
         "neos/form": "*",
         "neos/kickstarter": "~8.3.0"
     },
+    "scripts": {
+        "lint:phpstan": "../../bin/phpstan analyse",
+        "lint": [
+            "@lint:phpstan"
+        ]
+    },
     "replace": {
         "typo3/typo3cr": "self.version",
         "packagefactory/atomicfusion-afx": "*",
