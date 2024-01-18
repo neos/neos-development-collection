@@ -640,7 +640,7 @@ class SequenceMatcher
      * Quickly return an upper bound ratio for the similarity of the strings.
      * This is quicker to compute than Ratio().
      *
-     * @return float The calculated ratio.
+     * @return float|null The calculated ratio.
      * @todo throw away or make public
      */
     private function quickRatio()

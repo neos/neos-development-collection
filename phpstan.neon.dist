@@ -1,0 +1,19 @@
+parameters:
+    level: 0
+    ignoreErrors:
+        # Errors caused by the backport of the ESCR TraversableNodeInterface
+        - '#has invalid return type Neos\\ContentRepository\\DimensionSpace\\DimensionSpace\\DimensionSpacePoint.$#'
+        - '#has invalid return type Neos\\EventSourcedContentRepository\\Domain\\Context\\NodeAggregate\\OriginDimensionSpacePoint.$#'
+        - '#has invalid type Neos\\EventSourcedContentRepository\\Domain\\ValueObject\\PropertyName.$#'
+    paths:
+        - Neos.ContentRepository/Classes
+        - Neos.Diff/Classes
+        - Neos.Fusion.Afx/Classes
+        - Neos.Fusion/Classes
+        - Neos.Media.Browser/Classes
+        - Neos.Media/Classes
+        - Neos.Neos/Classes
+        - Neos.NodeTypes.Form/Classes
+        - Neos.SiteKickstarter/Classes
+    bootstrapFiles:
+         - ../Framework/bootstrap-phpstan.php

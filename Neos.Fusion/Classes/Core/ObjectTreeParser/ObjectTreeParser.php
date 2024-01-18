@@ -47,6 +47,7 @@ use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserUnexpectedCharException;
 
 /**
  * Parses a Fusion File to object ast-nodes
+ * @phpstan-consistent-constructor
  */
 class ObjectTreeParser
 {

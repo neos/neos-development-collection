@@ -89,7 +89,7 @@ class NodesController extends ActionController
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying
      * @param array $nodeTypes A list of node types the list should be filtered by
      * @param NodeInterface $contextNode a node to use as context for the search
-     * @return string
+     * @return void
      */
     public function indexAction($searchTerm = '', array $nodeIdentifiers = [], $workspaceName = 'live', array $dimensions = [], array $nodeTypes = ['Neos.Neos:Document'], NodeInterface $contextNode = null)
     {
@@ -126,7 +126,7 @@ class NodesController extends ActionController
      * @param string $identifier Specifies the node to look up
      * @param string $workspaceName Name of the workspace to use for querying the node
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
-     * @return string
+     * @return void
      */
     public function showAction($identifier, $workspaceName = 'live', array $dimensions = [])
     {
@@ -166,7 +166,7 @@ class NodesController extends ActionController
      * @param string $workspaceName Name of the workspace where to create the node in
      * @param array $dimensions Optional list of dimensions and their values in which the node should be created
      * @param array $sourceDimensions
-     * @return string
+     * @return void
      */
     public function createAction($mode, $identifier, $workspaceName = 'live', array $dimensions = [], array $sourceDimensions = [])
     {

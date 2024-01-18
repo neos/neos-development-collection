@@ -81,7 +81,7 @@ class AssetsController extends ActionController
      * Shows a list of assets
      *
      * @param string $searchTerm An optional search term used for filtering the list of assets
-     * @return string
+     * @return void
      */
     public function indexAction($searchTerm = '')
     {
@@ -97,7 +97,7 @@ class AssetsController extends ActionController
      * Shows a specific asset
      *
      * @param string $identifier Specifies the asset to look up
-     * @return string
+     * @return void
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
      */

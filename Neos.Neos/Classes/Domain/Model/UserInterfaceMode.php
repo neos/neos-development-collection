@@ -168,6 +168,7 @@ class UserInterfaceMode
      */
     public static function createByConfiguration($modeName, array $configuration)
     {
+        /** @phpstan-ignore-next-line */
         $mode = new static();
         $mode->setName($modeName);
         $mode->setPreview($configuration['isPreviewMode']);
