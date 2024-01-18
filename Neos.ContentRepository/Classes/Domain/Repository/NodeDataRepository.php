@@ -181,7 +181,7 @@ class NodeDataRepository extends Repository
      * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
      * @param boolean|NULL $removedNodes Include removed nodes, NULL (all), false (no removed nodes) or true (only removed nodes)
      * @throws \InvalidArgumentException
-     * @return NodeData The matching node if found, otherwise NULL
+     * @return NodeData|null The matching node if found, otherwise NULL
      */
     public function findOneByPath($path, Workspace $workspace, array $dimensions = null, $removedNodes = false)
     {
@@ -321,7 +321,7 @@ class NodeDataRepository extends Repository
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
      * @param bool $removedNodes If shadow nodes should be considered while finding the specified node
-     * @return NodeData The matching node if found, otherwise NULL
+     * @return NodeData|null The matching node if found, otherwise NULL
      */
     public function findOneByIdentifier($identifier, Workspace $workspace, array $dimensions = null, $removedNodes = false)
     {

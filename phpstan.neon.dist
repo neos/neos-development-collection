@@ -1,5 +1,5 @@
 parameters:
-    level: 0
+    level: 1
     ignoreErrors:
         # Errors caused by the backport of the ESCR TraversableNodeInterface
         - '#has invalid return type Neos\\ContentRepository\\DimensionSpace\\DimensionSpace\\DimensionSpacePoint.$#'

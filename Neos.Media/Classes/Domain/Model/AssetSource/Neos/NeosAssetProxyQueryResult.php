@@ -17,7 +17,6 @@ use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 use Neos\Flow\Annotations\Proxy;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Media\Domain\Model\AssetInterface;
-use ReturnTypeWillChange;
 
 /**
  * @Proxy(false)
@@ -101,7 +100,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
     /**
      * @return void
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->flowPersistenceQueryResult->next();
@@ -110,7 +109,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
     /**
      * @return AssetProxyInterface|null
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->flowPersistenceQueryResult->key();
@@ -119,7 +118,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
     /**
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->flowPersistenceQueryResult->valid();
@@ -138,7 +137,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @param mixed $offset
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this->flowPersistenceQueryResult->offsetExists($offset);
@@ -148,7 +147,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @param mixed $offset
      * @return AssetProxyInterface|mixed
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset): ?AssetProxyInterface
     {
         return new NeosAssetProxy($this->flowPersistenceQueryResult->offsetGet($offset), $this->assetSource);
@@ -158,7 +157,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @param mixed $offset
      * @param mixed $value
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new \RuntimeException('Unsupported operation: ' . __METHOD__, 1510060444);
@@ -167,7 +166,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
     /**
      * @param mixed $offset
      */
-    #[ReturnTypeWillChange]
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new \RuntimeException('Unsupported operation: ' . __METHOD__, 1510060467);

@@ -597,7 +597,7 @@ class SequenceMatcher
             ];
         }
 
-        if (!empty($group) && !(count($group) == 1 && $group[0][0] == 'equal')) {
+        if (!(count($group) == 1 && $group[0][0] == 'equal')) {
             $groups[] = $group;
         }
 

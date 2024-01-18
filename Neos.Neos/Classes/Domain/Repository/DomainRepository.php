@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Service\DomainMatchingStrategy;
@@ -22,6 +23,7 @@ use Neos\Neos\Domain\Service\DomainMatchingStrategy;
 /**
  * The Site Repository
  *
+ * @method QueryResultInterface<Domain> findByActive(boolean $active)
  * @Flow\Scope("singleton")
  * @api
  */
