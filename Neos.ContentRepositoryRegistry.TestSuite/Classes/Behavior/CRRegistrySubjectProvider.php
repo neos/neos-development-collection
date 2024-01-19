@@ -63,7 +63,7 @@ trait CRRegistrySubjectProvider
         $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
 
         if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
-            $contentRepository->setUp();
+            $contentRepository->setup();
             self::$alreadySetUpContentRepositories[] = $contentRepository->id;
         }
         $contentRepository->resetProjectionStates();

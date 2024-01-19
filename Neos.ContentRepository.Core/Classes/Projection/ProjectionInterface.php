@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\Core\Projection;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -24,7 +23,12 @@ interface ProjectionInterface
     /**
      * Set up the projection state (create databases, call CheckpointStorage::setup()).
      */
-    public function setUp(): void;
+    public function setup(): void;
+
+    /**
+     * Determines the status of the projection (not to confuse with {@see getState()})
+     */
+    public function status(): ProjectionStatus;
 
     public function canHandle(EventInterface $event): bool;
 

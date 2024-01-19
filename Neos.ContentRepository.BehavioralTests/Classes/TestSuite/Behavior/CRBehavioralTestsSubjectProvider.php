@@ -170,7 +170,7 @@ trait CRBehavioralTestsSubjectProvider
          */
         $contentRepository = $this->createContentRepository($contentRepositoryId);
         if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
-            $contentRepository->setUp();
+            $contentRepository->setup();
             self::$alreadySetUpContentRepositories[] = $contentRepository->id;
         }
         /** @var EventStoreInterface $eventStore */

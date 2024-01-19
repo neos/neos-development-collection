@@ -5,9 +5,12 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Cli\CommandController;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
@@ -34,8 +37,53 @@ final class CrCommandController extends CommandController
     public function setupCommand(string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $this->contentRepositoryRegistry->get($contentRepositoryId)->setUp();
+        $this->contentRepositoryRegistry->get($contentRepositoryId)->setup();
         $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
+    }
+
+    /**
+     * Determine and output the status of the event store and all registered projections for a given Content Repository
+     *
+     * @param string $contentRepository Identifier of the Content Repository to determine the status for
+     */
+    public function statusCommand(string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $status = $this->contentRepositoryRegistry->get($contentRepositoryId)->status();
+
+        $hasErrorsOrWarnings = false;
+
+        $this->output('Event Store: ');
+        $this->outputLine(match ($status->eventStoreStatus->type) {
+            StatusType::OK => '<success>OK</success>',
+            StatusType::SETUP_REQUIRED => '<comment>Setup required!</comment>',
+            StatusType::ERROR => '<error>ERROR</error>',
+        });
+        if ($status->eventStoreStatus->details !== '') {
+            $this->outputFormatted($status->eventStoreStatus->details, [], 2);
+        }
+        if ($status->eventStoreStatus->type !== StatusType::OK) {
+            $hasErrorsOrWarnings = true;
+        }
+        $this->outputLine();
+        foreach ($status->projectionStatuses as $projectionName => $projectionStatus) {
+            $this->output('Projection "<b>%s</b>": ', [$projectionName]);
+            $this->outputLine(match ($projectionStatus->type) {
+                ProjectionStatusType::OK => '<success>OK</success>',
+                ProjectionStatusType::SETUP_REQUIRED => '<comment>Setup required!</comment>',
+                ProjectionStatusType::REPLAY_REQUIRED => '<comment>Replay required!</comment>',
+                ProjectionStatusType::ERROR => '<error>ERROR</error>',
+            });
+            if ($projectionStatus->type !== ProjectionStatusType::OK) {
+                $hasErrorsOrWarnings = true;
+            }
+            if ($projectionStatus->details !== '') {
+                $this->outputFormatted($projectionStatus->details, [], 2);
+            }
+        }
+        if ($hasErrorsOrWarnings) {
+            $this->quit(1);
+        }
     }
 
     /**
