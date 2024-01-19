@@ -35,7 +35,9 @@ use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
@@ -197,6 +199,18 @@ final class ContentRepository
         foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
             $projection->setUp();
         }
+    }
+
+    public function status(): ContentRepositoryStatus
+    {
+        $projectionStatuses = ProjectionStatuses::create();
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projectionClassName => $projection) {
+            $projectionStatuses = $projectionStatuses->with($projectionClassName, $projection->status());
+        }
+        return new ContentRepositoryStatus(
+            $this->eventStore->status(),
+            $projectionStatuses,
+        );
     }
 
     public function resetProjectionStates(): void
