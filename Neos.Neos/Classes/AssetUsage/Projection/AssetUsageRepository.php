@@ -49,7 +49,6 @@ final class AssetUsageRepository
 
     public function isSetupRequired(): bool
     {
-        \Neos\Flow\var_dump(DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $this->databaseSchema()));
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $this->databaseSchema()) !== [];
     }
 
