@@ -14,6 +14,7 @@ use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Cli\CommandController;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
+use Symfony\Component\Console\Output\Output;
 
 final class CrCommandController extends CommandController
 {
@@ -45,9 +46,14 @@ final class CrCommandController extends CommandController
      * Determine and output the status of the event store and all registered projections for a given Content Repository
      *
      * @param string $contentRepository Identifier of the Content Repository to determine the status for
+     * @param bool $verbose If set, more details will be shown
+     * @param bool $quiet If set, no output is generated. This is useful if only the exit code (0 = all OK, 1 = errors or warnings) is of interest
      */
-    public function statusCommand(string $contentRepository = 'default'): void
+    public function statusCommand(string $contentRepository = 'default', bool $verbose = false, bool $quiet = false): void
     {
+        if ($quiet) {
+            $this->output->getOutput()->setVerbosity(Output::VERBOSITY_QUIET);
+        }
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $status = $this->contentRepositoryRegistry->get($contentRepositoryId)->status();
 
@@ -59,7 +65,7 @@ final class CrCommandController extends CommandController
             StatusType::SETUP_REQUIRED => '<comment>Setup required!</comment>',
             StatusType::ERROR => '<error>ERROR</error>',
         });
-        if ($status->eventStoreStatus->details !== '') {
+        if ($verbose && $status->eventStoreStatus->details !== '') {
             $this->outputFormatted($status->eventStoreStatus->details, [], 2);
         }
         if ($status->eventStoreStatus->type !== StatusType::OK) {
@@ -77,7 +83,7 @@ final class CrCommandController extends CommandController
             if ($projectionStatus->type !== ProjectionStatusType::OK) {
                 $hasErrorsOrWarnings = true;
             }
-            if ($projectionStatus->details !== '') {
+            if ($verbose && $projectionStatus->details !== '') {
                 $this->outputFormatted($projectionStatus->details, [], 2);
             }
         }
