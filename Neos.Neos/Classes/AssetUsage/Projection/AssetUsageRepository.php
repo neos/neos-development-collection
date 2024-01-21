@@ -70,7 +70,8 @@ final class AssetUsageRepository
             ->addIndex(['originalassetid'])
             ->addIndex(['contentstreamid'])
             ->addIndex(['nodeaggregateid'])
-            ->addIndex(['origindimensionspacepointhash']);
+            // NOTE: index for column of type TEXT has to be limited in size
+            ->addIndex(['origindimensionspacepointhash'], options: ['lengths' => [768]]);
     }
 
     public function findUsages(AssetUsageFilter $filter): AssetUsages
