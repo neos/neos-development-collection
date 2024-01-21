@@ -121,5 +121,4 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
         }
         return SequenceNumber::fromInteger((int)$highestAppliedSequenceNumber);
     }
-
 }
