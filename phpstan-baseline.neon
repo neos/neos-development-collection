@@ -196,11 +196,6 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
 		-
-			message: "#^Parameter \\#1 \\$roles of method Neos\\\\Flow\\\\Security\\\\Authorization\\\\PrivilegeManagerInterface\\:\\:isPrivilegeTargetGrantedForRoles\\(\\) expects array\\<Neos\\\\Flow\\\\Security\\\\Authorization\\\\Role\\>, array\\<int\\|string, Neos\\\\Flow\\\\Security\\\\Policy\\\\Role\\> given\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
-
-		-
 			message: "#^Parameter \\#1 \\$string of function htmlspecialchars expects string, Neos\\\\Party\\\\Domain\\\\Model\\\\PersonName given\\.$#"
 			count: 1
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
