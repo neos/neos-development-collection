@@ -20,9 +20,8 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -43,7 +42,7 @@ final class AssetUsageProjection implements ProjectionInterface
 {
     private ?AssetUsageFinder $stateAccessor = null;
     private AssetUsageRepository $repository;
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
     /** @var array<string, string|null> */
     private array $originalAssetIdMappingRuntimeCache = [];
 
@@ -54,7 +53,7 @@ final class AssetUsageProjection implements ProjectionInterface
         AssetUsageRepositoryFactory $assetUsageRepositoryFactory,
     ) {
         $this->repository = $assetUsageRepositoryFactory->build($contentRepositoryId);
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $dbal,
             $this->repository->getTableNamePrefix() . '_checkpoint',
             self::class
@@ -232,8 +231,8 @@ final class AssetUsageProjection implements ProjectionInterface
 
     public function setUp(): void
     {
-        $this->repository->setup();
-        $this->checkpointStorage->setup();
+        $this->repository->setUp();
+        $this->checkpointStorage->setUp();
     }
 
     public function canHandle(EventInterface $event): bool
@@ -271,7 +270,7 @@ final class AssetUsageProjection implements ProjectionInterface
         };
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
     }

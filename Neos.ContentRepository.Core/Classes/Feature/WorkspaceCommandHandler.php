@@ -317,10 +317,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $copiedEvent = $event->createCopyForContentStream($baseContentStreamId);
                 // We need to add the event metadata here for rebasing in nested workspace situations
                 // (and for exporting)
-                $events[] = DecoratedEvent::withMetadata(
-                    $copiedEvent,
-                    $eventEnvelope->event->metadata
-                );
+                $events[] = $eventEnvelope->event->metadata !== null ? DecoratedEvent::withMetadata($copiedEvent, $eventEnvelope->event->metadata) : $copiedEvent;
             }
         }
 
@@ -464,7 +461,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commands = [];
         foreach ($workspaceContentStream as $eventEnvelope) {
-            $metadata = $eventEnvelope->event->metadata->value;
+            $metadata = $eventEnvelope->event->metadata?->value ?? [];
             // TODO: Add this logic to the NodeAggregateCommandHandler;
             // so that we can be sure these can be parsed again.
             if (isset($metadata['commandClass'])) {

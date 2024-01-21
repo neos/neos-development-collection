@@ -44,6 +44,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -54,11 +55,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStore\SetupResult;
 
 /**
  * @implements ProjectionInterface<ContentGraph>
@@ -81,7 +79,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
      */
     private ?ContentGraph $contentGraph = null;
 
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
@@ -91,7 +89,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly string $tableNamePrefix,
     ) {
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->tableNamePrefix . '_checkpoint',
             self::class
@@ -111,10 +109,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     public function setUp(): void
     {
         $this->setupTables();
-        $this->checkpointStorage->setup();
+        $this->checkpointStorage->setUp();
     }
 
-    private function setupTables(): SetupResult
+    private function setupTables(): void
     {
         $connection = $this->dbalClient->getConnection();
         $schemaManager = $connection->getSchemaManager();
@@ -128,7 +126,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
             $connection->executeStatement($statement);
         }
-        return SetupResult::success('');
     }
 
     public function reset(): void
@@ -202,7 +199,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         };
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
     }
@@ -1239,7 +1236,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     private static function initiatingDateTime(EventEnvelope $eventEnvelope): \DateTimeImmutable
     {
-        $result = $eventEnvelope->event->metadata->has('initiatingTimestamp') ? \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $eventEnvelope->event->metadata->get('initiatingTimestamp')) : $eventEnvelope->recordedAt;
+        $initiatingTimestamp = $eventEnvelope->event->metadata?->get('initiatingTimestamp');
+        $result = $initiatingTimestamp !== null ? \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $initiatingTimestamp) : $eventEnvelope->recordedAt;
         if (!$result instanceof \DateTimeImmutable) {
             throw new \RuntimeException(sprintf('Failed to extract initiating timestamp from event "%s"', $eventEnvelope->event->id->value), 1678902291);
         }

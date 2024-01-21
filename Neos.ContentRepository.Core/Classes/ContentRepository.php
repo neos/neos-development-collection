@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
@@ -36,13 +37,10 @@ use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
-use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
-use Neos\EventStore\ProvidesSetupInterface;
 use Psr\Clock\ClockInterface;
 
 /**
@@ -118,7 +116,7 @@ final class ContentRepository
                     $initiatingUserId,
                     $initiatingTimestamp
                 ) {
-                    $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata->value : [];
+                    $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
                     $metadata['initiatingUserId'] ??= $initiatingUserId;
                     $metadata['initiatingTimestamp'] ??= $initiatingTimestamp;
                     return DecoratedEvent::withMetadata($event, EventMetadata::fromArray($metadata));
@@ -193,19 +191,12 @@ final class ContentRepository
         $catchUpHook?->onAfterCatchUp();
     }
 
-    public function setUp(): SetupResult
+    public function setUp(): void
     {
-        if ($this->eventStore instanceof ProvidesSetupInterface) {
-            $result = $this->eventStore->setup();
-            // TODO better result object
-            if ($result->errors !== []) {
-                return $result;
-            }
-        }
+        $this->eventStore->setup();
         foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
             $projection->setUp();
         }
-        return SetupResult::success('done');
     }
 
     public function resetProjectionStates(): void

@@ -18,8 +18,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Schema\SchemaConfig;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -39,13 +37,14 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFai
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 
 /**
  * See {@see ContentStreamFinder} for explanation.
@@ -60,13 +59,13 @@ class ContentStreamProjection implements ProjectionInterface
      * so that always the same instance is returned
      */
     private ?ContentStreamFinder $contentStreamFinder = null;
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableName
     ) {
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->tableName . '_checkpoint',
             self::class
@@ -76,7 +75,7 @@ class ContentStreamProjection implements ProjectionInterface
     public function setUp(): void
     {
         $this->setupTables();
-        $this->checkpointStorage->setup();
+        $this->checkpointStorage->setUp();
     }
 
     private function setupTables(): void

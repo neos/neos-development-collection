@@ -75,19 +75,18 @@ final class EventPersister
 
     private function normalizeEvent(EventInterface|DecoratedEvent $event): Event
     {
-        if ($event instanceof DecoratedEvent) {
-            $eventId = $event->eventId;
-            $eventMetadata = $event->eventMetadata;
-            $event = $event->innerEvent;
-        } else {
-            $eventId = EventId::create();
-            $eventMetadata = EventMetadata::none();
-        }
+        $eventId = $event instanceof DecoratedEvent ? $event->eventId : EventId::create();
+        $eventMetadata = $event instanceof DecoratedEvent ? $event->eventMetadata : null;
+        $causationId = $event instanceof DecoratedEvent ? $event->causationId : null;
+        $correlationId = $event instanceof DecoratedEvent ? $event->correlationId : null;
+        $event = $event instanceof DecoratedEvent ? $event->innerEvent : $event;
         return new Event(
             $eventId,
             $this->eventNormalizer->getEventType($event),
             $this->eventNormalizer->getEventData($event),
             $eventMetadata,
+            $causationId,
+            $correlationId,
         );
     }
 }

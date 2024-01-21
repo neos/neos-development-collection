@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\Core\Projection;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -22,7 +21,7 @@ use Neos\EventStore\Model\EventEnvelope;
 interface ProjectionInterface
 {
     /**
-     * Set up the projection state (create databases, call CheckpointStorage::setup()).
+     * Set up the projection state (create databases, call {@see CheckpointStorageInterface::setUp()}).
      */
     public function setUp(): void;
 

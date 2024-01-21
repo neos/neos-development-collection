@@ -26,11 +26,10 @@ use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -42,13 +41,13 @@ use Neos\EventStore\Model\EventEnvelope;
 class NodeHiddenStateProjection implements ProjectionInterface
 {
     private ?NodeHiddenStateFinder $nodeHiddenStateFinder;
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableName
     ) {
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->tableName . '_checkpoint',
             self::class
@@ -58,7 +57,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
     public function setUp(): void
     {
         $this->setupTables();
-        $this->checkpointStorage->setup();
+        $this->checkpointStorage->setUp();
     }
 
     private function setupTables(): void
@@ -116,7 +115,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
         };
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
     }
