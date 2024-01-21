@@ -117,9 +117,9 @@ class ObjectTreeParser
     /**
      * Checks, if the token type matches the current, if so consume it and return true.
      * @param int $tokenType
-     * @return bool|null
+     * @return bool
      */
-    protected function lazyExpect(int $tokenType): ?bool
+    protected function lazyExpect(int $tokenType): bool
     {
         $token = $this->lexer->getCachedLookaheadOrTryToGenerateLookaheadForTokenAndGetLookahead($tokenType);
         if ($token === null || $token->getType() !== $tokenType) {

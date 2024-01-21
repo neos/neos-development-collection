@@ -19,7 +19,7 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 #[Flow\Proxy(false)]
 class ValueUnset extends AbstractOperation
 {
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitValueUnset($this, ...$args);
     }

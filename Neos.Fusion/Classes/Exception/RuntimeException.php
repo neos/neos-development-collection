@@ -26,7 +26,7 @@ class RuntimeException extends Exception
      * @param string $message
      * @param int $code
      * @param \Exception $previous
-     * @param null $fusionPath
+     * @param string $fusionPath
      */
     public function __construct($message = '', $code = 0, \Exception $previous = null, $fusionPath = null)
     {
@@ -36,7 +36,7 @@ class RuntimeException extends Exception
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getFusionPath()
     {

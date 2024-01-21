@@ -25,7 +25,7 @@ class ValueCopy extends AbstractOperation
     ) {
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitValueCopy($this, ...$args);
     }
