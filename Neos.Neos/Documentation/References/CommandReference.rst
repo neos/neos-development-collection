@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-01-12
+The following reference was automatically generated from code on 2024-01-22
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -1157,6 +1157,8 @@ Options
 
 ``--collection``
   If specified, only resources of this collection are published. Example: 'persistent'
+``--quiet``
+  Don't print the progress-bar
 
 
 
