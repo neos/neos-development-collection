@@ -34,14 +34,13 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -58,14 +57,14 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
      * so that always the same instance is returned
      */
     private ?WorkspaceFinder $workspaceFinder = null;
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
     private WorkspaceRuntimeCache $workspaceRuntimeCache;
 
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableName,
     ) {
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->tableName . '_checkpoint',
             self::class
@@ -76,7 +75,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     public function setUp(): void
     {
         $this->setupTables();
-        $this->checkpointStorage->setup();
+        $this->checkpointStorage->setUp();
     }
 
     private function setupTables(): void
@@ -149,7 +148,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         };
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
     }

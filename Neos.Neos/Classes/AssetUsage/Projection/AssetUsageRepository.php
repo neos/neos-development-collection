@@ -9,24 +9,23 @@ use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\ForwardCompatibility\Result;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\Neos\AssetUsage\Dto\AssetUsage;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
+use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\Neos\AssetUsage\Dto\AssetUsages;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Types;
-use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 
 /**
  * @internal Not meant to be used in user land code. In order to look up asset usages the AssetUsageFinder can be used
@@ -39,7 +38,7 @@ final class AssetUsageRepository
     ) {
     }
 
-    public function setup(): void
+    public function setUp(): void
     {
         $schemaManager = $this->dbal->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
