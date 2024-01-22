@@ -15,32 +15,22 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
-use Neos\Neos\Domain\Exception\LiveWorkspaceIsMissing;
-use Neos\Neos\Domain\Exception\SitesNodeIsMissing;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
+use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteNodeName;
 
@@ -69,7 +59,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         foreach ($this->contentRepository->getContentStreamFinder()->findAllIds() as $contentStreamId) {
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
                 $contentStreamId,
-                NodeTypeName::fromString('Neos.Neos:Sites')
+                NodeTypeNameFactory::forSites()
             );
             $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
                 $contentStreamId,
@@ -79,7 +69,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
 
             foreach ($siteNodeAggregates as $siteNodeAggregate) {
                 assert($siteNodeAggregate instanceof NodeAggregate);
-                $this->contentRepository->handle(new RemoveNodeAggregate(
+                $this->contentRepository->handle(RemoveNodeAggregate::create(
                     $contentStreamId,
                     $siteNodeAggregate->nodeAggregateId,
                     $arbitraryDimensionSpacePoint,
@@ -97,14 +87,20 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
             $liveContentStreamId,
             NodeTypeNameFactory::forSites()
         );
-        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-
-        if ($siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
+        try {
+            $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        } catch (NodeTypeNotFoundException $exception) {
             throw new NodeTypeNotFoundException(
                 'Cannot create a site using a non-existing node type.',
-                1412372375
+                1412372375,
+                $exception
             );
         }
+
+        if (!$siteNodeType->isOfType(NodeTypeNameFactory::NAME_SITE)) {
+            throw SiteNodeTypeIsInvalid::becauseItIsNotOfTypeSite(NodeTypeName::fromString($nodeTypeName));
+        }
+
         $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregatesByName(
             $liveContentStreamId,
             $sitesNodeIdentifier,
@@ -125,7 +121,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
 
         $siteNodeAggregateId = NodeAggregateId::create();
-        $this->contentRepository->handle(new CreateNodeAggregateWithNode(
+        $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
             $liveContentStreamId,
             $siteNodeAggregateId,
             NodeTypeName::fromString($nodeTypeName),
@@ -140,7 +136,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
 
         // Handle remaining root dimension space points by creating peer variants
         foreach ($rootDimensionSpacePoints as $rootDimensionSpacePoint) {
-            $this->contentRepository->handle(new CreateNodeVariant(
+            $this->contentRepository->handle(CreateNodeVariant::create(
                 $liveContentStreamId,
                 $siteNodeAggregateId,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),

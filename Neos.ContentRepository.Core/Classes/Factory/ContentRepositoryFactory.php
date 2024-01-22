@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
@@ -43,15 +43,15 @@ use Symfony\Component\Serializer\Serializer;
 final class ContentRepositoryFactory
 {
     private ProjectionFactoryDependencies $projectionFactoryDependencies;
-    private Projections $projections;
+    private ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks;
 
     public function __construct(
-        ContentRepositoryId $contentRepositoryId,
+        private readonly ContentRepositoryId $contentRepositoryId,
         EventStoreInterface $eventStore,
         NodeTypeManager $nodeTypeManager,
         ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
-        ProjectionsFactory $projectionsFactory,
+        ProjectionsAndCatchUpHooksFactory $projectionsAndCatchUpHooksFactory,
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
@@ -61,7 +61,6 @@ final class ContentRepositoryFactory
             $contentDimensionSource,
             $contentDimensionZookeeper
         );
-
         $this->projectionFactoryDependencies = new ProjectionFactoryDependencies(
             $contentRepositoryId,
             $eventStore,
@@ -72,8 +71,7 @@ final class ContentRepositoryFactory
             $interDimensionalVariationGraph,
             new PropertyConverter($propertySerializer)
         );
-
-        $this->projections = $projectionsFactory->build($this->projectionFactoryDependencies);
+        $this->projectionsAndCatchUpHooks = $projectionsAndCatchUpHooksFactory->build($this->projectionFactoryDependencies);
     }
 
     // The following properties store "singleton" references of objects for this content repository
@@ -87,13 +85,15 @@ final class ContentRepositoryFactory
      * @return ContentRepository
      * @api
      */
-    public function build(): ContentRepository
+    public function getOrBuild(): ContentRepository
     {
         if (!$this->contentRepository) {
             $this->contentRepository = new ContentRepository(
+                $this->contentRepositoryId,
                 $this->buildCommandBus(),
                 $this->projectionFactoryDependencies->eventStore,
-                $this->projections,
+                $this->projectionsAndCatchUpHooks,
+                $this->projectionFactoryDependencies->eventNormalizer,
                 $this->buildEventPersister(),
                 $this->projectionFactoryDependencies->nodeTypeManager,
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
@@ -121,9 +121,9 @@ final class ContentRepositoryFactory
     ): ContentRepositoryServiceInterface {
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
-            $this->build(),
+            $this->getOrBuild(),
             $this->buildEventPersister(),
-            $this->projections,
+            $this->projectionsAndCatchUpHooks->projections,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }
@@ -166,7 +166,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projectionCatchUpTrigger,
                 $this->projectionFactoryDependencies->eventNormalizer,
-                $this->projections
+                $this->projectionsAndCatchUpHooks->projections,
             );
         }
         return $this->eventPersister;

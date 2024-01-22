@@ -2,12 +2,11 @@
 Feature: Find nodes using the findSubtree query
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
       properties:
@@ -44,6 +43,8 @@ Feature: Find nodes using the findSubtree query
       superTypes:
         'Neos.ContentRepository.Testing:AbstractPage': true
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -107,7 +108,7 @@ Feature: Find nodes using the findSubtree query
      b
       b1
     """
-    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExisting"}' I expect the following tree:
+    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:NonExisting"}' I expect the following tree:
     """
     home
     """
@@ -123,7 +124,7 @@ Feature: Find nodes using the findSubtree query
      b
       b1
     """
-    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage"}' I expect the following tree:
+    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage"}' I expect the following tree:
     """
     home
      a
@@ -136,7 +137,7 @@ Feature: Find nodes using the findSubtree query
      b
       b1
     """
-    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage", "maximumLevels": 3}' I expect the following tree:
+    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage", "maximumLevels": 3}' I expect the following tree:
     """
     home
      a

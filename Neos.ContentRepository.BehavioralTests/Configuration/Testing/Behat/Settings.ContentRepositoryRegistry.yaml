@@ -1,0 +1,12 @@
+Neos:
+  ContentRepositoryRegistry:
+    presets:
+      default:
+        userIdProvider:
+          factoryObjectName: 'Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\FakeUserIdProviderFactory'
+        clock:
+          factoryObjectName: 'Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\FakeClockFactory'
+        nodeTypeManager:
+          factoryObjectName: 'Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory'
+        contentDimensionSource:
+          factoryObjectName: 'Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory'

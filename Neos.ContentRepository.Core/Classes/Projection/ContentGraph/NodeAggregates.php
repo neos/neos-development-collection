@@ -17,19 +17,19 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 /**
  * An immutable, type-safe collection of NodeAggregate objects
  *
- * @implements \IteratorAggregate<int,NodeAggregate>
+ * @implements \IteratorAggregate<NodeAggregate>
  *
  * @api
  */
 final class NodeAggregates implements \IteratorAggregate, \Countable
 {
     /**
-     * @var array<int,NodeAggregate>
+     * @var array<NodeAggregate>
      */
     private array $nodeAggregates;
 
     /**
-     * @param iterable<mixed,NodeAggregate> $collection
+     * @param iterable<NodeAggregate> $collection
      */
     private function __construct(iterable $collection)
     {
@@ -48,7 +48,7 @@ final class NodeAggregates implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @param array<mixed,NodeAggregate> $nodeAggregates
+     * @param array<NodeAggregate> $nodeAggregates
      */
     public static function fromArray(array $nodeAggregates): self
     {
@@ -61,11 +61,11 @@ final class NodeAggregates implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return \ArrayIterator<int,NodeAggregate>|NodeAggregate[]
+     * @return \Traversable<NodeAggregate>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->nodeAggregates);
+        yield from $this->nodeAggregates;
     }
 
     public function count(): int

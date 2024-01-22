@@ -18,11 +18,15 @@ use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Migration\Factory\MigrationFactory;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\Service\NodeMigrationGeneratorService;
 use Neos\Flow\Cli\CommandController;
 use Neos\ContentRepository\NodeMigration\MigrationException;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Flow\Package\Exception\UnknownPackageException;
+use Neos\Flow\Package\PackageManager;
+use Neos\Utility\Exception\FilesException;
 
 /**
  * Command controller for tasks related to node migration.
@@ -34,9 +38,9 @@ class NodeMigrationCommandController extends CommandController
     public function __construct(
         private readonly MigrationFactory $migrationFactory,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly ObjectManagerInterface $container
-    )
-    {
+        private readonly PackageManager $packageManager,
+        private readonly NodeMigrationGeneratorService $nodeMigrationGeneratorService
+    ) {
         parent::__construct();
     }
 
@@ -45,13 +49,12 @@ class NodeMigrationCommandController extends CommandController
      *
      * @param string $version The version of the migration configuration you want to use.
      * @param string $workspace The workspace where the migration should be applied; by default "live"
-     * @param boolean $force Confirm application of this migration,
-     *                       only needed if the given migration contains any warnings.
+     * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
      * @return void
-     * @throws \Neos\Flow\Cli\Exception\StopCommandException
-     * @see neos.contentrepository.migration:node:migrationstatus
+     * @throws StopCommandException
+     * @see neos.contentrepositoryregistry:nodemigration:execute
      */
-    public function migrateCommand(string $version, $workspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default')
+    public function executeCommand(string $version, string $workspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
@@ -62,11 +65,11 @@ class NodeMigrationCommandController extends CommandController
             if ($migrationConfiguration->hasWarnings() && $force === false) {
                 $this->outputLine();
                 $this->outputLine('Migration has warnings.'
-                    . ' You need to confirm execution by adding the "--confirmation true" option to the command.');
+                    . ' You need to confirm execution by adding the "--force true" option to the command.');
                 $this->quit(1);
             }
 
-            $nodeMigrationService = $this->contentRepositoryRegistry->getService($contentRepositoryId, new NodeMigrationServiceFactory());
+            $nodeMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new NodeMigrationServiceFactory());
             $nodeMigrationService->executeMigration(
                 new ExecuteMigration(
                     $migrationConfiguration,
@@ -83,12 +86,65 @@ class NodeMigrationCommandController extends CommandController
     }
 
     /**
+     * Creates a node migration for the given package Key.
+     *
+     * @param string $packageKey The packageKey for the given package
+     * @return void
+     * @throws UnknownPackageException
+     * @throws FilesException
+     * @throws StopCommandException
+     * @see neos.contentrepositoryregistry:nodemigration:kickstart
+     */
+    public function kickstartCommand(string $packageKey): void
+    {
+        if (!$this->packageManager->isPackageAvailable($packageKey)) {
+            $this->outputLine('Package "%s" is not available.', [$packageKey]);
+            $this->quit(1);
+        }
+
+        $createdMigration = $this->nodeMigrationGeneratorService->generateBoilerplateMigrationFileInPackage($packageKey);
+        $this->outputLine($createdMigration);
+        $this->outputLine('Your node migration has been created successfully.');
+    }
+
+    /**
+     * List available migrations
+     *
+     * @see neos.contentrepositoryregistry:nodemigration:list
+     */
+    public function listCommand(): void
+    {
+        $availableMigrations = $this->migrationFactory->getAvailableVersions();
+        if (count($availableMigrations) === 0) {
+            $this->outputLine('No migrations available.');
+            $this->quit();
+        }
+
+        $tableRows = [];
+        foreach ($availableMigrations as $version => $migration) {
+            $migrationUpConfigurationComments = $this->migrationFactory->getMigrationForVersion($version)->getComments();
+
+            $tableRows[] = [
+                $version,
+                $migration['formattedVersionNumber'],
+                $migration['package']->getPackageKey(),
+
+                wordwrap($migrationUpConfigurationComments, 60)
+            ];
+        }
+
+        $this->outputLine('<b>Available migrations</b>');
+        $this->outputLine();
+        $this->output->outputTable($tableRows, ['Version', 'Date', 'Package', 'Comments']);
+    }
+
+    /**
      * Helper to output comments and warnings for the given configuration.
      *
      * @param MigrationConfiguration $migrationConfiguration
      * @return void
      */
-    protected function outputCommentsAndWarnings(MigrationConfiguration $migrationConfiguration)
+    protected function outputCommentsAndWarnings(MigrationConfiguration $migrationConfiguration): void
     {
         if ($migrationConfiguration->hasComments()) {
             $this->outputLine();

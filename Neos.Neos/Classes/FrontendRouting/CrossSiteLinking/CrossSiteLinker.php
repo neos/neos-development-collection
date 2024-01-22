@@ -40,24 +40,11 @@ final class CrossSiteLinker implements CrossSiteLinkerInterface
     protected $siteRepository;
 
     public function applyCrossSiteUriConstraints(
-        DocumentNodeInfo $targetNode,
-        SiteDetectionResult $currentRequestSiteDetectionResult
+        Site $targetSite,
+        UriConstraints $uriConstraints,
     ): UriConstraints {
-        $uriConstraints = UriConstraints::create();
-        if (!$targetNode->getSiteNodeName()->equals($currentRequestSiteDetectionResult->siteNodeName)) {
-            /** @var Site $site */
-            foreach ($this->siteRepository->findOnline() as $site) {
-                if ($site->getNodeName()->equals($targetNode->getSiteNodeName())) {
-                    return $this->applyDomainToUriConstraints($uriConstraints, $site->getPrimaryDomain());
-                }
-            }
-        }
+        $domain = $targetSite->getPrimaryDomain();
 
-        return $uriConstraints;
-    }
-
-    private function applyDomainToUriConstraints(UriConstraints $uriConstraints, ?Domain $domain): UriConstraints
-    {
         if ($domain === null) {
             return $uriConstraints;
         }

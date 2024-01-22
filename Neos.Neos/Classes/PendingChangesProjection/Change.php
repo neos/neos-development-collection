@@ -47,6 +47,11 @@ class Change
     /**
      * @var bool
      */
+    public $created;
+
+    /**
+     * @var bool
+     */
     public $changed;
 
     /**
@@ -68,6 +73,7 @@ class Change
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
+        bool $created,
         bool $changed,
         bool $moved,
         bool $deleted,
@@ -76,6 +82,7 @@ class Change
         $this->contentStreamId = $contentStreamId;
         $this->nodeAggregateId = $nodeAggregateId;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
+        $this->created = $created;
         $this->changed = $changed;
         $this->moved = $moved;
         $this->deleted = $deleted;
@@ -93,6 +100,7 @@ class Change
             'nodeAggregateId' => $this->nodeAggregateId->value,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
             'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
+            'created' => (int)$this->created,
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved,
             'deleted' => (int)$this->deleted,
@@ -105,6 +113,7 @@ class Change
         $databaseConnection->update(
             $tableName,
             [
+                'created' => (int)$this->created,
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,
                 'deleted' => (int)$this->deleted,
@@ -128,6 +137,7 @@ class Change
             ContentStreamId::fromString($databaseRow['contentStreamId']),
             NodeAggregateId::fromString($databaseRow['nodeAggregateId']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint']),
+            (bool)$databaseRow['created'],
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],
             (bool)$databaseRow['deleted'],

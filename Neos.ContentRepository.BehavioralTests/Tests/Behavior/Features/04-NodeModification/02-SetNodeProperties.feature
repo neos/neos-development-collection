@@ -4,12 +4,11 @@ Feature: Set properties
   As a user of the CR I want to modify node properties.
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values       | Generalizations |
       | language   | mul, de, gsw | gsw->de->mul    |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:Document':
       properties:
         string:
@@ -55,6 +54,8 @@ Feature: Set properties
             price: 13.37
             priceCurrency: 'EUR'
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |

@@ -1,6 +1,5 @@
 # "Insert content references" Fusion Object
-prototype(Neos.NodeTypes.ContentReferences:ContentReferences) < prototype(Neos.Neos:Content) {
-  templatePath = 'resource://Neos.NodeTypes.ContentReferences/Private/Templates/NodeTypes/ContentReferences.html'
+prototype(Neos.NodeTypes.ContentReferences:ContentReferences) < prototype(Neos.Neos:ContentComponent) {
   @context.referenceNodesArray = ${q(node).property('references')}
   referenceNodes = Neos.Fusion:Loop {
     items = ${referenceNodesArray}
@@ -16,7 +15,28 @@ prototype(Neos.NodeTypes.ContentReferences:ContentReferences) < prototype(Neos.N
       renderer.editable.condition = false
     }
   }
-  hasReferences = ${!!referenceNodesArray}
+
+  attributes = Neos.Fusion:DataStructure
+  attributes.class = ''
+  # The following is used to automatically append a class attribute that reflects the underlying node type of a Fusion object,
+  # for example "neos-nodetypes-form", "neos-nodetypes-headline", "neos-nodetypes-html", "neos-nodetypes-image", "neos-nodetypes-menu" and "neos-nodetypes-text"
+  # You can disable the following line with:
+  # prototype(Neos.NodeTypes.ContentReferences:ContentReferences) {
+  #   attributes.class.@process.nodeType >
+  # }
+  # in your site's Fusion if you don't need that behavior.
+  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeTypeName.value, '/[[:^alnum:]]/', '-')))}
+
+  renderer = afx`
+    <div {...props.attributes}>
+      <p @if.showEditHint={!props.referenceNodes && renderingMode.isEdit}>
+        {Translation.id('content.noReferencesSelected').package('Neos.NodeTypes.ContentReferences').source('NodeTypes/ContentReferences')}
+      </p>
+      <Neos.Fusion:Fragment @if.referencesSelected={props.referenceNodes}>{props.referenceNodes}</Neos.Fusion:Fragment>
+    </div>
+
+  `
+
   @cache {
     mode = 'cached'
     entryIdentifier {

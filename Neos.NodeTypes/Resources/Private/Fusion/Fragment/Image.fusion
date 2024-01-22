@@ -1,0 +1,50 @@
+prototype(Neos.NodeTypes:Fragment.Image) < prototype(Neos.Fusion:Component) {
+  imageClassName = ''
+  link = ''
+
+  image = null
+  maximumWidth = 2560
+  width = null
+  maximumHeight = 2560
+  height = null
+  allowCropping = false
+  allowUpScaling = false
+
+  alternativeText = ''
+  title = ''
+  loading = 'lazy'
+  hasCaption = false
+  caption = ''
+
+  @private {
+    imageSrc = Neos.Neos:ImageUri {
+      asset = ${props.image}
+      width = ${props.width}
+      maximumWidth = ${props.maximumWidth}
+      height = ${props.height}
+      maximumHeight = ${props.maximumHeight}
+      allowCropping = ${props.allowCropping}
+      allowUpScaling = ${props.allowUpScaling}
+    }
+  }
+
+  renderer = afx`
+    <figure class={props.imageClassName ? props.imageClassName : ''}>
+      <Neos.Fusion:Fragment @if.showImageWithLink={private.imageSrc && props.link}>
+        <a href={props.link}>
+          <img src={private.imageSrc} title={props.title} alt={props.alternativeText} loading={props.loading} />
+        </a>
+      </Neos.Fusion:Fragment>
+
+      <Neos.Fusion:Fragment @if.showImage={private.imageSrc && !props.link}>
+        <img src={private.imageSrc} title={props.title} alt={props.alternativeText} loading={props.loading} />
+      </Neos.Fusion:Fragment>
+
+      <Neos.Fusion:Fragment @if.showDummyImage={!private.imageSrc && renderingMode.isEdit}>
+        <img src={StaticResource.uri('Neos.Neos', 'Public/Images/dummy-image.svg')}
+             title="Dummy image" alt="Dummy image" class="neos-handle"/>
+      </Neos.Fusion:Fragment>
+      <figcaption @if.hasCaption={props.hasCaption && props.caption}>{props.caption}</figcaption>
+    </figure>
+  `
+}

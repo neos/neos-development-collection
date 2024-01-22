@@ -4,14 +4,15 @@ Feature: Run projection integrity violation detection to find nodes that do not 
   As a user of the CR I want to be able to detect whether there are nodes that are disconnected from the subgraph they originate in
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values  | Generalizations |
       | language   | de, gsw | gsw->de         |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:Document': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |

@@ -9,9 +9,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<HypergraphProjection>
@@ -33,22 +31,19 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar
     ): HypergraphProjection {
         $tableNamePrefix = self::graphProjectionTableNamePrefix(
             $projectionFactoryDependencies->contentRepositoryId
         );
 
         return new HypergraphProjection(
-            $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
-            $catchUpHookFactory,
             new NodeFactory(
                 $projectionFactoryDependencies->contentRepositoryId,
                 $projectionFactoryDependencies->nodeTypeManager,
                 $projectionFactoryDependencies->propertyConverter
             ),
+            $projectionFactoryDependencies->contentRepositoryId,
             $projectionFactoryDependencies->nodeTypeManager,
             $tableNamePrefix
         );

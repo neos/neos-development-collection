@@ -19,11 +19,11 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPo
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\Dimension
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
@@ -44,25 +45,20 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\CatchUp\CatchUp;
+use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
-use Neos\EventStore\Model\Event;
+use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
-use Neos\EventStore\Model\EventStream\EventStreamInterface;
-use Neos\EventStore\Model\Event\SequenceNumber;
 
 /**
  * @implements ProjectionInterface<ContentGraph>
@@ -88,12 +84,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private DoctrineCheckpointStorage $checkpointStorage;
 
     public function __construct(
-        private readonly EventNormalizer $eventNormalizer,
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeFactory $nodeFactory,
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ProjectionContentGraph $projectionContentGraph,
-        private readonly CatchUpHookFactoryInterface $catchUpHookFactory,
         private readonly string $tableNamePrefix,
     ) {
         $this->checkpointStorage = new DoctrineCheckpointStorage(
@@ -127,7 +122,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
-        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
+        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
@@ -158,10 +153,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_restrictionrelation');
     }
 
-    public function canHandle(Event $event): bool
+    public function canHandle(EventInterface $event): bool
     {
-        $eventClassName = $this->eventNormalizer->getEventClassName($event);
-        return in_array($eventClassName, [
+        return in_array($event::class, [
             RootNodeAggregateWithNodeWasCreated::class,
             RootNodeAggregateDimensionsWereUpdated::class,
             NodeAggregateWithNodeWasCreated::class,
@@ -183,75 +177,34 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         ]);
     }
 
-    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        $catchUpHook = $this->catchUpHookFactory->build($contentRepository);
-        $catchUpHook->onBeforeCatchUp();
-        $catchUp = CatchUp::create(
-            fn(EventEnvelope $eventEnvelope) => $this->apply($eventEnvelope, $catchUpHook),
-            $this->checkpointStorage
-        );
-        $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
-        $catchUp->run($eventStream);
-        $catchUpHook->onAfterCatchUp();
+        match ($event::class) {
+            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
+            RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
+            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
+            NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($event, $eventEnvelope),
+            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
+            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
+            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
+            NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event, $eventEnvelope),
+            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
+            NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event, $eventEnvelope),
+            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
+            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
+            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
+            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
+            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event, $eventEnvelope),
+            NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event, $eventEnvelope),
+            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event, $eventEnvelope),
+            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+        };
     }
 
-    private function apply(EventEnvelope $eventEnvelope, CatchUpHookInterface $catchUpHook): void
+    public function getCheckpointStorage(): CheckpointStorageInterface
     {
-        if (!$this->canHandle($eventEnvelope->event)) {
-            return;
-        }
-
-        $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
-
-        $catchUpHook->onBeforeEvent($eventInstance, $eventEnvelope);
-
-        if ($eventInstance instanceof RootNodeAggregateWithNodeWasCreated) {
-            $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof RootNodeAggregateDimensionsWereUpdated) {
-            $this->whenRootNodeAggregateDimensionsWereUpdated($eventInstance);
-        } elseif ($eventInstance instanceof NodeAggregateWithNodeWasCreated) {
-            $this->whenNodeAggregateWithNodeWasCreated($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof NodeAggregateNameWasChanged) {
-            $this->whenNodeAggregateNameWasChanged($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof ContentStreamWasForked) {
-            $this->whenContentStreamWasForked($eventInstance);
-        } elseif ($eventInstance instanceof ContentStreamWasRemoved) {
-            $this->whenContentStreamWasRemoved($eventInstance);
-        } elseif ($eventInstance instanceof NodePropertiesWereSet) {
-            $this->whenNodePropertiesWereSet($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof NodeReferencesWereSet) {
-            $this->whenNodeReferencesWereSet($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof NodeAggregateWasEnabled) {
-            $this->whenNodeAggregateWasEnabled($eventInstance);
-        } elseif ($eventInstance instanceof NodeAggregateTypeWasChanged) {
-            $this->whenNodeAggregateTypeWasChanged($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof DimensionSpacePointWasMoved) {
-            $this->whenDimensionSpacePointWasMoved($eventInstance);
-        } elseif ($eventInstance instanceof DimensionShineThroughWasAdded) {
-            $this->whenDimensionShineThroughWasAdded($eventInstance);
-        } elseif ($eventInstance instanceof NodeAggregateWasRemoved) {
-            $this->whenNodeAggregateWasRemoved($eventInstance);
-        } elseif ($eventInstance instanceof NodeAggregateWasMoved) {
-            $this->whenNodeAggregateWasMoved($eventInstance);
-        } elseif ($eventInstance instanceof NodeSpecializationVariantWasCreated) {
-            $this->whenNodeSpecializationVariantWasCreated($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof NodeGeneralizationVariantWasCreated) {
-            $this->whenNodeGeneralizationVariantWasCreated($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof NodePeerVariantWasCreated) {
-            $this->whenNodePeerVariantWasCreated($eventInstance, $eventEnvelope);
-        } elseif ($eventInstance instanceof NodeAggregateWasDisabled) {
-            $this->whenNodeAggregateWasDisabled($eventInstance);
-        } else {
-            throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
-        }
-
-        $catchUpHook->onAfterEvent($eventInstance, $eventEnvelope);
-    }
-
-    public function getSequenceNumber(): SequenceNumber
-    {
-        return $this->checkpointStorage->getHighestAppliedSequenceNumber();
+        return $this->checkpointStorage;
     }
 
     public function getState(): ContentGraph
@@ -260,6 +213,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $this->contentGraph = new ContentGraph(
                 $this->dbalClient,
                 $this->nodeFactory,
+                $this->contentRepositoryId,
                 $this->nodeTypeManager,
                 $this->tableNamePrefix
             );
@@ -281,13 +235,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $originDimensionSpacePoint = OriginDimensionSpacePoint::fromArray([]);
+        $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $event->nodeAggregateId,
             $originDimensionSpacePoint->coordinates,
             $originDimensionSpacePoint->hash,
-            SerializedPropertyValues::fromArray([]),
+            SerializedPropertyValues::createEmpty(),
             $event->nodeTypeName,
             $event->nodeAggregateClassification,
             null,
@@ -320,7 +274,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                 $event->nodeAggregateId,
                 /** the origin DSP of the root node is always the empty dimension ({@see whenRootNodeAggregateWithNodeWasCreated}) */
-                OriginDimensionSpacePoint::fromArray([]),
+                OriginDimensionSpacePoint::createWithoutDimensions(),
                 $event->contentStreamId
             );
         if ($rootNodeAnchorPoint === null) {
@@ -565,12 +519,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     }
 
     /**
-     * @param NodeRelationAnchorPoint|null $parentAnchorPoint
-     * @param NodeRelationAnchorPoint|null $childAnchorPoint
-     * @param NodeRelationAnchorPoint|null $succeedingSiblingAnchorPoint
-     * @param ContentStreamId $contentStreamId
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return int
      * @throws \Doctrine\DBAL\DBALException
      */
     private function getRelationPosition(
@@ -637,6 +585,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $contentStreamId,
                 $dimensionSpacePoint
             );
+
+        usort(
+            $hierarchyRelations,
+            fn (HierarchyRelation $relationA, HierarchyRelation $relationB): int
+                => $relationA->position <=> $relationB->position
+        );
 
         foreach ($hierarchyRelations as $relation) {
             $offset += self::RELATION_DEFAULT_OFFSET;
@@ -853,7 +807,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                         'nodeanchorpoint' => $nodeAnchorPoint?->value,
                         'destinationnodeaggregateid' => $reference->targetNodeAggregateId->value,
                         'properties' => $reference->properties
-                            ? \json_encode($reference->properties, JSON_THROW_ON_ERROR)
+                            ? \json_encode($reference->properties, JSON_THROW_ON_ERROR & JSON_FORCE_OBJECT)
                             : null
                     ]);
                     $position++;

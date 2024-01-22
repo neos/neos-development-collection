@@ -11,12 +11,13 @@ Feature: Publishing moved nodes without dimensions
   These are the test cases for publishing moved nodes without content dimensions being involved
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:Document': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |

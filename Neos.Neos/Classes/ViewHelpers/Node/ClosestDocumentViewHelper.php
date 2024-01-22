@@ -14,21 +14,20 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Node;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Neos\Ui\ContentRepository\Service\NodeService;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
  * ViewHelper to find the closest document node to a given node
  */
 class ClosestDocumentViewHelper extends AbstractViewHelper
 {
-    /**
-     * @Flow\Inject
-     * @var NodeService
-     */
-    protected $nodeService;
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public function initializeArguments(): void
     {
@@ -38,6 +37,10 @@ class ClosestDocumentViewHelper extends AbstractViewHelper
 
     public function render(): ?Node
     {
-        return $this->nodeService->getClosestDocument($this->arguments['node']);
+        /** @var Node $node */
+        $node = $this->arguments['node'];
+
+        return $this->contentRepositoryRegistry->subgraphForNode($node)
+            ->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_DOCUMENT));
     }
 }

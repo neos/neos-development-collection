@@ -14,13 +14,18 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Repository;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
-use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Exception as NeosException;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteNodeName;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\SiteNodeUtility;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * The Site Repository
@@ -32,6 +37,11 @@ use Neos\Neos\Domain\Model\SiteNodeName;
  */
 class SiteRepository extends Repository
 {
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     /**
      * @var array<string,string>
      */
@@ -92,6 +102,33 @@ class SiteRepository extends Repository
             ->getFirst();
 
         return $site;
+    }
+
+    /**
+     * Finds a given site by site node.
+     *
+     * To find the correct site node by its descended child node leverage `findClosestNode`:
+     * ```php
+     * $siteNode = $subgraph->findClosestNode(
+     *     $node->nodeAggregateId,
+     *     FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE)
+     * );
+     * ```
+     *
+     * To resolve the SiteNode by a Site use {@see SiteNodeUtility::findSiteNodeBySite()}
+     *
+     * @throws \Neos\Neos\Domain\Exception in case the passed $siteNode is not a real site node or no site matches this site node.
+     */
+    public function findSiteBySiteNode(Node $siteNode): Site
+    {
+        if (!$this->getNodeType($siteNode)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
+            throw new \Neos\Neos\Domain\Exception(sprintf('Node %s is not a site node. Site nodes must be of type "%s".', $siteNode->nodeAggregateId->value, NodeTypeNameFactory::NAME_SITE), 1697108987);
+        }
+        if ($siteNode->nodeName === null) {
+            throw new \Neos\Neos\Domain\Exception(sprintf('Site node "%s" is unnamed', $siteNode->nodeAggregateId->value), 1681286146);
+        }
+        return $this->findOneByNodeName(SiteNodeName::fromNodeName($siteNode->nodeName))
+            ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->nodeName->value), 1677245517);
     }
 
     /**

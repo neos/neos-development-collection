@@ -4,12 +4,13 @@ Feature: Constraint checks on SetNodeReferences
   As a user of the CR I expect invalid SetNodeReferences commands to be blocked
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values      | Generalizations |
       | language   | de, gsw, en | gsw->de, en     |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    And using the following node types:
+    """yaml
+    'Neos.ContentRepository.Testing:ReferencedNode': []
+
     'Neos.ContentRepository.Testing:NodeWithReferences':
       properties:
         referenceProperty:
@@ -22,7 +23,7 @@ Feature: Constraint checks on SetNodeReferences
           type: reference
           constraints:
             nodeTypes:
-              'Neos.ContentRepository.Testing:NodeWithReferences': false
+              'Neos.ContentRepository.Testing:ReferencedNode': false
         referencePropertyWithProperties:
           type: reference
           properties:
@@ -31,6 +32,8 @@ Feature: Constraint checks on SetNodeReferences
             postalAddress:
               type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
@@ -48,8 +51,8 @@ Feature: Constraint checks on SetNodeReferences
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
       | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
-      | anthony-destinode       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
-      | berta-destinode         | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
+      | anthony-destinode       | Neos.ContentRepository.Testing:ReferencedNode     | lady-eleonode-rootford        |
+      | berta-destinode         | Neos.ContentRepository.Testing:ReferencedNode     | lady-eleonode-rootford        |
 
   # checks for contentStreamId
   Scenario: Try to reference nodes in a non-existent content stream

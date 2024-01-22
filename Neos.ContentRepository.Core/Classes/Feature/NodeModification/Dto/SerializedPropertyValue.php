@@ -33,7 +33,7 @@ final class SerializedPropertyValue implements \JsonSerializable
     }
 
     /**
-     * @param array<string,mixed> $valueAndType
+     * @param array{type:string,value:mixed} $valueAndType
      */
     public static function fromArray(array $valueAndType): self
     {

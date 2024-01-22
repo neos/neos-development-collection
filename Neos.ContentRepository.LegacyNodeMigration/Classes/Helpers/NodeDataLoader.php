@@ -4,16 +4,21 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
 use Doctrine\DBAL\Connection;
-use Traversable;
 
+/**
+ * @implements \IteratorAggregate<int, array<string, mixed>>
+ */
 final class NodeDataLoader implements \IteratorAggregate
 {
-
     public function __construct(
         private readonly Connection $connection,
-    ) {}
+    ) {
+    }
 
-    public function getIterator(): Traversable
+    /**
+     * @return \Traversable<int, array<string, mixed>>
+     */
+    public function getIterator(): \Traversable
     {
         $query = $this->connection->executeQuery('
             SELECT

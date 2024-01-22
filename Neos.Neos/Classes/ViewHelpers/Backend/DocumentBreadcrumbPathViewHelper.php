@@ -18,22 +18,23 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * Render a bread crumb path by using the labels of documents leading to the given node path
  */
 class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 {
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     /**
      * @var boolean
      */
     protected $escapeOutput = false;
-
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
 
     public function initializeArguments(): void
     {
@@ -50,7 +51,7 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 
         $currentNode = $node;
         while ($currentNode instanceof Node) {
-            if ($currentNode->nodeType->isOfType('Neos.Neos:Document')) {
+            if ($this->getNodeType($currentNode)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                 $documentNodes[] = $currentNode;
             }
             $currentNode = $subgraph->findParentNode($currentNode->nodeAggregateId);

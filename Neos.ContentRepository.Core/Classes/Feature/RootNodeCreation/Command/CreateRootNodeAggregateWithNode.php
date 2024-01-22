@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\RootNodeCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -28,20 +29,80 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class CreateRootNodeAggregateWithNode implements
+final readonly class CreateRootNodeAggregateWithNode implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface
 {
-    public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeTypeName $nodeTypeName,
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the root node should be created in
+     * @param NodeAggregateId $nodeAggregateId The id of the root node aggregate to create
+     * @param NodeTypeName $nodeTypeName Name of type of the new node to create
+     * @param NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds Predefined aggregate ids of tethered child nodes per path. For any tethered node that has no matching entry in this set, the node aggregate id is generated randomly. Since tethered nodes may have tethered child nodes themselves, this works for multiple levels ({@see self::withTetheredDescendantNodeAggregateIds()})
+     */
+    private function __construct(
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public NodeTypeName $nodeTypeName,
+        public NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds,
     ) {
     }
 
     /**
-     * @param array<string,string> $array
+     * @param ContentStreamId $contentStreamId The content stream in which the root node should be created in
+     * @param NodeAggregateId $nodeAggregateId The id of the root node aggregate to create
+     * @param NodeTypeName $nodeTypeName Name of type of the new node to create
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName): self
+    {
+        return new self(
+            $contentStreamId,
+            $nodeAggregateId,
+            $nodeTypeName,
+            NodeAggregateIdsByNodePaths::createEmpty()
+        );
+    }
+
+    /**
+     * Specify explicitly the node aggregate ids for the tethered children {@see tetheredDescendantNodeAggregateIds}.
+     *
+     * In case you want to create a batch of commands where one creates the root node and a succeeding command needs
+     * a tethered node aggregate id, you need to generate the child node aggregate ids in advance.
+     *
+     * _Alternatively you would need to fetch the created tethered node first from the subgraph.
+     * {@see ContentSubgraphInterface::findNodeByPath()}_
+     *
+     * The helper method {@see NodeAggregateIdsByNodePaths::createForNodeType()} will generate recursively
+     * node aggregate ids for every tethered child node:
+     *
+     * ```php
+     * $tetheredDescendantNodeAggregateIds = NodeAggregateIdsByNodePaths::createForNodeType(
+     *     $command->nodeTypeName,
+     *     $nodeTypeManager
+     * );
+     * $command = $command->withTetheredDescendantNodeAggregateIds($tetheredDescendantNodeAggregateIds):
+     * ```
+     *
+     * The generated node aggregate id for the tethered node "main" is this way known before the command is issued:
+     *
+     * ```php
+     * $mainNodeAggregateId = $command->tetheredDescendantNodeAggregateIds->getNodeAggregateId(NodePath::fromString('main'));
+     * ```
+     *
+     * Generating the node aggregate ids from user land is totally optional.
+     */
+    public function withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds): self
+    {
+        return new self(
+            $this->contentStreamId,
+            $this->nodeAggregateId,
+            $this->nodeTypeName,
+            $tetheredDescendantNodeAggregateIds,
+        );
+    }
+
+    /**
+     * @param array<string,mixed> $array
      */
     public static function fromArray(array $array): self
     {
@@ -49,6 +110,9 @@ final class CreateRootNodeAggregateWithNode implements
             ContentStreamId::fromString($array['contentStreamId']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeTypeName::fromString($array['nodeTypeName']),
+            isset($array['tetheredDescendantNodeAggregateIds'])
+                ? NodeAggregateIdsByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIds'])
+                : NodeAggregateIdsByNodePaths::createEmpty()
         );
     }
 
@@ -66,6 +130,7 @@ final class CreateRootNodeAggregateWithNode implements
             $target,
             $this->nodeAggregateId,
             $this->nodeTypeName,
+            $this->tetheredDescendantNodeAggregateIds
         );
     }
 }

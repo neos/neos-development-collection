@@ -31,10 +31,23 @@ final class UpdateRootNodeAggregateDimensions implements
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface
 {
-    public function __construct(
+    /**
+     * @param ContentStreamId $contentStreamId The content stream which the dimensions should be updated in
+     * @param NodeAggregateId $nodeAggregateId The id of the node aggregate that should be updated
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId
+        public readonly NodeAggregateId $nodeAggregateId,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream which the dimensions should be updated in
+     * @param NodeAggregateId $nodeAggregateId The id of the node aggregate that should be updated
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId): self
+    {
+        return new self($contentStreamId, $nodeAggregateId);
     }
 
     /**

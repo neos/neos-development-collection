@@ -29,11 +29,28 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  */
 final class CreateRootWorkspace implements CommandInterface
 {
-    public function __construct(
+    /**
+     * @param WorkspaceName $workspaceName Unique name of the workspace to create
+     * @param WorkspaceTitle $workspaceTitle Human-readable title of the workspace to create (can be changed)
+     * @param WorkspaceDescription $workspaceDescription Description of the workspace to create (can be changed)
+     * @param ContentStreamId $newContentStreamId The id of the content stream the new workspace is assigned to initially
+     */
+    private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly WorkspaceTitle $workspaceTitle,
         public readonly WorkspaceDescription $workspaceDescription,
         public readonly ContentStreamId $newContentStreamId
     ) {
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName Name of the workspace to create
+     * @param WorkspaceTitle $workspaceTitle Human-readable title of the workspace to create (can be changed)
+     * @param WorkspaceDescription $workspaceDescription Description of the workspace to create (can be changed)
+     * @param ContentStreamId $newContentStreamId The id of the content stream the new workspace is assigned to initially
+     */
+    public static function create(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, ContentStreamId $newContentStreamId): self
+    {
+        return new self($workspaceName, $workspaceTitle, $workspaceDescription, $newContentStreamId);
     }
 }

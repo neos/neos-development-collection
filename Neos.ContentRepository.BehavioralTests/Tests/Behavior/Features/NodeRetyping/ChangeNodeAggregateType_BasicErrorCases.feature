@@ -4,13 +4,24 @@ Feature: Change node aggregate type - basic error cases
   As a user of the CR I want to change the type of a node aggregate.
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values  | Generalizations |
       | language   | de, gsw | gsw->de         |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository.Testing:ParentNodeType': []
+    And using the following node types:
+    """yaml
+    'Neos.ContentRepository.Testing:AutoCreated': []
+    'Neos.ContentRepository.Testing:ParentNodeType':
+      childNodes:
+        autocreated:
+          type: 'Neos.ContentRepository.Testing:AutoCreated'
+          constraints:
+            nodeTypes:
+              '*': TRUE
+              'Neos.ContentRepository.Testing:NodeTypeB': FALSE
+      constraints:
+        nodeTypes:
+          '*': TRUE
+          'Neos.ContentRepository.Testing:NodeTypeB': FALSE
     'Neos.ContentRepository.Testing:ChildOfNodeTypeA': []
     'Neos.ContentRepository.Testing:ChildOfNodeTypeB': []
     'Neos.ContentRepository.Testing:NodeTypeA':
@@ -30,6 +41,8 @@ Feature: Change node aggregate type - basic error cases
           type: string
           defaultValue: 'otherText'
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
@@ -84,14 +97,6 @@ Feature: Change node aggregate type - basic error cases
     Then the last command should have thrown an exception of type "NodeTypeNotFound"
 
   Scenario: Try to change to a node type disallowed by the parent node
-    Given I have the following additional NodeTypes configuration:
-    """
-    'Neos.ContentRepository.Testing:ParentNodeType':
-      constraints:
-        nodeTypes:
-          '*': TRUE
-          'Neos.ContentRepository.Testing:NodeTypeB': FALSE
-    """
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                      |
       | contentStreamId       | "cs-identifier"                            |
@@ -111,19 +116,6 @@ Feature: Change node aggregate type - basic error cases
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change to a node type that is not allowed by the grand parent aggregate inside an autocreated parent aggregate
-    Given I have the following additional NodeTypes configuration:
-    """
-    'Neos.ContentRepository.Testing:AutoCreated': []
-    'Neos.ContentRepository.Testing:ParentNodeType':
-      childNodes:
-        autocreated:
-          type: 'Neos.ContentRepository.Testing:AutoCreated'
-          constraints:
-            nodeTypes:
-              '*': TRUE
-              'Neos.ContentRepository.Testing:NodeTypeB': FALSE
-    """
-
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                           |
       | contentStreamId                    | "cs-identifier"                                 |
@@ -155,15 +147,6 @@ Feature: Change node aggregate type - basic error cases
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change the node type of an auto created child node to anything other than defined:
-    Given I have the following additional NodeTypes configuration:
-    """
-    'Neos.ContentRepository.Testing:AutoCreated': []
-    'Neos.ContentRepository.Testing:ParentNodeType':
-      childNodes:
-        autocreated:
-          type: 'Neos.ContentRepository.Testing:AutoCreated'
-    """
-
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                           |
       | contentStreamId                    | "cs-identifier"                                 |

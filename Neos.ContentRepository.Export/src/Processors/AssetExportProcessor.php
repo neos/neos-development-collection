@@ -25,6 +25,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
  */
 final class AssetExportProcessor implements ProcessorInterface
 {
+    /** @var array<int, \Closure> */
     private array $callbacks = [];
 
     public function __construct(

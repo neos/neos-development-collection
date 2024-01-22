@@ -64,6 +64,10 @@ final class RuntimeConfiguration
             return $this->pathCache[$fusionPath]['c'];
         }
 
+        if ($fusionPath === '') {
+            throw new Exception('Fusion path cannot be empty.', 1695308681);
+        }
+
         // Find longest prefix of path that already is in path cache
         $pathUntilNow = '';
         $fusionPathLength = strlen($fusionPath);

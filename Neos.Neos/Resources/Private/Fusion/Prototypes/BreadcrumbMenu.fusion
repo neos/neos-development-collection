@@ -1,17 +1,45 @@
 # Neos.Neos:BreadcrumbMenu provides a breadcrumb navigation based on menu items.
 #
-prototype(Neos.Neos:BreadcrumbMenu) < prototype(Neos.Neos:Menu) {
-  templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/BreadcrumbMenu.html'
+prototype(Neos.Neos:BreadcrumbMenu) < prototype(Neos.Fusion:Component) {
 
-  itemCollection = ${q(documentNode).parents('[instanceof Neos.Neos:Document]').get()}
-  // Show always the current node, event when it is hidden in index
-  items.@process.addCurrent = Neos.Fusion:Value {
-      currentItem = Neos.Neos:MenuItems {
-        renderHiddenInIndex = true
-        itemCollection = ${[documentNode]}
-      }
-      value = ${Array.concat(this.currentItem, value)}
+  # (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
+  node = ${documentNode}
+
+  # html attributes for the rendered list
+  attributes = Neos.Fusion:DataStructure
+
+  # (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
+  maximumLevels = 0
+
+  # (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
+  renderHiddenInIndex = true
+
+  # (boolean) activate the *expensive* calculation of item states defaults to ``false``
+  calculateItemStates = false
+
+  @private {
+    items = Neos.Neos:BreadcrumbMenuItems {
+      node = ${props.node}
+      maximumLevels = ${props.maximumLevels}
+      renderHiddenInIndex = ${props.renderHiddenInIndex}
+      calculateItemStates = ${props.calculateItemStates}
+    }
   }
 
-  attributes.class = 'breadcrumb'
+  renderer = Neos.Neos:MenuItemListRenderer {
+    items = ${private.items}
+    attributes = ${props.attributes}
+  }
+
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
+
+  @cache {
+    mode = 'cached'
+    entryIdentifier {
+      documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
+    }
+    entryTags {
+      1 = ${Neos.Caching.nodeTypeTag('Neos.Neos:Document', documentNode)}
+    }
+  }
 }

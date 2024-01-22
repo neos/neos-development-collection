@@ -132,8 +132,16 @@ class ThumbnailService
         if (isset($this->thumbnailCache[$assetIdentifier][$configurationHash])) {
             $thumbnail = $this->thumbnailCache[$assetIdentifier][$configurationHash];
         } else {
-            $thumbnail = $this->thumbnailRepository->findOneByAssetAndThumbnailConfiguration($asset, $configuration);
-            $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
+            $thumbnail = null;
+            // Load all thumbnails for the asset and cache them to prevent further db requests for the same asset
+            $thumbnailsForAsset = $this->thumbnailRepository->findByOriginalAsset($asset);
+            /** @var Thumbnail $thumbnailVariant */
+            foreach ($thumbnailsForAsset as $thumbnailVariant) {
+                $this->thumbnailCache[$assetIdentifier][$thumbnailVariant->getConfigurationHash()] = $thumbnailVariant;
+                if ($thumbnailVariant->getConfigurationHash() === $configurationHash) {
+                    $thumbnail = $thumbnailVariant;
+                }
+            }
         }
         $async = $configuration->isAsync();
         if ($thumbnail === null) {

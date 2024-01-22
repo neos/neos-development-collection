@@ -70,7 +70,7 @@ trait NodeReferencing
             }
         }
 
-        $lowLevelCommand = new SetSerializedNodeReferences(
+        $lowLevelCommand = SetSerializedNodeReferences::create(
             $command->contentStreamId,
             $command->sourceNodeAggregateId,
             $command->sourceOriginDimensionSpacePoint,

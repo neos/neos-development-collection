@@ -20,10 +20,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * Change the value of a given property.
@@ -107,7 +105,6 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
-                    /** @var PropertyCollectionInterface $properties */
                     $properties = $node->properties;
                     $currentProperty = $properties->serialized()->getProperty($this->propertyName);
                     /** @var \Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue $currentProperty safe since Node::hasProperty */
@@ -131,7 +128,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                     );
 
                     return $this->contentRepository->handle(
-                        new SetSerializedNodeProperties(
+                        SetSerializedNodeProperties::create(
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,

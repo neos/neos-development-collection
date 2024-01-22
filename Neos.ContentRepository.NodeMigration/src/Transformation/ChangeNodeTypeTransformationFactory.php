@@ -20,7 +20,6 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggrega
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /** @codingStandardsIgnoreStart */
@@ -65,7 +64,7 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                 NodeAggregate $nodeAggregate,
                 ContentStreamId $contentStreamForWriting
             ): CommandResult {
-                return $this->contentRepository->handle(new ChangeNodeAggregateType(
+                return $this->contentRepository->handle(ChangeNodeAggregateType::create(
                     $contentStreamForWriting,
                     $nodeAggregate->nodeAggregateId,
                     NodeTypeName::fromString($this->newType),

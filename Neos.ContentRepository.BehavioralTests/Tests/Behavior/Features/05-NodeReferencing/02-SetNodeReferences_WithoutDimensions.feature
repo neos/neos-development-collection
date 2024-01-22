@@ -4,10 +4,11 @@ Feature: Node References without Dimensions
   As a user of the CR I want to be able to create, overwrite, reorder and delete reference between nodes
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
+    'Neos.ContentRepository.Testing:ReferencedNode': []
+
     'Neos.ContentRepository.Testing:NodeWithReferences':
       properties:
         referenceProperty:
@@ -19,7 +20,7 @@ Feature: Node References without Dimensions
           constraints:
             nodeTypes:
               '*': false
-              'Neos.ContentRepository.Testing:NodeWithReferences': true
+              'Neos.ContentRepository.Testing:ReferencedNode': true
         referencePropertyWithProperty:
           type: reference
           properties:
@@ -39,6 +40,8 @@ Feature: Node References without Dimensions
             postalAddress:
               type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -56,9 +59,10 @@ Feature: Node References without Dimensions
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId   | parentNodeAggregateId  | nodeTypeName                                      |
       | source-nodandaise | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
-      | anthony-destinode | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
-      | berta-destinode   | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
-      | carl-destinode    | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
+      | node-wan-kenodi   | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
+      | anthony-destinode | lady-eleonode-rootford | Neos.ContentRepository.Testing:ReferencedNode     |
+      | berta-destinode   | lady-eleonode-rootford | Neos.ContentRepository.Testing:ReferencedNode     |
+      | carl-destinode    | lady-eleonode-rootford | Neos.ContentRepository.Testing:ReferencedNode     |
 
   Scenario: Ensure that a single reference between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
@@ -234,7 +238,7 @@ Feature: Node References without Dimensions
 
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
-      | sourceNodeAggregateId | "berta-destinode"                 |
+      | sourceNodeAggregateId | "node-wan-kenodi"                 |
       | references            | [{"target": "anthony-destinode"}] |
       | referenceName         | "referenceProperty"               |
     And the graph projection is fully up to date
@@ -242,7 +246,7 @@ Feature: Node References without Dimensions
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
     And I expect this node to be referenced by:
       | Name              | Node                               | Properties |
-      | referenceProperty | cs-identifier;berta-destinode;{}   | null       |
+      | referenceProperty | cs-identifier;node-wan-kenodi;{}   | null       |
       | referenceProperty | cs-identifier;source-nodandaise;{} | null       |
 
   Scenario: Ensure that a reference between nodes can be set and read when matching constraints

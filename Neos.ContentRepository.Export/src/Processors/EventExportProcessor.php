@@ -18,6 +18,7 @@ use Neos\EventStore\EventStoreInterface;
  */
 final class EventExportProcessor implements ProcessorInterface
 {
+    /** @var array<int, \Closure> */
     private array $callbacks = [];
 
     public function __construct(
@@ -64,6 +65,9 @@ final class EventExportProcessor implements ProcessorInterface
     /** --------------------------------------- */
 
 
+    /**
+     * @phpstan-ignore-next-line currently this private method is unused ... but it does no harm keeping it
+     */
     private function dispatch(Severity $severity, string $message, mixed ...$args): void
     {
         $renderedMessage = sprintf($message, ...$args);

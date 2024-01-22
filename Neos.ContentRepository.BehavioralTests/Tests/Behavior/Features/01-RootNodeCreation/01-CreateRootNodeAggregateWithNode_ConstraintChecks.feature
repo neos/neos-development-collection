@@ -7,14 +7,15 @@ Feature: Create a root node aggregate
   and Nody McNodeface, a new root node aggregate to be added.
 
   Background: The stage is set
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:AbstractRoot':
       abstract: true
     'Neos.ContentRepository.Testing:NonRoot': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |

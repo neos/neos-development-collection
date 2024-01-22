@@ -16,7 +16,7 @@ Neos:
         - 'resource://Neos.Media.Browser/Public/Libraries/bootstrap/bootstrap-components.js'
         - 'resource://Neos.Media.Browser/Public/JavaScript/media-browser.js'
       styles:
-        - 'resource://Neos.Neos/Public/Styles/Neos.css'
+        - 'resource://Neos.Neos/Public/Styles/Main.css'
         - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
         - 'resource://Neos.Media.Browser/Public/Styles/Main.css'
 

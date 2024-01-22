@@ -3,10 +3,8 @@
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
 /**
  * This describes a node's read model identity parts which are rooted in the {@see ContentSubgraphInterface}, namely:
@@ -19,7 +17,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
  * by {@see Node::$nodeAggregateId}.
  *
  * With the above information, you can fetch a Subgraph directly by using
- * {@see ContentRepositoryRegistry::subgraphForNode()}.
+ * {@see \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry::subgraphForNode()}.
  *
  * (a bit lower-level): For Non-Neos/Flow installations, you can fetch a Subgraph using
  * {@see ContentGraphInterface::getSubgraph()}.

@@ -37,7 +37,7 @@ class Workspace
     public function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly ?WorkspaceName $baseWorkspaceName,
-        public readonly ?WorkspaceTitle $workspaceTitle,
+        public readonly WorkspaceTitle $workspaceTitle,
         public readonly WorkspaceDescription $workspaceDescription,
         public readonly ContentStreamId $currentContentStreamId,
         public readonly WorkspaceStatus $status,

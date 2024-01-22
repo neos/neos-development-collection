@@ -29,10 +29,17 @@ final class StructureAdjustmentsCommandController extends CommandController
      */
     protected $contentRepositoryRegistry;
 
+
+    /**
+     * Detect required structure adjustments for the specified node type in the given content repository.
+     *
+     * @param string|null $nodeType The node type to find structure adjustments for. If not provided, all adjustments will be shown. (Default: null)
+     * @param string $contentRepositoryIdentifier The content repository identifier. (Default: 'default')
+     */
     public function detectCommand(string $nodeType = null, string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryId, new StructureAdjustmentServiceFactory());
+        $structureAdjustmentService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new StructureAdjustmentServiceFactory());
 
         if ($nodeType !== null) {
             $errors = $structureAdjustmentService->findAdjustmentsForNodeType(
@@ -45,10 +52,17 @@ final class StructureAdjustmentsCommandController extends CommandController
         $this->printErrors($errors);
     }
 
+    /**
+     * Apply required structure adjustments for the specified node type in the given content repository.
+     *
+     * @param string|null $nodeType The node type to apply structure adjustments for. If not provided, all found adjustments will be applied. (Default: null)
+     * @param string $contentRepositoryIdentifier The content repository identifier. (Default: 'default')
+     * @return void
+     */
     public function fixCommand(string $nodeType = null, string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryId, new StructureAdjustmentServiceFactory());
+        $structureAdjustmentService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new StructureAdjustmentServiceFactory());
 
         if ($nodeType !== null) {
             $errors = $structureAdjustmentService->findAdjustmentsForNodeType(

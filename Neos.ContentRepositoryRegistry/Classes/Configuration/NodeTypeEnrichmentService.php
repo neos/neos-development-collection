@@ -35,6 +35,10 @@ class NodeTypeEnrichmentService
      */
     protected $resourceManager;
 
+    /**
+     * @param array<string, mixed> $fullConfiguration
+     * @return array<string, mixed>
+     */
     public function enrichNodeTypeLabelsConfiguration(array $fullConfiguration): array
     {
         $superTypeConfigResolver = new SuperTypeConfigResolver($fullConfiguration);
@@ -86,7 +90,7 @@ class NodeTypeEnrichmentService
 
             $editorName = $propertyConfiguration['ui']['inspector']['editor']
                 ?? array_reduce($superTypeConfigResolver->getSuperTypesFor($nodeTypeName), function ($editorName, $superTypeName) use ($propertyName, $superTypeConfigResolver) {
-                    if ($editorName !== null || $superTypeName === null) {
+                    if ($editorName !== null) {
                         return $editorName;
                     }
                     $superTypeConfiguration = $superTypeConfigResolver->getLocalConfiguration($superTypeName);
@@ -178,8 +182,7 @@ class NodeTypeEnrichmentService
         $editorName,
         array &$editorOptions,
         $translationIdGenerator
-    )
-    {
+    ) {
         switch ($editorName) {
             case 'Neos.Neos/Inspector/Editors/SelectBoxEditor':
                 if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {

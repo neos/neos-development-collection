@@ -16,14 +16,13 @@ class SubprocessProjectionCatchUpTrigger implements ProjectionCatchUpTriggerInte
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow")
-     * @var array
+     * @var array<string, mixed>
      */
     protected $flowSettings;
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId
-    )
-    {
+    ) {
     }
 
     public function triggerCatchUp(Projections $projections): void

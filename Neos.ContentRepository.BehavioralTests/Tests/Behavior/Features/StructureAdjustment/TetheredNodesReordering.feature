@@ -4,10 +4,9 @@ Feature: Tethered Nodes Reordering Structure changes
   As a user of the CR I want to be able to detect wrongly ordered tethered nodes, and fix them.
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         'tethered-node':
@@ -18,6 +17,8 @@ Feature: Tethered Nodes Reordering Structure changes
           type: 'Neos.ContentRepository.Testing:Tethered'
     'Neos.ContentRepository.Testing:Tethered': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
@@ -53,12 +54,18 @@ Feature: Tethered Nodes Reordering Structure changes
       | cs-identifier;third-tethered-node-agg;{} |
 
   Scenario: re-ordering the tethered child nodes brings up wrongly sorted tethered nodes
-    Given I have the following additional NodeTypes configuration:
-    """
+    Given I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository.Testing:Document':
       childNodes:
+        'tethered-node':
+          type: 'Neos.ContentRepository.Testing:Tethered'
         'other-tethered-node':
+          type: 'Neos.ContentRepository.Testing:Tethered'
           position: start
+        'third-tethered-node':
+          type: 'Neos.ContentRepository.Testing:Tethered'
+    'Neos.ContentRepository.Testing:Tethered': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                          | nodeAggregateId |

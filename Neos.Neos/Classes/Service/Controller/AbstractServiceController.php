@@ -95,7 +95,6 @@ abstract class AbstractServiceController extends ActionController
     {
         try {
             parent::processRequest($request, $response);
-            /** @phpstan-ignore-next-line Although Flow does not declare it, StopActionExceptions might be thrown */
         } catch (StopActionException $exception) {
             throw $exception;
         } catch (\Exception $exception) {

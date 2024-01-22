@@ -2,27 +2,20 @@
 Feature: Strip Tags on Property
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
           'Neos.ContentRepository.Testing:Document': true
-
-    'Neos.ContentRepository.Testing:Document': []
-    """
-
-    ########################
-    # SETUP
-    ########################
-    Given I have the following additional NodeTypes configuration:
-    """
     'Neos.ContentRepository.Testing:Document':
       properties:
         text:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
@@ -51,7 +44,7 @@ Feature: Strip Tags on Property
 
   Scenario: Fixed newValue
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:

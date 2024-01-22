@@ -951,10 +951,6 @@
         <target state="translated">Node boomstructuur laad fout.</target>
       </trans-unit>
       <!-- FlashMessages -->
-      <trans-unit id="flashMessage.1222204027" xml:space="preserve" approved="yes">
-				<source>The entered username or password was wrong</source>
-        <target state="final">De gebruikersnaam of het wachtwoord is onjuist</target>
-      </trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
@@ -48,15 +49,22 @@ final class CrCommandController extends CommandController
     public function replayCommand(string $projection, string $contentRepository = 'default', bool $quiet = false, int $until = 0): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionServiceFactory);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
 
         if (!$quiet) {
             $this->outputLine('Replaying events for projection "%s" of Content Repository "%s" ...', [$projection, $contentRepositoryId->value]);
-            // TODO start progress bar
+            $this->output->progressStart();
         }
-        $projectionService->replayProjection($projection, $until !== 0 ? SequenceNumber::fromInteger($until) : null);
+        $options = CatchUpOptions::create(
+            progressCallback: fn () => $this->output->progressAdvance(),
+        );
+        if ($until > 0) {
+            $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));
+        }
+        $projectionService->replayProjection($projection, $options);
         if (!$quiet) {
-            // TODO finish progress bar
+            $this->output->progressFinish();
+            $this->outputLine();
             $this->outputLine('<success>Done.</success>');
         }
     }
@@ -70,18 +78,24 @@ final class CrCommandController extends CommandController
     public function replayAllCommand(string $contentRepository = 'default', bool $quiet = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionServiceFactory);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
         if (!$quiet) {
             $this->outputLine('Replaying events for all projections of Content Repository "%s" ...', [$contentRepositoryId->value]);
             // TODO start progress bar
         }
-        $projectionService->replayAllProjections();
+        $projectionService->replayAllProjections(CatchUpOptions::create());
         if (!$quiet) {
             // TODO finish progress bar
             $this->outputLine('<success>Done.</success>');
         }
     }
 
+    /**
+     * This will completely prune the data of the specified content repository.
+     *
+     * @param string $contentRepository name of the content repository where the data should be pruned from.
+     * @return void
+     */
     public function pruneCommand(string $contentRepository = 'default'): void
     {
         if (!$this->output->askConfirmation(sprintf("This will prune your content repository \"%s\". Are you sure to proceed? (y/n) ", $contentRepository), false)) {
@@ -90,13 +104,13 @@ final class CrCommandController extends CommandController
 
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
-        $contentStreamPruner = $this->contentRepositoryRegistry->getService(
+        $contentStreamPruner = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new ContentStreamPrunerFactory()
         );
         $contentStreamPruner->pruneAll();
 
-        $workspaceMaintenanceService = $this->contentRepositoryRegistry->getService(
+        $workspaceMaintenanceService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new WorkspaceMaintenanceServiceFactory()
         );

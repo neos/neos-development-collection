@@ -3,12 +3,11 @@
 Feature: Find and count nodes using the findAncestorNodes and countAncestorNodes queries
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
     'Neos.ContentRepository.Testing:SomeMixin':
@@ -42,6 +41,8 @@ Feature: Find and count nodes using the findAncestorNodes and countAncestorNodes
       superTypes:
         'Neos.ContentRepository.Testing:AbstractPage': true
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -91,4 +92,4 @@ Feature: Find and count nodes using the findAncestorNodes and countAncestorNodes
 
     # findAncestorNodes queries with results
     When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned and the total count to be 6
-    When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a2a2,a2,a" to be returned and the total count to be 3
+    When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a2a2,a2,a" to be returned and the total count to be 3

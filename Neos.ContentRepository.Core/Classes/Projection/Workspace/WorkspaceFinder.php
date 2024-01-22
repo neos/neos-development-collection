@@ -93,32 +93,6 @@ final class WorkspaceFinder implements ProjectionStateInterface
 
     /**
      * @return array<string,Workspace>
-     */
-    public function findByPrefix(WorkspaceName $prefix): array
-    {
-        $result = [];
-
-        $connection = $this->client->getConnection();
-        $workspaceRows = $connection->executeQuery(
-            '
-                SELECT * FROM ' . $this->tableName . '
-                WHERE workspaceName LIKE :workspaceNameLike
-            ',
-            [
-                'workspaceNameLike' => $prefix->value . '%'
-            ]
-        )->fetchAllAssociative();
-
-        foreach ($workspaceRows as $workspaceRow) {
-            $similarlyNamedWorkspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
-            $result[$similarlyNamedWorkspace->workspaceName->value] = $similarlyNamedWorkspace;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return array<string,Workspace>
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findByBaseWorkspace(WorkspaceName $baseWorkspace): array
@@ -218,7 +192,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         return new Workspace(
             WorkspaceName::fromString($row['workspacename']),
             !empty($row['baseworkspacename']) ? WorkspaceName::fromString($row['baseworkspacename']) : null,
-            !empty($row['workspacetitle']) ? WorkspaceTitle::fromString($row['workspacetitle']) : null,
+            WorkspaceTitle::fromString($row['workspacetitle']),
             WorkspaceDescription::fromString($row['workspacedescription']),
             ContentStreamId::fromString($row['currentcontentstreamid']),
             WorkspaceStatus::from($row['status']),

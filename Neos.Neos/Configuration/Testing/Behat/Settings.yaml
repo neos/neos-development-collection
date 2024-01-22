@@ -1,5 +1,1 @@
-
-Neos:
-  Neos:
-    eventLog:
-      enabled: true
+# Behat settings

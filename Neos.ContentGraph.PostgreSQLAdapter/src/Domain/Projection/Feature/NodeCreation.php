@@ -44,14 +44,14 @@ trait NodeCreation
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $originDimensionSpacePoint = OriginDimensionSpacePoint::fromArray([]);
+        $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
 
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $event->nodeAggregateId,
             $originDimensionSpacePoint,
             $originDimensionSpacePoint->hash,
-            SerializedPropertyValues::fromArray([]),
+            SerializedPropertyValues::createEmpty(),
             $event->nodeTypeName,
             $event->nodeAggregateClassification,
             null

@@ -4,12 +4,11 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
 
   Background:
     Given the current date and time is "2023-03-16T12:00:00+01:00"
-    And I have the following content dimensions:
+    And using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
       properties:
@@ -56,6 +55,8 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       superTypes:
         'Neos.ContentRepository.Testing:AbstractPage': true
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -104,11 +105,11 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
     When I execute the findChildNodes query for parent node aggregate id "a2a" I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned
 
       # Child nodes filtered by node type
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage"}' I expect the nodes "terms,contact,a,b" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "contact" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "contact" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "terms,a,b" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExistingNodeType"}' I expect no nodes to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:AbstractPage"}' I expect the nodes "terms,contact,a,b" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "contact" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "contact" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "terms,a,b" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:NonExistingNodeType"}' I expect no nodes to be returned
 
      # Child nodes filtered by search term
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "brown"}' I expect the nodes "a2a1,a2a4,a2a5" to be returned
@@ -120,9 +121,9 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
     When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"pagination": {"offset": 1}}' I expect the nodes "contact,a,b" to be returned and the total count to be 4
 
      # Child nodes filtered by node type, paginated
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage", "pagination": {"limit": 3}}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin", "pagination": {"limit": 2, "offset": 1}}' I expect the nodes "a,b" to be returned and the total count to be 3
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:Contact", "pagination": {"limit": 5}}' I expect the nodes "terms,a,b" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:AbstractPage", "pagination": {"limit": 3}}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin", "pagination": {"limit": 2, "offset": 1}}' I expect the nodes "a,b" to be returned and the total count to be 3
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "!Neos.ContentRepository.Testing:Contact", "pagination": {"limit": 5}}' I expect the nodes "terms,a,b" to be returned
 
      # Child nodes filtered by property value
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty ^= \"the\""}' I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned

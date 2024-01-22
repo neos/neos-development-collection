@@ -82,7 +82,7 @@ class FusionViewTest extends UnitTestCase
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $mockFusionService = $this->createMock(FusionService::class);
-        $mockFusionService->expects(self::any())->method('createRuntime')->will(self::returnValue($this->mockRuntime));
+        //  $mockFusionService->expects(self::any())->method('createRuntime')->will(self::returnValue($this->mockRuntime));
 
         $this->mockView = $this->getAccessibleMock(FusionView::class, ['getClosestDocumentNode']);
         $this->mockView->expects(self::any())->method('getClosestDocumentNode')->will(self::returnValue($this->mockContextualizedNode));
@@ -152,7 +152,7 @@ class FusionViewTest extends UnitTestCase
         $mockRuntime->expects(self::any())->method('getControllerContext')->will(self::returnValue($mockControllerContext));
 
         $mockFusionService = $this->createMock(FusionService::class);
-        $mockFusionService->expects(self::any())->method('createRuntime')->will(self::returnValue($mockRuntime));
+        // $mockFusionService->expects(self::any())->method('createRuntime')->will(self::returnValue($mockRuntime));
 
         $mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 

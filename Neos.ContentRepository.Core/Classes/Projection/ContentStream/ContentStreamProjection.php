@@ -16,34 +16,36 @@ namespace Neos\ContentRepository\Core\Projection\ContentStream;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaConfig;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\EventStore\CatchUp\CatchUp;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
-use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStream\EventStreamInterface;
 
 /**
  * See {@see ContentStreamFinder} for explanation.
@@ -61,7 +63,6 @@ class ContentStreamProjection implements ProjectionInterface
     private DoctrineCheckpointStorage $checkpointStorage;
 
     public function __construct(
-        private readonly EventNormalizer $eventNormalizer,
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableName
     ) {
@@ -93,22 +94,17 @@ class ContentStreamProjection implements ProjectionInterface
             $connection->executeStatement(sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName));
         }
 
-        $schema = new Schema();
-        $contentStreamTable = $schema->createTable($this->tableName);
-        $contentStreamTable->addColumn('contentStreamId', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('version', Types::INTEGER)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('sourceContentStreamId', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(false);
-        $contentStreamTable->addColumn('state', Types::STRING)
-            ->setLength(20)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('removed', Types::BOOLEAN)
-            ->setDefault(false)
-            ->setNotnull(false);
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [
+            (new Table($this->tableName, [
+                DbalSchemaFactory::columnForContentStreamId('contentStreamId')->setNotnull(true),
+                (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
+                DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId')->setNotnull(false),
+                // Should become a DB ENUM (unclear how to configure with DBAL) or int (latter needs adaption to code)
+                (new Column('state', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
+                (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
+            ]))
+        ]);
+
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
             $connection->executeStatement($statement);
@@ -122,11 +118,9 @@ class ContentStreamProjection implements ProjectionInterface
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
 
-    public function canHandle(Event $event): bool
+    public function canHandle(EventInterface $event): bool
     {
-        $eventClassName = $this->eventNormalizer->getEventClassName($event);
-
-        return in_array($eventClassName, [
+        return in_array($event::class, [
                 ContentStreamWasCreated::class,
                 RootWorkspaceWasCreated::class,
                 WorkspaceWasCreated::class,
@@ -139,47 +133,34 @@ class ContentStreamProjection implements ProjectionInterface
                 WorkspaceRebaseFailed::class,
                 ContentStreamWasRemoved::class,
             ])
-            || is_subclass_of($eventClassName, EmbedsContentStreamAndNodeAggregateId::class);
+            || $event instanceof EmbedsContentStreamAndNodeAggregateId;
     }
 
-    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
-        $catchUp->run($eventStream);
-    }
-
-    private function apply(EventEnvelope $eventEnvelope): void
-    {
-        if (!$this->canHandle($eventEnvelope->event)) {
+        if ($event instanceof EmbedsContentStreamAndNodeAggregateId) {
+            $this->updateContentStreamVersion($event, $eventEnvelope);
             return;
         }
-
-        $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
-
-        if ($eventInstance instanceof EmbedsContentStreamAndNodeAggregateId) {
-            $this->updateContentStreamVersion($eventInstance, $eventEnvelope);
-            return;
-        }
-
-        // @phpstan-ignore-next-line
-        match ($eventInstance::class) {
-            ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($eventInstance, $eventEnvelope),
-            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($eventInstance),
-            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($eventInstance),
-            ContentStreamWasForked::class => $this->whenContentStreamWasForked($eventInstance, $eventEnvelope),
-            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($eventInstance),
-            WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($eventInstance),
-            WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($eventInstance),
-            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($eventInstance),
-            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($eventInstance),
-            WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($eventInstance),
-            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($eventInstance, $eventEnvelope),
+        match ($event::class) {
+            ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event, $eventEnvelope),
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
+            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event, $eventEnvelope),
+            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
+            WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
+            WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),
+            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
+            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
+            WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
+            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 
-    public function getSequenceNumber(): SequenceNumber
+    public function getCheckpointStorage(): CheckpointStorageInterface
     {
-        return $this->checkpointStorage->getHighestAppliedSequenceNumber();
+        return $this->checkpointStorage;
     }
 
     public function getState(): ProjectionStateInterface

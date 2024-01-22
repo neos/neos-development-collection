@@ -16,24 +16,23 @@ namespace Neos\ContentRepository\Core\Projection\NodeHiddenState;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\EventStore\CatchUp\CatchUp;
+use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
-use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStream\EventStreamInterface;
 
 /**
  * TODO: this class needs proper testing
@@ -46,7 +45,6 @@ class NodeHiddenStateProjection implements ProjectionInterface
     private DoctrineCheckpointStorage $checkpointStorage;
 
     public function __construct(
-        private readonly EventNormalizer $eventNormalizer,
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableName
     ) {
@@ -70,26 +68,19 @@ class NodeHiddenStateProjection implements ProjectionInterface
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-        $schema = new Schema();
-        $contentStreamTable = $schema->createTable($this->tableName);
-        $contentStreamTable->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('dimensionspacepointhash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('dimensionspacepoint', Types::TEXT)
-            ->setNotnull(false);
-        $contentStreamTable->addColumn('hidden', Types::BOOLEAN)
-            ->setDefault(false)
-            ->setNotnull(false);
 
-        $contentStreamTable->setPrimaryKey(
+        $nodeHiddenStateTable = new Table($this->tableName, [
+            DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotNull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotNull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotNull(false),
+            DbalSchemaFactory::columnForDimensionSpacePoint('dimensionspacepoint')->setNotNull(false),
+            (new Column('hidden', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
+        ]);
+        $nodeHiddenStateTable->setPrimaryKey(
             ['contentstreamid', 'nodeaggregateid', 'dimensionspacepointhash']
         );
+
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$nodeHiddenStateTable]);
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
@@ -104,10 +95,9 @@ class NodeHiddenStateProjection implements ProjectionInterface
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
 
-    public function canHandle(Event $event): bool
+    public function canHandle(EventInterface $event): bool
     {
-        $eventClassName = $this->eventNormalizer->getEventClassName($event);
-        return in_array($eventClassName, [
+        return in_array($event::class, [
             NodeAggregateWasDisabled::class,
             NodeAggregateWasEnabled::class,
             ContentStreamWasForked::class,
@@ -115,32 +105,20 @@ class NodeHiddenStateProjection implements ProjectionInterface
         ]);
     }
 
-    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
-        $catchUp->run($eventStream);
-    }
-
-    private function apply(EventEnvelope $eventEnvelope): void
-    {
-        if (!$this->canHandle($eventEnvelope->event)) {
-            return;
-        }
-
-        $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
-
-        // @phpstan-ignore-next-line
-        match ($eventInstance::class) {
-            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($eventInstance),
-            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($eventInstance),
-            ContentStreamWasForked::class => $this->whenContentStreamWasForked($eventInstance),
-            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($eventInstance),
+        match ($event::class) {
+            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
+            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
+            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
+            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 
-    public function getSequenceNumber(): SequenceNumber
+    public function getCheckpointStorage(): CheckpointStorageInterface
     {
-        return $this->checkpointStorage->getHighestAppliedSequenceNumber();
+        return $this->checkpointStorage;
     }
 
     public function getState(): NodeHiddenStateFinder

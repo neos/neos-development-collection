@@ -35,11 +35,26 @@ final class ChangeNodeAggregateName implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-    public function __construct(
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to rename
+     * @param NodeName $newNodeName The new name of the node aggregate
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeName $newNodeName,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to rename
+     * @param NodeName $newNodeName The new name of the node aggregate
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeName $newNodeName): self
+    {
+        return new self($contentStreamId, $nodeAggregateId, $newNodeName);
     }
 
     /**

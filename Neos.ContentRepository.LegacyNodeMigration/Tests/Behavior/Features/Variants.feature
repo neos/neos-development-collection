@@ -2,31 +2,32 @@
 Feature: Migrating nodes with content dimensions
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
-    And I have the following NodeTypes configuration:
+    And using the following node types:
+    """yaml
+    'Neos.Neos:Site': {}
+    'Some.Package:Homepage':
+      superTypes:
+        'Neos.Neos:Site': true
+    'Some.Package:Thing': {}
     """
-    'unstructured': {}
-    'Some.Package:SomeNodeType':
-      properties:
-        'text':
-          type: string
-          defaultValue: 'My default text'
-    """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
   Scenario: Node specialization variants are prioritized over peer variants
     When I have the following node data rows:
-      | Identifier    | Path             | Node Type                 | Dimension Values     |
-      | sites-node-id | /sites           | unstructured              |                      |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["de"]} |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["en"]} |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["ch"]} |
+      | Identifier    | Path             | Node Type             | Dimension Values     |
+      | sites-node-id | /sites           | unstructured          |                      |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["en"]} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["ch"]} |
     And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                                                |
       | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "coveredDimensionSpacePoints": [{"language": "en"},{"language": "de"},{"language": "ch"}], "nodeAggregateClassification": "root"}                                                                                                              |
-      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:SomeNodeType", "nodeName": "test-site", "originDimensionSpacePoint": {"language": "de"}, "coveredDimensionSpacePoints": [{"language": "de"},{"language": "ch"}], "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular"} |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "originDimensionSpacePoint": {"language": "de"}, "coveredDimensionSpacePoints": [{"language": "de"},{"language": "ch"}], "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular"} |
       | NodePeerVariantWasCreated           | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "de"}, "peerOrigin": {"language": "en"}, "peerCoverage": [{"language": "en"}]}                                                                                                                                                                        |
       | NodeSpecializationVariantWasCreated | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "de"}, "specializationOrigin": {"language": "ch"}, "specializationCoverage": [{"language": "ch"}]}                                                                                                                                                    |
 
@@ -34,26 +35,26 @@ Feature: Migrating nodes with content dimensions
     When I have the following node data rows:
       | Identifier    | Path             | Node Type                 | Dimension Values     |
       | sites-node-id | /sites           | unstructured              |                      |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["ch"]} |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["en"]} |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["de"]} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage     | {"language": ["ch"]} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage     | {"language": ["en"]} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage     | {"language": ["de"]} |
     And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                             |
       | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites-node-id", "nodeTypeName": "Neos.Neos:Sites", "coveredDimensionSpacePoints": [{"language": "en"},{"language": "de"},{"language": "ch"}], "nodeAggregateClassification": "root"}                                                                                           |
-      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:SomeNodeType", "nodeName": "test-site", "originDimensionSpacePoint": {"language": "ch"}, "coveredDimensionSpacePoints": [{"language": "ch"}], "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular"} |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site-node-id", "nodeTypeName": "Some.Package:Homepage", "nodeName": "test-site", "originDimensionSpacePoint": {"language": "ch"}, "coveredDimensionSpacePoints": [{"language": "ch"}], "parentNodeAggregateId": "sites-node-id", "nodeAggregateClassification": "regular"} |
       | NodePeerVariantWasCreated           | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "ch"}, "peerOrigin": {"language": "en"}, "peerCoverage": [{"language": "en"}]}                                                                                                                                                     |
       | NodeGeneralizationVariantWasCreated | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "ch"}, "generalizationOrigin": {"language": "de"}, "generalizationCoverage": [{"language": "de"}]}                                                                                                                                 |
 
   Scenario: Node variant with a subset of the original dimension space points (NodeSpecializationVariantWasCreated covers languages "de" _and_ "ch")
-    Given I have the following content dimensions:
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Default | Values          | Generalizations |
       | language   | mul     | mul, en, de, ch | ch->de->mul     |
     When I have the following node data rows:
-      | Identifier | Path        | Dimension Values      |
-      | sites      | /sites      |                       |
-      | site       | /sites/site | {"language": ["mul"]} |
-      | site       | /sites/site | {"language": ["de"]}  |
+      | Identifier | Path        | Node Type             | Dimension Values      |
+      | sites      | /sites      | unstructured          |                       |
+      | site       | /sites/site | Some.Package:Homepage | {"language": ["mul"]} |
+      | site       | /sites/site | Some.Package:Homepage | {"language": ["de"]}  |
     And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                         |
@@ -63,13 +64,13 @@ Feature: Migrating nodes with content dimensions
 
   Scenario: Node variant with different parent node (moved)
     When I have the following node data rows:
-      | Identifier | Path             | Dimension Values     |
-      | sites      | /sites           |                      |
-      | site       | /sites/site      | {"language": ["de"]} |
-      | a          | /sites/site/a    | {"language": ["de"]} |
-      | a1         | /sites/site/a/a1 | {"language": ["de"]} |
-      | b          | /sites/site/b    | {"language": ["de"]} |
-      | a1         | /sites/site/b/a1 | {"language": ["ch"]} |
+      | Identifier | Path             | Node Type             | Dimension Values     |
+      | sites      | /sites           | unstructured          |                      |
+      | site       | /sites/site      | Some.Package:Homepage | {"language": ["de"]} |
+      | a          | /sites/site/a    | Some.Package:Thing    | {"language": ["de"]} |
+      | a1         | /sites/site/a/a1 | Some.Package:Thing    | {"language": ["de"]} |
+      | b          | /sites/site/b    | Some.Package:Thing    | {"language": ["de"]} |
+      | a1         | /sites/site/b/a1 | Some.Package:Thing    | {"language": ["ch"]} |
     And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                                                               |
@@ -84,14 +85,14 @@ Feature: Migrating nodes with content dimensions
 
   Scenario: Node variant with different grand parent node (ancestor node was moved) - Note: There is only NodeAggregateWasMoved event for "a" and not for "a1"
     When I have the following node data rows:
-      | Identifier | Path               | Dimension Values     |
-      | sites      | /sites             |                      |
-      | site       | /sites/site        | {"language": ["de"]} |
-      | a          | /sites/site/a      | {"language": ["de"]} |
-      | a1         | /sites/site/a/a1   | {"language": ["de"]} |
-      | b          | /sites/site/b      | {"language": ["de"]} |
-      | a          | /sites/site/b/a    | {"language": ["ch"]} |
-      | a1         | /sites/site/b/a/a1 | {"language": ["ch"]} |
+      | Identifier | Path               | Node Type             | Dimension Values     |
+      | sites      | /sites             | unstructured          |                      |
+      | site       | /sites/site        | Some.Package:Homepage | {"language": ["de"]} |
+      | a          | /sites/site/a      | Some.Package:Thing    | {"language": ["de"]} |
+      | a1         | /sites/site/a/a1   | Some.Package:Thing    | {"language": ["de"]} |
+      | b          | /sites/site/b      | Some.Package:Thing    | {"language": ["de"]} |
+      | a          | /sites/site/b/a    | Some.Package:Thing    | {"language": ["ch"]} |
+      | a1         | /sites/site/b/a/a1 | Some.Package:Thing    | {"language": ["ch"]} |
     And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                                                                 |

@@ -38,16 +38,16 @@ class YamlConfiguration extends Configuration
     /**
      * Loads a list of available versions into an array.
      *
-     * @return array
+     * @return void
      * @throws MigrationException
      */
     protected function registerAvailableVersions()
     {
         $this->availableVersions = [];
         foreach ($this->packageManager->getAvailablePackages() as $package) {
-            $this->registerVersionInDirectory($package, 'TYPO3CR');
             $this->registerVersionInDirectory($package, 'ContentRepository');
         }
+        assert(is_array($this->availableVersions));
         ksort($this->availableVersions);
     }
 
@@ -59,6 +59,7 @@ class YamlConfiguration extends Configuration
      */
     protected function registerVersionInDirectory(PackageInterface $package, string $directoryName)
     {
+        assert(is_array($this->availableVersions));
         $possibleMigrationsPath = Files::concatenatePaths([$package->getPackagePath(), 'Migrations', $directoryName]);
         if (!is_dir($possibleMigrationsPath)) {
             return;
@@ -93,7 +94,7 @@ class YamlConfiguration extends Configuration
      * Loads a specific version into an array.
      *
      * @param string $version
-     * @return array
+     * @return array<string, mixed>
      * @throws MigrationException
      */
     protected function loadConfiguration($version)
@@ -102,6 +103,7 @@ class YamlConfiguration extends Configuration
             throw new MigrationException('The requested YamlConfiguration was not available.', 1345822283);
         }
 
+        assert(is_array($this->availableVersions));
         $configuration = $this->yamlSourceImporter->load(substr($this->availableVersions[$version]['filePathAndName'], 0, -5));
         return $configuration;
     }

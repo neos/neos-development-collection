@@ -16,25 +16,18 @@ namespace Neos\Neos\Controller\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -44,6 +37,8 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Ui\Domain\Service\NodePropertyConverterService;
 use Neos\Neos\View\Service\NodeJsonView;
@@ -114,7 +109,7 @@ class NodesController extends ActionController
         array|string $nodeIds = [],
         string $workspaceName = 'live',
         array $dimensions = [],
-        array $nodeTypes = ['Neos.Neos:Document'],
+        array $nodeTypes = [NodeTypeNameFactory::NAME_DOCUMENT],
         string $contextNode = null,
         array|string $nodeIdentifiers = []
     ): void {
@@ -169,7 +164,7 @@ class NodesController extends ActionController
             $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
                 $entryNode->nodeAggregateId,
                 FindDescendantNodesFilter::create(
-                    nodeTypeConstraints: NodeTypeConstraints::create(
+                    nodeTypes: NodeTypeCriteria::create(
                         NodeTypeNames::fromStringArray($nodeTypes),
                         NodeTypeNames::createEmpty()
                     ),
@@ -426,7 +421,7 @@ class NodesController extends ActionController
                     . ' not found. This should never happen.', 1660905374);
             }
             $contentRepository->handle(
-                new CreateNodeVariant(
+                CreateNodeVariant::create(
                     $contentStreamId,
                     $identifier,
                     $sourceNode->originDimensionSpacePoint,
@@ -435,7 +430,7 @@ class NodesController extends ActionController
             )->block();
 
             if ($copyContent === true) {
-                $contentNodeConstraint = NodeTypeConstraints::fromFilterString('!Neos.Neos:Document');
+                $contentNodeConstraint = NodeTypeCriteria::fromFilterString('!' . NodeTypeNameFactory::NAME_DOCUMENT);
                 $this->createNodeVariantsForChildNodes(
                     $contentStreamId,
                     $identifier,
@@ -452,7 +447,7 @@ class NodesController extends ActionController
     private function createNodeVariantsForChildNodes(
         ContentStreamId $contentStreamId,
         NodeAggregateId $parentNodeId,
-        NodeTypeConstraints $constraints,
+        NodeTypeCriteria $constraints,
         ContentSubgraphInterface $sourceSubgraph,
         ContentSubgraphInterface $targetSubgraph,
         DimensionSpacePoint $targetDimensionSpacePoint,
@@ -461,14 +456,14 @@ class NodesController extends ActionController
         foreach (
             $sourceSubgraph->findChildNodes(
                 $parentNodeId,
-                FindChildNodesFilter::create(nodeTypeConstraints: $constraints)
+                FindChildNodesFilter::create(nodeTypes: $constraints)
             ) as $childNode
         ) {
             if ($childNode->classification->isRegular()) {
                 // Tethered nodes' variants are automatically created when the parent is translated.
                 // TODO: DOES THIS MAKE SENSE?
                 $contentRepository->handle(
-                    new CreateNodeVariant(
+                    CreateNodeVariant::create(
                         $contentStreamId,
                         $childNode->nodeAggregateId,
                         $childNode->originDimensionSpacePoint,

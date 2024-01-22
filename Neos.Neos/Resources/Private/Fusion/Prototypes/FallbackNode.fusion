@@ -1,4 +1,15 @@
-prototype(Neos.Neos:FallbackNode) < prototype(Neos.Neos:Content) {
-  templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/FallbackNode.html'
-  @if.onlyRenderInBackend = ${Neos.Node.inBackend(node)}
+prototype(Neos.Neos:FallbackNode) < prototype(Neos.Neos:ContentComponent) {
+  @if.onlyRenderInBackend = ${renderingMode.isEdit || renderingMode.isPreview}
+
+  renderer = afx`
+    <div>
+      <div class="neos-message-header">
+        <div class="neos-message-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <h1>{Translation.id('error.invalidNodeType.title').package('Neos.Neos').locale(Neos.Backend.interfaceLanguage()).translate()}</h1>
+      </div>
+      <div class="neos-message-wrapper">
+        <p class="neos-message-content">{Translation.id('error.invalidNodeType.description').package('Neos.Neos').locale(Neos.Backend.interfaceLanguage()).translate()}</p>
+      </div>
+    </div>
+  `
 }

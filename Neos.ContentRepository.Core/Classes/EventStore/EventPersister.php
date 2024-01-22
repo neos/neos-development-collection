@@ -58,7 +58,7 @@ final class EventPersister
         // Further details can be found in the docs of PendingProjections.
         $pendingProjections = PendingProjections::fromProjectionsAndEventsAndSequenceNumber(
             $this->projections,
-            $normalizedEvents,
+            $eventsToPublish->events,
             $commitResult->highestCommittedSequenceNumber
         );
 

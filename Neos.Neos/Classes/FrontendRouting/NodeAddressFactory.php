@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @api
@@ -36,23 +36,35 @@ class NodeAddressFactory
         return new self($contentRepository);
     }
 
-    public function createFromNode(Node $node): NodeAddress
-    {
+    public function createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
+        ContentStreamId $contentStreamId,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateId $nodeAggregateId
+    ): NodeAddress {
         $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $node->subgraphIdentity->contentStreamId
+            $contentStreamId
         );
         if ($workspace === null) {
             throw new \RuntimeException(
-                'Cannot build a NodeAddress for traversable node of aggregate ' . $node->nodeAggregateId->value
-                . ', because the content stream ' . $node->subgraphIdentity->contentStreamId->value
+                'Cannot build a NodeAddress for traversable node of aggregate ' . $nodeAggregateId->value
+                . ', because the content stream ' . $contentStreamId->value
                 . ' is not assigned to a workspace.'
             );
         }
         return new NodeAddress(
+            $contentStreamId,
+            $dimensionSpacePoint,
+            $nodeAggregateId,
+            $workspace->workspaceName,
+        );
+    }
+
+    public function createFromNode(Node $node): NodeAddress
+    {
+        return $this->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
             $node->subgraphIdentity->contentStreamId,
             $node->subgraphIdentity->dimensionSpacePoint,
             $node->nodeAggregateId,
-            $workspace->workspaceName
         );
     }
 

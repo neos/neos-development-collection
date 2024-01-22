@@ -1,5 +1,0 @@
-# @deprecated since Neos 4.2 in favor of Neos.Fusion:DataStructure
-prototype(Neos.Fusion:RawArray) {
-  @class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
-  @sortProperties = true
-}

@@ -52,9 +52,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
 
         foreach ($unusedContentStreams as $contentStream) {
             $this->lastCommandResult = $this->contentRepository->handle(
-                new RemoveContentStream(
-                    $contentStream,
-                )
+                RemoveContentStream::create($contentStream)
             );
         }
 
