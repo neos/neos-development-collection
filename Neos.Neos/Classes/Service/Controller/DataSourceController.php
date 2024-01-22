@@ -61,7 +61,6 @@ class DataSourceController extends AbstractServiceController
 
         $arguments = $this->request->getArguments();
         unset($arguments['dataSourceIdentifier']);
-        unset($arguments['node']);
 
         $values = $dataSource->getData($node, $arguments);
 
