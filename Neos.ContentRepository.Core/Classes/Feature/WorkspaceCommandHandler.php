@@ -317,7 +317,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $copiedEvent = $event->createCopyForContentStream($baseContentStreamId);
                 // We need to add the event metadata here for rebasing in nested workspace situations
                 // (and for exporting)
-                $events[] = $eventEnvelope->event->metadata !== null ? DecoratedEvent::withMetadata($copiedEvent, $eventEnvelope->event->metadata) : $copiedEvent;
+                $events[] = DecoratedEvent::create($copiedEvent, metadata: $eventEnvelope->event->metadata, causationId: $eventEnvelope->event->causationId, correlationId: $eventEnvelope->event->correlationId);
             }
         }
 

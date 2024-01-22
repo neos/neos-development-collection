@@ -12,10 +12,12 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageInterface;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageStatus;
 use Neos\EventStore\Model\Event\SequenceNumber;
 
 /**
@@ -44,18 +46,7 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
 
     public function setUp(): void
     {
-        $schemaManager = $this->connection->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1652269057);
-        }
-        $schema = new Schema();
-        $table = $schema->createTable($this->tableName);
-        $table->addColumn('subscriberid', Types::STRING, ['length' => 255]);
-        $table->addColumn('appliedsequencenumber', Types::INTEGER);
-        $table->setPrimaryKey(['subscriberid']);
-
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-        foreach ($schemaDiff->toSaveSql($this->platform) as $statement) {
+        foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->connection->executeStatement($statement);
         }
         try {
@@ -63,6 +54,32 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
         } catch (UniqueConstraintViolationException $e) {
             // table and row already exists, ignore
         }
+    }
+
+    public function status(): CheckpointStorageStatus
+    {
+        try {
+            $this->connection->connect();
+        } catch (\Throwable $e) {
+            return CheckpointStorageStatus::error(sprintf('Failed to connect to database for subscriber "%s": %s', $this->subscriberId, $e->getMessage()));
+        }
+        try {
+            $requiredSqlStatements = $this->determineRequiredSqlStatements();
+        } catch (\Throwable $e) {
+            return CheckpointStorageStatus::error(sprintf('Failed to compare database schema for subscriber "%s": %s', $this->subscriberId, $e->getMessage()));
+        }
+        if ($requiredSqlStatements !== []) {
+            return CheckpointStorageStatus::setupRequired(sprintf('The following SQL statement%s required for subscriber "%s": %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', $this->subscriberId, implode(chr(10), $requiredSqlStatements)));
+        }
+        try {
+            $appliedSequenceNumber = $this->connection->fetchOne('SELECT appliedsequencenumber FROM ' . $this->tableName . ' WHERE subscriberid = :subscriberId', ['subscriberId' => $this->subscriberId]);
+        } catch (\Throwable $e) {
+            return CheckpointStorageStatus::error(sprintf('Failed to determine initial applied sequence number for subscriber "%s": %s', $this->subscriberId, $e->getMessage()));
+        }
+        if ($appliedSequenceNumber === false) {
+            return CheckpointStorageStatus::setupRequired(sprintf('Initial initial applied sequence number not set for subscriber "%s"', $this->subscriberId));
+        }
+        return CheckpointStorageStatus::ok();
     }
 
     public function acquireLock(): SequenceNumber
@@ -120,5 +137,28 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
             throw new \RuntimeException(sprintf('Failed to fetch highest applied sequence number for subscriber "%s". Please run %s::setUp()', $this->subscriberId, $this::class), 1652279427);
         }
         return SequenceNumber::fromInteger((int)$highestAppliedSequenceNumber);
+    }
+
+    // --------------
+
+    /**
+     * @return array<string>
+     */
+    private function determineRequiredSqlStatements(): array
+    {
+        $schemaManager = $this->connection->getSchemaManager();
+        if (!$schemaManager instanceof AbstractSchemaManager) {
+            throw new \RuntimeException('Failed to retrieve Schema Manager', 1705681161);
+        }
+        $tableSchema = new Table(
+            $this->tableName,
+            [
+                (new Column('subscriberid', Type::getType(Types::STRING)))->setLength(255),
+                (new Column('appliedsequencenumber', Type::getType(Types::INTEGER)))
+            ]
+        );
+        $tableSchema->setPrimaryKey(['subscriberid']);
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$tableSchema]);
+        return DbalSchemaDiff::determineRequiredSqlStatements($this->connection, $schema);
     }
 }
