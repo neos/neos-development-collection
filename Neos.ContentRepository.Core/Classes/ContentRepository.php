@@ -119,7 +119,7 @@ final class ContentRepository
                     $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
                     $metadata['initiatingUserId'] ??= $initiatingUserId;
                     $metadata['initiatingTimestamp'] ??= $initiatingTimestamp;
-                    return DecoratedEvent::withMetadata($event, EventMetadata::fromArray($metadata));
+                    return DecoratedEvent::create($event, metadata: EventMetadata::fromArray($metadata));
                 })
             ),
             $eventsToPublish->expectedVersion,
