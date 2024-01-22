@@ -33,6 +33,11 @@ interface CheckpointStorageInterface
     public function setUp(): void;
 
     /**
+     * Retrieve the status of this checkpoint storage instance
+     */
+    public function status(): CheckpointStorageStatus;
+
+    /**
      * Obtain an exclusive lock (to prevent multiple instances from being executed simultaneously)
      * and return the highest {@see SequenceNumber} that was processed by this checkpoint storage.
      *

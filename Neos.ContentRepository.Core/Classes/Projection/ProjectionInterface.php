@@ -25,6 +25,11 @@ interface ProjectionInterface
      */
     public function setUp(): void;
 
+    /**
+     * Determines the status of the projection (not to confuse with {@see getState()})
+     */
+    public function status(): ProjectionStatus;
+
     public function canHandle(EventInterface $event): bool;
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void;

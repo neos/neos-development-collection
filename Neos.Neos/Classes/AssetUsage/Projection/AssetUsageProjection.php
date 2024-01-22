@@ -21,7 +21,9 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -30,6 +32,7 @@ use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
@@ -233,6 +236,26 @@ final class AssetUsageProjection implements ProjectionInterface
     {
         $this->repository->setUp();
         $this->checkpointStorage->setUp();
+    }
+
+    public function status(): ProjectionStatus
+    {
+        $checkpointStorageStatus = $this->checkpointStorage->status();
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
+            return ProjectionStatus::error($checkpointStorageStatus->details);
+        }
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
+            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
+        }
+        try {
+            $this->repository->findUsages(AssetUsageFilter::create());
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error($e->getMessage());
+        }
+        if ($this->repository->isSetupRequired()) {
+            return ProjectionStatus::setupRequired();
+        }
+        return ProjectionStatus::ok();
     }
 
     public function canHandle(EventInterface $event): bool
