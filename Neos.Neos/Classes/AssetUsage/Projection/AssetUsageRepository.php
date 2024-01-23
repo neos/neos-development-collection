@@ -73,7 +73,7 @@ final class AssetUsageRepository
             ->addIndex(['originalassetid'])
             ->addIndex(['contentstreamid'])
             ->addIndex(['nodeaggregateid'])
-            ->addIndex(['origindimensionspacepointhash'], options: ['lengths' => [768]]);
+            ->addIndex(['origindimensionspacepointhash']);
 
         return DbalSchemaFactory::createSchemaWithTables($schemaManager, [$table]);
     }
