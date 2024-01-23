@@ -63,7 +63,7 @@ final class AssetUsageRepository
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotNull(true),
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotNull(true),
             DbalSchemaFactory::columnForDimensionSpacePoint('origindimensionspacepoint')->setNotNull(false),
-            DbalSchemaFactory::columnForDimensionSpacePoint('origindimensionspacepointhash')->setNotNull(true),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotNull(true),
             (new Column('propertyname', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setDefault('')
         ]);
 
