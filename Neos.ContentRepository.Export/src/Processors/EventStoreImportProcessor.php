@@ -102,10 +102,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
                     Event\EventMetadata::fromArray($event->metadata)
                 )
             );
-            $domainEvent = DecoratedEvent::withEventId($domainEvent, EventId::fromString($event->identifier));
-            if ($event->metadata !== null && $event->metadata !== []) {
-                $domainEvent = DecoratedEvent::withMetadata($domainEvent, EventMetadata::fromArray($event->metadata));
-            }
+            $domainEvent = DecoratedEvent::create($domainEvent, eventId: EventId::fromString($event->identifier), metadata: $event->metadata);
             $domainEvents[] = $this->normalizeEvent($domainEvent);
         }
 
@@ -159,19 +156,18 @@ final class EventStoreImportProcessor implements ProcessorInterface
      */
     private function normalizeEvent(EventInterface|DecoratedEvent $event): Event
     {
-        if ($event instanceof DecoratedEvent) {
-            $eventId = $event->eventId;
-            $eventMetadata = $event->eventMetadata;
-            $event = $event->innerEvent;
-        } else {
-            $eventId = EventId::create();
-            $eventMetadata = EventMetadata::none();
-        }
+        $eventId = $event instanceof DecoratedEvent && $event->eventId !== null ? $event->eventId : EventId::create();
+        $eventMetadata = $event instanceof DecoratedEvent ? $event->eventMetadata : null;
+        $causationId = $event instanceof DecoratedEvent ? $event->causationId : null;
+        $correlationId = $event instanceof DecoratedEvent ? $event->correlationId : null;
+        $event = $event instanceof DecoratedEvent ? $event->innerEvent : $event;
         return new Event(
             $eventId,
             $this->eventNormalizer->getEventType($event),
             $this->eventNormalizer->getEventData($event),
             $eventMetadata,
+            $causationId,
+            $correlationId,
         );
     }
 
