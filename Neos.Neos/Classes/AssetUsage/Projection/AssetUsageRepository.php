@@ -46,6 +46,9 @@ final class AssetUsageRepository
         }
     }
 
+    /**
+     * @return false|non-empty-string false if everything is okay, otherwise the details string, why a setup is required
+     */
     public function isSetupRequired(): false|string
     {
         $requiredSqlStatements = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $this->databaseSchema());

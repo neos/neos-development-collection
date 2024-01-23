@@ -249,7 +249,7 @@ final class AssetUsageProjection implements ProjectionInterface
         }
         try {
             $falseOrDetailsString = $this->repository->isSetupRequired();
-            if ($falseOrDetailsString !== false) {
+            if (is_string($falseOrDetailsString)) {
                 return ProjectionStatus::setupRequired($falseOrDetailsString);
             }
         } catch (\Throwable $e) {
