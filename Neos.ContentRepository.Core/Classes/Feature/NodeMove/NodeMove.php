@@ -40,7 +40,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoes
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -64,8 +63,6 @@ trait NodeMove
     ): NodeAggregate;
 
     /**
-     * @param MoveNodeAggregate $command
-     * @return EventsToPublish
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
@@ -87,10 +84,10 @@ trait NodeMove
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->dimensionSpacePoint);
 
-        $affectedDimensionSpacePoints = $this->resolveAffectedDimensionSpacePointSet(
+        $affectedDimensionSpacePoints = $command->relationDistributionStrategy->resolveAffectedDimensionSpacePoints(
+            $command->dimensionSpacePoint,
             $nodeAggregate,
-            $command->relationDistributionStrategy,
-            $command->dimensionSpacePoint
+            $this->getInterDimensionalVariationGraph(),
         );
 
         if ($command->newParentNodeAggregateId) {
@@ -135,6 +132,22 @@ trait NodeMove
                 $command->newPrecedingSiblingNodeAggregateId,
                 $contentRepository
             );
+            if (!$command->newParentNodeAggregateId) {
+                foreach ($affectedDimensionSpacePoints as $affectedDimensionSpacePoint) {
+                    $newParentNodeAggregate = $contentRepository->getContentGraph()->findParentNodeAggregateByChildDimensionSpacePoint(
+                        $command->contentStreamId,
+                        $command->newPrecedingSiblingNodeAggregateId,
+                        $affectedDimensionSpacePoint
+                    );
+                    $this->requireConstraintsImposedByAncestorsAreMet(
+                        $command->contentStreamId,
+                        $this->requireNodeType($nodeAggregate->nodeTypeName),
+                        $nodeAggregate->nodeName,
+                        [$newParentNodeAggregate->nodeAggregateId],
+                        $contentRepository
+                    );
+                }
+            }
         }
         if ($command->newSucceedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
@@ -142,6 +155,22 @@ trait NodeMove
                 $command->newSucceedingSiblingNodeAggregateId,
                 $contentRepository
             );
+            if (!$command->newParentNodeAggregateId) {
+                foreach ($affectedDimensionSpacePoints as $affectedDimensionSpacePoint) {
+                    $newParentNodeAggregate = $contentRepository->getContentGraph()->findParentNodeAggregateByChildDimensionSpacePoint(
+                        $command->contentStreamId,
+                        $command->newSucceedingSiblingNodeAggregateId,
+                        $affectedDimensionSpacePoint
+                    );
+                    $this->requireConstraintsImposedByAncestorsAreMet(
+                        $command->contentStreamId,
+                        $this->requireNodeType($nodeAggregate->nodeTypeName),
+                        $nodeAggregate->nodeName,
+                        [$newParentNodeAggregate->nodeAggregateId],
+                        $contentRepository
+                    );
+                }
+            }
         }
 
         /** @var OriginNodeMoveMapping[] $originNodeMoveMappings */
@@ -219,22 +248,6 @@ trait NodeMove
                 $parentNode->originDimensionSpacePoint
             )
         );
-    }
-
-    private function resolveAffectedDimensionSpacePointSet(
-        NodeAggregate $nodeAggregate,
-        Dto\RelationDistributionStrategy $relationDistributionStrategy,
-        DimensionSpace\DimensionSpacePoint $referenceDimensionSpacePoint
-    ): DimensionSpacePointSet {
-        return match ($relationDistributionStrategy) {
-            Dto\RelationDistributionStrategy::STRATEGY_SCATTER =>
-            new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
-            RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS =>
-            $nodeAggregate->coveredDimensionSpacePoints->getIntersection(
-                $this->getInterDimensionalVariationGraph()->getSpecializationSet($referenceDimensionSpacePoint)
-            ),
-            default => $nodeAggregate->coveredDimensionSpacePoints,
-        };
     }
 
     private function findSibling(

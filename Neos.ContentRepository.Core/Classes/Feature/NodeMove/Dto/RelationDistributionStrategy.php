@@ -14,6 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeMove\Dto;
 
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+
 /**
  * The relation distribution strategy for node aggregates as defined in the NodeType declaration
  * Used for building relations to other node aggregates
@@ -39,6 +44,20 @@ enum RelationDistributionStrategy: string implements \JsonSerializable
         return !is_null($serialization)
             ? self::from($serialization)
             : self::STRATEGY_GATHER_ALL;
+    }
+
+    public function resolveAffectedDimensionSpacePoints(
+        DimensionSpacePoint $referenceDimensionSpacePoint,
+        NodeAggregate $nodeAggregate,
+        InterDimensionalVariationGraph $variationGraph
+    ): DimensionSpacePointSet {
+        return match ($this) {
+            self::STRATEGY_SCATTER => new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
+            self::STRATEGY_GATHER_SPECIALIZATIONS => $nodeAggregate->coveredDimensionSpacePoints->getIntersection(
+                $variationGraph->getSpecializationSet($referenceDimensionSpacePoint)
+            ),
+            default => $nodeAggregate->coveredDimensionSpacePoints,
+        };
     }
 
     public function jsonSerialize(): string
