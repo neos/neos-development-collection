@@ -13,7 +13,6 @@ namespace Neos\Media\Domain\Service;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -22,22 +21,26 @@ use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
+use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Model\AdjustmentCapableInterface;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
+use Neos\Media\Domain\Model\Dto\AssetResourceReplaced;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ImageVariant;
+use Neos\Media\Domain\Model\PresetVariantInterface;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
+use Neos\Media\Domain\Model\VariantSupportInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\AssetVariantGeneratorException;
 use Neos\Media\Exception\ThumbnailServiceException;
-use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
 use Psr\Log\LoggerInterface;
@@ -287,71 +290,86 @@ class AssetService
             $asset->getResource()->setMediaType($resourceMediaType);
         }
 
-        $uriMapping = [];
-        $redirectHandlerEnabled = isset($options['generateRedirects']) && (boolean)$options['generateRedirects'] === true && $this->packageManager->isPackageAvailable('Neos.RedirectHandler');
-        if ($redirectHandlerEnabled) {
-            $originalAssetResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalAssetResource));
-            $newAssetResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($asset->getResource()));
-            $uriMapping[$originalAssetResourceUri->getPath()] = $newAssetResourceUri->getPath();
-        }
+        $replacedResources = [];
 
-        if (method_exists($asset, 'getVariants')) {
+        $replacedResources[] = new AssetResourceReplaced($asset, $originalAssetResource, $resource);
+
+        if ($asset instanceof VariantSupportInterface) {
             $variants = $asset->getVariants();
             /** @var AssetVariantInterface $variant */
             foreach ($variants as $variant) {
+                $newVariant = null;
                 $originalVariantResource = $variant->getResource();
-                $presetIdentifier = $variant->getPresetIdentifier();
-                $variantName = $variant->getPresetVariantName();
-                if (isset($presetIdentifier, $variantName)) {
-                    try {
-                        $variant = $this->assetVariantGenerator->recreateVariant($asset, $presetIdentifier, $variantName);
-                        if ($variant === null) {
-                            $this->logger->debug(
-                                sprintf('No variant returned when recreating asset variant %s::%s for %s', $presetIdentifier, $variantName, $asset->getTitle()),
-                                LogEnvironment::fromMethodName(__METHOD__)
-                            );
-                            continue;
-                        }
-                    } catch (AssetVariantGeneratorException $exception) {
-                        $this->logger->error(
-                            sprintf('Error when recreating asset variant: %s', $exception->getMessage()),
-                            LogEnvironment::fromMethodName(__METHOD__)
-                        );
-                        continue;
-                    }
-                } else {
-                    $variant->refresh();
-                    foreach ($variant->getAdjustments() as $adjustment) {
-                        if (method_exists($adjustment, 'refit') && $this->imageService->getImageSize($originalAssetResource) !== $this->imageService->getImageSize($resource)) {
-                            if ($asset instanceof ImageInterface && $asset->getWidth() !== null && $asset->getHeight() !== null) {
-                                $adjustment->refit($asset);
-                            }
-                        }
-                    }
-                    $this->getRepository($variant)->update($variant);
+                if ($variant instanceof PresetVariantInterface && !empty($variant->getPresetIdentifier()) && !empty($variant->getPresetVariantName())) {
+                    $newVariant = $this->refreshPresetVariant($asset, $variant);
                 }
 
-                if ($redirectHandlerEnabled) {
-                    $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
-                    $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
-                    $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
+                if (
+                    ($newVariant === null && $variant instanceof AdjustmentCapableInterface)
+                    && $this->imageService->getImageSize($originalAssetResource) !== $this->imageService->getImageSize($resource)
+                ) {
+                    $newVariant = $this->refitAdjustmentsForVariant($asset, $variant);
                 }
+
+                $replacedResources[] = new AssetResourceReplaced($newVariant, $originalVariantResource, $newVariant->getResource());
             }
         }
 
-        if ($redirectHandlerEnabled) {
-            /** @var RedirectStorageInterface $redirectStorage */
-            $redirectStorage = $this->objectManager->get(RedirectStorageInterface::class);
-            foreach ($uriMapping as $originalUri => $newUri) {
-                $existingRedirect = $redirectStorage->getOneBySourceUriPathAndHost($originalUri);
-                if ($existingRedirect === null && $originalUri !== $newUri) {
-                    $redirectStorage->addRedirect($originalUri, $newUri, 301);
+        try {
+            $assetResourceReplacementFollowUp = $this->objectManager->get(AssetResourceReplacementFollowUpInterface::class);
+            if ($assetResourceReplacementFollowUp !== null) {
+                foreach ($replacedResources as $assetResourceReplaced) {
+                    $assetResourceReplacementFollowUp->handle($assetResourceReplaced);
                 }
             }
-        }
+        } catch (UnknownObjectException $exception) {}
 
         $this->getRepository($asset)->update($asset);
         $this->emitAssetResourceReplaced($asset);
+    }
+
+    protected function refreshPresetVariant(AssetInterface $asset, PresetVariantInterface $variant): ?AssetVariantInterface
+    {
+        $presetIdentifier = $variant->getPresetIdentifier();
+        $variantName = $variant->getPresetVariantName();
+
+        try {
+            $variant = $this->assetVariantGenerator->recreateVariant($asset, $presetIdentifier, $variantName);
+        } catch (AssetVariantGeneratorException $exception) {
+            $this->logger->error(
+                sprintf('Error when recreating asset variant: %s', $exception->getMessage()),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
+            return null;
+        }
+
+        if ($variant === null) {
+            $this->logger->debug(
+                sprintf('No variant returned when recreating asset variant %s::%s for %s', $presetIdentifier, $variantName, $asset->getTitle()),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
+
+            return null;
+        }
+
+        return $variant;
+    }
+
+    protected function refitAdjustmentsForVariant(AssetInterface $asset, AssetInterface $variant): AssetInterface
+    {
+        $variant->refresh();
+        if (!($asset instanceof ImageInterface) || !($variant instanceof AdjustmentCapableInterface) || $asset->getWidth() < 1 || $asset->getHeight() < 1) {
+            $this->getRepository($variant)->update($variant);
+            return $variant;
+        }
+
+        foreach ($variant->getAdjustments() as $adjustment) {
+            if (method_exists($adjustment, 'refit')) {
+                $adjustment->refit($asset);
+            }
+        }
+        $this->getRepository($variant)->update($variant);
+        return $variant;
     }
 
     /**

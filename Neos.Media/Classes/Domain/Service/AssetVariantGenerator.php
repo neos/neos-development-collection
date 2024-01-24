@@ -147,7 +147,7 @@ class AssetVariantGenerator
      * @param AssetInterface $asset
      * @param string $presetIdentifier
      * @param string $variantIdentifier
-     * @return AssetVariantInterface The created variant (if any)
+     * @return AssetVariantInterface|null The created variant (if any)
      * @throws AssetVariantGeneratorException
      */
     public function recreateVariant(AssetInterface $asset, string $presetIdentifier, string $variantIdentifier): ?AssetVariantInterface
