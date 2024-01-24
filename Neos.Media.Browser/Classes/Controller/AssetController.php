@@ -12,7 +12,7 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
-use Doctrine\Common\Persistence\Proxy as DoctrineProxy;
+use Doctrine\Persistence\Proxy as DoctrineProxy;
 use Doctrine\ORM\EntityNotFoundException;
 use enshrined\svgSanitize\Sanitizer;
 use Neos\Error\Messages\Error;
