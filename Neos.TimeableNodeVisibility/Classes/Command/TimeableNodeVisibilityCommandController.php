@@ -9,7 +9,6 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\TimeableNodeVisibility\Service\TimeableNodeVisibilityService;
 use Neos\TimeableNodeVisibility\Domain\HandlingResult;
 
-#[Flow\Scope('singleton')]
 class TimeableNodeVisibilityCommandController extends CommandController
 {
     #[Flow\Inject]
