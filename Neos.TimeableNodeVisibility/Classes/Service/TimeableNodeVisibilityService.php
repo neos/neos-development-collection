@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\OrCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\TimeableNodeVisibility\Domain\HandlingResult;
 use Neos\TimeableNodeVisibility\Domain\HandlingResultSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -52,7 +51,8 @@ class TimeableNodeVisibilityService
         $handledNodeResults = new HandlingResultSet();
 
         foreach ($nodes as $node) {
-            if ($this->needsEnabling($node, $now) && $this->isHidden($node, $nodeHiddenStateFinder)) {
+            $nodeIsHidden = $this->isHidden($node, $nodeHiddenStateFinder);
+            if ($this->needsEnabling($node, $now) && $nodeIsHidden) {
                 $contentRepository->handle(
                     EnableNodeAggregate::create(
                         $node->subgraphIdentity->contentStreamId,
@@ -66,7 +66,8 @@ class TimeableNodeVisibilityService
                 $handledNodeResults->add($result);
                 $this->logResult($result);
 
-            } elseif ($this->needsDisabling($node, $now) && !$this->isHidden($node, $nodeHiddenStateFinder)) {
+            }
+            if ($this->needsDisabling($node, $now) && !$nodeIsHidden) {
                 $contentRepository->handle(
                     DisableNodeAggregate::create(
                         $node->subgraphIdentity->contentStreamId,
