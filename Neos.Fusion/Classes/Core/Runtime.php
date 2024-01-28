@@ -334,7 +334,7 @@ class Runtime
             );
         }
 
-        $stream = match(true) {
+        $stream = match (true) {
             is_string($output),
             $output instanceof \Stringable => Utils::streamFor((string)$output),
             $output === null, $output === false => Utils::streamFor(''),

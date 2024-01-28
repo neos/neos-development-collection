@@ -15,7 +15,6 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 
-
 /**
  * A Fusion UriBuilder object
  *
