@@ -11,6 +11,10 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+
 
 /**
  * A Fusion UriBuilder object
@@ -150,8 +154,16 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        $controllerContext = $this->runtime->getControllerContext();
-        $uriBuilder = $controllerContext->getUriBuilder()->reset();
+        $uriBuilder = new UriBuilder();
+        $possibleRequest = $this->runtime->fusionGlobals->get('request');
+        if ($possibleRequest instanceof ActionRequest) {
+            $uriBuilder->setRequest($possibleRequest);
+        } else {
+            // legacy
+            $uriBuilder->setRequest(
+                ActionRequest::fromHttpRequest(ServerRequest::fromGlobals())
+            );
+        }
 
         $format = $this->getFormat();
         if ($format !== null) {
