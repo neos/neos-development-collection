@@ -57,11 +57,11 @@ class FusionView extends AbstractView
     /**
      * Renders the view
      *
-     * @return string|ResponseInterface The rendered view
+     * @return ResponseInterface The rendered view
      * @throws \Exception if no node is given
      * @api
      */
-    public function render(): string|ResponseInterface
+    public function render(): ResponseInterface
     {
         $currentNode = $this->getCurrentNode();
 
@@ -76,20 +76,15 @@ class FusionView extends AbstractView
 
         $this->setFallbackRuleFromDimension($currentNode->subgraphIdentity->dimensionSpacePoint);
 
-        $fusionRuntime->pushContextArray([
-            'node' => $currentNode,
-            'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
-            'site' => $currentSiteNode
-        ]);
         try {
-            $output = $fusionRuntime->render($this->fusionPath);
-            $output = $this->parsePotentialRawHttpResponse($output);
+            return $fusionRuntime->renderResponse($this->fusionPath, [
+                'node' => $currentNode,
+                'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
+                'site' => $currentSiteNode
+            ]);
         } catch (RuntimeException $exception) {
             throw $exception->getPrevious() ?: $exception;
         }
-        $fusionRuntime->popContext();
-
-        return $output;
     }
 
     /**
@@ -130,35 +125,6 @@ class FusionView extends AbstractView
      * @var Context
      */
     protected $securityContext;
-
-    /**
-     * @param string $output
-     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface
-     *                                  otherwise the original output.
-     */
-    protected function parsePotentialRawHttpResponse($output)
-    {
-        if ($this->isRawHttpResponse($output)) {
-            return Message::parseResponse($output);
-        }
-
-        return $output;
-    }
-
-    /**
-     * Checks if the mixed input looks like a raw HTTTP response.
-     *
-     * @param mixed $value
-     * @return bool
-     */
-    protected function isRawHttpResponse($value): bool
-    {
-        if (is_string($value) && strpos($value, 'HTTP/') === 0) {
-            return true;
-        }
-
-        return false;
-    }
 
     /**
      * Is it possible to render $node with $his->fusionPath?
