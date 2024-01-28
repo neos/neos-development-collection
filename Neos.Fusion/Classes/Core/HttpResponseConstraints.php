@@ -102,6 +102,7 @@ final class HttpResponseConstraints
             $response = $response->withStatus($this->partialResponse->getStatusCode());
         }
 
+        // reset internal state
         $this->partialResponse = new Response();
 
         return $response;
