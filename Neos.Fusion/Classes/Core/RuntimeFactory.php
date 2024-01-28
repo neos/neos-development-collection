@@ -45,19 +45,18 @@ class RuntimeFactory
      */
     public function create(array $fusionConfiguration, ControllerContext $controllerContext = null): Runtime
     {
-        if ($controllerContext === null) {
-            $controllerContext = self::createControllerContextFromEnvironment();
-        }
         $defaultContextVariables = EelUtility::getDefaultContextVariables(
             $this->defaultContextConfiguration ?? []
         );
         $runtime = new Runtime(
             FusionConfiguration::fromArray($fusionConfiguration),
             FusionGlobals::fromArray(
-                ['request' => $controllerContext->getRequest(), ...$defaultContextVariables]
+                [
+                    'request' => $controllerContext?->getRequest() ?? ActionRequest::fromHttpRequest(ServerRequest::fromGlobals()),
+                    ...$defaultContextVariables
+                ]
             )
         );
-        $runtime->setControllerContext($controllerContext);
         return $runtime;
     }
 
@@ -80,23 +79,6 @@ class RuntimeFactory
         return $this->createFromConfiguration(
             $this->fusionParser->parseFromSource($sourceCode),
             $fusionGlobals
-        );
-    }
-
-    private static function createControllerContextFromEnvironment(): ControllerContext
-    {
-        $httpRequest = ServerRequest::fromGlobals();
-
-        $request = ActionRequest::fromHttpRequest($httpRequest);
-
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
-
-        return new ControllerContext(
-            $request,
-            new ActionResponse(),
-            new Arguments([]),
-            $uriBuilder
         );
     }
 }
