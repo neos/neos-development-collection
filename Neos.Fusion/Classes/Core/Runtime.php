@@ -315,7 +315,10 @@ class Runtime
             $this->popContext();
         }
 
-        $legacyControllerContextResponseConstraints = HttpResponseConstraints::createFromActionResponse($this->controllerContext?->getResponse());
+        $legacyControllerContextResponseConstraints = new HttpResponseConstraints();
+        if ($this->controllerContext) {
+            $legacyControllerContextResponseConstraints->setAndMergeFromActionResponse($this->controllerContext->getResponse());
+        }
         $this->controllerContext = null;
 
         /**
