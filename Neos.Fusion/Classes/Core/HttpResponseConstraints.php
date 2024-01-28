@@ -20,14 +20,9 @@ final class HttpResponseConstraints
     /**
      * @deprecated
      */
-    public static function createFromActionResponse(?ActionResponse $actionResponse)
+    public function setAndMergeFromActionResponse(ActionResponse $actionResponse)
     {
-        $constraints = new self();
-        if (!$actionResponse) {
-            return $constraints;
-        }
-        $constraints->partialResponse = $actionResponse->buildHttpResponse();
-        return $constraints;
+        $this->partialResponse = $this->applyToResponse($actionResponse->buildHttpResponse());
     }
 
     /**
