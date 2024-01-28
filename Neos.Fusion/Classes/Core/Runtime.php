@@ -11,6 +11,10 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Message;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Utils;
+use Psr\Http\Message\ResponseInterface;
 use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
@@ -300,6 +304,39 @@ class Runtime
     public function getLastEvaluationStatus()
     {
         return $this->lastEvaluationStatus;
+    }
+
+    public function renderResponse(string $fusionPath, array $contextArray): ResponseInterface
+    {
+        foreach ($contextArray as $key => $_) {
+            if ($this->fusionGlobals->has($key)) {
+                throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1706452063);
+            }
+        }
+        $this->pushContextArray($contextArray);
+        try {
+            $output = $this->render($fusionPath);
+        } finally {
+            $this->popContext();
+        }
+
+        /**
+         * parse potential raw http response possibly rendered via "Neos.Fusion:Http.Message"
+         * {@see \Neos\Fusion\FusionObjects\HttpResponseImplementation}
+         */
+        $outputStringHasHttpPreamble = is_string($output) && str_starts_with($output, 'HTTP/');
+        if ($outputStringHasHttpPreamble) {
+            return Message::parseResponse($output);
+        }
+
+        $stream = match(true) {
+            is_string($output),
+            $output instanceof \Stringable => Utils::streamFor((string)$output),
+            $output === null, $output === false => Utils::streamFor(''),
+            default => throw new \RuntimeException(sprintf('Cannot render %s into http response body.', get_debug_type($output)), 1706454898)
+        };
+
+        return new Response(body: $stream);
     }
 
     /**
@@ -629,7 +666,7 @@ class Runtime
             $newContextArray ??= $this->currentContext;
             foreach ($fusionConfiguration['__meta']['context'] as $contextKey => $contextValue) {
                 if ($this->fusionGlobals->has($contextKey)) {
-                    throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $contextKey), 1694247627130);
+                    throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $contextKey), 1706452069);
                 }
                 $newContextArray[$contextKey] = $this->evaluate($fusionPath . '/__meta/context/' . $contextKey, $fusionObject, self::BEHAVIOR_EXCEPTION);
             }
