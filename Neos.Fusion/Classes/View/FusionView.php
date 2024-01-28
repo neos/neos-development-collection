@@ -194,9 +194,6 @@ class FusionView extends AbstractView
                 $this->parsedFusion,
                 $fusionGlobals
             );
-            if (isset($this->controllerContext)) {
-                $this->fusionRuntime->setControllerContext($this->controllerContext);
-            }
         }
         if (isset($this->options['debugMode'])) {
             $this->fusionRuntime->setDebugMode($this->options['debugMode']);

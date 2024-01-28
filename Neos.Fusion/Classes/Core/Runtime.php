@@ -117,7 +117,7 @@ class Runtime
     /**
      * @deprecated
      */
-    protected ControllerContext $controllerContext;
+    protected ?ControllerContext $controllerContext = null;
 
     /**
      * @var array
@@ -158,15 +158,6 @@ class Runtime
     }
 
     /**
-     * @deprecated {@see self::getControllerContext()}
-     * @internal
-     */
-    public function setControllerContext(ControllerContext $controllerContext): void
-    {
-        $this->controllerContext = $controllerContext;
-    }
-
-    /**
      * Returns the context which has been passed by the currently active MVC Controller
      *
      * DEPRECATED CONCEPT. We only implement this as backwards-compatible layer.
@@ -176,23 +167,10 @@ class Runtime
      */
     public function getControllerContext(): ControllerContext
     {
-        if (isset($this->controllerContext)) {
-            return $this->controllerContext;
+        if ($this->controllerContext === null) {
+            throw new Exception(sprintf('Legacy controller context in runtime is only available when fusion global "request" is a ActionRequest and during "renderResponse".'), 1706458355);
         }
-
-        if (!($request = $this->fusionGlobals->get('request')) instanceof ActionRequest) {
-            throw new Exception(sprintf('Expected Fusion variable "request" to be of type ActionRequest, got value of type "%s".', get_debug_type($request)), 1693558026485);
-        }
-
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
-
-        return $this->controllerContext = new ControllerContext(
-            $request,
-            new ActionResponse(),
-            new Arguments([]),
-            $uriBuilder
-        );
+        return $this->controllerContext;
     }
 
     /**
@@ -307,6 +285,20 @@ class Runtime
 
     public function renderResponse(string $fusionPath, array $contextArray): ResponseInterface
     {
+        // legacy controller context layer
+        $possibleRequest = $this->fusionGlobals->get('request');
+        if ($possibleRequest instanceof ActionRequest) {
+            $uriBuilder = new UriBuilder();
+            $uriBuilder->setRequest($possibleRequest);
+
+            $this->controllerContext = new ControllerContext(
+                $possibleRequest,
+                new ActionResponse(),
+                new Arguments([]),
+                $uriBuilder
+            );
+        }
+
         foreach ($contextArray as $key => $_) {
             if ($this->fusionGlobals->has($key)) {
                 throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1706452063);
@@ -319,6 +311,9 @@ class Runtime
             $this->popContext();
         }
 
+        $legacyControllerContextResponseConstraints = HttpResponseConstraints::createFromActionResponse($this->controllerContext?->getResponse());
+        $this->controllerContext = null;
+
         /**
          * parse potential raw http response possibly rendered via "Neos.Fusion:Http.Message"
          * {@see \Neos\Fusion\FusionObjects\HttpResponseImplementation}
@@ -326,7 +321,9 @@ class Runtime
         $outputStringHasHttpPreamble = is_string($output) && str_starts_with($output, 'HTTP/');
         if ($outputStringHasHttpPreamble) {
             return $this->unsafeHttpResponseConstrains->applyToResponse(
-                Message::parseResponse($output)
+                $legacyControllerContextResponseConstraints->applyToResponse(
+                    Message::parseResponse($output)
+                )
             );
         }
 
@@ -338,7 +335,9 @@ class Runtime
         };
 
         return $this->unsafeHttpResponseConstrains->applyToResponse(
-            new Response(body: $stream)
+            $legacyControllerContextResponseConstraints->applyToResponse(
+                new Response(body: $stream)
+            )
         );
     }
 

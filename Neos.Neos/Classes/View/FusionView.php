@@ -210,7 +210,6 @@ class FusionView extends AbstractView
                 $fusionConfiguration,
                 $fusionGlobals
             );
-            $this->fusionRuntime->setControllerContext($this->controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
