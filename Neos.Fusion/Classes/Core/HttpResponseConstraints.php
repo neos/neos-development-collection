@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\Fusion\Core;
 
 use GuzzleHttp\Psr7\Response;
+use Neos\Flow\Mvc\ActionResponse;
 use Psr\Http\Message\ResponseInterface;
 
 final class HttpResponseConstraints
@@ -14,6 +15,19 @@ final class HttpResponseConstraints
     public function __construct()
     {
         $this->partialResponse = new Response();
+    }
+
+    /**
+     * @deprecated
+     */
+    public static function createFromActionResponse(?ActionResponse $actionResponse)
+    {
+        $constraints = new self();
+        if (!$actionResponse) {
+            return $constraints;
+        }
+        $constraints->partialResponse = $actionResponse->buildHttpResponse();
+        return $constraints;
     }
 
     /**
