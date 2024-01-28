@@ -114,6 +114,8 @@ class Runtime
      */
     public readonly FusionGlobals $fusionGlobals;
 
+    public readonly HttpResponseConstraints $unsafeHttpResponseConstrains;
+
     /**
      * @var RuntimeConfiguration
      */
@@ -159,6 +161,7 @@ class Runtime
         );
         $this->runtimeContentCache = new RuntimeContentCache($this);
         $this->fusionGlobals = $fusionGlobals;
+        $this->unsafeHttpResponseConstrains = new HttpResponseConstraints();
     }
 
     /**
@@ -326,7 +329,9 @@ class Runtime
          */
         $outputStringHasHttpPreamble = is_string($output) && str_starts_with($output, 'HTTP/');
         if ($outputStringHasHttpPreamble) {
-            return Message::parseResponse($output);
+            return $this->unsafeHttpResponseConstrains->applyToResponse(
+                Message::parseResponse($output)
+            );
         }
 
         $stream = match(true) {
@@ -336,7 +341,9 @@ class Runtime
             default => throw new \RuntimeException(sprintf('Cannot render %s into http response body.', get_debug_type($output)), 1706454898)
         };
 
-        return new Response(body: $stream);
+        return $this->unsafeHttpResponseConstrains->applyToResponse(
+            new Response(body: $stream)
+        );
     }
 
     /**
