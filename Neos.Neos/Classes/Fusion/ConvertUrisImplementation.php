@@ -14,8 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
@@ -147,12 +149,23 @@ class ConvertUrisImplementation extends AbstractFusionObject
                         NodeAggregateId::fromString($matches[2])
                     );
                     $uriBuilder = new UriBuilder();
-                    $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
+                    $possibleRequest = $this->runtime->fusionGlobals->get('request');
+                    if ($possibleRequest instanceof ActionRequest) {
+                        $uriBuilder->setRequest($possibleRequest);
+                    } else {
+                        // unfortunately, the uri-builder always needs a request at hand and cannot build uris without
+                        // even, if the default param merging would not be required
+                        // this will improve with a reformed uri building:
+                        // https://github.com/neos/flow-development-collection/pull/2744
+                        $uriBuilder->setRequest(
+                            ActionRequest::fromHttpRequest(ServerRequest::fromGlobals())
+                        );
+                    }
                     $uriBuilder->setCreateAbsoluteUri($absolute);
                     try {
                         $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
                     } catch (NoMatchingRouteException) {
-                        $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri. Arguments: %s', $matches[0], json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
+                        $this->systemLogger->info(sprintf('Could not resolve "%s" to a live node uri. Arguments: %s', $matches[0], json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
                     }
                     $this->runtime->addCacheTag('node', $matches[2]);
                     break;
@@ -202,8 +215,12 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $setExternal = $this->fusionValue('setExternal');
         $externalLinkTarget = \trim((string)$this->fusionValue('externalLinkTarget'));
         $resourceLinkTarget = \trim((string)$this->fusionValue('resourceLinkTarget'));
-        $controllerContext = $this->runtime->getControllerContext();
-        $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
+        $possibleRequest = $this->runtime->fusionGlobals->get('request');
+        if ($possibleRequest instanceof ActionRequest) {
+            $host = $possibleRequest->getHttpRequest()->getUri()->getHost();
+        } else {
+            $host = null;
+        }
         $processedContent = \preg_replace_callback(
             '~<a\s+.*?href="(.*?)".*?>~i',
             static function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $setNoOpener, $setExternal) {

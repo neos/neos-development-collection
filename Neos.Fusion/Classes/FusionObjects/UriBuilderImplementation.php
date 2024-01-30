@@ -158,7 +158,10 @@ class UriBuilderImplementation extends AbstractFusionObject
         if ($possibleRequest instanceof ActionRequest) {
             $uriBuilder->setRequest($possibleRequest);
         } else {
-            // legacy
+            // unfortunately, the uri-builder always needs a request at hand and cannot build uris without
+            // even, if the default param merging would not be required
+            // this will improve with a reformed uri building:
+            // https://github.com/neos/flow-development-collection/pull/2744
             $uriBuilder->setRequest(
                 ActionRequest::fromHttpRequest(ServerRequest::fromGlobals())
             );
