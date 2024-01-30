@@ -114,8 +114,6 @@ class Runtime
      */
     public readonly FusionGlobals $fusionGlobals;
 
-    public readonly HttpResponseConstraints $unsafeHttpResponseConstrains;
-
     /**
      * @var RuntimeConfiguration
      */
@@ -161,7 +159,6 @@ class Runtime
         );
         $this->runtimeContentCache = new RuntimeContentCache($this);
         $this->fusionGlobals = $fusionGlobals;
-        $this->unsafeHttpResponseConstrains = new HttpResponseConstraints();
     }
 
     /**
@@ -291,13 +288,16 @@ class Runtime
     {
         // legacy controller context layer
         $possibleRequest = $this->fusionGlobals->get('request');
+        $legacyActionResponse = null;
         if ($possibleRequest instanceof ActionRequest) {
             $uriBuilder = new UriBuilder();
             $uriBuilder->setRequest($possibleRequest);
 
             $this->controllerContext = new ControllerContext(
                 $possibleRequest,
-                new ActionResponse(),
+                // expose action response to be possibly mutated in neos forms or fusion plugins.
+                // this behaviour is highly internal and deprecated!
+                $legacyActionResponse = new ActionResponse(),
                 new Arguments([]),
                 $uriBuilder
             );
@@ -315,23 +315,18 @@ class Runtime
             $this->popContext();
         }
 
-        $legacyControllerContextResponseConstraints = new HttpResponseConstraints();
-        if ($this->controllerContext) {
-            $legacyControllerContextResponseConstraints->setAndMergeFromActionResponse($this->controllerContext->getResponse());
-        }
-        $this->controllerContext = null;
-
         /**
          * parse potential raw http response possibly rendered via "Neos.Fusion:Http.Message"
          * {@see \Neos\Fusion\FusionObjects\HttpResponseImplementation}
          */
         $outputStringHasHttpPreamble = is_string($output) && str_starts_with($output, 'HTTP/');
         if ($outputStringHasHttpPreamble) {
-            return $this->unsafeHttpResponseConstrains->applyToResponse(
-                $legacyControllerContextResponseConstraints->applyToResponse(
-                    Message::parseResponse($output)
-                )
-            );
+            $response = Message::parseResponse($output);
+            if ($legacyActionResponse) {
+                $response = self::applyActionResponseToPsrResponse($legacyActionResponse, $response);
+                $this->controllerContext = null;
+            }
+            return $response;
         }
 
         $stream = match (true) {
@@ -341,11 +336,25 @@ class Runtime
             default => throw new \RuntimeException(sprintf('Cannot render %s into http response body.', get_debug_type($output)), 1706454898)
         };
 
-        return $this->unsafeHttpResponseConstrains->applyToResponse(
-            $legacyControllerContextResponseConstraints->applyToResponse(
-                new Response(body: $stream)
-            )
-        );
+        $response = new Response(body: $stream);
+        if ($legacyActionResponse) {
+            $response = self::applyActionResponseToPsrResponse($legacyActionResponse, $response);
+            $this->controllerContext = null;
+        }
+        return $response;
+    }
+
+    private static function applyActionResponseToPsrResponse(ActionResponse $actionResponse, ResponseInterface $response): ResponseInterface
+    {
+        $actionResponseAsHttp = $actionResponse->buildHttpResponse();
+        foreach ($actionResponseAsHttp->getHeaders() as $name => $values) {
+            $response = $response->withAddedHeader($name, $values);
+        }
+        // preserve non 200 status codes that would otherwise be overwritten
+        if ($actionResponseAsHttp->getStatusCode() !== 200) {
+            $response = $response->withStatus($actionResponseAsHttp->getStatusCode());
+        }
+        return $response;
     }
 
     /**

@@ -166,12 +166,17 @@ class PluginImplementation extends AbstractArrayFusionObject
         $currentContext = $this->runtime->getCurrentContext();
         $this->node = $currentContext['node'];
         $this->documentNode = $currentContext['documentNode'];
+        $parentResponse = $this->runtime->getControllerContext()->getResponse();
         $pluginResponse = new ActionResponse();
         $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
+        // We need to make sure to not merge content up into the parent ActionResponse
+        // because that would break the Fusion HttpResponse.
         $content = $pluginResponse->getContent();
+        $pluginResponse->setContent('');
 
-        $this->runtime->unsafeHttpResponseConstrains->setAndMergeFromActionResponse($pluginResponse);
+        $pluginResponse->mergeIntoParentResponse($parentResponse);
+
         return $content;
     }
 

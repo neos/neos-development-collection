@@ -11,7 +11,6 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -19,8 +18,6 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Fusion\Core\FusionConfiguration;
-use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
 use Neos\Neos\Fusion\PluginImplementation;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -82,7 +79,7 @@ class PluginImplementationTest extends UnitTestCase
         $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->mockControllerContext->method('getRequest')->willReturn($this->mockActionRequest);
 
-        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::fromArray([])])->getMock();
+        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $this->mockRuntime->method('getControllerContext')->willReturn($this->mockControllerContext);
         $this->pluginImplementation->_set('runtime', $this->mockRuntime);
 
@@ -99,12 +96,12 @@ class PluginImplementationTest extends UnitTestCase
             [
                 'Plugin response key does already exist in parent with same value',
                 ['parent' => ['key' => 'value'], 'plugin' => ['key' => 'value']],
-                ['key' => 'value'] // 'value, value'
+                ['key' => 'value']
             ],
             [
                 'Plugin response key does not exist in parent with different value',
                 ['parent' => ['key' => 'value'], 'plugin' => ['key' => 'otherValue']],
-                ['key' => 'otherValue'] // 'otherValue, value'
+                ['key' => 'otherValue']
             ],
             [
                 'Plugin response key does not exist in parent',
@@ -122,8 +119,6 @@ class PluginImplementationTest extends UnitTestCase
      */
     public function evaluateSetHeaderIntoParent(string $message, array $input, array $expected): void
     {
-        $this->markTestSkipped('DOESNT WORK.');
-
         $this->pluginImplementation->method('buildPluginRequest')->willReturn($this->mockActionRequest);
 
         $parentResponse = new ActionResponse();
@@ -138,16 +133,8 @@ class PluginImplementationTest extends UnitTestCase
 
         $this->pluginImplementation->evaluate();
 
-        // in the runtime would be:
-        $runtimeResponse = $this->mockRuntime->unsafeHttpResponseConstrains->applyToResponse(new Response());
-
-        // in the action would be:
-        $parentResponse->replaceHttpResponse($runtimeResponse);
-
         foreach ($expected as $expectedKey => $expectedValue) {
-            // previously tests succeeded:
-            // self::assertEquals($expectedValue, join(', ', \Neos\Utility\ObjectAccess::getProperty($parentResponse, 'headers', true)[$expectedKey]), $message);
-            self::assertEquals($expectedValue, $parentResponse->buildHttpResponse()->getHeaderLine($expectedKey), $message);
+            self::assertEquals($expectedValue, (string)$parentResponse->getHttpHeader($expectedKey), $message);
         }
     }
 
