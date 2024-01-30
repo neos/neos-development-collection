@@ -105,7 +105,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             }
 
             // determine metadata for target dimensions of node
-            array_walk($targetDimensions, function (&$dimensionValue, $dimensionName) use ($pinnedDimensionName, $presets) {
+            array_walk($targetDimensions, static function (&$dimensionValue, $dimensionName) use ($pinnedDimensionName, $presets) {
                 $dimensionValue = [
                     'value' => $dimensionValue,
                     'label' => $presets[$dimensionName]['label'],
