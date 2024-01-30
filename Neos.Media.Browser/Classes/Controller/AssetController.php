@@ -22,7 +22,6 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Package\PackageManager;
@@ -358,7 +357,6 @@ class AssetController extends ActionController
      * @param string $assetProxyIdentifier
      * @return void
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function showAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
     {
@@ -387,7 +385,6 @@ class AssetController extends ActionController
      * @param string $assetProxyIdentifier
      * @return void
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function editAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
     {
@@ -441,7 +438,6 @@ class AssetController extends ActionController
      * @param string $assetProxyIdentifier
      * @param string $overviewAction
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function variantsAction(string $assetSourceIdentifier, string $assetProxyIdentifier, string $overviewAction): void
     {
@@ -485,7 +481,6 @@ class AssetController extends ActionController
      * @param string $assetProxyIdentifier
      * @param string $overviewAction
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function createVariantsAction(string $assetSourceIdentifier, string $assetProxyIdentifier, string $overviewAction): void
     {
