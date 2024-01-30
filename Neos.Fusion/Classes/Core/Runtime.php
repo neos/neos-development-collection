@@ -299,6 +299,7 @@ class Runtime
             );
         }
 
+        /** unlike pushContextArray, we will  only allow "legal" fusion global variables. {@see self::pushContext} */
         foreach ($contextArray as $key => $_) {
             if ($this->fusionGlobals->has($key)) {
                 throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1706452063);
@@ -319,7 +320,7 @@ class Runtime
         if ($outputStringHasHttpPreamble) {
             $response = Message::parseResponse($output);
             if ($legacyActionResponse) {
-                $response = self::applyActionResponseToPsrResponse($legacyActionResponse, $response);
+                $response = self::applyActionResponseToHttpResponse($legacyActionResponse, $response);
                 $this->controllerContext = null;
             }
             return $response;
@@ -334,23 +335,22 @@ class Runtime
 
         $response = new Response(body: $stream);
         if ($legacyActionResponse) {
-            $response = self::applyActionResponseToPsrResponse($legacyActionResponse, $response);
+            $response = self::applyActionResponseToHttpResponse($legacyActionResponse, $response);
             $this->controllerContext = null;
         }
         return $response;
     }
 
-    private static function applyActionResponseToPsrResponse(ActionResponse $actionResponse, ResponseInterface $response): ResponseInterface
+    private static function applyActionResponseToHttpResponse(ActionResponse $actionResponse, ResponseInterface $httpResponse): ResponseInterface
     {
-        $actionResponseAsHttp = $actionResponse->buildHttpResponse();
-        foreach ($actionResponseAsHttp->getHeaders() as $name => $values) {
-            $response = $response->withAddedHeader($name, $values);
+        foreach ($actionResponse->buildHttpResponse()->getHeaders() as $name => $values) {
+            $httpResponse = $httpResponse->withAddedHeader($name, $values);
         }
-        // preserve non 200 status codes that would otherwise be overwritten
-        if ($actionResponseAsHttp->getStatusCode() !== 200) {
-            $response = $response->withStatus($actionResponseAsHttp->getStatusCode());
+        // if the status code is 200 we assume it's the default and will not overrule it
+        if ($actionResponse->getStatusCode() !== 200) {
+            $httpResponse = $httpResponse->withStatus($actionResponse->getStatusCode());
         }
-        return $response;
+        return $httpResponse;
     }
 
     /**
