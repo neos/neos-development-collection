@@ -125,7 +125,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             (new Column('workspacedescription', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
             (new Column('workspaceowner', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
             DbalSchemaFactory::columnForContentStreamId('currentcontentstreamid')->setNotNull(true),
-            (new Column('status', Type::getType(Types::STRING)))->setLength(20)->setNotnull(false)->setCustomSchemaOption('charset', 'binary')
+            (new Column('status', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(false)
         ]);
         $workspaceTable->setPrimaryKey(['workspacename']);
 
