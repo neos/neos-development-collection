@@ -62,7 +62,12 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
                 continue;
             }
             foreach ($properties as $propertyName => $propertyValue) {
-                $propertyType = $nodeType->getPropertyType($propertyName);
+                try {
+                    $propertyType = $nodeType->getPropertyType($propertyName);
+                } catch (\InvalidArgumentException $exception) {
+                    $this->dispatch(Severity::WARNING, 'Skipped node data processing for the property "%s". The property name is not part of the NodeType schema for the NodeType "%s". (Node: %s)', $propertyName, $nodeType->name->value, $nodeDataRow['identifier']);
+                    continue;
+                }
                 foreach ($this->extractAssetIdentifiers($propertyType, $propertyValue) as $assetId) {
                     if (array_key_exists($assetId, $this->processedAssetIds)) {
                         continue;
