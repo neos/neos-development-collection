@@ -6,22 +6,19 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 final class HandlingResult
 {
-    public const RESULT_ENABLED = 'ENABLED';
-    public const RESULT_DISABLED = 'DISABLED';
-
     private function __construct(
         public readonly Node $node,
-        public readonly string $result,
+        public readonly HandlingResultType $type
     ) {
     }
 
-    public static function createWithEnabled(Node $node): static
+    public static function createWithEnabled(Node $node): self
     {
-        return new static($node, static::RESULT_ENABLED);
+        return new self($node, HandlingResultType::ENABLED);
     }
 
-    public static function createWithDisabled(Node $node): static
+    public static function createWithDisabled(Node $node): self
     {
-        return new static($node, static::RESULT_DISABLED);
+        return new self($node, HandlingResultType::DISABLED);
     }
 }

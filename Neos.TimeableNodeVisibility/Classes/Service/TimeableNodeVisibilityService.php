@@ -172,7 +172,7 @@ class TimeableNodeVisibilityService
     {
         $this->logger->info(
             sprintf('Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]: %s',
-                $result->result,
+                $result->type->value,
                 $result->node->nodeAggregateId->value,
                 join(',', $result->node->originDimensionSpacePoint->coordinates),
                 $result->node->getLabel())

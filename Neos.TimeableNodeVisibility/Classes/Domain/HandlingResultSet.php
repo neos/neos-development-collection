@@ -18,7 +18,7 @@ class HandlingResultSet
         $this->handlingResults[] = $handlingResult;
     }
 
-    public function countByResult(string $result): int
+    public function countByResult(HandlingResultType $result): int
     {
         return count($this->getByResult($result));
     }
@@ -26,8 +26,8 @@ class HandlingResultSet
     /**
      * @return array<HandlingResult>
      */
-    public function getByResult(string $result): array
+    public function getByResult(HandlingResultType $result): array
     {
-        return array_filter($this->handlingResults, fn ($handlingResult) => $handlingResult->result === $result);
+        return array_filter($this->handlingResults, fn ($handlingResult) => $handlingResult->type === $result);
     }
 }
