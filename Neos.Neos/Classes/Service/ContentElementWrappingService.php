@@ -97,7 +97,8 @@ class ContentElementWrappingService
 
         $this->userLocaleService->switchToUILocale();
 
-        $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
+        // TODO illegal dependency on ui
+        $serializedNode = json_encode($this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node));
 
         $this->userLocaleService->switchToUILocale(true);
 
