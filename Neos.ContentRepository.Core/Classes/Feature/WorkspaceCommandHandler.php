@@ -23,6 +23,8 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
+use Neos\ContentRepository\Core\Feature\Common\ContentStreamIdOverride;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
@@ -360,91 +362,70 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
-        // TODO: please check the code below in-depth. it does:
         // - fork a new content stream
-        // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
-        $rebasedContentStream = $command->rebasedContentStreamId;
+        $rebasedContentStreamId = $command->rebasedContentStreamId;
         $contentRepository->handle(
             ForkContentStream::create(
-                $rebasedContentStream,
+                $command->rebasedContentStreamId,
                 $baseWorkspace->currentContentStreamId,
             )
         )->block();
 
+        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
             $workspace->currentContentStreamId
         );
 
-        // 2) we need to rebase the workspace so that the commands are written to the proper content stream
-        // @todo this should rather be a "Rebase was started"
-
-        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
-
-        $this->eventPersister->publishEvents(
-            new EventsToPublish(
-                $streamName,
-                Events::with(
-                    new WorkspaceWasRebased(
-                        $command->workspaceName,
-                        $rebasedContentStream,
-                        $workspace->currentContentStreamId,
-                    ),
-                ),
-                ExpectedVersion::ANY()
-            )
-        );
-
+        // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
         $rebaseStatistics = new WorkspaceRebaseStatistics();
-        foreach ($originalCommands as $i => $originalCommand) {
-            if (!($originalCommand instanceof RebasableToOtherWorkspaceInterface)) {
-                throw new \RuntimeException(
-                    'ERROR: The command ' . get_class($originalCommand)
-                    . ' does not implement RebasableToOtherContentStreamsInterface; but it should!'
-                );
-            }
+        $this->withContentStreamIdToUse(
+            $command->rebasedContentStreamId,
+            function () use($originalCommands, $contentRepository, $rebaseStatistics, $workspaceContentStreamName, $baseWorkspace): void {
+                foreach ($originalCommands as $i => $originalCommand) {
+                    // We no longer need to adjust commands as the workspace stays the same
+                    try {
+                        $contentRepository->handle($originalCommand)->block();
+                        // if we came this far, we know the command was applied successfully.
+                        $rebaseStatistics->commandRebaseSuccess();
+                    } catch (\Exception $e) {
+                        $fullCommandListSoFar = '';
+                        for ($a = 0; $a <= $i; $a++) {
+                            $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
 
-            // We no longer need to adjust commands to the new content stream as the workspace stays the same
-            try {
-                $contentRepository->handle($originalCommand)->block();
-                // if we came this far, we know the command was applied successfully.
-                $rebaseStatistics->commandRebaseSuccess();
-            } catch (\Exception $e) {
-                $fullCommandListSoFar = '';
-                for ($a = 0; $a <= $i; $a++) {
-                    $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
+                            if ($originalCommands[$a] instanceof \JsonSerializable) {
+                                $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
+                            }
+                        }
 
-                    if ($originalCommands[$a] instanceof \JsonSerializable) {
-                        $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
+                        $rebaseStatistics->commandRebaseError(sprintf(
+                            "The content stream %s cannot be rebased. Error with command %d (%s)"
+                            . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
+                            . "\n The full list of commands applied so far is: %s",
+                            $workspaceContentStreamName->value,
+                            $i,
+                            get_class($originalCommand),
+                            $baseWorkspace->workspaceName->value,
+                            $baseWorkspace->currentContentStreamId->value,
+                            $fullCommandListSoFar
+                        ), $e);
                     }
                 }
-
-                $rebaseStatistics->commandRebaseError(sprintf(
-                    "The content stream %s cannot be rebased. Error with command %d (%s)"
-                    . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
-                    . "\n The full list of commands applied so far is: %s",
-                    $workspaceContentStreamName->value,
-                    $i,
-                    get_class($originalCommand),
-                    $baseWorkspace->workspaceName->value,
-                    $baseWorkspace->currentContentStreamId->value,
-                    $fullCommandListSoFar
-                ), $e);
             }
-        }
+        );
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         if (!$rebaseStatistics->hasErrors()) {
             $events = Events::with(
                 new WorkspaceWasRebased(
                     $command->workspaceName,
-                    $rebasedContentStream,
+                    $rebasedContentStreamId,
                     $workspace->currentContentStreamId,
                 ),
             );
 
             return new EventsToPublish(
-                $streamName,
+                $workspaceStreamName,
                 $events,
                 ExpectedVersion::ANY()
             );
@@ -454,14 +435,14 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $event = Events::with(
                 new WorkspaceRebaseFailed(
                     $command->workspaceName,
-                    $rebasedContentStream,
+                    $rebasedContentStreamId,
                     $workspace->currentContentStreamId,
                     $rebaseStatistics->getErrors()
                 )
             );
 
             return new EventsToPublish(
-                $streamName,
+                $workspaceStreamName,
                 $event,
                 ExpectedVersion::ANY()
             );
@@ -534,71 +515,66 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             )
         )->block();
 
-        foreach ($matchingCommands as $matchingCommand) {
-            if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
-                throw new \RuntimeException(
-                    'ERROR: The command ' . get_class($matchingCommand)
-                    . ' does not implement RebasableToOtherContentStreamsInterface; but it should!'
-                );
+        // 3) using the new content stream, apply the matching commands
+        $this->withContentStreamIdToUse(
+            $matchingContentStreamId,
+            function () use ($matchingCommands, $contentRepository, $baseWorkspace, $matchingContentStreamId): void {
+                foreach ($matchingCommands as $matchingCommand) {
+                    if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
+                        throw new \RuntimeException(
+                            'ERROR: The command ' . get_class($matchingCommand)
+                            . ' does not implement RebasableToOtherContentStreamsInterface; but it should!'
+                        );
+                    }
+
+                    $contentRepository->handle($matchingCommand->createCopyForWorkspace(
+                        $baseWorkspace->workspaceName,
+                        $matchingContentStreamId
+                    ))->block();
+                }
             }
+        );
 
-            $contentRepository->handle($matchingCommand->createCopyForWorkspace(
-                $baseWorkspace->workspaceName,
+        // 4) fork a new content stream, based on the base WS new content stream, and apply REST
+        $contentRepository->handle(
+            ForkContentStream::create(
+                $command->contentStreamIdForRemainingPart,
                 $matchingContentStreamId
-            ))->block();
-        }
+            )
+        )->block();
 
-        // 3) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
+        // 5) apply REMAINING commands to the workspace's new content stream
+        $this->withContentStreamIdToUse(
+            $command->contentStreamIdForRemainingPart,
+            function () use ($contentRepository, $remainingCommands) {
+                foreach ($remainingCommands as $remainingCommand) {
+                    $contentRepository->handle($remainingCommand)->block();
+                }
+            }
+        );
+
+        // 6) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
         $this->publishContentStream(
             $matchingContentStreamId,
             $baseWorkspace->currentContentStreamId
         )?->block();
 
-        // 4) fork a new contentStream, based on the base WS content stream, and apply REST
-        $contentRepository->handle(
-            ForkContentStream::create(
-                $command->contentStreamIdForRemainingPart,
-                $baseWorkspace->currentContentStreamId
-            )
-        )->block();
+        // 7) also take EVENTS(REMAINING) and apply them to WS.
+        $this->publishContentStream(
+            $command->contentStreamIdForRemainingPart,
+            $workspace->currentContentStreamId
+        )?->block();
 
-        // 5) switch content stream to forked WS.
-        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
-
-        $this->eventPersister->publishEvents(
-            new EventsToPublish(
-                $streamName,
-                Events::with(
-                    new WorkspaceWasPartiallyPublished(
-                        $command->workspaceName,
-                        $baseWorkspace->workspaceName,
-                        $command->contentStreamIdForRemainingPart,
-                        $workspace->currentContentStreamId,
-                        $command->nodesToPublish,
-                    )
-                ),
-                ExpectedVersion::ANY()
-            )
-        );
-
-        // 6) apply REMAINING commands to the workspace's new content stream
-        foreach ($remainingCommands as $remainingCommand) {
-            if (!$remainingCommand instanceof RebasableToOtherWorkspaceInterface) {
-                throw new \Exception(
-                    'Command class ' . get_class($remainingCommand) . ' does not implement '
-                    . RebasableToOtherWorkspaceInterface::class,
-                    1645393626
-                );
-            }
-            $contentRepository->handle($remainingCommand)->block();
-        }
-
-        // to avoid dangling content streams, we need to remove our temporary content stream (whose events
+        // to avoid dangling content streams, we need to remove our temporary content streams (whose events
         // have already been published)
         $contentRepository->handle(RemoveContentStream::create(
             $matchingContentStreamId
         ));
+        $contentRepository->handle(RemoveContentStream::create(
+            $command->contentStreamIdForRemainingPart
+        ));
+
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
 
         // It is safe to only return the last command result,
         // as the commands which were rebased are already executed "synchronously"
@@ -942,5 +918,15 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         return false;
+    }
+
+    private function withContentStreamIdToUse(ContentStreamId $contentStreamIdToUse, callable $function): void
+    {
+        if (ContentStreamIdOverride::$contentStreamIdToUse !== null) {
+            throw new \Exception('Recursive content stream override is not supported');
+        }
+        ContentStreamIdOverride::useContentStreamId($contentStreamIdToUse);
+        $function();
+        ContentStreamIdOverride::useContentStreamId(null);
     }
 }

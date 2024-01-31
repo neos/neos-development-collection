@@ -29,18 +29,9 @@ Feature: Workspace based content publishing
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                    |
-      | contentStreamId             | "cs-identifier"                          |
-      | nodeAggregateId             | "nody-mc-nodeface"                       |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
-      | originDimensionSpacePoint   | {}                                       |
-      | coveredDimensionSpacePoints | [{}]                                     |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
-      | nodeName                    | "child"                                  |
-      | nodeAggregateClassification | "regular"                                |
-
-    And the graph projection is fully up to date
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | nodeTypeName                           | parentNodeAggregateId  | nodeName |
+      | nody-mc-nodeface | Neos.ContentRepository.Testing:Content | lady-eleonode-rootford | child    |
 
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                |
@@ -205,61 +196,3 @@ Feature: Workspace based content publishing
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Modified anew" |
-
-  Scenario: Discarding a full workspace works
-    When the command SetNodeProperties is executed with payload:
-      | Key                       | Value                |
-      | workspaceName             | "user-test"          |
-      | nodeAggregateId           | "nody-mc-nodeface"   |
-      | originDimensionSpacePoint | {}                   |
-      | propertyValues            | {"text": "Modified"} |
-    And the graph projection is fully up to date
-
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | "Modified" |
-
-    # Discarding
-    When the command DiscardWorkspace is executed with payload:
-      | Key                | Value                         |
-      | workspaceName      | "user-test"                   |
-      | newContentStreamId | "user-cs-identifier-modified" |
-    And the graph projection is fully up to date
-
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
-    And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | "Original" |
-
-  Scenario: Discarding a full workspace shows the most up-to-date base workspace when the base WS was modified in the meantime
-    When the command SetNodeProperties is executed with payload:
-      | Key                       | Value                |
-      | workspaceName             | "user-test"          |
-      | nodeAggregateId           | "nody-mc-nodeface"   |
-      | originDimensionSpacePoint | {}                   |
-      | propertyValues            | {"text": "Modified"} |
-    And the graph projection is fully up to date
-
-    And the command SetNodeProperties is executed with payload:
-      | Key                       | Value                                  |
-      | workspaceName             | "live"                                 |
-      | nodeAggregateId           | "nody-mc-nodeface"                     |
-      | originDimensionSpacePoint | {}                                     |
-      | propertyValues            | {"text": "Modified in live workspace"} |
-    And the graph projection is fully up to date
-
-    # Discarding
-    When the command DiscardWorkspace is executed with payload:
-      | Key                | Value                         |
-      | workspaceName      | "user-test"                   |
-      | newContentStreamId | "user-cs-identifier-modified" |
-    And the graph projection is fully up to date
-
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
-    And I expect this node to have the following properties:
-      | Key  | Value                        |
-      | text | "Modified in live workspace" |
