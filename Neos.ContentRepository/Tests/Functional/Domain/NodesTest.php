@@ -1430,6 +1430,34 @@ class NodesTest extends FunctionalTestCase
     }
 
     /**
+     * @see https://github.com/neos/neos-development-collection/issues/3624
+     * @test
+     */
+    public function getPropertyReturnsReferencedNodesWithoutHolesInArrayKeys(): void
+    {
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $nodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithReferences');
+
+        $rootNode = $this->context->getNode('/');
+        $nodeA = $rootNode->createNode('node-a', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+        $nodeB = $rootNode->createNode('node-b', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+        $nodeC = $rootNode->createNode('node-c', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
+
+        $expectedNodes = [0 => $nodeB, 1 => $nodeC];
+
+        $nodeA->setProperty('property2', '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+        $nodeA->setProperty('property3', [
+            '00000000-0000-0000-0000-000000000001',
+            '81c848ed-abb5-7608-a5db-7eea0331ccfa',
+            '00000000-0000-0000-0000-000000000002',
+            'e3b99700-f632-4a4c-2f93-0ad07eaf733f'
+        ]);
+
+        $actualProperties = $nodeA->getProperties();
+        self::assertSame($expectedNodes, $actualProperties['property3']);
+    }
+
+    /**
      * @test
      */
     public function nodeFactoryCachesCreatedNodesBasedOnIdentifierAndDimensions()

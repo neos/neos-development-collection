@@ -960,11 +960,15 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     protected function resolvePropertyReferences(array $value = []): array
     {
-        $nodes = array_map(function ($nodeIdentifier) {
-            return $this->context->getNodeByIdentifier($nodeIdentifier);
-        }, $value);
-
-        return array_filter($nodes);
+        $nodes = [];
+        foreach ($value as $nodeIdentifier) {
+            $node = $this->context->getNodeByIdentifier($nodeIdentifier);
+            // $node can be NULL if the node is not visible (or removed) according to the current content context:
+            if ($node !== null) {
+                $nodes[] = $node;
+            }
+        }
+        return $nodes;
     }
 
     /**
