@@ -149,6 +149,27 @@ final class CrCommandController extends CommandController
     }
 
     /**
+     * Resets all projections of the specified Content Repository
+     *
+     * @param string $contentRepository Identifier of the Content Repository instance to operate on
+     * @param bool $quiet If set only fatal errors are rendered to the output
+     */
+    public function resetAllCommand(string $contentRepository = 'default', bool $quiet = false): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
+        if (!$quiet) {
+            $this->outputLine('Resetting the state of all projections of Content Repository "%s".', [$contentRepositoryId->value]);
+            // TODO start progress bar
+        }
+        $projectionService->resetAllProjections();
+        if (!$quiet) {
+            // TODO finish progress bar
+            $this->outputLine('<success>Done.</success>');
+        }
+    }
+
+    /**
      * This will completely prune the data of the specified content repository.
      *
      * @param string $contentRepository name of the content repository where the data should be pruned from.

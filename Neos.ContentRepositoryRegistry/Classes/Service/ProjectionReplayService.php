@@ -39,6 +39,13 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
         }
     }
 
+    public function resetAllProjections(): void
+    {
+        foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
+            $this->contentRepository->resetProjectionState($classNamesAndAlias['className']);
+        }
+    }
+
     /**
      * @return class-string<ProjectionInterface<ProjectionStateInterface>>
      */
