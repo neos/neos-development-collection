@@ -6,7 +6,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\TimeableNodeVisibility\Domain\HandlingResultType;
+use Neos\TimeableNodeVisibility\Domain\ChangedVisibilityType;
 use Neos\TimeableNodeVisibility\Service\TimeableNodeVisibilityService;
 
 class TimeableNodeVisibilityCommandController extends CommandController
@@ -25,8 +25,8 @@ class TimeableNodeVisibilityCommandController extends CommandController
         );
 
         if (!$quiet) {
-            $this->output->outputLine(sprintf('Enabled %d nodes with exceeded timed dates.', $handlingResult->countByResult(HandlingResultType::ENABLED)));
-            foreach ($handlingResult->getByResult(HandlingResultType::ENABLED) as $result) {
+            $this->output->outputLine(sprintf('Enabled %d nodes with exceeded timed dates.', $handlingResult->countByType(ChangedVisibilityType::NODE_WAS_ENABLED)));
+            foreach ($handlingResult->getByType(ChangedVisibilityType::NODE_WAS_ENABLED) as $result) {
                 $this->output->outputLine(sprintf(
                         '- NodeAggregateId: %s, DimensionSpacePoint: %s, Label: %s',
                         $result->node->nodeAggregateId->value,
@@ -36,8 +36,8 @@ class TimeableNodeVisibilityCommandController extends CommandController
                 );
             }
 
-            $this->output->outputLine(sprintf('Disabled %d nodes with exceeded timed dates.', $handlingResult->countByResult(HandlingResultType::DISABLED)));
-            foreach ($handlingResult->getByResult(HandlingResultType::DISABLED) as $result) {
+            $this->output->outputLine(sprintf('Disabled %d nodes with exceeded timed dates.', $handlingResult->countByType(ChangedVisibilityType::NODE_WAS_DISABLED)));
+            foreach ($handlingResult->getByType(ChangedVisibilityType::NODE_WAS_DISABLED) as $result) {
                 $this->output->outputLine(sprintf(
                         '- NodeAggregateId: %s, DimensionSpacePoint: %s, Label: %s',
                         $result->node->nodeAggregateId->value,

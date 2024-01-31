@@ -22,11 +22,14 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\OrCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\TimeableNodeVisibility\Domain\HandlingResult;
-use Neos\TimeableNodeVisibility\Domain\HandlingResults;
+use Neos\TimeableNodeVisibility\Domain\ChangedVisibility;
+use Neos\TimeableNodeVisibility\Domain\ChangedVisibilities;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 
+/**
+ * @internal
+ */
 #[Flow\Scope('singleton')]
 class TimeableNodeVisibilityService
 {
@@ -36,7 +39,7 @@ class TimeableNodeVisibilityService
     #[Flow\Inject]
     protected LoggerInterface $logger;
 
-    public function handleExceededNodeDates(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): HandlingResults
+    public function handleExceededNodeDates(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): ChangedVisibilities
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
@@ -62,7 +65,7 @@ class TimeableNodeVisibilityService
                     )
                 );
 
-                $results[] = $result = HandlingResult::createWithEnabled($node);
+                $results[] = $result = ChangedVisibility::createForNodeWasEnabled($node);
                 $this->logResult($result);
 
             }
@@ -76,11 +79,11 @@ class TimeableNodeVisibilityService
                     )
                 );
 
-                $results[] = $result = HandlingResult::createWithDisabled($node);
+                $results[] = $result = ChangedVisibility::createForNodeWasDisabled($node);
                 $this->logResult($result);
             }
         }
-        return new HandlingResults(...$results);
+        return new ChangedVisibilities(...$results);
     }
 
     /**
@@ -122,7 +125,7 @@ class TimeableNodeVisibilityService
             foreach ($nodes as $node) {
 
                 if (!$node->originDimensionSpacePoint->equals($dimensionSpacePoint)) {
-                    // The node will be enabled by node in origin dimension spacepoint
+                    // The node will be enabled by node in origin dimension space-point
                     continue;
                 }
 
@@ -166,7 +169,7 @@ class TimeableNodeVisibilityService
             );
     }
 
-    private function logResult(HandlingResult $result): void
+    private function logResult(ChangedVisibility $result): void
     {
         $this->logger->info(
             sprintf('Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]: %s',
