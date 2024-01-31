@@ -736,6 +736,7 @@ Neos:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/EelHelpersReference.rst'
         affectedClasses:
           interface: Neos\Eel\ProtectedContextAwareInterface
-          classNamePattern: '/^.*Helper$/i'
+          # exclude possible EEL helpers residing in `Neos.Ui` as they are internal
+          classNamePattern: '/^(?!Neos\\Neos\\Ui\\).*Helper$/i'
         parser:
           implementationClassName: Neos\DocTools\Domain\Service\EelHelperClassParser
