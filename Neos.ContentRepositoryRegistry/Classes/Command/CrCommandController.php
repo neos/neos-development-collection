@@ -173,11 +173,13 @@ final class CrCommandController extends CommandController
      * This will completely prune the data of the specified content repository.
      *
      * @param string $contentRepository name of the content repository where the data should be pruned from.
+     * @param bool $assumeYes prune the cr without confirmation. This cannot be reverted!
      * @return void
      */
-    public function pruneCommand(string $contentRepository = 'default'): void
+    public function pruneCommand(string $contentRepository = 'default', bool $assumeYes = false): void
     {
-        if (!$this->output->askConfirmation(sprintf("This will prune your content repository \"%s\". Are you sure to proceed? (y/n) ", $contentRepository), false)) {
+        if (!$assumeYes && !$this->output->askConfirmation(sprintf("This will prune your content repository \"%s\". Are you sure to proceed? (y/n) ", $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
             return;
         }
 
@@ -187,14 +189,23 @@ final class CrCommandController extends CommandController
             $contentRepositoryId,
             new ContentStreamPrunerFactory()
         );
-        $contentStreamPruner->pruneAll();
 
         $workspaceMaintenanceService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new WorkspaceMaintenanceServiceFactory()
         );
-        $workspaceMaintenanceService->pruneAll();
 
-        $this->replayAllCommand($contentRepository);
+        $projectionService = $this->contentRepositoryRegistry->buildService(
+            $contentRepositoryId,
+            $this->projectionServiceFactory
+        );
+
+        // reset the events table
+        $contentStreamPruner->pruneAll();
+        $workspaceMaintenanceService->pruneAll();
+        // reset the projections state
+        $projectionService->resetAllProjections();
+
+        $this->outputLine('<success>Done.</success>');
     }
 }
