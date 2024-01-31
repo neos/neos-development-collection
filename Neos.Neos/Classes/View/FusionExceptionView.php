@@ -205,7 +205,7 @@ class FusionExceptionView extends AbstractView
 
             $fusionGlobals = FusionGlobals::fromArray([
                 'request' => $controllerContext->getRequest(),
-                'renderingModeName' => RenderingMode::FRONTEND
+                'renderingMode' => RenderingMode::createFrontend()
             ]);
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $fusionConfiguration,
