@@ -33,3 +33,22 @@ Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection
       value: Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
     2:
       object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
+
+'Neos.ContentRepositoryRegistry:CacheCatchUpStates':
+  className: Neos\Cache\Frontend\VariableFrontend
+  factoryObjectName: Neos\Flow\Cache\CacheManager
+  factoryMethodName: getCache
+  arguments:
+    1:
+      value: Neos_ContentRepositoryRegistry_CatchUpStates
+
+'Neos.ContentRepositoryRegistry:DbalConnection':
+  className: Doctrine\DBAL\Connection
+  factoryObjectName: Neos\ContentRepositoryRegistry\DoctrineDbalClient\DoctrineDbalClient
+  factoryMethodName: getConnection
+
+'Neos.ContentRepositoryRegistry:QueueLockStorage':
+  className: Symfony\Component\Lock\Store\DoctrineDbalStore
+  arguments:
+    1:
+      object: 'Neos.ContentRepositoryRegistry:DbalConnection'

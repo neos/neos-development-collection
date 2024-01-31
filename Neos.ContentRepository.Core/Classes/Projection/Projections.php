@@ -93,4 +93,9 @@ final class Projections implements \IteratorAggregate
     {
         yield from $this->projections;
     }
+
+    public function isEmpty(): bool
+    {
+        return $this->projections === [];
+    }
 }

@@ -19,6 +19,7 @@
         "neos/utility-arrays": "*",
         "doctrine/dbal": "^2.13",
         "symfony/serializer": "^6.3",
+        "symfony/lock": "^6.0.0",
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",
         "ramsey/uuid": "^3.0 || ^4.0"

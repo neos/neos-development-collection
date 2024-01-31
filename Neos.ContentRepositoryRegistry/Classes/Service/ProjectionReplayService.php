@@ -21,6 +21,7 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly Projections $projections,
         private readonly ContentRepository $contentRepository,
+        private readonly CatchUpDeduplicationQueue $catchUpDeduplicationQueue
     ) {
     }
 
@@ -28,14 +29,16 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
     {
         $projectionClassName = $this->resolveProjectionClassName($projectionAliasOrClassName);
         $this->contentRepository->resetProjectionState($projectionClassName);
-        $this->contentRepository->catchUpProjection($projectionClassName, $options);
+        $this->catchUpDeduplicationQueue->requestCatchUp(Projections::fromArray([$projectionClassName]));
     }
 
     public function replayAllProjections(CatchUpOptions $options): void
     {
+        $projectionsArray = [];
         foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
             $this->contentRepository->resetProjectionState($classNamesAndAlias['className']);
-            $this->contentRepository->catchUpProjection($classNamesAndAlias['className'], $options);
+            $projectionsArray[] = $classNamesAndAlias['className'];
+            $this->catchUpDeduplicationQueue->requestCatchUp(Projections::fromArray($projectionsArray));
         }
     }
 

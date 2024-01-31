@@ -28,11 +28,13 @@ use Neos\ContentRepository\Core\Feature\NodeDuplication\NodeDuplicationCommandHa
 use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepositoryRegistry\Service\CatchUpDeduplicationQueue;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\PersistingStoreInterface;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -52,9 +54,10 @@ final class ContentRepositoryFactory
         ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
         ProjectionsAndCatchUpHooksFactory $projectionsAndCatchUpHooksFactory,
-        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
+        private readonly CatchUpDeduplicationQueue $catchUpDeduplicationQueue,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
+        private readonly PersistingStoreInterface $lockStorage
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
@@ -100,6 +103,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->contentDimensionSource,
                 $this->userIdProvider,
                 $this->clock,
+                new LockFactory($this->lockStorage)
             );
         }
         return $this->contentRepository;
@@ -164,7 +168,7 @@ final class ContentRepositoryFactory
         if (!$this->eventPersister) {
             $this->eventPersister = new EventPersister(
                 $this->projectionFactoryDependencies->eventStore,
-                $this->projectionCatchUpTrigger,
+                $this->catchUpDeduplicationQueue,
                 $this->projectionFactoryDependencies->eventNormalizer,
                 $this->projectionsAndCatchUpHooks->projections,
             );

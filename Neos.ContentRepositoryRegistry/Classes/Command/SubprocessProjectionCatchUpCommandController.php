@@ -9,7 +9,6 @@ use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTrigger;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
 /**
@@ -18,11 +17,10 @@ use Neos\Flow\Cli\CommandController;
  */
 class SubprocessProjectionCatchUpCommandController extends CommandController
 {
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
+    public function __construct(private readonly ContentRepositoryRegistry $contentRepositoryRegistry)
+    {
+        parent::__construct();
+    }
 
     /**
      * @param string $contentRepositoryIdentifier

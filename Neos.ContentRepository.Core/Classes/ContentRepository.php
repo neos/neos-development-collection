@@ -32,6 +32,7 @@ use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\Projection\ProjectionCatchUpLockIdentifier;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
@@ -44,6 +45,7 @@ use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Psr\Clock\ClockInterface;
+use Symfony\Component\Lock\LockFactory;
 
 /**
  * Main Entry Point to the system. Encapsulates the full event-sourced Content Repository.
@@ -63,7 +65,6 @@ final class ContentRepository
      */
     private array $projectionStateCache;
 
-
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
      */
@@ -79,6 +80,7 @@ final class ContentRepository
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
+        private readonly LockFactory $lockFactory,
     ) {
     }
 
@@ -158,39 +160,50 @@ final class ContentRepository
      */
     public function catchUpProjection(string $projectionClassName, CatchUpOptions $options): void
     {
-        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
-
-        $catchUpHookFactory = $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection);
-        $catchUpHook = $catchUpHookFactory?->build($this);
-
-        // TODO allow custom stream name per projection
-        $streamName = VirtualStreamName::all();
-        $eventStream = $this->eventStore->load($streamName);
-        if ($options->maximumSequenceNumber !== null) {
-            $eventStream = $eventStream->withMaximumSequenceNumber($options->maximumSequenceNumber);
+        $lock = $this->lockFactory->createLock(
+            ProjectionCatchUpLockIdentifier::createRunning($this->id, $projectionClassName)->value
+        );
+        if (!$lock->acquire()) {
+            return;
         }
 
-        $eventApplier = function (EventEnvelope $eventEnvelope) use ($projection, $catchUpHook, $options) {
-            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
-            if ($options->progressCallback !== null) {
-                ($options->progressCallback)($event, $eventEnvelope);
-            }
-            if (!$projection->canHandle($event)) {
-                return;
-            }
-            $catchUpHook?->onBeforeEvent($event, $eventEnvelope);
-            $projection->apply($event, $eventEnvelope);
-            $catchUpHook?->onAfterEvent($event, $eventEnvelope);
-        };
+        try {
+            $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
 
-        $catchUp = CatchUp::create($eventApplier, $projection->getCheckpointStorage());
+            $catchUpHookFactory = $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection);
+            $catchUpHook = $catchUpHookFactory?->build($this);
 
-        if ($catchUpHook !== null) {
-            $catchUpHook->onBeforeCatchUp();
-            $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
+            // TODO allow custom stream name per projection
+            $streamName = VirtualStreamName::all();
+            $eventStream = $this->eventStore->load($streamName);
+            if ($options->maximumSequenceNumber !== null) {
+                $eventStream = $eventStream->withMaximumSequenceNumber($options->maximumSequenceNumber);
+            }
+
+            $eventApplier = function (EventEnvelope $eventEnvelope) use ($projection, $catchUpHook, $options) {
+                $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+                if ($options->progressCallback !== null) {
+                    ($options->progressCallback)($event, $eventEnvelope);
+                }
+                if (!$projection->canHandle($event)) {
+                    return;
+                }
+                $catchUpHook?->onBeforeEvent($event, $eventEnvelope);
+                $projection->apply($event, $eventEnvelope);
+                $catchUpHook?->onAfterEvent($event, $eventEnvelope);
+            };
+
+            $catchUp = CatchUp::create($eventApplier, $projection->getCheckpointStorage());
+
+            if ($catchUpHook !== null) {
+                $catchUpHook->onBeforeCatchUp();
+                $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
+            }
+            $catchUp->run($eventStream);
+            $catchUpHook?->onAfterCatchUp();
+        } finally {
+            $lock->release();
         }
-        $catchUp->run($eventStream);
-        $catchUpHook?->onAfterCatchUp();
     }
 
     public function setUp(): void
