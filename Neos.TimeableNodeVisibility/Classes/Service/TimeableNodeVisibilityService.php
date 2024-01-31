@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggrega
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\OrCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\TimeableNodeVisibility\Domain\HandlingResult;
-use Neos\TimeableNodeVisibility\Domain\HandlingResultSet;
+use Neos\TimeableNodeVisibility\Domain\HandlingResults;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 
@@ -36,7 +36,7 @@ class TimeableNodeVisibilityService
     #[Flow\Inject]
     protected LoggerInterface $logger;
 
-    public function handleExceededNodeDates(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): HandlingResultSet
+    public function handleExceededNodeDates(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): HandlingResults
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
@@ -48,7 +48,7 @@ class TimeableNodeVisibilityService
         $now = new \DateTimeImmutable();
 
         $nodes = $this->getNodesWithExceededDates($contentRepository, $liveWorkspace, $now);
-        $handledNodeResults = new HandlingResultSet();
+        $results = [];
 
         foreach ($nodes as $node) {
             $nodeIsHidden = $this->isHidden($node, $nodeHiddenStateFinder);
@@ -62,8 +62,7 @@ class TimeableNodeVisibilityService
                     )
                 );
 
-                $result = HandlingResult::createWithEnabled($node);
-                $handledNodeResults->add($result);
+                $results[] = $result = HandlingResult::createWithEnabled($node);
                 $this->logResult($result);
 
             }
@@ -77,12 +76,11 @@ class TimeableNodeVisibilityService
                     )
                 );
 
-                $result = HandlingResult::createWithDisabled($node);
-                $handledNodeResults->add($result);
+                $results[] = $result = HandlingResult::createWithDisabled($node);
                 $this->logResult($result);
             }
         }
-        return $handledNodeResults;
+        return new HandlingResults(...$results);
     }
 
     /**

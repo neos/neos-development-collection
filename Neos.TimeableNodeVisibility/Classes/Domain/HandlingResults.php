@@ -2,20 +2,16 @@
 
 namespace Neos\TimeableNodeVisibility\Domain;
 
-class HandlingResultSet
+class HandlingResults
 {
     /**
      * @var HandlingResult[]
      */
-    private array $handlingResults = [];
+    private array $handlingResults;
 
-    public function __construct()
+    public function __construct(HandlingResult ...$handlingResults)
     {
-    }
-
-    public function add(HandlingResult $handlingResult): void
-    {
-        $this->handlingResults[] = $handlingResult;
+        $this->handlingResults = $handlingResults;
     }
 
     public function countByResult(HandlingResultType $result): int
