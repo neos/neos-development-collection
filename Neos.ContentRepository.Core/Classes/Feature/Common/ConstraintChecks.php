@@ -224,7 +224,7 @@ trait ConstraintChecks
 
         $constraints = $propertyDeclaration['constraints']['nodeTypes'] ?? [];
 
-        if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType)) {
+        if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($this->getNodeTypeManager()->getNodeType($nodeTypeNameInQuestion))) {
             throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
                 $referenceName,
                 $nodeTypeName,

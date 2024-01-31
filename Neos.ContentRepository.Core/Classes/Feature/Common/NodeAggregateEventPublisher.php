@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\Common;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
 
 /**
@@ -71,13 +72,13 @@ final class NodeAggregateEventPublisher
                     'commandClass' => get_class($command),
                     'commandPayload' => $commandPayload
                 ]);
-                $event = DecoratedEvent::withMetadata($event, $metadata);
+                $event = DecoratedEvent::create($event, eventId: EventId::create(), metadata: $metadata);
                 // we remember the 1st event's identifier as causation identifier for all the others
                 $causationId = $event->eventId;
             } else {
                 // event 2,3,4,...n get a causation identifier set, as they all originate from the 1st event.
                 if ($causationId !== null) {
-                    $event = DecoratedEvent::withCausationId($event, $causationId);
+                    $event = DecoratedEvent::create($event, causationId: $causationId);
                 }
             }
             $processedEvents[] = $event;
