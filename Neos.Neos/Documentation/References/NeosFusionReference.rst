@@ -308,9 +308,9 @@ Example::
 
   # the initial value is not changed, so you can define the Debug prototype anywhere in your Fusion code
 
-.. _Neos_Fusion__DebugConsole:
+.. _Neos_Fusion__Debug_Console:
 
-Neos.Fusion:DebugConsole
+Neos.Fusion:Debug.Console
 -----------------
 
 Wraps the given value with a script tag to print it to the browser console.
