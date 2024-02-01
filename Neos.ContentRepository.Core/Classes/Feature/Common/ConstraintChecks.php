@@ -45,6 +45,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePo
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateTypeIsAlreadyOccupied;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -245,6 +246,41 @@ trait ConstraintChecks
         array $parentNodeAggregateIds,
         ContentRepository $contentRepository
     ): void {
+        /** @var array<string, bool> $parentNodeAggregateClassificationsById */
+        $parentNodeAggregateClassificationsById = [];
+
+        foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
+            foreach (
+                $contentRepository->getContentGraph()->findParentNodeAggregates(
+                    $contentStreamId,
+                    $parentNodeAggregateId
+                ) as $grandParentNodeAggregate
+            ) {
+                $parentAggregate = $this->requireProjectedNodeAggregate(
+                    $contentStreamId,
+                    $parentNodeAggregateId,
+                    $contentRepository
+                );
+                try {
+                    $grandParentsNodeType = $this->requireNodeType($grandParentNodeAggregate->nodeTypeName);
+                    $parentNodeAggregateClassificationsById[$parentNodeAggregateId->value] = $parentAggregate->classification;
+                    $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet(
+                        $grandParentsNodeType,
+                        $parentAggregate->nodeName,
+                        $nodeType
+                    );
+                } catch (NodeTypeNotFound $e) {
+                    // skip constraint check; Once the grandparent is changed to be of an available type,
+                    // the constraint checks are executed again. See handleChangeNodeAggregateType
+                }
+            }
+        }
+
+        if (!in_array(NodeAggregateClassification::CLASSIFICATION_REGULAR, $parentNodeAggregateClassificationsById, true)) {
+            // all parent node aggregates are tethered, so we don't run the direct constraint checks
+            return;
+        }
+
         foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
             $parentAggregate = $this->requireProjectedNodeAggregate(
                 $contentStreamId,
@@ -257,26 +293,6 @@ trait ConstraintChecks
             } catch (NodeTypeNotFound $e) {
                 // skip constraint check; Once the parent is changed to be of an available type,
                 // the constraint checks are executed again. See handleChangeNodeAggregateType
-            }
-
-            foreach (
-                $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $contentStreamId,
-                    $parentNodeAggregateId
-                ) as $grandParentNodeAggregate
-            ) {
-                /* @var $grandParentNodeAggregate NodeAggregate */
-                try {
-                    $grandParentsNodeType = $this->requireNodeType($grandParentNodeAggregate->nodeTypeName);
-                    $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet(
-                        $grandParentsNodeType,
-                        $parentAggregate->nodeName,
-                        $nodeType
-                    );
-                } catch (NodeTypeNotFound $e) {
-                    // skip constraint check; Once the grand parent is changed to be of an available type,
-                    // the constraint checks are executed again. See handleChangeNodeAggregateType
-                }
             }
         }
     }
