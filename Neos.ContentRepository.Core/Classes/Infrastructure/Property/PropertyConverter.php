@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\UnsetPropertyValue;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -44,17 +45,12 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
-            if ($propertyValue === null) {
-                // We want to remove it, so we set it to null
-                $serializedPropertyValues[$propertyName] = null;
-            } else {
-                $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
-                    $nodeType->getPropertyType($propertyName),
-                    PropertyName::fromString($propertyName),
-                    $nodeType->name,
-                    $propertyValue
-                );
-            }
+            $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
+                $nodeType->getPropertyType($propertyName),
+                PropertyName::fromString($propertyName),
+                $nodeType->name,
+                $propertyValue
+            );
         }
 
         return SerializedPropertyValues::fromArray($serializedPropertyValues);
@@ -65,7 +61,7 @@ final class PropertyConverter
         PropertyName $propertyName,
         NodeTypeName $nodeTypeName,
         mixed $propertyValue
-    ): SerializedPropertyValue {
+    ): SerializedPropertyValue|UnsetPropertyValue {
         $propertyType = PropertyType::fromNodeTypeDeclaration(
             $declaredType,
             $propertyName,
@@ -77,9 +73,17 @@ final class PropertyConverter
                 $propertyValue = $this->serializer->normalize($propertyValue);
             } catch (NotEncodableValueException | NotNormalizableValueException $e) {
                 throw new \RuntimeException(
-                    'TODO: There was a problem serializing ' . get_class($propertyValue),
+                    'TODO: There was a problem serializing ' . get_debug_type($propertyValue),
                     1594842314,
                     $e
+                );
+            }
+
+            if ($propertyValue === null) {
+                // todo or should we unset the property?
+                throw new \RuntimeException(
+                    'TODO: There was a problem serializing ' . get_debug_type($propertyValue) . '. The serializer returned null.',
+                    1706797942
                 );
             }
 
@@ -87,11 +91,8 @@ final class PropertyConverter
                 $propertyValue,
                 $propertyType->value
             );
-        } else {
-            // $propertyValue == null and defined in node types (we have a resolved type)
-            // -> we want to set the $propertyName to NULL
-            return new SerializedPropertyValue(null, $propertyType->value);
         }
+        return UnsetPropertyValue::get();
     }
 
     public function serializeReferencePropertyValues(
@@ -102,8 +103,6 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
-            // reference properties are always completely overwritten,
-            // so we don't need the node properties' unset option
             $declaredType = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]['type'];
 
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
@@ -119,10 +118,6 @@ final class PropertyConverter
 
     public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue): mixed
     {
-        if (is_null($serializedPropertyValue->value)) {
-            return null;
-        }
-
         return $this->serializer->denormalize(
             $serializedPropertyValue->value,
             $serializedPropertyValue->type

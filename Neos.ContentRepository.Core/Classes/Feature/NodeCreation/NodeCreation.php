@@ -106,6 +106,11 @@ trait NodeCreation
                 $nodeTypeName
             );
 
+            if ($defaultValue === null) {
+                $defaultValues[$propertyName] = null;
+                continue;
+            }
+
             $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
                 new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
             );

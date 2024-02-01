@@ -57,6 +57,11 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
+                if ($this->serializedValue === null) {
+                    // we don't need to unset a non-existing property
+                    return null;
+                }
+
                 if (!$node->hasProperty($this->newPropertyName)) {
                     return $this->contentRepository->handle(
                         SetSerializedNodeProperties::create(

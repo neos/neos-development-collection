@@ -21,16 +21,13 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
  *
  * This means: each "value" must be a simple PHP data type.
  *
- * NOTE: if a value is set to NULL in SerializedPropertyValues, this means the key should be unset,
- * because we treat NULL and "not set" the same from an API perspective.
- *
- * @implements \IteratorAggregate<string,?SerializedPropertyValue>
+ * @implements \IteratorAggregate<string,SerializedPropertyValue|UnsetPropertyValue>
  * @api used as part of commands/events
  */
 final readonly class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @param array<string,?SerializedPropertyValue> $values
+     * @param array<string,SerializedPropertyValue|UnsetPropertyValue> $values
      */
     private function __construct(
         public array $values
@@ -43,7 +40,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     }
 
     /**
-     * @param array<string,array{type:string,value:mixed}|SerializedPropertyValue|null> $propertyValues
+     * @param array<string,array{type:string,value:mixed}|SerializedPropertyValue|UnsetPropertyValue|null> $propertyValues
      */
     public static function fromArray(array $propertyValues): self
     {
@@ -52,10 +49,14 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
             if (!is_string($propertyName)) {
                 throw new \InvalidArgumentException(sprintf('Invalid property name. Expected string, got: %s', get_debug_type($propertyName)), 1681326239);
             }
-            if ($propertyValue === null) {
-                // this case means we want to un-set a property.
-                $values[$propertyName] = null;
+            if ($propertyValue === null || $propertyValue instanceof UnsetPropertyValue) {
+                $values[$propertyName] = UnsetPropertyValue::get();
             } elseif (is_array($propertyValue)) {
+                if (array_key_exists('value', $propertyValue) && $propertyValue['value'] === null) {
+                    // legacy
+                    $values[$propertyName] = UnsetPropertyValue::get();
+                    continue;
+                }
                 $values[$propertyName] = SerializedPropertyValue::fromArray($propertyValue);
             } elseif ($propertyValue instanceof SerializedPropertyValue) {
                 $values[$propertyName] = $propertyValue;
@@ -78,7 +79,9 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
             $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
             self::assertTypeIsNoReference($propertyTypeFromSchema);
 
-            $values[$propertyName] = new SerializedPropertyValue($defaultValue, $propertyTypeFromSchema);
+            $values[$propertyName] = $defaultValue === null
+                ? UnsetPropertyValue::get()
+                : new SerializedPropertyValue($defaultValue, $propertyTypeFromSchema);
         }
 
         return new self($values);
@@ -100,11 +103,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
 
     public function merge(self $other): self
     {
-        // here, we skip null values
-        return new self(array_filter(
-            array_merge($this->values, $other->values),
-            fn ($value) => $value !== null
-        ));
+        return new self(array_merge($this->values, $other->values));
     }
 
     /**
@@ -134,13 +133,13 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
         return isset($this->values[$propertyName]);
     }
 
-    public function getProperty(string $propertyName): ?SerializedPropertyValue
+    public function getProperty(string $propertyName): SerializedPropertyValue|UnsetPropertyValue|null
     {
         return $this->values[$propertyName] ?? null;
     }
 
     /**
-     * @return \Traversable<string,?SerializedPropertyValue>
+     * @return \Traversable<string,SerializedPropertyValue|UnsetPropertyValue>
      */
     public function getIterator(): \Traversable
     {
@@ -159,17 +158,28 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     {
         $values = [];
         foreach ($this->values as $propertyName => $propertyValue) {
-            $values[$propertyName] = $propertyValue?->value;
+            $values[$propertyName] = $propertyValue instanceof UnsetPropertyValue
+                ? null
+                : $propertyValue->value;
         }
 
         return $values;
     }
 
     /**
-     * @return array<string,?SerializedPropertyValue>
+     * @return array<string,SerializedPropertyValue|null>
      */
     public function jsonSerialize(): array
     {
-        return $this->values;
+        $values = [];
+        foreach ($this->values as $name => $serializedValue) {
+            if ($serializedValue instanceof UnsetPropertyValue) {
+                // for the event log we will save unset as null
+                $values[$name] = null;
+                continue;
+            }
+            $values[$name] = $serializedValue;
+        }
+        return $values;
     }
 }

@@ -18,16 +18,17 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
  * "Raw" / Serialized property value as saved in the event log // in projections.
  *
  * This means: "value" must be a simple PHP data type (no objects allowed!)
+ * Null is not permitted. To unset a property {@see UnsetPropertyValue} must be used.
  *
  * @api used as part of commands/events
  */
 final class SerializedPropertyValue implements \JsonSerializable
 {
     /**
-     * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null $value
+     * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed> $value
      */
     public function __construct(
-        public readonly int|float|string|bool|array|\ArrayObject|null $value,
+        public readonly int|float|string|bool|array|\ArrayObject $value,
         public readonly string $type
     ) {
     }

@@ -17,6 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\UnsetPropertyValue;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -57,7 +58,7 @@ final class NodeRecord
                 'nodeaggregateid' => $this->nodeAggregateId->value,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
-                'properties' => json_encode($this->properties),
+                'properties' => self::propertyValuesToJson($this->properties),
                 'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value,
                 'lastmodified' => $this->timestamps->lastModified,
@@ -142,7 +143,7 @@ final class NodeRecord
             'nodeaggregateid' => $nodeAggregateId->value,
             'origindimensionspacepoint' => json_encode($originDimensionSpacePoint),
             'origindimensionspacepointhash' => $originDimensionSpacePointHash,
-            'properties' => json_encode($properties),
+            'properties' => self::propertyValuesToJson($properties),
             'nodetypename' => $nodeTypeName->value,
             'classification' => $classification->value,
             'created' => $timestamps->created,
@@ -197,6 +198,19 @@ final class NodeRecord
             $copyFrom->nodeName,
             $copyFrom->timestamps
         );
+    }
+
+    private static function propertyValuesToJson(SerializedPropertyValues $serializedPropertyValues): string
+    {
+        $values = [];
+        foreach ($serializedPropertyValues->values as $name => $serializedValue) {
+            if ($serializedValue instanceof UnsetPropertyValue) {
+                // we don't write null explicitly into the database
+                continue;
+            }
+            $values[$name] = $serializedValue;
+        }
+        return json_encode($values, JSON_THROW_ON_ERROR);
     }
 
     private static function parseDateTimeString(string $string): \DateTimeImmutable

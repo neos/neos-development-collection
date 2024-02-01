@@ -80,6 +80,10 @@ class PropertyAdjustment
                     if ($defaultValue instanceof \DateTimeInterface) {
                         $defaultValue = json_encode($defaultValue);
                     }
+                    if ($defaultValue === null) {
+                        // we don't need to set null as default value if it doesn't exist
+                        continue;
+                    }
                     if (!array_key_exists($propertyKey, $propertyKeysInNode)) {
                         yield StructureAdjustment::createForNode(
                             $node,
