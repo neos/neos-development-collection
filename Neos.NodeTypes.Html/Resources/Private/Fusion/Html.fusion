@@ -7,7 +7,7 @@ prototype(Neos.NodeTypes.Html:Html) < prototype(Neos.Neos:ContentComponent) {
   # The following is used to automatically append a class attribute that reflects the underlying node type of a Fusion object,
   # for example "neos-nodetypes-form", "neos-nodetypes-headline", "neos-nodetypes-html", "neos-nodetypes-image", "neos-nodetypes-menu" and "neos-nodetypes-text"
   # You can disable the following line with:
-  # prototype(Neos.Neos:Content) {
+  # prototype(Neos.NodeTypes.Html:Html) {
   #   attributes.class.@process.nodeType >
   # }
   # in your site's Fusion if you don't need that behavior.

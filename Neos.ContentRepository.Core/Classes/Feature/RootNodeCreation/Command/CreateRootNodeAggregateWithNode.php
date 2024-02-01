@@ -70,7 +70,7 @@ final readonly class CreateRootNodeAggregateWithNode implements
      * a tethered node aggregate id, you need to generate the child node aggregate ids in advance.
      *
      * _Alternatively you would need to fetch the created tethered node first from the subgraph.
-     * {@see ContentSubgraphInterface::findChildNodeConnectedThroughEdgeName()}_
+     * {@see ContentSubgraphInterface::findNodeByPath()}_
      *
      * The helper method {@see NodeAggregateIdsByNodePaths::createForNodeType()} will generate recursively
      * node aggregate ids for every tethered child node:

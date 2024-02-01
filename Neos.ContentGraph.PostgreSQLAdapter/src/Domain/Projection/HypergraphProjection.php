@@ -16,7 +16,6 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Comparator;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStreamForking;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeCreation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeDisabling;
@@ -45,13 +44,14 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStore\SetupResult;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
@@ -76,7 +76,7 @@ final class HypergraphProjection implements ProjectionInterface
      * so that always the same instance is returned
      */
     private ?ContentHypergraph $contentHypergraph = null;
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
     private ProjectionHypergraph $projectionHypergraph;
 
     public function __construct(
@@ -87,7 +87,7 @@ final class HypergraphProjection implements ProjectionInterface
         private readonly string $tableNamePrefix,
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($this->databaseClient, $this->tableNamePrefix);
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $this->databaseClient->getConnection(),
             $this->tableNamePrefix . '_checkpoint',
             self::class
@@ -97,11 +97,50 @@ final class HypergraphProjection implements ProjectionInterface
 
     public function setUp(): void
     {
-        $this->setupTables();
-        $this->checkpointStorage->setup();
+        foreach ($this->determineRequiredSqlStatements() as $statement) {
+            $this->getDatabaseConnection()->executeStatement($statement);
+        }
+        $this->getDatabaseConnection()->executeStatement('
+            CREATE INDEX IF NOT EXISTS node_properties ON ' . $this->tableNamePrefix . '_node USING GIN(properties);
+
+            create index if not exists hierarchy_children
+                on ' . $this->tableNamePrefix . '_hierarchyhyperrelation using gin (childnodeanchors);
+
+            create index if not exists restriction_affected
+                on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateids);
+        ');
+        $this->checkpointStorage->setUp();
     }
 
-    private function setupTables(): SetupResult
+    public function status(): ProjectionStatus
+    {
+        $checkpointStorageStatus = $this->checkpointStorage->status();
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
+            return ProjectionStatus::error($checkpointStorageStatus->details);
+        }
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
+            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
+        }
+        try {
+            $this->getDatabaseConnection()->connect();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
+        }
+        try {
+            $requiredSqlStatements = $this->determineRequiredSqlStatements();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
+        }
+        if ($requiredSqlStatements !== []) {
+            return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        return ProjectionStatus::ok();
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function determineRequiredSqlStatements(): array
     {
         $connection = $this->databaseClient->getConnection();
         HypergraphSchemaBuilder::registerTypes($connection->getDatabasePlatform());
@@ -111,21 +150,7 @@ final class HypergraphProjection implements ProjectionInterface
         }
 
         $schema = (new HypergraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
-            $connection->executeStatement($statement);
-        }
-        $connection->executeStatement('
-            CREATE INDEX IF NOT EXISTS node_properties ON ' . $this->tableNamePrefix . '_node USING GIN(properties);
-
-            create index if not exists hierarchy_children
-                on ' . $this->tableNamePrefix . '_hierarchyhyperrelation using gin (childnodeanchors);
-
-            create index if not exists restriction_affected
-                on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateids);
-        ');
-
-        return SetupResult::success('');
+        return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
     public function reset(): void
@@ -212,7 +237,7 @@ final class HypergraphProjection implements ProjectionInterface
         };
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
     }

@@ -101,6 +101,9 @@
 			<trans-unit id="message.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			</trans-unit>
+			<trans-unit id="message.assetContainsMaliciousContent" xml:space="preserve">
+				<source>This asset might contain malicious content!</source>
+			</trans-unit>
 			<trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			</trans-unit>

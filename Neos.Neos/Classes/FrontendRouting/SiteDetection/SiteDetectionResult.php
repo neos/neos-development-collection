@@ -60,7 +60,7 @@ final class SiteDetectionResult
         if ($siteNodeName === null || $contentRepositoryId === null) {
             throw new \RuntimeException(
                 'Current site and content repository could not be extracted from the Request.'
-                    . ' SiteDetectionMiddleware must run before calling this method!'
+                    . ' The SiteDetectionMiddleware was not able to determine the site!'
             );
         }
         assert(is_string($siteNodeName));
