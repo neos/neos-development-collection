@@ -62,4 +62,9 @@ final class NodeTypeNameFactory
     {
         return NodeTypeName::fromString(self::NAME_SITES);
     }
+
+    public static function forRoot(): NodeTypeName
+    {
+        return NodeTypeName::fromString(NodeTypeName::ROOT_NODE_TYPE_NAME);
+    }
 }
