@@ -44,5 +44,6 @@ class ThrowingHandler extends AbstractRenderingExceptionHandler
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
+        throw new \BadMethodCallException('Will never be thrown see handleRenderingException.');
     }
 }

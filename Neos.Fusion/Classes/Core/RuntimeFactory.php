@@ -34,6 +34,7 @@ class RuntimeFactory
 
     /**
      * @Flow\InjectConfiguration(path="defaultContext", package="Neos.Fusion")
+     * @var array<string, string>
      */
     protected ?array $defaultContextConfiguration;
 

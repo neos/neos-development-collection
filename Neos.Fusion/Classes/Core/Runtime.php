@@ -345,9 +345,9 @@ class Runtime
      */
     public function handleRenderingException(string $fusionPath, \Exception $exception, bool $useInnerExceptionHandler = false)
     {
-        if ($this->overriddenExceptionHandler) {
-            $this->overriddenExceptionHandler->setRuntime($this);
-            return $this->overriddenExceptionHandler->handleRenderingException($fusionPath, $exception);
+        if ($exceptionHandler = $this->overriddenExceptionHandler) {
+            $exceptionHandler->setRuntime($this);
+            return $exceptionHandler->handleRenderingException($fusionPath, $exception);
         }
 
         $fusionConfiguration = $this->runtimeConfiguration->forPath($fusionPath);
@@ -755,7 +755,7 @@ class Runtime
         }
         $contextVariables['this'] = $contextObject;
 
-        /** may have to be phpstan-ignore-next-line'd: the mind of the great phpstan can and will not comprehend this */
+        /** @phpstan-ignore-next-line the mind of the great phpstan can and will not comprehend this */
         if ($this->eelEvaluator instanceof \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy) {
             $this->eelEvaluator->_activateDependency();
         }
