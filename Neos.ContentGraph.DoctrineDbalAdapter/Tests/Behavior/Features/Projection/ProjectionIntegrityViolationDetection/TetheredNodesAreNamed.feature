@@ -46,8 +46,16 @@ Feature: Run projection integrity violation detection regarding naming of tether
       | originDimensionSpacePoint     | {"language":"de"}                         |
       | coveredDimensionSpacePoints   | [{"language":"de"}]                       |
       | parentNodeAggregateId | "sir-david-nodenborough"                  |
+      | nodeName                      | "to-be-hacked-to-null"                    |
       | nodeAggregateClassification   | "tethered"                                |
     And the graph projection is fully up to date
+    And I change the following hierarchy relation's name:
+      | Key                        | Value                    |
+      | contentStreamId            | "cs-identifier"          |
+      | dimensionSpacePoint        | {"language":"de"}        |
+      | parentNodeAggregateId      | "sir-david-nodenborough" |
+      | childNodeAggregateId       | "nodewyn-tetherton"      |
+      | newName                    | null                     |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 errors
     And I expect integrity violation detection result error number 1 to have code 1597923103
