@@ -58,7 +58,8 @@ final class NodeRecord
                 'nodeaggregateid' => $this->nodeAggregateId->value,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
-                'properties' => self::propertyValuesToJson($this->properties),
+                // we don't write null explicitly into the database
+                'properties' => json_encode($this->properties->withoutUnsets()),
                 'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value,
                 'lastmodified' => $this->timestamps->lastModified,
@@ -143,7 +144,8 @@ final class NodeRecord
             'nodeaggregateid' => $nodeAggregateId->value,
             'origindimensionspacepoint' => json_encode($originDimensionSpacePoint),
             'origindimensionspacepointhash' => $originDimensionSpacePointHash,
-            'properties' => self::propertyValuesToJson($properties),
+            // we don't write null explicitly into the database
+            'properties' => json_encode($properties->withoutUnsets()),
             'nodetypename' => $nodeTypeName->value,
             'classification' => $classification->value,
             'created' => $timestamps->created,
@@ -198,19 +200,6 @@ final class NodeRecord
             $copyFrom->nodeName,
             $copyFrom->timestamps
         );
-    }
-
-    private static function propertyValuesToJson(SerializedPropertyValues $serializedPropertyValues): string
-    {
-        $values = [];
-        foreach ($serializedPropertyValues->values as $name => $serializedValue) {
-            if ($serializedValue instanceof UnsetPropertyValue) {
-                // we don't write null explicitly into the database
-                continue;
-            }
-            $values[$name] = $serializedValue;
-        }
-        return json_encode($values, JSON_THROW_ON_ERROR);
     }
 
     private static function parseDateTimeString(string $string): \DateTimeImmutable

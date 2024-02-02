@@ -76,10 +76,24 @@ class SerializedPropertyValuesTest extends TestCase
      */
     public function getPlainValuesReturnsNullForUnsetValues(): void
     {
-        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => UnsetPropertyValue::get(), 'otherProperty' => SerializedPropertyValue::create('mehehe', 'string')]);
+        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => UnsetPropertyValue::get(), 'otherProperty' => SerializedPropertyValue::create('me-he-he', 'string')]);
         self::assertSame(
-            ['someProperty' => null, 'otherProperty' => 'mehehe'],
+            ['someProperty' => null, 'otherProperty' => 'me-he-he'],
             $propertyValues->getPlainValues()
         );
     }
+
+    /**
+     * @test
+     */
+    public function withoutUnsets(): void
+    {
+        // the format which is implicitly used in the event log, due to json_serialize
+        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => UnsetPropertyValue::get(), 'otherProperty' => SerializedPropertyValue::create('text', 'string'), 'reputation' => UnsetPropertyValue::get()]);
+        self::assertEquals(
+            SerializedPropertyValues::fromArray(['otherProperty' => SerializedPropertyValue::create('text', 'string')]),
+            $propertyValues->withoutUnsets()
+        );
+    }
+
 }
