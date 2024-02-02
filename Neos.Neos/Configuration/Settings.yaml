@@ -82,6 +82,10 @@ Neos:
           label: 'Neos.Neos:Main:nodeTypes.groups.plugins'
           collapsed: true
 
+    frontend:
+      # HTTP Status Code used for redirecting Neos.Neos:Shortcut to target
+      shortcutRedirectHttpStatusCode: 303
+
     userInterface:
 
       # Switch on to see all translated labels getting scrambled. You now can localize
@@ -732,6 +736,7 @@ Neos:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/EelHelpersReference.rst'
         affectedClasses:
           interface: Neos\Eel\ProtectedContextAwareInterface
-          classNamePattern: '/^.*Helper$/i'
+          # exclude possible EEL helpers residing in `Neos.Ui` as they are internal
+          classNamePattern: '/^(?!Neos\\Neos\\Ui\\).*Helper$/i'
         parser:
           implementationClassName: Neos\DocTools\Domain\Service\EelHelperClassParser

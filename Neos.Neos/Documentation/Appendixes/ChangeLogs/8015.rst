@@ -1,0 +1,19 @@
+`8.0.15 (2023-12-13) <https://github.com/neos/neos-development-collection/releases/tag/8.0.15>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Filter for assets by asset collection by using constraints <https://github.com/neos/neos-development-collection/pull/4802>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes a bug, that was introduced with: https://github.com/neos/neos-development-collection/pull/4724
+
+Because of using the QueryBuilder twice, the count of the paramter and for the query is not correct anymore.
+
+* Fixes: `#4801 <https://github.com/neos/neos-development-collection/issues/4801>`_
+
+* Packages: ``Neos`` ``Media``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.0.14...8.0.15>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

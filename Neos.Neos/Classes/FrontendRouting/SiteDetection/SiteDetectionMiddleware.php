@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\SiteDetection;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -42,20 +43,25 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-//        return $handler->handle($siteDetectionResult->storeInRequest($request));
-        $requestUriHost = $request->getUri()->getHost();
         $site = null;
-        if (!empty($requestUriHost)) {
-            $activeDomain = $this->domainRepository->findOneByHost($requestUriHost, true);
-            if ($activeDomain !== null) {
-                $site = $activeDomain->getSite();
+        $requestUriHost = $request->getUri()->getHost();
+        try {
+            if (!empty($requestUriHost)) {
+                // try to get site by domain
+                $activeDomain = $this->domainRepository->findOneByHost($requestUriHost, true);
+                $site = $activeDomain?->getSite();
             }
-        }
-        if ($site === null) {
-            $site = $this->siteRepository->findFirstOnline();
+            if ($site === null) {
+                // try to get any site
+                $site = $this->siteRepository->findFirstOnline();
+            }
+        } catch (DatabaseException) {
+            // doctrine might have not been migrated yet or no database is connected.
         }
 
         if (!$site instanceof Site) {
+            // no site has been created yet,
+            // but we allow other middlewares / routes to work
             return $handler->handle($request);
         }
 

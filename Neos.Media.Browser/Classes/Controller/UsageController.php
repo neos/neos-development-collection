@@ -134,14 +134,14 @@ class UsageController extends ActionController
                 continue;
             }
 
-            $documentNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_DOCUMENT));
+            $documentNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_DOCUMENT));
             // this should actually never happen, too.
             if (!$documentNode) {
                 $inaccessibleRelations[] = $inaccessibleRelation;
                 continue;
             }
 
-            $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE));
+            $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
             // this should actually never happen, too. :D
             if (!$siteNode) {
                 $inaccessibleRelations[] = $inaccessibleRelation;
