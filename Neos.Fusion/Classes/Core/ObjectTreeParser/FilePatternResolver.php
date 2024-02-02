@@ -104,6 +104,7 @@ class FilePatternResolver
      */
     protected static function parseGlobPatternAndResolveFiles(string $filePattern, string $defaultFileNameEnd): array
     {
+        $matches = [];
         $fileIteratorCreator = match (1) {
             // We use the flag SKIP_DOTS, as it might not be allowed to access `..` and we only are interested in files
             // We use the flag UNIX_PATHS, so that stream wrapper paths are always valid on windows https://github.com/neos/neos-development-collection/issues/4358

@@ -200,7 +200,7 @@ class CacheSegmentParser
             $nextEndPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_END_TOKEN);
         }
 
-        /** may have to be phpstan-ignore-next-line'd: $toPosition expects int|null but int|false given. Is this a real case? */
+        /** @phpstan-ignore-next-line: $toPosition expects int|null but int|false given. Is this a real case? */
         $remainingContent = $this->extractContent($currentPosition, $nextEndPosition);
         $segmentData['content'] .= $remainingContent;
         $segmentData['cleanContent'] .= $remainingContent;
