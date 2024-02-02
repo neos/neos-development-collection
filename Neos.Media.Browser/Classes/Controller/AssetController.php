@@ -287,7 +287,7 @@ class AssetController extends ActionController
 
             $allCollectionsCount = $this->assetRepository->countAll();
             $allCount = ($activeAssetCollection ? $this->assetRepository->countByAssetCollection($activeAssetCollection) : $allCollectionsCount);
-            $searchResultCount = isset($assetProxies) ? $assetProxies->count() : 0;
+            $searchResultCount = $assetProxies->count();
             $untaggedCount = ($assetProxyRepository instanceof SupportsTaggingInterface ? $assetProxyRepository->countUntagged() : 0);
         } catch (AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
