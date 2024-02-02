@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2024-01-31
+This reference was automatically generated from code on 2024-02-02
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -261,7 +261,7 @@ Example (relative path):
 
 Example (absolute path):
 
- q(node).find('/sites/my-site/home')
+ q(node).find('/<Neos.Neos:Sites>/my-site/home')
 
 Example (identifier):
 
@@ -450,7 +450,7 @@ context elements and returns each following sibling or only those matching
 the filter expression specified as optional argument.
 
 :Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\NextAllOperation
-:Priority: 100
+:Priority: 0
 :Final: No
 :Returns: void
 
@@ -469,25 +469,6 @@ If an optional filter expression is provided as a second argument,
 it only returns the nodes matching the given expression.
 
 :Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\NextUntilOperation
-:Priority: 100
-:Final: No
-:Returns: void
-
-
-
-
-
-.. _`FlowQuery Operation Reference: nextUntil`:
-
-nextUntil
----------
-
-"prevUntil" operation working on ContentRepository nodes. It iterates over all context elements
-and returns each preceding sibling until the matching sibling is found.
-If an optional filter expression is provided as a second argument,
-it only returns the nodes matching the given expression.
-
-:Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\PrevUntilOperation
 :Priority: 0
 :Final: No
 :Returns: void
@@ -524,7 +505,7 @@ context elements and returns the parent nodes or only those matching
 the filter expression specified as optional argument.
 
 :Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\ParentsOperation
-:Priority: 100
+:Priority: 0
 :Final: No
 :Returns: void
 
@@ -543,7 +524,7 @@ If an optional filter expression is provided as a second argument,
 it only returns the nodes matching the given expression.
 
 :Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\ParentsUntilOperation
-:Priority: 100
+:Priority: 0
 :Final: No
 :Returns: void
 
@@ -580,6 +561,25 @@ context elements and returns each preceding sibling or only those matching
 the filter expression specified as optional argument
 
 :Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\PrevAllOperation
+:Priority: 0
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: prevUntil`:
+
+prevUntil
+---------
+
+"prevUntil" operation working on ContentRepository nodes. It iterates over all context elements
+and returns each preceding sibling until the matching sibling is found.
+If an optional filter expression is provided as a second argument,
+it only returns the nodes matching the given expression.
+
+:Implementation: Neos\\ContentRepository\\NodeAccess\\FlowQueryOperations\\PrevUntilOperation
 :Priority: 0
 :Final: No
 :Returns: void
