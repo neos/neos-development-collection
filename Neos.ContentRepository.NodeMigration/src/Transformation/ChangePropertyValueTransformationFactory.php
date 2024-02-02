@@ -133,7 +133,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
-                                $this->propertyName => new SerializedPropertyValue(
+                                $this->propertyName => SerializedPropertyValue::create(
                                     $newValueWithReplacedSearch,
                                     $currentProperty->type
                                 )

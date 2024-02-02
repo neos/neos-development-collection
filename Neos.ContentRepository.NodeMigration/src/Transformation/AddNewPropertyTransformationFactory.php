@@ -69,7 +69,7 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
-                                $this->newPropertyName => new SerializedPropertyValue(
+                                $this->newPropertyName => SerializedPropertyValue::create(
                                     $this->serializedValue,
                                     $this->type
                                 )

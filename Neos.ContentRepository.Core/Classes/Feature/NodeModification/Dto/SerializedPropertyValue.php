@@ -27,16 +27,31 @@ final class SerializedPropertyValue implements \JsonSerializable
     /**
      * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed> $value
      */
-    public function __construct(
+    private function __construct(
         public readonly int|float|string|bool|array|\ArrayObject $value,
         public readonly string $type
     ) {
     }
 
     /**
+     * If the value is NULL an unset-property instruction will be returned instead.
+     *
+     * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null $value
+     */
+    public static function create(
+        int|float|string|bool|array|\ArrayObject|null $value,
+        string $type
+    ): self|UnsetPropertyValue {
+        if ($value === null) {
+            return UnsetPropertyValue::get();
+        }
+        return new self($value, $type);
+    }
+
+    /**
      * @param array{type:string,value:mixed} $valueAndType
      */
-    public static function fromArray(array $valueAndType): self
+    public static function fromArray(array $valueAndType): self|UnsetPropertyValue
     {
         if (!array_key_exists('value', $valueAndType)) {
             throw new \InvalidArgumentException('Missing array key "value"', 1546524597);
@@ -45,7 +60,7 @@ final class SerializedPropertyValue implements \JsonSerializable
             throw new \InvalidArgumentException('Missing array key "type"', 1546524609);
         }
 
-        return new self($valueAndType['value'], $valueAndType['type']);
+        return self::create($valueAndType['value'], $valueAndType['type']);
     }
 
     /**

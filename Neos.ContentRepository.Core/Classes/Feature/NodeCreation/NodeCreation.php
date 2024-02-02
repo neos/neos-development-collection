@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\UnsetPropertyValue;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -106,13 +107,14 @@ trait NodeCreation
                 $nodeTypeName
             );
 
-            if ($defaultValue === null) {
+            $serializedPropertyValue = SerializedPropertyValue::create($defaultValue, $propertyType->getSerializationType());
+            if ($serializedPropertyValue instanceof UnsetPropertyValue) {
                 $defaultValues[$propertyName] = null;
                 continue;
             }
 
             $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
-                new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
+                $serializedPropertyValue
             );
         }
 

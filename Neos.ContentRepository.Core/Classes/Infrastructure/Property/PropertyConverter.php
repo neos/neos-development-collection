@@ -87,7 +87,7 @@ final class PropertyConverter
                 );
             }
 
-            return new SerializedPropertyValue(
+            return SerializedPropertyValue::create(
                 $propertyValue,
                 $propertyType->value
             );

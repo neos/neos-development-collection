@@ -56,7 +56,7 @@ class PropertyCollectionTest extends TestCase
     public function offsetGetReturnsNullIfSerializedPropertyValueIsNull(): void
     {
         $this->mockSerializer->expects($this->never())->method($this->anything());
-        $collection = new PropertyCollection(SerializedPropertyValues::fromArray(['someProperty' => ['value' => null, 'type' => 'string']]), $this->mockPropertyConverter);
+        $collection = new PropertyCollection(SerializedPropertyValues::fromArray(['someProperty' => null]), $this->mockPropertyConverter);
         self::assertNull($collection['someProperty']);
     }
 

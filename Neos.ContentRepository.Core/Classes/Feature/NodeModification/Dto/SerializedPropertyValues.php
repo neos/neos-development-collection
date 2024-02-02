@@ -52,11 +52,6 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
             if ($propertyValue === null || $propertyValue instanceof UnsetPropertyValue) {
                 $values[$propertyName] = UnsetPropertyValue::get();
             } elseif (is_array($propertyValue)) {
-                if (array_key_exists('value', $propertyValue) && $propertyValue['value'] === null) {
-                    // legacy
-                    $values[$propertyName] = UnsetPropertyValue::get();
-                    continue;
-                }
                 $values[$propertyName] = SerializedPropertyValue::fromArray($propertyValue);
             } elseif ($propertyValue instanceof SerializedPropertyValue) {
                 $values[$propertyName] = $propertyValue;
@@ -81,7 +76,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
 
             $values[$propertyName] = $defaultValue === null
                 ? UnsetPropertyValue::get()
-                : new SerializedPropertyValue($defaultValue, $propertyTypeFromSchema);
+                : SerializedPropertyValue::create($defaultValue, $propertyTypeFromSchema);
         }
 
         return new self($values);

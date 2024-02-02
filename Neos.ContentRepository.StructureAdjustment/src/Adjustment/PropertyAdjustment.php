@@ -107,7 +107,7 @@ class PropertyAdjustment
     {
         $propertyType = $node->nodeType?->getPropertyType($propertyKey) ?? 'string';
         $serializedPropertyValues = SerializedPropertyValues::fromArray([
-            $propertyKey => new SerializedPropertyValue($defaultValue, $propertyType)
+            $propertyKey => SerializedPropertyValue::create($defaultValue, $propertyType)
         ]);
 
         return $this->publishNodePropertiesWereSet($nodeAggregate, $node, $serializedPropertyValues);
