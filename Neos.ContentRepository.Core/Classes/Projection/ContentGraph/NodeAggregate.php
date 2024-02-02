@@ -99,11 +99,6 @@ final class NodeAggregate
         return array_values($this->nodesByOccupiedDimensionSpacePoint);
     }
 
-    public function getSingleNodeIndependentOfItsDimension(): Node
-    {
-        return current($this->nodesByOccupiedDimensionSpacePoint);
-    }
-
     public function getNodeByOccupiedDimensionSpacePoint(
         OriginDimensionSpacePoint $occupiedDimensionSpacePoint
     ): Node {
