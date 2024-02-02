@@ -15,12 +15,10 @@ namespace Neos\Fusion\Core\Cache;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Utility\Files;
-use Psr\Log\LoggerInterface;
 
 /**
  * Helper around the ParsePartials Cache.
@@ -45,12 +43,6 @@ class ParserCache
     protected $packageManager;
 
     /**
-     * @Flow\Inject
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @Flow\InjectConfiguration(path="enableParsePartialsCache")
      */
     protected $enableCache;
@@ -72,18 +64,7 @@ class ParserCache
             throw new \RuntimeException("Couldn't resolve realpath for: '$contextPathAndFilename'", 1705409467);
         }
         $identifier = $this->getCacheIdentifierForAbsoluteUnixStyleFilePathWithoutDirectoryTraversal($fusionFileRealPath);
-        $value = $this->cacheForIdentifier($identifier, $generateValueToCache);
-        if (!$value instanceof FusionFile) {
-            $this->logger->error(sprintf(
-                'Unexpected cache error in parser cache while retrieving identifier %s. Expected cache %s with backend %s to return `FusionFile` but got `%s`.',
-                $identifier,
-                $this->parsePartialsCache->getIdentifier(),
-                get_class($this->parsePartialsCache->getBackend()),
-                get_debug_type($value)
-            ), LogEnvironment::fromMethodName(__METHOD__));
-            return $generateValueToCache();
-        }
-        return $value;
+        return $this->cacheForIdentifier($identifier, $generateValueToCache);
     }
 
     public function cacheForDsl(string $identifier, string $code, \Closure $generateValueToCache): mixed
@@ -97,11 +78,16 @@ class ParserCache
 
     private function cacheForIdentifier(string $identifier, \Closure $generateValueToCache): mixed
     {
-        if ($this->parsePartialsCache->has($identifier)) {
-            return $this->parsePartialsCache->get($identifier);
+        $value = $this->parsePartialsCache->get($identifier);
+        if ($value !== false) {
+            return $value;
         }
         $value = $generateValueToCache();
-        $this->parsePartialsCache->set($identifier, $value);
+        if ($value !== false) {
+            // in the rare edge-case of a fusion dsl returning `false` we cannot cache it,
+            // as the above get would be ignored. This is an acceptable compromise.
+            $this->parsePartialsCache->set($identifier, $value);
+        }
         return $value;
     }
 
