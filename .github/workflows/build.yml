@@ -14,7 +14,7 @@ jobs:
       contents: read # to fetch code (actions/checkout)
 
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && 'static analysis ' || '' }} (deps: ${{ matrix.dependencies }})"
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -26,24 +26,11 @@ jobs:
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
-        #include:
-          #- php-versions: '7.3'
-          #  static-analysis: 'psalm'
-          #  experimental: false
-          #  dependencies: 'highest'
-
-          # Experimental build for PHP nightly
-          #- php-versions: 'nightly'
-          #  composer-arguments: '--ignore-platform-reqs'
-          #  static-analysis: 'no'
-          #  experimental: true
-          #  dependencies: 'highest'
-
-          # Build for minimum dependencies. Fails right now, hence deactivated.
-          #- php-versions: '7.1'
-          #  static-analysis: 'no'
-          #  experimental: false
-          #  dependencies: 'lowest'
+        include:
+          - php-versions: '8.1'
+            static-analysis: 'yes'
+            experimental: false
+            dependencies: 'highest'
 
     runs-on: ubuntu-latest
     services:
@@ -142,6 +129,7 @@ jobs:
         run: echo "FLOW_CONTEXT=${{ env.FLOW_CONTEXT }}" >> $GITHUB_ENV
 
       - name: Setup Flow configuration
+        if: matrix.static-analysis == 'no'
         run: |
           rm -f Configuration/Routes.yaml
           rm -f Configuration/Testing/Settings.yaml
@@ -163,9 +151,9 @@ jobs:
           ./flow configuration:show
           ./flow routing:list
 
-      #- name: Static analysis
-      #  if: matrix.static-analysis == 'psalm'
-      #  run: composer test-static
+      - name: Static analysis
+        if: matrix.static-analysis == 'yes'
+        run: cd Packages/Neos && composer lint:phpstan
 
       - name: Run unit tests
         if: matrix.static-analysis == 'no'

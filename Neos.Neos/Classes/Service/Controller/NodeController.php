@@ -200,7 +200,7 @@ class NodeController extends AbstractServiceController
      * @param string $fusionPath The Fusion path of the collection
      * @param array $nodeData
      * @param string $position where the node should be added (allowed: before, into, after)
-     * @return string
+     * @return void
      */
     public function createAndRenderAction(Node $referenceNode, $fusionPath, array $nodeData, $position)
     {
@@ -391,7 +391,7 @@ class NodeController extends AbstractServiceController
      *
      * @param NodeInterface $node
      * @param string $fusionPath
-     * @return string
+     * @return void
      */
     protected function redirectToRenderNode(NodeInterface $node, $fusionPath)
     {

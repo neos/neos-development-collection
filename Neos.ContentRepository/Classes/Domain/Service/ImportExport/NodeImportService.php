@@ -367,7 +367,7 @@ class NodeImportService
      * @param \XMLReader $reader reader positioned just after an opening array-tag
      * @param string $elementName
      * @param string $currentNodeIdentifier
-     * @return array the array values
+     * @return array|null the array values
      */
     protected function parseArrayElements(\XMLReader $reader, $elementName, $currentNodeIdentifier)
     {

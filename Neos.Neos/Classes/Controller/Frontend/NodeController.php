@@ -95,7 +95,7 @@ class NodeController extends ActionController
      * account.
      *
      * @param NodeInterface $node
-     * @return string View output for the specified node
+     * @return void View output for the specified node
      * @throws NodeNotFoundException | UnresolvableShortcutException | NeosException
      * We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      * @Flow\SkipCsrfProtection
@@ -131,7 +131,7 @@ class NodeController extends ActionController
      * Previews a node that is not live (i.e. for the Backend Preview & Edit Mode)
      *
      * @param NodeInterface $node
-     * @return string View output for the specified node
+     * @return void View output for the specified node
      * @throws NeosException | NodeNotFoundException | SessionNotStartedException | UnresolvableShortcutException
      * @Flow\IgnoreValidation("node")
      */

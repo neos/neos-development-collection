@@ -922,6 +922,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         }
 
         if (
+            /** @phpstan-ignore-next-line i will not touch this code */
             isset($expectedPropertyType) &&
             $expectedPropertyType === 'Neos\Media\Domain\Model\ImageInterface' &&
             empty($value)

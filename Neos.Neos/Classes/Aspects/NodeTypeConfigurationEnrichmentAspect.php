@@ -131,7 +131,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * Resolve help message thumbnail url
      *
      * @param string $nodeTypeName
-     * @param string $configurationThumbnail
+     * @param string|null $configurationThumbnail
      * @return string $thumbnailUrl
      */
     protected function resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail)
@@ -168,7 +168,7 @@ class NodeTypeConfigurationEnrichmentAspect
     {
         switch ($editorName) {
             case 'Neos.Neos/Inspector/Editors/SelectBoxEditor':
-                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {
                     $editorOptions['placeholder'] = $translationIdGenerator('selectBoxEditor.placeholder');
                 }
 
@@ -190,12 +190,12 @@ class NodeTypeConfigurationEnrichmentAspect
                 }
                 break;
             case 'Neos.Neos/Inspector/Editors/TextFieldEditor':
-                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {
                     $editorOptions['placeholder'] = $translationIdGenerator('textFieldEditor.placeholder');
                 }
                 break;
             case 'Neos.Neos/Inspector/Editors/TextAreaEditor':
-                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {
                     $editorOptions['placeholder'] = $translationIdGenerator('textAreaEditor.placeholder');
                 }
                 break;

@@ -93,6 +93,7 @@ final class RuntimeConfiguration
 
         // Build configuration for the remaining path parts
         $remainingPath = substr($fusionPath, $pathUntilNow === '' ? 0 : strlen($pathUntilNow) + 1);
+        /** @var non-empty-list<string> $pathParts */
         $pathParts = explode('/', $remainingPath);
         foreach ($pathParts as $pathPart) {
             if ($pathUntilNow === '') {
@@ -106,6 +107,7 @@ final class RuntimeConfiguration
                 continue;
             }
 
+            /** @phpstan-ignore-next-line $configuration is set */
             $configuration = $this->matchCurrentPathPart($pathPart, $configuration, $currentPrototypeDefinitions);
             $this->pathCache[$pathUntilNow]['c'] = $configuration;
             $this->pathCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;

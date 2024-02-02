@@ -60,7 +60,7 @@ class WorkspacesController extends ActionController
     /**
      * Shows a list of existing workspaces
      *
-     * @return string
+     * @return void
      */
     public function indexAction()
     {
@@ -92,7 +92,7 @@ class WorkspacesController extends ActionController
      * Shows details of the given workspace
      *
      * @param Workspace $workspace
-     * @return string
+     * @return void
      */
     public function showAction(Workspace $workspace)
     {

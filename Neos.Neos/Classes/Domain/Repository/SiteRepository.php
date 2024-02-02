@@ -21,6 +21,7 @@ use Neos\Neos\Domain\Exception as NeosException;
 /**
  * The Site Repository
  *
+ * @method QueryResultInterface<Site> findByState(int $state)
  * @Flow\Scope("singleton")
  * @api
  */

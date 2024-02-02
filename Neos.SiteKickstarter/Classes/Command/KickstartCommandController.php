@@ -48,7 +48,6 @@ class KickstartCommandController extends CommandController
      *
      * @param string $packageKey The packageKey for your site
      * @param string $siteName The siteName of your site
-     * @return string
      */
     public function siteCommand($packageKey, $siteName)
     {

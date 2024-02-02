@@ -98,7 +98,7 @@ abstract class Configuration implements ConfigurationInterface
     /**
      * Loads a list of available versions into an array.
      *
-     * @return array
+     * @return void
      */
     abstract protected function registerAvailableVersions();
 }

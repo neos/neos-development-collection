@@ -6,6 +6,12 @@
   "require": {
     "neos/flow-development-collection": "8.3.x-dev"
   },
+  "scripts": {
+    "lint:phpstan": "../../bin/phpstan analyse",
+    "lint": [
+      "@lint:phpstan"
+    ]
+  },
   "replace": {
   },
   "suggest": {
