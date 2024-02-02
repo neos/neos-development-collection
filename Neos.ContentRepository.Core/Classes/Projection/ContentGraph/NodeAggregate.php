@@ -47,11 +47,12 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
  * This interface is called *Readable* because it exposes read operations on the set of nodes inside
  * a single NodeAggregate; often used for constraint checks (in command handlers).
  *
- * @api
+ * @api except its constructor.
  */
 final class NodeAggregate
 {
     /**
+     * @internal
      * @param ContentStreamId $contentStreamId ID of the content stream of this node aggregate
      * @param NodeAggregateId $nodeAggregateId ID of this node aggregate
      * @param NodeAggregateClassification $classification whether this aggregate represents a root, regular or tethered node
