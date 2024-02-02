@@ -34,7 +34,7 @@ class RuntimeContentCache
     protected $enableContentCache = false;
 
     /**
-     * @var boolean
+     * @var boolean|null
      */
     protected $inCacheEntryPoint = null;
 

@@ -26,7 +26,7 @@ class RuntimeException extends Exception
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getFusionPath()
     {

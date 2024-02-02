@@ -9,8 +9,8 @@
         "neos/flow-development-collection": "9.0.x-dev",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
-        "neos/eventstore": "^1",
-        "neos/eventstore-doctrineadapter": "^1",
+        "neos/eventstore": "~1.0.0",
+        "neos/eventstore-doctrineadapter": "~1.0.0",
         "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
@@ -33,17 +33,18 @@
         "neos/utility-unicode": "*",
         "doctrine/orm": "^2.6",
         "ext-dom": "*",
+        "ext-libxml": "*",
         "neos/twitter-bootstrap": "^3.0.6",
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "doctrine/common": "^2.7 || ^3.0",
+        "enshrined/svg-sanitize": "^0.16.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
         "neos/party": "~7.0.3",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
-        "neos/kickstarter": "~9.0.0",
-        "enshrined/svg-sanitize": "^0.16.0"
+        "neos/kickstarter": "~9.0.0"
     },
     "replace": {
         "packagefactory/atomicfusion-afx": "*",
@@ -113,7 +114,7 @@
         "test:functional": [
             "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
         ],
-        "test:behat-cli": "../../bin/behat -vvv -f progress --strict --no-interaction",
+        "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
         "test:behavioral": [
             "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
@@ -122,11 +123,11 @@
             "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
         ],
         "test:behavioral:stop-on-failure": [
-            "@test:behat-cli --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "@test:behat-cli --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-            "@test:behat-cli --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml",
-            "@test:behat-cli --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
         ],
         "test": [
             "@test:unit",
