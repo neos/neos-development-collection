@@ -23,7 +23,7 @@ final class ExportedEvent implements \JsonSerializable
             $event->id->value,
             $event->type->value,
             \json_decode($event->data->value, true),
-            $event->metadata->value,
+            $event->metadata?->value ?? [],
         );
     }
 

@@ -36,13 +36,13 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createNodeTable(): Table
     {
         $table = new Table($this->tableNamePrefix . '_node', [
-            DbalSchemaFactory::columnForNodeAnchorPoint('relationanchorpoint'),
+            DbalSchemaFactory::columnForNodeAnchorPoint('relationanchorpoint')->setAutoincrement(true),
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePoint('origindimensionspacepoint')->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotnull(false),
             DbalSchemaFactory::columnForNodeTypeName('nodetypename'),
             (new Column('properties', Type::getType(Types::TEXT)))->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
-            (new Column('classification', Type::getType(Types::STRING)))->setLength(20)->setNotnull(true)->setCustomSchemaOption('charset', 'binary'),
+            (new Column('classification', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
             (new Column('created', Type::getType(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
             (new Column('originalcreated', Type::getType(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
             (new Column('lastmodified', Type::getType(Types::DATETIME_IMMUTABLE)))->setNotnull(false)->setDefault(null),

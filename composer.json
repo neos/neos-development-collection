@@ -9,8 +9,8 @@
         "neos/flow-development-collection": "9.0.x-dev",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
-        "neos/eventstore": "~1.0.0",
-        "neos/eventstore-doctrineadapter": "~1.0.0",
+        "neos/eventstore": "^1",
+        "neos/eventstore-doctrineadapter": "^1",
         "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
@@ -42,7 +42,8 @@
         "neos/party": "~7.0.3",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
-        "neos/kickstarter": "~9.0.0"
+        "neos/kickstarter": "~9.0.0",
+        "enshrined/svg-sanitize": "^0.16.0"
     },
     "replace": {
         "packagefactory/atomicfusion-afx": "*",
