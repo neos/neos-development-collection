@@ -16,7 +16,6 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
-use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Cache\ContentCache;
@@ -193,10 +192,6 @@ class ContentCacheTest extends UnitTestCase
     {
         $contentCache = new ContentCache();
 
-        $mockPropertyMapper = $this->createMock(PropertyMapper::class);
-        $mockPropertyMapper->expects(self::any())->method('convert')->will($this->returnArgument(0));
-        $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
-
         $mockCache = $this->createMock(FrontendInterface::class);
         $this->inject($contentCache, 'cache', $mockCache);
 
@@ -205,7 +200,7 @@ class ContentCacheTest extends UnitTestCase
         $content = $contentCache->createUncachedSegment(
             $invalidContent,
             'uncached.fusion.path',
-            ['node' => 'A node identifier']
+            []
         );
 
         $output = $contentCache->processCacheSegments($content);
@@ -222,10 +217,6 @@ class ContentCacheTest extends UnitTestCase
 
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
-
-        $mockPropertyMapper = $this->createMock(PropertyMapper::class);
-        $mockPropertyMapper->expects(self::any())->method('convert')->will($this->returnArgument(0));
-        $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
 
         $mockContext = $this->getMockBuilder(EnvironmentConfiguration::class)->disableOriginalConstructor()->getMock();
         $cacheBackend = new TransientMemoryBackend($mockContext);
@@ -246,7 +237,7 @@ class ContentCacheTest extends UnitTestCase
         $innerUncachedContent = $contentCache->createUncachedSegment(
             $uncachedCommandOutput,
             'some.fusionh.path.innerUncached',
-            ['node' => 'A node identifier']
+            []
         );
 
         $outerContentStart = 'You can nest cached segments like <';

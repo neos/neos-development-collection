@@ -26,11 +26,18 @@ final class FusionContextSerializer implements NormalizerInterface, Denormalizer
     ) {
     }
 
+    /**
+     * @param array<int|string,mixed> $context
+     */
     public function denormalize(mixed $data, string $type, string $format = null, array $context = [])
     {
         return $this->propertyMapper->convert($data, $type);
     }
 
+    /**
+     * @param array<int|string,mixed> $context
+     * @return array<int|string,mixed>
+     */
     public function normalize(mixed $object, string $format = null, array $context = [])
     {
         return $this->propertyMapper->convert($object, 'string');
@@ -46,6 +53,9 @@ final class FusionContextSerializer implements NormalizerInterface, Denormalizer
         throw new \BadMethodCallException(sprintf('Method %s is not supported.', __METHOD__), 1706978913);
     }
 
+    /**
+     * @return array<int|string,mixed>
+     */
     public function getSupportedTypes(?string $format): array
     {
         throw new \BadMethodCallException(sprintf('Method %s is not supported.', __METHOD__), 1706978914);

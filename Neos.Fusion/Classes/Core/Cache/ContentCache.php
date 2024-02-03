@@ -126,7 +126,7 @@ class ContentCache
      *
      * @param string $content The content rendered by the Fusion Runtime
      * @param string $fusionPath The Fusion path that rendered the content, for example "page<Acme.Com:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
-     * @param array<string, array{type: string, value: string}> $serializedContext Serialized Fusion context variables which are needed to correctly render the specified Fusion object
+     * @param array<string, array{type: string, value: mixed}> $serializedContext Serialized Fusion context variables which are needed to correctly render the specified Fusion object
      * @return string The original content, but with additional markers added
      */
     public function createUncachedSegment($content, $fusionPath, array $serializedContext)
@@ -142,7 +142,7 @@ class ContentCache
      *
      * @param string $content The content rendered by the Fusion Runtime
      * @param string $fusionPath The Fusion path that rendered the content, for example "page<Acme.Com:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
-     * @param array<string, array{type: string, value: string}> $serializedContext Serialized Fusion context variables which are needed to correctly render the specified Fusion object
+     * @param array<string, array{type: string, value: mixed}> $serializedContext Serialized Fusion context variables which are needed to correctly render the specified Fusion object
      * @param array $cacheIdentifierValues
      * @param array $tags Tags to add to the cache entry
      * @param integer $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.

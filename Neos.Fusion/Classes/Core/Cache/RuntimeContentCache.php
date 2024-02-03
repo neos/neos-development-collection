@@ -74,7 +74,7 @@ class RuntimeContentCache
         $this->runtime = $runtime;
     }
 
-    public function injectSerializer(NormalizerInterface&DenormalizerInterface $serializer)
+    public function injectSerializer(NormalizerInterface&DenormalizerInterface $serializer): void
     {
         $this->serializer = $serializer;
     }
@@ -375,7 +375,7 @@ class RuntimeContentCache
      * {@see self::unserializeContext()}
      *
      * @param array<string, mixed> $contextVariables
-     * @return array<string, array{type: string, value: string}>
+     * @return array<string, array{type: string, value: mixed}>
      */
     protected function serializeContext(array $contextVariables): array
     {
@@ -394,7 +394,7 @@ class RuntimeContentCache
      * Decodes and serialized array of context variables to its original values
      * {@see self::serializeContext()}
      *
-     * @param array<string, array{type: string, value: string}> $contextArray
+     * @param array<string, array{type: string, value: mixed}> $contextArray
      * @return array<string, mixed>
      */
     protected function unserializeContext(array $contextArray): array
