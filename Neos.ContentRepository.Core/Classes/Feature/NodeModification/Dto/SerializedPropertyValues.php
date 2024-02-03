@@ -103,6 +103,9 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
 
     public function withoutUnsets(): self
     {
+        if (!in_array(UnsetPropertyValue::get(), $this->values, true)) {
+            return $this;
+        }
         $values = [];
         foreach ($this->values as $name => $serializedValue) {
             if ($serializedValue instanceof UnsetPropertyValue) {

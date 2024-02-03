@@ -88,12 +88,17 @@ class SerializedPropertyValuesTest extends TestCase
      */
     public function withoutUnsets(): void
     {
-        // the format which is implicitly used in the event log, due to json_serialize
+        // the format which should be used by the projections
         $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => UnsetPropertyValue::get(), 'otherProperty' => SerializedPropertyValue::create('text', 'string'), 'reputation' => UnsetPropertyValue::get()]);
         self::assertEquals(
             SerializedPropertyValues::fromArray(['otherProperty' => SerializedPropertyValue::create('text', 'string')]),
             $propertyValues->withoutUnsets()
         );
-    }
 
+        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => SerializedPropertyValue::create('text', 'string'), 'otherProperty' => SerializedPropertyValue::create('text', 'string')]);
+        self::assertEquals(
+            $propertyValues,
+            $propertyValues->withoutUnsets()
+        );
+    }
 }

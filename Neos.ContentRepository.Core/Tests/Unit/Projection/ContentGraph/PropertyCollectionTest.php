@@ -48,6 +48,7 @@ class PropertyCollectionTest extends TestCase
         $this->mockSerializer->expects($this->never())->method($this->anything());
         $collection = new PropertyCollection(SerializedPropertyValues::fromArray(['someProperty' => ['value' => 'some string', 'type' => 'string']]), $this->mockPropertyConverter);
         self::assertNull($collection['non-existing']);
+        self::assertFalse(isset($collection['non-existing']));
     }
 
     /**
@@ -58,6 +59,7 @@ class PropertyCollectionTest extends TestCase
         $this->mockSerializer->expects($this->never())->method($this->anything());
         $collection = new PropertyCollection(SerializedPropertyValues::fromArray(['someProperty' => null]), $this->mockPropertyConverter);
         self::assertNull($collection['someProperty']);
+        self::assertFalse(isset($collection['someProperty']));
     }
 
     /**
@@ -68,6 +70,7 @@ class PropertyCollectionTest extends TestCase
         $this->mockSerializer->expects($this->once())->method('denormalize')->with('some string', 'string', null, [])->willReturn('some deserialized value');
         $collection = new PropertyCollection(SerializedPropertyValues::fromArray(['someProperty' => ['value' => 'some string', 'type' => 'string']]), $this->mockPropertyConverter);
         self::assertSame('some deserialized value', $collection['someProperty']);
+        self::assertTrue(isset($collection['someProperty']));
     }
 
     /**
@@ -107,7 +110,19 @@ class PropertyCollectionTest extends TestCase
     {
         $serializedPropertyValues = SerializedPropertyValues::fromArray(['someProperty' => ['value' => 'some string', 'type' => 'string']]);
         $collection = new PropertyCollection($serializedPropertyValues, $this->mockPropertyConverter);
-        self::assertSame($serializedPropertyValues, $collection->serialized());
+        self::assertEquals($serializedPropertyValues, $collection->serialized());
     }
 
+    /**
+     * @test
+     */
+    public function serializedReturnsSerializedPropertyWithoutUnsetValues(): void
+    {
+        $serializedPropertyValues = SerializedPropertyValues::fromArray(['unsetProperty' => null, 'someProperty' => ['value' => 'some string', 'type' => 'string']]);
+        $collection = new PropertyCollection($serializedPropertyValues, $this->mockPropertyConverter);
+        self::assertEquals(
+            SerializedPropertyValues::fromArray(['someProperty' => ['value' => 'some string', 'type' => 'string']]),
+            $collection->serialized()
+        );
+    }
 }
