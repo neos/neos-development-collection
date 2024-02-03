@@ -113,7 +113,6 @@ class NodeController extends ActionController
      * @param string $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
@@ -184,7 +183,6 @@ class NodeController extends ActionController
      * @param string $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
@@ -273,7 +271,6 @@ class NodeController extends ActionController
      * @param NodeAddress $nodeAddress
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
     protected function handleShortcutNode(NodeAddress $nodeAddress, ContentRepository $contentRepository): void
     {
