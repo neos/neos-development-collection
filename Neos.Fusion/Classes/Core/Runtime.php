@@ -270,60 +270,39 @@ class Runtime
 
     public function renderResponse(string $fusionPath, array $contextArray): ResponseInterface
     {
-        if ($this->legacyActionResponseForCurrentRendering !== null) {
-            throw new Exception('Recursion detected in `Runtime::renderResponse`. This entry point is only allowed to be invoked once per rendering.', 1706993940);
-        }
-        /** Legacy layer {@see self::getControllerContext()} */
-        $this->legacyActionResponseForCurrentRendering = new ActionResponse();
-
-        /** unlike pushContextArray, we will  only allow "legal" fusion global variables. {@see self::pushContext} */
+        /** Unlike pushContextArray, we don't allow to overrule fusion globals {@see self::pushContext} */
         foreach ($contextArray as $key => $_) {
             if ($this->fusionGlobals->has($key)) {
                 throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1706452063);
             }
         }
         $this->pushContextArray($contextArray);
-        try {
-            $output = $this->render($fusionPath);
-        } finally {
-            $this->popContext();
-        }
 
-        /**
-         * parse potential raw http response possibly rendered via "Neos.Fusion:Http.Message"
-         * {@see \Neos\Fusion\FusionObjects\HttpResponseImplementation}
-         */
-        $outputStringHasHttpPreamble = is_string($output) && str_starts_with($output, 'HTTP/');
-        if ($outputStringHasHttpPreamble) {
-            $response = Message::parseResponse($output);
-            $response = self::applyActionResponseToHttpResponse($this->legacyActionResponseForCurrentRendering, $response);
-            $this->legacyActionResponseForCurrentRendering = null;
-            return $response;
-        }
+        return $this->withSimulatedLegacyControllerContext(function () use ($fusionPath) {
+            try {
+                $output = $this->render($fusionPath);
+            } finally {
+                $this->popContext();
+            }
 
-        $stream = match (true) {
-            is_string($output),
-            $output instanceof \Stringable => Utils::streamFor((string)$output),
-            $output === null, $output === false => Utils::streamFor(''),
-            default => throw new \RuntimeException(sprintf('Cannot render %s into http response body.', get_debug_type($output)), 1706454898)
-        };
+            /**
+             * parse potential raw http response possibly rendered via "Neos.Fusion:Http.Message"
+             * {@see \Neos\Fusion\FusionObjects\HttpResponseImplementation}
+             */
+            $outputStringHasHttpPreamble = is_string($output) && str_starts_with($output, 'HTTP/');
+            if ($outputStringHasHttpPreamble) {
+                return Message::parseResponse($output);
+            }
 
-        $response = new Response(body: $stream);
-        $response = self::applyActionResponseToHttpResponse($this->legacyActionResponseForCurrentRendering, $response);
-        $this->legacyActionResponseForCurrentRendering = null;
-        return $response;
-    }
+            $stream = match (true) {
+                is_string($output),
+                $output instanceof \Stringable => Utils::streamFor((string)$output),
+                $output === null, $output === false => Utils::streamFor(''),
+                default => throw new \RuntimeException(sprintf('Cannot render %s into http response body.', get_debug_type($output)), 1706454898)
+            };
 
-    private static function applyActionResponseToHttpResponse(ActionResponse $actionResponse, ResponseInterface $httpResponse): ResponseInterface
-    {
-        foreach ($actionResponse->buildHttpResponse()->getHeaders() as $name => $values) {
-            $httpResponse = $httpResponse->withAddedHeader($name, $values);
-        }
-        // if the status code is 200 we assume it's the default and will not overrule it
-        if ($actionResponse->getStatusCode() !== 200) {
-            $httpResponse = $httpResponse->withStatus($actionResponse->getStatusCode());
-        }
-        return $httpResponse;
+            return new Response(body: $stream);
+        });
     }
 
     /**
@@ -958,6 +937,39 @@ class Runtime
     }
 
     /**
+     * Implements the legacy controller context simulation {@see self::getControllerContext()}
+     *
+     * Initially it was possible to mutate the current response of the active MVC controller though $response.
+     * While HIGHLY internal behaviour and ONLY to be used by Neos.Fusion.Form or Neos.Neos:Plugin
+     * this legacy layer is in place still allows this functionality.
+     *
+     * @param \Closure(): ResponseInterface $renderer
+     */
+    private function withSimulatedLegacyControllerContext(\Closure $renderer): ResponseInterface
+    {
+        if ($this->legacyActionResponseForCurrentRendering !== null) {
+            throw new Exception('Recursion detected in `Runtime::renderResponse`. This entry point is only allowed to be invoked once per rendering.', 1706993940);
+        }
+        $this->legacyActionResponseForCurrentRendering = new ActionResponse();
+
+        // actual rendering
+        $httpResponse = $renderer();
+
+        // transfer possible headers that have been set dynamically
+        foreach ($this->legacyActionResponseForCurrentRendering->buildHttpResponse()->getHeaders() as $name => $values) {
+            $httpResponse = $httpResponse->withAddedHeader($name, $values);
+        }
+        // if the status code is 200 we assume it's the default and will not overrule it
+        if ($this->legacyActionResponseForCurrentRendering->getStatusCode() !== 200) {
+            $httpResponse = $httpResponse->withStatus($this->legacyActionResponseForCurrentRendering->getStatusCode());
+        }
+
+        // reset for next render
+        $this->legacyActionResponseForCurrentRendering = null;
+        return $httpResponse;
+    }
+
+    /**
      * The concept of the controller context inside Fusion has been deprecated.
      *
      * To migrate the use case of fetching the active request, please look into {@see FusionGlobals::get()} instead.
@@ -980,11 +992,6 @@ class Runtime
      * WARNING:
      *      Invoking this backwards-compatible layer is possibly unsafe, if the rendering was not started
      *      in {@see self::renderResponse()} or no `request` global is available. This will raise an exception.
-     *
-     * MAINTAINER NOTE:
-     *      Initially it was possible to mutate the current response of the active MVC controller though $response.
-     *      While HIGHLY internal behaviour and ONLY to be used by Neos.Fusion.Form or Neos.Neos:Plugin
-     *      a legacy layer in place still allows this functionality.
      *
      * @deprecated with Neos 9.0
      * @internal
