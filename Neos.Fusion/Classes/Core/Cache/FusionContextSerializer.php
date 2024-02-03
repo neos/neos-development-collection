@@ -1,0 +1,53 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Neos\Fusion\Core\Cache;
+
+use Neos\Flow\Property\PropertyMapper;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+
+/**
+ * Serializer for Fusion's [at]cache.context values
+ *
+ * Uses the flow property mapper as implementation.
+ * It relies on a converter being available from the context value type to string and reverse.
+ *
+ * {@see RuntimeContentCache::serializeContext()}
+ * {@see RuntimeContentCache::unserializeContext()}
+ *
+ * @internal
+ */
+final class FusionContextSerializer implements NormalizerInterface, DenormalizerInterface
+{
+    public function __construct(
+        private readonly PropertyMapper $propertyMapper
+    ) {
+    }
+
+    public function denormalize(mixed $data, string $type, string $format = null, array $context = [])
+    {
+        return $this->propertyMapper->convert($data, $type);
+    }
+
+    public function normalize(mixed $object, string $format = null, array $context = [])
+    {
+        return $this->propertyMapper->convert($object, 'string');
+    }
+
+    public function supportsDenormalization(mixed $data, string $type, string $format = null)
+    {
+        throw new \BadMethodCallException(sprintf('Method %s is not supported.', __METHOD__), 1706978912);
+    }
+
+    public function supportsNormalization(mixed $data, string $format = null)
+    {
+        throw new \BadMethodCallException(sprintf('Method %s is not supported.', __METHOD__), 1706978913);
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        throw new \BadMethodCallException(sprintf('Method %s is not supported.', __METHOD__), 1706978914);
+    }
+}

@@ -16,6 +16,8 @@ use Neos\Utility\TypeHandling;
 use Neos\Utility\Unicode\Functions;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * Integrate the ContentCache into the Fusion Runtime
@@ -62,11 +64,7 @@ class RuntimeContentCache
      */
     protected $tags = [];
 
-    /**
-     * @var \Neos\Flow\Property\PropertyMapper
-     * @Flow\Inject
-     */
-    protected $propertyMapper;
+    private NormalizerInterface&DenormalizerInterface $serializer;
 
     /**
      * @param Runtime $runtime
@@ -74,6 +72,11 @@ class RuntimeContentCache
     public function __construct(Runtime $runtime)
     {
         $this->runtime = $runtime;
+    }
+
+    public function injectSerializer(NormalizerInterface&DenormalizerInterface $serializer)
+    {
+        $this->serializer = $serializer;
     }
 
     /**
@@ -368,7 +371,7 @@ class RuntimeContentCache
     }
 
     /**
-     * Encodes an array of context variables to its serialized representation via flows property mapping.
+     * Encodes an array of context variables to its serialized representation
      * {@see self::unserializeContext()}
      *
      * @param array<string, mixed> $contextVariables
@@ -378,10 +381,9 @@ class RuntimeContentCache
     {
         $serializedContextArray = [];
         foreach ($contextVariables as $variableName => $contextValue) {
-            // TODO This relies on a converter being available from the context value type to string
             if ($contextValue !== null) {
                 $serializedContextArray[$variableName]['type'] = TypeHandling::getTypeForValue($contextValue);
-                $serializedContextArray[$variableName]['value'] = $this->propertyMapper->convert($contextValue, 'string');
+                $serializedContextArray[$variableName]['value'] = $this->serializer->normalize($contextValue);
             }
         }
 
@@ -389,7 +391,7 @@ class RuntimeContentCache
     }
 
     /**
-     * Decodes and serialized array of context variables to its original values via flows property mapping.
+     * Decodes and serialized array of context variables to its original values
      * {@see self::serializeContext()}
      *
      * @param array<string, array{type: string, value: string}> $contextArray
@@ -399,7 +401,7 @@ class RuntimeContentCache
     {
         $unserializedContext = [];
         foreach ($contextArray as $variableName => $typeAndValue) {
-            $value = $this->propertyMapper->convert($typeAndValue['value'], $typeAndValue['type']);
+            $value = $this->serializer->denormalize($typeAndValue['value'], $typeAndValue['type']);
             $unserializedContext[$variableName] = $value;
         }
 
