@@ -120,9 +120,9 @@ class Runtime
     protected $runtimeConfiguration;
 
     /**
-     * @deprecated
+     * @deprecated legacy layer {@see self::getControllerContext()}
      */
-    protected ?ControllerContext $controllerContext = null;
+    private ?ActionResponse $legacyActionResponseForCurrentRendering = null;
 
     /**
      * @var array
@@ -159,22 +159,6 @@ class Runtime
         );
         $this->runtimeContentCache = new RuntimeContentCache($this);
         $this->fusionGlobals = $fusionGlobals;
-    }
-
-    /**
-     * Returns the context which has been passed by the currently active MVC Controller
-     *
-     * DEPRECATED CONCEPT. We only implement this as backwards-compatible layer.
-     *
-     * @deprecated use `Runtime::fusionGlobals->get('request')` instead to get the request. {@see FusionGlobals::get()}
-     * @internal
-     */
-    public function getControllerContext(): ControllerContext
-    {
-        if ($this->controllerContext === null) {
-            throw new Exception(sprintf('Legacy controller context in runtime is only available when fusion global "request" is a ActionRequest and during "renderResponse".'), 1706458355);
-        }
-        return $this->controllerContext;
     }
 
     /**
@@ -286,22 +270,11 @@ class Runtime
 
     public function renderResponse(string $fusionPath, array $contextArray): ResponseInterface
     {
-        // legacy controller context layer
-        $possibleRequest = $this->fusionGlobals->get('request');
-        $legacyActionResponse = null;
-        if ($possibleRequest instanceof ActionRequest) {
-            $uriBuilder = new UriBuilder();
-            $uriBuilder->setRequest($possibleRequest);
-
-            $this->controllerContext = new ControllerContext(
-                $possibleRequest,
-                // expose action response to be possibly mutated in neos forms or fusion plugins.
-                // this behaviour is highly internal and deprecated!
-                $legacyActionResponse = new ActionResponse(),
-                new Arguments([]),
-                $uriBuilder
-            );
+        if ($this->legacyActionResponseForCurrentRendering !== null) {
+            throw new Exception('Recursion detected in `Runtime::renderResponse`. This entry point is only allowed to be invoked once per rendering.', 1706993940);
         }
+        /** Legacy layer {@see self::getControllerContext()} */
+        $this->legacyActionResponseForCurrentRendering = new ActionResponse();
 
         /** unlike pushContextArray, we will  only allow "legal" fusion global variables. {@see self::pushContext} */
         foreach ($contextArray as $key => $_) {
@@ -323,10 +296,8 @@ class Runtime
         $outputStringHasHttpPreamble = is_string($output) && str_starts_with($output, 'HTTP/');
         if ($outputStringHasHttpPreamble) {
             $response = Message::parseResponse($output);
-            if ($legacyActionResponse) {
-                $response = self::applyActionResponseToHttpResponse($legacyActionResponse, $response);
-                $this->controllerContext = null;
-            }
+            $response = self::applyActionResponseToHttpResponse($this->legacyActionResponseForCurrentRendering, $response);
+            $this->legacyActionResponseForCurrentRendering = null;
             return $response;
         }
 
@@ -338,10 +309,8 @@ class Runtime
         };
 
         $response = new Response(body: $stream);
-        if ($legacyActionResponse) {
-            $response = self::applyActionResponseToHttpResponse($legacyActionResponse, $response);
-            $this->controllerContext = null;
-        }
+        $response = self::applyActionResponseToHttpResponse($this->legacyActionResponseForCurrentRendering, $response);
+        $this->legacyActionResponseForCurrentRendering = null;
         return $response;
     }
 
@@ -986,6 +955,59 @@ class Runtime
                 Please make sure to define one in your Fusion configuration.
                 MESSAGE, 1332493990);
         }
+    }
+
+    /**
+     * The concept of the controller context inside Fusion has been deprecated.
+     *
+     * To migrate the use case of fetching the active request, please look into {@see FusionGlobals::get()} instead.
+     * By convention, an {@see ActionRequest} will be available as `request`:
+     *
+     * ```php
+     * $actionRequest = $this->runtime->fusionGlobals->get('request');
+     * if (!$actionRequest instanceof ActionRequest) {
+     *     // fallback or error
+     * }
+     * ```
+     *
+     * To get an {@see UriBuilder} proceed with:
+     *
+     * ```php
+     * $uriBuilder = new UriBuilder();
+     * $uriBuilder->setRequest($actionRequest);
+     * ```
+     *
+     * WARNING:
+     *      Invoking this backwards-compatible layer is possibly unsafe, if the rendering was not started
+     *      in {@see self::renderResponse()} or no `request` global is available. This will raise an exception.
+     *
+     * MAINTAINER NOTE:
+     *      Initially it was possible to mutate the current response of the active MVC controller though $response.
+     *      While HIGHLY internal behaviour and ONLY to be used by Neos.Fusion.Form or Neos.Neos:Plugin
+     *      a legacy layer in place still allows this functionality.
+     *
+     * @deprecated with Neos 9.0
+     * @internal
+     */
+    public function getControllerContext(): ControllerContext
+    {
+        // legacy controller context layer
+        $actionRequest = $this->fusionGlobals->get('request');
+        if ($this->legacyActionResponseForCurrentRendering === null || !$actionRequest instanceof ActionRequest) {
+            throw new Exception(sprintf('Fusions simulated legacy controller context is only available inside `Runtime::renderResponse` and when the Fusion global "request" is an ActionRequest.'), 1706458355);
+        }
+
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($actionRequest);
+
+        return new ControllerContext(
+            $actionRequest,
+            // expose action response to be possibly mutated in neos forms or fusion plugins.
+            // this behaviour is highly internal and deprecated!
+            $this->legacyActionResponseForCurrentRendering,
+            new Arguments([]),
+            $uriBuilder
+        );
     }
 
     /**
