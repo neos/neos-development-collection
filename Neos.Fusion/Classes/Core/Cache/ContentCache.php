@@ -240,8 +240,8 @@ class ContentCache
      * @param string $fusionPath Fusion path identifying the Fusion object to retrieve from the content cache
      * @param array $cacheIdentifierValues Further values which play into the cache identifier hash, must be the same as the ones specified while the cache entry was written
      * @param boolean $addCacheSegmentMarkersToPlaceholders If cache segment markers should be added – this makes sense if the cached segment is about to be included in a not-yet-cached segment
-     * @param string|bool $cacheDiscriminator The evaluated cache discriminator value, if any and false if the cache discriminator is disabled for the current context
-     * @return string|boolean The segment with replaced cache placeholders, or false if a segment was missing in the cache
+     * @param string|false $cacheDiscriminator The evaluated cache discriminator value, if any and false if the cache discriminator is disabled for the current context
+     * @return string|false The segment with replaced cache placeholders, or false if a segment was missing in the cache
      * @throws Exception
      */
     public function getCachedSegment($uncachedCommandCallback, $fusionPath, $cacheIdentifierValues, $addCacheSegmentMarkersToPlaceholders = false, $cacheDiscriminator = null)
@@ -361,6 +361,7 @@ class ContentCache
     {
         if (is_object($contextValue)) {
             if ($contextValue instanceof Proxy) {
+                /** @var string $type */
                 $type = get_parent_class($contextValue);
             } else {
                 $type = get_class($contextValue);

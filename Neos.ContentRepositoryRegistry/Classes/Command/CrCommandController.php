@@ -83,8 +83,12 @@ final class CrCommandController extends CommandController
             if ($projectionStatus->type !== ProjectionStatusType::OK) {
                 $hasErrorsOrWarnings = true;
             }
-            if ($verbose && $projectionStatus->details !== '') {
-                $this->outputFormatted($projectionStatus->details, [], 2);
+            if ($verbose && ($projectionStatus->type !== ProjectionStatusType::OK || $projectionStatus->details)) {
+                $lines = explode(chr(10), $projectionStatus->details ?: '<comment>No details available.</comment>');
+                foreach ($lines as $line) {
+                    $this->outputLine('  ' . $line);
+                }
+                $this->outputLine();
             }
         }
         if ($hasErrorsOrWarnings) {

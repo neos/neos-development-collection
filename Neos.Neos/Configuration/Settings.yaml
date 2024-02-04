@@ -638,19 +638,6 @@ Neos:
             namespaces:
               f: Neos\FluidAdaptor\ViewHelpers
               neos: Neos\Neos\ViewHelpers
-      'Neos:ContentRepositoryViewHelpers':
-        title: 'Content Repository ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/ContentRepository.rst'
-        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
-        affectedClasses:
-          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
-          classNamePattern: '/^Neos\\ContentRepository\\ViewHelpers\\.*$/i'
-        parser:
-          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
-          options:
-            namespaces:
-              f: Neos\FluidAdaptor\ViewHelpers
-              neos: Neos\Neos\ViewHelpers
       'Neos:FusionViewHelpers':
         title: 'Fusion ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Fusion.rst'
@@ -715,15 +702,6 @@ Neos:
           includeAbstractClasses: true
         parser:
           implementationClassName: Neos\DocTools\Domain\Service\SignalsParser
-      'Neos:ContentRepositorySignals':
-        title: 'Content Repository Signals Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/ContentRepository.rst'
-        affectedClasses:
-          classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
-          classNamePattern: '/^Neos\\ContentRepository\\.*$/i'
-          includeAbstractClasses: true
-        parser:
-          implementationClassName: Neos\DocTools\Domain\Service\SignalsParser
       'Neos:FlowQueryOperations':
         title: 'FlowQuery Operation Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/FlowQueryOperationReference.rst'
@@ -736,6 +714,7 @@ Neos:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/EelHelpersReference.rst'
         affectedClasses:
           interface: Neos\Eel\ProtectedContextAwareInterface
-          classNamePattern: '/^.*Helper$/i'
+          # exclude possible EEL helpers residing in `Neos.Ui` as they are internal
+          classNamePattern: '/^(?!Neos\\Neos\\Ui\\).*Helper$/i'
         parser:
           implementationClassName: Neos\DocTools\Domain\Service\EelHelperClassParser

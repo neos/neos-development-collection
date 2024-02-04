@@ -33,7 +33,7 @@ class XmlCommentHandler extends AbstractRenderingExceptionHandler
     /**
      * @param LoggerInterface $logger
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -41,7 +41,7 @@ class XmlCommentHandler extends AbstractRenderingExceptionHandler
     /**
      * @param ThrowableStorageInterface $throwableStorage
      */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
     {
         $this->throwableStorage = $throwableStorage;
     }
@@ -51,7 +51,7 @@ class XmlCommentHandler extends AbstractRenderingExceptionHandler
      *
      * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
-     * @param integer $referenceCode
+     * @param string|null $referenceCode
      * @return string
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)

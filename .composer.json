@@ -31,21 +31,22 @@
     "test:functional": [
       "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
     ],
+    "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
     "test:behavioral": [
-      "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-      "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+      "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+      "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
       "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-      "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml",
-      "../../bin/behat -f progress -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
-      "../../bin/behat -f progress -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist"
+      "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml",
+      "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
+      "@test:behat-cli -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist"
     ],
     "test:behavioral:stop-on-failure": [
-      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+      "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+      "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
       "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml",
-      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
-      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist"
+      "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml",
+      "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
+      "@test:behat-cli -vvv --stop-on-failure -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist"
     ],
     "test": [
       "@test:unit",

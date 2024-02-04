@@ -15,6 +15,7 @@ namespace Neos\Fusion\Core\Cache;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
@@ -44,6 +45,7 @@ class ParserCache
 
     /**
      * @Flow\InjectConfiguration(path="enableParsePartialsCache")
+     * @var boolean
      */
     protected $enableCache;
 
@@ -105,6 +107,7 @@ class ParserCache
             throw new \InvalidArgumentException("Unsupported stream wrapper: '$requestedPath'");
         }
 
+        /** @var FlowPackageInterface $package */
         $package = $this->packageManager->getPackage($resourceUriParts['host']);
         return Files::concatenatePaths([$package->getResourcesPath(), $resourceUriParts['path']]);
     }

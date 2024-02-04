@@ -183,6 +183,15 @@ class NodeTypeManager
     public function overrideNodeTypes(array $completeNodeTypeConfiguration): void
     {
         $this->cachedNodeTypes = [];
+
+        if ($completeNodeTypeConfiguration === []) {
+            // as cachedNodeTypes is now empty loadNodeTypes will reload the default nodeTypes
+            return;
+        }
+
+        // the root node type must always exist
+        $completeNodeTypeConfiguration[NodeTypeName::ROOT_NODE_TYPE_NAME] ??= [];
+
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
             /** @var string $nodeTypeName */
             $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
