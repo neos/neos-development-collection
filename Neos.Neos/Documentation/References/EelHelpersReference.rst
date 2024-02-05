@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2024-02-02
+This reference was automatically generated from code on 2024-02-05
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -1237,6 +1237,8 @@ Formatted as {@see \Neos\Flow\I18n\Locale} identifier, eg "de", "en", ...
 Example::
 
     Translation.id("mh").locale(Neos.Backend.interfaceLanguage()).translate()
+
+**Return** (string)
 
 
 
