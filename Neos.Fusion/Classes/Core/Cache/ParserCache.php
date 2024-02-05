@@ -78,11 +78,16 @@ class ParserCache
 
     private function cacheForIdentifier(string $identifier, \Closure $generateValueToCache): mixed
     {
-        if ($this->parsePartialsCache->has($identifier)) {
-            return $this->parsePartialsCache->get($identifier);
+        $value = $this->parsePartialsCache->get($identifier);
+        if ($value !== false) {
+            return $value;
         }
         $value = $generateValueToCache();
-        $this->parsePartialsCache->set($identifier, $value);
+        if ($value !== false) {
+            // in the rare edge-case of a fusion dsl returning `false` we cannot cache it,
+            // as the above get would be ignored. This is an acceptable compromise.
+            $this->parsePartialsCache->set($identifier, $value);
+        }
         return $value;
     }
 
