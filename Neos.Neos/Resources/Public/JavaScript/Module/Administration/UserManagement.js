@@ -5,10 +5,11 @@ import {ImpersonateButton} from '../../Templates/ImpersonateButton'
 const BASE_PATH = '/neos/impersonate/'
 export default class UserManagement {
     constructor(_root) {
-        const csfrTokenField = document.querySelector('.neos-user-menu[data-csrf-token]')
+        const userMenuElement = document.querySelector('.neos-user-menu[data-csrf-token]')
         this._root = _root
-        this._csrfToken = !isNil(csfrTokenField) ? csfrTokenField.getAttribute('data-csrf-token') : ''
-        this._apiService = new ApiService(BASE_PATH, this._csrfToken)
+        this._csrfToken = !isNil(userMenuElement) ? userMenuElement.getAttribute('data-csrf-token') : ''
+        this._basePath = this._getBasePath(userMenuElement)
+        this._apiService = new ApiService(this._basePath, this._csrfToken)
 
         if (!isNil(_root)) {
             this._initialize()
@@ -27,6 +28,17 @@ export default class UserManagement {
         });
     }
 
+    _getBasePath(element) {
+        let url = BASE_PATH
+
+        if (!isNil(element) && element.hasAttribute('data-module-basepath')) {
+            let moduleBasePath = element.getAttribute('data-module-basepath')
+            moduleBasePath += moduleBasePath.endsWith('/') ? '' : '/'
+            url = moduleBasePath + 'impersonate/'
+        }
+
+        return url
+    }
     _renderImpersonateButtons() {
         const userTableActionButtons = Array.from(this._root.querySelectorAll('.neos-table .neos-action'))
         userTableActionButtons.forEach(_actionContainer => {

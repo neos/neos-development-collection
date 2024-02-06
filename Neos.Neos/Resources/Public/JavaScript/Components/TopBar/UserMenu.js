@@ -5,18 +5,30 @@ import { RestoreButton } from '../../Templates/RestoreButton'
 const BASE_PATH = '/neos/impersonate/'
 export default class UserMenu {
     constructor(_root) {
-        const csfrTokenField = document.querySelector('.neos-user-menu[data-csrf-token]')
-        this._csrfToken = !isNil(csfrTokenField)
-            ? csfrTokenField.getAttribute('data-csrf-token')
+        const userMenuElement = document.querySelector('.neos-user-menu[data-csrf-token]')
+        this._csrfToken = !isNil(userMenuElement)
+            ? userMenuElement.getAttribute('data-csrf-token')
             : ''
+        this._basePath = this._getBasePath(userMenuElement)
         this._root = _root
-        this._apiService = new ApiService(BASE_PATH, this._csrfToken)
+        this._apiService = new ApiService(this._basePath, this._csrfToken)
 
         if (!isNil(_root)) {
             this._checkImpersonateStatus()
         }
     }
 
+    _getBasePath(element) {
+        let url = BASE_PATH
+
+        if (!isNil(element) && element.hasAttribute('data-module-basepath')) {
+            let moduleBasePath = element.getAttribute('data-module-basepath')
+            moduleBasePath += moduleBasePath.endsWith('/') ? '' : '/'
+            url = moduleBasePath + 'impersonate/'
+        }
+
+        return url
+    }
     _renderRestoreButton(user) {
         const userMenuDropDown = this._root.querySelector('.neos-dropdown-menu')
         if (isNil(userMenuDropDown) || isNil(user)) {
