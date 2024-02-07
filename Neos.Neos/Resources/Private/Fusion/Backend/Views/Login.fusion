@@ -4,96 +4,81 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
   username = ''
   flashMessages = ${[]}
 
-  renderer = Neos.Fusion:Join {
-    doctype = '<!DOCTYPE html>'
-    doctype.@position = 'start 100'
+  @private {
+    logoImageSource = Neos.Neos:Component.ImageSource {
+      path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.logoImage')}
+    }
+    backgroundImageSource = Neos.Neos:Component.ImageSource {
+      path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
+    }
+    backgroundImageSourceIsWebp = ${private.backgroundImageSource ? String.endsWith(private.backgroundImageSource, '.webp') : null}
 
-    content = Neos.Fusion:Component {
-      @apply.props = ${props}
-
-      logoImageSource = Neos.Neos:Component.ImageSource {
-          path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.logoImage')}
+    additionalStyles = Neos.Fusion:Loop {
+      items = ${props.styles}
+      content = Neos.Fusion:Tag {
+        tagName = 'link'
+        attributes.rel = 'stylesheet'
+        attributes.href = Neos.Fusion:ResourceUri {
+          path = ${item}
+        }
       }
-      backgroundImageSource = Neos.Neos:Component.ImageSource {
-          path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
-      }
-      backgroundImageSourceIsWebp = ${this.backgroundImageSource ? String.endsWith(this.backgroundImageSource, '.webp') : null}
-
-      headerComment = ${Configuration.setting('Neos.Neos.headerComment')}
-
-      renderer = afx`
-        <html lang="en">
-            {props.headerComment}
-            <head>
-                <meta charset="utf-8" />
-                <meta name="robots" content="noindex" />
-                <title>{I18n.translate('login.index.title', 'Login to')} {props.site.name}</title>
-                <Neos.Fusion:Loop items={props.styles}>
-                    <link rel="stylesheet" @children="attributes.href">
-                        <Neos.Fusion:ResourceUri path={item}/>
-                    </link>
-                </Neos.Fusion:Loop>
-
-                <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/apple-touch-icon.png')} sizes="180x180" rel="apple-touch-icon" />
-                <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/favicon-16x16.png')} sizes="16x16" rel="icon" type="image/png" />
-                <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/favicon-32x32.png')} sizes="32x32" rel="icon" type="image/png" />
-                <link href={StaticResource.uri('Neos.Neos', 'Public/Images/Icons/safari-pinned-tab.svg')} rel="mask-icon" color="#00adee" />
-
-                <style type="text/css" @if.set={props.backgroundImageSource && !props.backgroundImageSourceIsWebp}>
-                    {'body.neos--bg,.neos-login-box:before{background-image:url(' + props.backgroundImageSource + ')}'}
-                </style>
-                <style type="text/css" @if.set={props.backgroundImageSource && props.backgroundImageSourceIsWebp}>
-                    {'.webp body.neos--bg,.webp .neos-login-box:before {background-image: url(' + props.backgroundImageSource + ')}'}
-                    {'.no-webp body.neos--bg,.no-webp .neos-login-box:before {background-image: url(' + String.substr(props.backgroundImageSource, 0, String.length(props.backgroundImageSource) - 4) + 'jpg)}'}
-                </style>
-            </head>
-            <body class={["neos", props.backgroundImageSource ? 'neos--bg' : null]}>
-                <img @if.set={props.backgroundImageSourceIsWebp} style="display: none" src="data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA" onload="document.documentElement.classList.add('webp')" onerror="document.documentElement.classList.add('no-webp')"/>
-                <div class="neos-modal-centered">
-                    <main class="neos-login-main">
-                        <div class={['neos-login-box', props.backgroundImageSource ? 'background-image-active' : null]}>
-                            <figure class="neos-login-box-logo">
-                                <img class="neos-login-box-logo-resource" @children="attributes.src" width="200px" height="200px" alt="Neos Logo">
-                                    {props.logoImageSource}
-                                </img>
-                            </figure>
-
-                            <h1 class="neos-login-heading">
-                                {I18n.id('login.index.title').value('Login to').package('Neos.Neos').source('Main')} <strong>{site.name}</strong>
-                            </h1>
-
-                            <div class="neos-login-body neos">
-                                <Neos.Neos:Component.Login.Form
-                                    username={props.username}
-                                    flashMessages={props.flashMessages}
-                                />
-                            </div>
-                        </div>
-                    </main>
-                    <footer class="neos-login-footer">
-                        <p>
-                            <a href="http://neos.io" target="_blank">Neos</a> –&nbsp;
-                            © 2006-{Date.format('now', 'Y')} This is free software, licensed under GPL3 or higher, and you are welcome to redistribute it under certain conditions;&nbsp;
-                            Neos comes with ABSOLUTELY NO WARRANTY;&nbsp;
-                            See <a href="http://neos.io" target="_blank">neos.io</a> for more details. Obstructing the appearance of this notice is prohibited by law.
-                        </p>
-                    </footer>
-                </div>
-
-                <script>{"
-                    if (document.querySelector('#username').value) {
-                        document.querySelector('#password').focus();
-                    }
-                    document.querySelector('form').addEventListener('submit', function() {
-                        document.querySelector('.neos-login-btn').classList.toggle('neos-hidden');
-                        document.querySelector('.neos-login-btn.neos-disabled').classList.toggle('neos-hidden');
-                    });
-                "}</script>
-            </body>
-        </html>
-      `
     }
   }
+
+  renderer = afx`
+    <Neos.Neos:Core.LoginPage title={I18n.translate('login.index.title', 'Login to') + ' ' + props.site.name} additionalResources.styles={private.additionalStyles}>
+      <Neos.Fusion:Fragment @path='additionalResources.inlineStyles'>
+        <style type="text/css" @if.set={private.backgroundImageSource && !private.backgroundImageSourceIsWebp}>
+          {'body.neos--bg,.neos-login-box:before{background-image:url(' + private.backgroundImageSource + ')}'}
+        </style>
+        <style type="text/css" @if.set={private.backgroundImageSource && private.backgroundImageSourceIsWebp}>
+          {'.webp body.neos--bg,.webp .neos-login-box:before {background-image: url(' + private.backgroundImageSource + ')}'}
+          {'.no-webp body.neos--bg,.no-webp .neos-login-box:before {background-image: url(' + String.substr(private.backgroundImageSource, 0, String.length(private.backgroundImageSource) - 4) + 'jpg)}'}
+        </style>
+      </Neos.Fusion:Fragment>
+      <body class={["neos", private.backgroundImageSource ? 'neos--bg' : null]}>
+        <img @if.set={private.backgroundImageSourceIsWebp} style="display: none" src="data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA" onload="document.documentElement.classList.add('webp')" onerror="document.documentElement.classList.add('no-webp')"/>
+        <div class="neos-modal-centered">
+          <main class="neos-login-main">
+            <div class={['neos-login-box', private.backgroundImageSource ? 'background-image-active' : null]}>
+              <figure class="neos-login-box-logo">
+                <img class="neos-login-box-logo-resource" src={private.logoImageSource} width="200px" height="200px" alt="Neos Logo" />
+              </figure>
+
+              <h1 class="neos-login-heading">
+                {I18n.id('login.index.title').value('Login to').package('Neos.Neos').source('Main')} <strong>{site.name}</strong>
+              </h1>
+
+              <div class="neos-login-body neos">
+                <Neos.Neos:Component.Login.Form
+                  username={props.username}
+                  flashMessages={props.flashMessages}
+                />
+              </div>
+            </div>
+          </main>
+          <footer class="neos-login-footer">
+            <p>
+              <a href="http://neos.io" target="_blank">Neos</a> –&nbsp;
+              © 2006-{Date.format('now', 'Y')} This is free software, licensed under GPL3 or higher, and you are welcome to redistribute it under certain conditions;&nbsp;
+              Neos comes with ABSOLUTELY NO WARRANTY;&nbsp;
+              See <a href="http://neos.io" target="_blank">neos.io</a> for more details. Obstructing the appearance of this notice is prohibited by law.
+            </p>
+          </footer>
+        </div>
+
+        <script>{"
+          if (document.querySelector('#username').value) {
+              document.querySelector('#password').focus();
+          }
+          document.querySelector('form').addEventListener('submit', function() {
+              document.querySelector('.neos-login-btn').classList.toggle('neos-hidden');
+              document.querySelector('.neos-login-btn.neos-disabled').classList.toggle('neos-hidden');
+          });
+        "}</script>
+      </body>
+    </Neos.Neos:Core.LoginPage>
+  `
 }
 
 prototype(Neos.Neos:Component.Login.Form) < prototype(Neos.Fusion:Component) {
