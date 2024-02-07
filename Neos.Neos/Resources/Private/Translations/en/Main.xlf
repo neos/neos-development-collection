@@ -695,6 +695,10 @@
 			<trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
 			</trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.setupMessage" xml:space="preserve">
+        <source>You might want to import or create a new site in the setup.</source>
+      </trans-unit>
+
 			<trans-unit id="error.invalidNodeType.title" xml:space="preserve">
 				<source>Invalid NodeType</source>
 			</trans-unit>

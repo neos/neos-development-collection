@@ -481,7 +481,7 @@ Neos:
 
           noHomepageException:
             matchingExceptionClassNames:
-              - Neos\Neos\Routing\Exception\NoHomepageException
+              - Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException
             options: *welcomeTemplate
       debugger:
         ignoredClasses:
