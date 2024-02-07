@@ -5,7 +5,7 @@ prototype(Neos.Neos:Error.View.FusionParserException) < prototype(Neos.Fusion:Co
   flowPathRoot = ''
 
   renderer = afx`
-    <Neos.Neos:ErrorPage title='Exception while parsing Fusion'>
+    <Neos.Neos:Core.ErrorPage title='Exception while parsing Fusion'>
       <body class='neos'>
         <div class='neos-error-screen'>
           <h3>{String.htmlspecialchars(props.exception.headingMessagePart)}</h3>
@@ -24,6 +24,6 @@ prototype(Neos.Neos:Error.View.FusionParserException) < prototype(Neos.Fusion:Co
           </details>
         </div>
       </body>
-    </Neos.Neos:ErrorPage>
+    </Neos.Neos:Core.ErrorPage>
   `
 }

@@ -2,7 +2,7 @@
  * Only for internal use!
  * @internal
  */
-prototype(Neos.Neos:ErrorPage) < prototype(Neos.Fusion:Component) {
+prototype(Neos.Neos:Core.ErrorPage) < prototype(Neos.Fusion:Component) {
   title = ''
   content = ''
 
