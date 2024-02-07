@@ -1,6 +1,9 @@
-prototype(Neos.Neos:Component.ImageSource) < prototype(Neos.Fusion:Component) {
+/**
+ * Only for internal use!
+ * @internal
+ */
+prototype(Neos.Neos:Core.ImageSource) < prototype(Neos.Fusion:Component) {
     path = ''
-    @if.set = ${this.path}
     renderer = Neos.Fusion:Case {
         resourcePath {
             condition = ${String.indexOf(props.path, 'resource://') == 0}
@@ -8,7 +11,6 @@ prototype(Neos.Neos:Component.ImageSource) < prototype(Neos.Fusion:Component) {
                 path = ${props.path}
             }
         }
-
         default {
             condition = true
             renderer = ${props.path}

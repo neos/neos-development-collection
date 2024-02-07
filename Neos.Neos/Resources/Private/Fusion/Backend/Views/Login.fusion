@@ -5,10 +5,10 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
   flashMessages = ${[]}
 
   @private {
-    logoImageSource = Neos.Neos:Component.ImageSource {
+    logoImageSource = Neos.Neos:Core.ImageSource {
       path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.logoImage')}
     }
-    backgroundImageSource = Neos.Neos:Component.ImageSource {
+    backgroundImageSource = Neos.Neos:Core.ImageSource {
       path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
     }
     backgroundImageSourceIsWebp = ${private.backgroundImageSource ? String.endsWith(private.backgroundImageSource, '.webp') : null}
