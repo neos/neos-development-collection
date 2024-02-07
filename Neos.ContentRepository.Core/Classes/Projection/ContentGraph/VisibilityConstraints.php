@@ -21,7 +21,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
  *
  * @api
  */
-final class VisibilityConstraints
+final class VisibilityConstraints implements \JsonSerializable
 {
     protected bool $disabledContentShown = false;
 
@@ -48,5 +48,10 @@ final class VisibilityConstraints
     public static function frontend(): VisibilityConstraints
     {
         return new VisibilityConstraints(false);
+    }
+
+    public function jsonSerialize(): string
+    {
+        return $this->getHash();
     }
 }
