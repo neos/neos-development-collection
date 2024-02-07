@@ -29,6 +29,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
+use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime as FusionRuntime;
 use Neos\Fusion\Core\RuntimeFactory;
@@ -38,6 +39,7 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 class FusionExceptionView extends AbstractView
@@ -107,7 +109,12 @@ class FusionExceptionView extends AbstractView
 
         $httpRequest = $requestHandler->getHttpRequest();
 
-        $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
+        try {
+            $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
+        } catch (SiteDetectionFailedException) {
+            return $this->renderErrorWelcomeScreen();
+        }
+
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
         $fusionExceptionViewInternals = $this->contentRepositoryRegistry->buildService(
             $siteDetectionResult->contentRepositoryId,
@@ -128,6 +135,10 @@ class FusionExceptionView extends AbstractView
             );
         }
 
+        if (!$currentSiteNode) {
+            return $this->renderErrorWelcomeScreen();
+        }
+
         $request = ActionRequest::fromHttpRequest($httpRequest);
         $request->setControllerPackageKey('Neos.Neos');
         $request->setFormat('html');
@@ -144,32 +155,28 @@ class FusionExceptionView extends AbstractView
         $securityContext = $this->objectManager->get(SecurityContext::class);
         $securityContext->setRequest($request);
 
-        if ($currentSiteNode) {
-            $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
+        $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 
-            $this->setFallbackRuleFromDimension($dimensionSpacePoint);
+        $this->setFallbackRuleFromDimension($dimensionSpacePoint);
 
-            $fusionRuntime->pushContextArray(array_merge(
-                $this->variables,
-                [
-                    'node' => $currentSiteNode,
-                    'documentNode' => $currentSiteNode,
-                    'site' => $currentSiteNode,
-                    'editPreviewMode' => null
-                ]
-            ));
+        $fusionRuntime->pushContextArray(array_merge(
+            $this->variables,
+            [
+                'node' => $currentSiteNode,
+                'documentNode' => $currentSiteNode,
+                'site' => $currentSiteNode,
+                'editPreviewMode' => null
+            ]
+        ));
 
-            try {
-                $output = $fusionRuntime->render('error');
-                return $this->extractBodyFromOutput($output);
-            } catch (RuntimeException $exception) {
-                throw $exception->getPrevious() ?: $exception;
-            } finally {
-                $fusionRuntime->popContext();
-            }
+        try {
+            $output = $fusionRuntime->render('error');
+            return $this->extractBodyFromOutput($output);
+        } catch (RuntimeException $exception) {
+            throw $exception->getPrevious() ?: $exception;
+        } finally {
+            $fusionRuntime->popContext();
         }
-
-        return '';
     }
 
     /**
@@ -218,5 +225,19 @@ class FusionExceptionView extends AbstractView
             }
         }
         return $this->fusionRuntime;
+    }
+
+    private function renderErrorWelcomeScreen(): string
+    {
+        // in case no neos site being there or no site node we cannot continue with the fusion exception view,
+        // as we wouldn't know the site and cannot get the site's root.fusion
+        // instead we render the welcome screen directly
+        // Todo hack to use fluid. Requires the Welcome.html to be ported to Fusion. PR -> https://github.com/neos/neos-development-collection/pull/4880
+        $view = StandaloneView::createWithOptions([
+            'templatePathAndFilename' => 'resource://Neos.Neos/Private/Templates/Error/Welcome.html',
+            'layoutRootPaths' => ['resource://Neos.Neos/Private/Layouts/']
+        ]);
+        $view->assignMultiple($this->variables);
+        return $view->render();
     }
 }
