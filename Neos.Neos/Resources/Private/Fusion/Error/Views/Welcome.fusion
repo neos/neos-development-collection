@@ -1,0 +1,73 @@
+prototype(Neos.Neos:Error.View.Welcome) < prototype(Neos.Fusion:Component) {
+  /** @var exception \Exception */
+  exception = ''
+  renderingGroupName = ''
+
+  @private {
+    logoImageSource = Neos.Neos:Core.ImageSource {
+      path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.logoImage')}
+    }
+    backgroundImageSource = Neos.Neos:Core.ImageSource {
+      path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
+    }
+
+    backgroundImageSourceIsWebp = ${private.backgroundImageSource ? String.endsWith(private.backgroundImageSource, '.webp') : null}
+
+    i18n = ${I18n.id(null).package('Neos.Neos').source('Main').locale(Neos.Backend.interfaceLanguage())}
+
+    additionalResources = afx`
+      <link rel="stylesheet" href={StaticResource.uri('Neos.Neos', 'Public/Styles/Login.css')} />
+      <link rel="stylesheet" href={StaticResource.uri('Neos.Neos', 'Public/Styles/Welcome.css')} />
+      <script src={StaticResource.uri('Neos.Neos', 'Public/JavaScript/Main.min.js')}></script>
+    `
+  }
+
+  renderer = afx`
+    <Neos.Neos:Core.LoginPage title='Welcome to Neos' additionalResources.resources={private.additionalResources}>
+      <Neos.Fusion:Fragment @path='additionalResources.inlineStyles'>
+        <style type="text/css" @if.set={private.backgroundImageSource && !private.backgroundImageSourceIsWebp}>
+          {'body.neos--bg,.neos-login-box:before{background-image:url(' + private.backgroundImageSource + ')}'}
+        </style>
+        <style type="text/css" @if.set={private.backgroundImageSource && private.backgroundImageSourceIsWebp}>
+          {'.webp body.neos--bg,.webp .neos-login-box:before {background-image: url(' + private.backgroundImageSource + ')}'}
+          {'.no-webp body.neos--bg,.no-webp .neos-login-box:before {background-image: url(' + String.substr(private.backgroundImageSource, 0, String.length(private.backgroundImageSource) - 4) + 'jpg)}'}
+        </style>
+      </Neos.Fusion:Fragment>
+      <body class={["neos", private.backgroundImageSource ? 'neos--bg' : null]}>
+        <img @if.set={private.backgroundImageSourceIsWebp} style="display: none" src="data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA" onload="document.documentElement.classList.add('webp')" onerror="document.documentElement.classList.add('no-webp')"/>
+        <div class="neos-modal-centered">
+          <main class="neos-login-main">
+            <div class={['neos-login-box', private.backgroundImageSource ? 'background-image-active' : null]}>
+              <figure class="neos-login-box-logo">
+                <img class="neos-login-box-logo-resource" src={private.logoImageSource} width="200px" height="200px" alt="Neos Logo" />
+              </figure>
+
+              <h1>
+                {private.i18n.id('error.exception.welcomeToNeos').translate()}
+              </h1>
+
+              <div class="neos-login-body neos">
+
+                <p>{String.nl2br(private.i18n.id('error.exception.' + props.renderingGroupName + '.description').translate())}</p>
+                <p>{String.nl2br(private.i18n.id('error.exception.' + props.renderingGroupName + '.setupMessage').translate())}</p>
+
+                <div class="neos-actions">
+                  <p><a href="/setup" class="btn neos-setup-btn">{private.i18n.id('error.exception.goToSetup').translate()}</a></p>
+                </div>
+                <div class="neos-error-details-toggle" data-neos-expandable="dropdown">
+                  <h4 class="neos-error-details-toggle__header neos-dropdown-trigger" aria-controls="neos-dropdown-content" aria-expanded="false">
+                    {private.i18n.id('error.exception.technicalInformation').translate()}
+                  </h4>
+                  <div id="neos-dropdown-content" class="neos-dropdown-content neos-error-details-toggle__body" hidden="true">
+                    <h5>{private.i18n.id('error.exception.' + props.renderingGroupName + '.title').translate()}</h5>
+                    <p>#{props.exception.code}: {props.exception.message}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </body>
+    </Neos.Neos:Core.LoginPage>
+  `
+}

@@ -1,8 +1,13 @@
 include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-include: ../SharedCoreComponents/ErrorPage.fusion
+include: resource://Neos.Neos/Private/Fusion/SharedCoreComponents/*
 include: Views/*.fusion
 
 Neos.Fusion.FusionParserException = Neos.Neos:Error.View.FusionParserException {
   exception = ${exception}
   flowPathRoot = ${flowPathRoot}
+}
+
+Neos.Fusion.DatabaseConnectionExceptions = Neos.Neos:Error.View.Welcome {
+  exception = ${exception}
+  renderingGroupName = ${renderingOptions.renderingGroup}
 }
