@@ -1710,24 +1710,29 @@ class NodeDataRepository extends Repository
         $constraints = [];
         $parameters = [];
 
+        // Use a counter to avoid parameter name conflicts and limit query metadata cache entries to the maximum number of relations
+        $identifierIndex = 0;
+
         foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
             foreach ($relatedIdentifiers as $relatedIdentifier) {
                 // entity references like "__identifier": "so-me-uu-id"
-                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
-                $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . $identifierIndex . ' )';
+                $parameters['entity' . $identifierIndex] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
 
                 // asset references in text like "asset://so-me-uu-id"
-                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :asset' . md5($relatedIdentifier) . ' )';
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :asset' . $identifierIndex . ' )';
                 switch ($this->entityManager->getConnection()->getDatabasePlatform()->getName()) {
                     case 'postgresql':
-                        $parameters['asset' . md5($relatedIdentifier)] = '%asset://' . strtolower($relatedIdentifier) . '%';
+                        $parameters['asset' . $identifierIndex] = '%asset://' . strtolower($relatedIdentifier) . '%';
                         break;
                     case 'sqlite':
-                        $parameters['asset' . md5($relatedIdentifier)] = '%asset:\/\/' . strtolower($relatedIdentifier) . '%';
+                        $parameters['asset' . $identifierIndex] = '%asset:\/\/' . strtolower($relatedIdentifier) . '%';
                         break;
                     default:
-                        $parameters['asset' . md5($relatedIdentifier)] = '%asset:\\\\/\\\\/' . strtolower($relatedIdentifier) . '%';
+                        $parameters['asset' . $identifierIndex] = '%asset:\\\\/\\\\/' . strtolower($relatedIdentifier) . '%';
                 }
+
+                $identifierIndex++;
             }
         }
 
