@@ -57,14 +57,13 @@ final class SiteDetectionResult
         $siteNodeName = $routeParameters->getValue(self::ROUTINGPARAMETER_SITENODENAME);
         $contentRepositoryId = $routeParameters->getValue(self::ROUTINGPARAMETER_CONTENTREPOSITORYID);
 
-        if ($siteNodeName === null || $contentRepositoryId === null) {
-            throw new \RuntimeException(
+        if (!is_string($siteNodeName) || !is_string($contentRepositoryId)) {
+            throw new SiteDetectionFailedException(
                 'Current site and content repository could not be extracted from the Request.'
-                    . ' The SiteDetectionMiddleware was not able to determine the site!'
+                    . ' The SiteDetectionMiddleware was not able to determine the site!',
+                1699459565
             );
         }
-        assert(is_string($siteNodeName));
-        assert(is_string($contentRepositoryId));
         return new self(
             SiteNodeName::fromString($siteNodeName),
             ContentRepositoryId::fromString($contentRepositoryId)
