@@ -23,7 +23,7 @@ prototype(Neos.Neos:Error.View.Welcome) < prototype(Neos.Fusion:Component) {
   }
 
   renderer = afx`
-    <Neos.Neos:Core.LoginPage title='Welcome to Neos' additionalResources.resources={private.additionalResources}>
+    <Neos.Neos:Core.BackendPage title='Welcome to Neos' additionalResources.resources={private.additionalResources}>
       <Neos.Fusion:Fragment @path='additionalResources.inlineStyles'>
         <style type="text/css" @if.set={private.backgroundImageSource && !private.backgroundImageSourceIsWebp}>
           {'body.neos--bg,.neos-login-box:before{background-image:url(' + private.backgroundImageSource + ')}'}
@@ -68,6 +68,6 @@ prototype(Neos.Neos:Error.View.Welcome) < prototype(Neos.Fusion:Component) {
           </main>
         </div>
       </body>
-    </Neos.Neos:Core.LoginPage>
+    </Neos.Neos:Core.BackendPage>
   `
 }

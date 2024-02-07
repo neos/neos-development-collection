@@ -1,5 +1,5 @@
 include: Prototypes/*.fusion
-include: SharedCoreComponents/ErrorPage.fusion
+include: SharedCoreComponents/BackendPage.fusion
 include: ErrorCase.fusion
 include: RootCase.fusion
 include: RawContentMode.fusion
