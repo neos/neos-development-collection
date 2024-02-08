@@ -33,7 +33,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
  *
  * @api
  */
-final class ContentSubgraphIdentity
+final class ContentSubgraphIdentity implements \JsonSerializable
 {
     private function __construct(
         public readonly ContentRepositoryId $contentRepositoryId,
@@ -89,5 +89,18 @@ final class ContentSubgraphIdentity
             $this->dimensionSpacePoint,
             $visibilityConstraints
         );
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentRepositoryId' => $this->contentRepositoryId,
+            'contentStreamId' => $this->contentStreamId,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint,
+            'visibilityConstraints' => $this->visibilityConstraints
+        ];
     }
 }

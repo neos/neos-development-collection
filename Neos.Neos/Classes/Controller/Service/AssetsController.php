@@ -17,7 +17,6 @@ namespace Neos\Neos\Controller\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -100,7 +99,6 @@ class AssetsController extends ActionController
      *
      * @param string $identifier Specifies the asset to look up
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function showAction($identifier): void
     {

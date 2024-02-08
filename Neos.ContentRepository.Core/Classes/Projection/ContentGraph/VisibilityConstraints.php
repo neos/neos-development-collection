@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
  *
  * @api
  */
-final readonly class VisibilityConstraints
+final readonly class VisibilityConstraints implements \JsonSerializable
 {
     private function __construct(
         public SubtreeTags $excludedTags,
@@ -49,5 +49,10 @@ final readonly class VisibilityConstraints
     public static function frontend(): VisibilityConstraints
     {
         return new self(SubtreeTags::fromStrings('disabled'));
+    }
+
+    public function jsonSerialize(): string
+    {
+        return $this->getHash();
     }
 }

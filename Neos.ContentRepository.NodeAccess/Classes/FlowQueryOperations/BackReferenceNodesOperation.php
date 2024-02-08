@@ -36,6 +36,19 @@ use Neos\Flow\Annotations as Flow;
  */
 final class BackReferenceNodesOperation implements OperationInterface
 {
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'backReferenceNodes';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject
