@@ -1,4 +1,4 @@
-@fixtures @contentrepository
+@flowEntities @contentrepository
 Feature: Basic routing functionality (match & resolve document nodes in one dimension)
 
   Background:

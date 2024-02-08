@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\ViewHelpers\Link;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -32,7 +33,6 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
-use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
@@ -136,12 +136,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @var string
      */
     protected $tagName = 'a';
-
-    /**
-     * @Flow\Inject
-     * @var NodeSiteResolvingService
-     */
-    protected $nodeSiteResolvingService;
 
     /**
      * @Flow\Inject
@@ -382,12 +376,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             VisibilityConstraints::withoutRestrictions()
         );
         if (strncmp($path, '~', 1) === 0) {
-            // TODO: This can be simplified
-            // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
-            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
-                $documentNodeAddress,
-                $documentNode->subgraphIdentity->contentRepositoryId
-            );
+            $siteNode = $subgraph->findClosestNode($documentNodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',

@@ -35,6 +35,19 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ReferenceNodesOperation implements OperationInterface
 {
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'referenceNodes';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject
@@ -42,11 +55,13 @@ final class ReferenceNodesOperation implements OperationInterface
      */
     protected $contentRepositoryRegistry;
 
+    /** @param array<int, mixed> $context */
     public function canEvaluate($context): bool
     {
         return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
+    /** @param array<int, mixed> $arguments */
     public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
         $output = [];

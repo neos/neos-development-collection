@@ -11,6 +11,7 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
@@ -73,9 +74,9 @@ class TetheredNodeAdjustments
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
-                    $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
+                    $tetheredNode = $subgraph->findNodeByPath(
+                        $tetheredNodeName,
                         $nodeAggregate->nodeAggregateId,
-                        $tetheredNodeName
                     );
                     if ($tetheredNode === null) {
                         $foundMissingOrDisallowedTetheredNodes = true;
@@ -118,7 +119,7 @@ class TetheredNodeAdjustments
                 $nodeAggregate->nodeAggregateId
             );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
-                /* @var $tetheredNodeAggregate NodeAggregate */
+                assert($tetheredNodeAggregate->nodeName !== null); // it's tethered!
                 if (!isset($expectedTetheredNodes[$tetheredNodeAggregate->nodeName->value])) {
                     $foundMissingOrDisallowedTetheredNodes = true;
                     yield StructureAdjustment::createForNodeAggregate(
@@ -147,6 +148,7 @@ class TetheredNodeAdjustments
                     $actualTetheredChildNodes = [];
                     foreach ($childNodes as $childNode) {
                         if ($childNode->classification->isTethered()) {
+                            assert($childNode->nodeName !== null); // it's tethered!
                             $actualTetheredChildNodes[$childNode->nodeName->value] = $childNode;
                         }
                     }

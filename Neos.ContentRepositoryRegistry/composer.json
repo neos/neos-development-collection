@@ -2,13 +2,21 @@
     "name": "neos/contentrepositoryregistry",
     "type": "neos-package",
     "description": "Global registry for Neos Content Repository instances",
+    "support": {
+        "source": "https://github.com/neos/contentrepositoryregistry.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
-        "neos/flow": "*",
-        "neos/contentrepository-core": "*",
-        "symfony/property-access": "*",
+        "neos/flow": "~9.0.0",
+        "neos/contentrepository-core": "self.version",
+        "neos/contentrepositoryregistry-storageclient": "self.version",
+        "symfony/property-access": "^5.4|^6.0",
         "psr/clock": "^1"
     },
     "autoload": {

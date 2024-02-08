@@ -1,4 +1,4 @@
-@fixtures @contentrepository
+@flowEntities @contentrepository
 Feature: Routing behavior of shortcut nodes
 
   Background:

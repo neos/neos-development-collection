@@ -1,0 +1,8 @@
+Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory:
+  scope: singleton
+  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
+  arguments:
+    1:
+      value: Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory
+    2:
+      object: 'Neos\ContentRepositoryRegistry\PostgresDbalClient\PostgresDbalClient'

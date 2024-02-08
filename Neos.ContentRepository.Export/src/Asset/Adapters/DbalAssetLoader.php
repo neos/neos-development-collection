@@ -57,9 +57,8 @@ final class DbalAssetLoader implements AssetLoaderInterface
                     'neos_media_adjustment_resizeimageadjustment' => ImageAdjustmentType::RESIZE_IMAGE,
                     'neos_media_adjustment_cropimageadjustment' => ImageAdjustmentType::CROP_IMAGE,
                     'neos_media_adjustment_qualityimageadjustment' => ImageAdjustmentType::QUALITY_IMAGE,
+                    default => throw new \InvalidArgumentException(sprintf('Invalid "dtype" in image adjustment row. Got "%s"', $imageAdjustmentRow['dtype']), 1698583820)
                 };
-                #unset($imageAdjustmentRow['persistence_object_identifier'], $imageAdjustmentRow['imagevariant'], $imageAdjustmentRow['dtype']);
-                #$imageAdjustmentRow = array_filter($imageAdjustmentRow, static fn ($value) => $value !== null);
                 $imageAdjustments[] = ['type' => $type->value, 'properties' => $type->convertProperties($imageAdjustmentRow)];
             }
             return SerializedImageVariant::fromArray([
@@ -82,11 +81,13 @@ final class DbalAssetLoader implements AssetLoaderInterface
             unset($row[$key]);
         }
         $row['type'] = match ($row['type']) {
-           'neos_media_image' => AssetType::IMAGE->value,
-           'neos_media_audio' => AssetType::AUDIO->value,
-           'neos_media_document' => AssetType::DOCUMENT->value,
-           'neos_media_video' => AssetType::VIDEO->value,
+            'neos_media_image' => AssetType::IMAGE->value,
+            'neos_media_audio' => AssetType::AUDIO->value,
+            'neos_media_document' => AssetType::DOCUMENT->value,
+            'neos_media_video' => AssetType::VIDEO->value,
+            default => throw new \InvalidArgumentException(sprintf('Invalid "type" in asset row. Got "%s"', $row['type']), 1698583897)
         };
+        /** @phpstan-ignore-next-line */
         return SerializedAsset::fromArray($row);
     }
 }

@@ -3,34 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2023-06-01
-
-
-.. _`Eel Helpers Reference: Api`:
-
-Api
----
-
-
-
-Implemented in: ``Neos\Neos\Ui\Fusion\Helper\ApiHelper``
-
-Api.emptyArrayToObject(array)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Converts an empty array to an empty object. Does nothing if array is not empty.
-
-Use this helper to prevent associative arrays from being converted to non-associative arrays by json_encode.
-This is an internal helper and might change without further notice
-FIXME: Probably better to produce objects in the first place "upstream".
-
-* ``array`` (array) Associative array which may be empty
-
-**Return** (array|\stdClass) Non-empty associative array or empty object
-
-
-
-
+This reference was automatically generated from code on 2024-02-02
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -444,32 +417,6 @@ Examples::
 * ``settingPath`` (string)
 
 **Return** (mixed)
-
-
-
-
-
-
-.. _`Eel Helpers Reference: ContentDimensions`:
-
-ContentDimensions
------------------
-
-
-
-Implemented in: ``Neos\Neos\Ui\Fusion\Helper\ContentDimensionsHelper``
-
-ContentDimensions.allowedPresetsByName(dimensions)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``dimensions`` (array) Dimension values indexed by dimension name
-
-**Return** (array) Allowed preset names for the given dimension combination indexed by dimension name
-
-ContentDimensions.contentDimensionsByName()
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**Return** (array) Dimensions indexed by name with presets indexed by name
 
 
 
@@ -1189,30 +1136,31 @@ Neos.Array.filter(set, filterProperty)
 
 Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to true.
 
-* ``set`` (array|Collection)
+* ``set`` (array<mixed>|Collection<int|string,mixed>)
 * ``filterProperty`` (string)
 
-**Return** (array)
+**Return** (array<mixed>)
 
 Neos.Array.filterNegated(set, filterProperty)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to false.
 
-* ``set`` (array|Collection)
+* ``set`` (array<mixed>|Collection<int|string,mixed>)
 * ``filterProperty`` (string)
 
-**Return** (array)
+**Return** (array<mixed>)
 
 Neos.Array.groupBy(set, groupingKey)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The input is assumed to be an array or Collection of objects. Groups this input by the $groupingKey property of each element.
+The input is assumed to be an array or Collection of objects.
+Groups this input by the $groupingKey property of each element.
 
-* ``set`` (array|Collection)
+* ``set`` (array<mixed>|Collection<int|string,mixed>)
 * ``groupingKey`` (string)
 
-**Return** (array)
+**Return** (array<mixed>)
 
 
 
@@ -1262,7 +1210,17 @@ the given nodes is updated.
 
 * ``nodes`` (mixed) (A single Node or array or \Traversable of Nodes)
 
-**Return** (array)
+**Return** (array<int,string>)
+
+Neos.Caching.entryIdentifierForNode(node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Neos.Caching.getWorkspaceChain(node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``node`` (Node)
+
+**Return** (array<string,Workspace>)
 
 Neos.Caching.nodeTag(nodes)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1273,16 +1231,16 @@ given nodes (for any variant) is updated.
 
 * ``nodes`` (mixed) (A single Node or array or \Traversable of Nodes)
 
-**Return** (array)
+**Return** (array<int,string>)
 
 Neos.Caching.nodeTagForIdentifier(identifier, contextNode)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Generate a `@cache` entry tag for a single node identifier. If a NodeInterface $contextNode is given the
+Generate a `@cache` entry tag for a single node identifier. If a Node $contextNode is given the
 entry tag will respect the workspace hash.
 
 * ``identifier`` (string)
-* ``contextNode`` (NodeInterface|null, *optional*)
+* ``contextNode`` (?Node, *optional*)
 
 **Return** (string)
 
@@ -1294,17 +1252,96 @@ A cache entry with this tag will be flushed whenever a node
 (for any variant) that is of the given node type(s)
 (including inheritance) is updated.
 
-* ``nodeType`` (string|NodeType|string[]|NodeType[])
-* ``contextNode`` (NodeInterface|null, *optional*)
+* ``nodeType`` (string|NodeType|string[]|NodeType[]|\Traversable<string>|\Traversable<NodeType>)
+* ``contextNode`` (Node|null, *optional*)
 
 **Return** (string|string[])
 
-Neos.Caching.renderWorkspaceTagForContextNode(workspaceName)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``workspaceName`` (string)
 
-**Return** (string)
+
+
+
+.. _`Eel Helpers Reference: Neos.Dimension`:
+
+Neos.Dimension
+--------------
+
+Helper for nodes in various content dimensions.
+
+Implemented in: ``Neos\Neos\Fusion\Helper\DimensionHelper``
+
+Neos.Dimension.all(subject)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Find all content dimensions in content repository defined by `contentRepositoryId` or `node`.
+
+Example::
+
+    Neos.Dimension.all(contentRepositoryId)
+    Neos.Dimension.all(node)
+
+* ``subject`` (ContentRepositoryId|Node) Node will be used to determine `ContentRepositoryId`
+
+**Return** (array<string,ContentDimension>)
+
+Neos.Dimension.allDimensionValues(subject, dimensionName)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Find all content dimension values in content repository defined by `contentRepositoryId` or `node`.
+
+Example::
+
+    Neos.Dimension.allDimensionValues(contentRepositoryId, 'language')
+    Neos.Dimension.allDimensionValues(node, 'language')
+
+* ``subject`` (ContentRepositoryId|Node) Node will be used to determine `ContentRepositoryId`
+* ``dimensionName`` (ContentDimensionId|string) String will be converted to `ContentDimensionId`
+
+**Return** (ContentDimensionValues|null)
+
+Neos.Dimension.currentValue(node, dimensionName)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get current dimension value for `node`.
+
+Example::
+
+    Neos.Dimension.currentValue(node, 'language')
+
+* ``node`` (Node)
+* ``dimensionName`` (ContentDimensionId|string) String will be converted to `ContentDimensionId`
+
+**Return** (ContentDimensionValue|null)
+
+Neos.Dimension.findVariantInDimension(node, dimensionName, dimensionValue)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Find the variant of `node` in the specified dimension and value.
+
+Example::
+
+    Neos.Dimension.findVariantInDimension(node, 'language', 'en_UK')
+
+* ``node`` (Node)
+* ``dimensionName`` (ContentDimensionId|string) String will be converted to `ContentDimensionId`
+* ``dimensionValue`` (ContentDimensionValue|string) String will be converted to `ContentDimensionValue`
+
+**Return** (Node|null)
+
+Neos.Dimension.originValue(node, dimensionName)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get original dimension value for `node`. Differs form current value in cases of dimension fallback.
+
+Example::
+
+    Neos.Dimension.originValue(node, 'language')
+
+* ``node`` (Node)
+* ``dimensionName`` (ContentDimensionId|string) String will be converted to `ContentDimensionId`
+
+**Return** (ContentDimensionValue|null)
 
 
 
@@ -1323,11 +1360,6 @@ Implemented in: ``Neos\Neos\Fusion\Helper\LinkHelper``
 Neos.Link.convertUriToObject(uri, contextNode)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``uri`` (string|UriInterface)
-* ``contextNode`` (NodeInterface, *optional*)
-
-**Return** (NodeInterface|AssetInterface|NULL)
-
 Neos.Link.getScheme(uri)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1338,25 +1370,15 @@ Neos.Link.getScheme(uri)
 Neos.Link.hasSupportedScheme(uri)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``uri`` (string|UriInterface)
+* ``uri`` (string|Uri)
 
 **Return** (boolean)
 
 Neos.Link.resolveAssetUri(uri)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``uri`` (string|UriInterface)
-
-**Return** (string)
-
 Neos.Link.resolveNodeUri(uri, contextNode, controllerContext)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``uri`` (string|UriInterface)
-* ``contextNode`` (NodeInterface)
-* ``controllerContext`` (ControllerContext)
-
-**Return** (string)
 
 
 
@@ -1403,25 +1425,19 @@ Eel helper for ContentRepository Nodes
 
 Implemented in: ``Neos\Neos\Fusion\Helper\NodeHelper``
 
+Neos.Node.getNodeType(node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Neos.Node.isOfType(node, nodeType)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If this node type or any of the direct or indirect super types
 has the given name.
 
-* ``node`` (NodeInterface)
-* ``nodeType`` (string)
-
-**Return** (bool)
-
 Neos.Node.labelForNode(node)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
-
-* ``node`` (NodeInterface|null, *optional*)
-
-**Return** (NodeLabelToken)
 
 Neos.Node.nearestContentCollection(node, nodePath)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1429,10 +1445,11 @@ Neos.Node.nearestContentCollection(node, nodePath)
 Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
 if no content collection could be found
 
-* ``node`` (NodeInterface)
-* ``nodePath`` (string)
+Neos.Node.serializedNodeAddress(node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-**Return** (NodeInterface)
+Neos.Node.subgraphForNode(node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
@@ -1450,13 +1467,6 @@ These helpers are *WORK IN PROGRESS* and *NOT STABLE YET*
 
 Implemented in: ``Neos\Neos\Fusion\Helper\RenderingHelper``
 
-Neos.Rendering.injectConfigurationManager(configurationManager)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``configurationManager`` (ConfigurationManager)
-
-**Return** (void)
-
 Neos.Rendering.labelForNodeType(nodeTypeName)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1471,9 +1481,7 @@ Neos.Rendering.renderDimensions(dimensions)
 
 Render a human-readable description for the passed $dimensions
 
-* ``dimensions`` (array)
-
-**Return** (string)
+* ``dimensions`` (array<string,mixed>)
 
 
 
@@ -1511,150 +1519,17 @@ Neos.Seo.Image.createThumbnail(asset, preset, width, maximumWidth, height, maxim
 
 
 
-.. _`Eel Helpers Reference: Neos.Ui.PositionalArraySorter`:
+.. _`Eel Helpers Reference: Neos.Site`:
 
-Neos.Ui.PositionalArraySorter
------------------------------
+Neos.Site
+---------
 
+Eel helper for accessing the Site object
 
+Implemented in: ``Neos\Neos\Fusion\Helper\SiteHelper``
 
-Implemented in: ``Neos\Neos\Ui\Fusion\Helper\PositionalArraySorterHelper``
-
-Neos.Ui.PositionalArraySorter.sort(array, positionPath)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``array`` (array)
-* ``positionPath`` (string, *optional*)
-
-**Return** (array)
-
-
-
-
-
-
-.. _`Eel Helpers Reference: Neos.Ui.StaticResources`:
-
-Neos.Ui.StaticResources
------------------------
-
-
-
-Implemented in: ``Neos\Neos\Ui\Fusion\Helper\StaticResourcesHelper``
-
-Neos.Ui.StaticResources.compiledResourcePackage()
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-
-
-
-
-.. _`Eel Helpers Reference: Neos.Ui.Workspace`:
-
-Neos.Ui.Workspace
------------------
-
-
-
-Implemented in: ``Neos\Neos\Ui\Fusion\Helper\WorkspaceHelper``
-
-Neos.Ui.Workspace.getAllowedTargetWorkspaces()
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Neos.Ui.Workspace.getPersonalWorkspace()
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Neos.Ui.Workspace.getPublishableNodeInfo(workspace)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``workspace`` (Workspace)
-
-**Return** (array)
-
-
-
-
-
-
-.. _`Eel Helpers Reference: NodeInfo`:
-
-NodeInfo
---------
-
-
-
-Implemented in: ``Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper``
-
-NodeInfo.createRedirectToNode(controllerContext, node)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Creates a URL that will redirect to the given $node in live or base workspace, or returns an empty string if that doesn't exist or is inaccessible
-
-* ``controllerContext`` (ControllerContext)
-* ``node`` (NodeInterface|null, *optional*)
-
-**Return** (string)
-
-NodeInfo.defaultNodesForBackend(site, documentNode, controllerContext)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``site`` (NodeInterface)
-* ``documentNode`` (NodeInterface)
-* ``controllerContext`` (ControllerContext)
-
-**Return** (array)
-
-NodeInfo.renderDocumentNodeAndChildContent(documentNode, controllerContext)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``documentNode`` (NodeInterface)
-* ``controllerContext`` (ControllerContext)
-
-**Return** (array)
-
-NodeInfo.renderNodeWithMinimalPropertiesAndChildrenInformation(node, controllerContext, nodeTypeFilterOverride)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``node`` (NodeInterface)
-* ``controllerContext`` (ControllerContext|null, *optional*)
-* ``nodeTypeFilterOverride`` (string, *optional*)
-
-**Return** (array|null)
-
-NodeInfo.renderNodeWithPropertiesAndChildrenInformation(node, controllerContext, nodeTypeFilterOverride)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``node`` (NodeInterface)
-* ``controllerContext`` (ControllerContext|null, *optional*)
-* ``nodeTypeFilterOverride`` (string, *optional*)
-
-**Return** (array|null)
-
-NodeInfo.renderNodes(nodes, controllerContext, omitMostPropertiesForTreeState)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``nodes`` (array)
-* ``controllerContext`` (ControllerContext)
-* ``omitMostPropertiesForTreeState`` (bool, *optional*)
-
-**Return** (array)
-
-NodeInfo.renderNodesWithParents(nodes, controllerContext)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``nodes`` (array)
-* ``controllerContext`` (ControllerContext)
-
-**Return** (array)
-
-NodeInfo.uri(node, controllerContext)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``node`` (NodeInterface)
-* ``controllerContext`` (ControllerContext)
-
-**Return** (string)
+Neos.Site.findBySiteNode(siteNode)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
@@ -2014,7 +1889,7 @@ Example::
 * ``string`` (string) The input string
 * ``pattern`` (string) A PREG pattern
 
-**Return** (array) The matches as array or NULL if not matched
+**Return** (array|null) The matches as array or NULL if not matched
 
 String.pregMatchAll(string, pattern)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2029,7 +1904,7 @@ Example::
 * ``string`` (string) The input string
 * ``pattern`` (string) A PREG pattern
 
-**Return** (array) The matches as array or NULL if not matched
+**Return** (array|null) The matches as array or NULL if not matched
 
 String.pregReplace(string, pattern, replace, limit)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2091,14 +1966,15 @@ Replace occurrences of a search string inside the string
 Example::
 
     String.replace("canal", "ana", "oo") == "cool"
+    String.replace("cool gridge", ["oo", "gri"], ["ana", "bri"]) == "canal bridge"
 
 Note: this method does not perform regular expression matching, @see pregReplace().
 
-* ``string`` (string) The input string
-* ``search`` (string) A search string
-* ``replace`` (string) A replacement string
+* ``string`` (array|string|null) The input string
+* ``search`` (array|string|null) A search string
+* ``replace`` (array|string|null) A replacement string
 
-**Return** (string) The string with all occurrences replaced
+**Return** (array|string|string[]) The string with all occurrences replaced
 
 String.sha1(string)
 ^^^^^^^^^^^^^^^^^^^

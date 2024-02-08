@@ -38,8 +38,8 @@ class ParserCacheFlusher
     }
 
     /**
-     * @param $fileMonitorIdentifier
-     * @param array $changedFiles
+     * @param string $fileMonitorIdentifier
+     * @param array<string, int> $changedFiles
      * @return void
      */
     public function flushPartialCacheOnFileChanges($fileMonitorIdentifier, array $changedFiles)

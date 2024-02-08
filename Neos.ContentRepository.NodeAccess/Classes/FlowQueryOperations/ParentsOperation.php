@@ -13,11 +13,10 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -41,7 +40,7 @@ class ParentsOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 100;
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject
@@ -71,7 +70,7 @@ class ParentsOperation extends AbstractOperation
     {
         $parents = Nodes::createEmpty();
         $findAncestorNodesFilter = FindAncestorNodesFilter::create(
-            NodeTypeConstraints::createWithDisallowedNodeTypeNames(
+            NodeTypeCriteria::createWithDisallowedNodeTypeNames(
                 NodeTypeNames::fromStringArray(['Neos.ContentRepository:Root'])
             )
         );

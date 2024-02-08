@@ -1,6 +1,6 @@
 # Event Sourced Content Repository - Content Graph Doctrine DBAL Adapter
 
-This repository is a **read-only subsplit** of a package that is part of the [Content Repository Development Collection](https://github.com/neos/contentrepository-development-collection)
+This repository is a **read-only subsplit** of a package that is part of the [Neos Development Collection](https://github.com/neos/neos-development-collection)
 
 Contribute
 ----------

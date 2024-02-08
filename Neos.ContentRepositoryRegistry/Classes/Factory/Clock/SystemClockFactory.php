@@ -10,6 +10,7 @@ use Psr\Clock\ClockInterface;
  */
 final class SystemClockFactory implements ClockFactoryInterface
 {
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryIdentifier, array $options): ClockInterface
     {
         return new SystemClock();

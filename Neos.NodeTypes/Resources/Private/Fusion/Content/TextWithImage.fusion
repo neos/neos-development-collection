@@ -1,0 +1,13 @@
+prototype(Neos.NodeTypes:TextWithImage) < prototype(Neos.NodeTypes:Image) {
+  text = Neos.Neos:Editable {
+    property = 'text'
+  }
+
+  renderer >
+  renderer = afx`
+    <div {...props.attributes}>
+      <Neos.NodeTypes:Fragment.Image {...props}/>
+      {props.text}
+    </div>
+  `
+}

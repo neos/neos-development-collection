@@ -320,7 +320,6 @@ class NodeTypeManagerTest extends TestCase
         $this->expectException(NodeConfigurationException::class);
         $nodeTypesFixture = [
             'Neos.ContentRepository.Testing:Base' => [
-                'final' => true
             ],
             'Neos.ContentRepository.Testing:Sub' => [
                 'superTypes' => [0 => 'Neos.ContentRepository.Testing:Base']
@@ -347,6 +346,94 @@ class NodeTypeManagerTest extends TestCase
     /**
      * @test
      */
+    public function anInheritedNodeTypePropertyCannotBeUnset(): void
+    {
+        $nodeTypesFixture = [
+            'Neos.ContentRepository.Testing:Base' => [
+                'properties' => [
+                    'foo' => [
+                        'type' => 'boolean',
+                    ]
+                ]
+            ],
+            'Neos.ContentRepository.Testing:Sub' => [
+                'superTypes' => ['Neos.ContentRepository.Testing:Base' => true],
+                'properties' => [
+                    'foo' => null
+                ]
+            ]
+        ];
+
+        $this->prepareNodeTypeManager($nodeTypesFixture);
+        $nodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Sub');
+
+        self::assertSame(['foo' => ['type' => 'boolean']], $nodeType->getProperties());
+    }
+
+    /**
+     * @test
+     */
+    public function allInheritedNodeTypePropertiesCannotBeUnset(): void
+    {
+        $nodeTypesFixture = [
+            'Neos.ContentRepository.Testing:Base' => [
+                'properties' => [
+                    'foo' => [
+                        'type' => 'boolean',
+                    ]
+                ]
+            ],
+            'Neos.ContentRepository.Testing:Sub' => [
+                'superTypes' => ['Neos.ContentRepository.Testing:Base' => true],
+                'properties' => null
+            ]
+        ];
+
+        $this->prepareNodeTypeManager($nodeTypesFixture);
+        $nodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Sub');
+
+        self::assertSame(['foo' => ['type' => 'boolean']], $nodeType->getProperties());
+    }
+
+    /**
+     * @test
+     */
+    public function anInheritedNodeTypePropertyCannotBeSetToEmptyArray(): void
+    {
+        $nodeTypesFixture = [
+            'Neos.ContentRepository.Testing:Base' => [
+                'properties' => [
+                    'foo' => [
+                        'type' => 'boolean',
+                        'ui' => [
+                            'inspector' => [
+                                'group' => 'things'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'Neos.ContentRepository.Testing:Sub' => [
+                'superTypes' => ['Neos.ContentRepository.Testing:Base' => true],
+                'properties' => [
+                    // Pseudo unset.
+                    // The property will still be existent but looses its type information (falls back to string).
+                    // Also, the property will not show up anymore in the ui as the inspector configuration is gone as well.
+                    'foo' => []
+                ]
+            ]
+        ];
+
+        $this->prepareNodeTypeManager($nodeTypesFixture);
+        $nodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Sub');
+
+        self::assertSame(['foo' => []], $nodeType->getProperties());
+        self::assertSame('string', $nodeType->getPropertyType('foo'));
+    }
+
+    /**
+     * @test
+     */
     public function getAutoCreatedChildNodesReturnsLowercaseNames()
     {
         $parentNodeType = $this->nodeTypeManager->getNodeType(NodeTypeName::fromString('Neos.ContentRepository.Testing:Page2'));
@@ -366,5 +453,19 @@ class NodeTypeManagerTest extends TestCase
         );
         self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
         self::assertInstanceOf(NodeType::class, $nodeTypeManager->getNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
+    }
+
+    /**
+     * @test
+     */
+    public function rootNodeTypeIsPresentAfterOverride()
+    {
+        $nodeTypeManager = new NodeTypeManager(
+            fn() => [],
+            new DefaultNodeLabelGeneratorFactory()
+        );
+        $nodeTypeManager->overrideNodeTypes(['Some:NewNodeType' => []]);
+        self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::fromString('Some:NewNodeType')));
+        self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
     }
 }

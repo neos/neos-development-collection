@@ -7,7 +7,6 @@ namespace Neos\Neos\FrontendRouting\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -30,16 +29,17 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
@@ -53,15 +53,20 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         'shortcutTarget' => Types::JSON,
     ];
 
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
     private ?DocumentUriPathFinder $stateAccessor = null;
+
+    /**
+     * @var array<string, array<string, bool>>
+     */
+    private array $nodeTypeImplementsRuntimeCache = [];
 
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
     ) {
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbal,
             $this->tableNamePrefix . '_checkpoint',
             self::class
@@ -70,25 +75,48 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     public function setUp(): void
     {
-        $this->setupTables();
-        $this->checkpointStorage->setup();
+        foreach ($this->determineRequiredSqlStatements() as $statement) {
+            $this->dbal->executeStatement($statement);
+        }
+        $this->checkpointStorage->setUp();
     }
 
-    private function setupTables(): SetupResult
+    public function status(): ProjectionStatus
     {
-        $connection = $this->dbal;
-        $schemaManager = $connection->getSchemaManager();
+        $checkpointStorageStatus = $this->checkpointStorage->status();
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
+            return ProjectionStatus::error($checkpointStorageStatus->details);
+        }
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
+            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
+        }
+        try {
+            $this->dbal->connect();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
+        }
+        try {
+            $requiredSqlStatements = $this->determineRequiredSqlStatements();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
+        }
+        if ($requiredSqlStatements !== []) {
+            return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        return ProjectionStatus::ok();
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function determineRequiredSqlStatements(): array
+    {
+        $schemaManager = $this->dbal->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-
-        $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema();
-
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
-            $connection->executeStatement($statement);
-        }
-        return SetupResult::success('');
+        $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
+        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 
 
@@ -154,7 +182,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         };
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
     }
@@ -537,8 +565,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
             if (
                 $node === null
-                || $this->nodeTypeManager->getNodeType($node->getNodeTypeName())
-                    ->isOfType(NodeTypeNameFactory::forSite())
+                || $this->isSiteNodeType($node->getNodeTypeName())
             ) {
                 // probably not a document node
                 continue;
@@ -706,20 +733,35 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         return $node->getDisableLevel() - $parentDisabledLevel !== 0;
     }
 
+    private function isSiteNodeType(NodeTypeName $nodeTypeName): bool
+    {
+        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forSite());
+    }
+
     private function isDocumentNodeType(NodeTypeName $nodeTypeName): bool
     {
-        // HACK: We consider the currently configured node type of the given node.
-        // This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType(NodeTypeNameFactory::NAME_DOCUMENT);
+        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forDocument());
     }
 
     private function isShortcutNodeType(NodeTypeName $nodeTypeName): bool
     {
-        // HACK: We consider the currently configured node type of the given node.
-        // This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType(NodeTypeNameFactory::NAME_SHORTCUT);
+        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forShortcut());
+    }
+
+    private function isNodeTypeOfType(NodeTypeName $nodeTypeName, NodeTypeName $superNodeTypeName): bool
+    {
+        if (!array_key_exists($superNodeTypeName->value, $this->nodeTypeImplementsRuntimeCache)) {
+            $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value] = [];
+        }
+        if (!array_key_exists($nodeTypeName->value, $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value])) {
+            // HACK: We consider the currently configured node type of the given node.
+            // This is a deliberate side effect of this projector!
+            // Note: We could add some hash over all node type decisions to the projected read model
+            // to tell whether a replay is required (e.g. if a document node type was changed to a content type vice versa)
+            // With https://github.com/neos/neos-development-collection/issues/4468 this can be compared in the `getStatus()` implementation
+            $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value] = $this->nodeTypeManager->hasNodeType($nodeTypeName) && $this->nodeTypeManager->getNodeType($nodeTypeName)->isOfType($superNodeTypeName);
+        }
+        return $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value];
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo

@@ -29,7 +29,7 @@ prototype({packageKey}:Document.AbstractPage) < prototype(Neos.Neos:Page) {
     # Define template properties
     menu = Neos.Neos:Menu
     content = Neos.Fusion:Component {
-      main = Neos.Neos:PrimaryContent {
+      main = Neos.Neos:ContentCollection {
         nodePath = 'main'
       }
 

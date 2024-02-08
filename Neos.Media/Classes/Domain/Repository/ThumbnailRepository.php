@@ -18,6 +18,7 @@ use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\Repository;
+use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
@@ -28,6 +29,7 @@ use Psr\Log\LoggerInterface;
  *
  * Note that this repository is not part of the public API. Use the asset's getThumbnail() method instead.
  *
+ * @method iterable<int,Thumbnail> findByResource(PersistentResource $resource)
  * @Flow\Scope("singleton")
  */
 class ThumbnailRepository extends Repository

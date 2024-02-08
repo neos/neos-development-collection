@@ -144,6 +144,9 @@ class Lexer
     {
         $token = $this->lookahead;
         $this->lookahead = null;
+        if ($token === null) {
+            throw new \LogicException('Cannot consume lookahead.', 1705652155);
+        }
         return $token;
     }
 

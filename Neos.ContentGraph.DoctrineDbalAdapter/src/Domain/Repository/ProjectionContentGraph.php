@@ -176,7 +176,7 @@ class ProjectionContentGraph
         }
 
         if (count($rows) === 1) {
-            return NodeRelationAnchorPoint::fromString($rows[0]['relationanchorpoint']);
+            return NodeRelationAnchorPoint::fromInteger($rows[0]['relationanchorpoint']);
         }
         return null;
     }
@@ -203,7 +203,7 @@ class ProjectionContentGraph
         )->fetchAllAssociative();
 
         return array_map(
-            fn($row) => NodeRelationAnchorPoint::fromString($row['relationanchorpoint']),
+            fn($row) => NodeRelationAnchorPoint::fromInteger($row['relationanchorpoint']),
             $rows
         );
     }
@@ -263,7 +263,7 @@ class ProjectionContentGraph
             )->fetchAssociative();
 
             $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
-            $parentAnchorPoint = NodeRelationAnchorPoint::fromString($succeedingSiblingRelation['parentnodeanchor']);
+            $parentAnchorPoint = NodeRelationAnchorPoint::fromInteger($succeedingSiblingRelation['parentnodeanchor']);
 
             $precedingSiblingData = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MAX(h.position) AS position FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
@@ -302,7 +302,7 @@ class ProjectionContentGraph
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAssociative();
-                $parentAnchorPoint = NodeRelationAnchorPoint::fromString(
+                $parentAnchorPoint = NodeRelationAnchorPoint::fromInteger(
                     $childHierarchyRelationData['parentnodeanchor']
                 );
             }
@@ -649,8 +649,8 @@ class ProjectionContentGraph
     protected function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelation
     {
         return new HierarchyRelation(
-            NodeRelationAnchorPoint::fromString($rawData['parentnodeanchor']),
-            NodeRelationAnchorPoint::fromString($rawData['childnodeanchor']),
+            NodeRelationAnchorPoint::fromInteger((int)$rawData['parentnodeanchor']),
+            NodeRelationAnchorPoint::fromInteger((int)$rawData['childnodeanchor']),
             $rawData['name'] ? NodeName::fromString($rawData['name']) : null,
             ContentStreamId::fromString($rawData['contentstreamid']),
             DimensionSpacePoint::fromJsonString($rawData['dimensionspacepoint']),

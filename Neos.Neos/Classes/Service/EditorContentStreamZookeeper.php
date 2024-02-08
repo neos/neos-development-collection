@@ -17,6 +17,7 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
@@ -90,7 +91,10 @@ final class EditorContentStreamZookeeper
     public function relayEditorAuthentication(Authentication\TokenInterface $token): void
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
-        assert($requestHandler instanceof HttpRequestHandlerInterface);
+        if (!$requestHandler instanceof HttpRequestHandlerInterface) {
+            // we might be in testing context
+            return;
+        }
         $siteDetectionResult = SiteDetectionResult::fromRequest($requestHandler->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
@@ -114,6 +118,11 @@ final class EditorContentStreamZookeeper
         );
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if ($workspace !== null) {
+            if ($workspace->status !== WorkspaceStatus::OUTDATED) {
+                // the workspace is either okay or in conflict, which would prevent the editor from logging in
+                return;
+            }
+
             CatchUpTriggerWithSynchronousOption::synchronously(fn() => $contentRepository->handle(
                 RebaseWorkspace::create(
                     $workspace->workspaceName,

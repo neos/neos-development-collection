@@ -7,17 +7,15 @@
     "type": "neos-package-collection",
     "require": {
         "neos/flow-development-collection": "9.0.x-dev",
-        "neos/neos-setup": "^2.0",
-        "league/flysystem-memory": "^3",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
-        "neos/eventstore": "*",
-        "neos/eventstore-doctrineadapter": "*",
+        "neos/eventstore": "~1.0.0",
+        "neos/eventstore-doctrineadapter": "~1.0.0",
         "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
-        "symfony/serializer": "*",
+        "symfony/serializer": "^6.3",
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",
         "ramsey/uuid": "^3.0 || ^4.0",
@@ -26,20 +24,24 @@
         "neos/flow": "*",
         "behat/behat": "^3.5",
         "phpunit/phpunit": "^9.0",
-        "symfony/property-access": "*",
+        "neos/behat": "^9.0",
+        "neos/contentrepositoryregistry-storageclient": "self.version",
+        "symfony/property-access": "^5.4|^6.0",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
         "neos/eel": "*",
         "neos/utility-unicode": "*",
         "doctrine/orm": "^2.6",
         "ext-dom": "*",
+        "ext-libxml": "*",
+        "neos/twitter-bootstrap": "^3.0.6",
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "doctrine/common": "^2.7 || ^3.0",
+        "enshrined/svg-sanitize": "^0.16.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
-        "neos/party": "*",
-        "neos/twitter-bootstrap": "*",
+        "neos/party": "~7.0.3",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
         "neos/kickstarter": "~9.0.0"
@@ -61,6 +63,9 @@
         "neos/contentrepository-nodemigration": "self.version",
         "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepository-testsuite": "self.version",
+        "neos/contentrepositoryregistry-doctrinedbalclient": "self.version",
+        "neos/contentrepositoryregistry-postgresdbalclient": "self.version",
+        "neos/contentrepositoryregistry-testsuite": "self.version",
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
         "neos/fusion-afx": "self.version",
@@ -88,6 +93,9 @@
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
+    "provide": {
+        "neos/contentrepositoryregistry-storageclient": "self.version"
+    },
     "scripts": {
         "lint:phpcs-psr12": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.TestSuite/Classes ./Neos.ContentRepository.Core/Classes ./Neos.Neos/Classes",
         "lint:phpcs": [
@@ -107,18 +115,20 @@
         "test:functional": [
             "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
         ],
+        "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
         "test:behavioral": [
-            "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-            "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml"
+            "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml",
+            "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
         ],
         "test:behavioral:stop-on-failure": [
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml",
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
         ],
         "test": [
             "@test:unit",
@@ -157,6 +167,15 @@
             ],
             "Neos\\ContentRepository\\TestSuite\\": [
                 "Neos.ContentRepository.TestSuite/Classes"
+            ],
+            "Neos\\ContentRepositoryRegistry\\DoctrineDbalClient\\": [
+                "Neos.ContentRepositoryRegistry.DoctrineDbalClient/Classes"
+            ],
+            "Neos\\ContentRepositoryRegistry\\PostgresDbalClient\\": [
+                "Neos.ContentRepositoryRegistry.PostgresDbalClient/Classes"
+            ],
+            "Neos\\ContentRepositoryRegistry\\TestSuite\\": [
+                "Neos.ContentRepositoryRegistry.TestSuite/Classes"
             ],
             "Neos\\ContentRepositoryRegistry\\": [
                 "Neos.ContentRepositoryRegistry/Classes"
@@ -271,6 +290,7 @@
         "phpstan/phpstan": "^1.8",
         "squizlabs/php_codesniffer": "^3.6",
         "phpunit/phpunit": "^9.0",
-        "neos/behat": "*"
+        "neos/behat": "*",
+        "league/flysystem-memory": "^3"
     }
 }

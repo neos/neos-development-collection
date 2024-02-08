@@ -162,7 +162,6 @@ class WorkspacesController extends AbstractModuleController
         if (is_null($workspaceObj)) {
             /** @todo add flash message */
             $this->redirect('index');
-            return;
         }
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspaceObj,
@@ -1006,8 +1005,8 @@ class WorkspacesController extends AbstractModuleController
                         'diff' => $diffArray
                     ];
                 }
-                // The && in belows condition is on purpose as creating a thumbnail for comparison only works
-                // if actually BOTH are ImageInterface (or NULL).
+            // The && in belows condition is on purpose as creating a thumbnail for comparison only works
+            // if actually BOTH are ImageInterface (or NULL).
             } elseif (
                 ($originalPropertyValue instanceof ImageInterface || $originalPropertyValue === null)
                 && ($changedPropertyValue instanceof ImageInterface || $changedPropertyValue === null)
