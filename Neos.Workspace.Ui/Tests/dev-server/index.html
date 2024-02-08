@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'>
+    <title>Workspace Module - Dev server</title>
+</head>
+
+<body class='neos neos-module neos-controls'>
+
+<div class='neos-module-wrap'>
+    <div class='neos-content neos-container-fluid'>
+        <div class='neos-row-fluid'>
+            <div id='workspace-module-app'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // This prevents parcel to bundle the css
+    const style = document.createElement('link');
+    style.rel = 'stylesheet';
+    style.href = '/Styles/Minimal.css';
+    document.head.appendChild(style);
+</script>
+
+<script type='module' src='./index.ts'></script>
+<script type='module' src='../../Resources/Private/JavaScript/index.tsx' defer></script>
+</body>
+</html>

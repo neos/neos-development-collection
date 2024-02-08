@@ -60,10 +60,6 @@ privilegeTargets:
       label: Allowed to publish to the live workspace
       matcher: 'method(Neos\ContentRepository\Domain\Model\Workspace->(publish|publishNode|publishNodes)(targetWorkspace.name === "live"))'
 
-    'Neos.Neos:Backend.PublishAllToLiveWorkspace':
-      label: Allowed to publish to the live workspace
-      matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->publishWorkspaceAction(workspace.baseWorkspace.name === "live"))'
-
     'Neos.Neos:Backend.PublishOwnWorkspaceContent':
       label: Allowed to publish own personal workspace
       matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.personalWorkspaceName)) || method(Neos\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.personalWorkspaceName))'
@@ -75,22 +71,6 @@ privilegeTargets:
     #
     # Workspace management
     #
-
-    'Neos.Neos:Backend.CreateWorkspaces':
-      label: Allowed to create a workspace
-      matcher: 'method(Neos\Neos\Controller\Service\WorkspacesController->(new|create)Action()) || method(Neos\Neos\Controller\Module\Management\WorkspacesController->(create|new)Action())'
-
-    'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
-      label: Allowed to manage own workspaces
-      matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === current.userInformation.backendUser))'
-
-    'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces':
-      label: Manage internal workspaces
-      matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === null))'
-
-    'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces':
-      label: Manage all private workspaces
-      matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === false)'
 
     'Neos.Neos:Backend.Service.Workspaces.Index':
       label: Access workspace services
@@ -150,10 +130,6 @@ privilegeTargets:
       label: General access to the management module section
       matcher: 'management'
 
-    'Neos.Neos:Backend.Module.Management.Workspaces':
-      label: General access to the workspace module
-      matcher: 'management/workspaces'
-
     'Neos.Neos:Backend.Module.Administration':
       label: General access to the administration module
       matcher: 'administration'
@@ -205,10 +181,6 @@ roles:
         privilegeTarget: 'Neos.Neos:Backend.PublishToLiveWorkspace'
         permission: GRANT
 
-      -
-        privilegeTarget: 'Neos.Neos:Backend.PublishAllToLiveWorkspace'
-        permission: GRANT
-
   'Neos.Neos:AbstractEditor':
     abstract: true
     parentRoles: ['Neos.ContentRepository:Administrator']
@@ -246,14 +218,6 @@ roles:
         permission: GRANT
 
       -
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'Neos.Neos:Backend.CreateWorkspaces'
-        permission: GRANT
-
-      -
         privilegeTarget: 'Neos.Neos:Backend.ContentDimensions'
         permission: GRANT
 
@@ -283,10 +247,6 @@ roles:
 
       -
         privilegeTarget: 'Neos.Neos:Backend.Module.Management'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces'
         permission: GRANT
 
 
@@ -330,14 +290,6 @@ roles:
 
       -
         privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Packages'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
         permission: GRANT
 
       -

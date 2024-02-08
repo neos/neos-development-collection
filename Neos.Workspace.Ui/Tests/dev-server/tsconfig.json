@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "@workspace-module/app"
+    ]
+  },
+  "references": [
+    {
+      "path": "../../Resources/Private/JavaScript"
+    }
+  ]
+}

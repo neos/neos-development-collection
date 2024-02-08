@@ -698,7 +698,8 @@ class UserService
             return true;
         }
 
-        return false;
+        return $currentUser && $workspace->isPrivateWorkspace()
+            && $this->isWorkspaceSharedWithUser($workspace, $currentUser);
     }
 
     /**
@@ -715,8 +716,15 @@ class UserService
 
         $currentUser = $this->getCurrentUser();
 
-        return $currentUser && $workspace->workspaceOwner
-            === $this->persistenceManager->getIdentifierByObject($currentUser);
+        if (!$currentUser) {
+            return false;
+        }
+
+        if ($workspace->workspaceOwner === $this->persistenceManager->getIdentifierByObject($currentUser)) {
+            return true;
+        }
+
+        return $workspace->isPrivateWorkspace() && $this->isWorkspaceSharedWithUser($workspace, $currentUser);
     }
 
     /**
@@ -963,13 +971,26 @@ class UserService
         return $user;
     }
 
-    /**
-     * @param Account $account
-     * @return User|null
-     */
     private function getNeosUserForAccount(Account $account): ?User
     {
         $user = $this->partyService->getAssignedPartyOfAccount($account);
         return ($user instanceof User) ? $user : null;
+    }
+
+    /**
+     * Checks whether the given workspace is shared with the given user.
+     */
+    protected function isWorkspaceSharedWithUser(Workspace $workspace, User $user): bool
+    {
+        // TODO: Reimplement
+        return false;
+
+//        $workspaceDetails = $this->workspaceDetailsRepository->findOneByWorkspace($workspace);
+//        if (!$workspaceDetails) {
+//            return false;
+//        }
+//        $allowedUsers = array_map(fn($user) => $this->persistenceManager->getIdentifierByObject($user),
+//            $workspaceDetails->getAcl());
+//        return in_array($this->persistenceManager->getIdentifierByObject($user), $allowedUsers, true);
     }
 }

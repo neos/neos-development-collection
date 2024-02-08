@@ -103,51 +103,6 @@
   appendExceedingArguments: true
   httpMethods: ['HEAD', 'GET']
 
-# RESTful WorkspacesController routes
-
--
-  name: 'Services - WorkspacesController->indexAction()'
-  uriPattern: 'workspaces'
-  defaults:
-    '@package':    'Neos.Neos'
-    '@controller': 'Service\Workspaces'
-    '@action':     'index'
-  appendExceedingArguments: true
-  httpMethods: ['GET']
-
--
-  name: 'Services - WorkspacesController->showAction()'
-  uriPattern: 'workspaces/{workspace}'
-  defaults:
-    '@package':    'Neos.Neos'
-    '@controller': 'Service\Workspaces'
-    '@action':     'show'
-  httpMethods: ['GET']
-
--
-  name: 'Services - WorkspacesController->createAction()'
-  uriPattern: 'workspaces/{baseWorkspace}/{workspaceName}'
-  defaults:
-    '@package':    'Neos.Neos'
-    '@controller': 'Service\Workspaces'
-    '@action':     'create'
-    '@format':     'json'
-  httpMethods: ['POST']
-
-# Note: we need to specify the workspace as {workspace.__identity} in the uriPattern because if we just used
-# {workspace}, the properties could not be overridden through the parameters in the PUT request's body.
-# This is a shortcoming of the DispatchComponent and should be solved in a future version of Flow.
--
-  name: 'Services - WorkspacesController->updateAction()'
-  uriPattern: 'workspaces/{workspace.__identity}'
-  defaults:
-    '@package':    'Neos.Neos'
-    '@controller': 'Service\Workspaces'
-    '@action':     'update'
-    '@format':     'json'
-  appendExceedingArguments: true
-  httpMethods: ['PUT']
-
 # DataSourceController routes
 -
   name: 'Services - DataSourceController->index'

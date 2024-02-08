@@ -1,0 +1,10 @@
+node_modules
+.parcel-cache
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+Tests/dev-server/dist
+/cypress
