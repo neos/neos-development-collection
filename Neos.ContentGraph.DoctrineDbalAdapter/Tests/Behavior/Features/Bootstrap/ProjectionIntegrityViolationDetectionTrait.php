@@ -151,6 +151,26 @@ trait ProjectionIntegrityViolationDetectionTrait
     }
 
     /**
+     * @When /^I change the following hierarchy relation's name:$/
+     * @param TableNode $payloadTable
+     * @throws DBALException
+     */
+    public function iChangeTheFollowingHierarchyRelationsEdgeName(TableNode $payloadTable): void
+    {
+        $dataset = $this->transformPayloadTableToDataset($payloadTable);
+        $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
+        unset($record['position']);
+
+        $this->dbalClient->getConnection()->update(
+            $this->getTableNamePrefix() . '_hierarchyrelation',
+            [
+                'name' => $dataset['newName']
+            ],
+            $record
+        );
+    }
+
+    /**
      * @When /^I set the following position:$/
      * @param TableNode $payloadTable
      * @throws DBALException
