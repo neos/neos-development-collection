@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
@@ -23,6 +24,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
 use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\Tests\Functional\Fixtures\NodePublishIntegrityCheckServiceTestImplementation;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\Functional\Command\TableNode;
@@ -50,6 +52,11 @@ trait NodeOperationsTrait
     private $nodeTypesConfiguration = [];
 
     /**
+     * @var \Exception|null
+     */
+    protected $lastException;
+
+    /**
      * @return mixed
      */
     abstract protected function getObjectManager(): ObjectManagerInterface;
@@ -68,6 +75,14 @@ trait NodeOperationsTrait
     private function getPersistenceManager()
     {
         return $this->getObjectManager()->get(PersistenceManagerInterface::class);
+    }
+
+    /**
+     * @return NodePublishIntegrityCheckServiceTestImplementation
+     */
+    private function getNodePublishIntegrityCheckService()
+    {
+        return $this->getObjectManager()->get(NodePublishIntegrityCheckServiceTestImplementation::class);
     }
 
     /**
@@ -407,6 +422,109 @@ trait NodeOperationsTrait
     }
 
     /**
+     * @When /^I publish the node and exceptions are caught$/
+     */
+    public function iPublishTheNodeAndExceptionsAreCaught()
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__);
+        } else {
+            try {
+                $this->iPublishTheNode();
+                $this->lastException = null;
+            } catch (\Exception $exception) {
+                $this->lastException = $exception;
+            }
+        }
+    }
+
+    /**
+     * @When /^I publish the following nodes with integrity check:$/
+     */
+    public function iPublishTheFollowingNodesWithIntegrityCheck($table)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
+        } else {
+            $nodes = $this->getNodesToPublish($table);
+
+            Assert::assertGreaterThan(0, count($nodes), 'List of nodes to publish must contain at least one node');
+            $this->getNodePublishIntegrityCheckService()->ensureIntegrityForPublishingOfNodes($nodes, $nodes[0]->getWorkspace()->getBaseWorkspace());
+
+            $publishingService = $this->getPublishingService();
+            $publishingService->publishNodes($nodes, $nodes[0]->getWorkspace()->getBaseWorkspace());
+
+            $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();
+            $this->resetNodeInstances();
+        }
+    }
+
+    /**
+     * @When /^I publish the following nodes with integrity check and exceptions are caught:$/
+     */
+    public function iPublishTheFollowingNodesWithIntegrityCheckAndExceptionsAreCaught($table)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
+        } else {
+            try {
+                $this->iPublishTheFollowingNodesWithIntegrityCheck($table);
+                $this->lastException = null;
+            } catch (\Exception $exception) {
+                $this->lastException = $exception;
+            }
+        }
+    }
+
+    /**
+     * @Then /^only the languages "([^"]*)" are effected when publishing the following nodes:$/
+     */
+    public function onlyTheLanguagesAreEffectedWhenPublishingTheFollowingNodes(string $languages, $table)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', $languages, 'string', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
+        } else {
+            $nodes = $this->getNodesToPublish($table);
+            $changesGroupedByDimensionsAndPresets = $this->getNodePublishIntegrityCheckService()->groupChangesByEffectedDimensionAndPreset($nodes);
+
+            $expectedEffectedDimensions = array_map(function ($entry) {
+                return trim($entry);
+            }, explode(';', $languages));
+            $actualEffectedDimensions = array_keys($changesGroupedByDimensionsAndPresets);
+            $actualEffectedDimensions = str_replace('language-', '', $actualEffectedDimensions);
+            Assert::assertEquals($expectedEffectedDimensions, $actualEffectedDimensions, 'Expected and actual effected language dimensions do not match!');
+        }
+    }
+
+    /**
+     * @param $table
+     * @return NodeInterface[]
+     */
+    protected function getNodesToPublish($table): array
+    {
+        $rows = $table->getHash();
+        $nodes = [];
+        foreach ($rows as $row) {
+            $context = $this->getContextForProperties([
+                'Workspace' => $row['Workspace'],
+                'Language' => $row['Language'],
+                'ShowRemovedNodes' => true,
+            ]);
+
+            $node = $context->getNode($row['path']);
+            Assert::assertNotNull($node, 'Node to publish must not be null');
+            $nodes[] = $node;
+
+            $nodeType = $node->getNodeType();
+            if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
+                $nodes = $this->getPublishingService()->collectAllContentChildNodes($node, $nodes);
+            }
+        }
+
+        return $nodes;
+    }
+
+    /**
      * @When /^I publish the workspace "([^"]*)"$/
      */
     public function iPublishTheWorkspace($sourceWorkspaceName)
@@ -586,11 +704,6 @@ trait NodeOperationsTrait
     }
 
     /**
-     * @var \Exception|null
-     */
-    protected $lastException;
-
-    /**
      * @Given /^I move the node (before|after|into) the node with path "([^"]*)" and exceptions are caught$/
      */
     public function iMoveTheNodeIntoTheNodeWithPathAndExceptionsAreCaught($action, $referenceNodePath)
@@ -607,9 +720,9 @@ trait NodeOperationsTrait
      * @Then /^the last caught exception should be of type "([^"]*)" with message:$/
      * @param string $shortExceptionName
      * @param PyStringNode $expectedMessage
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
-    public function theLastCauShouldHaveThrownWithMessage(string $shortExceptionName, $expectedMessage)
+    public function theLastCaughtExceptionShouldBeOfTypeWithMessage(string $shortExceptionName, $expectedMessage)
     {
         Assert::assertNotNull($this->lastException, 'Command did not throw exception');
         $lastCommandExceptionShortName = (new \ReflectionClass($this->lastException))->getShortName();
@@ -927,6 +1040,7 @@ trait NodeOperationsTrait
                 $this->nodeTypesConfiguration = Yaml::parse($nodeTypesConfiguration->getRaw());
                 $configuration = $this->nodeTypesConfiguration;
             }
+
             $this->getObjectManager()->get(NodeTypeManager::class)->overrideNodeTypes($configuration);
         }
     }
@@ -1105,6 +1219,10 @@ trait NodeOperationsTrait
                 $this->createWorkspaceIfNeeded($contextProperties['workspaceName']);
             } else {
                 $this->createWorkspaceIfNeeded();
+            }
+
+            if (isset($humanReadableContextProperties['ShowRemovedNodes'])) {
+                $contextProperties['removedContentShown'] = $humanReadableContextProperties['ShowRemovedNodes'];
             }
 
             if (isset($humanReadableContextProperties['Hidden'])) {
