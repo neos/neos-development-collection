@@ -535,7 +535,6 @@ Neos:
       Neos.Node: Neos\Neos\Fusion\Helper\NodeHelper
       Neos.Link: Neos\Neos\Fusion\Helper\LinkHelper
       Neos.Array: Neos\Neos\Fusion\Helper\ArrayHelper
-      Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
       Neos.Dimension: Neos\Neos\Fusion\Helper\DimensionHelper
       Neos.Backend: Neos\Neos\Fusion\Helper\BackendHelper
