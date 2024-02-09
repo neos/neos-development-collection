@@ -2,7 +2,6 @@
   superTypes:
     'Neos.Neos:Node': true
     'Neos.Neos:Hidable': true
-    'Neos.Neos:Timable': true
   abstract: true
   constraints:
     nodeTypes:

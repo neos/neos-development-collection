@@ -175,7 +175,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         );
         assert($this->eventFileResource !== null);
         fwrite($this->eventFileResource, $exportedEvent->toJson() . chr(10));
-        $this->numberOfExportedEvents ++;
+        $this->numberOfExportedEvents++;
     }
 
     /**
