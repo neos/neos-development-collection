@@ -154,10 +154,18 @@ class NodePrivilegeContext
     /**
      * Matches if the selected node belongs to one of the given $workspaceNames
      *
-     * Example: isInWorkspace(['live', 'user-admin']) matches if the selected node is in one of the workspaces "user-admin" or "live"
+     * Note: If you want to restrict editing a node if the user is in one of the given workspaces,
+     * use `userIsInTargetWorkspace` instead, as this method only checks the node's workspace.
+     * In general most nodes are in the "live" workspace until they are changed, so this will
+     * only apply if User A edits a node in the "live" workspace and pushes the changes to
+     * workspace "workspace-abcd" and User B tries to edit the node in "workspace-abcd".
      *
-     * @param array $workspaceNames An array of workspace names, e.g. ["live", "user-admin"]
+     * Example: isInWorkspace(['workspace-abcd', 'user-admin', 'live'])
+     * matches if the selected node is in one of the workspaces "workspace-abcd", "user-admin" or "live"
+     *
+     * @param array $workspaceNames An array of workspace names, e.g. ["live", "user-admin", "workspace-abcd"]
      * @return boolean true if the selected node matches the $workspaceNames, otherwise false
+     * @deprecated since 9.0, use userIsInTargetWorkspace instead
      */
     public function isInWorkspace($workspaceNames)
     {
