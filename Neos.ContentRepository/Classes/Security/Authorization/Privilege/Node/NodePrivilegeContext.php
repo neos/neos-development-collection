@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 
 /*
@@ -15,8 +16,10 @@ use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
+use Neos\Neos\Service\UserService;
 
 /**
  * An Eel context matching expression for the node privileges
@@ -46,6 +49,12 @@ class NodePrivilegeContext
      * @var ContentDimensionPresetSourceInterface
      */
     protected $contentDimensionPresetSource;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
 
     /**
      * @var NodeInterface
@@ -157,6 +166,42 @@ class NodePrivilegeContext
         }
 
         return in_array($this->node->getWorkspace()->getName(), $workspaceNames);
+    }
+
+    /**
+     * Matches if the currently-selected workspace is the target workspace of the current user.
+     *
+     * Example: userIsInTargetWorkspace(['preview-1234']) matches if the current user
+     * has selected workspace "preview-svxg3" as target workspace
+     *
+     * @param string|array $workspaceNames An array of workspace names, e.g. ["live", "preview-svxg3"]
+     * @return boolean true if the current user is in one of the given $workspaceNames, otherwise false
+     */
+    public function userIsInTargetWorkspace($workspaceNames): bool
+    {
+        if ($this->node === null) {
+            return true;
+        }
+
+        $userWorkspace = $this->userService->getPersonalWorkspace();
+
+        if (!($userWorkspace instanceof Workspace)) {
+            // User is not logged in
+            return true;
+        }
+
+        $baseWorkspace = $userWorkspace->getBaseWorkspace();
+
+        if ($baseWorkspace === null) {
+            // User is not logged in or has no base workspace
+            return true;
+        }
+
+        if (!is_array($workspaceNames)) {
+            $workspaceNames = [$workspaceNames];
+        }
+
+        return in_array($baseWorkspace->getName(), $workspaceNames);
     }
 
     /**
