@@ -47,7 +47,7 @@ class Lexer
           [^*]*             # consume until special case '*'
           \*+               # consume all '*'
           (?:
-            [^/*]           # break if its the end: '/'
+            [^/]            # break if its the end: '/'
             [^*]*           # unrolled loop following Jeffrey E.F. Friedl
             \*+
           )*
