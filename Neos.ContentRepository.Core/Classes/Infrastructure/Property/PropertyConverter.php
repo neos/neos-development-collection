@@ -68,31 +68,35 @@ final class PropertyConverter
             $nodeTypeName
         );
 
-        if ($propertyValue !== null) {
-            try {
-                $propertyValue = $this->serializer->normalize($propertyValue);
-            } catch (NotEncodableValueException | NotNormalizableValueException $e) {
-                throw new \RuntimeException(
-                    'TODO: There was a problem serializing ' . get_debug_type($propertyValue),
-                    1594842314,
-                    $e
-                );
-            }
-
-            if ($propertyValue === null) {
-                // todo or should we unset the property?
-                throw new \RuntimeException(
-                    'TODO: There was a problem serializing ' . get_debug_type($propertyValue) . '. The serializer returned null.',
-                    1706797942
-                );
-            }
-
-            return SerializedPropertyValue::create(
-                $propertyValue,
-                $propertyType->value
+        if ($propertyValue === null) {
+            // should not happen, as we must separate regular properties and unsets beforehand!
+            throw new \RuntimeException(
+                sprintf('Property %s with value "null" cannot be serialized as unsets are treated differently.', $propertyName->value),
+                1707578784
             );
         }
-        return UnsetPropertyValue::get();
+
+        try {
+            $serializedPropertyValue = $this->serializer->normalize($propertyValue);
+        } catch (NotEncodableValueException | NotNormalizableValueException $e) {
+            throw new \RuntimeException(
+                sprintf('There was a problem serializing property %s with value "%s".', $propertyName->value,  get_debug_type($propertyValue)),
+                1594842314,
+                $e
+            );
+        }
+
+        if ($serializedPropertyValue === null) {
+            throw new \RuntimeException(
+                sprintf('While serializing property %s with value "%s" the serializer returned not allowed value "null".', $propertyName->value, get_debug_type($propertyValue)),
+                1707578784
+            );
+        }
+
+        return SerializedPropertyValue::create(
+            $serializedPropertyValue,
+            $propertyType->value
+        );
     }
 
     public function serializeReferencePropertyValues(

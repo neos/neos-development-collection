@@ -66,4 +66,9 @@ final class PropertyValuesToWrite
     {
         return new self(array_merge($this->values, $other->values));
     }
+
+    public function withoutUnsets(): self
+    {
+        return new self(array_filter($this->values, fn ($value) => $value !== null));
+    }
 }

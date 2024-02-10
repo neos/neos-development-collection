@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -76,6 +77,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                                     $serializedPropertyValue->type
                                 )
                             ]),
+                            PropertyNames::createEmpty()
                         )
                     );
                 }

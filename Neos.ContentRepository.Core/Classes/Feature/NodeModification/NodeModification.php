@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -59,14 +60,22 @@ trait NodeModification
 
         $this->validateProperties($command->propertyValues, $nodeTypeName);
 
+        $propertiesToUnset = [];
+        foreach ($command->propertyValues->values as $propertyName => $value) {
+            if ($value === null) {
+                $propertiesToUnset[] = $propertyName;
+            }
+        }
+
         $lowLevelCommand = SetSerializedNodeProperties::create(
             $command->contentStreamId,
             $command->nodeAggregateId,
             $command->originDimensionSpacePoint,
             $this->getPropertyConverter()->serializePropertyValues(
-                $command->propertyValues,
+                $command->propertyValues->withoutUnsets(),
                 $this->requireNodeType($nodeTypeName)
             ),
+            PropertyNames::fromArray($propertiesToUnset)
         );
 
         return $this->handleSetSerializedNodeProperties($lowLevelCommand, $contentRepository);

@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -69,9 +70,9 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
                                 $this->to => $properties->serialized()
-                                    ->getProperty($this->from),
-                                $this->from => null
+                                    ->getProperty($this->from)
                             ]),
+                            PropertyNames::fromArray([$this->from])
                         )
                     );
                 }

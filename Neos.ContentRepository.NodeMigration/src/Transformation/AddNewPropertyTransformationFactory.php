@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -74,6 +75,7 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
                                     $this->type
                                 )
                             ]),
+                            PropertyNames::createEmpty()
                         )
                     );
                 }
