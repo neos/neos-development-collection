@@ -296,7 +296,8 @@ trait ConstraintChecks
         if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
             throw new NodeConstraintException(
                 'Node type "' . $nodeType->name->value . '" is not allowed for child nodes of type '
-                    . $parentsNodeType->name->value
+                    . $parentsNodeType->name->value,
+                1707561400
             );
         }
         if (
@@ -308,7 +309,8 @@ trait ConstraintChecks
                 'Node type "' . $nodeType->name->value . '" does not match configured "'
                     . $this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->value
                     . '" for auto created child nodes for parent type "' . $parentsNodeType->name->value
-                    . '" with name "' . $nodeName->value . '"'
+                    . '" with name "' . $nodeName->value . '"',
+                1707561404
             );
         }
     }
