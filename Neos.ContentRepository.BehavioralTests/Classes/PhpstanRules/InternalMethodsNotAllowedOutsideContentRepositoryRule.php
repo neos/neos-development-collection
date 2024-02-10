@@ -31,19 +31,29 @@ class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
     {
         assert($node instanceof Node\Expr\CallLike);
 
-        if ($scope->getNamespace() && str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\Core')) {
-            // Core is allowed to call all namespaces
-            // TODO !!! ONLY FROM WITHIN OWN PACKAGE!!!!
+        if ($scope->getNamespace() &&
+            (
+                str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\Core')
+                || str_starts_with($scope->getNamespace(), 'Neos\ContentGraph\DoctrineDbalAdapter')
+                || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\BehavioralTests')
+                || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\Export')
+                || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\LegacyNodeMigration')
+                || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\StructureAdjustment')
+            )
+        ) {
+            // todo this rule was intended to enforce the internal annotations from the Neos\ContentRepository\Core from all call sites.
+            // this is currently not achievable and thus we grant a few packages BUT NOT NEOS.NEOS free access.
+            // that is a good compromise between having this rule not enabled at all or cluttering everything with a baseline.
             return [];
         }
         if ($node instanceof Node\Expr\MethodCall) {
             $methodCallTargetClass = $scope->getType($node->var);
             if ($methodCallTargetClass instanceof ObjectType) {
                 $targetClassName = $methodCallTargetClass->getClassName();
-                // TODO: also extend to more packages
                 if (
                     !str_starts_with($targetClassName, 'Neos\ContentRepository\Core')
                 ) {
+                    // currently only access to methods on the cr core is protected.
                     return [];
                 }
 
