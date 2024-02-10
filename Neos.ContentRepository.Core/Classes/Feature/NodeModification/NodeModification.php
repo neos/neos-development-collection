@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -93,11 +94,10 @@ trait NodeModification
         );
         $nodeType = $this->requireNodeType($nodeAggregate->nodeTypeName);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
-        $propertyValuesByScope = $command->propertyValues->splitByScope($nodeType);
         $events = [];
+        $propertyValuesByScope = $command->propertyValues->splitByScope($nodeType);
         foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
-            $scope = PropertyScope::from($scopeValue);
-            $affectedOrigins = $scope->resolveAffectedOrigins(
+            $affectedOrigins = PropertyScope::from($scopeValue)->resolveAffectedOrigins(
                 $command->originDimensionSpacePoint,
                 $nodeAggregate,
                 $this->interDimensionalVariationGraph
@@ -109,9 +109,30 @@ trait NodeModification
                     $affectedOrigin,
                     $nodeAggregate->getCoverageByOccupant($affectedOrigin),
                     $propertyValues,
+                    PropertyNames::createEmpty()
                 );
             }
         }
+
+        $propertiesToUnsetByScope = $command->propertiesToUnset->splitByScope($nodeType);
+        foreach ($propertiesToUnsetByScope as $scopeValue => $propertyNamesToUnset) {
+            $affectedOrigins = PropertyScope::from($scopeValue)->resolveAffectedOrigins(
+                $command->originDimensionSpacePoint,
+                $nodeAggregate,
+                $this->interDimensionalVariationGraph
+            );
+            foreach ($affectedOrigins as $affectedOrigin) {
+                $events[] = new NodePropertiesWereSet(
+                    $command->contentStreamId,
+                    $command->nodeAggregateId,
+                    $affectedOrigin,
+                    $nodeAggregate->getCoverageByOccupant($affectedOrigin),
+                    SerializedPropertyValues::createEmpty(),
+                    $propertyNamesToUnset,
+                );
+            }
+        }
+
         $events = $this->mergeSplitEvents($events);
 
         return new EventsToPublish(

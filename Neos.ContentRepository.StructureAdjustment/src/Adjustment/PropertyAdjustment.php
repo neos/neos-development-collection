@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
@@ -125,6 +126,7 @@ class PropertyAdjustment
                 $node->originDimensionSpacePoint,
                 $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
                 $serializedPropertyValues,
+                PropertyNames::createEmpty()
             )
         );
 

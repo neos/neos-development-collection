@@ -13,6 +13,7 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -368,7 +369,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             }
         }
 
-        return new SerializedPropertyValuesAndReferences($this->propertyConverter->serializePropertyValues(PropertyValuesToWrite::fromArray($properties), $nodeType), $references);
+        return new SerializedPropertyValuesAndReferences($this->propertyConverter->serializePropertyValues(PropertyValuesToWrite::fromArray($properties)->withoutUnsets(), $nodeType), $references);
     }
 
     /**
@@ -408,7 +409,8 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     $nodeAggregateId,
                     $originDimensionSpacePoint,
                     $coveredDimensionSpacePoints,
-                    $serializedPropertyValuesAndReferences->serializedPropertyValues
+                    $serializedPropertyValuesAndReferences->serializedPropertyValues,
+                    PropertyNames::createEmpty()
                 )
             );
         }

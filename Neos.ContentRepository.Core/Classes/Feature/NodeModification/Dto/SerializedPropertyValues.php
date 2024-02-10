@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
  * "Raw" property values as saved in the event log // in projections.
@@ -123,12 +124,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     {
         $propertyValuesByScope = [];
         foreach ($this->values as $propertyName => $propertyValue) {
-            $declaration = $nodeType->getProperties()[$propertyName]['scope'] ?? null;
-            if (is_string($declaration)) {
-                $scope = PropertyScope::from($declaration);
-            } else {
-                $scope = PropertyScope::SCOPE_NODE;
-            }
+            $scope = PropertyScope::tryFromDeclaration($nodeType, PropertyName::fromString($propertyName));
             $propertyValuesByScope[$scope->value][$propertyName] = $propertyValue;
         }
 

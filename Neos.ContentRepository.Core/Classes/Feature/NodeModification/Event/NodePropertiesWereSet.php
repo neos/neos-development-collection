@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -45,7 +46,8 @@ final class NodePropertiesWereSet implements
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
         /** the covered dimension space points for this modification - i.e. where this change is visible */
         public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
-        public readonly SerializedPropertyValues $propertyValues
+        public readonly SerializedPropertyValues $propertyValues,
+        public readonly PropertyNames $propertiesToUnset
     ) {
     }
 
@@ -71,7 +73,8 @@ final class NodePropertiesWereSet implements
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
             $this->affectedDimensionSpacePoints,
-            $this->propertyValues
+            $this->propertyValues,
+            $this->propertiesToUnset
         );
     }
 
@@ -82,18 +85,21 @@ final class NodePropertiesWereSet implements
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
             $this->affectedDimensionSpacePoints,
-            $this->propertyValues->merge($other->propertyValues)
+            $this->propertyValues->merge($other->propertyValues),
+            $this->propertiesToUnset->merge($other->propertiesToUnset)
         );
     }
 
     public static function fromArray(array $values): EventInterface
     {
+        // todo legacy upcasting
         return new self(
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),
             SerializedPropertyValues::fromArray($values['propertyValues']),
+            PropertyNames::fromArray($values['propertiesToUnset'])
         );
     }
 

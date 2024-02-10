@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
@@ -34,5 +35,27 @@ final readonly class PropertyNames
     public static function createEmpty(): self
     {
         return new self();
+    }
+
+    /**
+     * @return array<string, self>
+     */
+    public function splitByScope(NodeType $nodeType): array
+    {
+        $propertiesToUnsetByScope = [];
+        foreach ($this->values as $propertyName) {
+            $scope = PropertyScope::tryFromDeclaration($nodeType, PropertyName::fromString($propertyName));
+            $propertiesToUnsetByScope[$scope->value][] = $propertyName;
+        }
+
+        return array_map(
+            fn(array $propertyValues): self => self::fromArray($propertyValues),
+            $propertiesToUnsetByScope
+        );
+    }
+
+    public function merge(self $other): self
+    {
+        return new self(...array_merge($this->values, $other->values));
     }
 }
