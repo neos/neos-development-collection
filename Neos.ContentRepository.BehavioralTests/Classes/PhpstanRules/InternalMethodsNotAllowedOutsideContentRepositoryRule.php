@@ -31,8 +31,9 @@ class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
     {
         assert($node instanceof Node\Expr\CallLike);
 
-        if ($scope->getNamespace() &&
-            (
+        if (
+            $scope->getNamespace()
+            && (
                 str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\Core')
                 || str_starts_with($scope->getNamespace(), 'Neos\ContentGraph\DoctrineDbalAdapter')
                 || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\BehavioralTests')
