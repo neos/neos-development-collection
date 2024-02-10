@@ -54,10 +54,8 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
-                $properties = $node->properties->serialized();
-                if ($properties->propertyExists($this->propertyName)) {
-                    $serializedPropertyValue = $properties->getProperty($this->propertyName);
-                    assert($serializedPropertyValue !== null);
+                $serializedPropertyValue = $node->properties->serialized()->getProperty($this->propertyName);
+                if ($serializedPropertyValue !== null) {
                     $propertyValue = $serializedPropertyValue->value;
                     if (!is_string($propertyValue)) {
                         throw new \Exception(

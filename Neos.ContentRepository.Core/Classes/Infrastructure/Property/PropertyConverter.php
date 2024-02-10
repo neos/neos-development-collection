@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\UnsetPropertyValue;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -61,7 +60,7 @@ final class PropertyConverter
         PropertyName $propertyName,
         NodeTypeName $nodeTypeName,
         mixed $propertyValue
-    ): SerializedPropertyValue|UnsetPropertyValue {
+    ): SerializedPropertyValue {
         $propertyType = PropertyType::fromNodeTypeDeclaration(
             $declaredType,
             $propertyName,
@@ -122,9 +121,18 @@ final class PropertyConverter
 
     public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue): mixed
     {
-        return $this->serializer->denormalize(
+        $value = $this->serializer->denormalize(
             $serializedPropertyValue->value,
             $serializedPropertyValue->type
         );
+
+        if ($value === null) {
+            throw new \RuntimeException(
+                sprintf('While deserializing property value %s of type %s the serializer returned not allowed value "null".', json_encode($serializedPropertyValue->value), $serializedPropertyValue->type),
+                1707578784
+            );
+        }
+
+        return $value;
     }
 }

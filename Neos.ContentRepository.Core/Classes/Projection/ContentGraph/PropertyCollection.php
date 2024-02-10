@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\UnsetPropertyValue;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 
 /**
@@ -62,7 +61,6 @@ final class PropertyCollection implements \ArrayAccess, \IteratorAggregate, \Cou
         }
 
         $serializedProperty = $this->serializedPropertyValues->getProperty($offset);
-        assert(!$serializedProperty instanceof UnsetPropertyValue); // not possible, see withoutUnsets
         if ($serializedProperty === null) {
             return null;
         }

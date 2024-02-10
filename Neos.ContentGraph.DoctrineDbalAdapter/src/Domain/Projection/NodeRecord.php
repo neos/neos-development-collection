@@ -17,7 +17,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\UnsetPropertyValue;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;

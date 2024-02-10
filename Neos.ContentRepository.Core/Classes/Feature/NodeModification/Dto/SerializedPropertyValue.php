@@ -14,18 +14,22 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
+use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+
 /**
  * "Raw" / Serialized property value as saved in the event log // in projections.
  *
  * This means: "value" must be a simple PHP data type (no objects allowed!)
- * Null is not permitted. To unset a property {@see UnsetPropertyValue} must be used.
+ * Null as value is not permitted! To unset a node property {@see SetSerializedNodeProperties::$propertiesToUnset} must be used.
+ *
+ * @phpstan-type Value int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>
  *
  * @api used as part of commands/events
  */
 final class SerializedPropertyValue implements \JsonSerializable
 {
     /**
-     * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed> $value
+     * @param Value $value
      */
     private function __construct(
         public readonly int|float|string|bool|array|\ArrayObject $value,
@@ -36,22 +40,19 @@ final class SerializedPropertyValue implements \JsonSerializable
     /**
      * If the value is NULL an unset-property instruction will be returned instead.
      *
-     * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null $value
+     * @param Value $value
      */
     public static function create(
-        int|float|string|bool|array|\ArrayObject|null $value,
+        int|float|string|bool|array|\ArrayObject $value,
         string $type
-    ): self|UnsetPropertyValue {
-        if ($value === null) {
-            return UnsetPropertyValue::get();
-        }
+    ): self {
         return new self($value, $type);
     }
 
     /**
-     * @param array{type:string,value:mixed} $valueAndType
+     * @param array{type:string,value:Value} $valueAndType
      */
-    public static function fromArray(array $valueAndType): self|UnsetPropertyValue
+    public static function fromArray(array $valueAndType): self
     {
         if (!array_key_exists('value', $valueAndType)) {
             throw new \InvalidArgumentException('Missing array key "value"', 1546524597);
@@ -60,7 +61,7 @@ final class SerializedPropertyValue implements \JsonSerializable
             throw new \InvalidArgumentException('Missing array key "type"', 1546524609);
         }
 
-        return self::create($valueAndType['value'], $valueAndType['type']);
+        return new self($valueAndType['value'], $valueAndType['type']);
     }
 
     /**

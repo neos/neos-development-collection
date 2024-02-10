@@ -105,10 +105,8 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
-                if ($node->hasProperty($this->propertyName)) {
-                    $properties = $node->properties;
-                    $currentProperty = $properties->serialized()->getProperty($this->propertyName);
-                    /** @var \Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue $currentProperty safe since Node::hasProperty */
+                $currentProperty = $node->properties->serialized()->getProperty($this->propertyName);
+                if ($currentProperty !== null) {
                     $value = $currentProperty->value;
                     if (!is_string($value) && !is_array($value)) {
                         throw new \Exception(

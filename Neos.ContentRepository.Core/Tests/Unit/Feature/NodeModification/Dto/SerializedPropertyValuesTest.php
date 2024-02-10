@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Feature\NodeModification\Dto;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\UnsetPropertyValue;
 use PHPUnit\Framework\TestCase;
 
 class SerializedPropertyValuesTest extends TestCase
@@ -32,42 +31,40 @@ class SerializedPropertyValuesTest extends TestCase
     /**
      * @test
      */
-    public function explicitNullValue(): void
+    public function nullIsRejectedByFromArray(): void
     {
-        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => null]);
-        self::assertTrue($propertyValues->propertyExists('someProperty'));
-        self::assertSame(UnsetPropertyValue::get(), $propertyValues->getProperty('someProperty'));
-
-        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => UnsetPropertyValue::get()]);
-        self::assertTrue($propertyValues->propertyExists('someProperty'));
-        self::assertSame(UnsetPropertyValue::get(), $propertyValues->getProperty('someProperty'));
+        $this->expectException(\InvalidArgumentException::class);
+        SerializedPropertyValues::fromArray(['someProperty' => null]);
     }
 
     /**
      * @test
      */
-    public function implicitNullValue(): void
+    public function nullIsRejectedByNestedFromArray(): void
     {
-        // contains migration layer for events with properties in alternate / old shape `{"value":null,"type":"string"}`
-        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => ['value' => null, 'type' => 'string']]);
-        self::assertSame(UnsetPropertyValue::get(), $propertyValues->getProperty('someProperty'));
-
-        $unset = SerializedPropertyValue::create(null, 'string');
-        self::assertSame(UnsetPropertyValue::get(), $unset);
-
-        $unset = SerializedPropertyValue::fromArray(['value' => null, 'type' => 'string']);
-        self::assertSame(UnsetPropertyValue::get(), $unset);
+        $this->expectException(\TypeError::class);
+        // events with the old shape `{"value":null,"type":"string"}` fail
+        SerializedPropertyValues::fromArray(['someProperty' => ['value' => null, 'type' => 'string']]);
     }
 
     /**
      * @test
      */
-    public function jsonSerializeReturnsNullForUnsetValues(): void
+    public function nullIsRejectedByConstructor(): void
+    {
+        $this->expectException(\TypeError::class);
+        SerializedPropertyValue::create(null, 'string');
+    }
+
+    /**
+     * @test
+     */
+    public function jsonSerialize(): void
     {
         // the format which is implicitly used in the event log, due to json_serialize
-        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => UnsetPropertyValue::get(), 'otherProperty' => SerializedPropertyValue::create('mhs', 'string')]);
+        $propertyValues = SerializedPropertyValues::fromArray(['otherProperty' => SerializedPropertyValue::create('mhs', 'string')]);
         self::assertJsonStringEqualsJsonString(
-            '{"someProperty":null,"otherProperty":{"value":"mhs","type":"string"}}',
+            '{"otherProperty":{"value":"mhs","type":"string"}}',
             json_encode($propertyValues)
         );
     }
@@ -75,11 +72,11 @@ class SerializedPropertyValuesTest extends TestCase
     /**
      * @test
      */
-    public function getPlainValuesReturnsNullForUnsetValues(): void
+    public function getPlainValues(): void
     {
-        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => UnsetPropertyValue::get(), 'otherProperty' => SerializedPropertyValue::create('me-he-he', 'string')]);
+        $propertyValues = SerializedPropertyValues::fromArray(['otherProperty' => SerializedPropertyValue::create('me-he-he', 'string')]);
         self::assertSame(
-            ['someProperty' => null, 'otherProperty' => 'me-he-he'],
+            ['otherProperty' => 'me-he-he'],
             $propertyValues->getPlainValues()
         );
     }

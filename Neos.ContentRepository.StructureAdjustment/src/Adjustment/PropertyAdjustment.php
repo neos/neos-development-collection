@@ -100,8 +100,7 @@ class PropertyAdjustment
 
     private function removeProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey): EventsToPublish
     {
-        $serializedPropertyValues = SerializedPropertyValues::fromArray([$propertyKey => null]);
-        return $this->publishNodePropertiesWereSet($nodeAggregate, $node, $serializedPropertyValues);
+        return $this->publishNodePropertiesWereSet($nodeAggregate, $node, SerializedPropertyValues::createEmpty(), PropertyNames::fromArray([$propertyKey]));
     }
 
     private function addProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey, mixed $defaultValue): EventsToPublish
@@ -111,13 +110,14 @@ class PropertyAdjustment
             $propertyKey => SerializedPropertyValue::create($defaultValue, $propertyType)
         ]);
 
-        return $this->publishNodePropertiesWereSet($nodeAggregate, $node, $serializedPropertyValues);
+        return $this->publishNodePropertiesWereSet($nodeAggregate, $node, $serializedPropertyValues, PropertyNames::createEmpty());
     }
 
     private function publishNodePropertiesWereSet(
         NodeAggregate $nodeAggregate,
         Node $node,
-        SerializedPropertyValues $serializedPropertyValues
+        SerializedPropertyValues $serializedPropertyValues,
+        PropertyNames $propertyNames
     ): EventsToPublish {
         $events = Events::with(
             new NodePropertiesWereSet(
@@ -126,7 +126,7 @@ class PropertyAdjustment
                 $node->originDimensionSpacePoint,
                 $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
                 $serializedPropertyValues,
-                PropertyNames::createEmpty()
+                $propertyNames
             )
         );
 

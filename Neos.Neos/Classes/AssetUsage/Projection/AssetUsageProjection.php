@@ -12,7 +12,6 @@ use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\UnsetPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
@@ -180,10 +179,6 @@ final class AssetUsageProjection implements ProjectionInterface
         /** @var array<string, array<AssetIdAndOriginalAssetId>> $assetIds */
         $assetIds = [];
         foreach ($propertyValues as $propertyName => $propertyValue) {
-            // skip removed properties
-            if ($propertyValue instanceof UnsetPropertyValue) {
-                continue;
-            }
             $extractedAssetIds = $this->extractAssetIds(
                 $propertyValue->type,
                 $propertyValue->value,

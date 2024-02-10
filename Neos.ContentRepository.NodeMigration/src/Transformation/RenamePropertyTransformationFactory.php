@@ -61,16 +61,15 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult
             {
-                if ($node->hasProperty($this->from)) {
-                    $properties = $node->properties;
+                $serializedPropertyValue = $node->properties->serialized()->getProperty($this->from);
+                if ($serializedPropertyValue !== null) {
                     return $this->contentRepository->handle(
                         SetSerializedNodeProperties::create(
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
-                                $this->to => $properties->serialized()
-                                    ->getProperty($this->from)
+                                $this->to => $serializedPropertyValue
                             ]),
                             PropertyNames::fromArray([$this->from])
                         )
