@@ -46,9 +46,7 @@ final class PropertyCollection implements \ArrayAccess, \IteratorAggregate, \Cou
         SerializedPropertyValues $serializedPropertyValues,
         PropertyConverter $propertyConverter
     ) {
-        // we are not interested in the unset properties, as for the read model we make no difference between unset and never set.
-        // the projection should not need to preserve unset properties, but if it does, we filter them here.
-        $this->serializedPropertyValues = $serializedPropertyValues->withoutUnsets();
+        $this->serializedPropertyValues = $serializedPropertyValues;
         $this->propertyConverter = $propertyConverter;
     }
 

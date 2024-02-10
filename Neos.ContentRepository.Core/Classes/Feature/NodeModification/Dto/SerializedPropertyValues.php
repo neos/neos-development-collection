@@ -102,19 +102,9 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
         return new self(array_merge($this->values, $other->values));
     }
 
-    public function withoutUnsets(): self
+    public function unsetProperties(PropertyNames $propertyNames): self
     {
-        if (!in_array(UnsetPropertyValue::get(), $this->values, true)) {
-            return $this;
-        }
-        $values = [];
-        foreach ($this->values as $name => $serializedValue) {
-            if ($serializedValue instanceof UnsetPropertyValue) {
-                continue;
-            }
-            $values[$name] = $serializedValue;
-        }
-        return new self($values);
+        return new self(array_diff_key($this->values, array_flip($propertyNames->values)));
     }
 
     /**

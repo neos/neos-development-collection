@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Feature\NodeModification\Dto;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\UnsetPropertyValue;
@@ -86,19 +87,19 @@ class SerializedPropertyValuesTest extends TestCase
     /**
      * @test
      */
-    public function withoutUnsets(): void
+    public function unsetProperties(): void
     {
-        // the format which should be used by the projections
-        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => UnsetPropertyValue::get(), 'otherProperty' => SerializedPropertyValue::create('text', 'string'), 'reputation' => UnsetPropertyValue::get()]);
+        $unsetProperties = PropertyNames::fromArray(['someProperty', 'nonExistent']);
+        $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => SerializedPropertyValue::create('old value', 'string'), 'otherProperty' => SerializedPropertyValue::create('text', 'string')]);
         self::assertEquals(
             SerializedPropertyValues::fromArray(['otherProperty' => SerializedPropertyValue::create('text', 'string')]),
-            $propertyValues->withoutUnsets()
+            $propertyValues->unsetProperties($unsetProperties)
         );
 
         $propertyValues = SerializedPropertyValues::fromArray(['someProperty' => SerializedPropertyValue::create('text', 'string'), 'otherProperty' => SerializedPropertyValue::create('text', 'string')]);
         self::assertEquals(
             $propertyValues,
-            $propertyValues->withoutUnsets()
+            $propertyValues->unsetProperties(PropertyNames::createEmpty())
         );
     }
 }

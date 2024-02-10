@@ -58,8 +58,7 @@ final class NodeRecord
                 'nodeaggregateid' => $this->nodeAggregateId->value,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
-                // we don't write null explicitly into the database
-                'properties' => json_encode($this->properties->withoutUnsets()),
+                'properties' => json_encode($this->properties),
                 'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value,
                 'lastmodified' => $this->timestamps->lastModified,
@@ -144,8 +143,7 @@ final class NodeRecord
             'nodeaggregateid' => $nodeAggregateId->value,
             'origindimensionspacepoint' => json_encode($originDimensionSpacePoint),
             'origindimensionspacepointhash' => $originDimensionSpacePointHash,
-            // we don't write null explicitly into the database
-            'properties' => json_encode($properties->withoutUnsets()),
+            'properties' => json_encode($properties),
             'nodetypename' => $nodeTypeName->value,
             'classification' => $classification->value,
             'created' => $timestamps->created,
