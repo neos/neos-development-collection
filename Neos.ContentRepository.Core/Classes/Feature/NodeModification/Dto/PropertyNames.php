@@ -11,7 +11,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  * Todo move to shared and use {@see PropertyName} ???
  * @api used as part of commands/events
  */
-final readonly class PropertyNames
+final readonly class PropertyNames implements \JsonSerializable
 {
     /**
      * @var array<string>
@@ -56,6 +56,11 @@ final readonly class PropertyNames
 
     public function merge(self $other): self
     {
-        return new self(...array_merge($this->values, $other->values));
+        return new self(...$this->values, ...$other->values);
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return $this->values;
     }
 }

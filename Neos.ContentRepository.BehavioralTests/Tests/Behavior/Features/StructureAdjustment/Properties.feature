@@ -126,6 +126,7 @@ Feature: Properties
       | originDimensionSpacePoint    | {}                                                                          |
       | affectedDimensionSpacePoints | [{}]                                                                        |
       | propertyValues               | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
+      | propertiesToUnset            | {}                                                      |
     And the graph projection is fully up to date
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                        | nodeAggregateId        |
