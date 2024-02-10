@@ -21,7 +21,10 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * Set property values for a given node.
+ * Add property values for a given node.
+ *
+ * The properties will not be replaced but will be merged via the existing ones by the projection.
+ * A null value will cause to unset a nodes' property.
  *
  * The property values support arbitrary types (but must match the NodeType's property types -
  * this is validated in the command handler).
