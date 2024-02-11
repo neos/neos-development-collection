@@ -152,7 +152,7 @@ final class NodeFactory
         $rawNodeName = '';
         $rawNodeAggregateClassification = '';
         $occupiedDimensionSpacePoints = [];
-        $nodesByOccupiedDimensionSpacePoints = [];
+        $nodesByOccupiedDimensionSpacePoint = [];
         $coveredDimensionSpacePoints = [];
         $nodesByCoveredDimensionSpacePoints = [];
         $coverageByOccupants = [];
@@ -164,9 +164,9 @@ final class NodeFactory
             $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString(
                 $nodeRow['origindimensionspacepoint']
             );
-            if (!isset($nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash])) {
+            if (!isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])) {
                 // ... so we handle occupation exactly once ...
-                $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
+                $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
                     $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                     $visibilityConstraints
@@ -187,7 +187,7 @@ final class NodeFactory
                 = $coveredDimensionSpacePoint;
             $occupationByCovering[$coveredDimensionSpacePoint->hash] = $occupiedDimensionSpacePoint;
             $nodesByCoveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash]
-                = $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash];
+                = $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash];
             // ... as we do for disabling
             if (isset($nodeRow['disableddimensionspacepointhash'])) {
                 $disabledDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
@@ -198,7 +198,7 @@ final class NodeFactory
         ksort($disabledDimensionSpacePoints);
 
         /** @var Node $primaryNode  a nodeAggregate only exists if it at least contains one node. */
-        $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
+        $primaryNode = current($nodesByOccupiedDimensionSpacePoint);
 
         return new NodeAggregate(
             $primaryNode->subgraphIdentity->contentStreamId,
@@ -207,7 +207,7 @@ final class NodeFactory
             NodeTypeName::fromString($rawNodeTypeName),
             $rawNodeName ? NodeName::fromString($rawNodeName) : null,
             new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints),
-            $nodesByOccupiedDimensionSpacePoints,
+            $nodesByOccupiedDimensionSpacePoint,
             CoverageByOrigin::fromArray($coverageByOccupants),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoints,
