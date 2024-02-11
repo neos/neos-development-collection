@@ -3,11 +3,13 @@
   <file original="" product-name="Neos.TimeableNodeVisibility" source-language="en" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="properties.enableAfterDateTime" xml:space="preserve">
-				<source>Show after</source>
-            <target state="needs-translation">Show after</target></trans-unit>
+        <source>Show after</source>
+        <target state="translated">Mostrar después</target>
+      </trans-unit>
       <trans-unit id="properties.disableAfterDateTime" xml:space="preserve">
-				<source>Hide after</source>
-			<target state="translated">Ocultar después de</target></trans-unit>
+        <source>Hide after</source>
+        <target state="translated">Ocultar después de</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
