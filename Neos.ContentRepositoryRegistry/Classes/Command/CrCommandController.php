@@ -97,15 +97,26 @@ final class CrCommandController extends CommandController
     }
 
     /**
-     * Replays the specified projection of a Content Repository by resetting its state and performing a full catchup
+     * Replays the specified projection of a Content Repository by resetting its state and performing a full catchup.
      *
      * @param string $projection Full Qualified Class Name or alias of the projection to replay (e.g. "contentStream")
      * @param string $contentRepository Identifier of the Content Repository instance to operate on
-     * @param bool $quiet If set only fatal errors are rendered to the output
+     * @param bool $force Replay the projection without confirmation. This may take some time!
+     * @param bool $quiet If set only fatal errors are rendered to the output (must be used with --force flag to avoid user input)
      * @param int $until Until which sequence number should projections be replayed? useful for debugging
      */
-    public function projectionReplayCommand(string $projection, string $contentRepository = 'default', bool $quiet = false, int $until = 0): void
+    public function projectionReplayCommand(string $projection, string $contentRepository = 'default', bool $force = false, bool $quiet = false, int $until = 0): void
     {
+        if (!$force && $quiet) {
+            $this->outputLine('Cannot run in quiet mode without --force. Please acknowledge that this command will reset and replay this projection. This may take some time.');
+            $this->quit(1);
+        }
+
+        if (!$force && !$this->output->askConfirmation(sprintf('This will replay the projection "%s" in "%s", which may take some time. Are you sure to proceed? (y/n) ', $projection, $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
 
@@ -131,10 +142,21 @@ final class CrCommandController extends CommandController
      * Replays all projections of the specified Content Repository by resetting their states and performing a full catchup
      *
      * @param string $contentRepository Identifier of the Content Repository instance to operate on
-     * @param bool $quiet If set only fatal errors are rendered to the output
+     * @param bool $force Replay the projection without confirmation. This may take some time!
+     * @param bool $quiet If set only fatal errors are rendered to the output (must be used with --force flag to avoid user input)
      */
-    public function projectionReplayAllCommand(string $contentRepository = 'default', bool $quiet = false): void
+    public function projectionReplayAllCommand(string $contentRepository = 'default', bool $force = false, bool $quiet = false): void
     {
+        if (!$force && $quiet) {
+            $this->outputLine('Cannot run in quiet mode without --force. Please acknowledge that this command will reset and replay this projection. This may take some time.');
+            $this->quit(1);
+        }
+
+        if (!$force && !$this->output->askConfirmation(sprintf('This will replay all projections in "%s", which may take some time. Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
         if (!$quiet) {
@@ -172,13 +194,13 @@ final class CrCommandController extends CommandController
     /**
      * This will completely prune the data of the specified content repository.
      *
-     * @param string $contentRepository name of the content repository where the data should be pruned from.
-     * @param bool $assumeYes prune the cr without confirmation. This cannot be reverted!
+     * @param string $contentRepository Name of the content repository where the data should be pruned from.
+     * @param bool $force Prune the cr without confirmation. This cannot be reverted!
      * @return void
      */
-    public function pruneCommand(string $contentRepository = 'default', bool $assumeYes = false): void
+    public function pruneCommand(string $contentRepository = 'default', bool $force = false): void
     {
-        if (!$assumeYes && !$this->output->askConfirmation(sprintf("This will prune your content repository \"%s\". Are you sure to proceed? (y/n) ", $contentRepository), false)) {
+        if (!$force && !$this->output->askConfirmation(sprintf('This will prune your content repository "%s". Are you sure to proceed? (y/n) ', $contentRepository), false)) {
             $this->outputLine('<comment>Abort.</comment>');
             return;
         }

@@ -111,7 +111,7 @@ class CrCommandController extends CommandController
         $this->outputLine('Replaying projections');
         /** {@see \Neos\ContentRepositoryRegistry\Command\CrCommandController::projectionReplayAllCommand()} */
         // todo why not run in this process?
-        Scripts::executeCommand('neos.contentrepositoryregistry:cr:projectionReplayAll', $this->flowSettings, false, ['contentRepository' => $contentRepositoryId->value]);
+        Scripts::executeCommand('neos.contentrepositoryregistry:cr:projectionReplayAll', $this->flowSettings, false, ['contentRepository' => $contentRepositoryId->value, 'force' => true]);
 
         $this->outputLine('<success>Done</success>');
     }
