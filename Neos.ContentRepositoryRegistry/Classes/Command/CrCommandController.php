@@ -40,7 +40,7 @@ final class CrCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
         if ($resetProjections) {
-            if (!$this->output->askConfirmation(sprintf('Advanced Mode. The flag --reset-projections will reset all projections in "%s", which leaves you with empty projections to be replayed. Are you sure to proceed? (y/n) ', $contentRepositoryId->value), false)) {
+            if (!$this->output->askConfirmation(sprintf('> Advanced Mode. The flag --reset-projections will reset all projections in "%s", which leaves you with empty projections to be replayed. Are you sure to proceed? (y/n) ', $contentRepositoryId->value), false)) {
                 $this->outputLine('<comment>Abort.</comment>');
                 return;
             }
@@ -124,7 +124,7 @@ final class CrCommandController extends CommandController
             $this->quit(1);
         }
 
-        if (!$force && !$this->output->askConfirmation(sprintf('This will replay the projection "%s" in "%s", which may take some time. Are you sure to proceed? (y/n) ', $projection, $contentRepository), false)) {
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will replay the projection "%s" in "%s", which may take some time. Are you sure to proceed? (y/n) ', $projection, $contentRepository), false)) {
             $this->outputLine('<comment>Abort.</comment>');
             return;
         }
@@ -164,7 +164,7 @@ final class CrCommandController extends CommandController
             $this->quit(1);
         }
 
-        if (!$force && !$this->output->askConfirmation(sprintf('This will replay all projections in "%s", which may take some time. Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will replay all projections in "%s", which may take some time. Are you sure to proceed? (y/n) ', $contentRepository), false)) {
             $this->outputLine('<comment>Abort.</comment>');
             return;
         }
@@ -173,11 +173,10 @@ final class CrCommandController extends CommandController
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
         if (!$quiet) {
             $this->outputLine('Replaying events for all projections of Content Repository "%s" ...', [$contentRepositoryId->value]);
-            // TODO start progress bar
         }
-        $projectionService->replayAllProjections(CatchUpOptions::create());
+        // TODO progress bar with all events? Like projectionReplayCommand?
+        $projectionService->replayAllProjections(CatchUpOptions::create(), fn (string $projectionAlias) => $this->outputLine(sprintf(' * replaying %s projection', $projectionAlias)));
         if (!$quiet) {
-            // TODO finish progress bar
             $this->outputLine('<success>Done.</success>');
         }
     }
@@ -191,7 +190,7 @@ final class CrCommandController extends CommandController
      */
     public function pruneCommand(string $contentRepository = 'default', bool $force = false): void
     {
-        if (!$force && !$this->output->askConfirmation(sprintf('This will prune your content repository "%s". Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will prune your content repository "%s". Are you sure to proceed? (y/n) ', $contentRepository), false)) {
             $this->outputLine('<comment>Abort.</comment>');
             return;
         }
