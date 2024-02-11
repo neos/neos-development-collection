@@ -5,7 +5,6 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
-use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
@@ -34,10 +33,23 @@ final class CrCommandController extends CommandController
      * Therefore it makes sense to include this command into the Continuous Integration
      *
      * @param string $contentRepository Identifier of the Content Repository to set up
+     * @param bool $resetProjections Advanced. Can be used in rare cases when the projections cannot be migrated to reset everything in advance. This requires a full replay afterwards.
      */
-    public function setupCommand(string $contentRepository = 'default'): void
+    public function setupCommand(string $contentRepository = 'default', bool $resetProjections = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+
+        if ($resetProjections) {
+            if (!$this->output->askConfirmation(sprintf('Advanced Mode. The flag --reset-projections will reset all projections in "%s", which leaves you with empty projections to be replayed. Are you sure to proceed? (y/n) ', $contentRepositoryId->value), false)) {
+                $this->outputLine('<comment>Abort.</comment>');
+                return;
+            }
+
+            $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
+            $projectionService->resetAllProjections();
+            $this->outputLine('<success>All projections of Content Repository "%s" were resettet.</success>', [$contentRepositoryId->value]);
+        }
+
         $this->contentRepositoryRegistry->get($contentRepositoryId)->setUp();
         $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
     }
@@ -164,27 +176,6 @@ final class CrCommandController extends CommandController
             // TODO start progress bar
         }
         $projectionService->replayAllProjections(CatchUpOptions::create());
-        if (!$quiet) {
-            // TODO finish progress bar
-            $this->outputLine('<success>Done.</success>');
-        }
-    }
-
-    /**
-     * Resets all projections of the specified Content Repository
-     *
-     * @param string $contentRepository Identifier of the Content Repository instance to operate on
-     * @param bool $quiet If set only fatal errors are rendered to the output
-     */
-    public function resetAllCommand(string $contentRepository = 'default', bool $quiet = false): void
-    {
-        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
-        if (!$quiet) {
-            $this->outputLine('Resetting the state of all projections of Content Repository "%s".', [$contentRepositoryId->value]);
-            // TODO start progress bar
-        }
-        $projectionService->resetAllProjections();
         if (!$quiet) {
             // TODO finish progress bar
             $this->outputLine('<success>Done.</success>');
