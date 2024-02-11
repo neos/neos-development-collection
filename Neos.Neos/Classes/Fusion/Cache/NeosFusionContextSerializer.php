@@ -18,10 +18,20 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 /**
  * Serializer for Fusion's [at]cache.context values
  *
- * Uses the flow property mapper as implementation.
- * It relies on a converter being available from the context value type to string and reverse.
+ * Implements special handing for serializing {@see Node} objects in fusions cache context:
  *
- * {@see FusionContextSerializer}
+ * ```
+ * [at]cache {
+ *   mode = 'uncached'
+ *   context {
+ *     1 = 'node'
+ *   }
+ * }
+ * ```
+ *
+ * The property mapper cannot be relied upon to serialize nodes, as this is willingly not implemented.
+ *
+ * Serializing falls back to Fusion's standard {@see FusionContextSerializer} which uses Flow's property mapper.
  *
  * @internal
  */
@@ -110,19 +120,11 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
 
     public function supportsDenormalization(mixed $data, string $type, string $format = null)
     {
-        throw new \BadMethodCallException(sprintf('Method %s is not supported.', __METHOD__), 1706978912);
+        return true;
     }
 
     public function supportsNormalization(mixed $data, string $format = null)
     {
-        throw new \BadMethodCallException(sprintf('Method %s is not supported.', __METHOD__), 1706978913);
-    }
-
-    /**
-     * @return array<int|string,mixed>
-     */
-    public function getSupportedTypes(?string $format): array
-    {
-        throw new \BadMethodCallException(sprintf('Method %s is not supported.', __METHOD__), 1706978914);
+        return true;
     }
 }
