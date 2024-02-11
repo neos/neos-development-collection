@@ -32,6 +32,9 @@ final class CrCommandController extends CommandController
      * Note: This command is non-destructive, i.e. it can be executed without side effects even if all dependencies are up-to-date
      * Therefore it makes sense to include this command into the Continuous Integration
      *
+     * To check if the content repository needs to be setup look into cr:status.
+     * That command will also display information what is about to be migrated.
+     *
      * @param string $contentRepository Identifier of the Content Repository to set up
      * @param bool $resetProjections Advanced. Can be used in rare cases when the projections cannot be migrated to reset everything in advance. This requires a full replay afterwards.
      */
@@ -57,6 +60,8 @@ final class CrCommandController extends CommandController
     /**
      * Determine and output the status of the event store and all registered projections for a given Content Repository
      *
+     * In verbose mode it will also display information what should and will be migrated when cr:setup is used.
+     *
      * @param string $contentRepository Identifier of the Content Repository to determine the status for
      * @param bool $verbose If set, more details will be shown
      * @param bool $quiet If set, no output is generated. This is useful if only the exit code (0 = all OK, 1 = errors or warnings) is of interest
@@ -69,8 +74,6 @@ final class CrCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $status = $this->contentRepositoryRegistry->get($contentRepositoryId)->status();
 
-        $hasErrorsOrWarnings = false;
-
         $this->output('Event Store: ');
         $this->outputLine(match ($status->eventStoreStatus->type) {
             StatusType::OK => '<success>OK</success>',
@@ -79,9 +82,6 @@ final class CrCommandController extends CommandController
         });
         if ($verbose && $status->eventStoreStatus->details !== '') {
             $this->outputFormatted($status->eventStoreStatus->details, [], 2);
-        }
-        if ($status->eventStoreStatus->type !== StatusType::OK) {
-            $hasErrorsOrWarnings = true;
         }
         $this->outputLine();
         foreach ($status->projectionStatuses as $projectionName => $projectionStatus) {
@@ -92,9 +92,6 @@ final class CrCommandController extends CommandController
                 ProjectionStatusType::REPLAY_REQUIRED => '<comment>Replay required!</comment>',
                 ProjectionStatusType::ERROR => '<error>ERROR</error>',
             });
-            if ($projectionStatus->type !== ProjectionStatusType::OK) {
-                $hasErrorsOrWarnings = true;
-            }
             if ($verbose && ($projectionStatus->type !== ProjectionStatusType::OK || $projectionStatus->details)) {
                 $lines = explode(chr(10), $projectionStatus->details ?: '<comment>No details available.</comment>');
                 foreach ($lines as $line) {
@@ -103,7 +100,7 @@ final class CrCommandController extends CommandController
                 $this->outputLine();
             }
         }
-        if ($hasErrorsOrWarnings) {
+        if (!$status->isOk()) {
             $this->quit(1);
         }
     }

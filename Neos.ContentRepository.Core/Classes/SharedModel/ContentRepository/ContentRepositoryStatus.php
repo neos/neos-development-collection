@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\ContentRepository;
 
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
+use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\EventStore\Model\EventStore\Status as EventStoreStatus;
+use Neos\EventStore\Model\EventStore\StatusType as EventStoreStatusType;
 
 /**
  * @api
@@ -26,5 +28,18 @@ final readonly class ContentRepositoryStatus
         public EventStoreStatus $eventStoreStatus,
         public ProjectionStatuses $projectionStatuses,
     ) {
+    }
+
+    public function isOk(): bool
+    {
+        if ($this->eventStoreStatus->type !== EventStoreStatusType::OK) {
+            return false;
+        }
+        foreach ($this->projectionStatuses as $projectionStatus) {
+            if ($projectionStatus->type !== ProjectionStatusType::OK) {
+                return false;
+            }
+        }
+        return true;
     }
 }
