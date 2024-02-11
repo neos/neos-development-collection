@@ -22,6 +22,7 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Domain\Service\UserService;
@@ -92,10 +93,9 @@ abstract class AbstractServiceController extends ActionController
      */
     public function processRequest(ActionRequest $request): ActionResponse
     {
-        $response = new ActionResponse();
         try {
             $response = parent::processRequest($request);
-        } catch (StopActionException $exception) {
+        } catch (StopActionException | ForwardException $exception) {
             throw $exception;
         } catch (\Exception $exception) {
             if ($this->request->getFormat() !== 'json') {
