@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
@@ -136,8 +138,10 @@ trait GenericCommandExecutionAndEventPublication
             Event\EventData::fromString(json_encode($eventPayload)),
             Event\EventMetadata::fromArray([])
         );
+        /** @var EventPersister $eventPersister */
         $eventPersister = (new \ReflectionClass($this->currentContentRepository))->getProperty('eventPersister')
             ->getValue($this->currentContentRepository);
+        /** @var EventNormalizer $eventPersister */
         $eventNormalizer = (new \ReflectionClass($eventPersister))->getProperty('eventNormalizer')
             ->getValue($eventPersister);
         $event = $eventNormalizer->denormalize($artificiallyConstructedEvent);

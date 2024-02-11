@@ -38,14 +38,16 @@
       "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
       "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
       "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml",
-      "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
+      "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
+      "@test:behat-cli -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist"
     ],
     "test:behavioral:stop-on-failure": [
       "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
       "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
       "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml",
-      "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
+      "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
+      "@test:behat-cli -vvv --stop-on-failure -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist"
     ],
     "test": [
       "@test:unit",

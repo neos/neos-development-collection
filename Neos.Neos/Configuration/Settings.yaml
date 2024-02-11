@@ -472,10 +472,13 @@ Neos:
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseStructureException
             options: &welcomeTemplate
-              viewClassName: Neos\FluidAdaptor\View\StandaloneView
+              viewClassName: Neos\Fusion\View\FusionView
               viewOptions:
-                templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Welcome.html'
-                layoutRootPaths: ['resource://Neos.Neos/Private/Layouts/']
+                fusionPath: 'Neos/Fusion/DatabaseConnectionExceptions'
+                fusionPathPatterns: ['resource://Neos.Neos/Private/Fusion/Error/Root.fusion']
+                enableContentCache: false
+                templatePathAndFilename: ~
+
           noHomepageException:
             matchingExceptionClassNames:
               - Neos\Neos\Routing\Exception\NoHomepageException
@@ -532,7 +535,6 @@ Neos:
       Neos.Node: Neos\Neos\Fusion\Helper\NodeHelper
       Neos.Link: Neos\Neos\Fusion\Helper\LinkHelper
       Neos.Array: Neos\Neos\Fusion\Helper\ArrayHelper
-      Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
       Neos.Dimension: Neos\Neos\Fusion\Helper\DimensionHelper
       Neos.Backend: Neos\Neos\Fusion\Helper\BackendHelper
