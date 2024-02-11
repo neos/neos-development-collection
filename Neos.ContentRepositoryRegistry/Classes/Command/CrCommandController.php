@@ -104,7 +104,7 @@ final class CrCommandController extends CommandController
      * @param bool $quiet If set only fatal errors are rendered to the output
      * @param int $until Until which sequence number should projections be replayed? useful for debugging
      */
-    public function replayCommand(string $projection, string $contentRepository = 'default', bool $quiet = false, int $until = 0): void
+    public function projectionReplayCommand(string $projection, string $contentRepository = 'default', bool $quiet = false, int $until = 0): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
@@ -133,7 +133,7 @@ final class CrCommandController extends CommandController
      * @param string $contentRepository Identifier of the Content Repository instance to operate on
      * @param bool $quiet If set only fatal errors are rendered to the output
      */
-    public function replayAllCommand(string $contentRepository = 'default', bool $quiet = false): void
+    public function projectionReplayAllCommand(string $contentRepository = 'default', bool $quiet = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
