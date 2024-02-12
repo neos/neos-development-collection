@@ -35,7 +35,6 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -88,12 +87,6 @@ class LinkingService
      * @var ResourceManager
      */
     protected $resourceManager;
-
-    /**
-     * @Flow\Inject
-     * @var NodeShortcutResolver
-     */
-    protected $nodeShortcutResolver;
 
     /**
      * @Flow\Inject
@@ -264,8 +257,6 @@ class LinkingService
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array<int,string> $argumentsToBeExcludedFromQueryString arguments to be removed from the URI.
      *                                                    Only active if $addQueryString = true
-     * @param boolean $resolveShortcuts @deprecated With Neos 7.0 this argument is no longer evaluated
-     *                                  and log a message if set to FALSE
      * @return string The rendered URI
      * @throws NeosException if no URI could be resolved for the given node
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
@@ -283,17 +274,9 @@ class LinkingService
         array $arguments = [],
         $section = '',
         $addQueryString = false,
-        array $argumentsToBeExcludedFromQueryString = [],
-        $resolveShortcuts = true
+        array $argumentsToBeExcludedFromQueryString = []
     ): string {
         $this->lastLinkedNode = null;
-        if ($resolveShortcuts === false) {
-            $this->systemLogger->info(sprintf(
-                '%s() was called with the "resolveShortCuts" argument set to FALSE.'
-                    . ' This is no longer supported, the argument was ignored',
-                __METHOD__
-            ));
-        }
         if (!($node instanceof Node || is_string($node) || $baseNode instanceof Node)) {
             throw new \InvalidArgumentException(
                 'Expected an instance of Node or a string for the node argument,'
