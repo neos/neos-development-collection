@@ -165,7 +165,6 @@ class NodePrivilegeContext
      *
      * @param array $workspaceNames An array of workspace names, e.g. ["live", "user-admin", "workspace-abcd"]
      * @return boolean true if the selected node matches the $workspaceNames, otherwise false
-     * @deprecated since 9.0, use userIsInTargetWorkspace instead
      */
     public function isInWorkspace($workspaceNames)
     {
