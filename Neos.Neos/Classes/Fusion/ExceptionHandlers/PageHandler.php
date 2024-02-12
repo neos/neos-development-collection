@@ -24,6 +24,7 @@ use Neos\Flow\Utility\Environment;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\HtmlMessageHandler;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Service\ContentElementWrappingService;
 use Psr\Http\Message\ResponseInterface;
 
@@ -60,7 +61,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
      *
      * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
-     * @param integer $referenceCode
+     * @param string|null $referenceCode
      * @return string
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
@@ -86,24 +87,13 @@ class PageHandler extends AbstractRenderingExceptionHandler
         }
 
         if (!is_null($documentNode)) {
-            $contentRepositoryId = $documentNode->subgraphIdentity->contentRepositoryId;
-            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-                $documentNode->subgraphIdentity->contentStreamId
-            );
+            $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
+            assert($renderingMode instanceof RenderingMode);
             if (
-                $workspace && !$workspace->workspaceName->isLive()
-                && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+                $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+                && $renderingMode->isEdit
             ) {
                 $isBackend = true;
-                $fluidView->assign(
-                    'metaData',
-                    $this->contentElementWrappingService->wrapCurrentDocumentMetadata(
-                        $documentNode,
-                        '<div id="neos-document-metadata"></div>',
-                        $fusionPath
-                    )
-                );
             }
         }
 

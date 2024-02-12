@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -27,6 +28,11 @@ final class ContentGraphProjection implements ProjectionInterface, WithMarkStale
     public function setUp(): void
     {
         $this->projectionImplementation->setUp();
+    }
+
+    public function status(): ProjectionStatus
+    {
+        return $this->projectionImplementation->status();
     }
 
     public function reset(): void

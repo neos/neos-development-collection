@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\EventStore;
 
+use Neos\EventStore\Model\Event\CausationId;
+use Neos\EventStore\Model\Event\CorrelationId;
 use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
 
@@ -16,39 +18,32 @@ final class DecoratedEvent
 {
     private function __construct(
         public readonly EventInterface $innerEvent,
-        public readonly EventId $eventId,
-        public readonly EventMetadata $eventMetadata,
+        public readonly ?EventId $eventId,
+        public readonly ?EventMetadata $eventMetadata,
+        public readonly ?CausationId $causationId,
+        public readonly ?CorrelationId $correlationId,
     ) {
     }
 
-    public static function withMetadata(DecoratedEvent|EventInterface $event, EventMetadata $metadata): self
-    {
-        $event = self::wrapWithDecoratedEventIfNecessary($event);
-        return new self($event->innerEvent, $event->eventId, $metadata);
-    }
-
-    public static function withEventId(DecoratedEvent|EventInterface $event, EventId $eventId): self
-    {
-        $event = self::wrapWithDecoratedEventIfNecessary($event);
-        return new self($event->innerEvent, $eventId, $event->eventMetadata);
-    }
-
-    public static function withCausationId(
+    /**
+     * @param EventMetadata|array<string, mixed>|null $metadata
+     */
+    public static function create(
         DecoratedEvent|EventInterface $event,
-        EventId $causationId
+        EventId $eventId = null,
+        EventMetadata|array $metadata = null,
+        EventId|CausationId $causationId = null,
+        CorrelationId $correlationId = null,
     ): self {
-        $event = self::wrapWithDecoratedEventIfNecessary($event);
-        $eventMetadata = $event->eventMetadata->value;
-        $eventMetadata['causationId'] = $causationId->value;
-
-        return new self($event->innerEvent, $event->eventId, EventMetadata::fromArray($eventMetadata));
-    }
-
-    private static function wrapWithDecoratedEventIfNecessary(EventInterface|DecoratedEvent $event): DecoratedEvent
-    {
         if ($event instanceof EventInterface) {
-            $event = new self($event, EventId::create(), EventMetadata::none());
+            $event = new self($event, null, null, null, null);
         }
-        return $event;
+        if ($causationId instanceof EventId) {
+            $causationId = CausationId::fromString($causationId->value);
+        }
+        if (is_array($metadata)) {
+            $metadata = EventMetadata::fromArray($metadata);
+        }
+        return new self($event->innerEvent, $eventId ?? $event->eventId, $metadata ?? $event->eventMetadata, $causationId ?? $event->causationId, $correlationId ?? $event->correlationId);
     }
 }

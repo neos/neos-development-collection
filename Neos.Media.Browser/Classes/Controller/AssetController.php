@@ -12,8 +12,9 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
-use Doctrine\Common\Persistence\Proxy as DoctrineProxy;
+use Doctrine\Persistence\Proxy as DoctrineProxy;
 use Doctrine\ORM\EntityNotFoundException;
+use enshrined\svgSanitize\Sanitizer;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
@@ -21,7 +22,6 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Package\PackageManager;
@@ -35,6 +35,7 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetNotFoundExceptionInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionExceptionInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
@@ -285,7 +286,7 @@ class AssetController extends ActionController
 
             $allCollectionsCount = $this->assetRepository->countAll();
             $allCount = ($activeAssetCollection ? $this->assetRepository->countByAssetCollection($activeAssetCollection) : $allCollectionsCount);
-            $searchResultCount = isset($assetProxies) ? $assetProxies->count() : 0;
+            $searchResultCount = $assetProxies->count();
             $untaggedCount = ($assetProxyRepository instanceof SupportsTaggingInterface ? $assetProxyRepository->countUntagged() : 0);
         } catch (AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
@@ -356,7 +357,6 @@ class AssetController extends ActionController
      * @param string $assetProxyIdentifier
      * @return void
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function showAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
     {
@@ -370,7 +370,8 @@ class AssetController extends ActionController
 
             $this->view->assignMultiple([
                 'assetProxy' => $assetProxy,
-                'assetCollections' => $this->assetCollectionRepository->findAll()
+                'assetCollections' => $this->assetCollectionRepository->findAll(),
+                'assetContainsMaliciousContent' => $this->checkForMaliciousContent($assetProxy)
             ]);
         } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
@@ -384,7 +385,6 @@ class AssetController extends ActionController
      * @param string $assetProxyIdentifier
      * @return void
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function editAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
     {
@@ -423,6 +423,7 @@ class AssetController extends ActionController
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
                 'contentPreview' => $contentPreview,
                 'assetSource' => $assetSource,
+                'assetContainsMaliciousContent' => $this->checkForMaliciousContent($assetProxy),
                 'canShowVariants' => ($assetProxy instanceof NeosAssetProxy) && ($assetProxy->getAsset() instanceof VariantSupportInterface)
             ]);
         } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
@@ -437,7 +438,6 @@ class AssetController extends ActionController
      * @param string $assetProxyIdentifier
      * @param string $overviewAction
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function variantsAction(string $assetSourceIdentifier, string $assetProxyIdentifier, string $overviewAction): void
     {
@@ -481,7 +481,6 @@ class AssetController extends ActionController
      * @param string $assetProxyIdentifier
      * @param string $overviewAction
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function createVariantsAction(string $assetSourceIdentifier, string $assetProxyIdentifier, string $overviewAction): void
     {
@@ -1021,5 +1020,26 @@ class AssetController extends ActionController
             $arguments['constraints'] = $this->request->getArgument('constraints');
         }
         $this->forward($actionName, $controllerName, null, $arguments);
+    }
+
+    private function checkForMaliciousContent(AssetProxyInterface $assetProxy): bool
+    {
+        if ($assetProxy->getMediaType() == 'image/svg+xml') {
+            // @todo: Simplify again when https://github.com/darylldoyle/svg-sanitizer/pull/90 is merged and released.
+            $previousXmlErrorHandling = libxml_use_internal_errors(true);
+            $sanitizer = new Sanitizer();
+
+            $resource = stream_get_contents($assetProxy->getImportStream());
+
+            $sanitizer->sanitize($resource);
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousXmlErrorHandling);
+            $issues = $sanitizer->getXmlIssues();
+            if ($issues && count($issues) > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

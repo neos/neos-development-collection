@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -136,18 +137,13 @@ class ChildrenOperation extends AbstractOperation
                 // Optimize property name filter if present
                 if (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = $filter['PropertyNameFilter'] ?? $filter['PathFilter'];
-                    $nodePathSegments = explode('/', $nodePath);
                     /** @var Node $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        $currentPathSegments = $nodePathSegments;
-                        $resolvedNode = $contextNode;
-                        while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
-                            $resolvedNode = $this->contentRepositoryRegistry->subgraphForNode($resolvedNode)
-                                ->findChildNodeConnectedThroughEdgeName(
-                                $resolvedNode->nodeAggregateId,
-                                NodeName::fromString($nodePathSegment)
+                        $resolvedNode = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                            ->findNodeByPath(
+                                NodePath::fromString($nodePath),
+                                $contextNode->nodeAggregateId,
                             );
-                        }
 
                         if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[
                             $resolvedNode->nodeAggregateId->value
@@ -195,7 +191,7 @@ class ChildrenOperation extends AbstractOperation
                     });
                     $filteredFlowQuery = new FlowQuery($filteredOutput);
                     $filteredFlowQuery->pushOperation('filter', [$attributeFilters]);
-                    $filteredOutput = $filteredFlowQuery->getContext();
+                    $filteredOutput = iterator_to_array($filteredFlowQuery);
                 }
 
                 // Add filtered nodes to output

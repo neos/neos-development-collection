@@ -13,7 +13,10 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
-/** @api */
+/**
+ * @implements \IteratorAggregate<int, FusionSourceCode>
+ * @api
+ */
 final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
 {
     /** @var array<int, FusionSourceCode> */
@@ -49,7 +52,7 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
         return static::tryFromFilePath($fusionPathAndFilename);
     }
 
-    public static function empty()
+    public static function empty(): self
     {
         return new static();
     }
@@ -73,7 +76,7 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @param array<int, FusionSourceCode> $fusionSourceCode
+     * @param array<int|string, FusionSourceCode> $fusionSourceCode
      * @return array<int, FusionSourceCode>
      */
     private static function deduplicateItemsAndKeepLast(array $fusionSourceCode): array

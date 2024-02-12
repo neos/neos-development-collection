@@ -21,10 +21,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTrigger;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 
 /**
- * We had some race conditions in projections, where {@see DoctrineCheckpointStorage} was not working properly.
+ * We had some race conditions in projections, where {@see \Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage} was not working properly.
  * We saw some non-deterministic, random errors when running the tests - unluckily only on Linux, not on OSX:
  * On OSX, forking a new subprocess in {@see SubprocessProjectionCatchUpTrigger} is *WAY* slower than in Linux;
  * and thus the race conditions which appears if two projector instances of the same class run concurrently

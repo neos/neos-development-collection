@@ -1,0 +1,150 @@
+`8.1.9 (2023-12-12) <https://github.com/neos/neos-development-collection/releases/tag/8.1.9>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Remove unnecessary basemixins dependency for ContentReferences <https://github.com/neos/neos-development-collection/pull/4648>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+The package has no direct dependency to the basemixins and should be usable without the other basemixins.
+
+* Packages: ``NodeTypes.ContentReferences``
+
+`BUGFIX: Add workspace hash to NodeDynamicTag_ and AssetDynamicTag_ cache tags <https://github.com/neos/neos-development-collection/pull/4782>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#4781 <https://github.com/neos/neos-development-collection/issues/4781>`_ 
+
+* Packages: ``Neos``
+
+`BUGFIX: Filter for assets by asset collection without overriding existing WHERE conditions <https://github.com/neos/neos-development-collection/pull/4724>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The query to fetch assets gets build in multiple steps. E.g in ``findAll`` it creates the query, adds the "variant filter clause" and afterwards the "asset collection filter clause".
+
+```
+    public function findAll(AssetCollection $assetCollection = null): QueryResultInterface
+    {
+        $query = $this->createQuery();
+        $this->addAssetVariantFilterClause($query);
+        $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
+        return $query->execute();
+    }
+```
+But adding the "asset collection filter clause" removes/overrides the existing "variant filter clause"
+
+This fix replaces the way of setting "asset collection filter clause", so the existing where clauses are retained.
+
+* Fixes: `#4723 <https://github.com/neos/neos-development-collection/issues/4723>`_
+
+* Packages: ``Media``
+
+`BUGFIX: flashmessages in legacy modules work as expected <https://github.com/neos/neos-development-collection/pull/4765>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This applies the, since a while unused, presets for message severity types to notifications in classic Neos backend modules again so that eg. warnings and errors stay on display and can be copied / screenshotted.
+
+Also regenerates js maps that seem to have compiled wrongly before.
+
+* Fixes: `#4672 <https://github.com/neos/neos-development-collection/issues/4672>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Check if image is possible to refit on replacement <https://github.com/neos/neos-development-collection/pull/4753>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#4752 <https://github.com/neos/neos-development-collection/issues/4752>`_
+
+Checks if the replacement is an image and has a size.
+
+* Packages: ``Neos`` ``NodeTypes.BaseMixins`` ``Media``
+
+`BUGFIX: Allow disabling of auto-created Image Variants <https://github.com/neos/neos-development-collection/pull/4303>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Fixes support for the setting ``autoCreateImageVariantPresets`` that was documented for a long time but never actually evaluated.
+
+This change set:
+
+* Adjusts ``AssetService::assetCreated()`` signal to only trigger ``AssetVariantGenerator::createVariants()`` if the ``autoCreateImageVariantPresets`` flag is set
+* Sets the default value of the flag to ``true`` for greater backwards compatibility
+* Adjusts ``AssetVariantGenerator::createVariant()`` to only create a variant if it does not exist already – previously multiple variants with the same identifiers could be created for a single asset leading to undeterministic behavior
+* Adds a button "Create missing Variants" to the ``Variants`` tab of the Media Module allowing editors to manually trigger creation of (missing) variants.
+
+* Fixes: `#4300 <https://github.com/neos/neos-development-collection/issues/4300>`_
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: `props` will be unset after an exception <https://github.com/neos/neos-development-collection/pull/4526>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4525 <https://github.com/neos/neos-development-collection/issues/4525>`_
+
+The rendering in a Neos.Fusion Component had a bug where the ``props`` might be undefined if an exception happened earlier in an eel expression.
+
+This was caused by not correctly poping the runtimes context and thus causing a unexpected shift in the context stack.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Use role label in list users/new user view if available <https://github.com/neos/neos-development-collection/pull/4793>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+In Neos 7 (and with https://github.com/neos/flow-development-collection/issues/2162), role labels were introduced. While we now have a nice table view in the "edit account" view, the role label is not displayed anywhere else.
+
+I'm aware that Neos 7 and 8 are in maintenance-only mode, but I think we all agree that Neos 8 will be around for quite a while. I suggest the minimal change to use the role label in the user list and the "new user" view if there is one.
+
+- [N/A] Code follows the PSR-2 coding style
+- [N/A] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_
+- [x] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [x] Reviewer - The first section explains the change briefly for change-logs
+- [N/A] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`TASK: Add PHP 8.3 to build workflow matrix <https://github.com/neos/neos-development-collection/pull/4784>`_
+-------------------------------------------------------------------------------------------------------------
+
+This will test Flow against PHP 8.3
+
+
+* Packages: ``Neos`` ``.github``
+
+`TASK: Adjust neos/neos css build to work on apple silicon <https://github.com/neos/neos-development-collection/pull/4691>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`TASK: Add support information to package composer.json <https://github.com/neos/neos-development-collection/pull/4690>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+The git url will be useful for automating the split configuration later.
+
+* Packages: ``Neos`` ``Media``
+
+`TASK: Tweak dependency on neos/twitter-bootstrap <https://github.com/neos/neos-development-collection/pull/4673>`_
+-------------------------------------------------------------------------------------------------------------------
+
+- move the dependency from ``neos/neos`` to ``neos/media-browser``
+- change from ``*`` to ``^3.0.6`` (the first version allowing Neos 7.x)
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`TASK: All dependencies within collection point to `self.version` <https://github.com/neos/neos-development-collection/pull/4666>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Re-adjusts dependencies to point to ``self.version`` for easier maintenance.
+
+* Fixes: `#4257 <https://github.com/neos/neos-development-collection/issues/4257>`_
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.1.8...8.1.9>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

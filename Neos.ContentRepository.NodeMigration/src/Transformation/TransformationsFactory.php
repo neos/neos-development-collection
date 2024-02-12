@@ -68,7 +68,6 @@ class TransformationsFactory
      * Neos\ContentRepository\NodeMigration\Transformation namespace.
      *
      * @param string $transformationName
-     * @return string
      * @throws MigrationException
      */
     protected function resolveTransformationFactory(string $transformationName): TransformationFactoryInterface

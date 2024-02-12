@@ -54,7 +54,7 @@ class FilePatternResolver
      * @param string $filePattern
      * @param string|null $filePathForRelativeResolves
      * @param string $defaultFileEndForUnspecificGlobbing
-     * @return array|string[]
+     * @return list<string>
      * @throws Fusion\Exception
      */
     public static function resolveFilesByPattern(string $filePattern, ?string $filePathForRelativeResolves, string $defaultFileEndForUnspecificGlobbing): array
@@ -99,8 +99,12 @@ class FilePatternResolver
         return Files::concatenatePaths([dirname($filePathForRelativeResolves), $filePattern]);
     }
 
+    /**
+     * @return list<string>
+     */
     protected static function parseGlobPatternAndResolveFiles(string $filePattern, string $defaultFileNameEnd): array
     {
+        $matches = null;
         $fileIteratorCreator = match (1) {
             // We use the flag SKIP_DOTS, as it might not be allowed to access `..` and we only are interested in files
             // We use the flag UNIX_PATHS, so that stream wrapper paths are always valid on windows https://github.com/neos/neos-development-collection/issues/4358
@@ -119,6 +123,7 @@ class FilePatternResolver
             default => throw new Fusion\Exception("The include glob pattern '$filePattern' is invalid. Only globbing with /**/* or /* is supported.", 1636144713),
         };
 
+        /** @var array{base: string, end: string} $matches */
         $basePath = $matches['base'];
         $fileNameEnd = $matches['end'] === '' ? $defaultFileNameEnd : $matches['end'];
 
@@ -133,7 +138,7 @@ class FilePatternResolver
     /**
      * @param \Iterator|\SplFileInfo[] $fileIterator
      * @param string $fileNameEnd when file matches this ending it will be included.
-     * @return array
+     * @return list<string>
      */
     protected static function iterateOverFilesAndSelectByFileEnding(\Iterator $fileIterator, string $fileNameEnd): array
     {

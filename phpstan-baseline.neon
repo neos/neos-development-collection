@@ -1,76 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\:\\:disable\" is called\\.$#"
-			count: 1
-			path: Neos.ContentGraph.DoctrineDbalAdapter/src/DoctrineDbalContentGraphProjection.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\:\\:enable\" is called\\.$#"
-			count: 1
-			path: Neos.ContentGraph.DoctrineDbalAdapter/src/DoctrineDbalContentGraphProjection.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\EventStore\\\\EventPersister\\:\\:publishEvents\" is called\\.$#"
-			count: 2
-			path: Neos.ContentRepository.BehavioralTests/Classes/Command/PerformanceMeasurementService.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 2
-			path: Neos.ContentRepository.BehavioralTests/Classes/Command/PerformanceMeasurementService.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\WorkspaceEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.Export/src/ImportService.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.Export/src/Processors/EventExportProcessor.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.Export/src/Processors/EventStoreImportProcessor.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\WorkspaceEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.Export/src/Processors/EventStoreImportProcessor.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Infrastructure\\\\Property\\\\PropertyConverter\\:\\:serializePropertyValues\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.LegacyNodeMigration/Classes/NodeDataToEventsProcessor.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 2
-			path: Neos.ContentRepository.StructureAdjustment/src/Adjustment/DisallowedChildNodeAdjustment.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.StructureAdjustment/src/Adjustment/PropertyAdjustment.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 3
-			path: Neos.ContentRepository.StructureAdjustment/src/Adjustment/TetheredNodeAdjustments.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.StructureAdjustment/src/Adjustment/UnknownNodeTypeAdjustment.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\EventStore\\\\EventPersister\\:\\:publishEvents\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.StructureAdjustment/src/StructureAdjustmentService.php
-
-		-
 			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\Projections\\:\\:getClassNames\" is called\\.$#"
 			count: 1
 			path: Neos.ContentRepositoryRegistry/Classes/Service/ProjectionReplayService.php
@@ -193,11 +123,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$messageBody of method Neos\\\\Flow\\\\Mvc\\\\Controller\\\\AbstractController\\:\\:addFlashMessage\\(\\) expects string, string\\|null given\\.$#"
 			count: 16
-			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
-
-		-
-			message: "#^Parameter \\#1 \\$roles of method Neos\\\\Flow\\\\Security\\\\Authorization\\\\PrivilegeManagerInterface\\:\\:isPrivilegeTargetGrantedForRoles\\(\\) expects array\\<Neos\\\\Flow\\\\Security\\\\Authorization\\\\Role\\>, array\\<int\\|string, Neos\\\\Flow\\\\Security\\\\Policy\\\\Role\\> given\\.$#"
-			count: 1
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
 		-

@@ -40,7 +40,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
     /**
      * @param LoggerInterface $logger
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -48,7 +48,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
     /**
      * @param ThrowableStorageInterface $throwableStorage
      */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
     {
         $this->throwableStorage = $throwableStorage;
     }
@@ -66,7 +66,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      *
      * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
-     * @param integer $referenceCode
+     * @param string|null $referenceCode
      * @return string
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
@@ -96,7 +96,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      * Renders a message depicting the user where to find further information
      * for the given reference code.
      *
-     * @param integer $referenceCode
+     * @param string $referenceCode
      * @return string A rendered message with the reference code containing HTML
      */
     protected function formatErrorCodeMessage($referenceCode)

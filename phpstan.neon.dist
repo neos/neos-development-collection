@@ -1,5 +1,6 @@
 includes:
 	- phpstan-baseline.neon
+	- phpstan-neos-fusion-baseline.neon
 
 parameters:
     level: 8
@@ -11,12 +12,17 @@ parameters:
         - Neos.ContentRepository.Export/src
         - Neos.ContentRepository.LegacyNodeMigration/Classes
         - Neos.ContentRepository.NodeAccess/Classes
+        - Neos.ContentRepository.NodeMigration/src
         - Neos.ContentRepository.StructureAdjustment/src
         - Neos.ContentRepository.TestSuite/Classes
         - Neos.ContentRepositoryRegistry/Classes
         - Neos.Neos/Classes
+        - Neos.TimeableNodeVisibility/Classes
+        - Neos.NodeTypes.Form/Classes
+        # todo lint whole fusion package
+        - Neos.Fusion/Classes/Core
     bootstrapFiles:
-        - bootstrap-phpstan.php
+         - ../Framework/bootstrap-phpstan.php
 rules:
     - Neos\ContentRepository\BehavioralTests\PhpstanRules\ApiOrInternalAnnotationRule
     - Neos\ContentRepository\BehavioralTests\PhpstanRules\InternalMethodsNotAllowedOutsideContentRepositoryRule

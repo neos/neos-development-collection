@@ -1024,7 +1024,7 @@
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
-        <target state="needs-translation">Link</target>
+        <target state="translated">Odkaz</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>

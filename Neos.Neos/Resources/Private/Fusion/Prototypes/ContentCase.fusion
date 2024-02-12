@@ -6,6 +6,7 @@ prototype(Neos.Neos:ContentCase) < prototype(Neos.Fusion:Case) {
   default {
     @position = 'end'
     condition = true
+    # this eel helper also handles the Neos.Neos:FallbackNode node type mechanism
     type = ${Neos.Node.getNodeType(node).name.value}
   }
 }
