@@ -613,9 +613,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $paramName = $this->createUniqueParameterName();
         $queryBuilder->setParameter($paramName, $value);
         if ($caseSensitive) {
-            return 'JSON_SEARCH(' . $nodeTableAlias . '.properties COLLATE utf8mb3_bin, \'one\', :' . $paramName . ' COLLATE utf8mb4_bin, NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
+            return 'JSON_SEARCH(' . $nodeTableAlias . '.properties COLLATE utf8mb4_bin, \'one\', :' . $paramName . ' COLLATE utf8mb4_bin, NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
         }
-        return 'JSON_SEARCH(' . $nodeTableAlias . '.properties COLLATE utf8mb3_unicode_ci, \'one\', :' . $paramName . ' COLLATE utf8mb4_unicode_ci, NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
+        return 'JSON_SEARCH(' . $nodeTableAlias . '.properties, \'one\', :' . $paramName . ', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
     }
 
     private function buildChildNodesQuery(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter|CountChildNodesFilter $filter): QueryBuilder
