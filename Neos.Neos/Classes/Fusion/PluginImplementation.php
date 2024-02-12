@@ -78,7 +78,7 @@ class PluginImplementation extends AbstractArrayFusionObject
     }
 
     /**
-     * @return ?string
+     * @return string|null
      */
     public function getArgumentNamespace()
     {
