@@ -29,7 +29,6 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
-use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime as FusionRuntime;
 use Neos\Fusion\Core\RuntimeFactory;
@@ -232,10 +231,10 @@ class FusionExceptionView extends AbstractView
         // in case no neos site being there or no site node we cannot continue with the fusion exception view,
         // as we wouldn't know the site and cannot get the site's root.fusion
         // instead we render the welcome screen directly
-        // Todo hack to use fluid. Requires the Welcome.html to be ported to Fusion. PR -> https://github.com/neos/neos-development-collection/pull/4880
-        $view = StandaloneView::createWithOptions([
-            'templatePathAndFilename' => 'resource://Neos.Neos/Private/Templates/Error/Welcome.html',
-            'layoutRootPaths' => ['resource://Neos.Neos/Private/Layouts/']
+        $view = \Neos\Fusion\View\FusionView::createWithOptions([
+            'fusionPath' => 'Neos/Fusion/NotFoundExceptions',
+            'fusionPathPatterns' => ['resource://Neos.Neos/Private/Fusion/Error/Root.fusion'],
+            'enableContentCache' => false,
         ]);
         $view->assignMultiple($this->variables);
         return $view->render();
