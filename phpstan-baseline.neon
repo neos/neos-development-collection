@@ -101,7 +101,7 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
 		-
-			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:getAuthenticationProviders\\(\\) should return array\\<string\\> but returns array\\<array\\<string, mixed\\>\\>\\.$#"
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:getAuthenticationProviders\\(\\) should return array\\<string\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
 			count: 1
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
