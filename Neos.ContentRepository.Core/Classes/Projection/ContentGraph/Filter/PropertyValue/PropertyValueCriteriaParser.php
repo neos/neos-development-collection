@@ -115,14 +115,19 @@ final class PropertyValueCriteriaParser
         '/^(\w{1,100})/' => TokenType::PROPERTY_NAME,
         '/^(["\'])(?<match>(\\\\{2})*|(.*?[^\\\\](\\\\{2})*))\1/' => TokenType::STRING,
         '/^(\s+)/' => TokenType::WHITESPACE,
+        '/^(\^=~)/' => TokenType::STARTS_WITH_CI,
         '/^(\^=)/' => TokenType::STARTS_WITH,
+        '/^(\!=~)/' => TokenType::NOT_EQUALS_CI,
         '/^(\!=)/' => TokenType::NOT_EQUALS,
+        '/^(\$=~)/' => TokenType::ENDS_WITH_CI,
         '/^(\$=)/' => TokenType::ENDS_WITH,
+        '/^(\*=~)/' => TokenType::CONTAINS_CI,
         '/^(\*=)/' => TokenType::CONTAINS,
         '/^(\>=)/' => TokenType::GREATER_THAN_OR_EQUAL,
         '/^(\>)/' => TokenType::GREATER_THAN,
         '/^(\<=)/' => TokenType::LESS_THAN_OR_EQUAL,
         '/^(\<)/' => TokenType::LESS_THAN,
+        '/^(=~)/' => TokenType::EQUALS_CI,
         '/^(=)/' => TokenType::EQUALS,
         '/^(\()/' => TokenType::PARENTHESIS_LEFT,
         '/^(\))/' => TokenType::PARENTHESIS_RIGHT,
@@ -207,14 +212,19 @@ final class PropertyValueCriteriaParser
 
         $comparison_operators = [
             TokenType::STARTS_WITH,
+            TokenType::STARTS_WITH_CI,
             TokenType::NOT_EQUALS,
+            TokenType::NOT_EQUALS_CI,
             TokenType::ENDS_WITH,
+            TokenType::ENDS_WITH_CI,
             TokenType::CONTAINS,
+            TokenType::CONTAINS_CI,
             TokenType::GREATER_THAN_OR_EQUAL,
             TokenType::GREATER_THAN,
             TokenType::LESS_THAN_OR_EQUAL,
             TokenType::LESS_THAN,
-            TokenType::EQUALS
+            TokenType::EQUALS,
+            TokenType::EQUALS_CI,
         ];
         $operator = self::consumeOneOf($comparison_operators, 'Expecting a comparison operator.');
 
@@ -230,15 +240,15 @@ final class PropertyValueCriteriaParser
         $propertyName = PropertyName::fromString($left->value);
         try {
             return match ($operator->type) {
-                TokenType::STARTS_WITH => PropertyValueStartsWith::create($propertyName, $value), // @phpstan-ignore-line
-                TokenType::NOT_EQUALS => NegateCriteria::create(PropertyValueEquals::create($propertyName, $value)),
-                TokenType::ENDS_WITH => PropertyValueEndsWith::create($propertyName, $value), // @phpstan-ignore-line
-                TokenType::CONTAINS => PropertyValueContains::create($propertyName, $value), // @phpstan-ignore-line
+                TokenType::STARTS_WITH, TokenType::STARTS_WITH_CI => PropertyValueStartsWith::create($propertyName, $value, $operator->type->isCaseSensitive()), // @phpstan-ignore-line
+                TokenType::NOT_EQUALS, TokenType::NOT_EQUALS_CI => NegateCriteria::create(PropertyValueEquals::create($propertyName, $value, $operator->type->isCaseSensitive())),
+                TokenType::ENDS_WITH, TokenType::ENDS_WITH_CI => PropertyValueEndsWith::create($propertyName, $value, $operator->type->isCaseSensitive()), // @phpstan-ignore-line
+                TokenType::CONTAINS, TokenType::CONTAINS_CI => PropertyValueContains::create($propertyName, $value, $operator->type->isCaseSensitive()), // @phpstan-ignore-line
                 TokenType::GREATER_THAN_OR_EQUAL => PropertyValueGreaterThanOrEqual::create($propertyName, $value), // @phpstan-ignore-line
                 TokenType::GREATER_THAN => PropertyValueGreaterThan::create($propertyName, $value), // @phpstan-ignore-line
                 TokenType::LESS_THAN_OR_EQUAL => PropertyValueLessThanOrEqual::create($propertyName, $value), // @phpstan-ignore-line
                 TokenType::LESS_THAN => PropertyValueLessThan::create($propertyName, $value), // @phpstan-ignore-line
-                TokenType::EQUALS => PropertyValueEquals::create($propertyName, $value),
+                TokenType::EQUALS, TokenType::EQUALS_CI => PropertyValueEquals::create($propertyName, $value, $operator->type->isCaseSensitive()),
                 default => self::throwParserException(sprintf('Invalid comparison token type "%s"', $operator->type->name), self::$index),
             };
         } catch (\TypeError $_) {
