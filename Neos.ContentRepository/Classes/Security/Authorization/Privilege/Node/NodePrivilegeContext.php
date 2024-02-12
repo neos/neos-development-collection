@@ -194,14 +194,14 @@ class NodePrivilegeContext
 
         if (!($userWorkspace instanceof Workspace)) {
             // User is not logged in
-            return true;
+            return false;
         }
 
         $baseWorkspace = $userWorkspace->getBaseWorkspace();
 
         if ($baseWorkspace === null) {
             // User is not logged in or has no base workspace
-            return true;
+            return false;
         }
 
         if (!is_array($workspaceNames)) {
