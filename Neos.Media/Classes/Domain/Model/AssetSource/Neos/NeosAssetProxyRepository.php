@@ -208,7 +208,12 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
     {
         $query = $this->assetRepository->createQuery();
         try {
-            $query->matching($query->isEmpty('tags'));
+            $constraints = $query->getConstraint();
+            if (!is_null($constraints)) {
+                $query->matching($query->logicalAnd($constraints, $query->isEmpty('tags')));
+            } else {
+                $query->matching($query->isEmpty('tags'));
+            }
         } catch (InvalidQueryException $e) {
         }
 
