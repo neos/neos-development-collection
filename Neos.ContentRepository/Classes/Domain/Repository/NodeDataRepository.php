@@ -361,7 +361,7 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $nodes = $query->getResult();
 
-        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
+        $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions, true);
         if ($removedNodes === false) {
             $foundNodes = $this->withoutRemovedNodes($foundNodes);
         }
@@ -1279,10 +1279,11 @@ class NodeDataRepository extends Repository
      * @param array $nodes NodeData result with multiple and duplicate identifiers (different nodes and redundant results for node variants with different dimensions)
      * @param array $workspaces
      * @param array $dimensions
+     * @param boolean $preferNonShadowNodes if set to TRUE and we have two nodes with the same dimension positions, we prefer the non-shadow variant of it.
      * @return array Array of unique node results indexed by identifier
      * @throws Exception\NodeException
      */
-    protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
+    protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions, $preferNonShadowNodes = false)
     {
         $reducedNodes = [];
 
@@ -1337,7 +1338,10 @@ class NodeDataRepository extends Repository
 
             $identifier = $node->getIdentifier();
             // Yes, it seems to work comparing arrays that way!
-            if (!isset($minimalDimensionPositionsByIdentifier[$identifier]) || $dimensionPositions < $minimalDimensionPositionsByIdentifier[$identifier]) {
+            if (!isset($minimalDimensionPositionsByIdentifier[$identifier])
+                || ($dimensionPositions < $minimalDimensionPositionsByIdentifier[$identifier])
+                || ($preferNonShadowNodes === true && $dimensionPositions === $minimalDimensionPositionsByIdentifier[$identifier] && $reducedNodes[$identifier]->isInternal() && !$node->isInternal())
+            ) {
                 $reducedNodes[$identifier] = $node;
                 $minimalDimensionPositionsByIdentifier[$identifier] = $dimensionPositions;
             }
