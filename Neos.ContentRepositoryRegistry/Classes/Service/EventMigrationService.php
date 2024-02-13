@@ -8,6 +8,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Core\Projection\Projections;
@@ -73,16 +74,14 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 $eventData = json_decode($eventEnvelope->event->data->value, true);
                 if (!isset($eventData['affectedDimensionSpacePoints'])) {
                     // Replay the projection until before the current NodePropertiesWereSet event
-                    $contentGraphProjection->catchUp(
-                        $eventStream->withMaximumSequenceNumber($eventEnvelope->sequenceNumber->previous()),
-                        $this->contentRepository
-                    );
+                    $this->contentRepository->catchUpProjection(ContentGraphProjection::class, CatchUpOptions::create(maximumSequenceNumber: $eventEnvelope->sequenceNumber->previous()));
 
                     // now we can ask the NodeAggregate (read model) for the covered DSPs.
                     $nodeAggregate = $contentGraph->findNodeAggregateById(
                         ContentStreamId::fromString($eventData['contentStreamId']),
                         NodeAggregateId::fromString($eventData['nodeAggregateId'])
                     );
+                    assert($nodeAggregate !== null);
                     $affectedDimensionSpacePoints = $nodeAggregate->getCoverageByOccupant(
                         OriginDimensionSpacePoint::fromArray($eventData['originDimensionSpacePoint'])
                     );
@@ -104,20 +103,21 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         }
 
         $outputFn('Rewriting completed. Now catching up the GraphProjection to final state.');
-        $contentGraphProjection->catchUp($eventStream, $this->contentRepository);
+        $this->contentRepository->catchUpProjection(ContentGraphProjection::class, CatchUpOptions::create());
 
         if ($this->projections->has(DocumentUriPathProjection::class)) {
             $outputFn('Found DocumentUriPathProjection. Will replay this, as it relies on the updated affectedDimensionSpacePoints');
-            $documentUriPathProjection = $this->projections->get(DocumentUriPathProjection::class);
-            $documentUriPathProjection->reset();
-            $documentUriPathProjection->catchUp($eventStream, $this->contentRepository);
+            $this->contentRepository->resetProjectionState(DocumentUriPathProjection::class);
+            $this->contentRepository->catchUpProjection(DocumentUriPathProjection::class, CatchUpOptions::create());
         }
 
         $outputFn('All done.');
     }
 
-
-    private function updateEvent(SequenceNumber $sequenceNumber, array $eventData)
+    /**
+     * @param array<mixed> $eventData
+     */
+    private function updateEvent(SequenceNumber $sequenceNumber, array $eventData): void
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
         $this->connection->beginTransaction();
@@ -131,7 +131,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $this->connection->commit();
     }
 
-    private function copyEventTable(string $backupEventTableName)
+    private function copyEventTable(string $backupEventTableName): void
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
         $this->connection->executeStatement(
