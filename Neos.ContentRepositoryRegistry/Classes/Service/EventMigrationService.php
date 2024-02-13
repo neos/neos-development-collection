@@ -12,6 +12,9 @@ use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursi
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\EventStoreInterface;
@@ -220,6 +223,86 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         if ($warnings) {
             $outputFn(sprintf('WARNING: Finished but %d warnings emitted.', $warnings));
         }
+    }
+
+
+    /**
+     * Add the workspace name to the events meta-data, so it can be replayed.
+     *
+     * Needed for #4708: https://github.com/neos/neos-development-collection/pull/4708
+     *
+     * Included in February 2023 - before Neos 9.0 Beta 3.
+     *
+     * @param \Closure $outputFn
+     * @return void
+     */
+    public function fillWorkspaceNameInCommandPayloadOfEventMetaData(\Closure $outputFn)
+    {
+
+        $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId)
+            . '_bak_' . date('Y_m_d_H_i_s');
+        $outputFn('Backup: copying events table to %s', [$backupEventTableName]);
+
+        $this->copyEventTable($backupEventTableName);
+
+        $outputFn('Backup completed. Resetting WorkspaceProjection.');
+        $this->contentRepository->resetProjectionState(WorkspaceProjection::class);
+
+        $workspaceProjection = $this->projections->get(WorkspaceProjection::class);
+        $workspaceFinder = $workspaceProjection->getState();
+        assert($workspaceFinder instanceof WorkspaceFinder);
+
+        $streamName = VirtualStreamName::all();
+        $eventStream = $this->eventStore->load($streamName);
+        foreach ($eventStream as $eventEnvelope) {
+            if (!$eventEnvelope->event->metadata) {
+                continue;
+            }
+            $eventMetaData = $eventEnvelope->event->metadata->value;
+
+            if (!in_array($eventMetaData['commandClass'] ?? null, [
+                // todo extend list
+                SetSerializedNodeProperties::class
+            ])) {
+                continue;
+            }
+
+            if (!isset($eventMetaData['commandPayload']['contentStreamId']) || isset($eventMetaData['commandPayload']['workspaceName'])) {
+                continue;
+            }
+
+            // Replay the projection until before the current event
+            $this->contentRepository->catchUpProjection(WorkspaceProjection::class, CatchUpOptions::create(maximumSequenceNumber: $eventEnvelope->sequenceNumber->previous()));
+
+            // now we can ask the read model
+            $workspace = $workspaceFinder->findOneByCurrentContentStreamId(ContentStreamId::fromString($eventMetaData['commandPayload']['contentStreamId']));
+
+            // ... and update the event
+            if (!$workspace) {
+                // todo does not exist, but as the value is not important when rebasing, as bernhard said, we will just enter a dummy.
+                $eventMetaData['commandPayload']['workspaceName'] = 'dummystring';
+            } else {
+                $eventMetaData['commandPayload']['workspaceName'] = $workspace->workspaceName->value;
+            }
+            unset($eventMetaData['commandPayload']['contentStreamId']);
+
+            $outputFn(
+                'Rewriting %s: (%s, ContentStreamId: %s) => WorkspaceName: %s',
+                [
+                    $eventEnvelope->sequenceNumber->value,
+                    $eventEnvelope->event->type->value,
+                    $eventMetaData['commandPayload']['contentStreamId'],
+                    $eventMetaData['commandPayload']['workspaceName']
+                ]
+            );
+
+            $this->updateEventMetaData($eventEnvelope->sequenceNumber, $eventMetaData);
+        }
+
+        $outputFn('Rewriting completed. Now catching up the WorkspaceProjection to final state.');
+        $this->contentRepository->catchUpProjection(WorkspaceProjection::class, CatchUpOptions::create());
+
+        $outputFn('All done.');
     }
 
     /**
