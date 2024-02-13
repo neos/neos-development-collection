@@ -49,7 +49,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
     public function denormalize(mixed $data, string $type, string $format = null, array $context = [])
     {
         if ($type === Node::class) {
-            return $this->deserializeNode($data);
+            return $this->tryDeserializeNode($data);
         }
         return $this->fusionContextSerializer->denormalize($data, $type, $format, $context);
     }
@@ -69,7 +69,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
     /**
      * @param array<int|string,mixed> $serializedNode
      */
-    private function deserializeNode(array $serializedNode): Node
+    private function tryDeserializeNode(array $serializedNode): ?Node
     {
         $contentRepositoryId = ContentRepositoryId::fromString($serializedNode['contentRepositoryId']);
 
@@ -77,6 +77,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($serializedNode['workspaceName']));
         if (!$workspace) {
+            // this can not happen?
             throw new \RuntimeException(sprintf('Could not find workspace while trying to convert node from array %s.', json_encode($serializedNode)), 1699782153);
         }
 
@@ -90,7 +91,9 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
 
         $node = $subgraph->findNodeById(NodeAggregateId::fromString($serializedNode['nodeAggregateId']));
         if (!$node) {
-            throw new \RuntimeException(sprintf('Could not find serialized node %s.', json_encode($serializedNode)), 1699782153);
+            // instead of crashing the whole rendering, by silently returning null we will most likely just break
+            // rendering of the sub part here that needs the node
+            return null;
         }
         return $node;
     }
