@@ -77,8 +77,10 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($serializedNode['workspaceName']));
         if (!$workspace) {
-            // this can not happen?
-            throw new \RuntimeException(sprintf('Could not find workspace while trying to convert node from array %s.', json_encode($serializedNode)), 1699782153);
+            // in case the workspace was deleted the rendering should probably not come to this very point
+            // still if it does we fail silently
+            // this is also the behaviour for when the property mapper is used
+            return null;
         }
 
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
@@ -93,6 +95,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
         if (!$node) {
             // instead of crashing the whole rendering, by silently returning null we will most likely just break
             // rendering of the sub part here that needs the node
+            // this is also the behaviour for when the property mapper is used
             return null;
         }
         return $node;
