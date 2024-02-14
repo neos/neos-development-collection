@@ -92,7 +92,6 @@ final class NodePropertiesWereSet implements
 
     public static function fromArray(array $values): EventInterface
     {
-        // todo legacy upcasting
         return new self(
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),

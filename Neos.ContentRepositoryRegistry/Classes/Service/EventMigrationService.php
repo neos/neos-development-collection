@@ -32,7 +32,6 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
     private bool $eventsTableWasUpdated = false;
 
     public function __construct(
-        private readonly Projections $projections,
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly ContentRepository $contentRepository,
         private readonly EventStoreInterface $eventStore,

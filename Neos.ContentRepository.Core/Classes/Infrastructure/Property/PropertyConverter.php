@@ -79,7 +79,7 @@ final class PropertyConverter
             $serializedPropertyValue = $this->serializer->normalize($propertyValue);
         } catch (NotEncodableValueException | NotNormalizableValueException $e) {
             throw new \RuntimeException(
-                sprintf('There was a problem serializing property %s with value "%s".', $propertyName->value,  get_debug_type($propertyValue)),
+                sprintf('There was a problem serializing property %s with value "%s".', $propertyName->value, get_debug_type($propertyValue)),
                 1594842314,
                 $e
             );

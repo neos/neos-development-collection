@@ -69,7 +69,6 @@ final class SetSerializedNodeProperties implements
      */
     public static function fromArray(array $array): self
     {
-        // todo legacy upcasting for rebase???
         return new self(
             ContentStreamId::fromString($array['contentStreamId']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
