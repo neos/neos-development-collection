@@ -8,8 +8,6 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SubtreeTagsWithInherited;
@@ -220,7 +218,9 @@ from tree
         foreach ($newParentSubtreeTags as $tag) {
             $newSubtreeTags[$tag->value] = null;
         }
-
+        if ($newSubtreeTags === [] && $nodeSubtreeTags->isEmpty()) {
+            return;
+        }
         $this->getDatabaseConnection()->executeStatement('
             UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
             SET h.subtreetags = JSON_MERGE_PATCH(:newParentTags, JSON_MERGE_PATCH(\'{}\', h.subtreetags))

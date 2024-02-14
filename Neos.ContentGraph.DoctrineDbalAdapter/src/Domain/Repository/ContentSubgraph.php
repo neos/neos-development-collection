@@ -207,7 +207,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('ch.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('ch.dimensionspacepointhash = :dimensionSpacePointHash');
-        $this->addSubtreeTagConstraints($queryBuilder, 'ch');
+        $this->addSubtreeTagConstraints($queryBuilder, 'ph');
         return $this->fetchNode($queryBuilder);
     }
 
@@ -778,7 +778,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('cn.*, h.name, h.subtreetags, h.contentstreamid, p.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position')
+            ->select('cn.*, h.name, h.subtreetags, h.contentstreamid, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position')
             ->from('tree', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = h.childnodeanchor')

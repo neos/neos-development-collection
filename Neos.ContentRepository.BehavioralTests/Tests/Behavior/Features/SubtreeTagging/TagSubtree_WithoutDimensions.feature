@@ -87,10 +87,24 @@ Feature: Tag subtree without dimensions
       | nodeVariantSelectionStrategy | "allVariants" |
       | tag                          | "tag4"        |
     And the graph projection is fully up to date
-    Then I expect the node with aggregate identifier "a1" to be explicitly tagged "tag1"
-    Then I expect the node with aggregate identifier "a1a" to inherit the tag "tag1"
-    Then I expect the node with aggregate identifier "a1a1" to be explicitly tagged "tag1"
-    Then I expect the node with aggregate identifier "a1a1b" to inherit the tag "tag1"
+
+    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    """
+    a
+     a1 (tag1*)
+      a1a (tag4*,tag1)
+       a1a1 (tag1*,tag4)
+        a1a1a (tag1,tag4)
+        a1a1b (tag1,tag4)
+       a1a2 (tag1,tag4)
+      a1b (tag1)
+     a2
+    """
+    When I execute the findSubtree query for entry node aggregate id "b" I expect the following tree with tags:
+    """
+    b (tag2*)
+     b1 (tag3*,tag2)
+    """
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                      | Value           |
@@ -98,7 +112,37 @@ Feature: Tag subtree without dimensions
       | nodeAggregateId          | "a1a"           |
       | newParentNodeAggregateId | "b1"            |
     And the graph projection is fully up to date
-    Then I expect the node with aggregate identifier "a1a" to not contain the tag "tag1"
-    Then I expect the node with aggregate identifier "a1a" to be explicitly tagged "tag4"
-    And I expect the node with aggregate identifier "a1a" to inherit the tag "tag2"
-    And I expect the node with aggregate identifier "a1a" to inherit the tag "tag3"
+    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    """
+    a
+     a1 (tag1*)
+      a1b (tag1)
+     a2
+    """
+    When I execute the findSubtree query for entry node aggregate id "b" I expect the following tree with tags:
+    """
+    b (tag2*)
+     b1 (tag3*,tag2)
+      a1a (tag4*,tag3,tag2)
+       a1a1 (tag4*,tag1*,tag3,tag2)
+        a1a1a (tag4*,tag3,tag2)
+        a1a1b (tag4*,tag3,tag2)
+       a1a2 (tag4*,tag3,tag2)
+    """
+
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value                                     |
+      | nodeAggregateId       | "a1a3"                                    |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
+      | parentNodeAggregateId | "a1a"                                    |
+    When I execute the findSubtree query for entry node aggregate id "b" I expect the following tree with tags:
+    """
+    b (tag2*)
+     b1 (tag3*,tag2)
+      a1a (tag4*,tag3,tag2)
+       a1a1 (tag4*,tag1*,tag3,tag2)
+        a1a1a (tag4*,tag3,tag2)
+        a1a1b (tag4*,tag3,tag2)
+       a1a2 (tag4*,tag3,tag2)
+       a1a3 (tag4,tag3,tag2)
+    """

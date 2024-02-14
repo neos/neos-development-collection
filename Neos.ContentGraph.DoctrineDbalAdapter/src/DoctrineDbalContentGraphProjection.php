@@ -652,6 +652,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   position,
                   dimensionspacepoint,
                   dimensionspacepointhash,
+                  subtreetags,
                   contentstreamid
                 )
                 SELECT
@@ -661,6 +662,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   h.position,
                   h.dimensionspacepoint,
                   h.dimensionspacepointhash,
+                  h.subtreetags,
                   "' . $event->newContentStreamId->value . '" AS contentstreamid
                 FROM
                     ' . $this->tableNamePrefix . '_hierarchyrelation h
@@ -1185,6 +1187,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   childnodeanchor,
                   `name`,
                   position,
+                  subtreetags,
                   dimensionspacepoint,
                   dimensionspacepointhash,
                   contentstreamid
@@ -1194,6 +1197,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   h.childnodeanchor,
                   h.name,
                   h.position,
+                  h.subtreetags,
                  :newDimensionSpacePoint AS dimensionspacepoint,
                  :newDimensionSpacePointHash AS dimensionspacepointhash,
                   h.contentstreamid

@@ -130,7 +130,7 @@ class ProjectionContentGraph
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name,h.subtreetags FROM ' . $this->tableNamePrefix . '_node n
+            'SELECT n.*, h.name, h.subtreetags FROM ' . $this->tableNamePrefix . '_node n
  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateid = :nodeAggregateId
  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash

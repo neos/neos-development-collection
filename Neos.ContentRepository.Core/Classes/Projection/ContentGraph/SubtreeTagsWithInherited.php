@@ -59,4 +59,9 @@ final readonly class SubtreeTagsWithInherited implements \IteratorAggregate
             yield $tag;
         }
     }
+
+    public function isEmpty(): bool
+    {
+        return $this->tags->isEmpty() && $this->inheritedTags->isEmpty();
+    }
 }

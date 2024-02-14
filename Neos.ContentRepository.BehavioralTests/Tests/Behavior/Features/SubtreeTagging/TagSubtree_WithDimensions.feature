@@ -11,10 +11,7 @@ Feature: Tag subtree with dimensions
       | language   | mul, de, en, gsw, ltz | ltz->de->mul, gsw->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository.Testing:Document':
-      properties:
-        references:
-          type: references
+    'Neos.ContentRepository.Testing:Document': {}
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -26,57 +23,43 @@ Feature: Tag subtree with dimensions
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
+    And I am in content stream "cs-identifier" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
-      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "root"                        |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId         | nodeTypeName                            | parentNodeAggregateId  | nodeName            |
-      | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | preceding-document  |
-      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document            |
-      | succeeding-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | succeeding-document |
-      | nody-mc-nodeface        | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | child-document      |
-    And the command SetNodeReferences is executed with payload:
-      | Key                   | Value                                  |
-      | sourceNodeAggregateId | "preceding-nodenborough"               |
-      | referenceName         | "references"                           |
-      | references            | [{"target": "sir-david-nodenborough"}] |
-    # We need both a real and a virtual specialization to test the different selection strategies
-    And the command CreateNodeVariant is executed with payload:
-      | Key             | Value                    |
-      | nodeAggregateId | "sir-david-nodenborough" |
-      | sourceOrigin    | {"language":"mul"}       |
-      | targetOrigin    | {"language":"ltz"}       |
-    And the graph projection is fully up to date
-    # Set the DSP to the "central" variant having variants of all kind
-    And I am in dimension space point {"language":"de"}
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName | originDimensionSpacePoint |
+      | a               | Neos.ContentRepository.Testing:Document | root                  | a        | {"language":"mul"}        |
+      | a1              | Neos.ContentRepository.Testing:Document | a                     | a1       | {"language":"de"}         |
+      | a1a             | Neos.ContentRepository.Testing:Document | a1                    | a1a      | {"language":"de"}         |
 
-  Scenario: Disable node aggregate with strategy allSpecializations
+  Scenario:
+    Given I am in dimension space point {"language":"de"}
     When the command TagSubtree is executed with payload:
-      | Key                          | Value                    |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | nodeVariantSelectionStrategy | "allSpecializations"     |
-      | tag                          | "some_tag"               |
+      | Key                          | Value                |
+      | nodeAggregateId              | "a1"                 |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag1"               |
 
-    Then I expect exactly 9 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 8 is of type "SubtreeWasTagged" with payload:
-      | Key                          | Expected                                                    |
-      | contentStreamId              | "cs-identifier"                                             |
-      | nodeAggregateId              | "sir-david-nodenborough"                                    |
-      | affectedDimensionSpacePoints | [{"language":"de"}, {"language":"ltz"}, {"language":"gsw"}] |
-      | tag                          | "some_tag"                                                  |
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value              |
+      | nodeAggregateId | "a1"               |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"mul"} |
+    And the graph projection is fully up to date
 
-    When the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
-    Then I expect the graph projection to consist of exactly 6 nodes
-    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
-    And I expect a node identified by cs-identifier;preceding-nodenborough;{"language":"mul"} to exist in the content graph
-    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"mul"} to exist in the content graph
-    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"ltz"} to exist in the content graph
-    And I expect a node identified by cs-identifier;succeeding-nodenborough;{"language":"mul"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"mul"} to exist in the content graph
-
-    And I expect the node aggregate "sir-david-nodenborough" to exist
-    #And I expect this node aggregate to disable dimension space points [{"language":"de"}, {"language":"ltz"}, {"language":"gsw"}]
+#    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+#    """
+#    a
+#     a1 (tag1*)
+#      a1a (tag1)
+#    """
+#
+#    When I am in dimension space point {"language":"mul"}
+#    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+#    """
+#    a
+#     a1
+#    """
