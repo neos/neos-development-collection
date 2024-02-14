@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting;
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -31,6 +32,9 @@ final class NodeUriBuilder
 {
     private UriBuilder $uriBuilder;
 
+    /**
+     * @Flow\Autowiring(false)
+     */
     private function __construct(UriBuilder $uriBuilder)
     {
         $this->uriBuilder = $uriBuilder;

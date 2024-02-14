@@ -44,13 +44,11 @@ final class NodeAggregateEventPublisher
                         get_class($event)
                     ));
                 }
-            } else {
-                if (!$event instanceof PublishableToOtherContentStreamsInterface) {
-                    throw new \RuntimeException(sprintf(
-                        'TODO: Event %s has to implement PublishableToOtherContentStreamsInterface',
-                        get_class($event)
-                    ));
-                }
+            } elseif (!$event instanceof PublishableToOtherContentStreamsInterface) {
+                throw new \RuntimeException(sprintf(
+                    'TODO: Event %s has to implement PublishableToOtherContentStreamsInterface',
+                    get_class($event)
+                ));
             }
 
             if ($i === 0) {
@@ -75,11 +73,9 @@ final class NodeAggregateEventPublisher
                 $event = DecoratedEvent::create($event, eventId: EventId::create(), metadata: $metadata);
                 // we remember the 1st event's identifier as causation identifier for all the others
                 $causationId = $event->eventId;
-            } else {
+            } elseif ($causationId !== null) {
                 // event 2,3,4,...n get a causation identifier set, as they all originate from the 1st event.
-                if ($causationId !== null) {
-                    $event = DecoratedEvent::create($event, causationId: $causationId);
-                }
+                $event = DecoratedEvent::create($event, causationId: $causationId);
             }
             $processedEvents[] = $event;
             $i++;

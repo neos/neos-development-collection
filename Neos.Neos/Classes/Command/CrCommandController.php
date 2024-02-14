@@ -81,7 +81,7 @@ class CrCommandController extends CommandController
      * @param bool $verbose If set, all notices will be rendered
      * @throws \Exception
      */
-    public function importCommand(string $path, string $contentRepository = 'default', bool $verbose = false,): void
+    public function importCommand(string $path, string $contentRepository = 'default', bool $verbose = false): void
     {
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
 

@@ -116,6 +116,7 @@ class ChildrenOperation extends AbstractOperation
         $outputNodeAggregateIds = [];
         foreach ($parsedFilter['Filters'] as $filter) {
             $instanceOfFilters = [];
+            // @todo array is never queried
             $attributeFilters = [];
             if (isset($filter['AttributeFilters'])) {
                 foreach ($filter['AttributeFilters'] as $attributeFilter) {

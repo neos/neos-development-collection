@@ -85,7 +85,7 @@ class AssetProxiesController extends ActionController
      * @param ViewInterface $view
      * @return void
      */
-    public function initializeView(ViewInterface $view)
+    protected function initializeView(ViewInterface $view)
     {
         $view->assign('asyncThumbnails', $this->asyncThumbnails);
     }
