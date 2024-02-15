@@ -12,11 +12,12 @@ Feature: On forking a content stream, node references should be copied as well.
     """yaml
     'Neos.ContentRepository.Testing:NodeWithReferences':
       properties:
+        referenceProperty:
+          type: reference
+        referencesProperty:
+          type: references
         text:
           type: string
-      references:
-        reference: {}
-        references: {}
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -43,7 +44,7 @@ Feature: On forking a content stream, node references should be copied as well.
     Given the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName                 | "reference"               |
+      | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
     And the graph projection is fully up to date
 
@@ -58,21 +59,21 @@ Feature: On forking a content stream, node references should be copied as well.
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     Then I expect this node to have the following references:
       | Name              | Node                                                    | Properties |
-      | reference | user-cs-identifier;anthony-destinode;{"language": "de"} | null       |
+      | referenceProperty | user-cs-identifier;anthony-destinode;{"language": "de"} | null       |
     Then I expect node aggregate identifier "anthony-destinode" to lead to node user-cs-identifier;anthony-destinode;{"language": "de"}
     And I expect this node to be referenced by:
       | Name              | Node                                                    | Properties |
-      | reference | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | referenceProperty | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
     When I am in content stream "user-cs-identifier" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     Then I expect this node to have the following references:
       | Name              | Node                                                    | Properties |
-      | reference | user-cs-identifier;anthony-destinode;{"language": "de"} | null       |
+      | referenceProperty | user-cs-identifier;anthony-destinode;{"language": "de"} | null       |
     Then I expect node aggregate identifier "anthony-destinode" to lead to node user-cs-identifier;anthony-destinode;{"language": "de"}
     And I expect this node to be referenced by:
       | Name              | Node                                                    | Properties |
-      | reference | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | referenceProperty | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
     # after then modifying the node's properties (thus triggering copy-on-write), the reference property
     # should still exist (this was a BUG)
@@ -86,18 +87,18 @@ Feature: On forking a content stream, node references should be copied as well.
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                                    | Properties |
-      | reference | user-cs-identifier;anthony-destinode;{"language": "de"} | null       |
+      | referenceProperty | user-cs-identifier;anthony-destinode;{"language": "de"} | null       |
     Then I expect node aggregate identifier "anthony-destinode" to lead to node user-cs-identifier;anthony-destinode;{"language": "de"}
     And I expect this node to be referenced by:
       | Name              | Node                                                    | Properties |
-      | reference | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | referenceProperty | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
     When I am in content stream "user-cs-identifier" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                                    | Properties |
-      | reference | user-cs-identifier;anthony-destinode;{"language": "de"} | null       |
+      | referenceProperty | user-cs-identifier;anthony-destinode;{"language": "de"} | null       |
     Then I expect node aggregate identifier "anthony-destinode" to lead to node user-cs-identifier;anthony-destinode;{"language": "de"}
     And I expect this node to be referenced by:
       | Name              | Node                                                    | Properties |
-      | reference | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | referenceProperty | user-cs-identifier;source-nodandaise;{"language": "de"} | null       |

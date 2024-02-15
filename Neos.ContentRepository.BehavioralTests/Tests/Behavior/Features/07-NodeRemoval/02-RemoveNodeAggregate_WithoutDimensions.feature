@@ -10,8 +10,9 @@ Feature: Remove NodeAggregate
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:Document':
-      references:
-        references: {}
+      properties:
+        references:
+          type: references
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"

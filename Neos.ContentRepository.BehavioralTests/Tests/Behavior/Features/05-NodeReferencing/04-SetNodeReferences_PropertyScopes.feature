@@ -10,20 +10,28 @@ Feature: Set node properties with different scopes
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:NodeWithReferences':
-      references:
-        unscopedReference: {}
-        unscopedReferences: {}
+      properties:
+        unscopedReference:
+          type: reference
+        unscopedReferences:
+          type: references
         nodeScopedReference:
+          type: reference
           scope: node
         nodeScopedReferences:
+          type: references
           scope: node
         nodeAggregateScopedReference:
+          type: reference
           scope: nodeAggregate
         nodeAggregateScopedReferences:
+          type: references
           scope: nodeAggregate
         specializationsScopedReference:
+          type: reference
           scope: specializations
         specializationsScopedReferences:
+          type: references
           scope: specializations
     """
     And using identifier "default", I define a content repository

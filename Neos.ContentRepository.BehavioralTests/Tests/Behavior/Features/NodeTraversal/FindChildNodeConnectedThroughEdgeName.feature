@@ -12,12 +12,13 @@ Feature: Find nodes using the findChildNodeConnectedThroughEdgeName query
       properties:
         text:
           type: string
-      references:
         refs:
+          type: references
           properties:
             foo:
               type: string
         ref:
+          type: reference
           properties:
             foo:
               type: string
