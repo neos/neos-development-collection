@@ -157,6 +157,7 @@ final class EventNormalizer
             );
         }
         assert(is_array($eventDataAsArray));
+        /** {@see EventInterface::fromArray()} */
         return $eventClassName::fromArray($eventDataAsArray);
     }
 }

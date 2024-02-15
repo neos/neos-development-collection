@@ -7,19 +7,18 @@ namespace Neos\Neos\Command;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Export\ExportService;
 use Neos\ContentRepository\Export\ExportServiceFactory;
 use Neos\ContentRepository\Export\ImportService;
 use Neos\ContentRepository\Export\ImportServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Core\Booting\Scripts;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Utility\Files;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -39,6 +38,7 @@ class CrCommandController extends CommandController
         private readonly ResourceManager $resourceManager,
         private readonly PersistenceManagerInterface $persistenceManager,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        private readonly ProjectionReplayServiceFactory $projectionReplayServiceFactory,
     ) {
         parent::__construct();
     }
@@ -109,7 +109,9 @@ class CrCommandController extends CommandController
         }
 
         $this->outputLine('Replaying projections');
-        Scripts::executeCommand('neos.contentrepositoryregistry:cr:replayall', $this->flowSettings, false, ['contentRepository' => $contentRepositoryId->value]);
+
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory);
+        $projectionService->replayAllProjections(CatchUpOptions::create());
 
         $this->outputLine('<success>Done</success>');
     }
