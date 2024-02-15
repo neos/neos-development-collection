@@ -91,15 +91,6 @@ class NodeType
         private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
     ) {
         $this->name = $name;
-
-        foreach ($declaredSuperTypes as $type) {
-            if ($type !== null && !$type instanceof NodeType) {
-                throw new \InvalidArgumentException(
-                    '$declaredSuperTypes must be an array of NodeType objects',
-                    1291300950
-                );
-            }
-        }
         $this->declaredSuperTypes = $declaredSuperTypes;
 
         if (isset($configuration['abstract']) && $configuration['abstract'] === true) {

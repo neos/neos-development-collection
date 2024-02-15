@@ -136,26 +136,6 @@ class NodeTypeTest extends TestCase
     /**
      * @test
      */
-    public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypesAsKeys()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionCode(1291300950);
-        new NodeType(NodeTypeName::fromString('ContentRepository:Folder'), ['foo' => true], [], new DefaultNodeLabelGeneratorFactory());
-    }
-
-    /**
-     * @test
-     */
-    public function setDeclaredSuperTypesAcceptsAnArrayOfNodeTypes()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionCode(1291300950);
-        new NodeType(NodeTypeName::fromString('ContentRepository:Folder'), ['foo'], [], new DefaultNodeLabelGeneratorFactory());
-    }
-
-    /**
-     * @test
-     */
     public function aNodeTypeMustHaveDistinctNamesForPropertiesReferences()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Invalid'), [], [

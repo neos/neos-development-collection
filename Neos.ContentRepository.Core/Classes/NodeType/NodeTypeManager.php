@@ -340,11 +340,11 @@ class NodeTypeManager
      *
      * @param array<string,mixed> $superTypesConfiguration
      * @param array<string,mixed> $completeNodeTypeConfiguration
-     * @return array<string,?NodeType>
+     * @return array<string,NodeType|null>
      */
     protected function evaluateSuperTypesConfiguration(
         array $superTypesConfiguration,
-        array &$completeNodeTypeConfiguration
+        array $completeNodeTypeConfiguration
     ): array {
         $superTypes = [];
         foreach ($superTypesConfiguration as $superTypeName => $enabled) {
