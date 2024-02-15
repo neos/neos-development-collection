@@ -26,7 +26,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     const MAXIMUM_LEVELS_LIMIT = 100;
 
     /**
-     * Internal cache for the startingPoint tsValue.
+     * Internal cache for the startingPoint value.
      *
      * @var NodeInterface
      */
@@ -191,12 +191,11 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
         $item = [
             'node' => $currentNode,
-            'state' => self::STATE_NORMAL,
+            'state' => $this->calculateItemState($currentNode),
             'label' => $currentNode->getLabel(),
             'menuLevel' => $this->currentLevel
         ];
 
-        $item['state'] = $this->calculateItemState($currentNode);
         if (!$this->isOnLastLevelOfMenu($currentNode)) {
             $this->currentLevel++;
             $item['subItems'] = $this->buildMenuLevelRecursive($currentNode->getChildNodes($this->getFilter()));
