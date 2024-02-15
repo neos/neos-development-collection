@@ -29,9 +29,9 @@ class ContextDependentHandler extends AbstractRenderingExceptionHandler
     /**
      * Handle an exception depending on the context with an HTML message or XML comment
      *
-     * @param array $fusionPath path causing the exception
+     * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
-     * @param integer $referenceCode
+     * @param string|null $referenceCode
      * @return string
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)

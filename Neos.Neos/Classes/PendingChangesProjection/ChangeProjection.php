@@ -17,8 +17,9 @@ namespace Neos\Neos\PendingChangesProjection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -34,12 +35,15 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -50,6 +54,8 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 class ChangeProjection implements ProjectionInterface
 {
+    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
+
     /**
      * @var ChangeFinder|null Cache for the ChangeFinder returned by {@see getState()},
      * so that always the same instance is returned
@@ -60,13 +66,13 @@ class ChangeProjection implements ProjectionInterface
      * @var array<string>|null
      */
     private ?array $liveContentStreamIdsRuntimeCache = null;
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableNamePrefix,
     ) {
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->tableNamePrefix . '_checkpoint',
             self::class
@@ -76,11 +82,41 @@ class ChangeProjection implements ProjectionInterface
 
     public function setUp(): void
     {
-        $this->setupTables();
-        $this->checkpointStorage->setup();
+        foreach ($this->determineRequiredSqlStatements() as $statement) {
+            $this->getDatabaseConnection()->executeStatement($statement);
+        }
+        $this->checkpointStorage->setUp();
     }
 
-    private function setupTables(): void
+    public function status(): ProjectionStatus
+    {
+        $checkpointStorageStatus = $this->checkpointStorage->status();
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
+            return ProjectionStatus::error($checkpointStorageStatus->details);
+        }
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
+            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
+        }
+        try {
+            $this->getDatabaseConnection()->connect();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
+        }
+        try {
+            $requiredSqlStatements = $this->determineRequiredSqlStatements();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
+        }
+        if ($requiredSqlStatements !== []) {
+            return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        return ProjectionStatus::ok();
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function determineRequiredSqlStatements(): array
     {
         $connection = $this->dbalClient->getConnection();
         $schemaManager = $connection->getSchemaManager();
@@ -88,46 +124,18 @@ class ChangeProjection implements ProjectionInterface
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
-        // MIGRATIONS
-        $currentSchema = $schemaManager->createSchema();
-        if ($currentSchema->hasTable($this->tableNamePrefix)) {
-            $tableSchema = $currentSchema->getTable($this->tableNamePrefix);
-            // added 2023-03-18
-            if ($tableSchema->hasColumn('nodeAggregateIdentifier')) {
-                // table in old format -> we migrate to new.
-                $connection->executeStatement(sprintf('ALTER TABLE %s CHANGE nodeAggregateIdentifier nodeAggregateId VARCHAR(255); ', $this->tableNamePrefix));
-            }
-            // added 2023-03-18
-            if ($tableSchema->hasColumn('contentStreamIdentifier')) {
-                $connection->executeStatement(sprintf('ALTER TABLE %s CHANGE contentStreamIdentifier contentStreamId VARCHAR(255); ', $this->tableNamePrefix));
-            }
-        }
-
-        $schema = new Schema();
-        $changeTable = $schema->createTable($this->tableNamePrefix);
-        $changeTable->addColumn('contentStreamId', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $changeTable->addColumn('created', Types::BOOLEAN)
-            ->setNotnull(true);
-        $changeTable->addColumn('changed', Types::BOOLEAN)
-            ->setNotnull(true);
-        $changeTable->addColumn('moved', Types::BOOLEAN)
-            ->setNotnull(true);
-
-        $changeTable->addColumn('nodeAggregateId', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
-        $changeTable->addColumn('originDimensionSpacePoint', Types::TEXT)
-            ->setNotnull(false);
-        $changeTable->addColumn('originDimensionSpacePointHash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $changeTable->addColumn('deleted', Types::BOOLEAN)
-            ->setNotnull(true);
-        $changeTable->addColumn('removalAttachmentPoint', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false);
+        $changeTable = new Table($this->tableNamePrefix, [
+            DbalSchemaFactory::columnForContentStreamId('contentStreamId')->setNotNull(true),
+            (new Column('created', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            (new Column('changed', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            (new Column('moved', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('nodeAggregateId')->setNotNull(true),
+            DbalSchemaFactory::columnForDimensionSpacePoint('originDimensionSpacePoint')->setNotNull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('originDimensionSpacePointHash')->setNotNull(true),
+            (new Column('deleted', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            // Despite the name suggesting this might be an anchor point of sorts, this is a nodeAggregateId type
+            DbalSchemaFactory::columnForNodeAggregateId('removalAttachmentPoint')->setNotNull(false)
+        ]);
 
         $changeTable->setPrimaryKey([
             'contentStreamId',
@@ -135,21 +143,14 @@ class ChangeProjection implements ProjectionInterface
             'originDimensionSpacePointHash'
         ]);
 
-        $liveContentStreamsTable = $schema->createTable($this->tableNamePrefix . '_livecontentstreams');
-        $liveContentStreamsTable->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setDefault('')
-            ->setNotnull(true);
-        $liveContentStreamsTable->addColumn('workspacename', Types::STRING)
-            ->setLength(255)
-            ->setDefault('')
-            ->setNotnull(true);
+        $liveContentStreamsTable = new Table($this->tableNamePrefix . '_livecontentstreams', [
+            DbalSchemaFactory::ColumnForContentStreamId('contentstreamid')->setNotNull(true),
+            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setDefault('')->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION)
+        ]);
         $liveContentStreamsTable->setPrimaryKey(['contentstreamid']);
 
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
-            $connection->executeStatement($statement);
-        }
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $liveContentStreamsTable]);
+        return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
     public function reset(): void
@@ -197,7 +198,7 @@ class ChangeProjection implements ProjectionInterface
         };
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
     }

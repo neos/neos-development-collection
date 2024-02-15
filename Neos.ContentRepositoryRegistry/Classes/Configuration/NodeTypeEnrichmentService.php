@@ -144,7 +144,7 @@ class NodeTypeEnrichmentService
      * Resolve help message thumbnail url
      *
      * @param string $nodeTypeName
-     * @param string $configurationThumbnail
+     * @param string|null $configurationThumbnail
      * @return string $thumbnailUrl
      */
     protected function resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail)

@@ -9,6 +9,8 @@ Feature: Constraint checks on SetNodeReferences
       | language   | de, gsw, en | gsw->de, en     |
     And using the following node types:
     """yaml
+    'Neos.ContentRepository.Testing:ReferencedNode': []
+
     'Neos.ContentRepository.Testing:NodeWithReferences':
       references:
         constrainedReferenceCount:
@@ -26,7 +28,7 @@ Feature: Constraint checks on SetNodeReferences
           type: reference
           constraints:
             nodeTypes:
-              'Neos.ContentRepository.Testing:NodeWithReferences': false
+              'Neos.ContentRepository.Testing:ReferencedNode': false
         referencePropertyWithProperties:
           type: reference
           properties:
@@ -54,8 +56,8 @@ Feature: Constraint checks on SetNodeReferences
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
       | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
-      | anthony-destinode       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
-      | berta-destinode         | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
+      | anthony-destinode       | Neos.ContentRepository.Testing:ReferencedNode     | lady-eleonode-rootford        |
+      | berta-destinode         | Neos.ContentRepository.Testing:ReferencedNode     | lady-eleonode-rootford        |
 
   # checks for contentStreamId
   Scenario: Try to reference nodes in a non-existent content stream

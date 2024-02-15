@@ -197,9 +197,9 @@ trait NodeTypeChange
                     $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                     VisibilityConstraints::withoutRestrictions()
                 );
-                $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
-                    $node->nodeAggregateId,
-                    $tetheredNodeName
+                $tetheredNode = $subgraph->findNodeByPath(
+                    $tetheredNodeName,
+                    $node->nodeAggregateId
                 );
                 if ($tetheredNode === null) {
                     $tetheredNodeAggregateId = $command->tetheredDescendantNodeAggregateIds

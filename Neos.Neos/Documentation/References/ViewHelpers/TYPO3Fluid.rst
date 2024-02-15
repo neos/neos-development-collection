@@ -3,7 +3,7 @@
 TYPO3 Fluid ViewHelper Reference
 ################################
 
-This reference was automatically generated from code on 2023-05-01
+This reference was automatically generated from code on 2024-02-15
 
 
 .. _`TYPO3 Fluid ViewHelper Reference: f:alias`:
@@ -109,7 +109,7 @@ Container tag
 
     <f:cache.disable>
        Some output or Fluid code
-    </f:cache.disble>
+    </f:cache.disable>
 
 Additional output is also not compilable because of the ViewHelper
 
@@ -277,7 +277,7 @@ Exception if it contains syntax errors. You can put child nodes in
 CDATA tags to avoid this.
 
 Using this ViewHelper won't have a notable effect on performance,
-especially once the template is parsed.  However it can lead to reduced
+especially once the template is parsed.  However, it can lead to reduced
 readability. You can use layouts and partials to split a large template
 into smaller parts. Using self-descriptive names for the partials can
 make comments redundant.
@@ -617,7 +617,77 @@ Arguments
 
 * ``reverse`` (boolean, *optional*): If TRUE, iterates in reverse
 
-* ``iteration`` (string, *optional*): The name of the variable to store iteration information (index, cycle, isFirst, isLast, isEven, isOdd)
+* ``iteration`` (string, *optional*): The name of the variable to store iteration information (index, cycle, total, isFirst, isLast, isEven, isOdd)
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:format.case`:
+
+f:format.case
+-------------
+
+Modifies the case of an input string to upper- or lowercase or capitalization.
+The default transformation will be uppercase as in `mb_convert_case`_.
+
+Possible modes are:
+
+``lower``
+  Transforms the input string to its lowercase representation
+
+``upper``
+  Transforms the input string to its uppercase representation
+
+``capital``
+  Transforms the input string to its first letter upper-cased, i.e. capitalization
+
+``uncapital``
+  Transforms the input string to its first letter lower-cased, i.e. uncapitalization
+
+``capitalWords``
+  Not supported yet: Transforms the input string to each containing word being capitalized
+
+Note that the behavior will be the same as in the appropriate PHP function `mb_convert_case`_;
+especially regarding locale and multibyte behavior.
+
+.. _mb_convert_case: https://www.php.net/manual/function.mb-convert-case.php
+
+Examples
+========
+
+Default
+-------
+
+::
+
+   <f:format.case>Some Text with miXed case</f:format.case>
+
+Output::
+
+   SOME TEXT WITH MIXED CASE
+
+Example with given mode
+-----------------------
+
+::
+
+   <f:format.case mode="capital">someString</f:format.case>
+
+Output::
+
+   SomeString
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\Format\\CaseViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (string, *optional*): The input value. If not given, the evaluated child nodes will be used.
+
+* ``mode`` (string, *optional*): The case to apply, must be one of this' CASE_* constants. Defaults to uppercase application.
 
 
 
@@ -730,6 +800,150 @@ Arguments
 * ``encoding`` (string, *optional*): Encoding
 
 * ``doubleEncode`` (boolean, *optional*): If FALSE html entities will not be encoded
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:format.json`:
+
+f:format.json
+-------------
+
+Wrapper for PHPs :php:`json_encode` function.
+See https://www.php.net/manual/function.json-encode.php.
+
+Examples
+========
+
+Encoding a view variable
+------------------------
+
+::
+
+   {someArray -> f:format.json()}
+
+``["array","values"]``
+Depending on the value of ``{someArray}``.
+
+Associative array
+-----------------
+
+::
+
+   {f:format.json(value: {foo: 'bar', bar: 'baz'})}
+
+``{"foo":"bar","bar":"baz"}``
+
+Non associative array with forced object
+----------------------------------------
+
+::
+
+   {f:format.json(value: {0: 'bar', 1: 'baz'}, forceObject: true)}
+
+``{"0":"bar","1":"baz"}``
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\Format\\JsonViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (mixed, *optional*): The incoming data to convert, or null if VH children should be used
+
+* ``forceObject`` (bool, *optional*): Outputs an JSON object rather than an array
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:format.nl2br`:
+
+f:format.nl2br
+--------------
+
+Wrapper for PHPs :php:`nl2br` function.
+See https://www.php.net/manual/function.nl2br.php.
+
+Examples
+========
+
+Default
+-------
+
+::
+
+   <f:format.nl2br>{text_with_linebreaks}</f:format.nl2br>
+
+Text with line breaks replaced by ``<br />``
+
+Inline notation
+---------------
+
+::
+
+   {text_with_linebreaks -> f:format.nl2br()}
+
+Text with line breaks replaced by ``<br />``
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\Format\\Nl2brViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (string, *optional*): string to format
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:format.number`:
+
+f:format.number
+---------------
+
+Formats a number with custom precision, decimal point and grouped thousands.
+See https://www.php.net/manual/function.number-format.php.
+
+Examples
+========
+
+Defaults
+--------
+
+::
+
+   <f:format.number>423423.234</f:format.number>
+
+``423,423.20``
+
+With all parameters
+-------------------
+
+::
+
+   <f:format.number decimals="1" decimalSeparator="," thousandsSeparator=".">
+       423423.234
+   </f:format.number>
+
+``423.423,2``
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\Format\\NumberViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``decimals`` (int, *optional*): The number of digits after the decimal point
+
+* ``decimalSeparator`` (string, *optional*): The decimal point character
+
+* ``thousandsSeparator`` (string, *optional*): The character for grouping the thousand digits
 
 
 
@@ -864,6 +1078,194 @@ Arguments
 *********
 
 * ``value`` (mixed, *optional*): The value to output
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:format.stripTags`:
+
+f:format.stripTags
+------------------
+
+Removes tags from the given string (applying PHPs :php:`strip_tags()` function)
+See https://www.php.net/manual/function.strip-tags.php.
+
+Examples
+========
+
+Default notation
+----------------
+
+::
+
+   <f:format.stripTags>Some Text with <b>Tags</b> and an &Uuml;mlaut.</f:format.stripTags>
+
+Some Text with Tags and an &Uuml;mlaut. :php:`strip_tags()` applied.
+
+.. note::
+   Encoded entities are not decoded.
+
+Default notation with allowedTags
+---------------------------------
+
+::
+
+   <f:format.stripTags allowedTags="<p><span><div><script>">
+       <p>paragraph</p><span>span</span><div>divider</div><iframe>iframe</iframe><script>script</script>
+   </f:format.stripTags>
+
+Output::
+
+   <p>paragraph</p><span>span</span><div>divider</div>iframe<script>script</script>
+
+Inline notation
+---------------
+
+::
+
+   {text -> f:format.stripTags()}
+
+Text without tags :php:`strip_tags()` applied.
+
+Inline notation with allowedTags
+--------------------------------
+
+::
+
+   {text -> f:format.stripTags(allowedTags: "<p><span><div><script>")}
+
+Text with p, span, div and script Tags inside, all other tags are removed.
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\Format\\StripTagsViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (string, *optional*): string to format
+
+* ``allowedTags`` (string, *optional*): Optional string of allowed tags as required by PHPs strip_tags() function
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:format.trim`:
+
+f:format.trim
+-------------
+
+This ViewHelper strips whitespace (or other characters) from the beginning and end of a string.
+
+Possible sides are:
+
+``both`` (default)
+  Strip whitespace (or other characters) from the beginning and end of a string
+
+``left`` or ``start``
+  Strip whitespace (or other characters) from the beginning of a string
+
+``right`` or ``end``
+  Strip whitespace (or other characters) from the end of a string
+
+
+Examples
+========
+
+Defaults
+--------
+::
+
+   #<f:format.trim>   String to be trimmed.   </f:format.trim>#
+
+.. code-block:: text
+
+   #String to be trimmed.#
+
+
+Trim only one side
+------------------
+
+::
+
+   #<f:format.trim side="right">   String to be trimmed.   </f:format.trim>#
+
+.. code-block:: text
+
+   #   String to be trimmed.#
+
+
+Trim special characters
+-----------------------
+
+::
+
+   #<f:format.trim characters=" St.">   String to be trimmed.   </f:format.trim>#
+
+.. code-block:: text
+
+   #ring to be trimmed#
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\Format\\TrimViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (string, *optional*): The string value to be trimmed. If not given, the evaluated child nodes will be used.
+
+* ``characters`` (string, *optional*): Optionally, the stripped characters can also be specified using the characters parameter. Simply list all characters that you want to be stripped. With .. you can specify a range of characters.
+
+* ``side`` (string, *optional*): The side to apply, must be one of this' CASE_* constants. Defaults to both application.
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:format.urlencode`:
+
+f:format.urlencode
+------------------
+
+Encodes the given string according to http://www.faqs.org/rfcs/rfc3986.html
+Applying PHPs :php:`rawurlencode()` function.
+See https://www.php.net/manual/function.rawurlencode.php.
+
+.. note::
+   The output is not escaped. You may have to ensure proper escaping on your own.
+
+Examples
+========
+
+Default notation
+----------------
+
+::
+
+   <f:format.urlencode>foo @+%/</f:format.urlencode>
+
+``foo%20%40%2B%25%2F`` :php:`rawurlencode()` applied.
+
+Inline notation
+---------------
+
+::
+
+   {text -> f:format.urlencode()}
+
+Url encoded text :php:`rawurlencode()` applied.
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\Format\\UrlencodeViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (string, *optional*): string to format
 
 
 
@@ -1141,7 +1543,27 @@ Arguments
 f:or
 ----
 
-If content is empty use alternative text
+Or ViewHelper
+
+If content is null use alternative text.
+
+Usage of f:or
+=============
+
+::
+
+    {f:variable(name:'fallback',value:'this is not the variable you\'re looking for')}
+    {undefinedVariable -> f:or(alternative:fallback)}
+
+Usage of ternary operator
+=========================
+
+In some cases (e.g. when you want to check for empty instead of null)
+it might be more handy to use a ternary operator instead of f:or
+
+::
+
+    {emptyVariable ?: 'this is an alterative text'}
 
 :Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\OrViewHelper
 
@@ -1151,9 +1573,9 @@ If content is empty use alternative text
 Arguments
 *********
 
-* ``content`` (mixed, *optional*): Content to check if empty
+* ``content`` (mixed, *optional*): Content to check if null
 
-* ``alternative`` (mixed, *optional*): Alternative if content is empty
+* ``alternative`` (mixed, *optional*): Alternative if content is null
 
 * ``arguments`` (array, *optional*): Arguments to be replaced in the resulting string, using sprintf
 
@@ -1267,8 +1689,6 @@ Arguments
 * ``partial`` (string, *optional*): Partial to render, with or without section
 
 * ``delegate`` (string, *optional*): Optional PHP class name of a permanent, included-in-app ParsedTemplateInterface implementation to override partial/section
-
-* ``renderable`` (TYPO3Fluid\Fluid\Core\Rendering\RenderableInterface, *optional*): Instance of a RenderableInterface implementation to be rendered
 
 * ``arguments`` (array, *optional*): Array of variables to be transferred. Use {_all} for all variables
 

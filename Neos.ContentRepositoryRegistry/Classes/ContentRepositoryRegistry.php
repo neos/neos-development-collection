@@ -196,7 +196,7 @@ final class ContentRepositoryRegistry
 
         $normalizers = [];
         foreach ($propertyConvertersConfiguration as $propertyConverterConfiguration) {
-            $normalizer = new $propertyConverterConfiguration['className'];
+            $normalizer = new $propertyConverterConfiguration['className']();
             if (!$normalizer instanceof NormalizerInterface && !$normalizer instanceof DenormalizerInterface) {
                 throw InvalidConfigurationException::fromMessage('Serializers can only be created of %s and %s, %s given', NormalizerInterface::class, DenormalizerInterface::class, get_debug_type($normalizer));
             }

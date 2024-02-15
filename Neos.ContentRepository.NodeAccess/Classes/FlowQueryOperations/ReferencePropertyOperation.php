@@ -28,6 +28,19 @@ use Neos\Eel\FlowQuery\OperationInterface;
  */
 final class ReferencePropertyOperation implements OperationInterface
 {
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'referenceProperty';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 0;
 
     /** @param array<int, mixed> $context */
     public function canEvaluate($context): bool

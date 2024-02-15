@@ -50,7 +50,7 @@
 						<div class="neos-controls">
 							<label for="roles-{rolesIteration.cycle}" class="neos-checkbox" title="{role.packageKey}" data-neos-toggle="tooltip" data-placement="right">
 								<f:form.checkbox name="roleIdentifiers" multiple="true" value="{role.identifier}" id="roles-{rolesIteration.cycle}" /><span></span>
-								{role.name}
+								{f:if(condition: role.label, then: role.label, else: role.name)}
 							</label>
 						</div>
 					</f:for>

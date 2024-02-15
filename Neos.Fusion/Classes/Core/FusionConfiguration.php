@@ -20,20 +20,29 @@ namespace Neos\Fusion\Core;
  */
 final class FusionConfiguration
 {
-    /** @internal */
+    /**
+     * @internal
+     * @param array<int|string, mixed> $fusionConfiguration
+     */
     protected function __construct(
         private array $fusionConfiguration
     ) {
     }
 
-    /** @internal */
-    public static function fromArray(array $fusionConfiguration)
+    /**
+     * @internal
+     * @param array<int|string, mixed> $fusionConfiguration
+     */
+    public static function fromArray(array $fusionConfiguration): self
     {
-        return new static($fusionConfiguration);
+        return new self($fusionConfiguration);
     }
 
-    /** @internal */
-    public function toArray()
+    /**
+     * @internal
+     * @return array<int|string, mixed>
+     */
+    public function toArray(): array
     {
         return $this->fusionConfiguration;
     }

@@ -323,7 +323,9 @@ class AssetService
                     $variant->refresh();
                     foreach ($variant->getAdjustments() as $adjustment) {
                         if (method_exists($adjustment, 'refit') && $this->imageService->getImageSize($originalAssetResource) !== $this->imageService->getImageSize($resource)) {
-                            $adjustment->refit($asset);
+                            if ($asset instanceof ImageInterface && $asset->getWidth() !== null && $asset->getHeight() !== null) {
+                                $adjustment->refit($asset);
+                            }
                         }
                     }
                     $this->getRepository($variant)->update($variant);
@@ -337,7 +339,7 @@ class AssetService
             }
         }
 
-        if ($redirectHandlerEnabled) {
+        if ($redirectHandlerEnabled && class_exists(RedirectStorageInterface::class)) {
             /** @var RedirectStorageInterface $redirectStorage */
             $redirectStorage = $this->objectManager->get(RedirectStorageInterface::class);
             foreach ($uriMapping as $originalUri => $newUri) {

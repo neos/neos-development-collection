@@ -70,7 +70,7 @@ final readonly class References implements \IteratorAggregate, \ArrayAccess, \Co
      */
     public function getIterator(): \Traversable
     {
-        return yield from $this->references;
+        yield from $this->references;
     }
 
     public function offsetExists(mixed $offset): bool

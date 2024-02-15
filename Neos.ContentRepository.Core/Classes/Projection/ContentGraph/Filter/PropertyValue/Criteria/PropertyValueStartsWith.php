@@ -8,8 +8,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
- * Criteria that matches if a property starts with the specified string
+ * Criteria that matches if a property starts with the specified string (case-sensitive)
  *     "prop1 ^= 'foo'"
+ *
+ * Criteria that matches if a property starts with the specified string (case-insensitive)
+ *      "prop1 ^=~ 'foo'"
  *
  * @see PropertyValueCriteriaParser
  * @api
@@ -19,11 +22,12 @@ final class PropertyValueStartsWith implements PropertyValueCriteriaInterface
     private function __construct(
         public readonly PropertyName $propertyName,
         public readonly string $value,
+        public readonly bool $caseSensitive,
     ) {
     }
 
-    public static function create(PropertyName $propertyName, string $value): self
+    public static function create(PropertyName $propertyName, string $value, bool $caseSensitive): self
     {
-        return new self($propertyName, $value);
+        return new self($propertyName, $value, $caseSensitive);
     }
 }

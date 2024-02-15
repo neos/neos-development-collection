@@ -20,6 +20,11 @@ Neos\Neos\Domain\Service\FusionConfigurationCache:
     2:
       setting: "Neos.Neos.fusion.enableObjectTreeCache"
 
+Neos\Fusion\Core\Cache\RuntimeContentCache:
+  properties:
+    serializer:
+      object: Neos\Neos\Fusion\Cache\NeosFusionContextSerializer
+
 Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface:
   className: Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler
 

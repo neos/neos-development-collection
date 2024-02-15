@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -26,6 +29,7 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
+use Psr\Log\LoggerInterface;
 
 /**
  * A Fusion Object that converts link references in the format "<type>://<UUID>" to proper URIs
@@ -82,6 +86,12 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected $contentRepositoryRegistry;
 
     /**
+     * @Flow\Inject
+     * @var LoggerInterface
+     */
+    protected $systemLogger;
+
+    /**
      * Convert URIs matching a supported scheme with generated URIs
      *
      * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
@@ -101,7 +111,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         if (!is_string($text)) {
             throw new NeosException(sprintf(
                 'Only strings can be processed by this Fusion object, given: "%s".',
-                gettype($text)
+                get_debug_type($text)
             ), 1382624080);
         }
 
@@ -110,8 +120,14 @@ class ConvertUrisImplementation extends AbstractFusionObject
         if (!$node instanceof Node) {
             throw new NeosException(sprintf(
                 'The current node must be an instance of Node, given: "%s".',
-                gettype($text)
+                get_debug_type($text)
             ), 1382624087);
+        }
+
+        $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
+        assert($renderingMode instanceof RenderingMode);
+        if ($renderingMode->isEdit && $this->fusionValue('forceConversion') !== true) {
+            return $text;
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get(
@@ -120,59 +136,51 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
 
-        if (!$nodeAddress->isInLiveWorkspace() && !($this->fusionValue('forceConversion'))) {
-            return $text;
-        }
-
         $unresolvedUris = [];
         $absolute = $this->fusionValue('absolute');
 
-        $processedContent = preg_replace_callback(
-            self::PATTERN_SUPPORTED_URIS,
-            function (array $matches) use (&$unresolvedUris, $absolute, $nodeAddress) {
-                $resolvedUri = null;
-                switch ($matches[1]) {
-                    case 'node':
-                        $nodeAddress = $nodeAddress->withNodeAggregateId(
-                            NodeAggregateId::fromString($matches[2])
-                        );
-                        $uriBuilder = new UriBuilder();
-                        $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
-                        $uriBuilder->setCreateAbsoluteUri($absolute);
-
-                        // TODO: multi-site ....
-                        // -> different object than NodeAddress which also contains the CR Identifier.
+        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $absolute) {
+            $resolvedUri = null;
+            switch ($matches[1]) {
+                case 'node':
+                    $nodeAddress = $nodeAddress->withNodeAggregateId(
+                        NodeAggregateId::fromString($matches[2])
+                    );
+                    $uriBuilder = new UriBuilder();
+                    $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
+                    $uriBuilder->setCreateAbsoluteUri($absolute);
+                    try {
                         $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
-                        $this->runtime->addCacheTag('node', $matches[2]);
-                        break;
-                    case 'asset':
-                        $asset = $this->assetRepository->findByIdentifier($matches[2]);
-                        if ($asset instanceof AssetInterface) {
-                            $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri(
-                                $asset->getResource()
-                            );
-                            $this->runtime->addCacheTag('asset', $matches[2]);
-                        }
-                        break;
-                }
+                    } catch (NoMatchingRouteException) {
+                        $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri. Arguments: %s', $matches[0], json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
+                    }
+                    $this->runtime->addCacheTag('node', $matches[2]);
+                    break;
+                case 'asset':
+                    $asset = $this->assetRepository->findByIdentifier($matches[2]);
+                    if ($asset instanceof AssetInterface) {
+                        $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri(
+                            $asset->getResource()
+                        );
+                        $this->runtime->addCacheTag('asset', $matches[2]);
+                    }
+                    break;
+            }
 
-                if ($resolvedUri === null) {
-                    $unresolvedUris[] = $matches[0];
-                    return $matches[0];
-                }
+            if ($resolvedUri === null) {
+                $unresolvedUris[] = $matches[0];
+                return $matches[0];
+            }
 
-                return $resolvedUri;
-            },
-            $text
-        ) ?: '';
+            return $resolvedUri;
+        }, $text);
+        assert($processedContent !== null, 'preg_* error');
 
         if ($unresolvedUris !== []) {
-            $processedContent = preg_replace(
-                '/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/',
-                '$2',
-                $processedContent
-            ) ?: '';
-            $processedContent = preg_replace(self::PATTERN_SUPPORTED_URIS, '', $processedContent) ?: '';
+            $processedContent = preg_replace('/<a(?:\s+[^>]*)?\s+href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
+            assert($processedContent !== null, 'preg_* error');
+            $processedContent = preg_replace(self::PATTERN_SUPPORTED_URIS, '', $processedContent);
+            assert($processedContent !== null, 'preg_* error');
         }
 
         $processedContent = $this->replaceLinkTargets($processedContent);
@@ -183,48 +191,74 @@ class ConvertUrisImplementation extends AbstractFusionObject
     /**
      * Replace the target attribute of link tags in processedContent with the target
      * specified by externalLinkTarget and resourceLinkTarget options.
-     * Additionally set rel="noopener" for links with target="_blank".
+     * Additionally set rel="noopener external" for external links.
+     *
+     * @param string $processedContent
+     * @return string
      */
-    protected function replaceLinkTargets(string $processedContent): string
+    protected function replaceLinkTargets($processedContent)
     {
-        $noOpenerString = $this->fusionValue('setNoOpener') ? ' rel="noopener"' : '';
-        $externalLinkTarget = trim($this->fusionValue('externalLinkTarget'));
-        $resourceLinkTarget = trim($this->fusionValue('resourceLinkTarget'));
-        if ($externalLinkTarget === '' && $resourceLinkTarget === '') {
-            return $processedContent;
-        }
+        $setNoOpener = $this->fusionValue('setNoOpener');
+        $setExternal = $this->fusionValue('setExternal');
+        $externalLinkTarget = \trim((string)$this->fusionValue('externalLinkTarget'));
+        $resourceLinkTarget = \trim((string)$this->fusionValue('resourceLinkTarget'));
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
-        $processedContent = preg_replace_callback(
-            '~<a.*?href="(.*?)".*?>~i',
-            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $noOpenerString) {
-                list($linkText, $linkHref) = $matches;
-                $uriHost = parse_url($linkHref, PHP_URL_HOST);
+        $processedContent = \preg_replace_callback(
+            '~<a\s+.*?href="(.*?)".*?>~i',
+            static function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $setNoOpener, $setExternal) {
+                [$linkText, $linkHref] = $matches;
+                $uriHost = \parse_url($linkHref, PHP_URL_HOST);
                 $target = null;
-                if ($externalLinkTarget !== '' && is_string($uriHost) && $uriHost !== $host) {
+                $isExternalLink = \is_string($uriHost) && $uriHost !== $host;
+
+                if ($externalLinkTarget && $externalLinkTarget !== '' && $isExternalLink) {
                     $target = $externalLinkTarget;
                 }
-                if ($resourceLinkTarget !== '' && strpos($linkHref, '_Resources') !== false) {
+                if ($resourceLinkTarget && $resourceLinkTarget !== '' && str_contains($linkHref, '_Resources')) {
                     $target = $resourceLinkTarget;
                 }
-                if ($target === null) {
-                    return $linkText;
+                if ($isExternalLink && $setNoOpener) {
+                    $linkText = self::setAttribute('rel', 'noopener', $linkText);
                 }
-                if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
-                    return preg_replace(
-                        '/target=".*?"/',
-                        sprintf('target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''),
-                        $linkText
-                    );
+                if ($isExternalLink && $setExternal) {
+                    $linkText = self::setAttribute('rel', 'external', $linkText);
                 }
-                return str_replace(
-                    '<a',
-                    sprintf('<a target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''),
-                    $linkText
-                );
+                if (is_string($target) && $target !== '') {
+                    return self::setAttribute('target', $target, $linkText);
+                }
+                return $linkText;
             },
             $processedContent
-        ) ?: '';
+        );
+        assert($processedContent !== null, 'preg_* error');
         return $processedContent;
+    }
+
+
+    /**
+     * Set or add value to the a attribute
+     *
+     * @param string $attribute The attribute, ('target' or 'rel')
+     * @param string $value The value of the attribute to add
+     * @param string $content The content to parse
+     * @return string
+     */
+    private static function setAttribute(string $attribute, string $value, string $content): string
+    {
+        // The attribute is already set
+        if (\preg_match_all('~\s+' . $attribute . '="(.*?)~i', $content, $matches)) {
+            // If the attribute is target or the value is already set, leave the attribute as it is
+            if ($attribute === 'target' || \preg_match('~' . $attribute . '=".*?' . $value . '.*?"~i', $content)) {
+                return $content;
+            }
+            // Add the attribute to the list
+            $result = \preg_replace('/' . $attribute . '="(.*?)"/', sprintf('%s="$1 %s"', $attribute, $value), $content);
+            assert($result !== null, 'preg_* error');
+            return $result;
+        }
+
+        // Add the missing attribute with the value
+        return \str_replace('<a', sprintf('<a %s="%s"', $attribute, $value), $content);
     }
 }

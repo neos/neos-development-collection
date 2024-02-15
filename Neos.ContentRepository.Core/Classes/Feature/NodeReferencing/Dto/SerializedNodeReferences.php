@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
  * A collection of SerializedNodeReference objects, to be used when creating reference relations.
  *
  * @implements \IteratorAggregate<SerializedNodeReference>
- * @api used as part of commands/events
+ * @internal
  */
 final readonly class SerializedNodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
 {

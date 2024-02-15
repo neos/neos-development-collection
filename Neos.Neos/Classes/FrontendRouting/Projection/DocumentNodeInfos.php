@@ -29,11 +29,11 @@ final readonly class DocumentNodeInfos implements \IteratorAggregate
 
     /**
      * @param array<DocumentNodeInfo> $documentNodeInfos
-     * @return static
+     * @return self
      */
-    public static function create(array $documentNodeInfos): static
+    public static function create(array $documentNodeInfos): self
     {
-        return new static($documentNodeInfos);
+        return new self($documentNodeInfos);
     }
 
     public function getIterator(): \Traversable

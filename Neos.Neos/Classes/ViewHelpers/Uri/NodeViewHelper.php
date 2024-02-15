@@ -14,10 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Uri;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -31,7 +32,6 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
-use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 
 /**
@@ -111,12 +111,6 @@ class NodeViewHelper extends AbstractViewHelper
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
-
-    /**
-     * @Flow\Inject
-     * @var NodeSiteResolvingService
-     */
-    protected $nodeSiteResolvingService;
 
     /**
      * @Flow\Inject
@@ -285,12 +279,7 @@ class NodeViewHelper extends AbstractViewHelper
             VisibilityConstraints::withoutRestrictions()
         );
         if (strncmp($path, '~', 1) === 0) {
-            // TODO: This can be simplified
-            // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
-            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
-                $documentNodeAddress,
-                $documentNode->subgraphIdentity->contentRepositoryId
-            );
+            $siteNode = $subgraph->findClosestNode($documentNodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
