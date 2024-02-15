@@ -140,8 +140,7 @@ class NodeTypeTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionCode(1291300950);
-        new NodeType(NodeTypeName::fromString('ContentRepository:Folder'), ['foo' => true], [], new DefaultNodeLabelGeneratorFactory()
-        );
+        new NodeType(NodeTypeName::fromString('ContentRepository:Folder'), ['foo' => true], [], new DefaultNodeLabelGeneratorFactory());
     }
 
     /**
@@ -413,6 +412,171 @@ class NodeTypeTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function propertyDeclaration()
+    {
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
+            'properties' => [
+                'someProperty' => [
+                    'type' => 'bool',
+                    'defaultValue' => false
+                ]
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        self::assertTrue($nodeType->hasProperty('someProperty'));
+        self::assertFalse($nodeType->hasReference('someProperty'));
+        self::assertSame('bool', $nodeType->getPropertyType('someProperty'));
+        self::assertEmpty($nodeType->getReferences());
+        self::assertNull($nodeType->getConfiguration('references.someProperty'));
+        self::assertNotNull($nodeType->getConfiguration('properties.someProperty'));
+        self::assertSame(['someProperty' => false], $nodeType->getDefaultValuesForProperties());
+        self::assertSame(
+            [
+                'someProperty' => [
+                    'type' => 'bool',
+                    'defaultValue' => false
+                ]
+            ],
+            $nodeType->getProperties()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getPropertyTypeThrowsOnInvalidProperty()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1708025421);
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [], new DefaultNodeLabelGeneratorFactory());
+        $nodeType->getPropertyType('nonExistent');
+        self::assertSame('string', $nodeType->getPropertyType('nonExistent'));
+    }
+
+    /**
+     * @test
+     */
+    public function getPropertyTypeFallback()
+    {
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
+            'properties' => [
+                'someProperty' => []
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        self::assertSame('string', $nodeType->getPropertyType('someProperty'));
+    }
+
+    /**
+     * @test
+     */
+    public function getDefaultValuesForPropertiesIgnoresNullAndUnset()
+    {
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
+            'properties' => [
+                'someProperty' => [
+                    'type' => 'string',
+                    'defaultValue' => 'lol'
+                ],
+                'otherProperty' => [
+                    'type' => 'string',
+                    'defaultValue' => null
+                ],
+                'thirdProperty' => [
+                    'type' => 'string'
+                ]
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        self::assertSame(['someProperty' => 'lol'], $nodeType->getDefaultValuesForProperties());
+    }
+
+    /**
+     * @test
+     */
+    public function referencesDeclaration()
+    {
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
+            'references' => [
+                'someReferences' => []
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        self::assertFalse($nodeType->hasProperty('someReferences'));
+        self::assertTrue($nodeType->hasReference('someReferences'));
+        self::assertThrows(fn() => $nodeType->getPropertyType('someReferences'), \InvalidArgumentException::class);
+        self::assertEmpty($nodeType->getProperties());
+        self::assertEmpty($nodeType->getDefaultValuesForProperties());
+        self::assertNull($nodeType->getConfiguration('properties.someReferences'));
+        self::assertNotNull($nodeType->getConfiguration('references.someReferences'));
+        self::assertSame(
+            [
+                'someReferences' => []
+            ],
+            $nodeType->getReferences()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function legacyPropertyReferenceDeclaration()
+    {
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
+            'properties' => [
+                'referenceProperty' => [
+                    'type' => 'reference',
+                ]
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        // will be available as _real_ reference
+        self::assertFalse($nodeType->hasProperty('referenceProperty'));
+        self::assertTrue($nodeType->hasReference('referenceProperty'));
+        self::assertThrows(fn() => $nodeType->getPropertyType('referenceProperty'), \InvalidArgumentException::class);
+        self::assertEmpty($nodeType->getProperties());
+        self::assertEmpty($nodeType->getDefaultValuesForProperties());
+        self::assertNull($nodeType->getConfiguration('properties.referenceProperty'));
+        self::assertNotNull($nodeType->getConfiguration('references.referenceProperty'));
+        self::assertSame(
+            [
+                'referenceProperty' => [
+                    'constraints' => [
+                        'maxItems' => 1
+                    ],
+                    '__legacyPropertyType' => 'reference'
+                ]
+            ],
+            $nodeType->getReferences()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function legacyPropertyReferencesDeclaration()
+    {
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
+            'properties' => [
+                'referencesProperty' => [
+                    'type' => 'references',
+                ]
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        // will be available as _real_ reference
+        self::assertFalse($nodeType->hasProperty('referencesProperty'));
+        self::assertTrue($nodeType->hasReference('referencesProperty'));
+        self::assertThrows(fn() => $nodeType->getPropertyType('referencesProperty'), \InvalidArgumentException::class);
+        self::assertEmpty($nodeType->getProperties());
+        self::assertEmpty($nodeType->getDefaultValuesForProperties());
+        self::assertNull($nodeType->getConfiguration('properties.referencesProperty'));
+        self::assertNotNull($nodeType->getConfiguration('references.referencesProperty'));
+        self::assertSame(
+            [
+                'referencesProperty' => []
+            ],
+            $nodeType->getReferences()
+        );
+    }
+
+    /**
      * Return a nodetype built from the nodeTypesFixture
      */
     protected function getNodeType(string $nodeTypeName): ?NodeType
@@ -436,5 +600,16 @@ class NodeTypeTest extends TestCase
             $configuration,
             new DefaultNodeLabelGeneratorFactory()
         );
+    }
+
+    private static function assertThrows(callable $fn, string $exceptionClassName): void
+    {
+        try {
+            $fn();
+        } catch (\Throwable $e) {
+            self::assertInstanceOf($exceptionClassName, $e);
+            return;
+        }
+        self::fail('$fn should throw.');
     }
 }
