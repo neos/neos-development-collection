@@ -12,7 +12,6 @@ use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursi
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
-use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\EventStoreInterface;
@@ -29,7 +28,8 @@ use Neos\EventStore\Model\EventStream\VirtualStreamName;
  */
 final class EventMigrationService implements ContentRepositoryServiceInterface
 {
-    private bool $eventsTableWasUpdated = false;
+    /** @var array<int, true> */
+    private array $eventsModified = [];
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
@@ -67,6 +67,8 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
      * ->
      *     "propertyValues":{}
      *
+     * Also the basically impossible state of "initialPropertyValues":{"tagName":null} and "propertyValues":{"tagName":null} will be migrated.
+     *
      * Needed for #4322: https://github.com/neos/neos-development-collection/pull/4322
      *
      * Included in February 2023 - before final Neos 9.0 release
@@ -76,7 +78,8 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
      */
     public function migratePropertiesToUnset(\Closure $outputFn)
     {
-        $this->eventsTableWasUpdated = false;
+        $this->eventsModified = [];
+        $warnings = 0;
 
         $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId)
             . '_bak_' . date('Y_m_d_H_i_s');
@@ -87,7 +90,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $streamName = VirtualStreamName::all();
         $eventStream = $this->eventStore->load($streamName);
         foreach ($eventStream as $eventEnvelope) {
-            $outputRewriteNotice = fn(string $message) => $outputFn(sprintf('%s@%s %s', $eventEnvelope->event->type->value, $eventEnvelope->sequenceNumber->value, $message));
+            $outputRewriteNotice = fn(string $message) => $outputFn(sprintf('%s@%s %s', $eventEnvelope->sequenceNumber->value, $eventEnvelope->event->type->value, $message));
 
             // migrate payload
             if ($eventEnvelope->event->type->value === 'NodePropertiesWereSet') {
@@ -107,7 +110,10 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 }
                 $eventData['propertiesToUnset'] = $unsetProperties;
 
-                $outputRewriteNotice(sprintf('Migrated %d $unsetProperties', count($unsetProperties)));
+                if (count($unsetProperties)) {
+                    // in case we just set `propertiesToUnset` to an empty array we dont display output.
+                    $outputRewriteNotice(sprintf('Payload: Migrated %d $unsetProperties', count($unsetProperties)));
+                }
                 $this->updateEventPayload($eventEnvelope->sequenceNumber, $eventData);
 
                 // optionally also migrate metadata
@@ -118,6 +124,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 }
 
                 if ($eventMetaData['commandClass'] !== SetSerializedNodeProperties::class) {
+                    $warnings++;
                     $outputFn(sprintf('WARNING: Cannot migrate event metadata of %s as commandClass %s was not expected.', $eventEnvelope->event->type->value, $eventMetaData['commandClass']));
                     continue;
                 }
@@ -132,7 +139,10 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 }
                 $eventMetaData['commandPayload']['propertiesToUnset'] = $unsetProperties;
 
-                $outputRewriteNotice(sprintf('Metadata: Migrated %d $unsetProperties', count($unsetProperties)));
+                if (count($unsetProperties)) {
+                    // in case we just set `propertiesToUnset` to an empty array we dont display output.
+                    $outputRewriteNotice(sprintf('Metadata: Migrated %d $unsetProperties', count($unsetProperties)));
+                }
                 $this->updateEventMetaData($eventEnvelope->sequenceNumber, $eventMetaData);
                 continue;
             }
@@ -148,7 +158,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                     }
                 }
                 if ($propertiesWithNullValues) {
-                    $outputRewriteNotice(sprintf('Removed %d $initialPropertyValues', $propertiesWithNullValues));
+                    $outputRewriteNotice(sprintf('Payload: Removed %d $initialPropertyValues', $propertiesWithNullValues));
                     $this->updateEventPayload($eventEnvelope->sequenceNumber, $eventData);
                 }
 
@@ -194,21 +204,26 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                         $this->updateEventMetaData($eventEnvelope->sequenceNumber, $eventMetaData);
                     }
                 } else {
+                    $warnings++;
                     $outputFn(sprintf('WARNING: Cannot migrate event metadata of %s as commandClass %s was not expected.', $eventEnvelope->event->type->value, $eventMetaData['commandClass']));
                 }
             }
         }
 
-        if (!$this->eventsTableWasUpdated) {
-            $outputFn('Migration was not necessary. All done.');
+        if (!count($this->eventsModified)) {
+            $outputFn('Migration was not necessary.');
             return;
         }
 
-        $outputFn('Rewriting completed. Replaying ContentGraph Projection.');
+        $outputFn();
+        $outputFn(sprintf('Migration applied to %s events.', count($this->eventsModified)));
+        $outputFn('Replaying ContentGraph Projection.');
         $this->contentRepository->resetProjectionState(ContentGraphProjection::class);
         $this->contentRepository->catchUpProjection(ContentGraphProjection::class, CatchUpOptions::create());
-
-        $outputFn('All done.');
+        $outputFn('Finished.');
+        if ($warnings) {
+            $outputFn(sprintf('WARNING: %d warnings emitted.', $warnings));
+        }
     }
 
     /**
@@ -226,7 +241,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
             ]
         );
         $this->connection->commit();
-        $this->eventsTableWasUpdated = true;
+        $this->eventsModified[$sequenceNumber->value] = true;
     }
 
     /**
@@ -244,7 +259,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
             ]
         );
         $this->connection->commit();
-        $this->eventsTableWasUpdated = true;
+        $this->eventsModified[$sequenceNumber->value] = true;
     }
 
     private function copyEventTable(string $backupEventTableName): void
