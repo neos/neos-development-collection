@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2024-02-11
+This reference was automatically generated from code on 2024-02-15
 
 
 .. _`Eel Helpers Reference: Api`:
