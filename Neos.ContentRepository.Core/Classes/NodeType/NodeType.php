@@ -156,28 +156,39 @@ class NodeType
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
 
-        // migrate old property like references to references
         $referencesConfiguration = $this->fullConfiguration['references'] ?? [];
         foreach ($this->fullConfiguration['properties'] ?? [] as $propertyName => $propertyConfiguration) {
+            // assert that references and properties never declare a thing with the same name
             if (isset($this->fullConfiguration['references'][$propertyName])) {
                 throw new NodeConfigurationException(sprintf('NodeType %s cannot declare "%s" as property and reference.', $this->name->value, $propertyName), 1708022344);
             }
-            $propertyType = $propertyConfiguration['type'] ?? 'string';
-            switch ($propertyType) {
-                case 'reference':
-                    unset($propertyConfiguration['type']);
-                    $propertyConfiguration['constraints']['maxItems'] = 1;
-                    // @deprecated remove with 10
-                    // used to ensure that the FlowQuery property operation will return the node directly but not an array of nodes
-                    $propertyConfiguration['__legacyPropertyType'] = 'reference';
-                    $referencesConfiguration[$propertyName] = $propertyConfiguration;
-                    unset($this->fullConfiguration['properties'][$propertyName]);
-                    break;
-                case 'references':
-                    unset($propertyConfiguration['type']);
-                    $referencesConfiguration[$propertyName] = $propertyConfiguration;
-                    unset($this->fullConfiguration['properties'][$propertyName]);
-                    break;
+            // migrate old property like references to references
+            $propertyType = $propertyConfiguration['type'] ?? null;
+            if ($propertyType !== 'reference' && $propertyType !== 'references') {
+                continue;
+            }
+            if (isset($propertyConfiguration['constraints'])) {
+                // we don't allow the new syntax `constraints.maxItems` on legacy property-like reference-declarations
+                throw new NodeConfigurationException(sprintf(
+                    'Legacy property-like reference-declaration for "%s" does not allow new configuration `constraints` in NodeType %s.'
+                    . ' Please use the reference declaration syntax.',
+                    $propertyName,
+                    $this->name->value
+                ), 1708022344);
+            }
+            if ($propertyType === 'reference') {
+                unset($propertyConfiguration['type']);
+                $propertyConfiguration['constraints']['maxItems'] = 1;
+                // @deprecated with Neos 9
+                // used to ensure that the FlowQuery property operation will return the node directly but not an array of nodes
+                $propertyConfiguration['__legacyPropertyType'] = 'reference';
+                $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                unset($this->fullConfiguration['properties'][$propertyName]);
+            }
+            if ($propertyType === 'references') {
+                unset($propertyConfiguration['type']);
+                $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                unset($this->fullConfiguration['properties'][$propertyName]);
             }
         }
         $this->fullConfiguration['references'] = $referencesConfiguration;

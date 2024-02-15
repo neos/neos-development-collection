@@ -577,6 +577,26 @@ class NodeTypeTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function legacyPropertyReferencesDeclarationShouldNotUseNewFeatures()
+    {
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
+            'properties' => [
+                'referencesProperty' => [
+                    'type' => 'references',
+                    'constraints' => [
+                        'maxItems' => 1
+                    ],
+                ]
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        $this->expectException(NodeConfigurationException::class);
+        $this->expectExceptionCode(1708022344);
+        $nodeType->getReferences();
+    }
+
+    /**
      * Return a nodetype built from the nodeTypesFixture
      */
     protected function getNodeType(string $nodeTypeName): ?NodeType
