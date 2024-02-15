@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
@@ -45,7 +46,9 @@ use Psr\Log\LoggerInterface;
  * The target node can be provided as string or as a Node object; if not specified
  * at all, the generated URI will refer to the current document node inside the Fusion context.
  *
- * When specifying the ``node`` argument as string, the following conventions apply:
+ * When specifying the `node` argument as string, the following conventions apply:
+ *
+ *
  *
  * *``node`` starts with ``/``:*
  * The given path is an absolute node path and is treated as such.
@@ -55,8 +58,6 @@ use Psr\Log\LoggerInterface;
  * The given path is treated as a path relative to the current node.
  * Examples: given that the current node is ``/sites/acmecom/products/``,
  * ``stapler`` results in ``/sites/acmecom/products/stapler``,
- * ``../about`` results in ``/sites/acmecom/about/``,
- * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
  *
  * *``node`` starts with a tilde character (``~``):*
  * The given path is treated as a path relative to the current site node.
@@ -70,6 +71,7 @@ class LinkingService
 {
     /**
      * Pattern to match supported URIs.
+     * Todo doestn work with other node ids ....
      *
      * @var string
      */
@@ -246,8 +248,8 @@ class LinkingService
      * Renders the URI to a given node instance or -path.
      *
      * @param ControllerContext $controllerContext
-     * @param mixed $node A node object or a string node path,
-     *                    if a relative path is provided the baseNode argument is required
+     * @param Node|AbsoluteNodePath|string $node A node object or a string node path,
+     *                                           if a relative path is provided the baseNode argument is required
      * @param Node $baseNode
      * @param string $format Format to use for the URL, for example "html" or "json"
      * @param boolean $absolute If set, an absolute URI is rendered
@@ -267,7 +269,7 @@ class LinkingService
      */
     public function createNodeUri(
         ControllerContext $controllerContext,
-        $node = null,
+        Node|string|AbsoluteNodePath $node = null,
         Node $baseNode = null,
         $format = null,
         $absolute = false,
@@ -350,6 +352,7 @@ class LinkingService
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
+        // hiddne good one .
         $action = $workspace && $workspace->isPublicWorkspace() && !$hiddenState->isHidden ? 'show' : 'preview';
 
         return $uriBuilder

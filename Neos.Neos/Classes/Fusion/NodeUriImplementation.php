@@ -18,11 +18,18 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Fusion\Exception;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Neos\Exception as NeosException;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\Service\LinkingService;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -41,6 +48,12 @@ class NodeUriImplementation extends AbstractFusionObject
      * @var LoggerInterface
      */
     protected $systemLogger;
+
+    /**
+     * @Flow\Inject
+     * @var LinkingService
+     */
+    protected $linkingService;
 
     /**
      * A node object or a string node path or NULL to resolve the current document node
@@ -120,13 +133,8 @@ class NodeUriImplementation extends AbstractFusionObject
         return $this->fusionValue('baseNodeName');
     }
 
-    /**
-     * Render the Uri.
-     *
-     * @return string The rendered URI or NULL if no URI could be resolved for the given node
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
-     */
-    public function evaluate()
+
+    public function evaluate2()
     {
         $baseNode = null;
         $baseNodeName = $this->getBaseNodeName() ?: 'documentNode';
@@ -174,5 +182,55 @@ class NodeUriImplementation extends AbstractFusionObject
             $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri. Arguments: %s', $node->nodeAggregateId->value, json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
         }
         return '';
+    }
+
+    /**
+     * Render the Uri.
+     *
+     * @return string The rendered URI or NULL if no URI could be resolved for the given node
+     */
+    public function evaluate()
+    {
+        $baseNode = null;
+        $baseNodeName = $this->getBaseNodeName() ?: 'documentNode';
+        $currentContext = $this->runtime->getCurrentContext();
+        if (isset($currentContext[$baseNodeName])) {
+            $baseNode = $currentContext[$baseNodeName];
+        } else {
+            throw new NeosException(sprintf('Could not find a node instance in Fusion context with name "%s" and no node instance was given to the node argument. Set a node instance in the Fusion context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+        }
+
+        $actionRequest = $this->getRuntime()->fusionGlobals->get('request');
+        if (!$actionRequest instanceof ActionRequest) {
+            throw new \Neos\Flow\Exception('The request is expected to be an ActionRequest.', 1707728033);
+        }
+
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($actionRequest);
+
+        $fakeControllerContext = new ControllerContext(
+            $actionRequest,
+            new ActionResponse(),
+            new Arguments(),
+            $uriBuilder
+        );
+
+        $node = $this->getNode();
+        try {
+            return $this->linkingService->createNodeUri(
+                $fakeControllerContext,
+                $node,
+                $baseNode,
+                $this->getFormat(),
+                $this->isAbsolute(),
+                $this->getAdditionalParams(),
+                $this->getSection(),
+                $this->getAddQueryString(),
+                $this->getArgumentsToBeExcludedFromQueryString()
+            );
+        } catch (NoMatchingRouteException) {
+            $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri. Arguments: %s', $node instanceof Node ? $node->nodeAggregateId->value : $node, json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
+            return '';
+        }
     }
 }
