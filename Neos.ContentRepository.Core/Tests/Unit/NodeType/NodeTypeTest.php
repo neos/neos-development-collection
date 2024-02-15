@@ -15,7 +15,7 @@ namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -139,6 +139,7 @@ class NodeTypeTest extends TestCase
     public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypesAsKeys()
     {
         $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1291300950);
         new NodeType(NodeTypeName::fromString('ContentRepository:Folder'), ['foo' => true], [], new DefaultNodeLabelGeneratorFactory()
         );
     }
@@ -149,7 +150,52 @@ class NodeTypeTest extends TestCase
     public function setDeclaredSuperTypesAcceptsAnArrayOfNodeTypes()
     {
         $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1291300950);
         new NodeType(NodeTypeName::fromString('ContentRepository:Folder'), ['foo'], [], new DefaultNodeLabelGeneratorFactory());
+    }
+
+    /**
+     * @test
+     */
+    public function aNodeTypeMustHaveDistinctNamesForPropertiesReferences()
+    {
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Invalid'), [], [
+            'properties' => [
+                'foo' => [
+                    'type' => 'string',
+                ]
+            ],
+            'references' => [
+                'foo' => []
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        $this->expectException(NodeConfigurationException::class);
+        $this->expectExceptionCode(1708022344);
+        // initialize the node type
+        $nodeType->getFullConfiguration();
+    }
+
+    /**
+     * @test
+     */
+    public function aNodeTypeMustHaveDistinctNamesForPropertiesReferencesInInheritance()
+    {
+        $superNodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Super'), [], [
+            'properties' => [
+                'foo' => [
+                    'type' => 'string',
+                ]
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Invalid'), ['ContentRepository:Super' => $superNodeType], [
+            'references' => [
+                'foo' => []
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        $this->expectException(NodeConfigurationException::class);
+        $this->expectExceptionCode(1708022344);
+        // initialize the node type
+        $nodeType->getFullConfiguration();
     }
 
     /**
@@ -377,6 +423,7 @@ class NodeTypeTest extends TestCase
 
         $configuration = $this->nodeTypesFixture[$nodeTypeName];
         $declaredSuperTypes = [];
+        // duplicated from the node type manager
         if (isset($configuration['superTypes']) && is_array($configuration['superTypes'])) {
             foreach ($configuration['superTypes'] as $superTypeName => $enabled) {
                 $declaredSuperTypes[$superTypeName] = $enabled === true ? $this->getNodeType($superTypeName) : null;

@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Core\NodeType;
  */
 
 use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
@@ -77,7 +78,7 @@ class NodeType
 
     /**
      * @param NodeTypeName $name Name of the node type
-     * @param array<string,mixed> $declaredSuperTypes Parent types of this node type
+     * @param array<string,NodeType|null> $declaredSuperTypes Parent types instances of this node type, if null it should be unset
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
      *
@@ -158,6 +159,9 @@ class NodeType
         // migrate old property like references to references
         $referencesConfiguration = $this->fullConfiguration['references'] ?? [];
         foreach ($this->fullConfiguration['properties'] ?? [] as $propertyName => $propertyConfiguration) {
+            if (isset($this->fullConfiguration['references'][$propertyName])) {
+                throw new NodeConfigurationException(sprintf('NodeType %s cannot declare "%s" as property and reference.', $this->name->value, $propertyName), 1708022344);
+            }
             $propertyType = $propertyConfiguration['type'] ?? 'string';
             switch ($propertyType) {
                 case 'reference':
