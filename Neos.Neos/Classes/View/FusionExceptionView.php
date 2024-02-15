@@ -163,8 +163,7 @@ class FusionExceptionView extends AbstractView
             [
                 'node' => $currentSiteNode,
                 'documentNode' => $currentSiteNode,
-                'site' => $currentSiteNode,
-                'editPreviewMode' => null
+                'site' => $currentSiteNode
             ]
         ));
 

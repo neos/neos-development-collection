@@ -77,8 +77,7 @@ class FusionView extends AbstractView
         $fusionRuntime->pushContextArray([
             'node' => $currentNode,
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
-            'site' => $currentSiteNode,
-            'editPreviewMode' => $this->variables['editPreviewMode'] ?? null
+            'site' => $currentSiteNode
         ]);
         try {
             $output = $fusionRuntime->render($this->fusionPath);
