@@ -31,7 +31,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocess
  *
  * @api Note: The constructor is not part of the public API
  */
-class NodeType
+final class NodeType
 {
     /**
      * Name of this node type. Example: "ContentRepository:Folder"
