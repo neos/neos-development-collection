@@ -167,11 +167,11 @@ class NodeType
             if ($propertyType !== 'reference' && $propertyType !== 'references') {
                 continue;
             }
-            if (isset($propertyConfiguration['constraints'])) {
+            if (isset($propertyConfiguration['constraints']) || isset($propertyConfiguration['properties'])) {
                 // we don't allow the new syntax `constraints.maxItems` on legacy property-like reference-declarations
                 throw new NodeConfigurationException(sprintf(
-                    'Legacy property-like reference-declaration for "%s" does not allow new configuration `constraints` in NodeType %s.'
-                    . ' Please use the reference declaration syntax.',
+                    'Legacy property-like reference-declaration for "%s" does not allow new configuration `constraints` or `properties` in NodeType %s.'
+                    . ' Please use the reference declaration syntax instead.',
                     $propertyName,
                     $this->name->value
                 ), 1708022344);

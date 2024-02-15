@@ -12,10 +12,6 @@ Feature: Constraint checks on SetNodeReferences
     'Neos.ContentRepository.Testing:ReferencedNode': []
 
     'Neos.ContentRepository.Testing:NodeWithReferences':
-      references:
-        constrainedReferenceCount:
-          constraints:
-            maxItems: 1
       # legacy notation
       properties:
         referenceProperty:
@@ -24,13 +20,16 @@ Feature: Constraint checks on SetNodeReferences
           type: references
         nonReferenceProperty:
           type: string
-        constrainedReferenceProperty:
-          type: reference
+      references:
+        constrainedReferenceCount:
           constraints:
+            maxItems: 1
+        constrainedReferenceProperty:
+          constraints:
+            maxItems: 1
             nodeTypes:
               'Neos.ContentRepository.Testing:ReferencedNode': false
         referencePropertyWithProperties:
-          type: reference
           properties:
             text:
               type: string

@@ -579,7 +579,7 @@ class NodeTypeTest extends TestCase
     /**
      * @test
      */
-    public function legacyPropertyReferencesDeclarationShouldNotUseNewFeatures()
+    public function legacyPropertyReferencesDeclarationMustNotUseConstraintFeatures()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
             'properties' => [
@@ -587,6 +587,28 @@ class NodeTypeTest extends TestCase
                     'type' => 'references',
                     'constraints' => [
                         'maxItems' => 1
+                    ],
+                ]
+            ]
+        ], new DefaultNodeLabelGeneratorFactory());
+        $this->expectException(NodeConfigurationException::class);
+        $this->expectExceptionCode(1708022344);
+        $nodeType->getReferences();
+    }
+
+    /**
+     * @test
+     */
+    public function legacyPropertyReferencesDeclarationMustNotUsePropertiesFeatures()
+    {
+        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
+            'properties' => [
+                'referencesProperty' => [
+                    'type' => 'references',
+                    'properties' => [
+                        'text' => [
+                            'type' => 'string'
+                        ]
                     ],
                 ]
             ]
