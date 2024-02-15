@@ -14,11 +14,9 @@ namespace Neos\Fusion\Core\Cache;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\Frontend\StringFrontend;
-use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Fusion\Exception;
-use Doctrine\Persistence\Proxy;
 use Neos\Fusion\Exception\CacheException;
 
 /**
@@ -71,12 +69,6 @@ class ContentCache
      * @Flow\Inject
      */
     protected $cache;
-
-    /**
-     * @var PropertyMapper
-     * @Flow\Inject
-     */
-    protected $propertyMapper;
 
     /**
      * @var Context
@@ -134,12 +126,11 @@ class ContentCache
      *
      * @param string $content The content rendered by the Fusion Runtime
      * @param string $fusionPath The Fusion path that rendered the content, for example "page<Acme.Com:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
-     * @param array $contextVariables Fusion context variables which are needed to correctly render the specified Fusion object
+     * @param array<string, array{type: string, value: mixed}> $serializedContext Serialized Fusion context variables which are needed to correctly render the specified Fusion object
      * @return string The original content, but with additional markers added
      */
-    public function createUncachedSegment($content, $fusionPath, array $contextVariables)
+    public function createUncachedSegment($content, $fusionPath, array $serializedContext)
     {
-        $serializedContext = $this->serializeContext($contextVariables);
         return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . 'eval=' . $fusionPath . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . json_encode(['context' => $serializedContext]) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
     }
 
@@ -151,14 +142,14 @@ class ContentCache
      *
      * @param string $content The content rendered by the Fusion Runtime
      * @param string $fusionPath The Fusion path that rendered the content, for example "page<Acme.Com:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
-     * @param array $contextVariables Fusion context variables which are needed to correctly render the specified Fusion object
+     * @param array<string, array{type: string, value: mixed}> $serializedContext Serialized Fusion context variables which are needed to correctly render the specified Fusion object
      * @param array $cacheIdentifierValues
      * @param array $tags Tags to add to the cache entry
      * @param integer $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.
      * @param string $cacheDiscriminator The evaluated cache discriminator value
      * @return string The original content, but with additional markers added
      */
-    public function createDynamicCachedSegment($content, $fusionPath, array $contextVariables, array $cacheIdentifierValues, array $tags, $lifetime, $cacheDiscriminator)
+    public function createDynamicCachedSegment($content, $fusionPath, array $serializedContext, array $cacheIdentifierValues, array $tags, $lifetime, $cacheDiscriminator)
     {
         $metadata = implode(',', $tags);
         if ($lifetime !== null) {
@@ -169,7 +160,7 @@ class ContentCache
         $segmentData = [
             'path' => $fusionPath,
             'metadata' => $metadata,
-            'context' => $this->serializeContext($contextVariables),
+            'context' => $serializedContext,
         ];
 
         return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . 'evalCached=' . $identifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . json_encode($segmentData) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
@@ -329,48 +320,6 @@ class ContentCache
             return $uncachedCommandCallback($command, $additionalData, $cache);
         }, $content, -1, $count);
         return $count;
-    }
-
-    /**
-     * Generates an array of strings from the given array of context variables
-     *
-     * @param array $contextVariables
-     * @return array
-     * @throws \InvalidArgumentException
-     */
-    protected function serializeContext(array $contextVariables)
-    {
-        $serializedContextArray = [];
-        foreach ($contextVariables as $variableName => $contextValue) {
-            // TODO This relies on a converter being available from the context value type to string
-            if ($contextValue !== null) {
-                $serializedContextArray[$variableName]['type'] = $this->getTypeForContextValue($contextValue);
-                $serializedContextArray[$variableName]['value'] = $this->propertyMapper->convert($contextValue, 'string');
-            }
-        }
-
-        return $serializedContextArray;
-    }
-
-    /**
-     * TODO: Adapt to Flow change https://review.typo3.org/#/c/33138/
-     *
-     * @param mixed $contextValue
-     * @return string
-     */
-    protected function getTypeForContextValue($contextValue)
-    {
-        if (is_object($contextValue)) {
-            if ($contextValue instanceof Proxy) {
-                /** @var string $type */
-                $type = get_parent_class($contextValue);
-            } else {
-                $type = get_class($contextValue);
-            }
-        } else {
-            $type = gettype($contextValue);
-        }
-        return $type;
     }
 
     /**

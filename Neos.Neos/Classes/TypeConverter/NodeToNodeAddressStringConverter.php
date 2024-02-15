@@ -20,17 +20,16 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
- * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
- * and deserialize the context.
- * {@see ContentCache::serializeContext()}
+ * To be removed legacy fragment for property mapping nodes in controllers.
+ * MUST not be used and MUST be removed before Neos 9 release.
+ * See issue: https://github.com/neos/neos-development-collection/issues/4873
  *
  * @Flow\Scope("singleton")
- * @deprecated
+ * @deprecated must be removed before Neos 9 release!!!
  */
-class NodeConverter extends AbstractTypeConverter
+class NodeToNodeAddressStringConverter extends AbstractTypeConverter
 {
     /**
      * @Flow\Inject

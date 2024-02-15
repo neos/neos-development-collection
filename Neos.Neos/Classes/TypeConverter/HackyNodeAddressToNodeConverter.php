@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Fusion;
+namespace Neos\Neos\TypeConverter;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -27,13 +27,14 @@ use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
- * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
- * and deserialize the context.
+ * To be removed legacy fragment for property mapping nodes in controllers.
+ * MUST not be used and MUST be removed before Neos 9 release.
+ * See issue: https://github.com/neos/neos-development-collection/issues/4873
  *
  * @Flow\Scope("singleton")
- * @deprecated
+ * @deprecated must be removed before Neos 9 release!!!
  */
-class NewNodeConverter extends AbstractTypeConverter
+class HackyNodeAddressToNodeConverter extends AbstractTypeConverter
 {
     /**
      * @var array<int,string>
