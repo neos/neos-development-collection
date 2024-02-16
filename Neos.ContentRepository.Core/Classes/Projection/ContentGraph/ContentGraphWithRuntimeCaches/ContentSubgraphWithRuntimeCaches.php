@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
@@ -29,6 +30,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -49,6 +51,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 
     public function __construct(
         private readonly ContentSubgraphInterface $wrappedContentSubgraph,
+        private readonly NodeTypeManager $nodeTypeManager
     ) {
         $this->inMemoryCache = new InMemoryCache();
     }
@@ -60,36 +63,27 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
     {
-        if (!self::isFilterEmpty($filter)) {
+        if (!$filter->propertyValue) {
             return $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter);
         }
-        $childNodesCache = $this->inMemoryCache->getAllChildNodesByNodeIdCache();
-        $namedChildNodeCache = $this->inMemoryCache->getNamedChildNodeByNodeIdCache();
-        $parentNodeIdCache = $this->inMemoryCache->getParentNodeIdByChildNodeIdCache();
-        $nodeByIdCache = $this->inMemoryCache->getNodeByNodeAggregateIdCache();
-        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypes)) {
-            return $childNodesCache->findChildNodes($parentNodeAggregateId, $filter->nodeTypes);
+        $unfiltered = $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter->without(propertyValue: true));
+        $filtered = [];
+        foreach ($unfiltered as $node) {
+            if (!Filter\PropertyValue\PropertyValueCriteriaMatcher::matchesNode($node, $filter->propertyValue)) {
+                continue;
+            }
+            $filtered[] = $node;
         }
-        $childNodes = $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter);
-        foreach ($childNodes as $node) {
-            $namedChildNodeCache->add($parentNodeAggregateId, $node->nodeName, $node);
-            $parentNodeIdCache->add($node->nodeAggregateId, $parentNodeAggregateId);
-            $nodeByIdCache->add($node->nodeAggregateId, $node);
-        }
-        $childNodesCache->add($parentNodeAggregateId, $filter->nodeTypes, $childNodes);
-        return $childNodes;
+        return Nodes::fromArray($filtered);
     }
 
     public function countChildNodes(NodeAggregateId $parentNodeAggregateId, CountChildNodesFilter $filter): int
     {
-        if (!self::isFilterEmpty($filter)) {
-            return $this->wrappedContentSubgraph->countChildNodes($parentNodeAggregateId, $filter);
-        }
-        $childNodesCache = $this->inMemoryCache->getAllChildNodesByNodeIdCache();
-        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypes)) {
-            return $childNodesCache->countChildNodes($parentNodeAggregateId, $filter->nodeTypes);
-        }
-        return $this->wrappedContentSubgraph->countChildNodes($parentNodeAggregateId, $filter);
+        return $this->findChildNodes($parentNodeAggregateId, FindChildNodesFilter::create(
+            nodeTypes: $filter->nodeTypes,
+            searchTerm: $filter->searchTerm,
+            propertyValue: $filter->propertyValue
+        ))->count();
     }
 
     public function findReferences(NodeAggregateId $nodeAggregateId, FindReferencesFilter $filter): References
@@ -165,26 +159,46 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 
     public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node
     {
-        // TODO: implement runtime caches
+        // TODO implement runtime caches
         return $this->wrappedContentSubgraph->findNodeByPath($path, $startingNodeAggregateId);
     }
 
     public function findNodeByAbsolutePath(AbsoluteNodePath $path): ?Node
     {
-        // TODO: implement runtime caches
+        // TODO implement runtime caches
         return $this->wrappedContentSubgraph->findNodeByAbsolutePath($path);
     }
 
     public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindSucceedingSiblingNodesFilter $filter): Nodes
     {
-        // TODO implement runtime caches
-        return $this->wrappedContentSubgraph->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter);
+        if (!$filter->propertyValue) {
+            return $this->wrappedContentSubgraph->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter);
+        }
+        $unfiltered = $this->wrappedContentSubgraph->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter->without(propertyValue: true));
+        $filtered = [];
+        foreach ($unfiltered as $node) {
+            if (!Filter\PropertyValue\PropertyValueCriteriaMatcher::matchesNode($node, $filter->propertyValue)) {
+                continue;
+            }
+            $filtered[] = $node;
+        }
+        return Nodes::fromArray($filtered);
     }
 
     public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter $filter): Nodes
     {
-        // TODO implement runtime caches
-        return $this->wrappedContentSubgraph->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter);
+        if (!$filter->propertyValue) {
+            return $this->wrappedContentSubgraph->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter);
+        }
+        $unfiltered = $this->wrappedContentSubgraph->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter->without(propertyValue: true));
+        $filtered = [];
+        foreach ($unfiltered as $node) {
+            if (!Filter\PropertyValue\PropertyValueCriteriaMatcher::matchesNode($node, $filter->propertyValue)) {
+                continue;
+            }
+            $filtered[] = $node;
+        }
+        return Nodes::fromArray($filtered);
     }
 
     public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath
@@ -208,32 +222,64 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 
     public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\FindAncestorNodesFilter $filter): Nodes
     {
-        // TODO: implement runtime caches
-        return $this->wrappedContentSubgraph->findAncestorNodes($entryNodeAggregateId, $filter);
+        if (!$filter->nodeTypes) {
+            return $this->wrappedContentSubgraph->findAncestorNodes($entryNodeAggregateId, $filter);
+        }
+        $unfiltered = $this->wrappedContentSubgraph->findAncestorNodes($entryNodeAggregateId, Filter\FindAncestorNodesFilter::create());
+        $filtered = [];
+        foreach ($unfiltered as $node) {
+            if (!Filter\NodeType\ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager)->matches($node->nodeTypeName)) {
+                continue;
+            }
+            $filtered[] = $node;
+        }
+        return Nodes::fromArray($filtered);
     }
 
     public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountAncestorNodesFilter $filter): int
     {
-        // TODO: Implement countAncestorNodes() method.
-        return $this->wrappedContentSubgraph->countAncestorNodes($entryNodeAggregateId, $filter);
+        return $this->findAncestorNodes($entryNodeAggregateId, Filter\FindAncestorNodesFilter::create(
+            nodeTypes: $filter->nodeTypes
+        ))->count();
     }
 
     public function findClosestNode(NodeAggregateId $entryNodeAggregateId, Filter\FindClosestNodeFilter $filter): ?Node
     {
-        // TODO: Implement findClosestNode() method.
-        return $this->wrappedContentSubgraph->findClosestNode($entryNodeAggregateId, $filter);
+        $node = $this->findNodeById($entryNodeAggregateId);
+        if (!$node) {
+            return null;
+        }
+        if (ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager)->matches($node->nodeTypeName)) {
+            return $node;
+        }
+        return $this->findAncestorNodes($entryNodeAggregateId, Filter\FindAncestorNodesFilter::create(
+            nodeTypes: $filter->nodeTypes
+        ))->first();
     }
 
     public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes
     {
-        // TODO: implement runtime caches
-        return $this->wrappedContentSubgraph->findDescendantNodes($entryNodeAggregateId, $filter);
+        if (!$filter->propertyValue) {
+            return $this->wrappedContentSubgraph->findDescendantNodes($entryNodeAggregateId, $filter);
+        }
+        $unfiltered = $this->wrappedContentSubgraph->findDescendantNodes($entryNodeAggregateId, $filter->without(propertyValue: true));
+        $filtered = [];
+        foreach ($unfiltered as $node) {
+            if (!Filter\PropertyValue\PropertyValueCriteriaMatcher::matchesNode($node, $filter->propertyValue)) {
+                continue;
+            }
+            $filtered[] = $node;
+        }
+        return Nodes::fromArray($filtered);
     }
 
     public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int
     {
-        // TODO: implement runtime caches
-        return $this->wrappedContentSubgraph->countDescendantNodes($entryNodeAggregateId, $filter);
+        return $this->findDescendantNodes($entryNodeAggregateId, FindDescendantNodesFilter::create(
+            nodeTypes: $filter->nodeTypes,
+            searchTerm: $filter->searchTerm,
+            propertyValue: $filter->propertyValue
+        ))->count();
     }
 
     public function countNodes(): int
@@ -242,6 +288,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $this->wrappedContentSubgraph->countNodes();
     }
 
+    /** @phpstan-ignore-next-line */
     private static function isFilterEmpty(object $filter): bool
     {
         return array_filter(get_object_vars($filter), static fn ($value) => $value !== null) === [];

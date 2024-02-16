@@ -92,7 +92,8 @@ final class ContentGraph implements ContentGraphInterface
                     $this->nodeFactory,
                     $this->nodeTypeManager,
                     $this->tableNamePrefix
-                )
+                ),
+                $this->nodeTypeManager
             );
         }
 
