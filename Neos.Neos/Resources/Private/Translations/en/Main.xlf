@@ -454,18 +454,6 @@
 			<trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
 			</trans-unit>
-			<trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
-				<source>Select a Plugin</source>
-			</trans-unit>
-			<trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
-				<source>No plugin configured</source>
-			</trans-unit>
-			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
-				<source>view is displayed on page</source>
-			</trans-unit>
-			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
-				<source>view is displayed on current page</source>
-			</trans-unit>
 			<trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			</trans-unit>
