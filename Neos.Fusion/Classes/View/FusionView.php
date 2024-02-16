@@ -149,11 +149,7 @@ class FusionView extends AbstractView
         $this->initializeFusionRuntime();
 
         if ($this->getOption('renderHttpResponse') === true) {
-            try {
-                return $this->fusionRuntime->renderResponse($this->getFusionPathForCurrentRequest(), $this->variables);
-            } catch (RuntimeException $exception) {
-                throw $exception->getPrevious();
-            }
+            return $this->fusionRuntime->renderResponse($this->getFusionPathForCurrentRequest(), $this->variables);
         } else {
             try {
                 $this->fusionRuntime->pushContextArray($this->variables);

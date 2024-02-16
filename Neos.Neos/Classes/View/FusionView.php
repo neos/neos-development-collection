@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\View;
 
-use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -24,7 +23,6 @@ use Neos\Flow\Security\Context;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
-use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
@@ -76,15 +74,11 @@ class FusionView extends AbstractView
 
         $this->setFallbackRuleFromDimension($currentNode->subgraphIdentity->dimensionSpacePoint);
 
-        try {
-            return $fusionRuntime->renderResponse($this->fusionPath, [
-                'node' => $currentNode,
-                'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
-                'site' => $currentSiteNode
-            ]);
-        } catch (RuntimeException $exception) {
-            throw $exception->getPrevious() ?: $exception;
-        }
+        return $fusionRuntime->renderResponse($this->fusionPath, [
+            'node' => $currentNode,
+            'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
+            'site' => $currentSiteNode
+        ]);
     }
 
     /**
