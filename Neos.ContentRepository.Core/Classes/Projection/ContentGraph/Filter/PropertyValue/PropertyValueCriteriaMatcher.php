@@ -29,12 +29,14 @@ final class PropertyValueCriteriaMatcher
     public static function matchesPropertyCollection(PropertyCollection $propertyCollection, PropertyValueCriteriaInterface $propertyValueCriteria): bool
     {
         return match ($propertyValueCriteria::class) {
-            AndCriteria::class => self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria1) && self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria2),
-            OrCriteria::class => self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria1) || self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria2),
+            AndCriteria::class => self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria1)
+                && self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria2),
+            OrCriteria::class => self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria1)
+                || self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria2),
             NegateCriteria::class => !self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria),
-            PropertyValueContains::class => self::compareStringPropertyValues($propertyCollection, $propertyValueCriteria, static fn (string $propertyValue, string $criteriaPropertyValue) => str_contains($propertyValue, $criteriaPropertyValue)),
-            PropertyValueEndsWith::class => self::compareStringPropertyValues($propertyCollection, $propertyValueCriteria, static fn (string $propertyValue, string $criteriaPropertyValue) => str_ends_with($propertyValue, $criteriaPropertyValue)),
-            PropertyValueStartsWith::class => self::compareStringPropertyValues($propertyCollection, $propertyValueCriteria, static fn (string $propertyValue, string $criteriaPropertyValue) => str_starts_with($propertyValue, $criteriaPropertyValue)),
+            PropertyValueContains::class => self::propertyValueContains($propertyCollection, $propertyValueCriteria),
+            PropertyValueEndsWith::class => self::propertyValueEndsWith($propertyCollection, $propertyValueCriteria),
+            PropertyValueStartsWith::class => self::propertyValueStartsWith($propertyCollection, $propertyValueCriteria),
             PropertyValueEquals::class => self::propertyValueEquals($propertyCollection, $propertyValueCriteria),
             PropertyValueGreaterThan::class => $propertyCollection->serialized()->propertyExists($propertyValueCriteria->propertyName->value)
                 && $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value > $propertyValueCriteria->value,
@@ -48,21 +50,34 @@ final class PropertyValueCriteriaMatcher
         };
     }
 
-    /**
-     * @param \Closure (string, string): bool $comparator
-     */
-    private static function compareStringPropertyValues(PropertyCollection $propertyCollection, PropertyValueContains|PropertyValueEndsWith|PropertyValueStartsWith $propertyValueCriteria, \Closure $comparator): bool
+    private static function propertyValueContains(PropertyCollection $propertyCollection, PropertyValueContains $propertyValueCriteria): bool
     {
         $propertyValue = $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value;
-        if (!is_string($propertyValue)) {
-            return false;
+        if ($propertyValueCriteria->caseSensitive) {
+            return is_string($propertyValue) ? str_contains($propertyValue, $propertyValueCriteria->value) : false;
+        } else {
+            return is_string($propertyValue) ? str_contains(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value)) : false;
         }
-        $criteriaPropertyValue = $propertyValueCriteria->value;
-        if (!$propertyValueCriteria->caseSensitive) {
-            $criteriaPropertyValue = mb_strtolower($propertyValueCriteria->value);
-            $propertyValue = mb_strtolower($propertyValue);
+    }
+
+    private static function propertyValueStartsWith(PropertyCollection $propertyCollection, PropertyValueStartsWith $propertyValueCriteria): bool
+    {
+        $propertyValue = $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value;
+        if ($propertyValueCriteria->caseSensitive) {
+            return is_string($propertyValue) ? str_starts_with($propertyValue, $propertyValueCriteria->value) : false;
+        } else {
+            return is_string($propertyValue) ? str_starts_with(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value)) : false;
         }
-        return $comparator($propertyValue, $criteriaPropertyValue);
+    }
+
+    private static function propertyValueEndsWith(PropertyCollection $propertyCollection, PropertyValueEndsWith $propertyValueCriteria): bool
+    {
+        $propertyValue = $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value;
+        if ($propertyValueCriteria->caseSensitive) {
+            return is_string($propertyValue) ? str_ends_with($propertyValue, $propertyValueCriteria->value) : false;
+        } else {
+            return is_string($propertyValue) ? str_ends_with(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value)) : false;
+        }
     }
 
     private static function propertyValueEquals(PropertyCollection $propertyCollection, PropertyValueEquals $propertyValueCriteria): bool
