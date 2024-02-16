@@ -277,6 +277,9 @@ class Runtime
         return $this->withSimulatedLegacyControllerContext(function () use ($fusionPath) {
             try {
                 $output = $this->render($fusionPath);
+            } catch (RuntimeException $exception) {
+                // unwrap the FusionRuntimeException
+                throw $exception->getPrevious();
             } finally {
                 $this->popContext();
             }
