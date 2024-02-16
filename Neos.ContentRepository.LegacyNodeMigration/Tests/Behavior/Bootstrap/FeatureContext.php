@@ -16,6 +16,8 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
@@ -26,6 +28,7 @@ use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedResource;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;
 use Neos\ContentRepository\Export\ProcessorResult;
+use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
@@ -156,6 +159,39 @@ class FeatureContext implements Context
     }
 
     /**
+     * @When I import all events for content stream :contentStream
+     */
+    public function iImportAllEvents(string $contentStream = 'contentStream') : void
+    {
+        $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
+        $eventStore = (new \ReflectionClass($this->currentContentRepository))
+            ->getProperty('eventStore')
+            ->getValue($this->currentContentRepository);
+
+        $eventstoreImport = new EventStoreImportProcessor(true,
+            $this->mockFilesystem,
+            $eventStore,
+            $eventNormalizer,
+            ContentStreamId::fromString($contentStream)
+        );
+        $eventstoreImport->run();
+    }
+
+    /**
+     * @When I replay all content projections
+     */
+    public function iReplayAllContentProjections(): void
+    {
+        try{
+            $this->currentContentRepository->resetProjectionState(ContentGraphProjection::class);
+            $this->currentContentRepository->catchUpProjection(ContentGraphProjection::class, CatchUpOptions::create());
+        } catch (\Throwable $e) {
+            $this->lastMigrationResult = ProcessorResult::error(sprintf('Error replaying the projections: %s', $e->getMessage()));
+        }
+
+    }
+
+    /**
      * @Then I expect the following events to be exported
      */
     public function iExpectTheFollowingEventsToBeExported(TableNode $table): void
@@ -190,6 +226,15 @@ class FeatureContext implements Context
             Assert::assertEquals($expectedEventPayload, $actualEventPayload, 'Actual event: ' . $exportedEvent->toJson());
         }
         Assert::assertCount(count($table->getHash()), $exportedEvents, 'Expected number of events does not match actual number');
+    }
+
+    /**
+     * @Then /^I expect exactly (\d+) nodes to be imported$/
+     */
+    public function iExpectXNodesToBeImported(int $count): void
+    {
+        Assert::assertSame($this->currentContentRepository->getContentGraph()->countNodes(), $count, 'Expected number of nodes does not match actual number');
+
     }
 
     /**
