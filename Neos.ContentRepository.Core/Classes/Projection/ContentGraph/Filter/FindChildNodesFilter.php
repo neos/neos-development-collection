@@ -92,4 +92,20 @@ final class FindChildNodesFilter
             $pagination ?? $this->pagination,
         );
     }
+
+    public function without(
+        bool $nodeTypes = false,
+        bool $searchTerm = false,
+        bool $propertyValue = false,
+        bool $ordering = false,
+        bool $pagination = false,
+    ): self {
+        return self::create(
+            $nodeTypes ? null : $this->nodeTypes,
+            $searchTerm ? null : $this->searchTerm,
+            $propertyValue ? null : $this->propertyValue,
+            $ordering ? null : $this->ordering,
+            $pagination ? null : $this->pagination,
+        );
+    }
 }
