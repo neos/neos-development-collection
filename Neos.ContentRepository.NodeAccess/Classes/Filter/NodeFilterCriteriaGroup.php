@@ -26,7 +26,7 @@ readonly class NodeFilterCriteriaGroup implements \IteratorAggregate
      */
     public function getIterator(): Traversable
     {
-        return new \ArrayIterator($this->criteria);
+        yield from $this->criteria;
     }
 
 }
