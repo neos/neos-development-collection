@@ -50,7 +50,10 @@ class ParserCacheFlusher
 
         $identifiersToFlush = [];
         foreach ($changedFiles as $changedFile => $status) {
-            $identifiersToFlush[] = $this->getCacheIdentifierForFile($changedFile);
+            // flow already returns absolute file paths from the file monitor, so we don't have to call realpath.
+            // attempting to use realpath can even result in an error as the file might be removed and thus no realpath can be resolved via file system.
+            // https://github.com/neos/neos-development-collection/pull/4509
+            $identifiersToFlush[] = $this->getCacheIdentifierForAbsoluteUnixStyleFilePathWithoutDirectoryTraversal($changedFile);
         }
 
         if ($identifiersToFlush !== []) {
