@@ -953,19 +953,23 @@ class Runtime
         $this->legacyActionResponseForCurrentRendering = new ActionResponse();
 
         // actual rendering
-        $httpResponse = $renderer();
+        try {
+            $httpResponse = $renderer();
+        } finally {
+            $toBeMergedLegacyActionResponse = $this->legacyActionResponseForCurrentRendering;
+            // reset for next render
+            $this->legacyActionResponseForCurrentRendering = null;
+        }
 
         // transfer possible headers that have been set dynamically
-        foreach ($this->legacyActionResponseForCurrentRendering->buildHttpResponse()->getHeaders() as $name => $values) {
+        foreach ($toBeMergedLegacyActionResponse->buildHttpResponse()->getHeaders() as $name => $values) {
             $httpResponse = $httpResponse->withAddedHeader($name, $values);
         }
         // if the status code is 200 we assume it's the default and will not overrule it
-        if ($this->legacyActionResponseForCurrentRendering->getStatusCode() !== 200) {
-            $httpResponse = $httpResponse->withStatus($this->legacyActionResponseForCurrentRendering->getStatusCode());
+        if ($toBeMergedLegacyActionResponse->getStatusCode() !== 200) {
+            $httpResponse = $httpResponse->withStatus($toBeMergedLegacyActionResponse->getStatusCode());
         }
 
-        // reset for next render
-        $this->legacyActionResponseForCurrentRendering = null;
         return $httpResponse;
     }
 
