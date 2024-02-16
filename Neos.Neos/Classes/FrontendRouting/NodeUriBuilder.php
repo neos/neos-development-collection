@@ -14,80 +14,134 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting;
 
-use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Mvc\Routing\RouterInterface;
 use Psr\Http\Message\UriInterface;
 
-/**
- * Builds URIs to nodes, taking workspace (live / shared / user) into account.
- * This class can also be used in order to render "preview" URLs to nodes
- * that are not in the live workspace (in the Neos Backend and shared workspaces)
- */
 final class NodeUriBuilder
 {
-    private UriBuilder $uriBuilder;
-
     /**
-     * @Flow\Autowiring(false)
+     * @internal
+     *
+     * This context ($baseUri and $routeParameters) can be inferred from the current request.
+     *
+     * For generating node uris in cli context, you can leverage `fromBaseUri` and pass in the desired base uri,
+     * Wich will be used for when generating host absolute uris.
+     * If the base uri does not contain a host, absolute uris which would contain the host of the current request
+     * like from `absoluteUriFor`, will be generated without host.
+     *
+     * TODO Flows base uri configuration is ignored if not specifically added via `mergeBaseUri`
      */
-    private function __construct(UriBuilder $uriBuilder)
-    {
-        $this->uriBuilder = $uriBuilder;
-    }
-
-    public static function fromRequest(ActionRequest $request): self
-    {
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
-
-        return new self($uriBuilder);
-    }
-
-    public static function fromUriBuilder(UriBuilder $uriBuilder): self
-    {
-        return new self($uriBuilder);
+    public function __construct(
+        private readonly RouterInterface $router,
+        private readonly UriInterface $baseUri,
+        private readonly RouteParameters $routeParameters
+    ) {
     }
 
     /**
-     * Renders an URI for the given $nodeAddress
-     * If the node belongs to the live workspace, the public URL is generated
-     * Otherwise a preview URI is rendered (@see previewUriFor())
+     * Return human readable host relative uris if the cr of the current request matches the one of the specified node.
+     * For cross-links to another cr the resulting uri be absolute and contain the host of the other site's domain.
      *
-     * Note: Shortcut nodes will be resolved in the RoutePartHandler thus the resulting URI will point
-     * to the shortcut target (node, asset or external URI)
+     * As the human readable uris are only routed for nodes of the live workspace (see DocumentUriProjection)
+     * This method requires the node to be passed to be in the live workspace and will throw otherwise.
      *
-     * @param NodeAddress $nodeAddress
-     * @return UriInterface
-     * @throws NoMatchingRouteException if the node address does not exist
+     * @throws NoMatchingRouteException
      */
-    public function uriFor(NodeAddress $nodeAddress): UriInterface
+    public function uriFor(NodeUriSpecification $specification): UriInterface
     {
-        if (!$nodeAddress->workspaceName->isLive()) {
-            // we cannot build a human-readable uri using the showAction as
-            // the DocumentUriPathProjection only handles the live workspace
-            return $this->previewUriFor($nodeAddress);
+        return $this->router->resolve(
+            new ResolveContext(
+                $this->baseUri,
+                $this->toShowActionRouteValues($specification),
+                false,
+                ltrim($this->baseUri->getPath(), '\/'),
+                $this->routeParameters
+            )
+        );
+    }
+
+    /**
+     * Return human readable absolute uris with host, independent if the node is cross linked or of the current request.
+     * For nodes of the current cr the passed base uri will be used as host. For cross-linked nodes the host will be derived by the site's domain.
+     *
+     * As the human readable uris are only routed for nodes of the live workspace (see DocumentUriProjection)
+     * This method requires the node to be passed to be in the live workspace and will throw otherwise.
+     *
+     * @throws NoMatchingRouteException
+     */
+    public function absoluteUriFor(NodeUriSpecification $specification): UriInterface
+    {
+        return $this->router->resolve(
+            new ResolveContext(
+                $this->baseUri,
+                $this->toShowActionRouteValues($specification),
+                true,
+                ltrim($this->baseUri->getPath(), '\/'),
+                $this->routeParameters
+            )
+        );
+    }
+
+    /**
+     * Returns a host relative uri with fully qualified node as query parameter encoded.
+     */
+    public function previewUriFor(NodeUriSpecification $specification): UriInterface
+    {
+        return $this->router->resolve(
+            new ResolveContext(
+                $this->baseUri,
+                $this->toPreviewActionRouteValues($specification),
+                false,
+                ltrim($this->baseUri->getPath(), '\/'),
+                $this->routeParameters
+            )
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function toShowActionRouteValues(NodeUriSpecification $specification): array
+    {
+        $routeValues = $specification->routingArguments;
+        $routeValues['node'] = $specification->node;
+        $routeValues['@action'] = strtolower('show');
+        $routeValues['@controller'] = strtolower('Frontend\Node');
+        $routeValues['@package'] = strtolower('Neos.Neos');
+
+        if ($specification->format !== '') {
+            $routeValues['@format'] = $specification->format;
         }
-        return new Uri($this->uriBuilder->uriFor('show', ['node' => $nodeAddress], 'Frontend\Node', 'Neos.Neos'));
+        return $routeValues;
     }
 
     /**
-     * Renders a stable "preview" URI for the given $nodeAddress
-     * A preview URI is used to display a node that is not public yet (i.e. not in a live workspace).
-     *
-     * @param NodeAddress $nodeAddress
-     * @return UriInterface
-     * @throws NoMatchingRouteException if the node address does not exist
+     * @return array<string, mixed>
      */
-    public function previewUriFor(NodeAddress $nodeAddress): UriInterface
+    private function toPreviewActionRouteValues(NodeUriSpecification $specification): array
     {
-        return new Uri($this->uriBuilder->uriFor(
-            'preview',
-            ['node' => $nodeAddress->serializeForUri()],
-            'Frontend\Node',
-            'Neos.Neos'
-        ));
+        // todo fully migrate me to NodeUriSpecification
+        $reg = \Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\ContentRepositoryRegistry\ContentRepositoryRegistry::class);
+        $ws = $reg->get($specification->node->contentRepositoryId)->getWorkspaceFinder()->findOneByName($specification->node->workspaceName);
+        $nodeAddress = new NodeAddress(
+            $ws->currentContentStreamId ?? throw new \Exception(),
+            $specification->node->dimensionSpacePoint,
+            $specification->node->aggregateId,
+            $specification->node->workspaceName,
+        );
+
+        $routeValues = $specification->routingArguments;
+        $routeValues['node'] = $nodeAddress->serializeForUri();
+        $routeValues['@action'] = strtolower('preview');
+        $routeValues['@controller'] = strtolower('Frontend\Node');
+        $routeValues['@package'] = strtolower('Neos.Neos');
+
+        if ($specification->format !== '') {
+            $routeValues['@format'] = $specification->format;
+        }
+        return $routeValues;
     }
 }
