@@ -25,7 +25,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\NodeSerializer;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -43,6 +45,8 @@ use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\NodeUriSpecification;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\View\FusionView;
@@ -105,6 +109,12 @@ class NodeController extends ActionController
 
     #[Flow\InjectConfiguration(path: "frontend.shortcutRedirectHttpStatusCode", package: "Neos.Neos")]
     protected int $shortcutRedirectHttpStatusCode;
+
+    #[Flow\Inject]
+    protected NodeUriBuilderFactory $nodeUriBuilderFactory;
+
+    #[Flow\Inject]
+    protected NodeSerializer $nodeSerializer;
 
     /**
      * @param string $node
@@ -193,40 +203,36 @@ class NodeController extends ActionController
      */
     public function showAction(string $node): void
     {
-        $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
-        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
+        $nodeIdentity = NodeIdentity::fromJsonString($node);
+        unset($node);
 
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
-        if (!$nodeAddress->isInLiveWorkspace()) {
+        if (!$nodeIdentity->workspaceName->isLive()) {
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamId,
-            $nodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::frontend()
-        );
+        $node = $this->nodeSerializer->findNodeByIdentity($nodeIdentity, VisibilityConstraints::frontend());
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
-        $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        $nodeInstance = $subgraph->findNodeById($nodeIdentity->nodeAggregateId);
         if ($nodeInstance === null) {
-            throw new NodeNotFoundException(sprintf('The cached node address for this uri could not be resolved. Possibly you have to flush the "Flow_Mvc_Routing_Route" cache. %s', $nodeAddress), 1707300738);
+            throw new NodeNotFoundException(sprintf('The cached node address for this uri could not be resolved. Possibly you have to flush the "Flow_Mvc_Routing_Route" cache. %s', $nodeIdentity->toJson()), 1707300738);
         }
 
-        $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
+        $site = $subgraph->findClosestNode($nodeIdentity->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
-            throw new NodeNotFoundException(sprintf('The site node of %s could not be resolved.', $nodeAddress), 1707300861);
+            throw new NodeNotFoundException(sprintf('The site node of %s could not be resolved.', $nodeIdentity->toJson()), 1707300861);
         }
 
-        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
+        $this->fillCacheWithContentNodes($nodeIdentity->nodeAggregateId, $subgraph);
 
         if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
-            $this->handleShortcutNode($nodeAddress, $contentRepository);
+            $this->handleShortcutNode($nodeIdentity);
         }
 
         $this->view->setOption('renderingModeName', RenderingMode::FRONTEND);
 
         $this->view->assignMultiple([
-            'value' => $nodeInstance,
+            'value' => $node,
             'site' => $site,
         ]);
     }
@@ -268,31 +274,31 @@ class NodeController extends ActionController
     /**
      * Handles redirects to shortcut targets of nodes in the live workspace.
      *
-     * @param NodeAddress $nodeAddress
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
-    protected function handleShortcutNode(NodeAddress $nodeAddress, ContentRepository $contentRepository): void
+    protected function handleShortcutNode(NodeIdentity $nodeIdentity): void
     {
         try {
-            $resolvedTarget = $this->nodeShortcutResolver->resolveShortcutTarget($nodeAddress, $contentRepository);
+            $resolvedTarget = $this->nodeShortcutResolver->resolveShortcutTarget($nodeIdentity);
         } catch (InvalidShortcutException $e) {
             throw new NodeNotFoundException(sprintf(
-                'The shortcut node target of node "%s" could not be resolved: %s',
-                $nodeAddress,
+                'The shortcut node target of node %s could not be resolved: %s',
+                $nodeIdentity->toJson(),
                 $e->getMessage()
             ), 1430218730, $e);
         }
-        if ($resolvedTarget instanceof NodeAddress) {
-            if ($resolvedTarget === $nodeAddress) {
+        if ($resolvedTarget instanceof NodeIdentity) {
+            if ($nodeIdentity->equals($resolvedTarget)) {
                 return;
             }
             try {
-                $resolvedUri = NodeUriBuilder::fromRequest($this->request)->uriFor($nodeAddress);
+                $resolvedUri = $this->nodeUriBuilderFactory->forRequest($this->request->getHttpRequest())
+                    ->uriFor(NodeUriSpecification::create($nodeIdentity));
             } catch (NoMatchingRouteException $e) {
                 throw new NodeNotFoundException(sprintf(
-                    'The shortcut node target of node "%s" could not be resolved: %s',
-                    $nodeAddress,
+                    'The shortcut node target of node %s could not be resolved: %s',
+                    $nodeIdentity->toJson(),
                     $e->getMessage()
                 ), 1599670695, $e);
             }

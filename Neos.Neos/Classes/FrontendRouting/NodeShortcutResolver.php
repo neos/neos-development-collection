@@ -17,6 +17,8 @@ namespace Neos\Neos\FrontendRouting;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -36,16 +38,11 @@ use Psr\Http\Message\UriInterface;
  */
 class NodeShortcutResolver
 {
-    private AssetRepository $assetRepository;
-
-    private ResourceManager $resourceManager;
-
     public function __construct(
-        AssetRepository $assetRepository,
-        ResourceManager $resourceManager
+        private readonly AssetRepository $assetRepository,
+        private readonly ResourceManager $resourceManager,
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry
     ) {
-        $this->assetRepository = $assetRepository;
-        $this->resourceManager = $resourceManager;
     }
 
     /**
@@ -53,31 +50,31 @@ class NodeShortcutResolver
      * Note: The ContentStreamId is not required for this service,
      * because it is only covering the live workspace
      *
-     * @param NodeAddress $nodeAddress
-     * @return NodeAddress|UriInterface NodeAddress is returned if we want to link to another node
+     * @return NodeIdentity|UriInterface NodeIdentity is returned if we want to link to another node
      * (i.e. node is NOT a shortcut node; or target is a node);
      * or UriInterface for links to fixed URLs (Asset URLs or external URLs)
      * @throws \Neos\Neos\FrontendRouting\Exception\InvalidShortcutException
      * @throws NodeNotFoundException
      */
-    public function resolveShortcutTarget(NodeAddress $nodeAddress, ContentRepository $contentRepository)
+    public function resolveShortcutTarget(NodeIdentity $nodeIdentity)
     {
-        if (!$nodeAddress->workspaceName->isLive()) {
-            throw new \RuntimeException(sprintf('Cannot resolve shortcut target for node-address %s in workspace %s because the DocumentUriPathProjection only handles the live workspace.', $nodeAddress->nodeAggregateId->value, $nodeAddress->workspaceName->value), 1707208650);
+        if (!$nodeIdentity->workspaceName->isLive()) {
+            throw new \RuntimeException(sprintf('Cannot resolve shortcut target for node-address %s in workspace %s because the DocumentUriPathProjection only handles the live workspace.', $nodeIdentity->nodeAggregateId->value, $nodeIdentity->workspaceName->value), 1707208650);
         }
+        $contentRepository = $this->contentRepositoryRegistry->get($nodeIdentity->contentRepositoryId);
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $documentNodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $nodeAddress->nodeAggregateId,
-            $nodeAddress->dimensionSpacePoint->hash
+            $nodeIdentity->nodeAggregateId,
+            $nodeIdentity->dimensionSpacePoint->hash
         );
         $resolvedTarget = $this->resolveNode($documentNodeInfo, $contentRepository);
         if ($resolvedTarget instanceof UriInterface) {
             return $resolvedTarget;
         }
         if ($resolvedTarget === $documentNodeInfo) {
-            return $nodeAddress;
+            return $nodeIdentity;
         }
-        return $nodeAddress->withNodeAggregateId($documentNodeInfo->getNodeAggregateId());
+        return $nodeIdentity->withNodeAggregateId($documentNodeInfo->getNodeAggregateId());
     }
 
     /**

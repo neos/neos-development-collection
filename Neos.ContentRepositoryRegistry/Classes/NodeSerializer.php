@@ -22,7 +22,7 @@ final readonly class NodeSerializer
     ) {
     }
 
-    public function findNodeByIdentity(NodeIdentity $identity): Node
+    public function findNodeByIdentity(NodeIdentity $identity, VisibilityConstraints $visibilityConstraints): Node
     {
         $contentRepository = $this->contentRepositoryRegistry->get($identity->contentRepositoryId);
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($identity->workspaceName);
@@ -32,8 +32,7 @@ final readonly class NodeSerializer
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
             $workspace->currentContentStreamId,
             $identity->dimensionSpacePoint,
-            // todo policy? Or what to prevent from accidentally showing unwanted nodes.
-            VisibilityConstraints::withoutRestrictions()
+            $visibilityConstraints
         );
         $node = $subgraph->findNodeById($identity->nodeAggregateId);
         if (!$node) {
