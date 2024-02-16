@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\SiteDetection;
 
 /**
- * Neos was probably not setup yet.
- * No existent site entity will for example cause this issue.
+ * This error will be thrown in {@see SiteDetectionResult::fromRequest()}
  */
 class SiteDetectionFailedException extends \RuntimeException
 {
