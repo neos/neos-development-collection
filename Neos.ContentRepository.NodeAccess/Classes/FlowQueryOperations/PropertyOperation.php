@@ -113,24 +113,22 @@ class PropertyOperation extends AbstractOperation
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
-        // legacy layer for single references which have been migrated dynamically.
-        // users still expect them to return a single node instead of an array.
-        if ($this->getNodeType($element)->hasReference($propertyName) && ($element->nodeType->getReferences()[$propertyName]['__legacyPropertyType'] ?? '') === 'reference') {
-            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            return (
-                $subgraph->findReferences(
-                    $element->nodeAggregateId,
-                    FindReferencesFilter::create(referenceName: $propertyName)
-                )[0] ?? null
-            )?->node;
-        }
-
         if ($this->getNodeType($element)->hasReference($propertyName)) {
+            // legacy access layer for references
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            return $subgraph->findReferences(
+            $references = $subgraph->findReferences(
                 $element->nodeAggregateId,
                 FindReferencesFilter::create(referenceName: $propertyName)
             )->getNodes();
+
+            if (($this->getNodeType($element)->getReferences()[$propertyName]['constraints']['maxItems'] ?? -1) === 1) {
+                // legacy layer references with only one item like the previous `type: reference`
+                // (the node type transforms that to constraints.maxItems = 1)
+                // users still expect the property operation to return a single node instead of an array.
+                return $references->first();
+            }
+
+            return $references;
         }
 
         return $element->getProperty($propertyName);

@@ -520,8 +520,7 @@ class NodeTypeTest extends TestCase
                 'referenceProperty' => [
                     'constraints' => [
                         'maxItems' => 1
-                    ],
-                    '__legacyPropertyType' => 'reference'
+                    ]
                 ]
             ],
             $nodeType->getReferences()

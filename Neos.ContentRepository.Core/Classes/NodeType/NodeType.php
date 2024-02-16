@@ -170,9 +170,6 @@ final class NodeType
             if ($propertyType === 'reference') {
                 unset($propertyConfiguration['type']);
                 $propertyConfiguration['constraints']['maxItems'] = 1;
-                // @deprecated with Neos 9
-                // used to ensure that the FlowQuery property operation will return the node directly but not an array of nodes
-                $propertyConfiguration['__legacyPropertyType'] = 'reference';
                 $referencesConfiguration[$propertyName] = $propertyConfiguration;
                 unset($this->fullConfiguration['properties'][$propertyName]);
             }
