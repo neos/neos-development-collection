@@ -31,7 +31,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * It is used in Neos Routing to build a URI to a node.
  *
- * @api
+ * @deprecated will be removed before Final 9.0
  */
 #[Flow\Proxy(false)]
 final class NodeAddress
