@@ -14,7 +14,7 @@ readonly class NodeFilterCriteriaGroup implements \IteratorAggregate
     /**
      * @var array<int, NodeFilterCriteria>
      */
-    protected array $criteria;
+    private array $criteria;
 
     public function __construct(NodeFilterCriteria ...$criteria)
     {
