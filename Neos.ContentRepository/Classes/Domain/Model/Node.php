@@ -947,6 +947,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         }
 
         try {
+            /**
+             * In case the value is a value object it _will_ already be deserialized due to the feature in flow_json_array
+             * {@see \Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType::deserializeValueObject}
+             */
             return $this->propertyMapper->convert($value, $expectedPropertyType);
         } catch (\Neos\Flow\Property\Exception $exception) {
             throw new NodeException(sprintf('Failed to convert property "%s" of node "%s" to the expected type of "%s": %s', $propertyName, $this->getIdentifier(), $expectedPropertyType, $exception->getMessage()), 1630675703, $exception);
