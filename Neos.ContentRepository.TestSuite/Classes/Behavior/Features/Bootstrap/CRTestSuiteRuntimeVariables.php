@@ -169,8 +169,6 @@ trait CRTestSuiteRuntimeVariables
         )->nodeAggregateId;
     }
 
-
-
     /**
      * @Then /^I expect the status of the workspace "([^"]*)" to be "([^"]*)"$/
      */
@@ -182,7 +180,6 @@ trait CRTestSuiteRuntimeVariables
             throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
         }
         Assert::assertSame($workspace->status->value, $workspaceStatus);
-
     }
 
     protected function getCurrentNodeAggregateId(): NodeAggregateId
