@@ -874,18 +874,6 @@
         <source>Technical Information</source>
         <target state="translated">Technische Informationen</target>
       </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
-        <source>Missing Homepage</source>
-        <target state="final">Fehlende Startseite</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve" approved="yes">
-        <source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-        <target state="final">Entweder wurde noch keine Site definiert, eine bestehende Site enthält noch keine Startseite oder es konnte keine aktive Site ermittelt werden.</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
-        <source>You might want to set the site's domain or import a new site in the setup.</source>
-        <target state="final">Weisen Sie entweder einer bestehenden Site eine Domain zu oder importieren Sie eine neue Site über das Setup-Tool.</target>
-      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
         <source>Database Error</source>
         <target state="final">Datenbankfehler</target>

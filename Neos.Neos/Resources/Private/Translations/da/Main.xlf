@@ -874,18 +874,6 @@
         <source>Technical Information</source>
         <target state="needs-translation">Technical Information</target>
       </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
-        <source>Missing Homepage</source>
-        <target state="final">Der blev ikke fundet en hjemmeside</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve" approved="yes">
-        <source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-        <target state="final">Enten er der ikke defineret noget websted, webstedet indeholder ikke en hjemmeside, eller det aktive websted kunne ikke bestemmes.</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
-        <source>You might want to set the site's domain or import a new site in the setup.</source>
-        <target state="final">Du kan angive webstedets domæne eller importere et nyt websted i opsætningen.</target>
-      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
         <source>Database Error</source>
         <target state="final">Databasefejl</target>

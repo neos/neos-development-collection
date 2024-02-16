@@ -875,18 +875,6 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
         <source>Technical Information</source>
         <target state="translated">Informação Técnica</target>
       </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
-        <source>Missing Homepage</source>
-        <target state="translated">Faltando Homepage</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
-        <source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-        <target state="translated">O site não foi definido, o site não contém uma página inicial ou o site ativo não pôde ser determinado.</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
-        <source>You might want to set the site's domain or import a new site in the setup.</source>
-        <target state="translated">Você pode querer definir o domínio do site, ou importar um novo site na configuração.</target>
-      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
         <source>Database Error</source>
         <target state="translated">Erro no banco de dados</target>

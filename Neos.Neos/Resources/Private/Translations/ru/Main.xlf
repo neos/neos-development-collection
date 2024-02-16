@@ -874,18 +874,6 @@
         <source>Technical Information</source>
         <target state="final">Техническая информация</target>
       </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
-        <source>Missing Homepage</source>
-        <target state="final">Домашняя страница отсутствует</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve" approved="yes">
-        <source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-        <target state="final">Сайт не был задан, либо сайт не содержит стартовую страницу, либо невозможно определить активный сайт.</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
-        <source>You might want to set the site's domain or import a new site in the setup.</source>
-        <target state="final">Попробуйте задать домен сайта или импортировать новый сайт в программе установки.</target>
-      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
         <source>Database Error</source>
         <target state="final">Ошибка базы данных</target>

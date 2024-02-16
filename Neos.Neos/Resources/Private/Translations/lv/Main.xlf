@@ -874,18 +874,6 @@
         <source>Technical Information</source>
         <target state="translated">Tehniskā informācija</target>
       </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
-        <source>Missing Homepage</source>
-        <target state="final">Trūkst mājas lapas</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve" approved="yes">
-        <source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-        <target state="final">Iespējams vietne nav izveidota, vietne nesatur mājaslapu vai nevar noteikt aktīvo vietni.</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
-        <source>You might want to set the site's domain or import a new site in the setup.</source>
-        <target state="final">Iestatiet vietnes domēnu vai importējiet jaunu vietni uzstādīšanas programmā.</target>
-      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
         <source>Database Error</source>
         <target state="final">Datubāzes kļūda</target>

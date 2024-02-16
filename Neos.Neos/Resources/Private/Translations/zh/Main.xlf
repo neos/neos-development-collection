@@ -874,18 +874,6 @@
         <source>Technical Information</source>
         <target state="translated">技术信息</target>
       </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
-        <source>Missing Homepage</source>
-        <target state="translated">找不到主页</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
-        <source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-        <target state="translated">没有定义站点、网站没有主页或者不能确定有效站点。</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
-        <source>You might want to set the site's domain or import a new site in the setup.</source>
-        <target state="translated">你可能想要设置该网站的域名或通过安装程序导入网站。</target>
-      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
         <source>Database Error</source>
         <target state="translated">数据库错误</target>

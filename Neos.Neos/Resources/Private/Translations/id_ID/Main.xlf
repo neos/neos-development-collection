@@ -874,18 +874,6 @@
         <source>Technical Information</source>
         <target state="translated">Informasi Teknis</target>
       </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
-        <source>Missing Homepage</source>
-        <target state="translated">Homepage hilang</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
-        <source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-        <target state="translated">Entah tidak ada situs telah ditetapkan, situs tidak mengandung homepage atau situs aktif tidak bisa ditentukan.</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
-        <source>You might want to set the site's domain or import a new site in the setup.</source>
-        <target state="translated">Anda mungkin ingin untuk mengatur domain situs atau mengimpor situs baru di setup.</target>
-      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
         <source>Database Error</source>
         <target state="translated">Database Error</target>

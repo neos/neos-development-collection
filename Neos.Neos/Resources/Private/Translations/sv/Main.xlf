@@ -874,18 +874,6 @@
         <source>Technical Information</source>
         <target state="translated">Teknisk information</target>
       </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
-        <source>Missing Homepage</source>
-        <target state="translated">Saknar hemsida</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
-        <source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-        <target state="translated">Antingen har ingen webbplats definierats, platsen innehåller ingen hemsida eller den aktiva platsen kunde inte fastställas.</target>
-      </trans-unit>
-      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
-        <source>You might want to set the site's domain or import a new site in the setup.</source>
-        <target state="translated">Du kanske vill ange webbplatsens domän eller importera en ny webbplats i inställningarna.</target>
-      </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
         <source>Database Error</source>
         <target state="translated">Databasfel</target>
