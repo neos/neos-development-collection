@@ -471,18 +471,13 @@ Neos:
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseException
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseStructureException
-            options: &welcomeTemplate
+            options:
               viewClassName: Neos\Fusion\View\FusionView
               viewOptions:
                 fusionPath: 'Neos/Fusion/DatabaseConnectionExceptions'
                 fusionPathPatterns: ['resource://Neos.Neos/Private/Fusion/Error/Root.fusion']
                 enableContentCache: false
                 templatePathAndFilename: ~
-
-          noHomepageException:
-            matchingExceptionClassNames:
-              - Neos\Neos\Routing\Exception\NoHomepageException
-            options: *welcomeTemplate
       debugger:
         ignoredClasses:
           Neos\\Neos\\Domain\\Service\\ContentContextFactory: true
