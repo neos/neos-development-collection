@@ -16,6 +16,7 @@ namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -45,14 +46,14 @@ use Psr\Http\Message\UriInterface;
 /**
  * A route part handler for finding nodes in the website's frontend. Like every RoutePartHandler,
  * this handles both directions:
- * - from URL to NodeAddress (via {@see EventSourcedFrontendNodeRoutePartHandler::matchWithParameters})
- * - from NodeAddress to URL (via {@see EventSourcedFrontendNodeRoutePartHandler::resolveWithParameters})
+ * - from URL to NodeIdentity (via {@see EventSourcedFrontendNodeRoutePartHandler::matchWithParameters})
+ * - from NodeIdentity to URL (via {@see EventSourcedFrontendNodeRoutePartHandler::resolveWithParameters})
  *
  * For performance reasons, this uses a special projection {@see DocumentUriPathFinder}, and
  * does NOT use the graph projection in any way.
  *
  *
- * ## Match Direction (URL to NodeAddress)
+ * ## Match Direction (URL to NodeIdentity)
  *
  * This is usually simply triggered ONCE per request, before the controller starts working.
  * The RoutePartHandler is invoked from {@see RoutingMiddleware} (which handles the routing).
@@ -63,7 +64,7 @@ use Psr\Http\Message\UriInterface;
  *  (*) = Extension Point               ┌───────────────────────────────────────────────┐
  * ┌──────────────┐                     │   EventSourcedFrontendNodeRoutePartHandler    │
  * │SiteDetection │                     │ ┌─────────────────────┐                       │
- * │Middleware (*)│────────────────────▶│ │DimensionResolver (*)│─────▶ Finding the    ─┼─▶NodeAddress
+ * │Middleware (*)│────────────────────▶│ │DimensionResolver (*)│─────▶ Finding the    ─┼─▶NodeIdentity
  * └──────────────┘ current site        │ └─────────────────────┘       NodeId          │
  *                                      └───────────────────────────────────────────────┘
  *                  current Content                              current
@@ -111,7 +112,7 @@ use Psr\Http\Message\UriInterface;
  * ### Result of the Routing
  *
  * The **result** of the {@see EventSourcedFrontendNodeRoutePartHandler::matchWithParameters} call is a
- * {@see NodeAddress} (wrapped in a {@see MatchResult}); so to build the NodeAddress, we need:
+ * {@see NodeIdentity} (wrapped in a {@see MatchResult}); so to build the NodeIdentity, we need:
  * - the {@see WorkspaceName} (which is always **live** in our case)
  * - the {@see ContentStreamId} of the Live workspace
  * - The {@see DimensionSpacePoint} we want to see the page in (i.e. in language=de)
@@ -120,13 +121,13 @@ use Psr\Http\Message\UriInterface;
  *   - resolved by {@see EventSourcedFrontendNodeRoutePartHandler}
  *
  *
- * ## Resolve Direction (NodeAddress to URL)
+ * ## Resolve Direction (NodeIdentity to URL)
  *
  * ```
  *                ┌────────────────────────────────────────────────────────────────────────┐
  *                │                EventSourcedFrontendNodeRoutePartHandler                │
  *                │                   ┌─────────────────────┐      ┌─────────────────────┐ │
- * NodeAddress────┼▶ Finding the ────▶│ CrossSiteLinker (*) │─────▶│DimensionResolver (*)│─┼──▶ URL
+ * NodeIdentity───┼▶ Finding the ────▶│ CrossSiteLinker (*) │─────▶│DimensionResolver (*)│─┼──▶ URL
  *                │  URL              └─────────────────────┘      └─────────────────────┘ │
  *                └────────────────────────────────────────────────────────────────────────┘
  * ```
@@ -240,12 +241,13 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $uriPath,
             $dimensionSpacePoint->hash
         );
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
-            $documentUriPathFinder->getLiveContentStreamId(),
+        $nodeIdentity = NodeIdentity::create(
+            $contentRepository->id,
+            WorkspaceName::forLive(),
             $dimensionSpacePoint,
             $nodeInfo->getNodeAggregateId(),
         );
-        return new MatchResult($nodeAddress->serializeForUri(), $nodeInfo->getRouteTags());
+        return new MatchResult($nodeIdentity->toJson(), $nodeInfo->getRouteTags());
     }
 
     /**
@@ -260,14 +262,13 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
         $currentRequestSiteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
 
-        $nodeAddress = $routeValues[$this->name];
-        // TODO: for cross-CR links: NodeAddressInContentRepository as a new value object
-        if (!$nodeAddress instanceof NodeAddress) {
+        $nodeIdentity = $routeValues[$this->name];
+        if (!$nodeIdentity instanceof NodeIdentity) {
             return false;
         }
 
         try {
-            $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult);
+            $resolveResult = $this->resolveNodeIdentity($nodeIdentity, $currentRequestSiteDetectionResult);
         } catch (NodeNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception
             return false;
@@ -278,30 +279,26 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
     /**
-     * Resolves a node address for uri building.
+     * Resolves a node identity for uri building.
      *
      * NOTE: The resolving of nodes is also done for disabled/hidden nodes.
      *       To disallow showing a node actually disabled/hidden itself has to be ensured in matching a request path,
      *       not in building one.
      *
-     * @param NodeAddress $nodeAddress
-     * @param SiteDetectionResult $currentRequestSiteDetectionResult
-     * @return ResolveResult
      * @throws InvalidShortcutException
      * @throws NodeNotFoundException
      */
-    private function resolveNodeAddress(
-        NodeAddress $nodeAddress,
+    private function resolveNodeIdentity(
+        NodeIdentity $nodeIdentity,
         SiteDetectionResult $currentRequestSiteDetectionResult
     ): ResolveResult {
-        // TODO: SOMEHOW FIND OTHER CONTENT REPOSITORY HERE FOR CROSS-CR LINKS!!
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $currentRequestSiteDetectionResult->contentRepositoryId
+            $nodeIdentity->contentRepositoryId
         );
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $nodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $nodeAddress->nodeAggregateId,
-            $nodeAddress->dimensionSpacePoint->hash
+            $nodeIdentity->nodeAggregateId,
+            $nodeIdentity->dimensionSpacePoint->hash
         );
 
         if ($nodeInfo->isShortcut()) {
@@ -326,7 +323,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
 
         $uriConstraints = $this->delegatingResolver->fromDimensionSpacePointToUriConstraints(
-            $nodeAddress->dimensionSpacePoint,
+            $nodeIdentity->dimensionSpacePoint,
             $nodeInfo,
             $targetSite,
             $uriConstraints
