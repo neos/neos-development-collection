@@ -264,3 +264,30 @@ Feature: Workspace based content publishing
     And I expect this node to have the following properties:
       | Key  | Value                        |
       | text | "Modified in live workspace" |
+
+  Scenario: Publishing workspace with PublishIndividualNodesFromWorkspace not possible with outdated workspace
+    And the command CreateWorkspace is executed with payload:
+      | Key                | Value                          |
+      | workspaceName      | "user-test-2"                  |
+      | baseWorkspaceName  | "live"                         |
+      | newContentStreamId | "user-cs-identifier-2"         |
+      | workspaceOwner     | "owner-identifier-2"           |
+    And the graph projection is fully up to date
+
+    # Make sure the first workspace is UP_TO_DATE by publishing first
+    When the command PublishWorkspace is executed with payload:
+      | Key              | Value                        |
+      | workspaceName    | "user-test"                  |
+
+    And the graph projection is fully up to date
+    Then I expect the status of the workspace "user-test" to be "UP_TO_DATE"
+    And I expect the status of the workspace "user-test-2" to be "OUTDATED"
+
+    # Publish outdated workspace
+    When the command PublishIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
+      | Key              | Value                        |
+      | workspaceName    | "user-test-2"                |
+      | nodesToPublish   | [{"nodeAggregateId": "nody-mc-nodeface", "contentStreamId": "user-cs-identifier-2", "dimensionSpacePoint": {}}] |
+    Then the last command should have thrown an exception of type "BaseWorkspaceHasBeenModifiedInTheMeantime"
+    Then I expect the status of the workspace "user-test" to be "UP_TO_DATE"
+    And I expect the status of the workspace "user-test-2" to be "OUTDATED"
