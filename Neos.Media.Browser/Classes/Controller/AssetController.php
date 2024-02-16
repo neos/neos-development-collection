@@ -1032,15 +1032,11 @@ class AssetController extends ActionController
     private function checkForMaliciousContent(AssetProxyInterface $assetProxy): bool
     {
         if ($assetProxy->getMediaType() == 'image/svg+xml') {
-            // @todo: Simplify again when https://github.com/darylldoyle/svg-sanitizer/pull/90 is merged and released.
-            $previousXmlErrorHandling = libxml_use_internal_errors(true);
             $sanitizer = new Sanitizer();
 
             $resource = stream_get_contents($assetProxy->getImportStream());
 
             $sanitizer->sanitize($resource);
-            libxml_clear_errors();
-            libxml_use_internal_errors($previousXmlErrorHandling);
             $issues = $sanitizer->getXmlIssues();
             if ($issues && count($issues) > 0) {
                 return true;
