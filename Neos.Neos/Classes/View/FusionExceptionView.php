@@ -92,7 +92,7 @@ class FusionExceptionView extends AbstractView
     protected DomainRepository $domainRepository;
 
     /**
-     * @return string
+     * @return mixed
      * @throws \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
@@ -225,7 +225,7 @@ class FusionExceptionView extends AbstractView
         return $this->fusionRuntime;
     }
 
-    private function renderErrorWelcomeScreen(): string
+    private function renderErrorWelcomeScreen(): mixed
     {
         // in case no neos site being there or no site node we cannot continue with the fusion exception view,
         // as we wouldn't know the site and cannot get the site's root.fusion
