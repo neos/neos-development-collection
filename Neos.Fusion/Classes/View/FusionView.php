@@ -22,7 +22,6 @@ use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * View for using Fusion for standard MVC controllers.
@@ -47,8 +46,7 @@ class FusionView extends AbstractView
         'fusionGlobals' => [null, 'Additional global variables; merged together with the "request". Must only be specified at creation.', FusionGlobals::class],
         'packageKey' => [null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'],
         'debugMode' => [false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'],
-        'enableContentCache' => [false, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean'],
-        'renderHttpResponse' => [false, 'Flag to render fusion as http repose for advanced form support and Neos.Fusion:Http.ResponseHead support.', 'boolean'],
+        'enableContentCache' => [false, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
     ];
 
     /**
@@ -141,25 +139,13 @@ class FusionView extends AbstractView
     /**
      * Render the view
      *
-     * @return mixed|ResponseInterface The rendered view
+     * @return mixed The rendered view
      * @api
      */
     public function render()
     {
         $this->initializeFusionRuntime();
-
-        if ($this->getOption('renderHttpResponse') === true) {
-            return $this->fusionRuntime->renderResponse($this->getFusionPathForCurrentRequest(), $this->variables);
-        } else {
-            try {
-                $this->fusionRuntime->pushContextArray($this->variables);
-                return $this->fusionRuntime->render($this->getFusionPathForCurrentRequest());
-            } catch (RuntimeException $exception) {
-                throw $exception->getWrappedException();
-            } finally {
-                $this->fusionRuntime->popContext();
-            }
-        }
+        return $this->renderFusion();
     }
 
     /**
@@ -190,6 +176,9 @@ class FusionView extends AbstractView
                 $this->parsedFusion,
                 $fusionGlobals
             );
+            if (isset($this->controllerContext)) {
+                $this->fusionRuntime->setControllerContext($this->controllerContext);
+            }
         }
         if (isset($this->options['debugMode'])) {
             $this->fusionRuntime->setDebugMode($this->options['debugMode']);
@@ -293,5 +282,22 @@ class FusionView extends AbstractView
             }
         }
         return $this->fusionPath;
+    }
+
+    /**
+     * Render the given Fusion and return the rendered page
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function renderFusion()
+    {
+        $this->fusionRuntime->pushContextArray($this->variables);
+        try {
+            $output = $this->fusionRuntime->render($this->getFusionPathForCurrentRequest());
+        } catch (RuntimeException $exception) {
+            throw $exception->getPrevious();
+        }
+        $this->fusionRuntime->popContext();
+        return $output;
     }
 }
