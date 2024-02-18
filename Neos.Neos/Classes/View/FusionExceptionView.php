@@ -32,7 +32,6 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime as FusionRuntime;
 use Neos\Fusion\Core\RuntimeFactory;
-use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -158,7 +157,7 @@ class FusionExceptionView extends AbstractView
 
         $this->setFallbackRuleFromDimension($dimensionSpacePoint);
 
-        $fusionRuntime->pushContextArray(array_merge(
+        $httpResponse = $fusionRuntime->renderResponse('error', array_merge(
             $this->variables,
             [
                 'node' => $currentSiteNode,
@@ -167,29 +166,13 @@ class FusionExceptionView extends AbstractView
             ]
         ));
 
-        try {
-            $output = $fusionRuntime->render('error');
-            return $this->extractBodyFromOutput($output);
-        } catch (RuntimeException $exception) {
-            throw $exception->getWrappedException();
-        } finally {
-            $fusionRuntime->popContext();
-        }
-    }
-
-    /**
-     * @param string $output
-     * @return string The message body without the message head
-     */
-    protected function extractBodyFromOutput(string $output): string
-    {
-        if (substr($output, 0, 5) === 'HTTP/') {
-            $endOfHeader = strpos($output, "\r\n\r\n");
-            if ($endOfHeader !== false) {
-                $output = substr($output, $endOfHeader + 4);
-            }
-        }
-        return $output;
+        /**
+         * Workaround: The http status code will already be sent and
+         * Flow's {@see \Neos\Flow\Error\DebugExceptionHandler::echoExceptionWeb()}
+         * expects a view to return a string to be echo'd.
+         * Thus, we unwrap the repose here:
+         */
+        return $httpResponse->getBody()->getContents();
     }
 
     /**
