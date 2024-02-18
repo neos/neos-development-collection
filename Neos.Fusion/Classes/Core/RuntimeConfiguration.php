@@ -90,9 +90,11 @@ final class RuntimeConfiguration
                 $currentPrototypeDefinitions = $configuration['__prototypes'];
             }
         }
+        assert(isset($configuration));
 
         // Build configuration for the remaining path parts
         $remainingPath = substr($fusionPath, $pathUntilNow === '' ? 0 : strlen($pathUntilNow) + 1);
+        /** @var non-empty-list<string> $pathParts */
         $pathParts = explode('/', $remainingPath);
         foreach ($pathParts as $pathPart) {
             if ($pathUntilNow === '') {

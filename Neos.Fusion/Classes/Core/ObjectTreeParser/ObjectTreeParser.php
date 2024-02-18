@@ -54,7 +54,7 @@ class ObjectTreeParser
 
     protected ?string $contextPathAndFilename;
 
-    protected function __construct(Lexer $lexer, ?string $contextPathAndFilename)
+    private function __construct(Lexer $lexer, ?string $contextPathAndFilename)
     {
         $this->lexer = $lexer;
         $this->contextPathAndFilename = $contextPathAndFilename;
@@ -63,7 +63,7 @@ class ObjectTreeParser
     public static function parse(FusionSourceCode $fusionCode): FusionFile
     {
         $lexer = new Lexer($fusionCode->getSourceCode());
-        $parser = new static($lexer, $fusionCode->getFilePath());
+        $parser = new self($lexer, $fusionCode->getFilePath());
         return $parser->parseFusionFile();
     }
 
@@ -117,9 +117,9 @@ class ObjectTreeParser
     /**
      * Checks, if the token type matches the current, if so consume it and return true.
      * @param int $tokenType
-     * @return bool|null
+     * @return bool
      */
-    protected function lazyExpect(int $tokenType): ?bool
+    protected function lazyExpect(int $tokenType): bool
     {
         $token = $this->lexer->getCachedLookaheadOrTryToGenerateLookaheadForTokenAndGetLookahead($tokenType);
         if ($token === null || $token->getType() !== $tokenType) {

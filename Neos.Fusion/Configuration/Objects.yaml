@@ -27,3 +27,8 @@ Neos\Fusion\Core\Cache\ParserCache:
         arguments:
           1:
             value: Neos_Fusion_ParsePartials
+
+Neos\Fusion\Core\Cache\RuntimeContentCache:
+  properties:
+    serializer:
+      object: Neos\Fusion\Core\Cache\FusionContextSerializer

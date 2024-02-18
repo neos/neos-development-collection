@@ -151,6 +151,26 @@ trait ProjectionIntegrityViolationDetectionTrait
     }
 
     /**
+     * @When /^I change the following hierarchy relation's name:$/
+     * @param TableNode $payloadTable
+     * @throws DBALException
+     */
+    public function iChangeTheFollowingHierarchyRelationsEdgeName(TableNode $payloadTable): void
+    {
+        $dataset = $this->transformPayloadTableToDataset($payloadTable);
+        $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
+        unset($record['position']);
+
+        $this->dbalClient->getConnection()->update(
+            $this->getTableNamePrefix() . '_hierarchyrelation',
+            [
+                'name' => $dataset['newName']
+            ],
+            $record
+        );
+    }
+
+    /**
      * @When /^I set the following position:$/
      * @param TableNode $payloadTable
      * @throws DBALException
@@ -186,7 +206,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $this->dbalClient->getConnection()->update(
             $this->getTableNamePrefix() . '_referencerelation',
             [
-                'nodeanchorpoint' => 'detached'
+                'nodeanchorpoint' => 7777777
             ],
             $this->transformDatasetToReferenceRelationRecord($dataset)
         );
@@ -246,14 +266,14 @@ trait ProjectionIntegrityViolationDetectionTrait
             'dimensionspacepoint' => $dimensionSpacePoint->toJson(),
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'parentnodeanchor' => $parentNodeAggregateId->isNonExistent()
-                ? UuidFactory::create()
+                ? 9999999
                 : $this->findRelationAnchorPointByIds(
                     ContentStreamId::fromString($dataset['contentStreamId']),
                     $dimensionSpacePoint,
                     NodeAggregateId::fromString($dataset['parentNodeAggregateId'])
                 ),
             'childnodeanchor' => $childAggregateId->isNonExistent()
-                ? UuidFactory::create()
+                ? 8888888
                 : $this->findRelationAnchorPointByIds(
                     ContentStreamId::fromString($dataset['contentStreamId']),
                     $dimensionSpacePoint,
@@ -263,7 +283,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         ];
     }
 
-    private function findRelationAnchorPointByDataset(array $dataset): string
+    private function findRelationAnchorPointByDataset(array $dataset): int
     {
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'] ?? $dataset['dimensionSpacePoint']);
 
@@ -278,7 +298,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
-    ): string {
+    ): int {
         $nodeRecord = $this->dbalClient->getConnection()->executeQuery(
             'SELECT n.relationanchorpoint
                             FROM ' . $this->getTableNamePrefix() . '_node n

@@ -116,6 +116,7 @@ class ChildrenOperation extends AbstractOperation
         $outputNodeAggregateIds = [];
         foreach ($parsedFilter['Filters'] as $filter) {
             $instanceOfFilters = [];
+            // @todo array is never queried
             $attributeFilters = [];
             if (isset($filter['AttributeFilters'])) {
                 foreach ($filter['AttributeFilters'] as $attributeFilter) {
@@ -191,7 +192,7 @@ class ChildrenOperation extends AbstractOperation
                     });
                     $filteredFlowQuery = new FlowQuery($filteredOutput);
                     $filteredFlowQuery->pushOperation('filter', [$attributeFilters]);
-                    $filteredOutput = $filteredFlowQuery->getContext();
+                    $filteredOutput = iterator_to_array($filteredFlowQuery);
                 }
 
                 // Add filtered nodes to output

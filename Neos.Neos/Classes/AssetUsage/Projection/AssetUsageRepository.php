@@ -46,9 +46,16 @@ final class AssetUsageRepository
         }
     }
 
-    public function isSetupRequired(): bool
+    /**
+     * @return false|non-empty-string false if everything is okay, otherwise the details string, why a setup is required
+     */
+    public function isSetupRequired(): false|string
     {
-        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $this->databaseSchema()) !== [];
+        $requiredSqlStatements = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $this->databaseSchema());
+        if ($requiredSqlStatements !== []) {
+            return sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements));
+        }
+        return false;
     }
 
     private function databaseSchema(): Schema

@@ -122,7 +122,7 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a1"}' I expect the nodes "a1,a2a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\""}' I expect the nodes "a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\" OR text $= \"a1\""}' I expect the nodes "a1,a2a1" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty *= \"späci\" OR text $= \"a1\""}' I expect the nodes "b,a1,a2a1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty *= \"späCi\" OR text $= \"a1\""}' I expect the nodes "b,a1,a2a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = true"}' I expect the nodes "a,a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = false"}' I expect the nodes "a3" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty >= 20"}' I expect the nodes "a1,a2,a2a2b" to be returned

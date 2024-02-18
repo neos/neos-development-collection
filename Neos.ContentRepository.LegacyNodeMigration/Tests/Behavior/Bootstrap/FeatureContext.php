@@ -108,6 +108,8 @@ class FeatureContext implements Context
                 'properties' => !empty($row['Properties']) ? $row['Properties'] : '{}',
                 'dimensionvalues' => !empty($row['Dimension Values']) ? $row['Dimension Values'] : '{}',
                 'hiddeninindex' => $row['Hidden in index'] ?? '0',
+                'hiddenbeforedatetime' =>  !empty($row['Hidden before DateTime']) ? ($row['Hidden before DateTime']): null,
+                'hiddenafterdatetime' =>  !empty($row['Hidden after DateTime']) ? ($row['Hidden after DateTime']) : null,
                 'hidden' => $row['Hidden'] ?? '0',
             ];
         }, $nodeDataRows->getHash());

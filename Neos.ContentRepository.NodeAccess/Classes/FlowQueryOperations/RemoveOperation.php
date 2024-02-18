@@ -34,6 +34,20 @@ final class RemoveOperation implements OperationInterface
 {
     use CreateNodeHashTrait;
 
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'remove';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 100;
+
     /** @param array<int, mixed> $context */
     public function canEvaluate($context): bool
     {
