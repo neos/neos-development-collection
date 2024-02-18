@@ -13,7 +13,6 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
 use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\FrontendInterface;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Model\TestModel;
 
@@ -331,8 +330,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
             'object' => $object
         ]);
 
-        /** @var \Neos\Flow\Mvc\ActionRequest $actionRequest */
-        $actionRequest = $this->controllerContext->getRequest();
+        $actionRequest = $this->request;
         $actionRequest->setArgument('currentPage', 1);
 
         $firstRenderResult = $view->render();
@@ -729,8 +727,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('someContextVariable', 'prettyUnused');
         $view->setFusionPath('contentCache/dynamicWithChangingDiscriminator');
 
-        /** @var ActionRequest $actionRequest */
-        $actionRequest = $this->controllerContext->getRequest();
+        $actionRequest = $this->request;
         $actionRequest->setArgument('testArgument', '1');
         $firstRenderResult = $view->render();
 

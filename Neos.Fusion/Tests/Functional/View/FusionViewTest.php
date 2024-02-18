@@ -12,8 +12,8 @@ namespace Neos\Fusion\Tests\Functional\View;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\View\FusionView;
 
 /**
@@ -22,19 +22,6 @@ use Neos\Fusion\View\FusionView;
  */
 class FusionViewTest extends FunctionalTestCase
 {
-    /**
-     * @var ControllerContext
-     */
-    protected $mockControllerContext;
-
-    /**
-     * Initializer
-     */
-    public function setUp(): void
-    {
-        $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-    }
-
     /**
      * @test
      */
@@ -76,10 +63,9 @@ class FusionViewTest extends FunctionalTestCase
         $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $request->expects(self::any())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
         $request->expects(self::any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
-        $this->mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($request));
 
         $view = new FusionView();
-        $view->setControllerContext($this->mockControllerContext);
+        $view->setOption('fusionGlobals', FusionGlobals::fromArray(['request' => $request]));
         $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
 
         return $view;
