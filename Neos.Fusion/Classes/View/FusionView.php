@@ -13,6 +13,7 @@ namespace Neos\Fusion\View;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Fusion\Core\FusionConfiguration;
 use Neos\Fusion\Core\FusionGlobals;
@@ -95,6 +96,28 @@ class FusionView extends AbstractView
     }
 
     /**
+     * Legacy layer to make the `request` available in Fusion.
+     *
+     * Please use {@see setOption} and {@see FusionGlobals} instead:
+     *
+     *     $view->setOption('fusionGlobals', FusionGlobals::fromArray(['request' => $this->request]))
+     *
+     * @deprecated with Neos 9
+     */
+    public function setControllerContext(ControllerContext $controllerContext)
+    {
+        /** @var FusionGlobals $fusionGlobals */
+        $fusionGlobals = $this->options['fusionGlobals'] ?? FusionGlobals::empty();
+        if ($fusionGlobals->has('request')) {
+            // no need for legacy layer as the request was already set.
+            return;
+        }
+        $this->setOption('fusionGlobals', $fusionGlobals->merge(FusionGlobals::fromArray(
+            ['request' => $controllerContext->getRequest()]
+        )));
+    }
+
+    /**
      * Sets the Fusion path to be rendered to an explicit value;
      * to be used mostly inside tests.
      *
@@ -164,21 +187,10 @@ class FusionView extends AbstractView
             if (!$fusionGlobals instanceof FusionGlobals) {
                 throw new \InvalidArgumentException('View option "fusionGlobals" must be of type FusionGlobals', 1694252923947);
             }
-            $fusionGlobals = $fusionGlobals->merge(
-                FusionGlobals::fromArray(
-                    array_filter([
-                        'request' => $this->controllerContext?->getRequest()
-                    ])
-                )
-            );
-
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $this->parsedFusion,
                 $fusionGlobals
             );
-            if (isset($this->controllerContext)) {
-                $this->fusionRuntime->setControllerContext($this->controllerContext);
-            }
         }
         if (isset($this->options['debugMode'])) {
             $this->fusionRuntime->setDebugMode($this->options['debugMode']);
@@ -250,9 +262,9 @@ class FusionView extends AbstractView
         if ($packageKey !== null) {
             return $packageKey;
         } else {
-            $request = $this->controllerContext?->getRequest();
+            $request = $this->getRequestFromFusionGlobals();
             if (!$request) {
-                throw new \RuntimeException(sprintf('To resolve the @package in all fusionPathPatterns, either packageKey has to be specified, or the current request be available.'));
+                throw new \RuntimeException(sprintf('To resolve the @package in all fusionPathPatterns, either packageKey has to be specified, or the current request be available.'), 1708267874);
             }
             return $request->getControllerPackageKey();
         }
@@ -270,8 +282,10 @@ class FusionView extends AbstractView
             if ($fusionPath !== null) {
                 $this->fusionPath = $fusionPath;
             } else {
-                /** @var $request ActionRequest */
-                $request = $this->controllerContext->getRequest();
+                $request = $this->getRequestFromFusionGlobals();
+                if (!$request) {
+                    throw new \RuntimeException(sprintf('The option `fusionPath` was not set. Could not fallback to the current request.'), 1708267857);
+                }
                 $fusionPathForCurrentRequest = $request->getControllerObjectName();
                 $fusionPathForCurrentRequest = str_replace('\\Controller\\', '\\', $fusionPathForCurrentRequest);
                 $fusionPathForCurrentRequest = str_replace('\\', '/', $fusionPathForCurrentRequest);
@@ -299,5 +313,19 @@ class FusionView extends AbstractView
         }
         $this->fusionRuntime->popContext();
         return $output;
+    }
+
+    private function getRequestFromFusionGlobals(): ?ActionRequest
+    {
+        /** @var FusionGlobals $fusionGlobals */
+        $fusionGlobals = $this->options['fusionGlobals'] ?? FusionGlobals::empty();
+        if (!$fusionGlobals instanceof FusionGlobals) {
+            throw new \InvalidArgumentException('View option "fusionGlobals" must be of type FusionGlobals', 1694252923947);
+        }
+        $actionRequest = $fusionGlobals->get('request');
+        if (!$actionRequest instanceof ActionRequest) {
+            return null;
+        }
+        return $actionRequest;
     }
 }

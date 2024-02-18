@@ -12,11 +12,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\View\FusionView;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
@@ -27,9 +24,9 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 abstract class AbstractFusionObjectTest extends FunctionalTestCase
 {
     /**
-     * @var ControllerContext
+     * @var ActionRequest
      */
-    protected $controllerContext;
+    protected $request;
 
     /**
      * Helper to build a Fusion view object
@@ -43,20 +40,10 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
         /** @var ServerRequestFactoryInterface $httpRequestFactory */
         $httpRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
         $httpRequest = $httpRequestFactory->createServerRequest('GET', 'http://localhost/');
-        $request = ActionRequest::fromHttpRequest($httpRequest);
+        $this->request = ActionRequest::fromHttpRequest($httpRequest);
 
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
-
-        $this->controllerContext = new ControllerContext(
-            $request,
-            new ActionResponse(),
-            new Arguments([]),
-            $uriBuilder
-        );
-
-        $view->setControllerContext($this->controllerContext);
         $view->setPackageKey('Neos.Fusion');
+        $view->setOption('fusionGlobals', FusionGlobals::fromArray(['request' => $this->request]));
         $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
         $view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
 
