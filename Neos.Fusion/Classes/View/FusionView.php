@@ -155,7 +155,7 @@ class FusionView extends AbstractView
                 $this->fusionRuntime->pushContextArray($this->variables);
                 return $this->fusionRuntime->render($this->getFusionPathForCurrentRequest());
             } catch (RuntimeException $exception) {
-                throw $exception->getPrevious();
+                throw $exception->getWrappedException();
             } finally {
                 $this->fusionRuntime->popContext();
             }
