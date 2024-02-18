@@ -39,6 +39,7 @@ use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Psr\Http\Message\ResponseInterface;
 
 class FusionExceptionView extends AbstractView
 {
@@ -218,6 +219,10 @@ class FusionExceptionView extends AbstractView
             'enableContentCache' => false,
         ]);
         $view->assignMultiple($this->variables);
-        return $view->render();
+        $output = $view->render();
+        if ($output instanceof ResponseInterface) {
+            return $output->getBody()->getContents();
+        }
+        return $output;
     }
 }
