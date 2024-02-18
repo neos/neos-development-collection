@@ -282,8 +282,7 @@ class Runtime
             try {
                 $output = $this->render($fusionPath);
             } catch (RuntimeException $exception) {
-                // unwrap the FusionRuntimeException
-                throw $exception->getPrevious();
+                throw $exception->getWrappedException();
             } finally {
                 $this->popContext();
             }
