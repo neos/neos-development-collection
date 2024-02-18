@@ -171,7 +171,7 @@ class FusionExceptionView extends AbstractView
             $output = $fusionRuntime->render('error');
             return $this->extractBodyFromOutput($output);
         } catch (RuntimeException $exception) {
-            throw $exception->getPrevious() ?: $exception;
+            throw $exception->getWrappedException();
         } finally {
             $fusionRuntime->popContext();
         }
