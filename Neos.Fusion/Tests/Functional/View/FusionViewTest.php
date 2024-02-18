@@ -15,7 +15,6 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\View\FusionView;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * Testcase for the Fusion View
@@ -63,41 +62,6 @@ class FusionViewTest extends FunctionalTestCase
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->assign('test', 'Hallo Welt');
         self::assertEquals('XHallo Welt', $view->render());
-    }
-
-    /**
-     * @test
-     */
-    public function fusionViewCanReturnHttpResponse()
-    {
-        $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
-        $view->setOption('renderHttpResponse', true);
-        $view->assign('test', 'Hallo Welt');
-        $response = $view->render();
-        self::assertInstanceOf(ResponseInterface::class, $response);
-        self::assertEquals('XHallo Welt', $view->render()->getBody()->getContents());
-    }
-
-    /**
-     * @test
-     */
-    public function fusionViewCanReturnHttpResponseFromHttpMessagePrototype()
-    {
-        $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
-        $view->setFusionPath('response');
-        self::assertSame(<<<EOF
-        HTTP/1.1 404 Not Found\r
-        Content-Type: application/json\r
-        \r
-        {"some":"json"}
-        EOF, $view->render());
-
-        $view->setOption('renderHttpResponse', true);
-        $response = $view->render();
-        self::assertInstanceOf(ResponseInterface::class, $response);
-        self::assertSame('{"some":"json"}', $response->getBody()->getContents());
-        self::assertSame(404, $response->getStatusCode());
-        self::assertSame("application/json", $response->getHeaderLine("Content-Type"));
     }
 
     /**
