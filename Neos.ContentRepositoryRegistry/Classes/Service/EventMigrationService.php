@@ -33,7 +33,6 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
-        private readonly ContentRepository $contentRepository,
         private readonly EventStoreInterface $eventStore,
         private readonly Connection $connection,
     ) {
@@ -217,12 +216,9 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
         $outputFn();
         $outputFn(sprintf('Migration applied to %s events.', count($this->eventsModified)));
-        $outputFn('Replaying ContentGraph Projection.');
-        $this->contentRepository->resetProjectionState(ContentGraphProjection::class);
-        $this->contentRepository->catchUpProjection(ContentGraphProjection::class, CatchUpOptions::create());
-        $outputFn('Finished.');
+        $outputFn('Please replay your content-graph projection via `flow cr:projectionReplay contentGraph`.');
         if ($warnings) {
-            $outputFn(sprintf('WARNING: %d warnings emitted.', $warnings));
+            $outputFn(sprintf('WARNING: Finished but %d warnings emitted.', $warnings));
         }
     }
 

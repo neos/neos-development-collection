@@ -33,7 +33,6 @@ final class EventMigrationServiceFactory implements ContentRepositoryServiceFact
 
         return new EventMigrationService(
             $serviceFactoryDependencies->contentRepositoryId,
-            $serviceFactoryDependencies->contentRepository,
             $serviceFactoryDependencies->eventStore,
             $this->connection
         );
