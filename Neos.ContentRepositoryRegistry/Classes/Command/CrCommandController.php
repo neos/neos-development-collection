@@ -8,13 +8,18 @@ use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Cli\CommandController;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
 use Symfony\Component\Console\Output\Output;
 
 final class CrCommandController extends CommandController
@@ -23,6 +28,7 @@ final class CrCommandController extends CommandController
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly ProjectionReplayServiceFactory $projectionServiceFactory,
+        private readonly SiteRepository $siteRepository,
     ) {
         parent::__construct();
     }
@@ -243,5 +249,74 @@ final class CrCommandController extends CommandController
         $projectionService->resetAllProjections();
 
         $this->outputLine('<success>Done.</success>');
+    }
+
+    public function listCommand()
+    {
+        $rows = [];
+
+        /** @var list<Site> $sites */
+        $sites = [];
+        try {
+            $sites = iterator_to_array($this->siteRepository->findAll());
+        } catch (DatabaseException) {
+            // doctrine might have not been migrated yet or no database is connected.
+            $this->outputLine('<comment>Site repository is not accessible.</comment>');
+        }
+
+        foreach ($this->contentRepositoryRegistry->getContentRepositoryIds() as $contentRepositoryId) {
+            $contentRepository = null;
+            try {
+                $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+            } catch (InvalidConfigurationException $exception) {
+                $this->outputLine('<comment>Content repository %s is not well configures: %s.</comment>', [$contentRepositoryId->value, $exception->getMessage()]);
+            }
+
+            $configuredSites = [];
+            foreach ($sites as $site) {
+                if (!$site->getConfiguration()->contentRepositoryId->equals($contentRepositoryId)) {
+                    continue;
+                }
+                $configuredSites[] = $site->getName();
+            }
+
+            $statusString = '-';
+            $workspacesString = '-';
+            $contentStreamsString = '-';
+            $nodesString = '-';
+
+            if ($contentRepository) {
+                $statusString = $contentRepository->status()->isOk() ? 'okay' : 'not okay';
+
+                try {
+                    $workspacesString = sprintf('%d entries', count($contentRepository->getWorkspaceFinder()->findAll()));
+                } catch (\Throwable $e) {
+                    $this->outputLine('<comment>WorkspaceFinder of %s not functional: %s.</comment>', [$contentRepositoryId->value, $e->getMessage()]);
+                }
+
+                try {
+                    $contentStreamsString = sprintf('%d entries', iterator_count($contentRepository->getContentStreamFinder()->findAllIds()));
+                } catch (\Throwable $e) {
+                    $this->outputLine('<comment>ContentStreamFinder of %s not functional: %s.</comment>', [$contentRepositoryId->value, $e->getMessage()]);
+                }
+
+                try {
+                    $nodesString = sprintf('%d entries', $contentRepository->getContentGraph(WorkspaceName::forLive())->countNodes());
+                } catch (\RuntimeException $e) {
+                    $this->outputLine('<comment>ContentGraph of %s not functional: %s.</comment>', [$contentRepositoryId->value, $e->getMessage()]);
+                }
+            }
+
+            $rows[] = [
+                $contentRepositoryId->value,
+                $statusString,
+                join(', ', $configuredSites) ?: '-',
+                $workspacesString,
+                $contentStreamsString,
+                $nodesString
+            ];
+        }
+
+        $this->output->outputTable($rows, ['Identifier', 'Status', 'Sites', 'Workspaces', 'Contentstreams', 'Nodes']);
     }
 }
