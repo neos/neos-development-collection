@@ -8,27 +8,35 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 
 /**
+ * @implements \IteratorAggregate<int, PropertyName>
  * @api
  */
-final readonly class PropertyNames implements \JsonSerializable
+final readonly class PropertyNames implements \IteratorAggregate, \JsonSerializable
 {
     /**
-     * @var array<string>
+     * @var array<int, PropertyName>
      */
-    public array $values;
+    private array $values;
 
+    /**
+     * @no-named-arguments
+     */
     private function __construct(
-        string ...$propertyNames
+        PropertyName ...$propertyNames
     ) {
         $this->values = $propertyNames;
     }
 
     /**
-     * @param array<string> $propertyNames
+     * @param array<string|PropertyName> $propertyNames
      */
     public static function fromArray(array $propertyNames): self
     {
-        return new self(...$propertyNames);
+        $values = [];
+        foreach ($propertyNames as $propertyName) {
+            $values[] = is_string($propertyName) ? PropertyName::fromString($propertyName) : $propertyName;
+        }
+        return new self(...$values);
     }
 
     public static function createEmpty(): self
@@ -37,13 +45,14 @@ final readonly class PropertyNames implements \JsonSerializable
     }
 
     /**
+     * @internal
      * @return array<string, self>
      */
     public function splitByScope(NodeType $nodeType): array
     {
         $propertiesToUnsetByScope = [];
-        foreach ($this->values as $propertyName) {
-            $scope = PropertyScope::tryFromDeclaration($nodeType, PropertyName::fromString($propertyName));
+        foreach ($this as $propertyName) {
+            $scope = PropertyScope::tryFromDeclaration($nodeType, $propertyName);
             $propertiesToUnsetByScope[$scope->value][] = $propertyName;
         }
 
@@ -61,5 +70,13 @@ final readonly class PropertyNames implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return $this->values;
+    }
+
+    /**
+     * @return \Traversable<int, PropertyName>
+     */
+    public function getIterator(): \Traversable
+    {
+        yield from $this->values;
     }
 }

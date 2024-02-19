@@ -107,7 +107,11 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
 
     public function unsetProperties(PropertyNames $propertyNames): self
     {
-        return new self(array_diff_key($this->values, array_flip($propertyNames->values)));
+        $propertiesToUnsetMap = [];
+        foreach ($propertyNames as $propertyName) {
+            $propertiesToUnsetMap[$propertyName->value] = true;
+        }
+        return new self(array_diff_key($this->values, $propertiesToUnsetMap));
     }
 
     /**
