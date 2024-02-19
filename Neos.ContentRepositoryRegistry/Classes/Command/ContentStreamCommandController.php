@@ -28,9 +28,14 @@ class ContentStreamCommandController extends CommandController
      * If you also call with "--removeTemporary", will delete ALL content streams which are currently not assigned
      * to a workspace (f.e. dangling ones in FORKED or CREATED.).
      */
-    public function pruneCommand(string $contentRepositoryIdentifier = 'default', bool $removeTemporary = false): void
+    public function pruneCommand(string $contentRepository = 'default', bool $removeTemporary = false): void
     {
-        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        if (!$this->output->askConfirmation(sprintf('> This operation in "%s" cannot be reverted. Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentStreamPruner = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentStreamPrunerFactory());
 
         $unusedContentStreams = $contentStreamPruner->prune($removeTemporary);
@@ -47,9 +52,14 @@ class ContentStreamCommandController extends CommandController
     /**
      * Remove unused and deleted content streams from the event stream; effectively REMOVING information completely
      */
-    public function pruneRemovedFromEventStreamCommand(string $contentRepositoryIdentifier = 'default'): void
+    public function pruneRemovedFromEventStreamCommand(string $contentRepository = 'default'): void
     {
-        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        if (!$this->output->askConfirmation(sprintf('> This operation in "%s" cannot be reverted. Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentStreamPruner = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentStreamPrunerFactory());
 
         $unusedContentStreams = $contentStreamPruner->pruneRemovedFromEventStream();

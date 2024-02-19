@@ -175,6 +175,8 @@ class SiteCommandController extends CommandController
             }
         }
 
+        // todo use outputTable
+
         $this->outputLine();
         $this->outputLine(' ' . str_pad('Name', $longestSiteName + 15)
             . str_pad('Node name', $longestNodeName + 15)
