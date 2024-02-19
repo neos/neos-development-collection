@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Feature\NodeModification\Dto;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use PHPUnit\Framework\TestCase;

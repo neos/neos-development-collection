@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
+namespace Neos\ContentRepository\Core\SharedModel\Node;
 
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
- * Todo move to shared and use {@see PropertyName} ???
- * @api used as part of commands/events
+ * @api
  */
 final readonly class PropertyNames implements \JsonSerializable
 {

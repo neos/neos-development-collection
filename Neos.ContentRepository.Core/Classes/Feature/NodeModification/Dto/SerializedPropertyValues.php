@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 
 /**
  * "Raw" property values as saved in the event log // in projections.
