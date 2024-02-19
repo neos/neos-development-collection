@@ -44,24 +44,6 @@ final readonly class PropertyNames implements \IteratorAggregate, \JsonSerializa
         return new self();
     }
 
-    /**
-     * @internal
-     * @return array<string, self>
-     */
-    public function splitByScope(NodeType $nodeType): array
-    {
-        $propertiesToUnsetByScope = [];
-        foreach ($this as $propertyName) {
-            $scope = PropertyScope::tryFromDeclaration($nodeType, $propertyName);
-            $propertiesToUnsetByScope[$scope->value][] = $propertyName;
-        }
-
-        return array_map(
-            fn(array $propertyValues): self => self::fromArray($propertyValues),
-            $propertiesToUnsetByScope
-        );
-    }
-
     public function merge(self $other): self
     {
         return new self(...$this->values, ...$other->values);

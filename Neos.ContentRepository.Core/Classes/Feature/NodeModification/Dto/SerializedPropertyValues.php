@@ -115,6 +115,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     }
 
     /**
+     * @internal
      * @return array<string,self>
      */
     public function splitByScope(NodeType $nodeType): array

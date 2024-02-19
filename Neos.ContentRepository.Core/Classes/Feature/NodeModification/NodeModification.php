@@ -114,7 +114,7 @@ trait NodeModification
             }
         }
 
-        $propertiesToUnsetByScope = $command->propertiesToUnset->splitByScope($nodeType);
+        $propertiesToUnsetByScope = $this->splitPropertiesToUnsetByScope($command->propertiesToUnset, $nodeType);
         foreach ($propertiesToUnsetByScope as $scopeValue => $propertyNamesToUnset) {
             $affectedOrigins = PropertyScope::from($scopeValue)->resolveAffectedOrigins(
                 $command->originDimensionSpacePoint,
@@ -143,6 +143,23 @@ trait NodeModification
                 Events::fromArray($events)
             ),
             ExpectedVersion::ANY()
+        );
+    }
+
+    /**
+     * @return array<string,PropertyNames>
+     */
+    private function splitPropertiesToUnsetByScope(PropertyNames $propertiesToUnset, NodeType $nodeType): array
+    {
+        $propertiesToUnsetByScope = [];
+        foreach ($propertiesToUnset as $propertyName) {
+            $scope = PropertyScope::tryFromDeclaration($nodeType, $propertyName);
+            $propertiesToUnsetByScope[$scope->value][] = $propertyName;
+        }
+
+        return array_map(
+            fn(array $propertyValues): PropertyNames => PropertyNames::fromArray($propertyValues),
+            $propertiesToUnsetByScope
         );
     }
 
