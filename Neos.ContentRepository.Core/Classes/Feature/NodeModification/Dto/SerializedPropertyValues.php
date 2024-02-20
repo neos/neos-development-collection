@@ -72,10 +72,6 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     {
         $values = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-            if ($defaultValue instanceof \DateTimeInterface) {
-                $defaultValue = json_encode($defaultValue);
-            }
-
             $propertyType = PropertyType::fromNodeTypeDeclaration(
                 $nodeType->getPropertyType($propertyName),
                 PropertyName::fromString($propertyName),
