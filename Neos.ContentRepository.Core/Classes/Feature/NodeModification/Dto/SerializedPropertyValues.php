@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -66,7 +67,8 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
         return new self($values);
     }
 
-    public static function defaultFromNodeType(NodeType $nodeType): self
+    /** @internal */
+    public static function defaultFromNodeType(NodeType $nodeType, PropertyConverter $propertyConverter): self
     {
         $values = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
@@ -79,8 +81,17 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
                 PropertyName::fromString($propertyName),
                 $nodeType->name
             );
-
-            $values[$propertyName] = SerializedPropertyValue::create($defaultValue, $propertyType->getSerializationType());
+            $deserializedDefaultValue = $propertyConverter->deserializePropertyValue(
+                SerializedPropertyValue::create($defaultValue, $propertyType->getSerializationType())
+            );
+            $values[$propertyName] = $propertyConverter->serializePropertyValue(
+                PropertyType::fromNodeTypeDeclaration(
+                    $nodeType->getPropertyType($propertyName),
+                    PropertyName::fromString($propertyName),
+                    $nodeType->name
+                ),
+                $deserializedDefaultValue
+            );
         }
 
         return new self($values);

@@ -283,6 +283,10 @@ trait ProjectedNodeTrait
                 $expectedPropertyValue = $this->resolvePropertyValue($row['Value']);
                 $actualPropertyValue = $properties->offsetGet($row['Key']);
                 if ($row['Value'] === 'Date:now') {
+                    // special case as It's hard to work with relative times. We only handle `now` right now (pun intended) but this or similar handling would also be required for `yesterday` or `after rep tv`
+                    // as It's hard to check otherwise, we have to verify that `now` was not actually saved as string `now` but as timestamp when it was created
+                    $serializedValue = $currentNode->properties->serialized()->getProperty($row['Key'])?->value;
+                    Assert::assertNotEquals('now', $serializedValue, 'Relative DateTime must be serialized as absolute time in the events/serialized-properties');
                     // we accept 10s offset for the projector to be fine
                     Assert::assertLessThan($actualPropertyValue, $expectedPropertyValue->sub(new \DateInterval('PT10S')), 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($expectedPropertyValue) . '; Actual: ' . json_encode($actualPropertyValue));
                 } else {

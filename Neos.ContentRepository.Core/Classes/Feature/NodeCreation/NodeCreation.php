@@ -224,7 +224,7 @@ trait NodeCreation
             );
         }
 
-        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType);
+        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->getPropertyConverter());
         $initialPropertyValues = $defaultPropertyValues->merge($command->initialPropertyValues);
 
         $events = [
@@ -294,7 +294,7 @@ trait NodeCreation
                 : NodePath::fromString($nodeName->value);
             $childNodeAggregateId = $nodeAggregateIds->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType);
+            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
 
             $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
             $events[] = $this->createTetheredWithNode(
