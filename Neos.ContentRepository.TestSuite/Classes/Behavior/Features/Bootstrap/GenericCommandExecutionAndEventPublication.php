@@ -117,16 +117,6 @@ trait GenericCommandExecutionAndEventPublication
     }
 
     /**
-     * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
-     * @throws \Exception
-     */
-    public function theEventWasPublishedToStreamWithPayload(string $eventType, string $streamName, TableNode $payloadTable): void
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        $this->publishEvent($eventType, StreamName::fromString($streamName), $eventPayload);
-    }
-
-    /**
      * @throws \Exception
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
