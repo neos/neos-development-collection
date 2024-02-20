@@ -212,7 +212,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             if (
                 $nodeAggregate->nodeName
                 && $parentsNodeType->hasTetheredNode($nodeAggregate->nodeName)
-                && $this->nodeTypeManager->getTypeOfTetheredNode($parentsNodeType, $nodeAggregate->nodeName)->name
+                && $this->nodeTypeManager->getTypeOfTetheredNode($parentsNodeType->name, $nodeAggregate->nodeName)->name
                     !== $command->newNodeTypeName->value
             ) {
                 throw new NodeConstraintException(
@@ -234,9 +234,9 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                     $parentAggregate->nodeName
                     && $grandParentsNodeType->hasTetheredNode($parentAggregate->nodeName)
                     && !$this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
-                        $grandParentsNodeType,
+                        $grandParentsNodeType->name,
                         $parentAggregate->nodeName,
-                        $newNodeType
+                        $newNodeType->name
                     )
                 ) {
                     throw new NodeConstraintException(

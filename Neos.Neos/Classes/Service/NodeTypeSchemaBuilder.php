@@ -17,6 +17,7 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
@@ -90,7 +91,6 @@ class NodeTypeSchemaBuilder
     {
         $constraints = [];
         $nodeTypes = $this->nodeTypeManager->getNodeTypes(true);
-        /** @var NodeType $nodeType */
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             if ($nodeType->isAbstract()) {
                 continue;
@@ -105,9 +105,9 @@ class NodeTypeSchemaBuilder
                 }
             }
 
-            foreach ($this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeType) as $key => $_x) {
-                foreach ($nodeTypes as $innerNodeTypeName => $innerNodeType) {
-                    if ($this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode($nodeType, NodeName::fromString($key), $innerNodeType)) {
+            foreach ($this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeType->name) as $key => $_x) {
+                foreach ($nodeTypes as $innerNodeTypeName => $_y) {
+                    if ($this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode($nodeType->name, NodeName::fromString($key), NodeTypeName::fromString($innerNodeTypeName))) {
                         $constraints[$nodeTypeName]['childNodes'][$key]['nodeTypes'][$innerNodeTypeName] = true;
                     }
                 }

@@ -164,7 +164,7 @@ trait ConstraintChecks
     protected function requireTetheredDescendantNodeTypesToExist(NodeType $nodeType): void
     {
         // this getter throws if any of the child nodeTypes doesnt exist!
-        $tetheredNodeTypes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType);
+        $tetheredNodeTypes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType->name);
         foreach ($tetheredNodeTypes as $tetheredNodeType) {
             $this->requireTetheredDescendantNodeTypesToExist($tetheredNodeType);
         }
@@ -176,7 +176,7 @@ trait ConstraintChecks
      */
     protected function requireTetheredDescendantNodeTypesToNotBeOfTypeRoot(NodeType $nodeType): void
     {
-        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $tetheredChildNodeType) {
+        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType->name) as $tetheredChildNodeType) {
             if ($tetheredChildNodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 throw new NodeTypeIsOfTypeRoot(
                     'Node type "' . $nodeType->name->value . '" for tethered descendant is of type root.',
@@ -299,11 +299,11 @@ trait ConstraintChecks
         if (
             $nodeName
             && $parentsNodeType->hasTetheredNode($nodeName)
-            && !$this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->equals($nodeType->name)
+            && !$this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType->name, $nodeName)->name->equals($nodeType->name)
         ) {
             throw new NodeConstraintException(
                 'Node type "' . $nodeType->name->value . '" does not match configured "'
-                    . $this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->value
+                    . $this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType->name, $nodeName)->name->value
                     . '" for auto created child nodes for parent type "' . $parentsNodeType->name->value
                     . '" with name "' . $nodeName->value . '"'
             );
@@ -322,7 +322,7 @@ trait ConstraintChecks
         if (
             $nodeName
             && $parentsNodeType->hasTetheredNode($nodeName)
-            && !$this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->equals($nodeType->name)
+            && !$this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType->name, $nodeName)->name->equals($nodeType->name)
         ) {
             return false;
         }
@@ -360,7 +360,7 @@ trait ConstraintChecks
         if (
             $parentNodeName
             && $grandParentsNodeType->hasTetheredNode($parentNodeName)
-            && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType, $parentNodeName, $nodeType)
+            && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType->name, $parentNodeName, $nodeType->name)
         ) {
             return false;
         }
