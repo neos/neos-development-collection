@@ -256,6 +256,21 @@ trait ProjectedNodeTrait
     }
 
     /**
+     * @Then /^I expect this node to have the following serialized property types:$/
+     * @param TableNode $expectedPropertyTypes
+     */
+    public function iExpectThisNodeToHaveTheFollowingSerializedPropertyTypes(TableNode $expectedPropertyTypes): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedPropertyTypes) {
+            $serialized = $currentNode->properties->serialized();
+            foreach ($expectedPropertyTypes->getHash() as $row) {
+                Assert::assertTrue($serialized->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
+                Assert::assertEquals($row['Type'], $serialized->getProperty($row['Key'])->type, 'Serialized node property ' . $row['Key'] . ' does not match expected type.');
+            }
+        });
+    }
+
+    /**
      * @Then /^I expect this node to have the following properties:$/
      * @param TableNode $expectedProperties
      */

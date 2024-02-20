@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
@@ -73,14 +74,13 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
                 $defaultValue = json_encode($defaultValue);
             }
 
-            $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
-            self::assertTypeIsNoReference($propertyTypeFromSchema);
+            $propertyType = PropertyType::fromNodeTypeDeclaration(
+                $nodeType->getPropertyType($propertyName),
+                PropertyName::fromString($propertyName),
+                $nodeType->name
+            );
 
-            if ($defaultValue === null) {
-                continue;
-            }
-
-            $values[$propertyName] = SerializedPropertyValue::create($defaultValue, $propertyTypeFromSchema);
+            $values[$propertyName] = SerializedPropertyValue::create($defaultValue, $propertyType->getSerializationType());
         }
 
         return new self($values);
@@ -89,15 +89,6 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     public static function fromJsonString(string $jsonString): self
     {
         return self::fromArray(\json_decode($jsonString, true));
-    }
-
-    private static function assertTypeIsNoReference(string $propertyTypeFromSchema): void
-    {
-        if ($propertyTypeFromSchema === 'reference' || $propertyTypeFromSchema === 'references') {
-            throw new \RuntimeException(
-                'TODO: references cannot be serialized; you need to use the SetNodeReferences command instead.'
-            );
-        }
     }
 
     public function merge(self $other): self

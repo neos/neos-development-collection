@@ -18,7 +18,7 @@ Feature: Create a node aggregate with complex default values
           type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek
           defaultValue: 'https://schema.org/Wednesday'
         now:
-          type: DateTimeImmutable
+          type: DateTime
           defaultValue: 'now'
         date:
           type: DateTimeImmutable
@@ -66,6 +66,18 @@ Feature: Create a node aggregate with complex default values
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
     And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
+
+    And I expect this node to have the following serialized property types:
+      | Key           | Type                                                                   |
+      | array         | array                                                                  |
+      | dayOfWeek     | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek          |
+      | postalAddress | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress      |
+      # DateTime must always be treated as immutable see DateTimeImmutable
+      | now           | DateTimeImmutable                                                      |
+      | date          | DateTimeImmutable                                                      |
+      | uri           | GuzzleHttp\Psr7\Uri                                                    |
+      | price         | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification |
+
     And I expect this node to have the following properties:
       | Key           | Value                                           |
       | array         | {"givenName":"Nody", "familyName":"McNodeface"} |
