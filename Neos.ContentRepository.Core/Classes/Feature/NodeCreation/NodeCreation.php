@@ -97,7 +97,7 @@ trait NodeCreation
 
     private function deserializeDefaultProperties(NodeTypeName $nodeTypeName): PropertyValuesToWrite
     {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         $defaultValues = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
             $propertyType = PropertyType::fromNodeTypeDeclaration(
@@ -120,7 +120,7 @@ trait NodeCreation
             return;
         }
 
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         foreach ($propertyValues->values as $propertyName => $propertyValue) {
             if (!isset($nodeType->getProperties()[$propertyName])) {
                 throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
