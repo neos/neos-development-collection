@@ -117,9 +117,17 @@ final class PropertyConverter
 
     public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue): mixed
     {
-        return $this->serializer->denormalize(
-            $serializedPropertyValue->value,
-            $serializedPropertyValue->type
-        );
+        try {
+            return $this->serializer->denormalize(
+                $serializedPropertyValue->value,
+                $serializedPropertyValue->type
+            );
+        } catch (NotNormalizableValueException $e) {
+            throw new \RuntimeException(
+                sprintf('TODO: There was a problem deserializing %s', json_encode($serializedPropertyValue)),
+                1708416598,
+                $e
+            );
+        }
     }
 }

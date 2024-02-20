@@ -39,6 +39,11 @@ Feature: Create a node aggregate with complex default values
             price: 13.37
             priceCurrency: 'EUR'
 
+    'Neos.ContentRepository.Testing:FaultyDateNode':
+      properties:
+        date:
+          type: DateTimeImmutable
+          defaultValue: 'not a date'
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -106,3 +111,11 @@ Feature: Create a node aggregate with complex default values
       | date          | Date:2021-03-13T17:33:17+00:00                  |
       | uri           | URI:https://www.neos.io                         |
       | price         | PriceSpecification:anotherDummy                 |
+
+  Scenario: Create a node aggregate with faulty date time defaultValue fails
+    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:FaultyDateNode" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                        |
+    And the last command should have thrown an exception of type "RuntimeException" with code 1708416598

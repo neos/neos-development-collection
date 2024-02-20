@@ -69,10 +69,6 @@ trait NodeCreation
         ContentRepository $contentRepository
     ): EventsToPublish {
         $this->requireNodeType($command->nodeTypeName);
-        $this->validateProperties(
-            $this->deserializeDefaultProperties($command->nodeTypeName),
-            $command->nodeTypeName
-        );
         $this->validateProperties($command->initialPropertyValues, $command->nodeTypeName);
 
         $lowLevelCommand = CreateNodeAggregateWithNodeAndSerializedProperties::create(
@@ -93,27 +89,6 @@ trait NodeCreation
         }
 
         return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand, $contentRepository);
-    }
-
-    private function deserializeDefaultProperties(NodeTypeName $nodeTypeName): PropertyValuesToWrite
-    {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        $defaultValues = [];
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-            $propertyType = PropertyType::fromNodeTypeDeclaration(
-                $nodeType->getPropertyType($propertyName),
-                PropertyName::fromString($propertyName),
-                $nodeTypeName
-            );
-
-            $serializedPropertyValue = SerializedPropertyValue::create($defaultValue, $propertyType->getSerializationType());
-
-            $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
-                $serializedPropertyValue
-            );
-        }
-
-        return PropertyValuesToWrite::fromArray($defaultValues);
     }
 
     private function validateProperties(?PropertyValuesToWrite $propertyValues, NodeTypeName $nodeTypeName): void
