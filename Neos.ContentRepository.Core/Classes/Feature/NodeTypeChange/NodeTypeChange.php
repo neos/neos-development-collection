@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWa
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -148,7 +149,7 @@ trait NodeTypeChange
          * Preparation - make the command fully deterministic in case of rebase
          **************/
         $descendantNodeAggregateIds = $command->tetheredDescendantNodeAggregateIds->completeForNodeOfType(
-            $newNodeType->name,
+            $command->newNodeTypeName,
             $this->nodeTypeManager
         );
         // Write the auto-created descendant node aggregate ids back to the command;
@@ -176,12 +177,12 @@ trait NodeTypeChange
             array_push($events, ...iterator_to_array($this->deleteObsoleteTetheredNodesWhenChangingNodeType(
                 $contentGraph,
                 $nodeAggregate,
-                $newNodeType
+                $command->newNodeTypeName
             )));
         }
 
         // new tethered child nodes
-        $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($newNodeType);
+        $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($command->newNodeTypeName);
         foreach ($nodeAggregate->getNodes() as $node) {
             assert($node instanceof Node);
             foreach ($expectedTetheredNodes as $serializedTetheredNodeName => $expectedTetheredNodeType) {
@@ -347,9 +348,9 @@ trait NodeTypeChange
     private function deleteObsoleteTetheredNodesWhenChangingNodeType(
         ContentGraphInterface $contentGraph,
         NodeAggregate $nodeAggregate,
-        NodeType $newNodeType
+        NodeTypeName $newNodeTypeName
     ): Events {
-        $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($newNodeType);
+        $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($newNodeTypeName);
 
         $events = [];
         // find disallowed tethered nodes

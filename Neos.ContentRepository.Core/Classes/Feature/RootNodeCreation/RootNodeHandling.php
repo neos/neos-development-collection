@@ -105,7 +105,7 @@ trait RootNodeHandling
         foreach ($this->getInterDimensionalVariationGraph()->getRootGeneralizations() as $rootGeneralization) {
             array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
                 $contentGraph->getContentStreamId(),
-                $nodeType,
+                $command->nodeTypeName,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootGeneralization),
                 $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization, true),
                 $command->nodeAggregateId,
@@ -184,7 +184,7 @@ trait RootNodeHandling
      */
     private function handleTetheredRootChildNodes(
         ContentStreamId $contentStreamId,
-        NodeType $nodeType,
+        NodeTypeName $nodeTypeName,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateId $parentNodeAggregateId,
@@ -192,9 +192,8 @@ trait RootNodeHandling
         ?NodePath $nodePath
     ): Events {
         $events = [];
-        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $rawNodeName => $childNodeType) {
-            assert($childNodeType instanceof NodeType);
-            $nodeName = NodeName::fromString($rawNodeName);
+        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeTypeName) as $nodeNameString => $childNodeType) {
+            $nodeName = NodeName::fromString($nodeNameString);
             $childNodePath = $nodePath
                 ? $nodePath->appendPathSegment($nodeName)
                 : NodePath::fromString($nodeName->value);
@@ -215,7 +214,7 @@ trait RootNodeHandling
 
             array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
                 $contentStreamId,
-                $childNodeType,
+                $childNodeType->name,
                 $originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
                 $childNodeAggregateId,

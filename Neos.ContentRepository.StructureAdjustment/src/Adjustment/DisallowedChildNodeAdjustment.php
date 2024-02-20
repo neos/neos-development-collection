@@ -71,19 +71,17 @@ class DisallowedChildNodeAdjustment
                 }
 
                 $allowedByGrandparent = false;
-                $grandparentNodeType = null;
                 if (
                     $parentNode !== null
                     && $grandparentNode !== null
                     && $parentNode->classification->isTethered()
                     && !is_null($parentNode->nodeName)
                 ) {
-                    $grandparentNodeType = $this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName) ? $this->nodeTypeManager->getNodeType($grandparentNode->nodeTypeName) : null;
-                    if ($grandparentNodeType !== null) {
+                    if ($this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName)) {
                         $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
-                            $grandparentNodeType,
+                            $grandparentNode->nodeTypeName,
                             $parentNode->nodeName,
-                            $nodeType
+                            $nodeAggregate->nodeTypeName
                         );
                     }
                 }
@@ -100,9 +98,9 @@ class DisallowedChildNodeAdjustment
                     and the grandparent node type "%s" is not allowing grandchildren of type "%s".
                     Thus, the node is invalid at this location and should be removed.
                 ',
-                        $parentNodeType !== null ? $parentNodeType->name->value : '',
+                        $parentNode?->nodeTypeName->value ?? '',
                         $node->nodeTypeName->value,
-                        $grandparentNodeType !== null ? $grandparentNodeType->name->value : '',
+                        $grandparentNode?->nodeTypeName->value ?? '',
                         $node->nodeTypeName->value,
                     );
 
