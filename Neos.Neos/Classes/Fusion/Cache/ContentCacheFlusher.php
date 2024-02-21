@@ -198,7 +198,7 @@ class ContentCacheFlusher
     ): void {
         try {
             $nodeTypesToFlush = $this->getAllImplementedNodeTypeNames(
-                $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName->value)
+                $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName)
             );
         } catch (NodeTypeNotFoundException $e) {
             // as a fallback, we flush the single NodeType
