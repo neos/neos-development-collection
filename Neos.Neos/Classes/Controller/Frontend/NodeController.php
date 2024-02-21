@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\NodeSerializer;
+use Neos\ContentRepositoryRegistry\NodeHackToIdentity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -113,9 +113,6 @@ class NodeController extends ActionController
     #[Flow\Inject]
     protected NodeUriBuilderFactory $nodeUriBuilderFactory;
 
-    #[Flow\Inject]
-    protected NodeSerializer $nodeSerializer;
-
     /**
      * @param string $node
      * @throws NodeNotFoundException
@@ -142,7 +139,7 @@ class NodeController extends ActionController
 
         $nodeIdentity = NodeAddressFactory::create($contentRepository)->createFromUriString($node)->toNodeIdentity($contentRepository->id);
 
-        $subgraph = $this->nodeSerializer->getSubgraph($nodeIdentity, $visibilityConstraints);
+        $subgraph = (new NodeHackToIdentity())->getSubgraph($nodeIdentity, $visibilityConstraints);
 
         $nodeInstance = $subgraph->findNodeById($nodeIdentity->nodeAggregateId);
 
@@ -206,7 +203,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
-        $subgraph = $this->nodeSerializer->getSubgraph($nodeIdentity, VisibilityConstraints::frontend());
+        $subgraph = (new NodeHackToIdentity())->getSubgraph($nodeIdentity, VisibilityConstraints::frontend());
 
         $nodeInstance = $subgraph->findNodeById($nodeIdentity->nodeAggregateId);
         if ($nodeInstance === null) {

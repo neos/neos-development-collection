@@ -13,13 +13,12 @@ use Neos\Flow\Annotations as Flow;
 /**
  * TODO THIS IS JUST TEMPORARY
  */
-#[Flow\Scope('singleton')]
-final readonly class NodeSerializer
+final class NodeHackToIdentity
 {
-    public function __construct(
-        private ContentRepositoryRegistry $contentRepositoryRegistry
-    ) {
-    }
+    /**
+     * @Flow\Inject
+     */
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public function getSubgraph(NodeIdentity $identity, VisibilityConstraints $visibilityConstraints): ContentSubgraphInterface
     {
