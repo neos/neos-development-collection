@@ -140,22 +140,11 @@ class NodeController extends ActionController
         $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
+        $nodeIdentity = NodeAddressFactory::create($contentRepository)->createFromUriString($node)->toNodeIdentity($contentRepository->id);
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamId,
-            $nodeAddress->dimensionSpacePoint,
-            $visibilityConstraints
-        );
+        $subgraph = $this->nodeSerializer->getSubgraph($nodeIdentity, $visibilityConstraints);
 
-        $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
-        if ($site === null) {
-            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
-        }
-
-        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
-
-        $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        $nodeInstance = $subgraph->findNodeById($nodeIdentity->nodeAggregateId);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException(
@@ -164,12 +153,19 @@ class NodeController extends ActionController
             );
         }
 
+        $site = $subgraph->findClosestNode($nodeIdentity->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
+        if ($site === null) {
+            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for identity " . $nodeIdentity->toJson());
+        }
+
+        $this->fillCacheWithContentNodes($nodeIdentity->nodeAggregateId, $subgraph);
+
         if (
             $this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)
             && !$renderingMode->isEdit
-            && $nodeAddress->workspaceName->isLive() // shortcuts are only resolvable for the live workspace
+            && $nodeIdentity->workspaceName->isLive() // shortcuts are only resolvable for the live workspace
         ) {
-            $this->handleShortcutNode($nodeAddress, $contentRepository);
+            $this->handleShortcutNode($nodeIdentity);
         }
 
         $this->view->setOption('renderingModeName', $renderingMode->name);
@@ -210,8 +206,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
-        $node = $this->nodeSerializer->findNodeByIdentity($nodeIdentity, VisibilityConstraints::frontend());
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+        $subgraph = $this->nodeSerializer->getSubgraph($nodeIdentity, VisibilityConstraints::frontend());
 
         $nodeInstance = $subgraph->findNodeById($nodeIdentity->nodeAggregateId);
         if ($nodeInstance === null) {
@@ -232,7 +227,7 @@ class NodeController extends ActionController
         $this->view->setOption('renderingModeName', RenderingMode::FRONTEND);
 
         $this->view->assignMultiple([
-            'value' => $node,
+            'value' => $nodeInstance,
             'site' => $site,
         ]);
     }

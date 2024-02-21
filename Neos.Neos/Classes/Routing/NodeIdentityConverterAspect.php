@@ -29,6 +29,8 @@ use Neos\Flow\Aop\JoinPointInterface;
  * On the long term, type converters should be able to convert the reverse direction
  * as well, and then this aspect could be removed.
  *
+ * TODO LOL?
+ *
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
