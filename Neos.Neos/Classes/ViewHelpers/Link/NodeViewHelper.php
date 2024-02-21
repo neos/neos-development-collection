@@ -19,7 +19,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFi
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\NodeHackToIdentity;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
@@ -37,6 +39,8 @@ use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\NodeUriSpecification;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
@@ -150,6 +154,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     protected $throwableStorage;
 
     /**
+     * @Flow\Inject
+     * @var NodeUriBuilderFactory
+     */
+    protected $nodeUriBuilderFactory;
+
+    /**
      * Initialize arguments
      *
      * @return void
@@ -255,18 +265,15 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         }
 
         if ($node instanceof Node) {
-            $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->subgraphIdentity->contentRepositoryId
-            );
-            $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-            $nodeAddress = $nodeAddressFactory->createFromNode($node);
+            $nodeIdentity = (new NodeHackToIdentity())->convertNodeToIdentity($node);
         } elseif (is_string($node)) {
             $documentNode = $this->getContextVariable('documentNode');
             assert($documentNode instanceof Node);
             $contentRepository = $this->contentRepositoryRegistry->get(
                 $documentNode->subgraphIdentity->contentRepositoryId
             );
-            $nodeAddress = $this->resolveNodeAddressFromString($node, $documentNode, $contentRepository);
+            $nodeIdentity = $this->resolveNodeAddressFromString($node, $documentNode, $contentRepository)
+                ->toNodeIdentity($documentNode->subgraphIdentity->contentRepositoryId);
             $node = $documentNode;
         } else {
             throw new ViewHelperException(sprintf(
@@ -277,28 +284,22 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         }
 
 
-        $subgraph = $contentRepository->getContentGraph()
-            ->getSubgraph(
-                $nodeAddress->contentStreamId,
-                $nodeAddress->dimensionSpacePoint,
-                $node->subgraphIdentity->visibilityConstraints
-            );
+        $subgraph = (new NodeHackToIdentity())->getSubgraph($nodeIdentity, $node->subgraphIdentity->visibilityConstraints);
 
-        $resolvedNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        $resolvedNode = $subgraph->findNodeById($nodeIdentity->nodeAggregateId);
         if ($resolvedNode === null) {
             $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                 'Failed to resolve node "%s" on subgraph "%s"',
-                $nodeAddress->nodeAggregateId->value,
+                $nodeIdentity->nodeAggregateId->value,
                 json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601372444));
         }
         if ($resolvedNode && $this->getNodeType($resolvedNode)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
             try {
                 $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget(
-                    $nodeAddress,
-                    $contentRepository
+                    $nodeIdentity
                 );
-                if ($shortcutNodeAddress instanceof NodeAddress) {
+                if ($shortcutNodeAddress instanceof NodeIdentity) {
                     $resolvedNode = $subgraph
                         ->findNodeById($shortcutNodeAddress->nodeAggregateId);
                 }
@@ -311,30 +312,32 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             }
         }
 
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($this->controllerContext->getRequest()->getMainRequest());
-        $uriBuilder->setFormat($this->arguments['format'])
-            ->setCreateAbsoluteUri($this->arguments['absolute'])
-            ->setArguments($this->arguments['arguments'])
-            ->setSection($this->arguments['section'])
-            ->setAddQueryString($this->arguments['addQueryString'])
-            ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
+        $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest($this->controllerContext->getRequest()->getHttpRequest());
+
+        // todo ->setAddQueryString($this->arguments['addQueryString'])
+        // todo ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
 
         $uri = '';
+        $specification = NodeUriSpecification::create($nodeIdentity)
+            ->withFormat($this->arguments['format'])
+            ->withRoutingArguments($this->arguments['arguments']);
+
         try {
-            $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
-        } catch (
-            HttpException
-            | NoMatchingRouteException
-            | MissingActionNameException $e
-        ) {
+            $uri = $this->arguments['absolute']
+                ? $nodeUriBuilder->absoluteUriFor($specification)
+                : $nodeUriBuilder->uriFor($specification);
+
+            if ($this->arguments['section'] !== '') {
+                $uri = $uri->withFragment($this->arguments['section']);
+            }
+        } catch (NoMatchingRouteException $e) {
             $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                 'Failed to build URI for node: %s: %s',
-                $nodeAddress,
+                $nodeIdentity->toJson(),
                 $e->getMessage()
             ), 1601372594, $e));
         }
-        $this->tag->addAttribute('href', $uri);
+        $this->tag->addAttribute('href', (string)$uri);
 
         $this->templateVariableContainer->add($this->arguments['nodeVariableName'], $resolvedNode);
         $content = $this->renderChildren();
