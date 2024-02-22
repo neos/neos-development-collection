@@ -283,6 +283,10 @@ class AssetRepository extends Repository
         $variantsConstraints = [];
         $variantClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetVariantInterface::class);
         foreach ($variantClassNames as $variantClassName) {
+            if (!$this->reflectionService->isClassAnnotatedWith($variantClassName, Flow\Entity::class)) {
+                // ignore non-entity classes to prevent "class schema found" error
+                continue;
+            }
             $variantsConstraints[] = 'e NOT INSTANCE OF ' . $variantClassName;
         }
 
