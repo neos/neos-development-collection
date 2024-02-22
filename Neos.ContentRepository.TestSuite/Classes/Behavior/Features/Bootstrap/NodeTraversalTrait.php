@@ -250,7 +250,7 @@ trait NodeTraversalTrait
             if ($withTags !== null) {
                 $tags = [...array_map(static fn(string $tag) => $tag . '*', $subtree->node->tags->tags->toStringArray()), ...$subtree->node->tags->inheritedTags->toStringArray()];
             }
-            $result[] = str_repeat(' ', $subtree->level) . $subtree->node->nodeAggregateId->value . ($tags !== [] ? ' (' . implode(',',$tags) . ')' : '');
+            $result[] = str_repeat(' ', $subtree->level) . $subtree->node->nodeAggregateId->value . ($tags !== [] ? ' (' . implode(',', $tags) . ')' : '');
             $subtreeStack = [...$subtree->children, ...$subtreeStack];
         }
         Assert::assertSame($expectedTree?->getRaw() ?? '', implode(chr(10), $result));
