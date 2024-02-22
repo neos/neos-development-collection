@@ -73,6 +73,8 @@ final readonly class SubtreeTagsWithInherited implements \IteratorAggregate, \Js
     /**
      * The JSON representation contains the tag names as keys and a value of `true` for explicitly set tags and `null` for inherited tags.
      * Example: ['someExplicitlySetTag' => true, 'someInheritedTag' => null]
+     *
+     * @return array<string, null|true>
      */
     public function jsonSerialize(): array
     {
