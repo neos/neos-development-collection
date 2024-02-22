@@ -162,6 +162,7 @@ final class EventNormalizer
             );
         }
         assert(is_array($eventDataAsArray));
+        /** {@see EventInterface::fromArray()} */
         $eventInstance = $eventClassName::fromArray($eventDataAsArray);
         return match ($eventInstance::class) {
             // upcast disabled / enabled events to the corresponding SubtreeTag events

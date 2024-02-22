@@ -1,0 +1,69 @@
+`8.2.11 (2024-01-15) <https://github.com/neos/neos-development-collection/releases/tag/8.2.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Check SVG files for malicious code before providing original asset url links <https://github.com/neos/neos-development-collection/pull/4812>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This adds a check in the preview of assets in the media module and checks for malicous content in svgs. If detected, the direct links to the original url get removed from the preview pages and a warning is shown.
+
+!`image <https://github.com/neos/neos-development-collection/assets/13046100/bb8a2b73-a251-499e-926a-1e6b866bbc87>`_
+
+Fixes: 
+- https://github.com/neos/neos-development-collection/issues/4833
+- https://github.com/neos/flow-development-collection/issues/3248
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: Resolve StyleCI issues <https://github.com/neos/neos-development-collection/pull/4820>`_
+-------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: node:repair fails with could not be converted to string <https://github.com/neos/neos-development-collection/pull/4795>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Fixes the following crash during node:repair
+
+```shell
+./flow node:repair --dry-run --only removeBrokenEntityReferences
+Dry run, not committing any changes.
+
+Checking for broken entity references ...
+Object of class Neos\\Flow\\Persistence\\Doctrine\\Proxies\\__CG__\\Neos\\Media\\Domain\\Model\\ImageVariant could not be converted to string
+
+  Type: Error
+  File: Data/Temporary/Development/SubContextWbWeb/Cache/Code/Flow_Object_Classes/Neos_ContentRepository_Command_NodeCommandControllerPlugin.php
+  Line: 836
+```
+
+resolved `#4794 <https://github.com/neos/neos-development-collection/issues/4794>`_
+
+**Upgrade instructions**
+
+- [x] Code follows the PSR-2 coding style
+- ~~Tests have been created, run and adjusted as needed~~
+    - There are not tests in place and I added none.
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_ -> 7.3
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`TASK: Removes neos/neos-setup <https://github.com/neos/neos-development-collection/pull/4803>`_
+------------------------------------------------------------------------------------------------
+
+**Summary:**
+When attempting to install Neos version 8.3 using the command ``composer create-project neos/neos-development-distribution neos-development 8.3.x-dev --keep-vcs``, the installation results in the neos-setup (version 1.x) being installed. The ``neos/cli-setup`` tool has been removed and the default command ``./flow welcome`` is still called. But the  command is no longer available due to the absence of the CLI setup tool. Consequently, the setup process is not possible as the recommended command is missing.
+
+We remove the dependency from the development collection and adds the ``neos/neos-setup`` in the latest version to the `neos-development-distribution <https://github.com/neos/neos-development-distribution>`_ 
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.2.10...8.2.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

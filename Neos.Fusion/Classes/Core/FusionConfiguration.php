@@ -35,7 +35,7 @@ final class FusionConfiguration
      */
     public static function fromArray(array $fusionConfiguration): self
     {
-        return new static($fusionConfiguration);
+        return new self($fusionConfiguration);
     }
 
     /**

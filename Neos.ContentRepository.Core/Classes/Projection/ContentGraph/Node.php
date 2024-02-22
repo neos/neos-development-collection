@@ -62,6 +62,9 @@ final readonly class Node
         public SubtreeTagsWithInherited $tags,
         public Timestamps $timestamps,
     ) {
+        if ($this->classification->isTethered() && $this->nodeName === null) {
+            throw new \InvalidArgumentException('The NodeName must be set if the Node is tethered.', 1695118377);
+        }
     }
 
     /**

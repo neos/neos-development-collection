@@ -63,7 +63,12 @@ class ParserCache
         if (str_contains($contextPathAndFilename, 'nodetypes://')) {
             $contextPathAndFilename = $this->getAbsolutePathForNodeTypesUri($contextPathAndFilename);
         }
-        $identifier = $this->getCacheIdentifierForFile($contextPathAndFilename);
+        $fusionFileRealPath = realpath($contextPathAndFilename);
+        if ($fusionFileRealPath === false) {
+            // should not happen as the file would not been able to be read in the first place.
+            throw new \RuntimeException("Couldn't resolve realpath for: '$contextPathAndFilename'", 1705409467);
+        }
+        $identifier = $this->getCacheIdentifierForAbsoluteUnixStyleFilePathWithoutDirectoryTraversal($fusionFileRealPath);
         return $this->cacheForIdentifier($identifier, $generateValueToCache);
     }
 
@@ -78,11 +83,16 @@ class ParserCache
 
     private function cacheForIdentifier(string $identifier, \Closure $generateValueToCache): mixed
     {
-        if ($this->parsePartialsCache->has($identifier)) {
-            return $this->parsePartialsCache->get($identifier);
+        $value = $this->parsePartialsCache->get($identifier);
+        if ($value !== false) {
+            return $value;
         }
         $value = $generateValueToCache();
-        $this->parsePartialsCache->set($identifier, $value);
+        if ($value !== false) {
+            // in the rare edge-case of a fusion dsl returning `false` we cannot cache it,
+            // as the above get would be ignored. This is an acceptable compromise.
+            $this->parsePartialsCache->set($identifier, $value);
+        }
         return $value;
     }
 

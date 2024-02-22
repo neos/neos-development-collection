@@ -140,25 +140,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     }
 
     /**
-     * Sort the Fusion objects inside $this->properties depending on:
-     * - numerical ordering
-     * - position meta-property
-     *
-     * This will ignore all properties defined in "@ignoreProperties" in Fusion
-     *
-     * @return array an ordered list of key value pairs
-     * @throws FusionException if the positional string has an unsupported format
-     * @see PositionalArraySorter
-     *
-     * @deprecated
-     * @see preparePropertyKeys()
-     */
-    protected function sortNestedProperties(): array
-    {
-        return $this->preparePropertyKeys($this->properties, $this->ignoreProperties);
-    }
-
-    /**
      * @param array $properties
      * @param array $ignoredProperties
      * @return array<string> Fusion keys in this Array fusion object

@@ -1,76 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\:\\:disable\" is called\\.$#"
-			count: 1
-			path: Neos.ContentGraph.DoctrineDbalAdapter/src/DoctrineDbalContentGraphProjection.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\:\\:enable\" is called\\.$#"
-			count: 1
-			path: Neos.ContentGraph.DoctrineDbalAdapter/src/DoctrineDbalContentGraphProjection.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\EventStore\\\\EventPersister\\:\\:publishEvents\" is called\\.$#"
-			count: 2
-			path: Neos.ContentRepository.BehavioralTests/Classes/Command/PerformanceMeasurementService.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 2
-			path: Neos.ContentRepository.BehavioralTests/Classes/Command/PerformanceMeasurementService.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\WorkspaceEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.Export/src/ImportService.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.Export/src/Processors/EventExportProcessor.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.Export/src/Processors/EventStoreImportProcessor.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\WorkspaceEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.Export/src/Processors/EventStoreImportProcessor.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Infrastructure\\\\Property\\\\PropertyConverter\\:\\:serializePropertyValues\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.LegacyNodeMigration/Classes/NodeDataToEventsProcessor.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 2
-			path: Neos.ContentRepository.StructureAdjustment/src/Adjustment/DisallowedChildNodeAdjustment.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.StructureAdjustment/src/Adjustment/PropertyAdjustment.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 3
-			path: Neos.ContentRepository.StructureAdjustment/src/Adjustment/TetheredNodeAdjustments.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Feature\\\\ContentStreamEventStreamName\\:\\:getEventStreamName\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.StructureAdjustment/src/Adjustment/UnknownNodeTypeAdjustment.php
-
-		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\EventStore\\\\EventPersister\\:\\:publishEvents\" is called\\.$#"
-			count: 1
-			path: Neos.ContentRepository.StructureAdjustment/src/StructureAdjustmentService.php
-
-		-
 			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\Projections\\:\\:getClassNames\" is called\\.$#"
 			count: 1
 			path: Neos.ContentRepositoryRegistry/Classes/Service/ProjectionReplayService.php
@@ -146,11 +76,6 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
 
 		-
-			message: "#^Call to method getFullName\\(\\) on an unknown class Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\PersonName\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
-
-		-
 			message: "#^Cannot call method getName\\(\\) on Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\|null\\.$#"
 			count: 2
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
@@ -171,7 +96,7 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
 		-
-			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:getAuthenticationProviders\\(\\) should return array\\<string\\> but returns array\\<array\\<string, mixed\\>\\>\\.$#"
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:getAuthenticationProviders\\(\\) should return array\\<string\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
 			count: 1
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
@@ -186,18 +111,8 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$personName contains unknown class Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\PersonName\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
-
-		-
 			message: "#^Parameter \\#1 \\$messageBody of method Neos\\\\Flow\\\\Mvc\\\\Controller\\\\AbstractController\\:\\:addFlashMessage\\(\\) expects string, string\\|null given\\.$#"
 			count: 16
-			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function htmlspecialchars expects string, Neos\\\\Party\\\\Domain\\\\Model\\\\PersonName given\\.$#"
-			count: 1
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
 		-

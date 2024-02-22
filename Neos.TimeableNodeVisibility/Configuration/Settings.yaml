@@ -1,0 +1,10 @@
+Neos:
+  Neos:
+    fusion:
+      autoInclude:
+        Neos.TimeableNodeVisibility: true
+    userInterface:
+      translation:
+        autoInclude:
+          Neos.TimeableNodeVisibility:
+            - 'NodeTypes/*'

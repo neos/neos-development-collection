@@ -372,45 +372,6 @@ class ContentController extends ActionController
     }
 
     /**
-     * Fetch the configured views for the given master plugin
-     *
-     * @param string $identifier Specifies the node to look up
-     * @param string $workspaceName Name of the workspace to use for querying the node
-     * @param array<string,string> $dimensions Optional list of dimensions and their values which should be used
-     *                          for querying the specified node
-     * @return string
-     * @throws \Neos\Eel\Exception
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
-     * @deprecated remove with UI editors
-     */
-    public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
-    {
-        $this->response->setContentType('application/json');
-
-        $views = [];
-        return json_encode((object)$views, JSON_THROW_ON_ERROR);
-    }
-
-    /**
-     * Fetch all master plugins that are available in the current
-     * workspace.
-     *
-     * @param string $workspaceName Name of the workspace to use for querying the node
-     * @param array<string,string> $dimensions Optional list of dimensions and their values
-     *                          which should be used for querying the specified node
-     * @return string JSON encoded array of node path => label
-     * @throws \Neos\Eel\Exception
-     * @deprecated remove with UI editors
-     */
-    public function masterPluginsAction(string $workspaceName = 'live', array $dimensions = [])
-    {
-        $this->response->setContentType('application/json');
-        $masterPlugins = [];
-
-        return json_encode((object)$masterPlugins, JSON_THROW_ON_ERROR);
-    }
-
-    /**
      * Signals that a new asset has been uploaded through the Neos Backend
      *
      * @param Asset $asset The uploaded asset

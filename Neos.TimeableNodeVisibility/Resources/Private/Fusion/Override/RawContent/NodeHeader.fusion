@@ -1,0 +1,8 @@
+prototype(Neos.Neos:RawContent.NodeHeader) {
+    visibilityInformations {
+        enableAfterDateTime = ${'hidden before ' + Date.format(q(node).property('enableAfterDateTime'), 'Y-m-d H:i:s')}
+        enableAfterDateTime.@if.hasEnableAfterDateTime = ${q(node).property('enableAfterDateTime')}
+        disableAfterDateTime = ${'hidden after ' + Date.format(q(node).property('disableAfterDateTime'), 'Y-m-d H:i:s')}
+        disableAfterDateTime.@if.hasDisableAfterDateTime = ${q(node).property('disableAfterDateTime')}
+    }
+}

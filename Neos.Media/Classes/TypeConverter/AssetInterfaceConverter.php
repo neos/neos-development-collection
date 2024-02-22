@@ -43,7 +43,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
     /**
      * @var integer
      */
-    const CONFIGURATION_ONE_PER_RESOURCE = 'onePerResource';
+    public const CONFIGURATION_ONE_PER_RESOURCE = 'onePerResource';
 
     /**
      * @var array
