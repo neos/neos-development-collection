@@ -20,10 +20,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Cache\RuntimeContentCache;
@@ -978,22 +975,7 @@ class Runtime
     /**
      * The concept of the controller context inside Fusion has been deprecated.
      *
-     * To migrate the use case of fetching the active request, please look into {@see FusionGlobals::get()} instead.
-     * By convention, an {@see ActionRequest} will be available as `request`:
-     *
-     * ```php
-     * $actionRequest = $this->runtime->fusionGlobals->get('request');
-     * if (!$actionRequest instanceof ActionRequest) {
-     *     // fallback or error
-     * }
-     * ```
-     *
-     * To get an {@see UriBuilder} proceed with:
-     *
-     * ```php
-     * $uriBuilder = new UriBuilder();
-     * $uriBuilder->setRequest($actionRequest);
-     * ```
+     * For further information and migration strategies, please look into {@see LegacyFusionControllerContext}
      *
      * WARNING:
      *      Invoking this backwards-compatible layer is possibly unsafe, if the rendering was not started
@@ -1001,8 +983,9 @@ class Runtime
      *
      * @deprecated with Neos 9.0
      * @internal
+     * @throws Exception if unsafe call
      */
-    public function getControllerContext(): ControllerContext
+    public function getControllerContext(): LegacyFusionControllerContext
     {
         // legacy controller context layer
         $actionRequest = $this->fusionGlobals->get('request');
@@ -1010,16 +993,11 @@ class Runtime
             throw new Exception(sprintf('Fusions simulated legacy controller context is only available inside `Runtime::renderResponse` and when the Fusion global "request" is an ActionRequest.'), 1706458355);
         }
 
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($actionRequest);
-
-        return new ControllerContext(
+        return new LegacyFusionControllerContext(
             $actionRequest,
             // expose action response to be possibly mutated in neos forms or fusion plugins.
             // this behaviour is highly internal and deprecated!
-            $this->legacyActionResponseForCurrentRendering,
-            new Arguments([]),
-            $uriBuilder
+            $this->legacyActionResponseForCurrentRendering
         );
     }
 
