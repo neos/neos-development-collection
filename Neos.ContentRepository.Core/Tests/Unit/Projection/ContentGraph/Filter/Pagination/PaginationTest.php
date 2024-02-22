@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class PaginationTest extends TestCase
 {
-    public function invalidLimitAndOffsets(): \Generator
+    public static function invalidLimitAndOffsets(): \Generator
     {
         yield ['limit' => 0, 'offset' => 0];
         yield ['limit' => 1, 'offset' => -1];
@@ -71,7 +71,7 @@ class PaginationTest extends TestCase
         self::assertSame(23, $pagination->offset);
     }
 
-    public function invalidLimitAndOffsetArrays(): \Generator
+    public static function invalidLimitAndOffsetArrays(): \Generator
     {
         yield ['no numeric limit' => ['limit' => 'not a number']];
         yield ['no numeric offset' => ['offset' => 'not a number']];

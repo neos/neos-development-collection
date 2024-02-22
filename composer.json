@@ -115,7 +115,7 @@
             "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepositoryRegistry/Tests/Unit"
         ],
         "test:functional": [
-            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
+            "FLOW_CONTEXT=Testing ../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
         ],
         "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
         "test:behavioral": [
