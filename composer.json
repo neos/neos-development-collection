@@ -23,8 +23,8 @@
         "webmozart/assert": "^1.11",
         "neos/flow": "*",
         "behat/behat": "^3.5",
-        "phpunit/phpunit": "^10.0",
-        "brianium/paratest": "^7.0",
+        "phpunit/phpunit": "^9.6",
+        "brianium/paratest": "^6.11",
         "neos/behat": "^9.0",
         "neos/contentrepositoryregistry-storageclient": "self.version",
         "symfony/property-access": "^5.4|^6.0",
@@ -296,9 +296,9 @@
         "roave/security-advisories": "dev-latest",
         "phpstan/phpstan": "^1.8",
         "squizlabs/php_codesniffer": "^3.6",
-        "phpunit/phpunit": "^10.0",
+        "phpunit/phpunit": "^9.6",
         "neos/behat": "*",
-        "brianium/paratest": "^7.0",
+        "brianium/paratest": "^6.11",
         "league/flysystem-memory": "^3"
     }
 }
