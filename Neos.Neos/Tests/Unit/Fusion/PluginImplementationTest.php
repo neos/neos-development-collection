@@ -65,6 +65,8 @@ class PluginImplementationTest extends UnitTestCase
 
     public function setUp(): void
     {
+        $this->markTestSkipped('TODO Doesnt test any thing really, has to be rewritten as behat test.');
+
         $this->pluginImplementation = $this->getAccessibleMock(PluginImplementation::class, ['buildPluginRequest'], [], '', false);
 
         $this->mockHttpUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
@@ -92,6 +94,11 @@ class PluginImplementationTest extends UnitTestCase
      */
     public function responseHeadersDataProvider(): array
     {
+        /*
+         * Fyi (from christian) Multiple competing headers like that are a broken use case anyways.
+         * Headers by definition can appear multiple times, we can't really know if we should remove the first one and when not.
+         * IMHO the test is misleading the result might as well (correctly) be key => [value, value]
+         */
         return [
             [
                 'Plugin response key does already exist in parent with same value',
@@ -119,8 +126,6 @@ class PluginImplementationTest extends UnitTestCase
      */
     public function evaluateSetHeaderIntoParent(string $message, array $input, array $expected): void
     {
-        $this->markTestSkipped('TODO Doesnt test any thing really, has to be rewritten as behat test.');
-
         $this->pluginImplementation->method('buildPluginRequest')->willReturn($this->mockActionRequest);
 
         $parentResponse = new ActionResponse();
