@@ -23,6 +23,9 @@ namespace Neos\Fusion\Core;
  */
 final readonly class FusionGlobals
 {
+    /**
+     * @param array<string|mixed> $value
+     */
     private function __construct(
         public array $value
     ) {
@@ -33,6 +36,9 @@ final readonly class FusionGlobals
         return new self([]);
     }
 
+    /**
+     * @param array<string|mixed> $variables
+     */
     public static function fromArray(array $variables): self
     {
         return new self($variables);

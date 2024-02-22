@@ -82,10 +82,6 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             return $content;
         }
 
-        if ($this->fusionValue('renderCurrentDocumentMetadata')) {
-            return '';
-        }
-
         return $this->contentElementWrappingService->wrapContentObject(
             $node,
             $content,

@@ -1,0 +1,25 @@
+# partial linting for Neos.Fusion was introduced with
+# https://github.com/neos/neos-development-collection/pull/4844
+# once the special ignores are not necessary anymore, this php-stan config should be deleted
+parameters:
+    ignoreErrors:
+        # Adding array<int|string, mixed> would just bloat the code up.
+        # In these files we are mostly dealing with the fusion configuration which is highly dynamic:
+        -
+          message: '#no value type specified in iterable type array.$#'
+          paths:
+            - Neos.Fusion/Classes/Core/Runtime.php
+            - Neos.Fusion/Classes/Core/Cache/RuntimeContentCache.php
+            - Neos.Fusion/Classes/Core/Cache/ContentCache.php
+            - Neos.Fusion/Classes/Core/Cache/CacheSegmentParser.php
+            - Neos.Fusion/Classes/Core/RuntimeConfiguration.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTreeVisitor.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTree.php
+        # A return type was not explicitly specified in the ast visiting code.
+        # But it is planned refactor this instead to something better type- and readable in general:
+        -
+          message: '#has no return type specified.$#'
+          paths:
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/MergedArrayTreeVisitor.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/AstNodeVisitorInterface.php
+            - Neos.Fusion/Classes/Core/ObjectTreeParser/Ast

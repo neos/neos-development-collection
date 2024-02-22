@@ -34,6 +34,7 @@ use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
@@ -175,7 +176,11 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             return false;
         }
 
-        $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
+        try {
+            $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
+        } catch (SiteDetectionFailedException) {
+            return false;
+        }
         $resolvedSite = $this->siteRepository->findOneByNodeName($siteDetectionResult->siteNodeName);
 
         if ($resolvedSite === null) {
@@ -196,7 +201,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
         // if incomplete -> no match + log
 
-        $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
         try {

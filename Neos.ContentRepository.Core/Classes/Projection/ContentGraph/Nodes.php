@@ -97,8 +97,18 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     public function first(): ?Node
     {
         if (count($this->nodes) > 0) {
-            $array = $this->nodes;
-            return reset($array);
+            $key = array_key_first($this->nodes);
+            return $this->nodes[$key];
+        }
+
+        return null;
+    }
+
+    public function last(): ?Node
+    {
+        if (count($this->nodes) > 0) {
+            $key = array_key_last($this->nodes);
+            return $this->nodes[$key];
         }
 
         return null;
@@ -116,6 +126,10 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return new self(array_reverse($this->nodes));
     }
 
+    /**
+     * @phpstan-assert-if-false Node $this->first()
+     * @phpstan-assert-if-false Node $this->last()
+     */
     public function isEmpty(): bool
     {
         return $this->count() === 0;
@@ -178,15 +192,6 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
-        return new self(array_slice($this->nodes, $referenceNodeIndex + 1));
-    }
-
-    /**
-     * Returns all nodes after the given $referenceNode in this set
-     */
-    public function until(Node $referenceNode): self
-    {
-        $referenceNodeIndex = $this->getNodeIndex($referenceNode);
         return new self(array_slice($this->nodes, $referenceNodeIndex + 1));
     }
 }

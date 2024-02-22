@@ -58,6 +58,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                 $properties = $node->properties->serialized();
                 if ($properties->propertyExists($this->propertyName)) {
                     $serializedPropertyValue = $properties->getProperty($this->propertyName);
+                    assert($serializedPropertyValue !== null);
                     $propertyValue = $serializedPropertyValue->value;
                     if (!is_string($propertyValue)) {
                         throw new \Exception(

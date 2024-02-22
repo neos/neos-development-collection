@@ -52,7 +52,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -105,7 +104,7 @@ trait ConstraintChecks
     protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType
     {
         try {
-            return $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+            return $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         } catch (NodeTypeNotFoundException $exception) {
             throw new NodeTypeNotFound(
                 'Node type "' . $nodeTypeName->value . '" is unknown to the node type manager.',
@@ -194,14 +193,14 @@ trait ConstraintChecks
 
     protected function requireNodeTypeToDeclareProperty(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         if (!isset($nodeType->getProperties()[$propertyName->value])) {
         }
     }
 
     protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $propertyName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         if (isset($nodeType->getProperties()[$propertyName->value])) {
             $propertyType = $nodeType->getPropertyType($propertyName->value);
             if ($propertyType === 'reference' || $propertyType === 'references') {
@@ -216,7 +215,7 @@ trait ConstraintChecks
         ReferenceName $referenceName,
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         $propertyDeclaration = $nodeType->getProperties()[$referenceName->value] ?? null;
         if (is_null($propertyDeclaration)) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
@@ -636,7 +635,7 @@ trait ConstraintChecks
         PropertyValuesToWrite $referenceProperties,
         NodeTypeName $nodeTypeName
     ): void {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 
         foreach ($referenceProperties->values as $propertyName => $propertyValue) {
             $referencePropertyConfig = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]

@@ -61,7 +61,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
      *
      * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
-     * @param integer $referenceCode
+     * @param string|null $referenceCode
      * @return string
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
@@ -94,14 +94,6 @@ class PageHandler extends AbstractRenderingExceptionHandler
                 && $renderingMode->isEdit
             ) {
                 $isBackend = true;
-                $fluidView->assign(
-                    'metaData',
-                    $this->contentElementWrappingService->wrapCurrentDocumentMetadata(
-                        $documentNode,
-                        '<div id="neos-document-metadata"></div>',
-                        $fusionPath
-                    )
-                );
             }
         }
 

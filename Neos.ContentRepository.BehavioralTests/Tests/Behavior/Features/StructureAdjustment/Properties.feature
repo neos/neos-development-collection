@@ -116,7 +116,7 @@ Feature: Properties
           type: string
     """
 
-    And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
+    And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                                       |
       | contentStreamId              | "cs-identifier"                                                             |
       | nodeAggregateId              | "sir-david-nodenborough"                                                    |
