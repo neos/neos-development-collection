@@ -24,7 +24,7 @@ class SubtreeTagsWithInheritedTest extends TestCase
     /**
      * @test
      */
-    public function foo(): void
+    public function createEmptyCreatesInstanceWithoutTags(): void
     {
         $tags = SubtreeTagsWithInherited::createEmpty();
         self::assertTrue($tags->tags->isEmpty());

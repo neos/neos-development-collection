@@ -145,9 +145,6 @@ final class NodeAggregate
         return $occupation;
     }
 
-    /**
-     * TODO adjust to SubtreeTags
-     */
     public function disablesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         return $this->disabledDimensionSpacePoints->contains($dimensionSpacePoint);

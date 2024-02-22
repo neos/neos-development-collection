@@ -175,74 +175,29 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     /**
      * @inheritDoc
      */
-    public function restrictionsArePropagatedRecursively(): Result
+    public function subtreeTagsAreInherited(): Result
     {
         $result = new Result();
-        $nodeRecordsWithMissingRestrictions = $this->client->getConnection()->executeQuery(
-            'SELECT c.nodeaggregateid, h.contentstreamid, h.dimensionspacepoint
-            FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
-            INNER JOIN ' . $this->tableNamePrefix . '_node p
-                ON p.relationanchorpoint = h.parentnodeanchor
-            INNER JOIN ' . $this->tableNamePrefix . '_restrictionrelation pr
-                ON pr.affectednodeaggregateid = p.nodeaggregateid
-                AND pr.contentstreamid = h.contentstreamid
-                AND pr.dimensionspacepointhash = h.dimensionspacepointhash
-            INNER JOIN ' . $this->tableNamePrefix . '_node c
-                ON c.relationanchorpoint = h.childnodeanchor
-            LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation cr
-                ON cr.affectednodeaggregateid = c.nodeaggregateid
-                AND cr.contentstreamid = h.contentstreamid
-                AND cr.dimensionspacepointhash = h.dimensionspacepointhash
-            WHERE cr.affectednodeaggregateid IS NULL'
+        $hierarchyRelationsWithMissingSubtreeTags = $this->client->getConnection()->executeQuery(
+            'SELECT
+              ph.name
+            FROM
+              ' . $this->tableNamePrefix . '_hierarchyrelation h
+              INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
+                ON ph.childnodeanchor = h.parentnodeanchor
+                AND ph.contentstreamid = h.contentstreamid
+                AND ph.dimensionspacepointhash = h.dimensionspacepointhash
+            WHERE
+              EXISTS (
+                SELECT t.tag FROM JSON_TABLE(JSON_KEYS(ph.subtreetags), \'$[*]\' COLUMNS(tag VARCHAR(30) PATH \'$\')) t WHERE NOT JSON_EXISTS(h.subtreetags, CONCAT(\'$.\', t.tag))
+              )'
         )->fetchAllAssociative();
 
-        foreach ($nodeRecordsWithMissingRestrictions as $nodeRecord) {
+        foreach ($hierarchyRelationsWithMissingSubtreeTags as $hierarchyRelation) {
             $result->addError(new Error(
-                'Node aggregate ' . $nodeRecord['nodeaggregateid']
-                . ' misses a restriction relation in content stream ' . $nodeRecord['contentstreamid']
-                . ' and dimension space point ' . $nodeRecord['dimensionspacepoint'],
-                self::ERROR_CODE_NODE_HAS_MISSING_RESTRICTION
-            ));
-        }
-
-        return $result;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function restrictionIntegrityIsProvided(): Result
-    {
-        $result = new Result();
-
-        $restrictionRelationRecordsWithoutOriginOrAffectedNode = $this->client->getConnection()->executeQuery(
-            '
-            SELECT r.* FROM ' . $this->tableNamePrefix . '_restrictionrelation r
-                LEFT JOIN (
-                    ' . $this->tableNamePrefix . '_node p
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
-                        ON p.relationanchorpoint = ph.childnodeanchor
-                ) ON p.nodeaggregateid = r.originnodeaggregateid
-                AND ph.contentstreamid = r.contentstreamid
-                AND ph.dimensionspacepointhash = r.dimensionspacepointhash
-                LEFT JOIN (
-                    ' . $this->tableNamePrefix . '_node c
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
-                        ON c.relationanchorpoint = ch.childnodeanchor
-                ) ON c.nodeaggregateid = r.affectednodeaggregateid
-                AND ch.contentstreamid = r.contentstreamid
-                AND ch.dimensionspacepointhash = r.dimensionspacepointhash
-            WHERE p.nodeaggregateid IS NULL
-            OR c.nodeaggregateid IS NULL'
-        )->fetchAllAssociative();
-
-        foreach ($restrictionRelationRecordsWithoutOriginOrAffectedNode as $relationRecord) {
-            $result->addError(new Error(
-                'Restriction relation ' . $relationRecord['originnodeaggregateid']
-                . ' -> ' . $relationRecord['affectednodeaggregateid']
-                . ' does not connect two nodes in content stream ' . $relationRecord['contentstreamid']
-                . ' and dimension space point ' . $relationRecord['dimensionspacepointhash'],
-                self::ERROR_CODE_RESTRICTION_INTEGRITY_IS_COMPROMISED
+                'Hierarchy relation ' . \json_encode($hierarchyRelation, JSON_THROW_ON_ERROR)
+                . ' is missing inherited subtree tags from the parent relation.',
+                self::ERROR_CODE_NODE_HAS_MISSING_SUBTREE_TAG
             ));
         }
 

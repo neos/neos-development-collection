@@ -177,10 +177,9 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.contentstreamid, h.subtreetags, h.dimensionspacepoint AS covereddimensionspacepoint, r.dimensionspacepointhash AS disableddimensionspacepointhash')
+            ->select('n.*, h.name, h.contentstreamid, h.subtreetags, h.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNamePrefix . '_hierarchyrelation', 'h')
             ->innerJoin('h', $this->tableNamePrefix . '_node', 'n', 'n.relationanchorpoint = h.childnodeanchor')
-            ->leftJoin('h', $this->tableNamePrefix . '_restrictionrelation', 'r', 'r.originnodeaggregateid = n.nodeaggregateid AND r.contentstreamid = :contentStreamId AND r.affectednodeaggregateid = n.nodeaggregateid AND r.dimensionspacepointhash = h.dimensionspacepointhash')
             ->where('n.nodeaggregateid = :nodeAggregateId')
             ->andWhere('h.contentstreamid = :contentStreamId')
             ->setParameters([
@@ -202,12 +201,11 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $childNodeAggregateId
     ): iterable {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('pn.*, ph.name, ph.contentstreamid, ph.subtreetags, ph.dimensionspacepoint AS covereddimensionspacepoint, r.dimensionspacepointhash AS disableddimensionspacepointhash')
+            ->select('pn.*, ph.name, ph.contentstreamid, ph.subtreetags, ph.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'ph.childnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->leftJoin('ph', $this->tableNamePrefix . '_restrictionrelation', 'r', 'r.originnodeaggregateid = pn.nodeaggregateid AND r.contentstreamid = :contentStreamId AND r.affectednodeaggregateid = pn.nodeaggregateid AND r.dimensionspacepointhash = ph.dimensionspacepointhash')
             ->where('cn.nodeaggregateid = :nodeAggregateId')
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ch.contentstreamid = :contentStreamId')
@@ -235,10 +233,9 @@ final class ContentGraph implements ContentGraphInterface
             ->andWhere('cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash');
 
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.contentstreamid, h.subtreetags, h.dimensionspacepoint AS covereddimensionspacepoint, r.dimensionspacepointhash AS disableddimensionspacepointhash')
+            ->select('n.*, h.name, h.contentstreamid, h.subtreetags, h.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->leftJoin('h', $this->tableNamePrefix . '_restrictionrelation', 'r', 'r.originnodeaggregateid = n.nodeaggregateid AND r.contentstreamid = :contentStreamId AND r.affectednodeaggregateid = n.nodeaggregateid AND r.dimensionspacepointhash = h.dimensionspacepointhash')
             ->where('n.nodeaggregateid = (' . $subQueryBuilder->getSQL() . ')')
             ->andWhere('h.contentstreamid = :contentStreamId')
             ->setParameters([
@@ -369,12 +366,11 @@ final class ContentGraph implements ContentGraphInterface
     private function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId): QueryBuilder
     {
         return $this->createQueryBuilder()
-            ->select('cn.*, ch.name, ch.contentstreamid, ch.subtreetags, ch.dimensionspacepoint AS covereddimensionspacepoint, r.dimensionspacepointhash AS disableddimensionspacepointhash')
+            ->select('cn.*, ch.name, ch.contentstreamid, ch.subtreetags, ch.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'ph.childnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->leftJoin('pn', $this->tableNamePrefix . '_restrictionrelation', 'r', 'r.originnodeaggregateid = pn.nodeaggregateid AND r.contentstreamid = :contentStreamId AND r.affectednodeaggregateid = pn.nodeaggregateid AND r.dimensionspacepointhash = ph.dimensionspacepointhash')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ch.contentstreamid = :contentStreamId')

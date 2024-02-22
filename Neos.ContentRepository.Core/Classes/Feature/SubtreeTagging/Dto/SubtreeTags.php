@@ -51,6 +51,11 @@ final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializabl
         return new self(...array_map(SubtreeTag::fromString(...), $tags));
     }
 
+    public function without(SubtreeTag $subtreeTagToRemove): self
+    {
+        return new self(...array_filter($this->tags, static fn (SubtreeTag $tag) => !$tag->equals($subtreeTagToRemove)));
+    }
+
     public function isEmpty(): bool
     {
         return $this->tags === [];

@@ -22,7 +22,7 @@ use Traversable;
  * @implements \IteratorAggregate<SubtreeTag>
  * @api
  */
-final readonly class SubtreeTagsWithInherited implements \IteratorAggregate
+final readonly class SubtreeTagsWithInherited implements \IteratorAggregate, \JsonSerializable
 {
     private function __construct(
         public SubtreeTags $tags,
@@ -38,6 +38,11 @@ final readonly class SubtreeTagsWithInherited implements \IteratorAggregate
     public static function createEmpty(): self
     {
         return new self(SubtreeTags::createEmpty(), SubtreeTags::createEmpty());
+    }
+
+    public function without(SubtreeTag $subtreeTagToRemove): self
+    {
+        return new self($this->tags->without($subtreeTagToRemove), $this->inheritedTags->without($subtreeTagToRemove));
     }
 
     public function contain(SubtreeTag $tag): bool
@@ -63,5 +68,21 @@ final readonly class SubtreeTagsWithInherited implements \IteratorAggregate
     public function isEmpty(): bool
     {
         return $this->tags->isEmpty() && $this->inheritedTags->isEmpty();
+    }
+
+    /**
+     * The JSON representation contains the tag names as keys and a value of `true` for explicitly set tags and `null` for inherited tags.
+     * Example: ['someExplicitlySetTag' => true, 'someInheritedTag' => null]
+     */
+    public function jsonSerialize(): array
+    {
+        $convertedSubtreeTags = [];
+        foreach ($this->tags as $tag) {
+            $convertedSubtreeTags[$tag->value] = true;
+        }
+        foreach ($this->inheritedTags as $tag) {
+            $convertedSubtreeTags[$tag->value] = null;
+        }
+        return $convertedSubtreeTags;
     }
 }

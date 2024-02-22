@@ -20,17 +20,15 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDe
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The NodeMove projection feature trait
- *
- * Requires RestrictionRelations to work
  *
  * @internal
  */
 trait NodeMove
 {
+
     abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
 
     abstract protected function getTableNamePrefix(): string;
@@ -61,13 +59,6 @@ trait NodeMove
                         $newLocation->coveredDimensionSpacePoint
                     ]);
 
-                    // remove restriction relations by ancestors. We will reconnect them back after the move.
-                    $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
-                        $event->contentStreamId,
-                        $event->nodeAggregateId,
-                        $affectedDimensionSpacePoints
-                    );
-
                     // do the move (depending on how the move target is specified)
                     $newParentNodeAggregateId = match ($newLocation->destination::class) {
                         SucceedingSiblingNodeMoveDestination::class => $this->moveNodeBeforeSucceedingSibling(
@@ -87,14 +78,6 @@ trait NodeMove
                         );
                     }
                     $this->moveSubtreeTags($event->contentStreamId, $event->nodeAggregateId, $newParentNodeAggregateId, $newLocation->coveredDimensionSpacePoint);
-
-                    // re-build restriction relations TODO remove
-                    $this->cascadeRestrictionRelations(
-                        $event->contentStreamId,
-                        $newParentNodeAggregateId,
-                        $event->nodeAggregateId,
-                        $affectedDimensionSpacePoints
-                    );
                 }
             }
         });

@@ -44,13 +44,6 @@ final readonly class HierarchyRelation
      */
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $convertedSubtreeTags = [];
-        foreach ($this->subtreeTags->tags as $tag) {
-            $convertedSubtreeTags[$tag->value] = true;
-        }
-        foreach ($this->subtreeTags->inheritedTags as $tag) {
-            $convertedSubtreeTags[$tag->value] = null;
-        }
         $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
             'parentnodeanchor' => $this->parentNodeAnchor->value,
             'childnodeanchor' => $this->childNodeAnchor->value,
@@ -59,7 +52,7 @@ final readonly class HierarchyRelation
             'dimensionspacepoint' => $this->dimensionSpacePoint->toJson(),
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
             'position' => $this->position,
-            'subtreetags' => json_encode($convertedSubtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
+            'subtreetags' => json_encode($this->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
         ]);
     }
 

@@ -17,6 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -192,7 +193,8 @@ final class NodeFactory
             $nodesByCoveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash]
                 = $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash];
             // ... as we do for disabling
-            if (isset($nodeRow['disableddimensionspacepointhash'])) {
+            $subTreeTagsWithInherited = self::extractSubtreeTagsWithInheritedFromJson($nodeRow['subtreetags']);
+            if ($subTreeTagsWithInherited->tags->contain(SubtreeTag::fromString('disabled'))) {
                 $disabledDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
             }
         }

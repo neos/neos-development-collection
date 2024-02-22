@@ -1,7 +1,7 @@
 @contentrepository
-Feature: Run integrity violation detection regarding restriction relations
+Feature: Run integrity violation detection regarding subtree tag inheritance
 
-  As a user of the CR I want to know whether there are nodes with restriction relations missing from their ancestors
+  As a user of the CR I want to know whether there are nodes with subtree tags that are not inherited from its ancestors
 
   Background:
     Given using the following content dimensions:
@@ -21,10 +21,10 @@ Feature: Run integrity violation detection regarding restriction relations
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
+      | Key             | Value                         |
+      | contentStreamId | "cs-identifier"               |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
   Scenario: Create nodes, disable the topmost and remove some restriction edges manually
@@ -65,12 +65,13 @@ Feature: Run integrity violation detection regarding restriction relations
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | tag                          | "disabled"                                               |
     And the graph projection is fully up to date
-    And I remove the following restriction relation:
-      | Key                     | Value                    |
-      | contentStreamId         | "cs-identifier"          |
-      | dimensionSpacePoint     | {"language":"de"}        |
-      | originNodeAggregateId   | "sir-david-nodenborough" |
-      | affectedNodeAggregateId | "nody-mc-nodeface"       |
+    And I remove the following subtree tag:
+      | Key                   | Value                        |
+      | contentStreamId       | "cs-identifier"              |
+      | dimensionSpacePoint   | {"language":"de"}            |
+      | parentNodeAggregateId | "sir-nodeward-nodington-iii" |
+      | childNodeAggregateId  | "nody-mc-nodeface"           |
+      | subtreeTag            | "disabled"                   |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597837797
