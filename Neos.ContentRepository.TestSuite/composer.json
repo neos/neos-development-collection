@@ -16,8 +16,8 @@
         "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepository-nodemigration": "self.version",
         "behat/behat": "^3.5",
-        "phpunit/phpunit": "^9.0",
-        "brianium/paratest": "^7.4"
+        "phpunit/phpunit": "^10.0",
+        "brianium/paratest": "^7.0"
     },
     "autoload": {
         "psr-4": {
