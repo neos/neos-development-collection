@@ -28,7 +28,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 trait NodeMove
 {
-
     abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
 
     abstract protected function getTableNamePrefix(): string;
