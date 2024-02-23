@@ -79,6 +79,20 @@ class FusionViewTest extends FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function fusionViewJsonSerializesOutputIfNotString()
+    {
+        $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
+        $view->setFusionPath('jsonSerializeable');
+        $response = $view->render();
+        self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertSame('{"my":"array","with":"values"}', $response->getBody()->getContents());
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
+    }
+
+    /**
      * Prepare a FusionView for testing that Mocks a request with the given controller and action names.
      *
      * @param string $controllerObjectName

@@ -11,6 +11,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Message;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\ProtectedContext;
 use Neos\Flow\Exception;
@@ -22,6 +23,7 @@ use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\ValueImplementation;
+use Psr\Http\Message\ResponseInterface;
 
 class RuntimeTest extends UnitTestCase
 {
@@ -208,6 +210,18 @@ class RuntimeTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function renderResponseIsNotAllowedToOverrideFusionGlobals()
+    {
+        $this->expectException(\Neos\Fusion\Exception::class);
+        $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
+
+        $runtime->renderResponse('foo', ['request' =>'anything']);
+    }
+
+    /**
      * Legacy compatible layer to possibly override fusion globals like "request".
      * This functionality is only allowed for internal packages.
      * Currently Neos.Fusion.Form overrides the request, and we need to keep this behaviour.
@@ -221,5 +235,162 @@ class RuntimeTest extends UnitTestCase
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
         $runtime->pushContextArray(['bing' => 'beer', 'request' => 'anything']);
         self::assertTrue(true);
+    }
+
+    public static function renderResponseExamples(): iterable
+    {
+        yield 'simple string' => [
+            'rawValue' => 'my string',
+            'response' => <<<'TEXT'
+            HTTP/1.1 200 OK
+
+            my string
+            TEXT
+        ];
+
+        yield 'string cast object (\Stringable)' => [
+            'rawValue' => new class implements \Stringable, \JsonSerializable {
+                public function __toString()
+                {
+                    return 'my string karsten';
+                }
+                // __toString is preferred
+                public function jsonSerialize(): mixed
+                {
+                    return ['my string'];
+                }
+            },
+            'response' => <<<'TEXT'
+            HTTP/1.1 200 OK
+
+            my string karsten
+            TEXT
+        ];
+
+        yield 'empty string' => [
+            'rawValue' => '',
+            'response' => <<<'TEXT'
+            HTTP/1.1 200 OK
+
+
+            TEXT
+        ];
+
+        yield 'null value' => [
+            'rawValue' => null,
+            'response' => <<<'TEXT'
+            HTTP/1.1 200 OK
+
+
+            TEXT
+        ];
+
+        yield 'stringified http response string is upcasted' => [
+            'rawValue' => <<<'TEXT'
+            HTTP/1.1 418 OK
+            Content-Type: text/html
+            X-MyCustomHeader: marc
+
+            <!DOCTYPE html>
+            <head></head>
+            <body>Hello World</body>
+            TEXT,
+            'response' => <<<'TEXT'
+            HTTP/1.1 418 OK
+            Content-Type: text/html
+            X-MyCustomHeader: marc
+
+            <!DOCTYPE html>
+            <head></head>
+            <body>Hello World</body>
+            TEXT
+        ];
+
+        yield 'json serialize array' => [
+            'rawValue' => ['my' => 'array', 'with' => 'values'],
+            'response' => <<<'TEXT'
+            HTTP/1.1 200 OK
+            Content-Type: application/json
+
+            {"my":"array","with":"values"}
+            TEXT
+        ];
+
+        yield 'json serialize \stdClass' => [
+            'rawValue' => (object)[],
+            'response' => <<<'TEXT'
+            HTTP/1.1 200 OK
+            Content-Type: application/json
+
+            {}
+            TEXT
+        ];
+
+        yield 'json serialize object (\JsonSerializable)' => [
+            'rawValue' => new class implements \JsonSerializable {
+                public function jsonSerialize(): mixed
+                {
+                    return ['my' => 'object', 'with' => 'values'];
+                }
+            },
+            'response' => <<<'TEXT'
+            HTTP/1.1 200 OK
+            Content-Type: application/json
+
+            {"my":"object","with":"values"}
+            TEXT
+        ];
+
+        yield 'json serialize boolean' => [
+            'rawValue' => false,
+            'response' => <<<'TEXT'
+            HTTP/1.1 200 OK
+            Content-Type: application/json
+
+            false
+            TEXT
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider renderResponseExamples
+     */
+    public function renderResponse(mixed $rawValue, string $expectedHttpResponseString)
+    {
+        $runtime = $this->getMockBuilder(Runtime::class)
+            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
+            ->onlyMethods(['render'])
+            ->getMock();
+
+        $runtime->expects(self::once())->method('render')->willReturn(
+            is_string($rawValue) ? str_replace("\n", "\r\n", $rawValue) : $rawValue
+        );
+
+        $response = $runtime->renderResponse('/path', []);
+
+        self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertSame(str_replace("\n", "\r\n", $expectedHttpResponseString), Message::toString($response));
+    }
+
+    /**
+     * @test
+     */
+    public function renderResponseThrowsIfNotStringableOrJsonSerializeable()
+    {
+        $illegalValue = new class {
+        };
+        $this->expectExceptionMessage('Cannot render class@anonymous into http response body.');
+
+        $runtime = $this->getMockBuilder(Runtime::class)
+            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
+            ->onlyMethods(['render'])
+            ->getMock();
+
+        $runtime->expects(self::once())->method('render')->willReturn(
+            $illegalValue
+        );
+
+        $runtime->renderResponse('/path', []);
     }
 }
