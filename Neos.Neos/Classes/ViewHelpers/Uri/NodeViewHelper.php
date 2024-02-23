@@ -33,6 +33,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\Utility\LegacyNodePathNormalizer;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -50,8 +51,6 @@ use Neos\Neos\FrontendRouting\NodeUriBuilder;
  * The given path is treated as a path relative to the current node.
  * Examples: given that the current node is ``/sites/acmecom/products/``,
  * ``stapler`` results in ``/sites/acmecom/products/stapler``,
- * ``../about`` results in ``/sites/acmecom/about/``,
- * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
  *
  * *``node`` starts with a tilde character (``~``):*
  * The given path is treated as a path relative to the current site node.
@@ -111,6 +110,12 @@ class NodeViewHelper extends AbstractViewHelper
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
+
+    /**
+     * @Flow\Inject
+     * @var LegacyNodePathNormalizer
+     */
+    protected $legacyNodePathNormalizer;
 
     /**
      * @Flow\Inject
