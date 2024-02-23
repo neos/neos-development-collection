@@ -22,7 +22,7 @@ use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
-use Neos\Fusion\Exception\RuntimeException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * View for using Fusion for standard MVC controllers.
@@ -162,13 +162,16 @@ class FusionView extends AbstractView
     /**
      * Render the view
      *
-     * @return mixed The rendered view
+     * @return ResponseInterface The rendered view
      * @api
      */
-    public function render()
+    public function render(): ResponseInterface
     {
         $this->initializeFusionRuntime();
-        return $this->renderFusion();
+        return $this->fusionRuntime->renderResponse(
+            $this->getFusionPathForCurrentRequest(),
+            $this->variables
+        );
     }
 
     /**
@@ -296,23 +299,6 @@ class FusionView extends AbstractView
             }
         }
         return $this->fusionPath;
-    }
-
-    /**
-     * Render the given Fusion and return the rendered page
-     * @return mixed
-     * @throws \Exception
-     */
-    protected function renderFusion()
-    {
-        $this->fusionRuntime->pushContextArray($this->variables);
-        try {
-            $output = $this->fusionRuntime->render($this->getFusionPathForCurrentRequest());
-        } catch (RuntimeException $exception) {
-            throw $exception->getPrevious();
-        }
-        $this->fusionRuntime->popContext();
-        return $output;
     }
 
     private function getRequestFromFusionGlobals(): ?ActionRequest
