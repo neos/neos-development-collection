@@ -224,6 +224,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'existing "stringProperty" does not equal empty string' => ['stringProperty', '', true, false];
         yield 'existing "integerProperty" does not equal 0' => ['integerProperty', 0, true, false];
         yield 'non existing "otherProperty" bar does not equal "foo"' => ['otherProperty', 'foo', true, false];
+        yield 'existing "stringProperty" does not equal true' => ['stringProperty', true, true, false];
+        yield 'existing "stringProperty" does not equal true (case insensitive)' => ['stringProperty', true, false, false];
     }
 
     /**

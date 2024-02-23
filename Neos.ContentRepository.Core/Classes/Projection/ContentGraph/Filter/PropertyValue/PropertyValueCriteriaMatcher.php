@@ -87,9 +87,9 @@ final class PropertyValueCriteriaMatcher
         }
         $propertyValue = $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value;
         if ($propertyValueCriteria->caseSensitive) {
-            return $propertyValue == $propertyValueCriteria->value;
+            return $propertyValue === $propertyValueCriteria->value;
         }
-        return (is_string($propertyValue) ? mb_strtolower($propertyValue) : $propertyValue) == (is_string($propertyValueCriteria->value) ? mb_strtolower($propertyValueCriteria->value) : $propertyValueCriteria->value);
+        return (is_string($propertyValue) ? mb_strtolower($propertyValue) : $propertyValue) === (is_string($propertyValueCriteria->value) ? mb_strtolower($propertyValueCriteria->value) : $propertyValueCriteria->value);
     }
 
     public static function matchesNode(Node $node, PropertyValueCriteriaInterface $propertyValueCriteria): bool
