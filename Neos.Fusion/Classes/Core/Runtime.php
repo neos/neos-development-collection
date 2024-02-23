@@ -13,7 +13,6 @@ namespace Neos\Fusion\Core;
 
 use GuzzleHttp\Psr7\Message;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\ResponseInterface;
 use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
@@ -265,6 +264,9 @@ class Runtime
         return $this->lastEvaluationStatus;
     }
 
+    /**
+     * todo
+     */
     public function renderResponse(string $fusionPath, array $contextArray): ResponseInterface
     {
         /** Unlike pushContextArray, we don't allow to overrule fusion globals {@see self::pushContext} */
@@ -293,14 +295,21 @@ class Runtime
                 return Message::parseResponse($output);
             }
 
-            $stream = match (true) {
-                is_string($output),
-                $output instanceof \Stringable => Utils::streamFor((string)$output),
-                $output === null, $output === false => Utils::streamFor(''),
-                default => throw new \RuntimeException(sprintf('Cannot render %s into http response body.', get_debug_type($output)), 1706454898)
-            };
+            if (is_string($output) || $output instanceof \Stringable || $output === null) {
+                return new Response(body: $output);
+            }
 
-            return new Response(body: $stream);
+            if (is_array($output) || $output instanceof \JsonSerializable || $output instanceof \stdClass || is_bool($output)) {
+                try {
+                    $jsonSerialized = json_encode($output, JSON_THROW_ON_ERROR);
+                } catch (\JsonException $e) {
+                    throw new \RuntimeException(sprintf('Cannot render %s into http response body.', get_debug_type($output)), 1708713158, $e);
+                }
+                $jsonResponse = new Response(body: $jsonSerialized);
+                return $jsonResponse->withHeader('Content-Type', 'application/json');
+            }
+
+            throw new \RuntimeException(sprintf('Cannot render %s into http response body.', get_debug_type($output)), 1706454898);
         });
     }
 
