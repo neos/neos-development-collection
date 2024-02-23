@@ -26,6 +26,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
  */
 final class PropertyValueCriteriaMatcher
 {
+    public static function matchesNode(Node $node, PropertyValueCriteriaInterface $propertyValueCriteria): bool
+    {
+        return static::matchesPropertyCollection($node->properties, $propertyValueCriteria);
+    }
+
     public static function matchesPropertyCollection(PropertyCollection $propertyCollection, PropertyValueCriteriaInterface $propertyValueCriteria): bool
     {
         return match ($propertyValueCriteria::class) {
@@ -90,10 +95,5 @@ final class PropertyValueCriteriaMatcher
             return $propertyValue === $propertyValueCriteria->value;
         }
         return (is_string($propertyValue) ? mb_strtolower($propertyValue) : $propertyValue) === (is_string($propertyValueCriteria->value) ? mb_strtolower($propertyValueCriteria->value) : $propertyValueCriteria->value);
-    }
-
-    public static function matchesNode(Node $node, PropertyValueCriteriaInterface $propertyValueCriteria): bool
-    {
-        return static::matchesPropertyCollection($node->properties, $propertyValueCriteria);
     }
 }
