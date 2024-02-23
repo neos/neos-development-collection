@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
+
 /**
  * Property values to write, supports arbitrary objects. Will be then converted to {@see SerializedPropertyValues}
  * inside the events and persisted commands.
@@ -29,8 +31,9 @@ final class PropertyValuesToWrite
     /**
      * @param array<string,mixed> $values
      */
-    private function __construct(public readonly array $values)
-    {
+    private function __construct(
+        public readonly array $values
+    ) {
     }
 
     public static function createEmpty(): self
@@ -70,5 +73,14 @@ final class PropertyValuesToWrite
     public function withoutUnsets(): self
     {
         return new self(array_filter($this->values, fn ($value) => $value !== null));
+    }
+
+    public function getPropertiesToUnset(): PropertyNames
+    {
+        return PropertyNames::fromArray(
+            array_keys(
+                array_filter($this->values, fn ($value) => $value === null)
+            )
+        );
     }
 }

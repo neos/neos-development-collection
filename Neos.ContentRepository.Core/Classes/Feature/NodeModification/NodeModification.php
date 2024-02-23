@@ -61,13 +61,6 @@ trait NodeModification
 
         $this->validateProperties($command->propertyValues, $nodeTypeName);
 
-        $propertiesToUnset = [];
-        foreach ($command->propertyValues->values as $propertyName => $value) {
-            if ($value === null) {
-                $propertiesToUnset[] = $propertyName;
-            }
-        }
-
         $lowLevelCommand = SetSerializedNodeProperties::create(
             $command->contentStreamId,
             $command->nodeAggregateId,
@@ -76,7 +69,7 @@ trait NodeModification
                 $command->propertyValues->withoutUnsets(),
                 $this->requireNodeType($nodeTypeName)
             ),
-            PropertyNames::fromArray($propertiesToUnset)
+            $command->propertyValues->getPropertiesToUnset()
         );
 
         return $this->handleSetSerializedNodeProperties($lowLevelCommand, $contentRepository);
