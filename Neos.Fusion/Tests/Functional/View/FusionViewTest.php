@@ -15,6 +15,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\View\FusionView;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Testcase for the Fusion View
@@ -28,7 +29,7 @@ class FusionViewTest extends FunctionalTestCase
     public function fusionViewIsUsedForRendering()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
-        self::assertEquals('X', $view->render());
+        self::assertEquals('X', $view->render()->getBody()->getContents());
     }
 
     /**
@@ -38,7 +39,7 @@ class FusionViewTest extends FunctionalTestCase
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->setFusionPath('foo/bar');
-        self::assertEquals('Xfoobar', $view->render());
+        self::assertEquals('Xfoobar', $view->render()->getBody()->getContents());
     }
 
     /**
@@ -48,7 +49,33 @@ class FusionViewTest extends FunctionalTestCase
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->assign('test', 'Hallo Welt');
-        self::assertEquals('XHallo Welt', $view->render());
+        self::assertEquals('XHallo Welt', $view->render()->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
+    public function fusionVieReturnsHttpResponse()
+    {
+        $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
+        $view->assign('test', 'Hallo Welt');
+        $response = $view->render();
+        self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertEquals('XHallo Welt', $view->render()->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
+    public function fusionViewReturnsHttpResponseFromHttpMessagePrototype()
+    {
+        $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
+        $view->setFusionPath('response');
+        $response = $view->render();
+        self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertSame('{"some":"json"}', $response->getBody()->getContents());
+        self::assertSame(404, $response->getStatusCode());
+        self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
     }
 
     /**
