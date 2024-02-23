@@ -23,6 +23,9 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Utility\Arrays;
 
+/**
+ * @internal
+ */
 readonly class NodeFilterCriteriaGroupFactory
 {
     public static function createFromFizzleExpressionString (string $fizzleExpression): ?NodeFilterCriteriaGroup

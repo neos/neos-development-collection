@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\NodeAccess\Filter;
 use Traversable;
 
 /**
+ * @internal
  * @implements \IteratorAggregate<int, NodeFilterCriteria>
  */
 readonly class NodeFilterCriteriaGroup implements \IteratorAggregate
