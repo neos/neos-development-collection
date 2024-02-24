@@ -27,16 +27,19 @@ use PHPUnit\Framework\TestCase;
 class PropertyValueCriteriaMatcherTest extends TestCase
 {
     protected PropertyCollection $propertyCollection;
+    protected SerializedPropertyValues $serializedPropertyValues;
 
     public function setUp(): void
     {
+        $this->serializedPropertyValues = SerializedPropertyValues::fromArray([
+            'nullProperty' => new SerializedPropertyValue(null, 'null'),
+            'stringProperty' => new SerializedPropertyValue('foo', 'string'),
+            'integerProperty' => new SerializedPropertyValue(123, 'int')
+        ]);
+
         $subjectProvider = new NodeSubjectProvider();
         $this->propertyCollection = new PropertyCollection(
-            SerializedPropertyValues::fromArray([
-                'nullProperty' => new SerializedPropertyValue(null, 'null'),
-                'stringProperty' => new SerializedPropertyValue('foo', 'string'),
-                'integerProperty' => new SerializedPropertyValue(123, 'int')
-            ]),
+            $this->serializedPropertyValues,
             $subjectProvider->propertyConverter
         );
     }
@@ -66,6 +69,14 @@ class PropertyValueCriteriaMatcherTest extends TestCase
                 AndCriteria::create($criteriaA, $criteriaB)
             )
         );
+
+        $this->assertSame(
+            $expectation,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
+                AndCriteria::create($criteriaA, $criteriaB)
+            )
+        );
     }
 
     public function negateCriteriaDataProvider(): \Generator
@@ -90,6 +101,14 @@ class PropertyValueCriteriaMatcherTest extends TestCase
                 NegateCriteria::create($criteriaA)
             )
         );
+
+        $this->assertSame(
+            $expectation,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
+                NegateCriteria::create($criteriaA)
+            )
+        );
     }
 
     public function orCriteriaDataProvider(): \Generator
@@ -109,11 +128,17 @@ class PropertyValueCriteriaMatcherTest extends TestCase
      */
     public function orCriteria(PropertyValueCriteriaInterface $criteriaA, PropertyValueCriteriaInterface $criteriaB, $expectation)
     {
-
         $this->assertSame(
             $expectation,
             PropertyValueCriteriaMatcher::matchesPropertyCollection(
                 $this->propertyCollection,
+                OrCriteria::create($criteriaA, $criteriaB)
+            )
+        );
+        $this->assertSame(
+            $expectation,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
                 OrCriteria::create($criteriaA, $criteriaB)
             )
         );
@@ -141,6 +166,17 @@ class PropertyValueCriteriaMatcherTest extends TestCase
             $expectedResult,
             PropertyValueCriteriaMatcher::matchesPropertyCollection(
                 $this->propertyCollection,
+                PropertyValueContains::create(
+                    PropertyName::fromString($propertyName),
+                    $propertyValueToExpect,
+                    $caseSensitive
+                )
+            )
+        );
+        $this->assertEquals(
+            $expectedResult,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
                 PropertyValueContains::create(
                     PropertyName::fromString($propertyName),
                     $propertyValueToExpect,
@@ -179,6 +215,17 @@ class PropertyValueCriteriaMatcherTest extends TestCase
                 )
             )
         );
+        $this->assertEquals(
+            $expectedResult,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
+                PropertyValueStartsWith::create(
+                    PropertyName::fromString($propertyName),
+                    $propertyValueToExpect,
+                    $caseSensitive
+                )
+            )
+        );
     }
 
     public function valueEndsWithCriteriaDataProvider(): \Generator
@@ -203,6 +250,17 @@ class PropertyValueCriteriaMatcherTest extends TestCase
             $expectedResult,
             PropertyValueCriteriaMatcher::matchesPropertyCollection(
                 $this->propertyCollection,
+                PropertyValueEndsWith::create(
+                    PropertyName::fromString($propertyName),
+                    $propertyValueToExpect,
+                    $caseSensitive
+                )
+            )
+        );
+        $this->assertEquals(
+            $expectedResult,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
                 PropertyValueEndsWith::create(
                     PropertyName::fromString($propertyName),
                     $propertyValueToExpect,
@@ -245,6 +303,17 @@ class PropertyValueCriteriaMatcherTest extends TestCase
                 )
             )
         );
+        $this->assertEquals(
+            $expectedResult,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
+                PropertyValueEquals::create(
+                    PropertyName::fromString($propertyName),
+                    $propertyValueToExpect,
+                    $caseSensitive
+                )
+            )
+        );
     }
 
     public function greaterThanCriteriaDataProvider(): \Generator
@@ -266,6 +335,16 @@ class PropertyValueCriteriaMatcherTest extends TestCase
             $expectedResult,
             PropertyValueCriteriaMatcher::matchesPropertyCollection(
                 $this->propertyCollection,
+                PropertyValueGreaterThan::create(
+                    PropertyName::fromString($propertyName),
+                    $propertyValueToExpect
+                )
+            )
+        );
+        $this->assertEquals(
+            $expectedResult,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
                 PropertyValueGreaterThan::create(
                     PropertyName::fromString($propertyName),
                     $propertyValueToExpect
@@ -299,6 +378,16 @@ class PropertyValueCriteriaMatcherTest extends TestCase
                 )
             )
         );
+        $this->assertEquals(
+            $expectedResult,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
+                PropertyValueGreaterThanOrEqual::create(
+                    PropertyName::fromString($propertyName),
+                    $propertyValueToExpect
+                )
+            )
+        );
     }
 
     public function lessThanCriteriaDataProvider(): \Generator
@@ -326,6 +415,16 @@ class PropertyValueCriteriaMatcherTest extends TestCase
                 )
             )
         );
+        $this->assertEquals(
+            $expectedResult,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
+                PropertyValueLessThan::create(
+                    PropertyName::fromString($propertyName),
+                    $propertyValueToExpect
+                )
+            )
+        );
     }
 
     public function lessThanOrEqualCriteriaDataProvider(): \Generator
@@ -347,6 +446,16 @@ class PropertyValueCriteriaMatcherTest extends TestCase
             $expectedResult,
             PropertyValueCriteriaMatcher::matchesPropertyCollection(
                 $this->propertyCollection,
+                PropertyValueLessThanOrEqual::create(
+                    PropertyName::fromString($propertyName),
+                    $propertyValueToExpect
+                )
+            )
+        );
+        $this->assertEquals(
+            $expectedResult,
+            PropertyValueCriteriaMatcher::matchesSerializedPropertyValues(
+                $this->serializedPropertyValues,
                 PropertyValueLessThanOrEqual::create(
                     PropertyName::fromString($propertyName),
                     $propertyValueToExpect
