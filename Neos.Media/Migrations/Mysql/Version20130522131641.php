@@ -16,10 +16,15 @@ class Version20130522131641 extends AbstractMigration
     public function up(Schema $schema): void 
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $tableNames = $this->sm->listTableNames();
 
             // new tables for Asset, Document, Video, Audio
         $this->addSql("CREATE TABLE typo3_media_domain_model_asset (persistence_object_identifier VARCHAR(40) NOT NULL, dtype VARCHAR(255) NOT NULL, resource VARCHAR(40) DEFAULT NULL, title VARCHAR(255) NOT NULL, INDEX IDX_B8306B8EBC91F416 (resource), PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
-        $this->addSql("ALTER TABLE typo3_media_domain_model_asset ADD CONSTRAINT FK_B8306B8EBC91F416 FOREIGN KEY (resource) REFERENCES typo3_flow_resource_resource (persistence_object_identifier)");
+        if (in_array('typo3_flow3_resource_resource', $tableNames, true)) {
+            $this->addSql("ALTER TABLE typo3_media_domain_model_asset ADD CONSTRAINT FK_B8306B8EBC91F416 FOREIGN KEY (resource) REFERENCES typo3_flow3_resource_resource (persistence_object_identifier)");
+        } elseif (in_array('typo3_flow_resource_resource', $tableNames, true)) {
+            $this->addSql("ALTER TABLE typo3_media_domain_model_asset ADD CONSTRAINT FK_B8306B8EBC91F416 FOREIGN KEY (resource) REFERENCES typo3_flow_resource_resource (persistence_object_identifier)");
+        }
 
         $this->addSql("CREATE TABLE typo3_media_domain_model_document (persistence_object_identifier VARCHAR(40) NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
         $this->addSql("ALTER TABLE typo3_media_domain_model_document ADD CONSTRAINT FK_F089E2F547A46B0A FOREIGN KEY (persistence_object_identifier) REFERENCES typo3_media_domain_model_asset (persistence_object_identifier) ON DELETE CASCADE");
@@ -32,7 +37,7 @@ class Version20130522131641 extends AbstractMigration
         $this->addSql("INSERT INTO typo3_media_domain_model_asset (persistence_object_identifier, dtype, resource, title) SELECT persistence_object_identifier, 'typo3_media_image', resource, title FROM typo3_media_domain_model_image");
 
             // adjust Image table
-        $this->addSql("ALTER TABLE typo3_media_domain_model_image DROP FOREIGN KEY typo3_media_domain_model_image_ibfk_1");
+        $this->addSql("ALTER TABLE typo3_media_domain_model_image DROP FOREIGN KEY IF EXISTS typo3_media_domain_model_image_ibfk_1");
         $this->addSql("DROP INDEX IDX_7FA2358DBC91F416 ON typo3_media_domain_model_image");
         $this->addSql("ALTER TABLE typo3_media_domain_model_image DROP resource, DROP title");
         $this->addSql("ALTER TABLE typo3_media_domain_model_image ADD CONSTRAINT FK_7FA2358D47A46B0A FOREIGN KEY (persistence_object_identifier) REFERENCES typo3_media_domain_model_asset (persistence_object_identifier) ON DELETE CASCADE");

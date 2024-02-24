@@ -43,7 +43,7 @@ class Version20170110130217 extends AbstractMigration
             $this->addSql('DROP INDEX idx_84416fdca76d06e6 ON neos_media_domain_model_adjustment_abstractimageadjustment');
             $this->addSql('CREATE INDEX IDX_8B2F26F8A76D06E6 ON neos_media_domain_model_adjustment_abstractimageadjustment (imagevariant)');
             $this->addSql('ALTER TABLE neos_media_domain_model_adjustment_abstractimageadjustment ADD CONSTRAINT FK_84416FDCA76D06E6 FOREIGN KEY (imagevariant) REFERENCES neos_media_domain_model_imagevariant (persistence_object_identifier)');
-            $this->addSql('ALTER TABLE neos_media_domain_model_asset DROP FOREIGN KEY FK_B8306B8EBC91F416');
+            $this->addSql('ALTER TABLE neos_media_domain_model_asset DROP FOREIGN KEY IF EXISTS FK_B8306B8EBC91F416');
             $this->addSql('DROP INDEX uniq_b8306b8ebc91f416 ON neos_media_domain_model_asset');
             $this->addSql('CREATE UNIQUE INDEX UNIQ_675F9550BC91F416 ON neos_media_domain_model_asset (resource)');
             $this->addSql('ALTER TABLE neos_media_domain_model_asset ADD CONSTRAINT FK_B8306B8EBC91F416 FOREIGN KEY (resource) REFERENCES neos_flow_resourcemanagement_persistentresource (persistence_object_identifier)');
@@ -76,7 +76,7 @@ class Version20170110130217 extends AbstractMigration
             $this->addSql('CREATE INDEX IDX_C4BF979F55FF4171 ON neos_media_domain_model_imagevariant (originalasset)');
             $this->addSql('ALTER TABLE neos_media_domain_model_imagevariant ADD CONSTRAINT FK_758EDEBD55FF4171 FOREIGN KEY (originalasset) REFERENCES neos_media_domain_model_image (persistence_object_identifier)');
             $this->addSql('ALTER TABLE neos_media_domain_model_thumbnail DROP FOREIGN KEY FK_B7CE141455FF4171');
-            $this->addSql('ALTER TABLE neos_media_domain_model_thumbnail DROP FOREIGN KEY FK_B7CE1414BC91F416');
+            $this->addSql('ALTER TABLE neos_media_domain_model_thumbnail DROP FOREIGN KEY IF EXISTS FK_B7CE1414BC91F416');
             $this->addSql('DROP INDEX idx_b7ce141455ff4171 ON neos_media_domain_model_thumbnail');
             $this->addSql('CREATE INDEX IDX_3A163C4955FF4171 ON neos_media_domain_model_thumbnail (originalasset)');
             $this->addSql('DROP INDEX uniq_b7ce1414bc91f416 ON neos_media_domain_model_thumbnail');

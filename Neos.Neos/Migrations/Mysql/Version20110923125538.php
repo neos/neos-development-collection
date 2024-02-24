@@ -17,16 +17,22 @@ class Version20110923125538 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain DROP FOREIGN KEY typo3_typo3_domain_model_domain_ibfk_1");
-        $this->addSql("DROP INDEX IDX_64D1A917E12C6E67 ON typo3_typo3_domain_model_domain");
+        $tableNames = $this->sm->listTableNames();
+
+        $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain DROP FOREIGN KEY IF EXISTS typo3_typo3_domain_model_domain_ibfk_1");
+        $this->addSql("DROP INDEX IF EXISTS IDX_64D1A917E12C6E67 ON typo3_typo3_domain_model_domain");
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain CHANGE typo3_site site VARCHAR(40) DEFAULT NULL");
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain ADD CONSTRAINT typo3_typo3_domain_model_domain_ibfk_1 FOREIGN KEY (site) REFERENCES typo3_typo3_domain_model_site(flow3_persistence_identifier)");
         $this->addSql("CREATE INDEX IDX_F227E8F6694309E4 ON typo3_typo3_domain_model_domain (site)");
 
-        $this->addSql("ALTER TABLE typo3_typo3_domain_model_media_image DROP FOREIGN KEY typo3_typo3_domain_model_media_image_ibfk_1");
+        $this->addSql("ALTER TABLE typo3_typo3_domain_model_media_image DROP FOREIGN KEY IF EXISTS typo3_typo3_domain_model_media_image_ibfk_1");
         $this->addSql("DROP INDEX UNIQ_E5EA82E211FFD19F ON typo3_typo3_domain_model_media_image");
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_media_image CHANGE flow3_resource_resource resource VARCHAR(40) DEFAULT NULL");
-        $this->addSql("ALTER TABLE typo3_typo3_domain_model_media_image ADD CONSTRAINT typo3_typo3_domain_model_media_image_ibfk_1 FOREIGN KEY (resource) REFERENCES typo3_flow3_resource_resource(flow3_persistence_identifier)");
+        if (in_array('typo3_flow3_resource_resource', $tableNames, true)) {
+            $this->addSql("ALTER TABLE typo3_typo3_domain_model_media_image ADD CONSTRAINT typo3_typo3_domain_model_media_image_ibfk_1 FOREIGN KEY (resource) REFERENCES typo3_flow3_resource_resource(flow3_persistence_identifier)");
+        } elseif (in_array('typo3_flow_resource_resource', $tableNames, true)) {
+            $this->addSql("ALTER TABLE typo3_typo3_domain_model_media_image ADD CONSTRAINT typo3_typo3_domain_model_media_image_ibfk_1 FOREIGN KEY (resource) REFERENCES typo3_flow_resource_resource(flow3_persistence_identifier)");
+        }
         $this->addSql("CREATE UNIQUE INDEX UNIQ_E5EA82E2BC91F416 ON typo3_typo3_domain_model_media_image (resource)");
 
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_user DROP FOREIGN KEY typo3_typo3_domain_model_user_ibfk_1");
@@ -44,7 +50,7 @@ class Version20110923125538 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain DROP FOREIGN KEY typo3_typo3_domain_model_domain_ibfk_1");
+        $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain DROP FOREIGN KEY IF EXISTS typo3_typo3_domain_model_domain_ibfk_1");
         $this->addSql("DROP INDEX IDX_F227E8F6694309E4 ON typo3_typo3_domain_model_domain");
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain CHANGE site typo3_site VARCHAR(40) DEFAULT NULL");
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain ADD CONSTRAINT typo3_typo3_domain_model_domain_ibfk_1 FOREIGN KEY (typo3_site) REFERENCES typo3_typo3_domain_model_site(flow3_persistence_identifier)");
