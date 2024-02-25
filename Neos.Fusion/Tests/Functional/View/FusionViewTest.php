@@ -13,7 +13,6 @@ namespace Neos\Fusion\Tests\Functional\View;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\View\FusionView;
 use Psr\Http\Message\ResponseInterface;
 
@@ -106,7 +105,7 @@ class FusionViewTest extends FunctionalTestCase
         $request->expects(self::any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
 
         $view = new FusionView();
-        $view->setOption('fusionGlobals', FusionGlobals::fromArray(['request' => $request]));
+        $view->assign('request', $request);
         $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
 
         return $view;

@@ -44,7 +44,7 @@ class FusionView extends AbstractView
     protected $supportedOptions = [
         'fusionPathPatterns' => [['resource://@package/Private/Fusion'], 'Fusion files that will be loaded if directories are given the Root.fusion is used.', 'array'],
         'fusionPath' => [null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'],
-        'fusionGlobals' => [null, 'Additional global variables; merged together with the "request". Must only be specified at creation.', FusionGlobals::class],
+        'fusionGlobals' => [null, 'Additional Fusion global variables. The request must be assigned using `assign`. For regular variables please use `assign` as well.', 'array'],
         'packageKey' => [null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'],
         'debugMode' => [false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'],
         'enableContentCache' => [false, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
@@ -83,6 +83,12 @@ class FusionView extends AbstractView
     protected $fusionRuntime = null;
 
     /**
+     * Via {@see assign} request using the "request" key,
+     * will be available also as Fusion global in the runtime.
+     */
+    protected ?ActionRequest $assignedActionRequest = null;
+
+    /**
      * Reset runtime cache if an option is changed
      *
      * @param string $optionName
@@ -91,30 +97,37 @@ class FusionView extends AbstractView
      */
     public function setOption($optionName, $value)
     {
+        // todo do we want to allow to set the `fusionPathPatterns` after the first render?
         $this->fusionPath = null;
         parent::setOption($optionName, $value);
     }
 
+    public function assign($key, $value)
+    {
+        if ($key === 'request') {
+            // the request cannot be used as "normal" fusion variable and must be treated as FusionGlobal
+            // to for example not cache it accidentally
+            // additionally we need it for special request based handling in the view
+            $this->assignedActionRequest = $value;
+            return $this;
+        }
+        return parent::assign($key, $value);
+    }
+
     /**
-     * Legacy layer to make the `request` available in Fusion.
+     * Legacy layer to set the request for this view if not set already.
      *
-     * Please use {@see setOption} and {@see FusionGlobals} instead:
+     * Please use {@see assign} with "request" instead
      *
-     *     $view->setOption('fusionGlobals', FusionGlobals::fromArray(['request' => $this->request]))
+     *     $view->assign('request"', $this->request)
      *
      * @deprecated with Neos 9
      */
     public function setControllerContext(ControllerContext $controllerContext)
     {
-        /** @var FusionGlobals $fusionGlobals */
-        $fusionGlobals = $this->options['fusionGlobals'] ?? FusionGlobals::empty();
-        if ($fusionGlobals->has('request')) {
-            // no need for legacy layer as the request was already set.
-            return;
+        if (!$this->assignedActionRequest) {
+            $this->assignedActionRequest = $controllerContext->getRequest();
         }
-        $this->setOption('fusionGlobals', $fusionGlobals->merge(FusionGlobals::fromArray(
-            ['request' => $controllerContext->getRequest()]
-        )));
     }
 
     /**
@@ -185,14 +198,15 @@ class FusionView extends AbstractView
     {
         if ($this->fusionRuntime === null) {
             $this->loadFusion();
-
-            $fusionGlobals = $this->options['fusionGlobals'] ?? FusionGlobals::empty();
-            if (!$fusionGlobals instanceof FusionGlobals) {
-                throw new \InvalidArgumentException('View option "fusionGlobals" must be of type FusionGlobals', 1694252923947);
+            $additionalGlobals = FusionGlobals::fromArray($this->options['fusionGlobals'] ?? []);
+            if ($additionalGlobals->has('request')) {
+                throw new \RuntimeException(sprintf('The request cannot be set using the additional fusion globals. Please use $view->assign("request", ...) instead.'), 1708854895);
             }
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $this->parsedFusion,
-                $fusionGlobals
+                $this->assignedActionRequest
+                    ? $additionalGlobals->merge(FusionGlobals::fromArray(['request' => $this->assignedActionRequest]))
+                    : $additionalGlobals
             );
         }
         if (isset($this->options['debugMode'])) {
@@ -265,11 +279,10 @@ class FusionView extends AbstractView
         if ($packageKey !== null) {
             return $packageKey;
         } else {
-            $request = $this->getRequestFromFusionGlobals();
-            if (!$request) {
+            if (!$this->assignedActionRequest) {
                 throw new \RuntimeException(sprintf('To resolve the @package in all fusionPathPatterns, either packageKey has to be specified, or the current request be available.'), 1708267874);
             }
-            return $request->getControllerPackageKey();
+            return $this->assignedActionRequest->getControllerPackageKey();
         }
     }
 
@@ -285,7 +298,7 @@ class FusionView extends AbstractView
             if ($fusionPath !== null) {
                 $this->fusionPath = $fusionPath;
             } else {
-                $request = $this->getRequestFromFusionGlobals();
+                $request = $this->assignedActionRequest;
                 if (!$request) {
                     throw new \RuntimeException(sprintf('The option `fusionPath` was not set. Could not fallback to the current request.'), 1708267857);
                 }
@@ -299,19 +312,5 @@ class FusionView extends AbstractView
             }
         }
         return $this->fusionPath;
-    }
-
-    private function getRequestFromFusionGlobals(): ?ActionRequest
-    {
-        /** @var FusionGlobals $fusionGlobals */
-        $fusionGlobals = $this->options['fusionGlobals'] ?? FusionGlobals::empty();
-        if (!$fusionGlobals instanceof FusionGlobals) {
-            throw new \InvalidArgumentException('View option "fusionGlobals" must be of type FusionGlobals', 1694252923947);
-        }
-        $actionRequest = $fusionGlobals->get('request');
-        if (!$actionRequest instanceof ActionRequest) {
-            return null;
-        }
-        return $actionRequest;
     }
 }
