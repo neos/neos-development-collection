@@ -18,6 +18,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFi
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Security\Context;
 use Neos\Fusion\Core\FusionGlobals;
@@ -51,6 +53,12 @@ class FusionView extends AbstractView
 
     #[Flow\Inject]
     protected RenderingModeService $renderingModeService;
+
+    /**
+     * Via {@see assign} request using the "request" key,
+     * will be available also as Fusion global in the runtime.
+     */
+    protected ?ActionRequest $assignedActionRequest = null;
 
     /**
      * Renders the view
@@ -198,10 +206,10 @@ class FusionView extends AbstractView
 
             $renderingMode = $this->renderingModeService->findByName($this->getOption('renderingModeName'));
 
-            $fusionGlobals = FusionGlobals::fromArray([
-                'request' => $this->controllerContext->getRequest(),
+            $fusionGlobals = FusionGlobals::fromArray(array_filter([
+                'request' => $this->assignedActionRequest,
                 'renderingMode' => $renderingMode
-            ]);
+            ]));
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $fusionConfiguration,
                 $fusionGlobals
@@ -222,7 +230,30 @@ class FusionView extends AbstractView
      */
     public function assign($key, $value): AbstractView
     {
+        if ($key === 'request') {
+            // the request cannot be used as "normal" fusion variable and must be treated as FusionGlobal
+            // to for example not cache it accidentally
+            // additionally we need it for special request based handling in the view
+            $this->assignedActionRequest = $value;
+            return $this;
+        }
         $this->fusionRuntime = null;
         return parent::assign($key, $value);
+    }
+
+    /**
+     * Legacy layer to set the request for this view if not set already.
+     *
+     * Please use {@see assign} with "request" instead
+     *
+     *     $view->assign('request"', $this->request)
+     *
+     * @deprecated with Neos 9
+     */
+    public function setControllerContext(ControllerContext $controllerContext)
+    {
+        if (!$this->assignedActionRequest) {
+            $this->assignedActionRequest = $controllerContext->getRequest();
+        }
     }
 }

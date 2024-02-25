@@ -9,7 +9,7 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
- * Serializer for Fusion's [at]cache.context values
+ * Serializer for Fusion's \@cache.context values
  *
  * Uses the Flows's property mapper as implementation.
  * It relies on a converter being available from the context value type to string and reverse.

@@ -45,16 +45,15 @@ class RuntimeFactory
         $defaultContextVariables = EelUtility::getDefaultContextVariables(
             $this->defaultContextConfiguration ?? []
         );
-        $runtime = new Runtime(
+        return new Runtime(
             FusionConfiguration::fromArray($fusionConfiguration),
             FusionGlobals::fromArray(
                 [
+                    ...$defaultContextVariables,
                     'request' => $controllerContext?->getRequest() ?? ActionRequest::fromHttpRequest(ServerRequest::fromGlobals()),
-                    ...$defaultContextVariables
                 ]
             )
         );
-        return $runtime;
     }
 
     public function createFromConfiguration(
