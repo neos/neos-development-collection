@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph\Propert
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\AndCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\NegateCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\OrCriteria;
@@ -21,8 +22,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaMatcher;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\TestSuite\Unit\NodeSubjectProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\Serializer;
 
 class PropertyValueCriteriaMatcherTest extends TestCase
 {
@@ -37,10 +38,9 @@ class PropertyValueCriteriaMatcherTest extends TestCase
             'integerProperty' => new SerializedPropertyValue(123, 'int')
         ]);
 
-        $subjectProvider = new NodeSubjectProvider();
         $this->propertyCollection = new PropertyCollection(
             $this->serializedPropertyValues,
-            $subjectProvider->propertyConverter
+            new PropertyConverter(new Serializer())
         );
     }
 
