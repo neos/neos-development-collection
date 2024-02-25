@@ -13,6 +13,7 @@ namespace Neos\Fusion\Tests\Functional\View;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Fusion\Core\IllegalEntryFusionPathValueException;
 use Neos\Fusion\View\FusionView;
 use Psr\Http\Message\ResponseInterface;
 
@@ -80,15 +81,14 @@ class FusionViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function fusionViewJsonSerializesOutputIfNotString()
+    public function fusionViewCannotRenderNonStringableValue()
     {
+        $this->expectException(IllegalEntryFusionPathValueException::class);
+        $this->expectExceptionMessage('Fusion entry path "illegalEntryPointValue" is expected to render a compatible http response body: string|\Stringable|null. Got array instead.');
+
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
-        $view->setFusionPath('jsonSerializeable');
-        $response = $view->render();
-        self::assertInstanceOf(ResponseInterface::class, $response);
-        self::assertSame('{"my":"array","with":"values"}', $response->getBody()->getContents());
-        self::assertSame(200, $response->getStatusCode());
-        self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
+        $view->setFusionPath('illegalEntryPointValue');
+        $view->render();
     }
 
     /**

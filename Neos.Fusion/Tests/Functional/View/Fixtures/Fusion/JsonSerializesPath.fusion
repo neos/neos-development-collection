@@ -1,5 +1,0 @@
-
-jsonSerializeable = Neos.Fusion:DataStructure {
-  my = 'array'
-  with = 'values'
-}

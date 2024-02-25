@@ -265,51 +265,44 @@ class Runtime
     }
 
     /**
-     * todo
+     * Entry point to render a Fusion path as HttpResponse.
+     *
+     * @param string $entryFusionPath the absolute fusion path to render (without leading slash)
+     * @param array $contextVariables the context variables that will be available during the rendering.
+     * @throws IllegalEntryFusionPathValueException The Fusion path rendered to a value that is not a compatible http response body: string|\Stringable|null
      */
-    public function renderResponse(string $fusionPath, array $contextArray): ResponseInterface
+    public function renderResponse(string $entryFusionPath, array $contextVariables): ResponseInterface
     {
-        /** Unlike pushContextArray, we don't allow to overrule fusion globals {@see self::pushContext} */
-        foreach ($contextArray as $key => $_) {
+        // Like in pushContext, we don't allow to overrule fusion globals
+        foreach ($contextVariables as $key => $_) {
             if ($this->fusionGlobals->has($key)) {
                 throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1706452063);
             }
         }
-        $this->pushContextArray($contextArray);
+        // replace any previously assigned values
+        $this->pushContextArray($contextVariables);
 
-        return $this->withSimulatedLegacyControllerContext(function () use ($fusionPath) {
+        return $this->withSimulatedLegacyControllerContext(function () use ($entryFusionPath) {
             try {
-                $output = $this->render($fusionPath);
+                $output = $this->render($entryFusionPath);
             } catch (RuntimeException $exception) {
                 throw $exception->getWrappedException();
             } finally {
                 $this->popContext();
             }
 
-            /**
-             * parse potential raw http response possibly rendered via "Neos.Fusion:Http.Message"
-             * {@see \Neos\Fusion\FusionObjects\HttpResponseImplementation}
-             */
+            // Parse potential raw http response possibly rendered via "Neos.Fusion:Http.Message"
+            /** {@see \Neos\Fusion\FusionObjects\HttpResponseImplementation} */
             $outputStringHasHttpPreamble = is_string($output) && str_starts_with($output, 'HTTP/');
             if ($outputStringHasHttpPreamble) {
                 return Message::parseResponse($output);
             }
 
-            if (is_string($output) || $output instanceof \Stringable || $output === null) {
-                return new Response(body: $output);
+            if (!is_string($output) && !$output instanceof \Stringable && $output !== null) {
+                throw new IllegalEntryFusionPathValueException(sprintf('Fusion entry path "%s" is expected to render a compatible http response body: string|\Stringable|null. Got %s instead.', $entryFusionPath, get_debug_type($output)), 1706454898);
             }
 
-            if (is_array($output) || $output instanceof \JsonSerializable || $output instanceof \stdClass || is_bool($output)) {
-                try {
-                    $jsonSerialized = json_encode($output, JSON_THROW_ON_ERROR);
-                } catch (\JsonException $e) {
-                    throw new \RuntimeException(sprintf('Cannot render %s into http response body.', get_debug_type($output)), 1708713158, $e);
-                }
-                $jsonResponse = new Response(body: $jsonSerialized);
-                return $jsonResponse->withHeader('Content-Type', 'application/json');
-            }
-
-            throw new \RuntimeException(sprintf('Cannot render %s into http response body.', get_debug_type($output)), 1706454898);
+            return new Response(body: $output);
         });
     }
 
