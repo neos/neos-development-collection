@@ -20,6 +20,7 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Fusion\Core\FusionConfiguration;
 use Neos\Fusion\Core\FusionGlobals;
+use Neos\Fusion\Core\IllegalEntryFusionPathValueException;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\ValueImplementation;
@@ -38,9 +39,9 @@ class RuntimeTest extends UnitTestCase
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'), 'root');
         $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->disableOriginalConstructor()->getMock();
         $runtime->expects(self::any())->method('evaluate')->will(self::throwException($runtimeException));
-        $runtime->expects(self::once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->will(self::returnValue('Exception Message'));
+        $runtime->expects(self::once())->method('handleRenderingException')->with('foo/bar', $runtimeException)->will(self::returnValue('Exception Message'));
 
-        $output = $runtime->render('/foo/bar');
+        $output = $runtime->render('foo/bar');
 
         self::assertEquals('Exception Message', $output);
     }
@@ -65,7 +66,7 @@ class RuntimeTest extends UnitTestCase
         $objectManager->expects(self::once())->method('isRegistered')->with($exceptionHandlerSetting)->will(self::returnValue(true));
         $objectManager->expects(self::once())->method('get')->with($exceptionHandlerSetting)->will(self::returnValue(new ThrowingHandler()));
 
-        $runtime->handleRenderingException('/foo/bar', $runtimeException);
+        $runtime->handleRenderingException('foo/bar', $runtimeException);
     }
 
     /**
@@ -121,7 +122,7 @@ class RuntimeTest extends UnitTestCase
         $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->disableOriginalConstructor()->getMock();
         $runtime->expects(self::any())->method('evaluate')->will(self::throwException($securityException));
 
-        $runtime->render('/foo/bar');
+        $runtime->render('foo/bar');
     }
 
     /**
@@ -249,15 +250,10 @@ class RuntimeTest extends UnitTestCase
         ];
 
         yield 'string cast object (\Stringable)' => [
-            'rawValue' => new class implements \Stringable, \JsonSerializable {
+            'rawValue' => new class implements \Stringable {
                 public function __toString()
                 {
                     return 'my string karsten';
-                }
-                // __toString is preferred
-                public function jsonSerialize(): mixed
-                {
-                    return ['my string'];
                 }
             },
             'response' => <<<'TEXT'
@@ -305,51 +301,6 @@ class RuntimeTest extends UnitTestCase
             <body>Hello World</body>
             TEXT
         ];
-
-        yield 'json serialize array' => [
-            'rawValue' => ['my' => 'array', 'with' => 'values'],
-            'response' => <<<'TEXT'
-            HTTP/1.1 200 OK
-            Content-Type: application/json
-
-            {"my":"array","with":"values"}
-            TEXT
-        ];
-
-        yield 'json serialize \stdClass' => [
-            'rawValue' => (object)[],
-            'response' => <<<'TEXT'
-            HTTP/1.1 200 OK
-            Content-Type: application/json
-
-            {}
-            TEXT
-        ];
-
-        yield 'json serialize object (\JsonSerializable)' => [
-            'rawValue' => new class implements \JsonSerializable {
-                public function jsonSerialize(): mixed
-                {
-                    return ['my' => 'object', 'with' => 'values'];
-                }
-            },
-            'response' => <<<'TEXT'
-            HTTP/1.1 200 OK
-            Content-Type: application/json
-
-            {"my":"object","with":"values"}
-            TEXT
-        ];
-
-        yield 'json serialize boolean' => [
-            'rawValue' => false,
-            'response' => <<<'TEXT'
-            HTTP/1.1 200 OK
-            Content-Type: application/json
-
-            false
-            TEXT
-        ];
     }
 
     /**
@@ -367,20 +318,49 @@ class RuntimeTest extends UnitTestCase
             is_string($rawValue) ? str_replace("\n", "\r\n", $rawValue) : $rawValue
         );
 
-        $response = $runtime->renderResponse('/path', []);
+        $response = $runtime->renderResponse('path', []);
 
         self::assertInstanceOf(ResponseInterface::class, $response);
         self::assertSame(str_replace("\n", "\r\n", $expectedHttpResponseString), Message::toString($response));
     }
 
+    public static function renderResponseIllegalValueExamples(): iterable
+    {
+        yield 'array' => [
+            'rawValue' => ['my' => 'array', 'with' => 'values']
+        ];
+
+        yield '\stdClass' => [
+            'rawValue' => (object)[]
+        ];
+
+        yield '\JsonSerializable' => [
+            'rawValue' => new class implements \JsonSerializable {
+                public function jsonSerialize(): mixed
+                {
+                    return 123;
+                }
+            }
+        ];
+
+        yield 'any class' => [
+            'rawValue' => new class {
+            }
+        ];
+
+        yield 'boolean' => [
+            'rawValue' => false
+        ];
+    }
+
     /**
+     * @dataProvider renderResponseIllegalValueExamples
      * @test
      */
-    public function renderResponseThrowsIfNotStringableOrJsonSerializeable()
+    public function renderResponseThrowsIfNotStringable(mixed $illegalValue)
     {
-        $illegalValue = new class {
-        };
-        $this->expectExceptionMessage('Cannot render class@anonymous into http response body.');
+        $this->expectException(IllegalEntryFusionPathValueException::class);
+        $this->expectExceptionMessage(sprintf('Fusion entry path "path" is expected to render a compatible http response body: string|\Stringable|null. Got %s instead.', get_debug_type($illegalValue)));
 
         $runtime = $this->getMockBuilder(Runtime::class)
             ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
@@ -391,6 +371,6 @@ class RuntimeTest extends UnitTestCase
             $illegalValue
         );
 
-        $runtime->renderResponse('/path', []);
+        $runtime->renderResponse('path', []);
     }
 }

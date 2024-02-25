@@ -1,0 +1,4 @@
+
+illegalEntryPointValue = Neos.Fusion:DataStructure {
+  my = 'array'
+}
