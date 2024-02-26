@@ -179,10 +179,6 @@ final class AssetUsageProjection implements ProjectionInterface
         /** @var array<string, array<AssetIdAndOriginalAssetId>> $assetIds */
         $assetIds = [];
         foreach ($propertyValues as $propertyName => $propertyValue) {
-            // skip removed properties ({@see SerializedPropertyValues})
-            if ($propertyValue === null) {
-                continue;
-            }
             $extractedAssetIds = $this->extractAssetIds(
                 $propertyValue->type,
                 $propertyValue->value,

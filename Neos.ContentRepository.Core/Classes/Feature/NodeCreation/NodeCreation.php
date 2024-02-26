@@ -84,7 +84,7 @@ trait NodeCreation
             $command->succeedingSiblingNodeAggregateId,
             $command->nodeName,
             $this->getPropertyConverter()->serializePropertyValues(
-                $command->initialPropertyValues,
+                $command->initialPropertyValues->withoutUnsets(),
                 $this->requireNodeType($command->nodeTypeName)
             )
         );
@@ -106,8 +106,10 @@ trait NodeCreation
                 $nodeTypeName
             );
 
+            $serializedPropertyValue = SerializedPropertyValue::create($defaultValue, $propertyType->getSerializationType());
+
             $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
-                new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
+                $serializedPropertyValue
             );
         }
 
@@ -136,7 +138,7 @@ trait NodeCreation
             if (!$propertyType->isMatchedBy($propertyValue)) {
                 throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
                     PropertyName::fromString($propertyName),
-                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
+                    get_debug_type($propertyValues),
                     $propertyType->value
                 );
             }

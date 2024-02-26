@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
+
 /**
  * Property values to write, supports arbitrary objects. Will be then converted to {@see SerializedPropertyValues}
  * inside the events and persisted commands.
@@ -22,6 +24,8 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
  * are stored in the data structure.
  * We expect the value types to match the NodeType's property types (this is validated in the command handler).
  *
+ * A null value will cause to unset a nodes' property.
+ *
  * @api used as part of commands
  */
 final class PropertyValuesToWrite
@@ -29,8 +33,9 @@ final class PropertyValuesToWrite
     /**
      * @param array<string,mixed> $values
      */
-    private function __construct(public readonly array $values)
-    {
+    private function __construct(
+        public readonly array $values
+    ) {
     }
 
     public static function createEmpty(): self
@@ -54,16 +59,39 @@ final class PropertyValuesToWrite
         return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
     }
 
+    /**
+     * Adds a property value to write.
+     *
+     * To declare to unset a property, `null` is used:
+     *
+     *     $propertyValues->withValue('my-property', null);
+     *
+     */
     public function withValue(string $valueName, mixed $value): self
     {
         $values = $this->values;
         $values[$valueName] = $value;
-
         return new self($values);
     }
 
     public function merge(self $other): self
     {
         return new self(array_merge($this->values, $other->values));
+    }
+
+    /** @internal you should not need this in user-land */
+    public function withoutUnsets(): self
+    {
+        return new self(array_filter($this->values, fn ($value) => $value !== null));
+    }
+
+    /** @internal you should not need this in user-land */
+    public function getPropertiesToUnset(): PropertyNames
+    {
+        return PropertyNames::fromArray(
+            array_keys(
+                array_filter($this->values, fn ($value) => $value === null)
+            )
+        );
     }
 }

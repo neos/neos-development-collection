@@ -87,7 +87,7 @@ final class NodeSubjectProvider
     ): Node {
         $defaultPropertyValues = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-            $defaultPropertyValues[$propertyName] = new SerializedPropertyValue(
+            $defaultPropertyValues[$propertyName] = SerializedPropertyValue::create(
                 $propertyValue,
                 $nodeType->getPropertyType($propertyName)
             );

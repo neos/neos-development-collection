@@ -760,7 +760,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $event->getContentStreamId(),
                 $anchorPoint,
                 function (NodeRecord $node) use ($event, $eventEnvelope) {
-                    $node->properties = $node->properties->merge($event->propertyValues);
+                    $node->properties = $node->properties
+                        ->merge($event->propertyValues)
+                        ->unsetProperties($event->propertiesToUnset);
                     $node->timestamps = $node->timestamps->with(
                         lastModified: $eventEnvelope->recordedAt,
                         originalLastModified: self::initiatingDateTime($eventEnvelope)

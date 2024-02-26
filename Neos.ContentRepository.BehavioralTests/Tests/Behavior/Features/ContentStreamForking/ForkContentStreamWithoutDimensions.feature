@@ -46,6 +46,7 @@ Feature: ForkContentStream Without Dimensions
       | originDimensionSpacePoint    | {}                                                      |
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "original value", "type": "string"}} |
+      | propertiesToUnset            | {}                                                      |
 
   Scenario: Ensure that the node is available in the forked content stream
     When the command "ForkContentStream" is executed with payload:
@@ -69,6 +70,7 @@ Feature: ForkContentStream Without Dimensions
       | originDimensionSpacePoint    | {}                                                      |
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
+      | propertiesToUnset            | {}                                                      |
     And the graph projection is fully up to date
 
       # live
@@ -98,6 +100,7 @@ Feature: ForkContentStream Without Dimensions
       | originDimensionSpacePoint    | {}                                                      |
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
+      | propertiesToUnset            | {}                                                      |
     And the graph projection is fully up to date
 
     # live

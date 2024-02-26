@@ -47,7 +47,9 @@ trait NodeModification
                 $event->contentStreamId,
                 $nodeRecord,
                 function (NodeRecord $node) use ($event) {
-                    $node->properties = $node->properties->merge($event->propertyValues);
+                    $node->properties = $node->properties
+                        ->merge($event->propertyValues)
+                        ->unsetProperties($event->propertiesToUnset);
                 }
             );
         });

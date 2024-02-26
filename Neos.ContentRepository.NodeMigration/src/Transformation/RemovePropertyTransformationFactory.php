@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -59,9 +60,8 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
-                            SerializedPropertyValues::fromArray([
-                                $this->propertyName => null
-                            ]),
+                            SerializedPropertyValues::createEmpty(),
+                            PropertyNames::fromArray([$this->propertyName])
                         )
                     );
                 }
