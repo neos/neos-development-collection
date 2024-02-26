@@ -65,16 +65,29 @@ class PropertyCollectionTest extends TestCase
     /**
      * @test
      */
-    public function deserializedValueIsNotAllowedToBeNull(): void
+    public function deserializedValueMightEvaluateToNull(): void
     {
-        $this->mockSerializer->expects($this->once())->method('denormalize')->with('convert-me-to-null', 'null-special', null, [])->willReturn(null);
-        $collection = new PropertyCollection(SerializedPropertyValues::fromArray(['someProperty' => ['value' => 'convert-me-to-null', 'type' => 'null-special']]), $this->mockPropertyConverter);
-        self::assertTrue(isset($collection['someProperty']));
+        $this->mockSerializer->expects($this->once())->method('denormalize')
+            ->with('protected-image-123', 'ImageEntity', null, [])
+            ->willReturn(null);
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('While deserializing property value "convert-me-to-null" of type null-special the serializer returned not allowed value "null".');
+        $collection = new PropertyCollection(
+            SerializedPropertyValues::fromArray([
+                'myImage' => [
+                    'value' => 'protected-image-123',
+                    'type' => 'ImageEntity'
+                ]
+            ]),
+            $this->mockPropertyConverter
+        );
 
-        $collection['someProperty'];
+        // $node->hasProperty("myImage") will be true
+        self::assertTrue(isset($collection['myImage']));
+
+        // An entity privilege would result in a referenced object being null if the user reading
+        // the node doesn't have permission to see it.
+        // $node->getProperty("myImage") will be null!!!
+        self::assertNull($collection['myImage']);
     }
 
     /**

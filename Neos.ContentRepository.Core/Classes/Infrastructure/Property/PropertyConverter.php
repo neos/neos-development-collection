@@ -78,6 +78,7 @@ final class PropertyConverter
         try {
             $serializedPropertyValue = $this->serializer->normalize($propertyValue);
         } catch (NotEncodableValueException | NotNormalizableValueException $e) {
+            // todo add custom exception class
             throw new \RuntimeException(
                 sprintf('There was a problem serializing property %s with value "%s".', $propertyName->value, get_debug_type($propertyValue)),
                 1594842314,
@@ -121,18 +122,9 @@ final class PropertyConverter
 
     public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue): mixed
     {
-        $value = $this->serializer->denormalize(
+        return $this->serializer->denormalize(
             $serializedPropertyValue->value,
             $serializedPropertyValue->type
         );
-
-        if ($value === null) {
-            throw new \RuntimeException(
-                sprintf('While deserializing property value %s of type %s the serializer returned not allowed value "null".', json_encode($serializedPropertyValue->value), $serializedPropertyValue->type),
-                1707578784
-            );
-        }
-
-        return $value;
     }
 }
