@@ -254,7 +254,7 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
         $this->mergedArrayTree->copyValueInTree($currentPath, $sourcePath);
     }
 
-    public function visitAssignedObjectPath(AssignedObjectPath $assignedObjectPath, $relativePath = [])
+    public function visitAssignedObjectPath(AssignedObjectPath $assignedObjectPath, array $relativePath = [])
     {
         $path = [];
         if ($assignedObjectPath->isRelative) {
@@ -305,7 +305,7 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
         if ($this->contextPathAndFilename === null) {
             $fusionCode = '';
         } else {
-            $fusionCode = file_get_contents($this->contextPathAndFilename);
+            $fusionCode = file_get_contents($this->contextPathAndFilename) ?: '';
         }
         return $parserException
             ->setHideColumnInformation()

@@ -6,14 +6,31 @@ namespace Neos\ContentRepository\Core\NodeType;
  * Performs node type constraint checks against a given set of constraints
  * @internal
  */
-class ConstraintCheck
+final readonly class ConstraintCheck
 {
     /**
-     * @param array<string,mixed> $constraints
+     * @param array<string,bool> $constraints
      */
-    public function __construct(
-        private readonly array $constraints
+    private function __construct(
+        private array $constraints
     ) {
+        foreach ($this->constraints as $constraint => $value) {
+            /** @phpstan-ignore-next-line */
+            if (!(is_string($constraint) && is_bool($value))) {
+                throw new \RuntimeException(
+                    sprintf('Constraints must be declared as an array of NodeType names with boolean as values. Got %s.', json_encode([$constraint => $value])),
+                    1702374249
+                );
+            }
+        }
+    }
+
+    /**
+     * @param array<string,bool> $constraints
+     */
+    public static function create(array $constraints): self
+    {
+        return new self($constraints);
     }
 
     public function isNodeTypeAllowed(NodeType $nodeType): bool

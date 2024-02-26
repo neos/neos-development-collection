@@ -420,7 +420,7 @@ class NodeType
 
         if (!$this->hasProperty($propertyName)) {
             throw new \InvalidArgumentException(
-                sprintf('NodeType schema has no property "%s" configured. Cannot read its type.', $propertyName),
+                sprintf('NodeType schema has no property "%s" configured for the NodeType "%s". Cannot read its type.', $propertyName, $this->name->value),
                 1695062252040
             );
         }
@@ -497,7 +497,7 @@ class NodeType
     public function allowsChildNodeType(NodeType $nodeType): bool
     {
         $constraints = $this->getConfiguration('constraints.nodeTypes') ?: [];
-        return (new ConstraintCheck($constraints))->isNodeTypeAllowed($nodeType);
+        return ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType);
     }
 
     /**

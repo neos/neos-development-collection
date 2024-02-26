@@ -14,15 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
@@ -60,9 +58,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected ?NodeAggregateIds $currentNodeRootlineAggregateIds = null;
 
     /**
-     * Runtime cache for the node type constraints to be applied
+     * Runtime cache for the node type criteria to be applied
      */
-    protected ?NodeTypeConstraints $nodeTypeConstraints = null;
+    protected ?NodeTypeCriteria $nodeTypeCriteria = null;
 
     /**
      * The last navigation level which should be rendered.
@@ -156,7 +154,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 if ($this->getMaximumLevels() > 0) {
                     $childSubtree = $subgraph->findSubtree(
                         $node->nodeAggregateId,
-                        FindSubtreeFilter::create(nodeTypeConstraints: $this->getNodeTypeConstraints(), maximumLevels: $this->getMaximumLevels() - 1)
+                        FindSubtreeFilter::create(nodeTypes: $this->getNodeTypeCriteria(), maximumLevels: $this->getMaximumLevels() - 1)
                     );
                     if ($childSubtree === null) {
                         continue;
@@ -180,7 +178,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             $depthOfEntryParentNodeAggregateId = $subgraph->countAncestorNodes(
                 $entryParentNodeAggregateId,
                 CountAncestorNodesFilter::create(
-                    NodeTypeConstraints::createWithAllowedNodeTypeNames(
+                    NodeTypeCriteria::createWithAllowedNodeTypeNames(
                         NodeTypeNames::with(
                             NodeTypeNameFactory::forDocument()
                         )
@@ -202,7 +200,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         $childSubtree = $subgraph->findSubtree(
             $entryParentNodeAggregateId,
             FindSubtreeFilter::create(
-                nodeTypeConstraints: $this->getNodeTypeConstraints(),
+                nodeTypes: $this->getNodeTypeCriteria(),
                 maximumLevels: $maximumLevels
             )
         );
@@ -282,12 +280,12 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         }
     }
 
-    protected function getNodeTypeConstraints(): NodeTypeConstraints
+    protected function getNodeTypeCriteria(): NodeTypeCriteria
     {
-        if (!$this->nodeTypeConstraints) {
-            $this->nodeTypeConstraints = NodeTypeConstraints::fromFilterString($this->getFilter());
+        if (!$this->nodeTypeCriteria) {
+            $this->nodeTypeCriteria = NodeTypeCriteria::fromFilterString($this->getFilter());
         }
-        return $this->nodeTypeConstraints;
+        return $this->nodeTypeCriteria;
     }
 
     protected function getCurrentNodeRootlineAggregateIds(): NodeAggregateIds
@@ -299,7 +297,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         $currentNodeAncestors = $subgraph->findAncestorNodes(
             $this->currentNode->nodeAggregateId,
             FindAncestorNodesFilter::create(
-                NodeTypeConstraints::createWithAllowedNodeTypeNames(
+                NodeTypeCriteria::createWithAllowedNodeTypeNames(
                     NodeTypeNames::with(
                         NodeTypeNameFactory::forDocument()
                     )

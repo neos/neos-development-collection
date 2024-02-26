@@ -119,7 +119,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
 
     protected function setUp(): void
     {
-        $this->markTestSkipped('Skipped until we find a better way to mock node read models (see https://github.com/neos/neos-development-collection/issues/4317)');
+        $this->markTestSkipped('Skipped. Either migrate to behat or find a better way to mock node read models. See https://github.com/neos/neos-development-collection/issues/4317');
         parent::setUp();
         $nodeSubjectProvider = new NodeSubjectProvider();
 

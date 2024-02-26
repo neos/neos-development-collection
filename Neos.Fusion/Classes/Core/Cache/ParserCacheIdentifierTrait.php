@@ -19,7 +19,7 @@ namespace Neos\Fusion\Core\Cache;
 trait ParserCacheIdentifierTrait
 {
     /**
-     * creates a comparable hash of the dsl type and content to be used as cache identifier
+     * Creates a comparable hash of the dsl type and content to be used as cache identifier
      */
     private function getCacheIdentifierForDslCode(string $identifier, string $code): string
     {
@@ -27,18 +27,24 @@ trait ParserCacheIdentifierTrait
     }
 
     /**
-     * creates a comparable hash of the absolute, resolved $fusionFileName
+     * Creates a comparable hash of the absolute-unix-style-file-path-without-directory-traversal
      *
-     * @throws \InvalidArgumentException
+     * something like
+     *  - /Users/marc/Code/neos-project/Packages/Neos
+     *
+     * its crucial that the path
+     *  - is absolute
+     *  - the path separator is in unix style: forward-slash /
+     *  - doesn't contain directory traversal /../ or /./
+     *
+     * to be absolutely sure the path matches the criteria, {@see realpath} can be used.
+     *
+     * if the path does not match the criteria, a different hash as expected will be generated and caching will break.
      */
-    private function getCacheIdentifierForFile(string $fusionFileName): string
-    {
-        $realPath = realpath($fusionFileName);
-        if ($realPath === false) {
-            throw new \InvalidArgumentException("Couldn't resolve realpath for: '$fusionFileName'");
-        }
-
-        $realFusionFilePathWithoutRoot = str_replace(FLOW_PATH_ROOT, '', $realPath);
-        return 'file_' . md5($realFusionFilePathWithoutRoot);
+    private function getCacheIdentifierForAbsoluteUnixStyleFilePathWithoutDirectoryTraversal(
+        string $absoluteUnixStyleFilePathWithoutDirectoryTraversal
+    ): string {
+        $filePathWithoutRoot = str_replace(FLOW_PATH_ROOT, '', $absoluteUnixStyleFilePathWithoutDirectoryTraversal);
+        return 'file_' . md5($filePathWithoutRoot);
     }
 }

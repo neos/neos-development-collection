@@ -19,7 +19,7 @@ namespace Neos\ContentRepository\Core\Factory;
  *
  * @api
  */
-final class ContentRepositoryId
+final class ContentRepositoryId implements \JsonSerializable
 {
     private function __construct(
         public readonly string $value
@@ -46,5 +46,10 @@ final class ContentRepositoryId
     public function equals(self $other): bool
     {
         return $this->value === $other->value;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return $this->value;
     }
 }

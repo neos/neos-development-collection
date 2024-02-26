@@ -5,20 +5,18 @@ namespace Neos\ContentRepositoryRegistry\Service;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
+use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
-use Neos\ContentRepository\Core\Projection\Projections;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 
 /**
  * Content Repository service to perform migrations of events.
@@ -30,108 +28,237 @@ use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
  */
 final class EventMigrationService implements ContentRepositoryServiceInterface
 {
+    /** @var array<int, true> */
+    private array $eventsModified = [];
 
     public function __construct(
-        private readonly Projections $projections,
         private readonly ContentRepositoryId $contentRepositoryId,
-        private readonly ContentRepository $contentRepository,
         private readonly EventStoreInterface $eventStore,
         private readonly Connection $connection,
     ) {
     }
 
     /**
-     * Adds affectedDimensionSpacePoints to NodePropertiesWereSet event, by replaying the content graph
-     * and then reading the dimension space points for the relevant NodeAggregate.
+     * The following things have to be migrated:
      *
-     * Needed for #4265: https://github.com/neos/neos-development-collection/issues/4265
+     * - `NodePropertiesWereSet` `payload`
+     * - `SetSerializedNodeProperties` in `metadata`
      *
-     * Included in May 2023 - before Neos 9.0 Beta 1.
+     * example:
+     *     "propertyValues":{"tagName":{"value":null,"type":"string"}}
+     * ->
+     *     "propertyValues":[],"propertiesToUnset":["tagName"]
+     *
+     * Here we just have to omit the null values because its a new node either way:
+     *
+     * - `NodeAggregateWithNodeWasCreated` `payload`
+     * - `CreateNodeAggregateWithNodeAndSerializedProperties` in `metadata`
+     *
+     * example:
+     *     "initialPropertyValues":{"title":{"value":"Blog","type":"string"},"titleOverride":{"value":null,"type":"string"},"uriPathSegment":{"value":"blog","type":"string"}}
+     * ->
+     *     "initialPropertyValues":{"title":{"value":"Blog","type":"string"},"uriPathSegment":{"value":"blog","type":"string"}}
+     *
+     * - `CopyNodesRecursively` in `metadata`
+     *
+     * example (somewhere deep recursive in $nodeTreeToInsert):
+     *     "propertyValues":{"senderName":{"value":null,"type":"string"}}}
+     * ->
+     *     "propertyValues":{}
+     *
+     * Also the basically impossible state of "initialPropertyValues":{"tagName":null} and "propertyValues":{"tagName":null} will be migrated.
+     *
+     * Needed for #4322: https://github.com/neos/neos-development-collection/pull/4322
+     *
+     * Included in February 2023 - before final Neos 9.0 release
      *
      * @param \Closure $outputFn
      * @return void
      */
-    public function fillAffectedDimensionSpacePointsInNodePropertiesWereSet(\Closure $outputFn)
+    public function migratePropertiesToUnset(\Closure $outputFn)
     {
+        $this->eventsModified = [];
+        $warnings = 0;
 
         $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId)
             . '_bak_' . date('Y_m_d_H_i_s');
-        $outputFn('Backup: copying events table to %s', [$backupEventTableName]);
+        $outputFn(sprintf('Backup: copying events table to %s', $backupEventTableName));
+
         $this->copyEventTable($backupEventTableName);
-
-        $outputFn('Backup completed. Resetting Graph Projection.');
-        $this->contentRepository->resetProjectionState(ContentGraphProjection::class);
-
-        $contentGraphProjection = $this->projections->get(ContentGraphProjection::class);
-        $contentGraph = $contentGraphProjection->getState();
-        assert($contentGraph instanceof ContentGraphInterface);
 
         $streamName = VirtualStreamName::all();
         $eventStream = $this->eventStore->load($streamName);
         foreach ($eventStream as $eventEnvelope) {
+            $outputRewriteNotice = fn(string $message) => $outputFn(sprintf('%s@%s %s', $eventEnvelope->sequenceNumber->value, $eventEnvelope->event->type->value, $message));
+
+            // migrate payload
             if ($eventEnvelope->event->type->value === 'NodePropertiesWereSet') {
                 $eventData = json_decode($eventEnvelope->event->data->value, true);
-                if (!isset($eventData['affectedDimensionSpacePoints'])) {
-                    // Replay the projection until before the current NodePropertiesWereSet event
-                    $contentGraphProjection->catchUp(
-                        $eventStream->withMaximumSequenceNumber($eventEnvelope->sequenceNumber->previous()),
-                        $this->contentRepository
-                    );
+                if (isset($eventData['propertiesToUnset'])) {
+                    // is already new event type with field
+                    continue;
+                }
 
-                    // now we can ask the NodeAggregate (read model) for the covered DSPs.
-                    $nodeAggregate = $contentGraph->findNodeAggregateById(
-                        ContentStreamId::fromString($eventData['contentStreamId']),
-                        NodeAggregateId::fromString($eventData['nodeAggregateId'])
-                    );
-                    $affectedDimensionSpacePoints = $nodeAggregate->getCoverageByOccupant(
-                        OriginDimensionSpacePoint::fromArray($eventData['originDimensionSpacePoint'])
-                    );
+                // separate and omit null setters to unsets:
+                $unsetProperties = [];
+                foreach ($eventData['propertyValues'] as $key => $value) {
+                    if ($value === null || $value['value'] === null) {
+                        $unsetProperties[] = $key;
+                        unset($eventData['propertyValues'][$key]);
+                    }
+                }
+                $eventData['propertiesToUnset'] = $unsetProperties;
 
-                    // ... and update the event
-                    $eventData['affectedDimensionSpacePoints'] = $affectedDimensionSpacePoints->jsonSerialize();
-                    $outputFn(
-                        'Rewriting %s: (%s, Origin: %s) => Affected: %s',
-                        [
-                            $eventEnvelope->sequenceNumber->value,
-                            $eventEnvelope->event->type->value,
-                            json_encode($eventData['originDimensionSpacePoint']),
-                            json_encode($eventData['affectedDimensionSpacePoints'])
-                        ]
-                    );
-                    $this->updateEvent($eventEnvelope->sequenceNumber, $eventData);
+                if (count($unsetProperties)) {
+                    // in case we just set `propertiesToUnset` to an empty array we dont display output.
+                    $outputRewriteNotice(sprintf('Payload: Migrated %d $unsetProperties', count($unsetProperties)));
+                }
+                $this->updateEventPayload($eventEnvelope->sequenceNumber, $eventData);
+
+                // optionally also migrate metadata
+                $eventMetaData = $eventEnvelope->event->metadata?->value;
+                // optionally also migrate metadata
+                if (!isset($eventMetaData['commandClass'])) {
+                    continue;
+                }
+
+                if ($eventMetaData['commandClass'] !== SetSerializedNodeProperties::class) {
+                    $warnings++;
+                    $outputFn(sprintf('WARNING: Cannot migrate event metadata of %s as commandClass %s was not expected.', $eventEnvelope->event->type->value, $eventMetaData['commandClass']));
+                    continue;
+                }
+
+                // separate and omit null setters to unsets:
+                $unsetProperties = [];
+                foreach ($eventMetaData['commandPayload']['propertyValues'] as $key => $value) {
+                    if ($value === null || $value['value'] === null) {
+                        $unsetProperties[] = $key;
+                        unset($eventMetaData['commandPayload']['propertyValues'][$key]);
+                    }
+                }
+                $eventMetaData['commandPayload']['propertiesToUnset'] = $unsetProperties;
+
+                if (count($unsetProperties)) {
+                    // in case we just set `propertiesToUnset` to an empty array we dont display output.
+                    $outputRewriteNotice(sprintf('Metadata: Migrated %d $unsetProperties', count($unsetProperties)));
+                }
+                $this->updateEventMetaData($eventEnvelope->sequenceNumber, $eventMetaData);
+                continue;
+            }
+
+            if ($eventEnvelope->event->type->value === 'NodeAggregateWithNodeWasCreated') {
+                $eventData = json_decode($eventEnvelope->event->data->value, true);
+                // omit null setters
+                $propertiesWithNullValues = 0;
+                foreach ($eventData['initialPropertyValues'] as $key => $value) {
+                    if ($value === null || $value['value'] === null) {
+                        $propertiesWithNullValues++;
+                        unset($eventData['initialPropertyValues'][$key]);
+                    }
+                }
+                if ($propertiesWithNullValues) {
+                    $outputRewriteNotice(sprintf('Payload: Removed %d $initialPropertyValues', $propertiesWithNullValues));
+                    $this->updateEventPayload($eventEnvelope->sequenceNumber, $eventData);
+                }
+
+                $eventMetaData = $eventEnvelope->event->metadata?->value;
+                // optionally also migrate metadata
+                if (!isset($eventMetaData['commandClass'])) {
+                    continue;
+                }
+
+                if ($eventMetaData['commandClass'] === CreateNodeAggregateWithNodeAndSerializedProperties::class) {
+                    // omit null setters
+                    $propertiesWithNullValues = 0;
+                    foreach ($eventMetaData['commandPayload']['initialPropertyValues'] as $key => $value) {
+                        if ($value === null || $value['value'] === null) {
+                            $propertiesWithNullValues++;
+                            unset($eventMetaData['commandPayload']['initialPropertyValues'][$key]);
+                        }
+                    }
+                    if ($propertiesWithNullValues) {
+                        $outputRewriteNotice(sprintf('Metadata: Removed %d $initialPropertyValues', $propertiesWithNullValues));
+                        $this->updateEventMetaData($eventEnvelope->sequenceNumber, $eventMetaData);
+                    }
+                } elseif ($eventMetaData['commandClass'] === CopyNodesRecursively::class) {
+                    // nodes can be also created on copy, and in $nodeTreeToInsert, we have to also omit null values.
+                    // NodeDuplicationCommandHandler::createEventsForNodeToInsert
+
+                    $removeNullValuesRecursively = function (array &$nodeSubtreeSnapshotData, int &$propertiesWithNullValues, $fn) {
+                        foreach ($nodeSubtreeSnapshotData['propertyValues'] as $key => $value) {
+                            if ($value === null || $value['value'] === null) {
+                                $propertiesWithNullValues++;
+                                unset($nodeSubtreeSnapshotData['propertyValues'][$key]);
+                            }
+                        }
+                        foreach ($nodeSubtreeSnapshotData['childNodes'] as &$childNode) {
+                            $fn($childNode, $propertiesWithNullValues, $fn);
+                        }
+                    };
+
+                    $propertiesWithNullValues = 0;
+                    $removeNullValuesRecursively($eventMetaData['commandPayload']['nodeTreeToInsert'], $propertiesWithNullValues, $removeNullValuesRecursively);
+                    if ($propertiesWithNullValues) {
+                        $outputRewriteNotice(sprintf('Metadata: Removed %d $propertyValues from $nodeTreeToInsert', $propertiesWithNullValues));
+                        $this->updateEventMetaData($eventEnvelope->sequenceNumber, $eventMetaData);
+                    }
+                } else {
+                    $warnings++;
+                    $outputFn(sprintf('WARNING: Cannot migrate event metadata of %s as commandClass %s was not expected.', $eventEnvelope->event->type->value, $eventMetaData['commandClass']));
                 }
             }
         }
 
-        $outputFn('Rewriting completed. Now catching up the GraphProjection to final state.');
-        $contentGraphProjection->catchUp($eventStream, $this->contentRepository);
-
-        if ($this->projections->has(DocumentUriPathProjection::class)) {
-            $outputFn('Found DocumentUriPathProjection. Will replay this, as it relies on the updated affectedDimensionSpacePoints');
-            $documentUriPathProjection = $this->projections->get(DocumentUriPathProjection::class);
-            $documentUriPathProjection->reset();
-            $documentUriPathProjection->catchUp($eventStream, $this->contentRepository);
+        if (!count($this->eventsModified)) {
+            $outputFn('Migration was not necessary.');
+            return;
         }
 
-        $outputFn('All done.');
+        $outputFn();
+        $outputFn(sprintf('Migration applied to %s events.', count($this->eventsModified)));
+        $outputFn('Please replay your content-graph projection via `flow cr:projectionReplay contentGraph`.');
+        if ($warnings) {
+            $outputFn(sprintf('WARNING: Finished but %d warnings emitted.', $warnings));
+        }
     }
 
-
-    private function updateEvent(SequenceNumber $sequenceNumber, array $eventData)
+    /**
+     * @param array<mixed> $payload
+     */
+    private function updateEventPayload(SequenceNumber $sequenceNumber, array $payload): void
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
         $this->connection->beginTransaction();
         $this->connection->executeStatement(
             'UPDATE ' . $eventTableName . ' SET payload=:payload WHERE sequencenumber=:sequenceNumber',
             [
-                'payload' => json_encode($eventData),
-                'sequenceNumber' => $sequenceNumber->value
+                'sequenceNumber' => $sequenceNumber->value,
+                'payload' => json_encode($payload),
             ]
         );
         $this->connection->commit();
+        $this->eventsModified[$sequenceNumber->value] = true;
     }
 
-    private function copyEventTable(string $backupEventTableName)
+    /**
+     * @param array<mixed> $eventMetaData
+     */
+    private function updateEventMetaData(SequenceNumber $sequenceNumber, array $eventMetaData): void
+    {
+        $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
+        $this->connection->beginTransaction();
+        $this->connection->executeStatement(
+            'UPDATE ' . $eventTableName . ' SET metadata=:metadata WHERE sequencenumber=:sequenceNumber',
+            [
+                'sequenceNumber' => $sequenceNumber->value,
+                'metadata' => json_encode($eventMetaData),
+            ]
+        );
+        $this->connection->commit();
+        $this->eventsModified[$sequenceNumber->value] = true;
+    }
+
+    private function copyEventTable(string $backupEventTableName): void
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
         $this->connection->executeStatement(

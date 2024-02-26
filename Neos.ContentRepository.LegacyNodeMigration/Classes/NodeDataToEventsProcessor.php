@@ -13,6 +13,7 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -175,7 +176,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         );
         assert($this->eventFileResource !== null);
         fwrite($this->eventFileResource, $exportedEvent->toJson() . chr(10));
-        $this->numberOfExportedEvents ++;
+        $this->numberOfExportedEvents++;
     }
 
     /**
@@ -287,7 +288,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamId, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint()), $parentNodeAggregate->nodeAggregateId, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_REGULAR, null));
         }
         // nodes are hidden via NodeAggregateWasDisabled event
-        if ($nodeDataRow['hidden']) {
+        if ($this->isNodeHidden($nodeDataRow)) {
             $this->exportEvent(new NodeAggregateWasDisabled($this->contentStreamId, $nodeAggregateId, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->toDimensionSpacePointSet())));
         }
         foreach ($serializedPropertyValuesAndReferences->references as $referencePropertyName => $destinationNodeAggregateIds) {
@@ -316,7 +317,12 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
 
         foreach ($decodedProperties as $propertyName => $propertyValue) {
-            $type = $nodeType->getPropertyType($propertyName);
+            try {
+                $type = $nodeType->getPropertyType($propertyName);
+            } catch (\InvalidArgumentException $exception) {
+                $this->dispatch(Severity::WARNING, 'Skipped node data processing for the property "%s". The property name is not part of the NodeType schema for the NodeType "%s". (Node: %s)', $propertyName, $nodeType->name->value, $nodeDataRow['identifier']);
+                continue;
+            }
 
             if ($type === 'reference' || $type === 'references') {
                 if (!empty($propertyValue)) {
@@ -348,7 +354,22 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $properties['_hiddenInIndex'] = true;
         }
 
-        return new SerializedPropertyValuesAndReferences($this->propertyConverter->serializePropertyValues(PropertyValuesToWrite::fromArray($properties), $nodeType), $references);
+        if ($nodeType->isOfType(NodeTypeName::fromString('Neos.TimeableNodeVisibility:Timeable'))) {
+            // hiddenbeforedatetime is stored as separate column in the nodedata table, but we need it as property
+            if ($nodeDataRow['hiddenbeforedatetime']) {
+                $properties['enableAfterDateTime'] = $nodeDataRow['hiddenbeforedatetime'];
+            }
+            // hiddenafterdatetime is stored as separate column in the nodedata table, but we need it as property
+            if ($nodeDataRow['hiddenafterdatetime']) {
+                $properties['disableAfterDateTime'] = $nodeDataRow['hiddenafterdatetime'];
+            }
+        } else {
+            if ($nodeDataRow['hiddenbeforedatetime'] || $nodeDataRow['hiddenafterdatetime']) {
+                $this->dispatch(Severity::WARNING, 'Skipped the migration of your "hiddenBeforeDateTime" and "hiddenAfterDateTime" properties as your target NodeTypes do not inherit "Neos.TimeableNodeVisibility:Timeable". Please install neos/timeable-node-visibility, if you want to migrate them.');
+            }
+        }
+
+        return new SerializedPropertyValuesAndReferences($this->propertyConverter->serializePropertyValues(PropertyValuesToWrite::fromArray($properties)->withoutUnsets(), $nodeType), $references);
     }
 
     /**
@@ -388,7 +409,8 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     $nodeAggregateId,
                     $originDimensionSpacePoint,
                     $coveredDimensionSpacePoints,
-                    $serializedPropertyValuesAndReferences->serializedPropertyValues
+                    $serializedPropertyValuesAndReferences->serializedPropertyValues,
+                    PropertyNames::createEmpty()
                 )
             );
         }
@@ -438,5 +460,48 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         foreach ($this->callbacks as $callback) {
             $callback($severity, $renderedMessage);
         }
+    }
+
+    /**
+     * Determines actual hidden state based on "hidden", "hiddenafterdatetime" and "hiddenbeforedatetime"
+     *
+     * @param array<string, mixed> $nodeDataRow
+     */
+    private function isNodeHidden(array $nodeDataRow): bool
+    {
+        // Already hidden
+        if ($nodeDataRow['hidden']) {
+            return true;
+        }
+
+        $now = new \DateTimeImmutable();
+        $hiddenAfterDateTime = $nodeDataRow['hiddenafterdatetime'] ? new \DateTimeImmutable($nodeDataRow['hiddenafterdatetime']) : null;
+        $hiddenBeforeDateTime = $nodeDataRow['hiddenbeforedatetime'] ? new \DateTimeImmutable($nodeDataRow['hiddenbeforedatetime']) : null;
+
+        // Hidden after a date time, without getting already re-enabled by hidden before date time - afterward
+        if ($hiddenAfterDateTime != null
+            && $hiddenAfterDateTime < $now
+            && (
+                $hiddenBeforeDateTime == null
+                || $hiddenBeforeDateTime > $now
+                || $hiddenBeforeDateTime<= $hiddenAfterDateTime
+            )
+        ) {
+            return true;
+        }
+
+        // Hidden before a date time, without getting enabled by hidden after date time - before
+        if ($hiddenBeforeDateTime != null
+            && $hiddenBeforeDateTime > $now
+            && (
+                $hiddenAfterDateTime == null
+                || $hiddenAfterDateTime > $hiddenBeforeDateTime
+            )
+        ) {
+            return true;
+        }
+
+        return false;
+
     }
 }

@@ -16,7 +16,7 @@ class SubprocessProjectionCatchUpTrigger implements ProjectionCatchUpTriggerInte
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow")
-     * @var array
+     * @var array<string, mixed>
      */
     protected $flowSettings;
 

@@ -1,15 +1,13 @@
 <?php
 declare(strict_types=1);
 
-require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\Behat\FlowBootstrapTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
@@ -43,7 +41,7 @@ use PHPUnit\Framework\MockObject\Generator as MockGenerator;
  */
 class FeatureContext implements Context
 {
-    use FlowContextTrait;
+    use FlowBootstrapTrait;
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
 
@@ -64,17 +62,19 @@ class FeatureContext implements Context
      */
     private array $loggedErrors = [];
 
+    /**
+     * @var array<string>
+     */
+    private array $loggedWarnings = [];
+
     private ContentRepository $contentRepository;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public function __construct()
     {
-        if (self::$bootstrap === null) {
-            self::$bootstrap = $this->initializeFlow();
-        }
-        $this->objectManager = self::$bootstrap->getObjectManager();
-        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+        self::bootstrapFlow();
+        $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
 
         $this->mockFilesystemAdapter = new InMemoryFilesystemAdapter();
         $this->mockFilesystem = new Filesystem($this->mockFilesystemAdapter);
@@ -108,6 +108,8 @@ class FeatureContext implements Context
                 'properties' => !empty($row['Properties']) ? $row['Properties'] : '{}',
                 'dimensionvalues' => !empty($row['Dimension Values']) ? $row['Dimension Values'] : '{}',
                 'hiddeninindex' => $row['Hidden in index'] ?? '0',
+                'hiddenbeforedatetime' =>  !empty($row['Hidden before DateTime']) ? ($row['Hidden before DateTime']): null,
+                'hiddenafterdatetime' =>  !empty($row['Hidden after DateTime']) ? ($row['Hidden after DateTime']) : null,
                 'hidden' => $row['Hidden'] ?? '0',
             ];
         }, $nodeDataRows->getHash());
@@ -120,7 +122,7 @@ class FeatureContext implements Context
     public function iRunTheEventMigration(string $contentStream = null): void
     {
         $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
-        $propertyMapper = $this->getObjectManager()->get(PropertyMapper::class);
+        $propertyMapper = $this->getObject(PropertyMapper::class);
         $contentGraph = $this->currentContentRepository->getContentGraph();
         $nodeFactory = (new \ReflectionClass($contentGraph))
             ->getProperty('nodeFactory')
@@ -130,7 +132,7 @@ class FeatureContext implements Context
             ->getValue($nodeFactory);
         $interDimensionalVariationGraph = $this->currentContentRepository->getVariationGraph();
 
-        $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
+        $eventNormalizer = $this->getObject(EventNormalizer::class);
         $migration = new NodeDataToEventsProcessor(
             $nodeTypeManager,
             $propertyMapper,
@@ -146,6 +148,8 @@ class FeatureContext implements Context
         $migration->onMessage(function (Severity $severity, string $message) {
             if ($severity === Severity::ERROR) {
                 $this->loggedErrors[] = $message;
+            } elseif ($severity === Severity::WARNING) {
+                $this->loggedWarnings[] = $message;
             }
         });
         $this->lastMigrationResult = $migration->run();
@@ -191,10 +195,19 @@ class FeatureContext implements Context
     /**
      * @Then I expect the following errors to be logged
      */
-    public function iExpectTheFollwingErrorsToBeLogged(TableNode $table): void
+    public function iExpectTheFollowingErrorsToBeLogged(TableNode $table): void
     {
         Assert::assertSame($table->getColumn(0), $this->loggedErrors, 'Expected logged errors do not match');
         $this->loggedErrors = [];
+    }
+
+    /**
+     * @Then I expect the following warnings to be logged
+     */
+    public function iExpectTheFollowingWarningsToBeLogged(TableNode $table): void
+    {
+        Assert::assertSame($table->getColumn(0), $this->loggedWarnings, 'Expected logged warnings do not match');
+        $this->loggedWarnings = [];
     }
 
     /**
@@ -312,6 +325,8 @@ class FeatureContext implements Context
         $migration->onMessage(function (Severity $severity, string $message) {
             if ($severity === Severity::ERROR) {
                 $this->loggedErrors[] = $message;
+            } elseif ($severity === Severity::WARNING) {
+                $this->loggedWarnings[] = $message;
             }
         });
         $this->lastMigrationResult = $migration->run();

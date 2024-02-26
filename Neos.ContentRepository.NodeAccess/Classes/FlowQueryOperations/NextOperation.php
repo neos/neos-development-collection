@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -69,7 +70,11 @@ class NextOperation extends AbstractOperation
         $output = [];
         $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nextNode = $this->getNextForNode($contextNode);
+            $nextNode = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                ->findSucceedingSiblingNodes(
+                    $contextNode->nodeAggregateId,
+                    FindSucceedingSiblingNodesFilter::create()
+                )->first();
             if ($nextNode !== null && !isset($outputNodePaths[$nextNode->nodeAggregateId->value])) {
                 $outputNodePaths[$nextNode->nodeAggregateId->value] = true;
                 $output[] = $nextNode;
@@ -80,22 +85,5 @@ class NextOperation extends AbstractOperation
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);
         }
-    }
-
-    /**
-     * @param Node $contextNode The node for which the preceding node should be found
-     * @return Node|null The following node of $contextNode or NULL
-     */
-    protected function getNextForNode(Node $contextNode): ?Node
-    {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-
-        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
-        if ($parentNode === null) {
-            return null;
-        }
-
-        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create())
-            ->next($contextNode);
     }
 }

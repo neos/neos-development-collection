@@ -23,7 +23,7 @@ final class ExportedEvent implements \JsonSerializable
             $event->id->value,
             $event->type->value,
             \json_decode($event->data->value, true),
-            $event->metadata->value,
+            $event->metadata?->value ?? [],
         );
     }
 
@@ -85,6 +85,7 @@ final class ExportedEvent implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
+        /** @phpstan-ignore-next-line */
         return get_object_vars($this);
     }
 }

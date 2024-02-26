@@ -25,10 +25,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * CreateNodeAggregateWithNode
+ * Creates a new node aggregate with a new node.
  *
- * Creates a new node aggregate with a new node in the given `contentStreamId`
- * with the given `nodeAggregateId` and `originDimensionSpacePoint`.
  * The node will be appended as child node of the given `parentNodeId` which must cover the given
  * `originDimensionSpacePoint`.
  *
@@ -97,7 +95,7 @@ final class CreateNodeAggregateWithNode implements CommandInterface
      * a tethered node aggregate id, you need to generate the child node aggregate ids in advance.
      *
      * _Alternatively you would need to fetch the created tethered node first from the subgraph.
-     * {@see ContentSubgraphInterface::findChildNodeConnectedThroughEdgeName()}_
+     * {@see ContentSubgraphInterface::findNodeByPath()}_
      *
      * The helper method {@see NodeAggregateIdsByNodePaths::createForNodeType()} will generate recursively
      * node aggregate ids for every tethered child node:

@@ -64,6 +64,9 @@ class NodeShortcutResolver
      */
     public function resolveShortcutTarget(NodeAddress $nodeAddress, ContentRepository $contentRepository)
     {
+        if (!$nodeAddress->workspaceName->isLive()) {
+            throw new \RuntimeException(sprintf('Cannot resolve shortcut target for node-address %s in workspace %s because the DocumentUriPathProjection only handles the live workspace.', $nodeAddress->nodeAggregateId->value, $nodeAddress->workspaceName->value), 1707208650);
+        }
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $documentNodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->nodeAggregateId,

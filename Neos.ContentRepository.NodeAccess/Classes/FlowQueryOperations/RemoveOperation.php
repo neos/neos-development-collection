@@ -34,11 +34,27 @@ final class RemoveOperation implements OperationInterface
 {
     use CreateNodeHashTrait;
 
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'remove';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 100;
+
+    /** @param array<int, mixed> $context */
     public function canEvaluate($context): bool
     {
         return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
+    /** @param array<int, mixed> $arguments */
     public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
         $nodeHashesToRemove = [];

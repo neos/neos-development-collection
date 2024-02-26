@@ -73,7 +73,15 @@ class SiteService
             $site->getConfiguration()->contentRepositoryId,
             new SiteServiceInternalsFactory()
         );
-        $siteServiceInternals->removeSiteNode($site->getNodeName());
+
+        try {
+            $siteServiceInternals->removeSiteNode($site->getNodeName());
+        } catch (\Doctrine\DBAL\Exception $exception) {
+            throw new \RuntimeException(sprintf(
+                'Could not remove site nodes for site "%s", please ensure the content repository is setup.',
+                $site->getName()
+            ), 1707302419, $exception);
+        }
 
         $site->setPrimaryDomain(null);
         $this->siteRepository->update($site);
@@ -115,7 +123,7 @@ class SiteService
     public function assignUploadedAssetToSiteAssetCollection(Asset $asset, Node $node, string $propertyName)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE));
+        $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if (!$siteNode) {
             // should not happen
             return;

@@ -119,13 +119,14 @@ Feature: Properties
           type: string
     """
 
-    And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
+    And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                                       |
       | contentStreamId              | "cs-identifier"                                                             |
       | nodeAggregateId              | "sir-david-nodenborough"                                                    |
       | originDimensionSpacePoint    | {}                                                                          |
       | affectedDimensionSpacePoints | [{}]                                                                        |
       | propertyValues               | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
+      | propertiesToUnset            | {}                                                      |
     And the graph projection is fully up to date
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                        | nodeAggregateId        |

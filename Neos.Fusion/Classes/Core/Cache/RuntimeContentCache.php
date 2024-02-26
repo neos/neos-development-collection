@@ -12,9 +12,12 @@ namespace Neos\Fusion\Core\Cache;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\TypeHandling;
 use Neos\Utility\Unicode\Functions;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * Integrate the ContentCache into the Fusion Runtime
@@ -34,7 +37,7 @@ class RuntimeContentCache
     protected $enableContentCache = false;
 
     /**
-     * @var boolean
+     * @var boolean|null
      */
     protected $inCacheEntryPoint = null;
 
@@ -61,11 +64,7 @@ class RuntimeContentCache
      */
     protected $tags = [];
 
-    /**
-     * @var \Neos\Flow\Property\PropertyMapper
-     * @Flow\Inject
-     */
-    protected $propertyMapper;
+    private NormalizerInterface&DenormalizerInterface $serializer;
 
     /**
      * @param Runtime $runtime
@@ -73,6 +72,11 @@ class RuntimeContentCache
     public function __construct(Runtime $runtime)
     {
         $this->runtime = $runtime;
+    }
+
+    public function injectSerializer(NormalizerInterface&DenormalizerInterface $serializer): void
+    {
+        $this->serializer = $serializer;
     }
 
     /**
@@ -166,12 +170,11 @@ class RuntimeContentCache
             if ($evaluateContext['cacheForPathEnabled']) {
                 $evaluateContext['cacheIdentifierValues'] = $this->buildCacheIdentifierValues($evaluateContext['configuration'], $evaluateContext['fusionPath'], $fusionObject);
                 $cacheDiscriminator = isset($evaluateContext['cacheDiscriminator']) ? $evaluateContext['cacheDiscriminator'] : null;
-                $self = $this;
-                $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) use ($self) {
+                $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) {
                     if (strpos($command, 'eval=') === 0) {
-                        $unserializedContext = $self->unserializeContext($additionalData['context']);
+                        $unserializedContext = $this->unserializeContext($additionalData['context']);
                         $path = substr($command, 5);
-                        $result = $self->evaluateUncached($path, $unserializedContext);
+                        $result = $this->evaluateUncached($path, $unserializedContext);
                         return $result;
                     } elseif (strpos($command, 'evalCached=') === 0) {
                         /*
@@ -179,21 +182,21 @@ class RuntimeContentCache
                          * - in "enter" the cache context is decided upon which contains "currentPathIsEntryPoint".
                          * - This can not happen in nested segments as the topmost entry point should be the only one active
                          * - the result of a "currentPathIsEntryPoint" is that on postProcess cache segments are parsed from the content.
-                         * - To get "currentPathIsEntryPoint" only on topmost segments, the state "$self->inCacheEntryPoint" is used.
+                         * - To get "currentPathIsEntryPoint" only on topmost segments, the state "$this->inCacheEntryPoint" is used.
                          *   This state can have two values "true" and "null", in case it's true a topmost segment existed and "currentPathIsEntryPoint" will not be set
                          * - A dynamic cache segment that we resolve here is to be seen independently from the parent cached entry as it is a forking point for content
                          *   It must create cache segment tokens in order to properly cache, but those also need to be removed from the result.
                          *   Therefore a dynamic cache entry must always have "currentPathIsEntryPoint" to make sure the markers are parsed regardless of the caching status of the upper levels
-                         *   To make that happen the state "$self->inCacheEntryPoint" must be reset to null.
+                         *   To make that happen the state "$this->inCacheEntryPoint" must be reset to null.
                          */
-                        $previouslyInCacheEntryPoint = $self->inCacheEntryPoint;
-                        $self->inCacheEntryPoint = null;
+                        $previouslyInCacheEntryPoint = $this->inCacheEntryPoint;
+                        $this->inCacheEntryPoint = null;
 
-                        $unserializedContext = $self->unserializeContext($additionalData['context']);
+                        $unserializedContext = $this->unserializeContext($additionalData['context']);
                         $this->runtime->pushContextArray($unserializedContext);
                         $result = $this->runtime->evaluate($additionalData['path']);
                         $this->runtime->popContext();
-                        $self->inCacheEntryPoint = $previouslyInCacheEntryPoint;
+                        $this->inCacheEntryPoint = $previouslyInCacheEntryPoint;
                         return $result;
                     } else {
                         throw new Exception(sprintf('Unknown uncached command "%s"', $command), 1392837596);
@@ -252,7 +255,7 @@ class RuntimeContentCache
             }
             $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['fusionPath'], $fusionObject);
             $cacheMetadata = array_pop($this->cacheMetadata);
-            $output = $this->contentCache->createDynamicCachedSegment($output, $evaluateContext['fusionPath'], $contextVariables, $evaluateContext['cacheIdentifierValues'], $cacheTags, $cacheMetadata['lifetime'], $evaluateContext['cacheDiscriminator']);
+            $output = $this->contentCache->createDynamicCachedSegment($output, $evaluateContext['fusionPath'], $this->serializeContext($contextVariables), $evaluateContext['cacheIdentifierValues'], $cacheTags, $cacheMetadata['lifetime'], $evaluateContext['cacheDiscriminator']);
         } elseif ($this->enableContentCache && $evaluateContext['cacheForPathEnabled']) {
             $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['fusionPath'], $fusionObject);
             $cacheMetadata = array_pop($this->cacheMetadata);
@@ -271,7 +274,7 @@ class RuntimeContentCache
             } else {
                 $contextVariables = $contextArray;
             }
-            $output = $this->contentCache->createUncachedSegment($output, $evaluateContext['fusionPath'], $contextVariables);
+            $output = $this->contentCache->createUncachedSegment($output, $evaluateContext['fusionPath'], $this->serializeContext($contextVariables));
         }
 
         if ($evaluateContext['cacheForPathEnabled'] && $evaluateContext['currentPathIsEntryPoint']) {
@@ -368,14 +371,37 @@ class RuntimeContentCache
     }
 
     /**
-     * @param array $contextArray
-     * @return array
+     * Encodes an array of context variables to its serialized representation
+     * {@see self::unserializeContext()}
+     *
+     * @param array<string, mixed> $contextVariables
+     * @return array<string, array{type: string, value: mixed}>
      */
-    public function unserializeContext(array $contextArray)
+    protected function serializeContext(array $contextVariables): array
+    {
+        $serializedContextArray = [];
+        foreach ($contextVariables as $variableName => $contextValue) {
+            if ($contextValue !== null) {
+                $serializedContextArray[$variableName]['type'] = TypeHandling::getTypeForValue($contextValue);
+                $serializedContextArray[$variableName]['value'] = $this->serializer->normalize($contextValue);
+            }
+        }
+
+        return $serializedContextArray;
+    }
+
+    /**
+     * Decodes and serialized array of context variables to its original values
+     * {@see self::serializeContext()}
+     *
+     * @param array<string, array{type: string, value: mixed}> $contextArray
+     * @return array<string, mixed>
+     */
+    protected function unserializeContext(array $contextArray): array
     {
         $unserializedContext = [];
         foreach ($contextArray as $variableName => $typeAndValue) {
-            $value = $this->propertyMapper->convert($typeAndValue['value'], $typeAndValue['type']);
+            $value = $this->serializer->denormalize($typeAndValue['value'], $typeAndValue['type']);
             $unserializedContext[$variableName] = $value;
         }
 

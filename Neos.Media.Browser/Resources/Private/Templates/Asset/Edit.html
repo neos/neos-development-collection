@@ -57,14 +57,16 @@
                                             </label>
                                         </f:for>
                                     </f:if>
-                                    <f:if condition="{assetCollections}">
-                                        <label>{neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}</label>
-                                        <f:for each="{assetCollections}" as="assetCollection">
-                                            <label class="neos-checkbox neos-inline">
-                                                <m:form.checkbox property="assetCollections" multiple="TRUE" value="{assetCollection}" /><span></span> {assetCollection.title}
-                                            </label>
-                                        </f:for>
-                                    </f:if>
+                                    <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ManageAssetCollections">
+                                        <f:if condition="{assetCollections}">
+                                            <label>{neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}</label>
+                                            <f:for each="{assetCollections}" as="assetCollection">
+                                                <label class="neos-checkbox neos-inline">
+                                                    <m:form.checkbox property="assetCollections" multiple="TRUE" value="{assetCollection}" /><span></span> {assetCollection.title}
+                                                </label>
+                                            </f:for>
+                                        </f:if>
+                                    </f:security.ifAccess>
                                 </fieldset>
                                 <fieldset>
                                     <legend>{neos:backend.translate(id: 'metadata', package: 'Neos.Media.Browser')}</legend>
@@ -78,7 +80,19 @@
                                         </f:if>
                                         <tr>
                                             <th>{neos:backend.translate(id: 'metadata.filename', package: 'Neos.Media.Browser')}</th>
-                                            <td><a href="#" target="_blank">{assetProxy.filename}</a></td>
+                                            <td>
+                                                <f:if condition="{assetContainsMaliciousContent}">
+                                                    <f:then>
+                                                        {assetProxy.filename}
+                                                        <div class="neos-badge neos-badge-important">
+                                                            {neos:backend.translate(id: 'message.assetContainsMaliciousContent', package: 'Neos.Media.Browser')}
+                                                        </div>
+                                                    </f:then>
+                                                    <f:else>
+                                                        <a href="{assetProxy.originalUri}" target="_blank">{assetProxy.filename}</a>
+                                                    </f:else>
+                                                </f:if>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>{neos:backend.translate(id: 'metadata.lastModified', package: 'Neos.Media.Browser')}</th>

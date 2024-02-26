@@ -122,10 +122,9 @@ class CrCommandController extends CommandController
             $this->quit();
         }
         $this->connection->executeStatement('TRUNCATE ' . $connection->quoteIdentifier($eventTableName));
-        // we also need to reset the projections; in order to ensure the system runs deterministically. We
-        // do this by replaying the just-truncated event stream.
+        // we also need to reset the projections; in order to ensure the system runs deterministically
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory);
-        $projectionService->replayAllProjections(CatchUpOptions::create());
+        $projectionService->resetAllProjections();
         $this->outputLine('Truncated events');
 
         $liveContentStreamId = ContentStreamId::create();
@@ -202,7 +201,6 @@ class CrCommandController extends CommandController
 
     private static function defaultResourcesPath(): string
     {
-        // @phpstan-ignore-next-line
         return FLOW_PATH_DATA . 'Persistent/Resources';
     }
 }

@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.2']
+        php-versions: ['8.2', '8.3']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
 
@@ -132,13 +132,11 @@ jobs:
           git -C ../${{ env.NEOS_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
-          # TODO workaround for not-yet-released neos/eventstore packages
-          composer require --no-update neos/eventstore:"dev-main"
-          composer require --no-update neos/eventstore-doctrineadapter:"dev-main"
 
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v2
+        timeout-minutes: 30
         with:
           path: |
             ~/.cache/composer

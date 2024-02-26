@@ -23,23 +23,29 @@ class PropertyValueCriteriaParserTest extends TestCase
 {
     public function validQueries(): \Generator
     {
-        yield ['query' => 'prop1 = "foo"', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop1', 'value' => 'foo']];
-        yield ['query' => 'prop1=   \'foo\'', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop1', 'value' => 'foo']];
+        yield ['query' => 'prop1 = "foo"', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => true]];
+        yield ['query' => 'prop1=   \'foo\'', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => true]];
         yield ['query' => 'some_property > "10"', 'expectedResult' => ['type' => 'PropertyValueGreaterThan', 'propertyName' => 'some_property', 'value' => '10']];
         yield ['query' => 'some_property>10', 'expectedResult' => ['type' => 'PropertyValueGreaterThan', 'propertyName' => 'some_property', 'value' => 10]];
         yield ['query' => 'prop <= 123.45', 'expectedResult' => ['type' => 'PropertyValueLessThanOrEqual', 'propertyName' => 'prop', 'value' => 123.45]];
-        yield ['query' => 'prop = true', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop', 'value' => true]];
-        yield ['query' => 'prop=FALSE', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop', 'value' => false]];
+        yield ['query' => 'prop = true', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop', 'value' => true, 'caseSensitive' => true]];
+        yield ['query' => 'prop=FALSE', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop', 'value' => false, 'caseSensitive' => true]];
 
-        yield ['query' => 'p ^= "start" AND p $= \'end\'', 'expectedResult' => ['type' => 'AndCriteria', 'criteria1' => ['type' => 'PropertyValueStartsWith', 'propertyName' => 'p', 'value' => 'start'], 'criteria2' => ['type' => 'PropertyValueEndsWith', 'propertyName' => 'p', 'value' => 'end']]];
-        yield ['query' => 'p ^= "start" OR p $= \'end\'', 'expectedResult' => ['type' => 'OrCriteria', 'criteria1' => ['type' => 'PropertyValueStartsWith', 'propertyName' => 'p', 'value' => 'start'], 'criteria2' => ['type' => 'PropertyValueEndsWith', 'propertyName' => 'p', 'value' => 'end']]];
+        yield ['query' => 'p ^= "start" AND p $= \'end\'', 'expectedResult' => ['type' => 'AndCriteria', 'criteria1' => ['type' => 'PropertyValueStartsWith', 'propertyName' => 'p', 'value' => 'start', 'caseSensitive' => true], 'criteria2' => ['type' => 'PropertyValueEndsWith', 'propertyName' => 'p', 'value' => 'end', 'caseSensitive' => true]]];
+        yield ['query' => 'p ^= "start" OR p $= \'end\'', 'expectedResult' => ['type' => 'OrCriteria', 'criteria1' => ['type' => 'PropertyValueStartsWith', 'propertyName' => 'p', 'value' => 'start', 'caseSensitive' => true], 'criteria2' => ['type' => 'PropertyValueEndsWith', 'propertyName' => 'p', 'value' => 'end', 'caseSensitive' => true]]];
 
-        yield ['query' => 'NOT p = "negate"', 'expectedResult' => ['type' => 'NegateCriteria', 'criteria' => ['type' => 'PropertyValueEquals', 'propertyName' => 'p', 'value' => 'negate']]];
-        yield ['query' => 'p != "negate"', 'expectedResult' => ['type' => 'NegateCriteria', 'criteria' => ['type' => 'PropertyValueEquals', 'propertyName' => 'p', 'value' => 'negate']]];
+        yield ['query' => 'NOT p = "negate"', 'expectedResult' => ['type' => 'NegateCriteria', 'criteria' => ['type' => 'PropertyValueEquals', 'propertyName' => 'p', 'value' => 'negate', 'caseSensitive' => true]]];
+        yield ['query' => 'p != "negate"', 'expectedResult' => ['type' => 'NegateCriteria', 'criteria' => ['type' => 'PropertyValueEquals', 'propertyName' => 'p', 'value' => 'negate', 'caseSensitive' => true]]];
 
-        yield ['query' => '(p *= "foo")', 'expectedResult' => ['type' => 'PropertyValueContains', 'propertyName' => 'p', 'value' => 'foo']];
-        yield ['query' => '(p1 *= "foo" OR p2 <= "bar") AND p3 >= 123', 'expectedResult' => ['type' => 'AndCriteria', 'criteria1' => ['type' => 'OrCriteria', 'criteria1' => ['type' => 'PropertyValueContains', 'propertyName' => 'p1', 'value' => 'foo'], 'criteria2' => ['type' => 'PropertyValueLessThanOrEqual', 'propertyName' => 'p2', 'value' => 'bar']], 'criteria2' => ['type' => 'PropertyValueGreaterThanOrEqual', 'propertyName' => 'p3', 'value' => 123]]];
-        yield ['query' => 'prop1 ^= "foo" AND NOT (prop2 = "bar" OR prop3 = "baz")', 'expectedResult' => ['type' => 'AndCriteria', 'criteria1' => ['type' => 'PropertyValueStartsWith', 'propertyName' => 'prop1', 'value' => 'foo'], 'criteria2' => ['type' => 'NegateCriteria', 'criteria' => ['type' => 'OrCriteria', 'criteria1' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop2', 'value' => 'bar'], 'criteria2' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop3', 'value' => 'baz']]]]];
+        yield ['query' => '(p *= "foo")', 'expectedResult' => ['type' => 'PropertyValueContains', 'propertyName' => 'p', 'value' => 'foo', 'caseSensitive' => true]];
+        yield ['query' => '(p1 *= "foo" OR p2 <= "bar") AND p3 >= 123', 'expectedResult' => ['type' => 'AndCriteria', 'criteria1' => ['type' => 'OrCriteria', 'criteria1' => ['type' => 'PropertyValueContains', 'propertyName' => 'p1', 'value' => 'foo', 'caseSensitive' => true], 'criteria2' => ['type' => 'PropertyValueLessThanOrEqual', 'propertyName' => 'p2', 'value' => 'bar']], 'criteria2' => ['type' => 'PropertyValueGreaterThanOrEqual', 'propertyName' => 'p3', 'value' => 123]]];
+        yield ['query' => 'prop1 ^= "foo" AND NOT (prop2 = "bar" OR prop3 = "baz")', 'expectedResult' => ['type' => 'AndCriteria', 'criteria1' => ['type' => 'PropertyValueStartsWith', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => true], 'criteria2' => ['type' => 'NegateCriteria', 'criteria' => ['type' => 'OrCriteria', 'criteria1' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop2', 'value' => 'bar', 'caseSensitive' => true], 'criteria2' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop3', 'value' => 'baz', 'caseSensitive' => true]]]]];
+
+        yield ['query' => 'prop1 =~ "foo"', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => false]];
+        yield ['query' => 'prop1 !=~ "foo"', 'expectedResult' => ['type' => 'NegateCriteria', 'criteria' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => false]]];
+        yield ['query' => 'prop1 ^=~ "foo"', 'expectedResult' => ['type' => 'PropertyValueStartsWith', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => false]];
+        yield ['query' => 'prop1 $=~ "foo"', 'expectedResult' => ['type' => 'PropertyValueEndsWith', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => false]];
+        yield ['query' => 'prop1 *=~ "foo"', 'expectedResult' => ['type' => 'PropertyValueContains', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => false]];
     }
 
     /**

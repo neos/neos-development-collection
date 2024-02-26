@@ -16,8 +16,9 @@ namespace Neos\ContentRepository\Core\Projection\Workspace;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
@@ -32,13 +33,16 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -48,19 +52,21 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 {
+    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
+
     /**
      * @var WorkspaceFinder|null Cache for the workspace finder returned by {@see getState()},
      * so that always the same instance is returned
      */
     private ?WorkspaceFinder $workspaceFinder = null;
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
     private WorkspaceRuntimeCache $workspaceRuntimeCache;
 
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableName,
     ) {
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->tableName . '_checkpoint',
             self::class
@@ -70,11 +76,41 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     public function setUp(): void
     {
-        $this->setupTables();
-        $this->checkpointStorage->setup();
+        foreach ($this->determineRequiredSqlStatements() as $statement) {
+            $this->getDatabaseConnection()->executeStatement($statement);
+        }
+        $this->checkpointStorage->setUp();
     }
 
-    private function setupTables(): void
+    public function status(): ProjectionStatus
+    {
+        $checkpointStorageStatus = $this->checkpointStorage->status();
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
+            return ProjectionStatus::error($checkpointStorageStatus->details);
+        }
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
+            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
+        }
+        try {
+            $this->getDatabaseConnection()->connect();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
+        }
+        try {
+            $requiredSqlStatements = $this->determineRequiredSqlStatements();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
+        }
+        if ($requiredSqlStatements !== []) {
+            return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        return ProjectionStatus::ok();
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function determineRequiredSqlStatements(): array
     {
         $connection = $this->dbalClient->getConnection();
         $schemaManager = $connection->getSchemaManager();
@@ -82,36 +118,19 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
-        $schema = new Schema();
-        $workspaceTable = $schema->createTable($this->tableName);
-        $workspaceTable->addColumn('workspacename', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $workspaceTable->addColumn('baseworkspacename', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false);
-        $workspaceTable->addColumn('workspacetitle', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $workspaceTable->addColumn('workspacedescription', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $workspaceTable->addColumn('workspaceowner', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false);
-        $workspaceTable->addColumn('currentcontentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(false);
-        $workspaceTable->addColumn('status', Types::STRING)
-            ->setLength(50)
-            ->setNotnull(false);
-
+        $workspaceTable = new Table($this->tableName, [
+            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('baseworkspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('workspacetitle', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('workspacedescription', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('workspaceowner', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            DbalSchemaFactory::columnForContentStreamId('currentcontentstreamid')->setNotNull(true),
+            (new Column('status', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(false)
+        ]);
         $workspaceTable->setPrimaryKey(['workspacename']);
 
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
-            $connection->executeStatement($statement);
-        }
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$workspaceTable]);
+        return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
     public function reset(): void
@@ -158,7 +177,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         };
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
     }

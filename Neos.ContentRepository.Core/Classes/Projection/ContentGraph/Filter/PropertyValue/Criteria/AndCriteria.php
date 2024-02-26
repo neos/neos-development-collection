@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
-
 /**
  * Binary operation that conjunctively combines two criteria:
  *   "prop1 = 'foo' AND prop2 = 'bar'"

@@ -21,6 +21,10 @@ final class FileSystemResourceLoader implements ResourceLoaderInterface
         if (!is_readable($resourcePath)) {
             throw new \RuntimeException(sprintf('Resource file "%s" is not readable', $resourcePath), 1658583621);
         }
-        return fopen($resourcePath, 'rb');
+        $stream = fopen($resourcePath, 'rb');
+        if (!is_resource($stream)) {
+            throw new \RuntimeException(sprintf('Could not open stream to resource file "%s"', $resourcePath), 1698584155);
+        }
+        return $stream;
     }
 }

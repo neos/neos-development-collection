@@ -2,6 +2,11 @@
     "name": "neos/fusion",
     "type": "neos-package",
     "description": "Fusion is a hierarchical, prototype based processing language",
+    "support": {
+        "source": "https://github.com/neos/fusion.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],

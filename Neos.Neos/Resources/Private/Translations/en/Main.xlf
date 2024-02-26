@@ -454,18 +454,6 @@
 			<trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
 			</trans-unit>
-			<trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
-				<source>Select a Plugin</source>
-			</trans-unit>
-			<trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
-				<source>No plugin configured</source>
-			</trans-unit>
-			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
-				<source>view is displayed on page</source>
-			</trans-unit>
-			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
-				<source>view is displayed on current page</source>
-			</trans-unit>
 			<trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			</trans-unit>
@@ -681,16 +669,6 @@
 				<source>Technical Information</source>
 			</trans-unit>
 
-			<trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
-				<source>Missing Homepage</source>
-			</trans-unit>
-			<trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
-				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			</trans-unit>
-			<trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
-				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			</trans-unit>
-
 			<trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
 			</trans-unit>
@@ -707,6 +685,10 @@
 			<trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
 			</trans-unit>
+			<trans-unit id="error.exception.notFoundExceptions.setupMessage" xml:space="preserve">
+				<source>You might want to import or create a new site in the setup.</source>
+			</trans-unit>
+
 			<trans-unit id="error.invalidNodeType.title" xml:space="preserve">
 				<source>Invalid NodeType</source>
 			</trans-unit>

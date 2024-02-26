@@ -15,6 +15,9 @@ use Imagine\Image\BoxInterface;
 use Imagine\Image\Point;
 use Imagine\Image\PointInterface;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class Box implements BoxInterface
 {
     /**
@@ -86,7 +89,7 @@ class Box implements BoxInterface
      */
     public function contains(BoxInterface $box, PointInterface $start = null)
     {
-        $start = $start ? $start : new Point(0, 0);
+        $start ??= new Point(0, 0);
 
         return $start->in($this) && $this->width >= $box->getWidth() + $start->getX() && $this->height >= $box->getHeight() + $start->getY();
     }
