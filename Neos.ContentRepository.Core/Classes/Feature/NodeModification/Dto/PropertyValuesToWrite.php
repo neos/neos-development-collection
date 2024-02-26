@@ -24,6 +24,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
  * are stored in the data structure.
  * We expect the value types to match the NodeType's property types (this is validated in the command handler).
  *
+ * A null value will cause to unset a nodes' property.
+ *
  * @api used as part of commands
  */
 final class PropertyValuesToWrite
@@ -57,11 +59,18 @@ final class PropertyValuesToWrite
         return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
     }
 
+    /**
+     * Adds a property value to write.
+     *
+     * To declare to unset a property, `null` is used:
+     *
+     *     $propertyValues->withValue('my-property', null);
+     *
+     */
     public function withValue(string $valueName, mixed $value): self
     {
         $values = $this->values;
         $values[$valueName] = $value;
-
         return new self($values);
     }
 
@@ -70,11 +79,13 @@ final class PropertyValuesToWrite
         return new self(array_merge($this->values, $other->values));
     }
 
+    /** @internal you should not need this in user-land */
     public function withoutUnsets(): self
     {
         return new self(array_filter($this->values, fn ($value) => $value !== null));
     }
 
+    /** @internal you should not need this in user-land */
     public function getPropertiesToUnset(): PropertyNames
     {
         return PropertyNames::fromArray(
