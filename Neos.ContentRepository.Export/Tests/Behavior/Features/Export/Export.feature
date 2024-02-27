@@ -36,7 +36,8 @@ Feature: As a user of the CR I want to export the event stream
 
   Scenario: Export the event stream
     Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-identifier"
-    When the events are exported i expect the following jsonl:
+    When the events are exported
+    Then I expect the following jsonl:
       """
       {"identifier":"random-event-uuid","type":"ContentStreamWasCreated","payload":{"contentStreamId":"cs-identifier"},"metadata":{"initiatingUserId":"system","initiatingTimestamp":"random-time"}}
       {"identifier":"random-event-uuid","type":"RootNodeAggregateWithNodeWasCreated","payload":{"contentStreamId":"cs-identifier","nodeAggregateId":"lady-eleonode-rootford","nodeTypeName":"Neos.ContentRepository:Root","coveredDimensionSpacePoints":[{"language":"de"},{"language":"gsw"},{"language":"fr"}],"nodeAggregateClassification":"root"},"metadata":{"commandClass":"Neos\\ContentRepository\\Core\\Feature\\RootNodeCreation\\Command\\CreateRootNodeAggregateWithNode","commandPayload":{"contentStreamId":"cs-identifier","nodeAggregateId":"lady-eleonode-rootford","nodeTypeName":"Neos.ContentRepository:Root","tetheredDescendantNodeAggregateIds":[]},"initiatingUserId":"system","initiatingTimestamp":"random-time"}}
