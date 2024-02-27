@@ -5,6 +5,7 @@ namespace Neos\ContentRepository\Export\Processors;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -26,13 +27,13 @@ final class EventExportProcessor implements ProcessorInterface, ContentRepositor
         private readonly Filesystem $files,
         private readonly WorkspaceFinder $workspaceFinder,
         private readonly EventStoreInterface $eventStore,
-    ) {}
+    ) {
+    }
 
     public function onMessage(\Closure $callback): void
     {
         $this->callbacks[] = $callback;
     }
-
 
     public function run(): ProcessorResult
     {
@@ -50,6 +51,10 @@ final class EventExportProcessor implements ProcessorInterface, ContentRepositor
 
         $numberOfExportedEvents = 0;
         foreach ($eventStream as $eventEnvelope) {
+            if ($eventEnvelope->event->type->value === 'ContentStreamWasCreated') {
+                // the content stream will be created in the import dynamically, so we prevent duplication here
+                continue;
+            }
             $event = ExportedEvent::fromRawEvent($eventEnvelope->event);
             fwrite($eventFileResource, $event->toJson() . chr(10));
             $numberOfExportedEvents ++;

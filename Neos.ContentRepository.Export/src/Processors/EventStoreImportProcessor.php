@@ -25,7 +25,6 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
-use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\Flow\Utility\Algorithms;
@@ -38,13 +37,18 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
     /** @var array<int, \Closure> */
     private array $callbacks = [];
 
+    private ?ContentStreamId $contentStreamId = null;
+
     public function __construct(
         private readonly bool $keepEventIds,
         private readonly Filesystem $files,
         private readonly EventStoreInterface $eventStore,
         private readonly EventNormalizer $eventNormalizer,
-        private ?ContentStreamId $contentStreamId,
+        ?ContentStreamId $overrideContentStreamId
     ) {
+        if ($overrideContentStreamId) {
+            $this->contentStreamId = $overrideContentStreamId;
+        }
     }
 
     public function onMessage(\Closure $callback): void
@@ -103,6 +107,10 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
                     Event\EventMetadata::fromArray($event->metadata)
                 )
             );
+            if ($domainEvent instanceof ContentStreamWasCreated) {
+                $this->dispatch(Severity::ERROR, 'Skipping explicit content stream creation event. The export format should not contain "ContentStreamWasCreated".');
+                continue;
+            }
             $domainEvent = DecoratedEvent::create($domainEvent, eventId: EventId::fromString($event->identifier), metadata: $event->metadata);
             $domainEvents[] = $this->normalizeEvent($domainEvent);
         }
@@ -186,9 +194,6 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
         return ContentStreamId::fromString($payload['contentStreamId']);
     }
 
-    /**
-     * @phpstan-ignore-next-line currently this private method is unused ... but it does no harm keeping it
-     */
     private function dispatch(Severity $severity, string $message, mixed ...$args): void
     {
         $renderedMessage = sprintf($message, ...$args);
