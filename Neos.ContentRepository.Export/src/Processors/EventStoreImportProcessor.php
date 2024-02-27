@@ -8,6 +8,7 @@ use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
@@ -32,7 +33,7 @@ use Neos\Flow\Utility\Algorithms;
 /**
  * Processor that imports all events from an "events.jsonl" file to the event store
  */
-final class EventStoreImportProcessor implements ProcessorInterface
+final class EventStoreImportProcessor implements ProcessorInterface, ContentRepositoryServiceInterface
 {
     /** @var array<int, \Closure> */
     private array $callbacks = [];

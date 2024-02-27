@@ -4,6 +4,7 @@ namespace Neos\ContentRepository\Export\Processors;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -16,7 +17,7 @@ use Neos\EventStore\EventStoreInterface;
 /**
  * Processor that exports all events of the live workspace to an "events.jsonl" file
  */
-final class EventExportProcessor implements ProcessorInterface
+final class EventExportProcessor implements ProcessorInterface, ContentRepositoryServiceInterface
 {
     /** @var array<int, \Closure> */
     private array $callbacks = [];
