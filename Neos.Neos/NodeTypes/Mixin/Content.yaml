@@ -6,10 +6,6 @@
   constraints:
     nodeTypes:
       '*': false
-  postprocessors:
-    'CreationDialogPostprocessor':
-      position: 'after NodeTypePresetPostprocessor'
-      postprocessor: 'Neos\Neos\NodeTypePostprocessor\CreationDialogPostprocessor'
   ui:
     label: i18n
     icon: 'icon-square-o'
