@@ -35,7 +35,6 @@
       ui:
         label: i18n
         reloadPageIfChanged: true
-        showInCreationDialog: true
         inspector:
           group: 'document'
       validation:
