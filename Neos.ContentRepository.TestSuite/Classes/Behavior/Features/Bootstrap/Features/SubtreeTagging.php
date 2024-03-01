@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -127,7 +127,7 @@ trait SubtreeTagging
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->currentDimensionSpacePoint;
 
-        $command = UntagSubtreeTag::create(
+        $command = UntagSubtree::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,

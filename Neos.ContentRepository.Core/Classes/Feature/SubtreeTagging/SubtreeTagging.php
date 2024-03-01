@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
@@ -79,7 +79,7 @@ trait SubtreeTagging
         );
     }
 
-    public function handleUntagSubtree(UntagSubtreeTag $command, ContentRepository $contentRepository): EventsToPublish
+    public function handleUntagSubtree(UntagSubtree $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);

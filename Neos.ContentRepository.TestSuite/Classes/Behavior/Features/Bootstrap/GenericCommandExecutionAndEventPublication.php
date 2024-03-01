@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
@@ -111,7 +111,7 @@ trait GenericCommandExecutionAndEventPublication
             'DisableNodeAggregate' => DisableNodeAggregate::class,
             'EnableNodeAggregate' => EnableNodeAggregate::class,
             'TagSubtree' => TagSubtree::class,
-            'UntagSubtree' => UntagSubtreeTag::class,
+            'UntagSubtree' => UntagSubtree::class,
             'MoveNodeAggregate' => MoveNodeAggregate::class,
             'SetNodeReferences' => SetNodeReferences::class,
             default => throw new \Exception(

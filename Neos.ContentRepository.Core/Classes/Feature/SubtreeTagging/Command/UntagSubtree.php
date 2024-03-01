@@ -30,7 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class UntagSubtreeTag implements
+final class UntagSubtree implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
