@@ -275,6 +275,7 @@ class NodeTypeEnrichmentService
             }
         }
 
+        // todo ui.creationDialog logic should rather reside in the Neos.Neos.Ui
         $creationDialogConfiguration = Arrays::getValueByPath($configuration, 'ui.creationDialog.elements');
         if (is_array($creationDialogConfiguration)) {
             $creationDialogConfiguration = &$configuration['ui']['creationDialog']['elements'];
