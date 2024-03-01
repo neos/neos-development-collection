@@ -15,22 +15,23 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 
 /**
  * "Raw" property values as saved in the event log // in projections.
  *
  * This means: each "value" must be a simple PHP data type.
  *
- * NOTE: if a value is set to NULL in SerializedPropertyValues, this means the key should be unset,
- * because we treat NULL and "not set" the same from an API perspective.
+ * @phpstan-import-type Value from SerializedPropertyValue
  *
- * @implements \IteratorAggregate<string,?SerializedPropertyValue>
+ * @implements \IteratorAggregate<string,SerializedPropertyValue>
  * @api used as part of commands/events
  */
 final readonly class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @param array<string,?SerializedPropertyValue> $values
+     * @param array<string,SerializedPropertyValue> $values
      */
     private function __construct(
         public array $values
@@ -43,7 +44,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     }
 
     /**
-     * @param array<string,array{type:string,value:mixed}|SerializedPropertyValue|null> $propertyValues
+     * @param array<string,array{type:string,value:Value}|SerializedPropertyValue> $propertyValues
      */
     public static function fromArray(array $propertyValues): self
     {
@@ -52,10 +53,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
             if (!is_string($propertyName)) {
                 throw new \InvalidArgumentException(sprintf('Invalid property name. Expected string, got: %s', get_debug_type($propertyName)), 1681326239);
             }
-            if ($propertyValue === null) {
-                // this case means we want to un-set a property.
-                $values[$propertyName] = null;
-            } elseif (is_array($propertyValue)) {
+            if (is_array($propertyValue)) {
                 $values[$propertyName] = SerializedPropertyValue::fromArray($propertyValue);
             } elseif ($propertyValue instanceof SerializedPropertyValue) {
                 $values[$propertyName] = $propertyValue;
@@ -78,7 +76,11 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
             $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
             self::assertTypeIsNoReference($propertyTypeFromSchema);
 
-            $values[$propertyName] = new SerializedPropertyValue($defaultValue, $propertyTypeFromSchema);
+            if ($defaultValue === null) {
+                continue;
+            }
+
+            $values[$propertyName] = SerializedPropertyValue::create($defaultValue, $propertyTypeFromSchema);
         }
 
         return new self($values);
@@ -100,26 +102,27 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
 
     public function merge(self $other): self
     {
-        // here, we skip null values
-        return new self(array_filter(
-            array_merge($this->values, $other->values),
-            fn ($value) => $value !== null
-        ));
+        return new self(array_merge($this->values, $other->values));
+    }
+
+    public function unsetProperties(PropertyNames $propertyNames): self
+    {
+        $propertiesToUnsetMap = [];
+        foreach ($propertyNames as $propertyName) {
+            $propertiesToUnsetMap[$propertyName->value] = true;
+        }
+        return new self(array_diff_key($this->values, $propertiesToUnsetMap));
     }
 
     /**
+     * @internal
      * @return array<string,self>
      */
     public function splitByScope(NodeType $nodeType): array
     {
         $propertyValuesByScope = [];
         foreach ($this->values as $propertyName => $propertyValue) {
-            $declaration = $nodeType->getProperties()[$propertyName]['scope'] ?? null;
-            if (is_string($declaration)) {
-                $scope = PropertyScope::from($declaration);
-            } else {
-                $scope = PropertyScope::SCOPE_NODE;
-            }
+            $scope = PropertyScope::tryFromDeclaration($nodeType, PropertyName::fromString($propertyName));
             $propertyValuesByScope[$scope->value][$propertyName] = $propertyValue;
         }
 
@@ -140,7 +143,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     }
 
     /**
-     * @return \Traversable<string,?SerializedPropertyValue>
+     * @return \Traversable<string,SerializedPropertyValue>
      */
     public function getIterator(): \Traversable
     {
@@ -159,14 +162,14 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     {
         $values = [];
         foreach ($this->values as $propertyName => $propertyValue) {
-            $values[$propertyName] = $propertyValue?->value;
+            $values[$propertyName] = $propertyValue->value;
         }
 
         return $values;
     }
 
     /**
-     * @return array<string,?SerializedPropertyValue>
+     * @return array<string,SerializedPropertyValue|null>
      */
     public function jsonSerialize(): array
     {

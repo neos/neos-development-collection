@@ -41,6 +41,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
@@ -369,7 +370,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             }
         }
 
-        return new SerializedPropertyValuesAndReferences($this->propertyConverter->serializePropertyValues(PropertyValuesToWrite::fromArray($properties), $nodeType), $references);
+        return new SerializedPropertyValuesAndReferences($this->propertyConverter->serializePropertyValues(PropertyValuesToWrite::fromArray($properties)->withoutUnsets(), $nodeType), $references);
     }
 
     /**
@@ -409,7 +410,8 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     $nodeAggregateId,
                     $originDimensionSpacePoint,
                     $coveredDimensionSpacePoints,
-                    $serializedPropertyValuesAndReferences->serializedPropertyValues
+                    $serializedPropertyValuesAndReferences->serializedPropertyValues,
+                    PropertyNames::createEmpty()
                 )
             );
         }

@@ -18,10 +18,10 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -41,13 +41,14 @@ final class SetSerializedNodeProperties implements
      * @param ContentStreamId $contentStreamId The content stream in which the set properties operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint The dimension space point the properties should be changed in
-     * @param SerializedPropertyValues $propertyValues Names and (serialized) values of properties to set
+     * @param SerializedPropertyValues $propertyValues Names of properties to unset
      */
     private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
         public readonly SerializedPropertyValues $propertyValues,
+        public readonly PropertyNames $propertiesToUnset,
     ) {
     }
 
@@ -56,10 +57,11 @@ final class SetSerializedNodeProperties implements
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint The dimension space point the properties should be changed in
      * @param SerializedPropertyValues $propertyValues Names and (serialized) values of properties to set
+     * @param PropertyNames $propertiesToUnset Names of properties to unset
      */
-    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, SerializedPropertyValues $propertyValues): self
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, SerializedPropertyValues $propertyValues, PropertyNames $propertiesToUnset): self
     {
-        return new self($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, $propertyValues);
+        return new self($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, $propertyValues, $propertiesToUnset);
     }
 
     /**
@@ -72,6 +74,7 @@ final class SetSerializedNodeProperties implements
             NodeAggregateId::fromString($array['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
             SerializedPropertyValues::fromArray($array['propertyValues']),
+            PropertyNames::fromArray($array['propertiesToUnset']),
         );
     }
 
@@ -91,6 +94,7 @@ final class SetSerializedNodeProperties implements
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
             $this->propertyValues,
+            $this->propertiesToUnset
         );
     }
 

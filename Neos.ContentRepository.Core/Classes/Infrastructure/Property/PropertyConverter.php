@@ -44,17 +44,12 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
-            if (!isset($nodeType->getProperties()[$propertyName]) && $propertyValue === null) {
-                // The property is undefined and the value null => we want to remove it, so we set it to null
-                $serializedPropertyValues[$propertyName] = null;
-            } else {
-                $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
-                    $nodeType->getPropertyType($propertyName),
-                    PropertyName::fromString($propertyName),
-                    $nodeType->name,
-                    $propertyValue
-                );
-            }
+            $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
+                $nodeType->getPropertyType($propertyName),
+                PropertyName::fromString($propertyName),
+                $nodeType->name,
+                $propertyValue
+            );
         }
 
         return SerializedPropertyValues::fromArray($serializedPropertyValues);
@@ -72,26 +67,36 @@ final class PropertyConverter
             $nodeTypeName
         );
 
-        if ($propertyValue !== null) {
-            try {
-                $propertyValue = $this->serializer->normalize($propertyValue);
-            } catch (NotEncodableValueException | NotNormalizableValueException $e) {
-                throw new \RuntimeException(
-                    'TODO: There was a problem serializing ' . get_class($propertyValue),
-                    1594842314,
-                    $e
-                );
-            }
-
-            return new SerializedPropertyValue(
-                $propertyValue,
-                $propertyType->value
+        if ($propertyValue === null) {
+            // should not happen, as we must separate regular properties and unsets beforehand!
+            throw new \RuntimeException(
+                sprintf('Property %s with value "null" cannot be serialized as unsets are treated differently.', $propertyName->value),
+                1707578784
             );
-        } else {
-            // $propertyValue == null and defined in node types (we have a resolved type)
-            // -> we want to set the $propertyName to NULL
-            return new SerializedPropertyValue(null, $propertyType->value);
         }
+
+        try {
+            $serializedPropertyValue = $this->serializer->normalize($propertyValue);
+        } catch (NotEncodableValueException | NotNormalizableValueException $e) {
+            // todo add custom exception class
+            throw new \RuntimeException(
+                sprintf('There was a problem serializing property %s with value "%s".', $propertyName->value, get_debug_type($propertyValue)),
+                1594842314,
+                $e
+            );
+        }
+
+        if ($serializedPropertyValue === null) {
+            throw new \RuntimeException(
+                sprintf('While serializing property %s with value "%s" the serializer returned not allowed value "null".', $propertyName->value, get_debug_type($propertyValue)),
+                1707578784
+            );
+        }
+
+        return SerializedPropertyValue::create(
+            $serializedPropertyValue,
+            $propertyType->value
+        );
     }
 
     public function serializeReferencePropertyValues(
@@ -102,8 +107,6 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
-            // reference properties are always completely overwritten,
-            // so we don't need the node properties' unset option
             $declaredType = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]['type'];
 
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
@@ -119,10 +122,6 @@ final class PropertyConverter
 
     public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue): mixed
     {
-        if (is_null($serializedPropertyValue->value)) {
-            return null;
-        }
-
         return $this->serializer->denormalize(
             $serializedPropertyValue->value,
             $serializedPropertyValue->type

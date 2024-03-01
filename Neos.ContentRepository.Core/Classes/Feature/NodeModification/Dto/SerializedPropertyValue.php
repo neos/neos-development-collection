@@ -14,26 +14,43 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
+use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+
 /**
  * "Raw" / Serialized property value as saved in the event log // in projections.
  *
  * This means: "value" must be a simple PHP data type (no objects allowed!)
+ * Null as value is not permitted! To unset a node property {@see SetSerializedNodeProperties::$propertiesToUnset} must be used.
+ *
+ * @phpstan-type Value int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>
  *
  * @api used as part of commands/events
  */
 final class SerializedPropertyValue implements \JsonSerializable
 {
     /**
-     * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null $value
+     * @param Value $value
      */
-    public function __construct(
-        public readonly int|float|string|bool|array|\ArrayObject|null $value,
+    private function __construct(
+        public readonly int|float|string|bool|array|\ArrayObject $value,
         public readonly string $type
     ) {
     }
 
     /**
-     * @param array{type:string,value:mixed} $valueAndType
+     * If the value is NULL an unset-property instruction will be returned instead.
+     *
+     * @param Value $value
+     */
+    public static function create(
+        int|float|string|bool|array|\ArrayObject $value,
+        string $type
+    ): self {
+        return new self($value, $type);
+    }
+
+    /**
+     * @param array{type:string,value:Value} $valueAndType
      */
     public static function fromArray(array $valueAndType): self
     {

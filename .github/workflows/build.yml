@@ -136,6 +136,7 @@ jobs:
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v2
+        timeout-minutes: 30
         with:
           path: |
             ~/.cache/composer
