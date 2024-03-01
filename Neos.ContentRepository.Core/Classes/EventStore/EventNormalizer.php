@@ -165,7 +165,9 @@ final class EventNormalizer
                 1651839461
             );
         }
-        assert(is_array($eventDataAsArray));
+        if (!is_array($eventDataAsArray)) {
+            throw new \RuntimeException(sprintf('Expected array got %s', $eventDataAsArray));
+        }
         /** {@see EventInterface::fromArray()} */
         $eventInstance = $eventClassName::fromArray($eventDataAsArray);
         return match ($eventInstance::class) {

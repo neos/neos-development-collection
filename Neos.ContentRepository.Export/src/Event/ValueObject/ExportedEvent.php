@@ -7,22 +7,22 @@ use Neos\EventStore\Model\Event;
 final class ExportedEvent implements \JsonSerializable
 {
     /**
-     * @param array<mixed> $payload
      * @param array<mixed> $metadata
      */
     public function __construct(
         public readonly string $identifier,
         public readonly string $type,
-        public readonly array $payload, // TODO: string
+        public readonly string $payload,
         public readonly array $metadata,
-    ) {}
+    ) {
+    }
 
     public static function fromRawEvent(Event $event): self
     {
         return new self(
             $event->id->value,
             $event->type->value,
-            \json_decode($event->data->value, true),
+            $event->data->value,
             $event->metadata?->value ?? [],
         );
     }
@@ -30,16 +30,11 @@ final class ExportedEvent implements \JsonSerializable
     public static function fromJson(string $json): self
     {
         try {
-            ///** @var array{identifier: string, type: string, payload: array<mixed>, metadata: array<mixed>} $data */
-            /** @var array<mixed> $data */
+            /** @var array{identifier: string, type: string, payload: string, metadata: array<mixed>} $data */
             $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             throw new \InvalidArgumentException(sprintf('Failed to decode JSON "%s": %s', $json, $e->getMessage()), 1638432979, $e);
         }
-        assert(isset($data['identifier']) && is_string($data['identifier']));
-        assert(isset($data['type']) && is_string($data['type']));
-        assert(isset($data['payload']) && is_array($data['payload']));
-        assert(isset($data['metadata']) && is_array($data['metadata']));
         return new self(
             $data['identifier'],
             $data['type'],
@@ -57,9 +52,11 @@ final class ExportedEvent implements \JsonSerializable
      * @param \Closure(array<mixed>): array<mixed> $processor
      * @return $this
      */
-    public function processPayload(\Closure $processor): self
+    public function processPayloadAsArray(\Closure $processor): self
     {
-        return new self($this->identifier, $this->type, $processor($this->payload), $this->metadata);
+        $payloadArray = \json_decode($this->payload, true, 512, JSON_THROW_ON_ERROR);
+        $newPayloadString = json_encode($processor($payloadArray), JSON_THROW_ON_ERROR);
+        return new self($this->identifier, $this->type, $newPayloadString, $this->metadata);
     }
 
     /**
@@ -80,12 +77,8 @@ final class ExportedEvent implements \JsonSerializable
         }
     }
 
-    /**
-     * @return array{identifier: string, type: string, payload: array<mixed>, metadata?: ?array<mixed>, streamName?: string, version?: int, sequenceNumber?: int, recordedAt?: string}
-     */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
-        /** @phpstan-ignore-next-line */
         return get_object_vars($this);
     }
 }

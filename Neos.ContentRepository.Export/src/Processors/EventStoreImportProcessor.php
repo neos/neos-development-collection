@@ -75,7 +75,7 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
                 $keepStreamName = true;
             }
             if (!$keepStreamName) {
-                $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => $this->contentStreamId->value] : $payload);
+                $event = $event->processPayloadAsArray(fn(array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => $this->contentStreamId->value] : $payload);
             }
             if (!$this->keepEventIds) {
                 try {
@@ -105,7 +105,7 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
                 new Event(
                     EventId::fromString($event->identifier),
                     Event\EventType::fromString($event->type),
-                    Event\EventData::fromString(\json_encode($event->payload, JSON_THROW_ON_ERROR)),
+                    Event\EventData::fromString($event->payload),
                     Event\EventMetadata::fromArray($event->metadata)
                 )
             );
@@ -184,11 +184,11 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
     /** --------------------------- */
 
     /**
-     * @param array<string, mixed> $payload
      * @return ContentStreamId
      */
-    private static function extractContentStreamId(array $payload): ContentStreamId
+    private static function extractContentStreamId(string $payloadString): ContentStreamId
     {
+        $payload = \json_decode($payloadString, true, 512, JSON_THROW_ON_ERROR);
         if (!isset($payload['contentStreamId']) || !is_string($payload['contentStreamId'])) {
             throw new \RuntimeException('Failed to extract "contentStreamId" from event', 1646404169);
         }
