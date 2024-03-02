@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -68,10 +69,14 @@ class PrevOperation extends AbstractOperation
         $output = [];
         $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nextNode = $this->getPrevForNode($contextNode);
-            if ($nextNode !== null && !isset($outputNodePaths[$nextNode->nodeAggregateId->value])) {
-                $outputNodePaths[$nextNode->nodeAggregateId->value] = true;
-                $output[] = $nextNode;
+            $previousNode = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                ->findPrecedingSiblingNodes(
+                    $contextNode->nodeAggregateId,
+                    FindPrecedingSiblingNodesFilter::create()
+                )->first();
+            if ($previousNode !== null && !isset($outputNodePaths[$previousNode->nodeAggregateId->value])) {
+                $outputNodePaths[$previousNode->nodeAggregateId->value] = true;
+                $output[] = $previousNode;
             }
         }
         $flowQuery->setContext($output);
@@ -79,21 +84,5 @@ class PrevOperation extends AbstractOperation
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);
         }
-    }
-
-    /**
-     * @param Node $contextNode The node for which the preceding node should be found
-     * @return Node|null The preceeding node of $contextNode or NULL
-     */
-    protected function getPrevForNode(Node $contextNode): ?Node
-    {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
-        if ($parentNode === null) {
-            return null;
-        }
-
-        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create())
-            ->previous($contextNode);
     }
 }

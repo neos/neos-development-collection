@@ -55,7 +55,7 @@ abstract class AbstractServiceController extends ActionController
      *
      * @throws StopActionException
      */
-    public function errorAction(): never
+    protected function errorAction(): never
     {
         if ($this->arguments->getValidationResults()->hasErrors()) {
             $errors = [];

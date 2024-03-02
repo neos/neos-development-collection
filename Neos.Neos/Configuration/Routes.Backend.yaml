@@ -42,20 +42,6 @@
   httpMethods: ['POST']
 
 -
-  name: 'Content Module - Plugin Views'
-  uriPattern: 'content/plugin-views'
-  defaults:
-    '@controller': 'Backend\Content'
-    '@action':     'pluginViews'
-
--
-  name: 'Content Module - Master Plugins'
-  uriPattern: 'content/master-plugins'
-  defaults:
-    '@controller': 'Backend\Content'
-    '@action':     'masterPlugins'
-
--
   name: 'Schema - NodeType'
   uriPattern: 'schema/node-type'
   defaults:

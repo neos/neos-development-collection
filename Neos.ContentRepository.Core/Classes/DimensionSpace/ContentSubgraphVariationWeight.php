@@ -43,7 +43,7 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable
                 throw new \InvalidArgumentException(
                     sprintf(
                         'Weight component %s was not of type ContentDimensionValueSpecializationDepth',
-                        $specializationDepth
+                        get_debug_type($specializationDepth)
                     ),
                     1531477454
                 );

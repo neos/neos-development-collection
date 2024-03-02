@@ -13,13 +13,21 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
-/** @api */
+use Neos\Flow\Annotations as Flow;
+
+/**
+ * @implements \IteratorAggregate<int, FusionSourceCode>
+ * @api
+ */
 final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
 {
     /** @var array<int, FusionSourceCode> */
     private array $fusionCodeCollection;
 
-    /** @param $fusionSourceCode array<int, FusionSourceCode> */
+    /**
+     * @Flow\Autowiring(false)
+     * @param $fusionSourceCode array<int, FusionSourceCode>
+     */
     public function __construct(FusionSourceCode ...$fusionSourceCode)
     {
         $this->fusionCodeCollection = self::deduplicateItemsAndKeepLast($fusionSourceCode);
@@ -27,36 +35,36 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
 
     public static function fromFilePath(string $filePath): self
     {
-        return new static(FusionSourceCode::fromFilePath($filePath));
+        return new self(FusionSourceCode::fromFilePath($filePath));
     }
 
     public static function fromString(string $string): self
     {
-        return new static(FusionSourceCode::fromString($string));
+        return new self(FusionSourceCode::fromString($string));
     }
 
     public static function tryFromFilePath(string $filePath): self
     {
         if (!is_readable($filePath)) {
-            return static::empty();
+            return self::empty();
         }
-        return static::fromFilePath($filePath);
+        return self::fromFilePath($filePath);
     }
 
     public static function tryFromPackageRootFusion(string $packageKey): self
     {
         $fusionPathAndFilename = sprintf('resource://%s/Private/Fusion/Root.fusion', $packageKey);
-        return static::tryFromFilePath($fusionPathAndFilename);
+        return self::tryFromFilePath($fusionPathAndFilename);
     }
 
-    public static function empty()
+    public static function empty(): self
     {
-        return new static();
+        return new self();
     }
 
     public function union(FusionSourceCodeCollection $other): self
     {
-        return new static(...$this->fusionCodeCollection, ...$other->fusionCodeCollection);
+        return new self(...$this->fusionCodeCollection, ...$other->fusionCodeCollection);
     }
 
     /**
@@ -73,7 +81,7 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @param array<int, FusionSourceCode> $fusionSourceCode
+     * @param array<int|string, FusionSourceCode> $fusionSourceCode
      * @return array<int, FusionSourceCode>
      */
     private static function deduplicateItemsAndKeepLast(array $fusionSourceCode): array

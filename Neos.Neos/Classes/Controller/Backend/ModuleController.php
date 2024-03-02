@@ -94,7 +94,7 @@ class ModuleController extends ActionController
         $moduleBreadcrumb = [];
         $path = [];
         foreach ($modules as $moduleIdentifier) {
-            array_push($path, $moduleIdentifier);
+            $path[] = $moduleIdentifier;
             $config = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $path));
             $moduleBreadcrumb[implode('/', $path)] = $config;
         }

@@ -196,7 +196,7 @@ final class ContentRepositoryRegistry
 
         $normalizers = [];
         foreach ($propertyConvertersConfiguration as $propertyConverterConfiguration) {
-            $normalizer = new $propertyConverterConfiguration['className'];
+            $normalizer = new $propertyConverterConfiguration['className']();
             if (!$normalizer instanceof NormalizerInterface && !$normalizer instanceof DenormalizerInterface) {
                 throw InvalidConfigurationException::fromMessage('Serializers can only be created of %s and %s, %s given', NormalizerInterface::class, DenormalizerInterface::class, get_debug_type($normalizer));
             }
@@ -211,12 +211,18 @@ final class ContentRepositoryRegistry
         (isset($contentRepositorySettings['projections']) && is_array($contentRepositorySettings['projections'])) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have projections configured, or the value is no array.', $contentRepositoryId->value);
         $projectionsFactory = new ProjectionsAndCatchUpHooksFactory();
         foreach ($contentRepositorySettings['projections'] as $projectionName => $projectionOptions) {
+            if ($projectionOptions === null) {
+                continue;
+            }
             $projectionFactory = $this->objectManager->get($projectionOptions['factoryObjectName']);
             if (!$projectionFactory instanceof ProjectionFactoryInterface) {
                 throw InvalidConfigurationException::fromMessage('Projection factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s.', $projectionName, $contentRepositoryId->value, ProjectionFactoryInterface::class, get_debug_type($projectionFactory));
             }
             $projectionsFactory->registerFactory($projectionFactory, $projectionOptions['options'] ?? []);
             foreach (($projectionOptions['catchUpHooks'] ?? []) as $catchUpHookOptions) {
+                if ($catchUpHookOptions === null) {
+                    continue;
+                }
                 $catchUpHookFactory = $this->objectManager->get($catchUpHookOptions['factoryObjectName']);
                 if (!$catchUpHookFactory instanceof CatchUpHookFactoryInterface) {
                     throw InvalidConfigurationException::fromMessage('CatchUpHook factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s', $projectionName, $contentRepositoryId->value, CatchUpHookFactoryInterface::class, get_debug_type($catchUpHookFactory));

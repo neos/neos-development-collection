@@ -13,6 +13,8 @@ namespace Neos\Media\Domain\ValueObject\Configuration;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 final class Variant
 {
     /**
@@ -39,6 +41,7 @@ final class Variant
      * @param string $identifier
      * @param Label $label
      * @param string $description
+     * @Flow\Autowiring(false)
      */
     public function __construct(string $identifier, Label $label, string $description = null)
     {
@@ -52,9 +55,9 @@ final class Variant
      * @param array $configuration
      * @return Variant
      */
-    public static function fromConfiguration(string $identifier, array $configuration): Variant
+    public static function fromConfiguration(string $identifier, array $configuration): self
     {
-        $variant = new static(
+        $variant = new self(
             $identifier,
             new Label($configuration['label']),
             $configuration['description'] ?? null

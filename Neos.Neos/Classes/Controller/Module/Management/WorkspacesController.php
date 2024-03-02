@@ -711,7 +711,7 @@ class WorkspacesController extends AbstractModuleController
                         $changesCount['new']++;
                     } else {
                         $changesCount['changed']++;
-                    };
+                    }
                     $changesCount['total']++;
                 }
             }

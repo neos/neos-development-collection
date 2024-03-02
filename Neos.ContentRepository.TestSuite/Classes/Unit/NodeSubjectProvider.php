@@ -47,7 +47,10 @@ use Symfony\Component\Serializer\Serializer;
  * The general provider class for node subjects.
  * Capable of creating all kinds of nodes to be used in unit tests.
  *
- * @api
+ * @internal this WIP helper is purely experimental and only to be used internally
+ *           behaviour or api may change at any time.
+ *           Generally It's advised to prefer behat testing over unit tests for complex cases,
+ *           like when interacting with the NodeType or the Subgraph or other parts of the CR.
  */
 final class NodeSubjectProvider
 {
@@ -84,7 +87,7 @@ final class NodeSubjectProvider
     ): Node {
         $defaultPropertyValues = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-            $defaultPropertyValues[$propertyName] = new SerializedPropertyValue(
+            $defaultPropertyValues[$propertyName] = SerializedPropertyValue::create(
                 $propertyValue,
                 $nodeType->getPropertyType($propertyName)
             );

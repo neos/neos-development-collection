@@ -27,7 +27,7 @@ class DslExpressionValue extends AbstractPathValue
     ) {
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitDslExpressionValue($this, ...$args);
     }

@@ -39,13 +39,14 @@ Feature: ForkContentStream Without Dimensions
       | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
       | nodeName                    | "child"                                  |
       | nodeAggregateClassification | "regular"                                |
-    And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
+    And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
       | contentStreamId              | "cs-identifier"                                         |
       | nodeAggregateId              | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint    | {}                                                      |
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "original value", "type": "string"}} |
+      | propertiesToUnset            | {}                                                      |
 
   Scenario: Ensure that the node is available in the forked content stream
     When the command "ForkContentStream" is executed with payload:
@@ -62,13 +63,14 @@ Feature: ForkContentStream Without Dimensions
       | Key                   | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "cs-identifier"      |
-    And the Event "NodePropertiesWereSet" was published to stream "ContentStream:user-cs-identifier" with payload:
+    And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
       | contentStreamId              | "user-cs-identifier"                                    |
       | nodeAggregateId              | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint    | {}                                                      |
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
+      | propertiesToUnset            | {}                                                      |
     And the graph projection is fully up to date
 
       # live
@@ -91,13 +93,14 @@ Feature: ForkContentStream Without Dimensions
       | Key                   | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "cs-identifier"      |
-    And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
+    And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
       | contentStreamId              | "cs-identifier"                                         |
       | nodeAggregateId              | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint    | {}                                                      |
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
+      | propertiesToUnset            | {}                                                      |
     And the graph projection is fully up to date
 
     # live

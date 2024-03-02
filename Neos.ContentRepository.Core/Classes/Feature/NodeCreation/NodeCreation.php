@@ -84,7 +84,7 @@ trait NodeCreation
             $command->succeedingSiblingNodeAggregateId,
             $command->nodeName,
             $this->getPropertyConverter()->serializePropertyValues(
-                $command->initialPropertyValues,
+                $command->initialPropertyValues->withoutUnsets(),
                 $this->requireNodeType($command->nodeTypeName)
             )
         );
@@ -97,7 +97,7 @@ trait NodeCreation
 
     private function deserializeDefaultProperties(NodeTypeName $nodeTypeName): PropertyValuesToWrite
     {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         $defaultValues = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
             $propertyType = PropertyType::fromNodeTypeDeclaration(
@@ -106,8 +106,10 @@ trait NodeCreation
                 $nodeTypeName
             );
 
+            $serializedPropertyValue = SerializedPropertyValue::create($defaultValue, $propertyType->getSerializationType());
+
             $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
-                new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
+                $serializedPropertyValue
             );
         }
 
@@ -120,7 +122,7 @@ trait NodeCreation
             return;
         }
 
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         foreach ($propertyValues->values as $propertyName => $propertyValue) {
             if (!isset($nodeType->getProperties()[$propertyName])) {
                 throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
@@ -136,7 +138,7 @@ trait NodeCreation
             if (!$propertyType->isMatchedBy($propertyValue)) {
                 throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
                     PropertyName::fromString($propertyName),
-                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
+                    get_debug_type($propertyValues),
                     $propertyType->value
                 );
             }

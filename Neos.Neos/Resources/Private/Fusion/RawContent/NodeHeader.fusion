@@ -5,10 +5,6 @@ prototype(Neos.Neos:RawContent.NodeHeader) < prototype(Neos.Fusion:Component) {
   visibilityInformations = Neos.Fusion:DataStructure {
     hidden = 'hidden'
     hidden.@if.isHidden = ${node.hidden}
-    hiddenBeforeDateTime = ${'hidden before ' + Date.format(node.hiddenBeforeDateTime, 'Y-m-d H:i:s')}
-    hiddenBeforeDateTime.@if.hasHiddenBeforeDateTime = ${node.hiddenBeforeDateTime}
-    hiddenAfterDateTime = ${'hidden after ' + Date.format(node.hiddenAfterDateTime, 'Y-m-d H:i:s')}
-    hiddenAfterDateTime.@if.hasHiddenAfterDateTime = ${node.hiddenAfterDateTime}
     @process.join = ${Array.join(value, ', ')}
   }
 

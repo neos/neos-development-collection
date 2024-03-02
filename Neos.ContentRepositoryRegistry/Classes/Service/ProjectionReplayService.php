@@ -31,11 +31,21 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
         $this->contentRepository->catchUpProjection($projectionClassName, $options);
     }
 
-    public function replayAllProjections(CatchUpOptions $options): void
+    public function replayAllProjections(CatchUpOptions $options, ?\Closure $progressCallback = null): void
+    {
+        foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
+            if ($progressCallback) {
+                $progressCallback($classNamesAndAlias['alias']);
+            }
+            $this->contentRepository->resetProjectionState($classNamesAndAlias['className']);
+            $this->contentRepository->catchUpProjection($classNamesAndAlias['className'], $options);
+        }
+    }
+
+    public function resetAllProjections(): void
     {
         foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
             $this->contentRepository->resetProjectionState($classNamesAndAlias['className']);
-            $this->contentRepository->catchUpProjection($classNamesAndAlias['className'], $options);
         }
     }
 
@@ -80,6 +90,4 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
         }
         return $alias;
     }
-
-
 }

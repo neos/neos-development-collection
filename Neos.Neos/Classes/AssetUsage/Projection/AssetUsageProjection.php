@@ -179,10 +179,6 @@ final class AssetUsageProjection implements ProjectionInterface
         /** @var array<string, array<AssetIdAndOriginalAssetId>> $assetIds */
         $assetIds = [];
         foreach ($propertyValues as $propertyName => $propertyValue) {
-            // skip removed properties ({@see SerializedPropertyValues})
-            if ($propertyValue === null) {
-                continue;
-            }
             $extractedAssetIds = $this->extractAssetIds(
                 $propertyValue->type,
                 $propertyValue->value,
@@ -248,12 +244,12 @@ final class AssetUsageProjection implements ProjectionInterface
             return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
         }
         try {
-            $this->repository->findUsages(AssetUsageFilter::create());
+            $falseOrDetailsString = $this->repository->isSetupRequired();
+            if (is_string($falseOrDetailsString)) {
+                return ProjectionStatus::setupRequired($falseOrDetailsString);
+            }
         } catch (\Throwable $e) {
-            return ProjectionStatus::error($e->getMessage());
-        }
-        if ($this->repository->isSetupRequired()) {
-            return ProjectionStatus::setupRequired();
+            return ProjectionStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
         }
         return ProjectionStatus::ok();
     }

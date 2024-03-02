@@ -71,6 +71,7 @@ Feature: Rebasing auto-created nodes works
       | nodeAggregateId   | $this->currentNodeAggregateId          |
       | originDimensionSpacePoint | {}                                             |
       | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
+      | propertiesToUnset         | {}                                             |
     And the graph projection is fully up to date
 
     When the command RebaseWorkspace is executed with payload:
