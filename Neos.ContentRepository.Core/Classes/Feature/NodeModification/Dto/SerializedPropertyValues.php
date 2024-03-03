@@ -80,7 +80,12 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
             $deserializedDefaultValue = $propertyConverter->deserializePropertyValue(
                 SerializedPropertyValue::create($defaultValue, $propertyType->getSerializationType())
             );
-            $values[$propertyName] = $propertyConverter->serializePropertyValue(
+            // The $defaultValue and $properlySerializedDefaultValue will likely equal, but in some cases diverge.
+            // For example relative date time default values like "now" will herby be serialized to the current date.
+            // Also, custom value objects might serialize slightly different, but more "correct"
+            // (by for example adding default values for undeclared properties)
+            // Additionally due the double conversion, we guarantee that a valid property converted exists at this time.
+            $properlySerializedDefaultValue = $propertyConverter->serializePropertyValue(
                 PropertyType::fromNodeTypeDeclaration(
                     $nodeType->getPropertyType($propertyName),
                     PropertyName::fromString($propertyName),
@@ -88,6 +93,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
                 ),
                 $deserializedDefaultValue
             );
+            $values[$propertyName] = $properlySerializedDefaultValue;
         }
 
         return new self($values);

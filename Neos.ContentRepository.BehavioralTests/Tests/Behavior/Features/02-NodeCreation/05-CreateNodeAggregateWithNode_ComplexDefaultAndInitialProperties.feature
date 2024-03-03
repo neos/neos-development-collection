@@ -72,16 +72,18 @@ Feature: Create a node aggregate with complex default values
     And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
 
-    And I expect this node to have the following serialized property types:
-      | Key           | Type                                                                   |
-      | array         | array                                                                  |
-      | dayOfWeek     | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek          |
-      | postalAddress | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress      |
-      # DateTime must always be treated as immutable see DateTimeImmutable
-      | now           | DateTimeImmutable                                                      |
-      | date          | DateTimeImmutable                                                      |
-      | uri           | GuzzleHttp\Psr7\Uri                                                    |
-      | price         | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification |
+    And I expect this node to have the following serialized properties:
+      | Key           | Type                                                                   | Value                                                              |
+      | array         | array                                                                  | {"givenName":"Nody","familyName":"McNodeface"}                     |
+      | dayOfWeek     | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek          | "https://schema.org/Wednesday"                                     |
+      | postalAddress | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress      | {"streetAddress":"28 31st of February Street","postalCode":12345,"addressLocality":"City","addressCountry":"Country"} |
+      # DateTime must always be treated as immutable see DateTimeImmutable.
+      # And the default value "now" must not be serialized as string "now" but as its actual value of the time of the command:
+      | now           | DateTimeImmutable                                                      | NOT:"now"                                                          |
+      | date          | DateTimeImmutable                                                      | "2020-08-20T18:56:15+00:00"                                        |
+      | uri           | GuzzleHttp\Psr7\Uri                                                    | "https://neos.io"                                                  |
+      # Defaults while deserializing value objects will be manifested at the time of the command: (valueAddedTaxIncluded was not explicitly declared above)
+      | price         | Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification | {"price":13.37,"priceCurrency":"EUR","valueAddedTaxIncluded":true} |
 
     And I expect this node to have the following properties:
       | Key           | Value                                           |

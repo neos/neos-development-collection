@@ -256,7 +256,7 @@ trait ProjectedNodeTrait
     }
 
     /**
-     * @Then /^I expect this node to have the following serialized property types:$/
+     * @Then /^I expect this node to have the following serialized properties:$/
      * @param TableNode $expectedPropertyTypes
      */
     public function iExpectThisNodeToHaveTheFollowingSerializedPropertyTypes(TableNode $expectedPropertyTypes): void
@@ -266,6 +266,14 @@ trait ProjectedNodeTrait
             foreach ($expectedPropertyTypes->getHash() as $row) {
                 Assert::assertTrue($serialized->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
                 Assert::assertEquals($row['Type'], $serialized->getProperty($row['Key'])->type, 'Serialized node property ' . $row['Key'] . ' does not match expected type.');
+                if (str_starts_with($row['Value'], 'NOT:')) {
+                    // special case. assert NOT equals:
+                    $value = json_decode(mb_substr($row['Value'], 4), true, 512, JSON_THROW_ON_ERROR);
+                    Assert::assertNotEquals($value, $serialized->getProperty($row['Key'])->value, 'Serialized node property ' . $row['Key'] . ' does match value it should not.');
+                } else {
+                    $value = json_decode($row['Value'], true, 512, JSON_THROW_ON_ERROR);
+                    Assert::assertEquals($value, $serialized->getProperty($row['Key'])->value, 'Serialized node property ' . $row['Key'] . ' does not match expected value.');
+                }
             }
         });
     }
