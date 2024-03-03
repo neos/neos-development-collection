@@ -171,10 +171,17 @@ class PluginImplementation extends AbstractArrayFusionObject
 
         // We need to make sure to not merge content up into the parent ActionResponse
         // because that would break the Fusion HttpResponse.
-        $content = $pluginResponse->getContent();
-        $pluginResponse->setContent('');
+        $content = $pluginResponse->getBody()->getContents();
 
-        $pluginResponse->mergeIntoParentResponse($parentResponse);
+        // hacky, but part of the deal. We have to manipulate the global response to redirect for example.
+        // transfer possible headers that have been set dynamically
+        foreach ($pluginResponse->getHeaders() as $name => $values) {
+            $parentResponse->setHttpHeader($name, $values);
+        }
+        // if the status code is 200 we assume it's the default and will not overrule it
+        if ($pluginResponse->getStatusCode() !== 200) {
+            $parentResponse->setStatusCode($pluginResponse->getStatusCode());
+        }
 
         return $content;
     }
