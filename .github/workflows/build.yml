@@ -95,6 +95,7 @@ jobs:
       NEOS_TARGET_VERSION: 9.0
       NEOS_DIST_FOLDER: neos-development-distribution
       NEOS_FOLDER: neos-development-collection
+      COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     defaults:
       run:
@@ -132,6 +133,12 @@ jobs:
           git -C ../${{ env.NEOS_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
+          # TODO REMOVE BEFORE MERGE!!!!!
+          # composer config repositories.mhs vcs https://github.com/mhsdesign/flow-development-collection
+          composer require --no-update neos/flow-development-collection:"dev-feature/viewInterfaceWithoutControllerContext as ${{ env.NEOS_BRANCH_ALIAS }}"
+          composer require --no-update neos/neos-ui:"dev-task/adjustToViewInterfaceChange as ${{ env.NEOS_BRANCH_ALIAS }}"
+          composer require --no-update neos/neos-ui-compiled:"${{ env.NEOS_BRANCH_ALIAS }} as dev-task/adjustToViewInterfaceChange"
+          # composer remove --no-update neos/neos-ui neos/neos-ui-compiled
 
       - name: Cache Composer packages
         id: composer-cache
