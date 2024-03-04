@@ -16,15 +16,16 @@ namespace Neos\Fusion\Core;
 /**
  * This holds the parsed Fusion Configuration and can be used to pass it to the Runtime via
  * {@see RuntimeFactory::createFromConfiguration()}
- * The contents of this DTO are internal and can change at any time!
+ *
+ * @internal The Fusion parsing is considered internal.
  */
 final class FusionConfiguration
 {
     /**
      * @internal
-     * @param array<int|string, mixed> $fusionConfiguration
+     * @param array<int|string, mixed> $fusionConfiguration The representation of the configuration as array is fully internal and only allowed to be accessed by the Runtime
      */
-    protected function __construct(
+    private function __construct(
         private array $fusionConfiguration
     ) {
     }

@@ -22,7 +22,8 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**
  * @Flow\Scope("singleton")
- * @api
+ * @internal The Fusion Runtime is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
  */
 class RuntimeFactory
 {

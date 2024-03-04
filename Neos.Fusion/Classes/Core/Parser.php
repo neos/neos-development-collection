@@ -25,7 +25,8 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The Fusion Parser
  *
- * @api
+ * @internal The Fusion parsing is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
  */
 class Parser
 {

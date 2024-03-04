@@ -25,6 +25,9 @@ use Neos\Neos\Domain\Exception as NeosDomainException;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Flow\Annotations as Flow;
 
+/**
+ * @internal For interacting with Fusion from the outside a FusionView should be used.
+ */
 class FusionSourceCodeFactory
 {
     /**

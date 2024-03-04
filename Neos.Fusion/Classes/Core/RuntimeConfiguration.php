@@ -8,6 +8,7 @@ use Neos\Utility\Arrays;
 
 /**
  * @Flow\Proxy(false)
+ * @internal helper for the Fusion Runtime to calculate fusion path configurations
  */
 final class RuntimeConfiguration
 {

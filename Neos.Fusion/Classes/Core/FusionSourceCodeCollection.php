@@ -17,7 +17,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * @implements \IteratorAggregate<int, FusionSourceCode>
- * @api
+ * @internal The Fusion parsing is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
  */
 final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
 {
