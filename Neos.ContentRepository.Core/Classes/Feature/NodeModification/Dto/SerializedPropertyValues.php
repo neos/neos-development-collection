@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
@@ -65,22 +67,33 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
         return new self($values);
     }
 
-    public static function defaultFromNodeType(NodeType $nodeType): self
+    /** @internal */
+    public static function defaultFromNodeType(NodeType $nodeType, PropertyConverter $propertyConverter): self
     {
         $values = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-            if ($defaultValue instanceof \DateTimeInterface) {
-                $defaultValue = json_encode($defaultValue);
-            }
-
-            $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
-            self::assertTypeIsNoReference($propertyTypeFromSchema);
-
-            if ($defaultValue === null) {
-                continue;
-            }
-
-            $values[$propertyName] = SerializedPropertyValue::create($defaultValue, $propertyTypeFromSchema);
+            $propertyType = PropertyType::fromNodeTypeDeclaration(
+                $nodeType->getPropertyType($propertyName),
+                PropertyName::fromString($propertyName),
+                $nodeType->name
+            );
+            $deserializedDefaultValue = $propertyConverter->deserializePropertyValue(
+                SerializedPropertyValue::create($defaultValue, $propertyType->getSerializationType())
+            );
+            // The $defaultValue and $properlySerializedDefaultValue will likely equal, but in some cases diverge.
+            // For example relative date time default values like "now" will herby be serialized to the current date.
+            // Also, custom value objects might serialize slightly different, but more "correct"
+            // (by for example adding default values for undeclared properties)
+            // Additionally due the double conversion, we guarantee that a valid property converted exists at this time.
+            $properlySerializedDefaultValue = $propertyConverter->serializePropertyValue(
+                PropertyType::fromNodeTypeDeclaration(
+                    $nodeType->getPropertyType($propertyName),
+                    PropertyName::fromString($propertyName),
+                    $nodeType->name
+                ),
+                $deserializedDefaultValue
+            );
+            $values[$propertyName] = $properlySerializedDefaultValue;
         }
 
         return new self($values);
@@ -89,15 +102,6 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     public static function fromJsonString(string $jsonString): self
     {
         return self::fromArray(\json_decode($jsonString, true));
-    }
-
-    private static function assertTypeIsNoReference(string $propertyTypeFromSchema): void
-    {
-        if ($propertyTypeFromSchema === 'reference' || $propertyTypeFromSchema === 'references') {
-            throw new \RuntimeException(
-                'TODO: references cannot be serialized; you need to use the SetNodeReferences command instead.'
-            );
-        }
     }
 
     public function merge(self $other): self

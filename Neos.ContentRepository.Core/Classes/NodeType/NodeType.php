@@ -433,7 +433,7 @@ class NodeType
      *
      * The default value is configured for each property under the "default" key.
      *
-     * @return array<string,mixed>
+     * @return array<string,int|float|string|bool|array<int|string,mixed>>
      * @api
      */
     public function getDefaultValuesForProperties(): array
