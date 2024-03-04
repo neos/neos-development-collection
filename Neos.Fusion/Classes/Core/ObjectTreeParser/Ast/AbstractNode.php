@@ -17,6 +17,7 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 use Neos\Flow\Annotations as Flow;
 
+/** @internal */
 #[Flow\Proxy(false)]
 abstract class AbstractNode
 {
