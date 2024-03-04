@@ -18,10 +18,9 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 /** @internal */
 #[Flow\Proxy(false)]
-class FusionObjectValue extends AbstractPathValue
+final readonly class FusionObjectValue extends AbstractPathValue
 {
     public function __construct(
-        /** @psalm-readonly */
         public string $value
     ) {
     }

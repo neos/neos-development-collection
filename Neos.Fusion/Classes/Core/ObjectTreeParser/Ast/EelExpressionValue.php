@@ -18,10 +18,9 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 /** @internal */
 #[Flow\Proxy(false)]
-class EelExpressionValue extends AbstractPathValue
+final readonly class EelExpressionValue extends AbstractPathValue
 {
     public function __construct(
-        /** @psalm-readonly */
         public string $value
     ) {
     }

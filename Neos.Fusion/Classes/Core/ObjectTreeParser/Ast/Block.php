@@ -18,10 +18,9 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 /** @internal */
 #[Flow\Proxy(false)]
-class Block extends AbstractNode
+final readonly class Block extends AbstractNode
 {
     public function __construct(
-        /** @psalm-readonly */
         public StatementList $statementList
     ) {
     }

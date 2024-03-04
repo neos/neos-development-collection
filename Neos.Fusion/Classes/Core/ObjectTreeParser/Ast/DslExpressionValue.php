@@ -18,12 +18,10 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 /** @internal */
 #[Flow\Proxy(false)]
-class DslExpressionValue extends AbstractPathValue
+final readonly class DslExpressionValue extends AbstractPathValue
 {
     public function __construct(
-        /** @psalm-readonly */
         public string $identifier,
-        /** @psalm-readonly */
         public string $code
     ) {
     }

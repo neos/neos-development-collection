@@ -17,6 +17,6 @@ use Neos\Flow\Annotations as Flow;
 
 /** @internal */
 #[Flow\Proxy(false)]
-abstract class AbstractPathValue extends AbstractNode
+abstract readonly class AbstractPathValue extends AbstractNode
 {
 }

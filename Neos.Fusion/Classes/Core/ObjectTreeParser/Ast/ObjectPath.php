@@ -18,13 +18,12 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 /** @internal */
 #[Flow\Proxy(false)]
-class ObjectPath extends AbstractNode
+final readonly class ObjectPath extends AbstractNode
 {
     /**
-     * @psalm-readonly
      * @var AbstractPathSegment[]
      */
-    public $segments;
+    public array $segments;
 
     public function __construct(AbstractPathSegment ...$segments)
     {

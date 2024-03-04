@@ -18,10 +18,9 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 /** @internal */
 #[Flow\Proxy(false)]
-class IncludeStatement extends AbstractStatement
+final readonly class IncludeStatement extends AbstractStatement
 {
     public function __construct(
-        /** @psalm-readonly */
         public string $filePattern
     ) {
     }

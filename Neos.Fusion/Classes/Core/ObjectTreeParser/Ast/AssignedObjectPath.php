@@ -18,12 +18,10 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 /** @internal */
 #[Flow\Proxy(false)]
-class AssignedObjectPath extends AbstractNode
+final readonly class AssignedObjectPath extends AbstractNode
 {
     public function __construct(
-        /** @psalm-readonly */
         public ObjectPath $objectPath,
-        /** @psalm-readonly */
         public bool $isRelative
     ) {
     }

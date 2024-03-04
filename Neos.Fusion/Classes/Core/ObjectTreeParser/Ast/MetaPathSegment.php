@@ -18,10 +18,9 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 /** @internal */
 #[Flow\Proxy(false)]
-class MetaPathSegment extends AbstractPathSegment
+final readonly class MetaPathSegment extends AbstractPathSegment
 {
     public function __construct(
-        /** @psalm-readonly */
         public string $identifier
     ) {
     }
