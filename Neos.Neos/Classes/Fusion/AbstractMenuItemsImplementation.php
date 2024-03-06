@@ -25,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  * Base class for Menu and DimensionsMenu
  *
  * Main Options:
- *  - renderHiddenInIndex: if TRUE, hidden-in-index nodes will be shown in the menu. FALSE by default.
+ *  - renderHiddenInMenu: if TRUE, hidden-in-index nodes will be shown in the menu. FALSE by default.
  */
 abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 {
@@ -47,11 +47,11 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected $currentNode;
 
     /**
-     * Internal cache for the renderHiddenInIndex property.
+     * Internal cache for the renderHiddenInMenu property.
      *
      * @var boolean
      */
-    protected $renderHiddenInIndex;
+    protected $renderHiddenInMenu;
 
     /**
      * Internal cache for the calculateItemStates property.
@@ -77,17 +77,17 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     }
 
     /**
-     * Should nodes that have "hiddenInIndex" set still be visible in this menu.
+     * Should nodes that have "hiddenInMenu" set still be visible in this menu.
      *
      * @return boolean
      */
-    public function getRenderHiddenInIndex()
+    public function getRenderHiddenInMenu()
     {
-        if ($this->renderHiddenInIndex === null) {
-            $this->renderHiddenInIndex = (bool)$this->fusionValue('renderHiddenInIndex');
+        if ($this->renderHiddenInMenu === null) {
+            $this->renderHiddenInMenu = (bool)($this->fusionValue('renderHiddenInMenu') ?? $this->fusionValue('renderHiddenInIndex'));
         }
 
-        return $this->renderHiddenInIndex;
+        return $this->renderHiddenInMenu;
     }
 
     /**
@@ -140,7 +140,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 
     /**
      * Return TRUE/FALSE if the node is currently hidden or not in the menu;
-     * taking the "renderHiddenInIndex" configuration of the Menu Fusion object into account.
+     * taking the "renderHiddenInMenu" configuration of the Menu Fusion object into account.
      *
      * This method needs to be called inside buildItems() in the subclasses.
      *
@@ -149,14 +149,14 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      */
     protected function isNodeHidden(Node $node)
     {
-        if ($this->getRenderHiddenInIndex() === true) {
+        if ($this->getRenderHiddenInMenu() === true) {
             // Please show hiddenInIndex nodes
             // -> node is *never* hidden!
             return false;
         }
 
         // Node is hidden depending on the _hiddenInIndex property
-        return $node->getProperty('_hiddenInIndex');
+        return $node->getProperty('hiddenInMenu');
     }
 
     protected function buildUri(Node $node): string

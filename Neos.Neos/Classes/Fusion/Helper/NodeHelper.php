@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
@@ -154,6 +155,17 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
         return $this->contentRepositoryRegistry->subgraphForNode($node);
+    }
+
+    public function isNodeStateHidden(Node $node): bool
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
+        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateFinder::class);
+        return $nodeHiddenStateFinder->findHiddenState(
+            $node->subgraphIdentity->contentStreamId,
+            $node->subgraphIdentity->dimensionSpacePoint,
+            $node->nodeAggregateId
+        )->isHidden;
     }
 
     /**
