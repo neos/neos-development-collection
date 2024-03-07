@@ -15,7 +15,7 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
           type: string
         uriPathSegment:
           type: string
-        hiddenInIndex:
+        hiddenInMenu:
           type: bool
     'Neos.Neos:Site':
       superTypes:
@@ -63,7 +63,7 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
       | a1b1b           | a1b1                  | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1b", "title": "Node a1b1b"}                     | a1b1b    |
       | a1b2            | a1b                   | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1b2", "title": "Node a1b2"}                       | a1b2     |
       | a1b3            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b3", "title": "Node a1b3"}                       | a1b3     |
-      | a1c             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c", "title": "Node a1c", "hiddenInIndex": true} | a1c      |
+      | a1c             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c", "title": "Node a1c", "hiddenInMenu": true} | a1c      |
       | a1c1            | a1c                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c1", "title": "Node a1c1"}                       | a1c1     |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
@@ -352,12 +352,12 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
     """
 
-  Scenario: MenuItems (renderHiddenInIndex)
+  Scenario: MenuItems (renderHiddenInMenu)
     When I execute the following Fusion code:
     """fusion
     test = Neos.Neos:Test.Menu {
       items = Neos.Neos:MenuItems {
-        renderHiddenInIndex = true
+        renderHiddenInMenu = true
       }
     }
     """
