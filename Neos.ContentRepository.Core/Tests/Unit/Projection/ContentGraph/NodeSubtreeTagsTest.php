@@ -15,7 +15,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SubtreeTagsWithInherited;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeSubtreeTags;
 use PHPUnit\Framework\TestCase;
 
 class SubtreeTagsWithInheritedTest extends TestCase
@@ -26,7 +26,7 @@ class SubtreeTagsWithInheritedTest extends TestCase
      */
     public function createEmptyCreatesInstanceWithoutTags(): void
     {
-        $tags = SubtreeTagsWithInherited::createEmpty();
+        $tags = NodeSubtreeTags::createEmpty();
         self::assertTrue($tags->tags->isEmpty());
         self::assertTrue($tags->inheritedTags->isEmpty());
     }
@@ -36,7 +36,7 @@ class SubtreeTagsWithInheritedTest extends TestCase
      */
     public function iteratingOverIncludesAllTags(): void
     {
-        $tags = SubtreeTagsWithInherited::create(
+        $tags = NodeSubtreeTags::create(
             SubtreeTags::fromStrings('a', 'b'),
             SubtreeTags::fromStrings('c', 'd'),
         );
