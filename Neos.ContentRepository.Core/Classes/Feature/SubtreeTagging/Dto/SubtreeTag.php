@@ -23,7 +23,7 @@ final readonly class SubtreeTag implements \JsonSerializable
 {
     private function __construct(public string $value)
     {
-        $regexPattern = '/^[a-z0-9_.]{1,30}$/';
+        $regexPattern = '/^[a-z0-9_.-]{1,36}$/';
         if (preg_match($regexPattern, $value) !== 1) {
             throw new \InvalidArgumentException(sprintf('The SubtreeTag value "%s" does not adhere to the regular expression "%s"', $value, $regexPattern), 1695467813);
         }
