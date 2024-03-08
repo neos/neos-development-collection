@@ -248,7 +248,7 @@ trait NodeTraversalTrait
             $subtree = array_shift($subtreeStack);
             $tags = [];
             if ($withTags !== null) {
-                $tags = [...array_map(static fn(string $tag) => $tag . '*', $subtree->node->tags->tags->toStringArray()), ...$subtree->node->tags->inheritedTags->toStringArray()];
+                $tags = [...array_map(static fn(string $tag) => $tag . '*', $subtree->node->tags->withoutInherited()->toStringArray()), ...$subtree->node->tags->onlyInherited()->toStringArray()];
             }
             $result[] = str_repeat(' ', $subtree->level) . $subtree->node->nodeAggregateId->value . ($tags !== [] ? ' (' . implode(',', $tags) . ')' : '');
             $subtreeStack = [...$subtree->children, ...$subtreeStack];

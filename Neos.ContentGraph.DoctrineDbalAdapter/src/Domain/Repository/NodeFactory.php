@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SubtreeTagsWithInherited;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeSubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -194,7 +194,7 @@ final class NodeFactory
                 = $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash];
             // ... as we do for disabling
             $subTreeTagsWithInherited = self::extractSubtreeTagsWithInheritedFromJson($nodeRow['subtreetags']);
-            if ($subTreeTagsWithInherited->tags->contain(SubtreeTag::fromString('disabled'))) {
+            if ($subTreeTagsWithInherited->withoutInherited()->contain(SubtreeTag::fromString('disabled'))) {
                 $disabledDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
             }
         }
@@ -322,7 +322,7 @@ final class NodeFactory
         }
     }
 
-    public static function extractSubtreeTagsWithInheritedFromJson(string $subtreeTagsJson): SubtreeTagsWithInherited
+    public static function extractSubtreeTagsWithInheritedFromJson(string $subtreeTagsJson): NodeSubtreeTags
     {
         $explicitTags = [];
         $inheritedTags = [];
@@ -334,7 +334,7 @@ final class NodeFactory
                 $inheritedTags[] = $tagValue;
             }
         }
-        return SubtreeTagsWithInherited::create(
+        return NodeSubtreeTags::create(
             tags: SubtreeTags::fromStrings(...$explicitTags),
             inheritedTags: SubtreeTags::fromStrings(...$inheritedTags)
         );

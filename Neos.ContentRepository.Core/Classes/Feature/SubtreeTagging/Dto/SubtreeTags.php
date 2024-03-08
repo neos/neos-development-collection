@@ -20,17 +20,21 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto;
  * @api
  * @implements \IteratorAggregate<SubtreeTag>
  */
-final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializable
+final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array<SubtreeTag>
+     * @var array<string, SubtreeTag>
      */
     private array $tags;
 
 
     private function __construct(SubtreeTag ...$tags)
     {
-        $this->tags = $tags;
+        $tagsByValue = [];
+        foreach ($tags as $tag) {
+            $tagsByValue[$tag->value] = $tag;
+        }
+        $this->tags = $tagsByValue;
     }
 
     public static function createEmpty(): self
@@ -53,6 +57,9 @@ final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializabl
 
     public function without(SubtreeTag $subtreeTagToRemove): self
     {
+        if (!$this->contain($subtreeTagToRemove)) {
+            return $this;
+        }
         return new self(...array_filter($this->tags, static fn (SubtreeTag $tag) => !$tag->equals($subtreeTagToRemove)));
     }
 
@@ -61,22 +68,24 @@ final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializabl
         return $this->tags === [];
     }
 
-    /**
-     * @return array<string>
-     */
-    public function toStringArray(): array
+    public function count(): int
     {
-        return array_map(static fn (SubtreeTag $tag) => $tag->value, $this->tags);
+        return count($this->tags);
     }
 
     public function contain(SubtreeTag $tag): bool
     {
-        foreach ($this->tags as $containedTag) {
-            if ($containedTag->equals($tag)) {
-                return true;
-            }
-        }
-        return false;
+        return array_key_exists($tag->value, $this->tags);
+    }
+
+    public function intersection(self $other): self
+    {
+        return self::fromArray(array_intersect_key($this->tags, $other->tags));
+    }
+
+    public function merge(self $other): self
+    {
+        return self::fromArray(array_merge($this->tags, $other->tags));
     }
 
     /**
@@ -85,7 +94,20 @@ final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializabl
      */
     public function map(\Closure $callback): array
     {
-        return array_map($callback, $this->tags);
+        return array_map($callback, array_values($this->tags));
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function toStringArray(): array
+    {
+        return $this->map(static fn (SubtreeTag $tag) => $tag->value);
+    }
+
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator(array_values($this->tags));
     }
 
     /**
@@ -93,11 +115,6 @@ final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializabl
      */
     public function jsonSerialize(): array
     {
-        return $this->tags;
-    }
-
-    public function getIterator(): \Traversable
-    {
-        return new \ArrayIterator($this->tags);
+        return array_values($this->tags);
     }
 }

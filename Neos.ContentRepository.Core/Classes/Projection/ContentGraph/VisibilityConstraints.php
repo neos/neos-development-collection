@@ -20,8 +20,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 /**
  * The context parameters value object
  *
- * Maybe future: "Node Filter" tree or so as replacement of ReadNodePrivilege?
- *
  * @api
  */
 final readonly class VisibilityConstraints implements \JsonSerializable

@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SubtreeTagsWithInherited;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeSubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -171,7 +171,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
             $textNodeType,
             $textNodeProperties,
             null,
-            SubtreeTagsWithInherited::createEmpty(),
+            NodeSubtreeTags::createEmpty(),
             Timestamps::create($now, $now, null, null)
         );
     }

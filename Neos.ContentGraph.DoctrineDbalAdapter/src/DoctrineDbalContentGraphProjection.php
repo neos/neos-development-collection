@@ -49,7 +49,7 @@ use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SubtreeTagsWithInherited;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeSubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
@@ -477,7 +477,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             );
 
             $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamId, $parentNodeAnchorPoint, $dimensionSpacePoint);
-            $inheritedSubtreeTags = SubtreeTagsWithInherited::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all());
+            $inheritedSubtreeTags = NodeSubtreeTags::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all());
 
             $hierarchyRelation = new HierarchyRelation(
                 $parentNodeAnchorPoint,

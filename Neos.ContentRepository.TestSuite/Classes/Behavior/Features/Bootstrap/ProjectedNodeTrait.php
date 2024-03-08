@@ -207,7 +207,7 @@ trait ProjectedNodeTrait
         $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
             $currentNode = $subgraph->findNodeById($nodeAggregateId);
             Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
-            Assert::assertTrue($currentNode->tags->tags->contain($expectedTag));
+            Assert::assertTrue($currentNode->tags->withoutInherited()->contain($expectedTag));
             return $currentNode;
         });
     }
@@ -222,7 +222,7 @@ trait ProjectedNodeTrait
         $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
             $currentNode = $subgraph->findNodeById($nodeAggregateId);
             Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
-            Assert::assertTrue($currentNode->tags->inheritedTags->contain($expectedTag));
+            Assert::assertTrue($currentNode->tags->onlyInherited()->contain($expectedTag));
             return $currentNode;
         });
     }
