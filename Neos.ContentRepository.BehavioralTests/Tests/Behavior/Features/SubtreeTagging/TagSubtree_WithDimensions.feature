@@ -37,11 +37,6 @@ Feature: Tag subtree with dimensions
 
   Scenario:
     Given I am in dimension space point {"language":"de"}
-    When the command TagSubtree is executed with payload:
-      | Key                          | Value                |
-      | nodeAggregateId              | "a1"                 |
-      | nodeVariantSelectionStrategy | "allSpecializations" |
-      | tag                          | "tag1"               |
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value              |
@@ -50,16 +45,36 @@ Feature: Tag subtree with dimensions
       | targetOrigin    | {"language":"mul"} |
     And the graph projection is fully up to date
 
-#    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
-#    """
-#    a
-#     a1 (tag1*)
-#      a1a (tag1)
-#    """
-#
-#    When I am in dimension space point {"language":"mul"}
-#    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
-#    """
-#    a
-#     a1
-#    """
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a1"                 |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag1"               |
+
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a1a"                |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag2"               |
+
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value              |
+      | nodeAggregateId | "a1a"              |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"mul"} |
+    And the graph projection is fully up to date
+
+    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    """
+    a
+     a1 (tag1*)
+      a1a (tag2*,tag1)
+    """
+
+    When I am in dimension space point {"language":"mul"}
+    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    """
+    a
+     a1
+      a1a (tag2*)
+    """

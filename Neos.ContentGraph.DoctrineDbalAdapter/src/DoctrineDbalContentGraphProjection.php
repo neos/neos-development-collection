@@ -795,7 +795,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $contentStreamId,
                 $dimensionSpacePoint
             ),
-            $sourceHierarchyRelation->subtreeTags,
+            $sourceHierarchyRelation->subtreeTags->withoutInherited(),
         );
         $copy->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
