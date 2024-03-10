@@ -60,6 +60,9 @@ class ImpersonateService
     public function impersonate(Account $account): void
     {
         $currentAccount = $this->securityContext->getAccount();
+        if ($currentAccount === null) {
+            throw new \RuntimeException('No account is authenticated', 1710068887);
+        }
         $this->writeSession('OriginalIdentity', $this->persistenceManager->getIdentifierByObject($currentAccount));
         $this->refreshTokens($account);
         $this->writeSession('Impersonate', $this->persistenceManager->getIdentifierByObject($account));
