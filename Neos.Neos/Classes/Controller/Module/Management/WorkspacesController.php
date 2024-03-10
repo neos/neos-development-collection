@@ -107,6 +107,9 @@ class WorkspacesController extends AbstractModuleController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $currentAccount = $this->securityContext->getAccount();
+        if ($currentAccount === null) {
+            throw new \RuntimeException('No account is authenticated', 1710068839);
+        }
         $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
             WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
         );
@@ -444,6 +447,9 @@ class WorkspacesController extends AbstractModuleController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $currentAccount = $this->securityContext->getAccount();
+        if ($currentAccount === null) {
+            throw new \RuntimeException('No account is authenticated', 1710068880);
+        }
         $personalWorkspaceName = WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier());
         $personalWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($personalWorkspaceName);
         /** @var Workspace $personalWorkspace */

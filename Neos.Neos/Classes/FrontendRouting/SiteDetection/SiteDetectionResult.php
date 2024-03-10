@@ -81,7 +81,7 @@ final class SiteDetectionResult
     {
         $parameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS)
             ?? RouteParameters::createEmpty();
-        $parameters = self::storeInRouteParameters($parameters);
+        $parameters = $this->storeInRouteParameters($parameters);
         return $request->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters);
     }
 
