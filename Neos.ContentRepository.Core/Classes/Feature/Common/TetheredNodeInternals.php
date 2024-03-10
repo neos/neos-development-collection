@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -35,6 +36,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 trait TetheredNodeInternals
 {
     use NodeVariationInternals;
+
+    abstract protected function getPropertyConverter(): PropertyConverter;
 
     abstract protected function createEventsForVariations(
         ContentStreamId $contentStreamId,
@@ -100,7 +103,7 @@ trait TetheredNodeInternals
                             $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization),
                             $parentNodeAggregate->nodeAggregateId,
                             $tetheredNodeName,
-                            SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
+                            SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter()),
                             NodeAggregateClassification::CLASSIFICATION_TETHERED,
                         );
                         $creationOriginDimensionSpacePoint = $rootGeneralizationOrigin;
@@ -117,7 +120,7 @@ trait TetheredNodeInternals
                         $parentNodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
                         $parentNodeAggregate->nodeAggregateId,
                         $tetheredNodeName,
-                        SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
+                        SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter()),
                         NodeAggregateClassification::CLASSIFICATION_TETHERED,
                     )
                 );

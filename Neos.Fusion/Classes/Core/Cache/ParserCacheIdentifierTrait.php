@@ -33,9 +33,10 @@ trait ParserCacheIdentifierTrait
      *  - /Users/marc/Code/neos-project/Packages/Neos
      *
      * its crucial that the path
-     *  - is absolute
+     *  - is absolute (starting with /)
      *  - the path separator is in unix style: forward-slash /
      *  - doesn't contain directory traversal /../ or /./
+     *  - is not a symlink
      *
      * to be absolutely sure the path matches the criteria, {@see realpath} can be used.
      *

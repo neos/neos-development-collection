@@ -303,6 +303,29 @@ trait ProjectedNodeTrait
     }
 
     /**
+     * @Then /^I expect this node to have the following serialized properties:$/
+     * @param TableNode $expectedPropertyTypes
+     */
+    public function iExpectThisNodeToHaveTheFollowingSerializedPropertyTypes(TableNode $expectedPropertyTypes): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedPropertyTypes) {
+            $serialized = $currentNode->properties->serialized();
+            foreach ($expectedPropertyTypes->getHash() as $row) {
+                Assert::assertTrue($serialized->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
+                Assert::assertEquals($row['Type'], $serialized->getProperty($row['Key'])->type, 'Serialized node property ' . $row['Key'] . ' does not match expected type.');
+                if (str_starts_with($row['Value'], 'NOT:')) {
+                    // special case. assert NOT equals:
+                    $value = json_decode(mb_substr($row['Value'], 4), true, 512, JSON_THROW_ON_ERROR);
+                    Assert::assertNotEquals($value, $serialized->getProperty($row['Key'])->value, 'Serialized node property ' . $row['Key'] . ' does match value it should not.');
+                } else {
+                    $value = json_decode($row['Value'], true, 512, JSON_THROW_ON_ERROR);
+                    Assert::assertEquals($value, $serialized->getProperty($row['Key'])->value, 'Serialized node property ' . $row['Key'] . ' does not match expected value.');
+                }
+            }
+        });
+    }
+
+    /**
      * @Then /^I expect this node to have the following properties:$/
      * @param TableNode $expectedProperties
      */
@@ -315,6 +338,10 @@ trait ProjectedNodeTrait
                 $expectedPropertyValue = $this->resolvePropertyValue($row['Value']);
                 $actualPropertyValue = $properties->offsetGet($row['Key']);
                 if ($row['Value'] === 'Date:now') {
+                    // special case as It's hard to work with relative times. We only handle `now` right now (pun intended) but this or similar handling would also be required for `yesterday` or `after rep tv`
+                    // as It's hard to check otherwise, we have to verify that `now` was not actually saved as string `now` but as timestamp when it was created
+                    $serializedValue = $currentNode->properties->serialized()->getProperty($row['Key'])?->value;
+                    Assert::assertNotEquals('now', $serializedValue, 'Relative DateTime must be serialized as absolute time in the events/serialized-properties');
                     // we accept 10s offset for the projector to be fine
                     Assert::assertLessThan($actualPropertyValue, $expectedPropertyValue->sub(new \DateInterval('PT10S')), 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($expectedPropertyValue) . '; Actual: ' . json_encode($actualPropertyValue));
                 } else {
