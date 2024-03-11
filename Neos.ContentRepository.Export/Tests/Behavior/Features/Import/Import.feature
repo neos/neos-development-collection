@@ -69,6 +69,8 @@ Feature: As a user of the CR I want to export the event stream
     And I import the events.jsonl
 
     And I expect a MigrationError with the message
-      | Failed to read events. ContentStreamWasCreated is not expected in imported event stream. |
+      """
+      Failed to read events. ContentStreamWasCreated is not expected in imported event stream.
+      """
 
     Then I expect exactly 0 events to be published on stream with prefix "ContentStream:cs-imported-identifier"
