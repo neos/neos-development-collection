@@ -14,9 +14,9 @@
         <source>URL path segment</source>
         <target state="translated">Сегмент URL путање</target>
       </trans-unit>
-      <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
+      <trans-unit id="properties.hiddenInMenu" xml:space="preserve">
         <source>Hide in menus</source>
-        <target state="translated">Сакривено у менију</target>
+        <target state="translated">Сакривено у менију</target></trans-unit>
       </trans-unit>
     </body>
   </file>

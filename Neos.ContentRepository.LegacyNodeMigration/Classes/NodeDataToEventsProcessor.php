@@ -378,7 +378,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
         // hiddenInIndex is stored as separate column in the nodedata table, but we need it as (internal) property
         if ($nodeDataRow['hiddeninindex']) {
-            $properties['_hiddenInIndex'] = true;
+            $properties['hiddenInMenu'] = true;
         }
 
         if ($nodeType->isOfType(NodeTypeName::fromString('Neos.TimeableNodeVisibility:Timeable'))) {

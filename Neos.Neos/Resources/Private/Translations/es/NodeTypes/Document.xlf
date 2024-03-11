@@ -14,9 +14,9 @@
         <source>URL path segment</source>
         <target state="translated">Segmento de ruta de URL</target>
       </trans-unit>
-      <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
-        <source>Hide in menus</source>
-        <target state="translated">Ocultar en los menús</target>
+      <trans-unit id="properties.hiddenInMenu" xml:space="preserve">
+				<source>Hide in menus</source>
+			<target state="translated">Ocultar en los menús</target></trans-unit>
       </trans-unit>
     </body>
   </file>
