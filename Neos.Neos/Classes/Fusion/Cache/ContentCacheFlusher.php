@@ -39,7 +39,6 @@ use Psr\Log\LoggerInterface;
  */
 class ContentCacheFlusher
 {
-
     #[Flow\InjectConfiguration(path: "fusion.contentCacheDebugMode")]
     protected bool $debugMode;
 
