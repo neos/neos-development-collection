@@ -16,6 +16,26 @@ use Neos\Fusion;
 /**
  * Contract for a Fusion DSL parser
  *
+ * A dsl can be registered like:
+ *
+ *     Neos:
+ *       Fusion:
+ *         dsl:
+ *           afx: Neos\Fusion\Afx\Dsl\AfxDslImplementation
+ *
+ * And will be available via its identifier in Fusion:
+ *
+ *     root = afx`
+ *         <div>Hello World</div>
+ *     `
+ * The returned string must be a valid fusion string,
+ * which is parsed again:
+ *
+ *     Neos.Fusion:Tag {
+ *         tagName = 'div'
+ *         content = 'Hello World'
+ *     }
+ *
  * @api
  */
 interface DslInterface
@@ -27,5 +47,5 @@ interface DslInterface
      * @return string
      * @throws Fusion\Exception
      */
-    public function transpile($code);
+    public function transpile(string $code): string;
 }

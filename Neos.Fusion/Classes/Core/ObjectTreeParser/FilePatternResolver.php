@@ -19,6 +19,7 @@ use Neos\Utility\Files;
 /**
  * Resolve files after a pattern.
  * The returned files will not be checked for recursion and for readability.
+ * @internal
  */
 class FilePatternResolver
 {

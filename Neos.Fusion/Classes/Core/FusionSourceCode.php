@@ -13,11 +13,19 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
 
+/**
+ * @internal The Fusion parsing is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
+ */
 final class FusionSourceCode
 {
-    protected function __construct(
+    /**
+     * @Flow\Autowiring(false)
+     */
+    private function __construct(
         private ?string $filePath,
         private string|\Closure $sourceCodeOrFactory,
     ) {

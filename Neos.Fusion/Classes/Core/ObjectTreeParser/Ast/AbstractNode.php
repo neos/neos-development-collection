@@ -17,8 +17,9 @@ use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 use Neos\Flow\Annotations as Flow;
 
+/** @internal */
 #[Flow\Proxy(false)]
-abstract class AbstractNode
+abstract readonly class AbstractNode
 {
     abstract public function visit(AstNodeVisitorInterface $visitor, mixed ...$args);
 }
