@@ -18,25 +18,30 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 
 /**
- * The context parameters value object
+ * The visibility constraints define a context in which the content graph is accessed.
+ *
+ * For example: In the `frontend` context, nodes with the `disabled` tag are excluded. In the `backend` context {@see self::withoutRestrictions()} they are included
  *
  * @api
  */
 final readonly class VisibilityConstraints implements \JsonSerializable
 {
+    /**
+     * @param SubtreeTags $tagConstraints A set of {@see SubtreeTag} instances that will be _excluded_ from the results of any content graph query
+     */
     private function __construct(
-        public SubtreeTags $excludedTags,
+        public SubtreeTags $tagConstraints,
     ) {
     }
 
     public function isDisabledContentShown(): bool
     {
-        return $this->excludedTags->contain(SubtreeTag::fromString('disabled'));
+        return $this->tagConstraints->contain(SubtreeTag::fromString('disabled'));
     }
 
     public function getHash(): string
     {
-        return md5(implode('|', $this->excludedTags->toStringArray()));
+        return md5(implode('|', $this->tagConstraints->toStringArray()));
     }
 
     public static function withoutRestrictions(): self
