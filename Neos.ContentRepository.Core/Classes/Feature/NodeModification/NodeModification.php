@@ -117,7 +117,7 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
-                    $command->contentStreamId,
+                    $contentStreamId,
                     $command->nodeAggregateId,
                     $affectedOrigin,
                     $nodeAggregate->getCoverageByOccupant($affectedOrigin),

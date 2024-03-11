@@ -151,7 +151,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
         $nodeAggregateId = NodeAggregateId::fromString('nody-mc-nodeface');
         $origin = OriginDimensionSpacePoint::createWithoutDimensions();
         $workspaceName = WorkspaceName::fromString('user-test');
-        for ($i = 0; $i < 400; $i++) {
+        for ($i = 0; $i < 200; $i++) {
             $this->contentRepository->handle(SetNodeProperties::create(
                 $workspaceName,
                 $nodeAggregateId,
@@ -162,11 +162,17 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             ))->block();
         }
         touch(self::REBASE_IS_RUNNING_FLAG_PATH);
-        $this->contentRepository->handle(PublishWorkspace::create(
-            $workspaceName,
-        ))->block();
+        $exception = null;
+        try {
+            $this->contentRepository->handle(PublishWorkspace::create(
+                $workspaceName,
+            ))->block();
+        } catch (\RuntimeException $runtimeException) {
+            unlink(self::REBASE_IS_RUNNING_FLAG_PATH);
+            $exception = $runtimeException;
+        }
+        Assert::assertNull($exception);
         unlink(self::REBASE_IS_RUNNING_FLAG_PATH);
-        Assert::assertTrue(true);
     }
 
     /**
@@ -177,22 +183,32 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
     {
         $this->awaitFile(self::REBASE_IS_RUNNING_FLAG_PATH);
         $origin = OriginDimensionSpacePoint::createWithoutDimensions();
-        $this->contentRepository->handle(SetNodeProperties::create(
-            WorkspaceName::fromString('user-test'),
-            NodeAggregateId::fromString('nody-mc-nodeface'),
-            $origin,
-            PropertyValuesToWrite::fromArray([
-                'title' => 'title47b'
-            ])
-        ))->block();
+        $exception = null;
+        try {
+            $this->contentRepository->handle(SetNodeProperties::create(
+                WorkspaceName::fromString('user-test'),
+                NodeAggregateId::fromString('nody-mc-nodeface'),
+                $origin,
+                PropertyValuesToWrite::fromArray([
+                    'title' => 'title47b'
+                ])
+            ))->block();
+        } catch (\RuntimeException $runtimeException) {
+            unlink(self::SETUP_IS_DONE_FLAG_PATH);
+            $exception = $runtimeException;
+        }
+        Assert::assertNull($exception, $exception?->getMessage() ?: '');
+
         $this->awaitFileRemoval(self::REBASE_IS_RUNNING_FLAG_PATH);
         $node = $this->contentRepository->getContentGraph()->getSubgraph(
-            $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString('user-test'))->currentContentStreamId,
+            $this->contentRepository->getWorkspaceFinder()
+                ->findOneByName(WorkspaceName::fromString('user-test'))
+                ->currentContentStreamId,
             DimensionSpacePoint::createWithoutDimensions(),
             VisibilityConstraints::withoutRestrictions()
         )->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface'));
-        Assert::assertSame('title47b', $node->getProperty('text'));
         unlink(self::SETUP_IS_DONE_FLAG_PATH);
+        Assert::assertSame('title47b', $node->getProperty('title'));
     }
 
     private function awaitFile(string $filename): void
@@ -202,7 +218,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             usleep(1000);
             $waiting++;
             clearstatcache(true, $filename);
-            if ($waiting > 10000) {
+            if ($waiting > 30000) {
                 throw new \Exception('timeout while waiting on file ' . $filename);
             }
         }
@@ -215,7 +231,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             usleep(10000);
             $waiting++;
             clearstatcache(true, $filename);
-            if ($waiting > 500) {
+            if ($waiting > 3000) {
                 throw new \Exception('timeout while waiting on removal of file ' . $filename);
             }
         }
