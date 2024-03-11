@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -55,10 +56,8 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                 WorkspaceName $workspaceNameForWriting,
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
-                $properties = $node->properties->serialized();
-                if ($properties->propertyExists($this->propertyName)) {
-                    $serializedPropertyValue = $properties->getProperty($this->propertyName);
-                    assert($serializedPropertyValue !== null);
+                $serializedPropertyValue = $node->properties->serialized()->getProperty($this->propertyName);
+                if ($serializedPropertyValue !== null) {
                     $propertyValue = $serializedPropertyValue->value;
                     if (!is_string($propertyValue)) {
                         throw new \Exception(
@@ -73,11 +72,12 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
-                                $this->propertyName => new SerializedPropertyValue(
+                                $this->propertyName => SerializedPropertyValue::create(
                                     $newValue,
                                     $serializedPropertyValue->type
                                 )
                             ]),
+                            PropertyNames::createEmpty()
                         )
                     );
                 }

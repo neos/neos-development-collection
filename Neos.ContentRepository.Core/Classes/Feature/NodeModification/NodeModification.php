@@ -17,6 +17,8 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -64,9 +66,10 @@ trait NodeModification
             $command->nodeAggregateId,
             $command->originDimensionSpacePoint,
             $this->getPropertyConverter()->serializePropertyValues(
-                $command->propertyValues,
+                $command->propertyValues->withoutUnsets(),
                 $this->requireNodeType($nodeTypeName)
             ),
+            $command->propertyValues->getPropertiesToUnset()
         );
 
         return $this->handleSetSerializedNodeProperties($lowLevelCommand, $contentRepository);
@@ -85,11 +88,10 @@ trait NodeModification
         );
         $nodeType = $this->requireNodeType($nodeAggregate->nodeTypeName);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
-        $propertyValuesByScope = $command->propertyValues->splitByScope($nodeType);
         $events = [];
+        $propertyValuesByScope = $command->propertyValues->splitByScope($nodeType);
         foreach ($propertyValuesByScope as $scopeValue => $propertyValues) {
-            $scope = PropertyScope::from($scopeValue);
-            $affectedOrigins = $scope->resolveAffectedOrigins(
+            $affectedOrigins = PropertyScope::from($scopeValue)->resolveAffectedOrigins(
                 $command->originDimensionSpacePoint,
                 $nodeAggregate,
                 $this->interDimensionalVariationGraph
@@ -101,9 +103,30 @@ trait NodeModification
                     $affectedOrigin,
                     $nodeAggregate->getCoverageByOccupant($affectedOrigin),
                     $propertyValues,
+                    PropertyNames::createEmpty()
                 );
             }
         }
+
+        $propertiesToUnsetByScope = $this->splitPropertiesToUnsetByScope($command->propertiesToUnset, $nodeType);
+        foreach ($propertiesToUnsetByScope as $scopeValue => $propertyNamesToUnset) {
+            $affectedOrigins = PropertyScope::from($scopeValue)->resolveAffectedOrigins(
+                $command->originDimensionSpacePoint,
+                $nodeAggregate,
+                $this->interDimensionalVariationGraph
+            );
+            foreach ($affectedOrigins as $affectedOrigin) {
+                $events[] = new NodePropertiesWereSet(
+                    $command->contentStreamId,
+                    $command->nodeAggregateId,
+                    $affectedOrigin,
+                    $nodeAggregate->getCoverageByOccupant($affectedOrigin),
+                    SerializedPropertyValues::createEmpty(),
+                    $propertyNamesToUnset,
+                );
+            }
+        }
+
         $events = $this->mergeSplitEvents($events);
 
         return new EventsToPublish(
@@ -114,6 +137,23 @@ trait NodeModification
                 Events::fromArray($events)
             ),
             ExpectedVersion::ANY()
+        );
+    }
+
+    /**
+     * @return array<string,PropertyNames>
+     */
+    private function splitPropertiesToUnsetByScope(PropertyNames $propertiesToUnset, NodeType $nodeType): array
+    {
+        $propertiesToUnsetByScope = [];
+        foreach ($propertiesToUnset as $propertyName) {
+            $scope = PropertyScope::tryFromDeclaration($nodeType, $propertyName);
+            $propertiesToUnsetByScope[$scope->value][] = $propertyName;
+        }
+
+        return array_map(
+            fn(array $propertyValues): PropertyNames => PropertyNames::fromArray($propertyValues),
+            $propertiesToUnsetByScope
         );
     }
 

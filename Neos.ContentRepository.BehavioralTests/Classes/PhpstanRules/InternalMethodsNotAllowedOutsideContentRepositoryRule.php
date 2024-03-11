@@ -40,6 +40,8 @@ class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
                 || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\Export')
                 || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\LegacyNodeMigration')
                 || str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\StructureAdjustment')
+                // We don't limit ourselves to the @api in the EventMigrationService and thus violate our own internal restrictions. But this is part of the deal.
+                || str_ends_with($scope->getFile(), 'Neos.ContentRepositoryRegistry/Classes/Service/EventMigrationService.php')
             )
         ) {
             // todo this rule was intended to enforce the internal annotations from the Neos\ContentRepository\Core from all call sites.

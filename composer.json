@@ -39,7 +39,7 @@
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "doctrine/common": "^2.7 || ^3.0",
-        "enshrined/svg-sanitize": "^0.16.0",
+        "enshrined/svg-sanitize": "^0.17.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
         "neos/party": "~7.0.3",

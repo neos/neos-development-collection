@@ -1110,6 +1110,10 @@
         <source>Can't publish a single node in a new page</source>
         <target state="translated">No se puede publicar un solo nodo en una página nueva</target>
       </trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.setupMessage" xml:space="preserve">
+        <source>You might want to import or create a new site in the setup.</source>
+        <target state="translated">Es posible que desee importar o crear un nuevo sitio en la configuración.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

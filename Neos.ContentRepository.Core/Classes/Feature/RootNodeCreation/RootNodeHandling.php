@@ -201,7 +201,7 @@ trait RootNodeHandling
                 : NodePath::fromString($nodeName->value);
             $childNodeAggregateId = $nodeAggregateIdsByNodePath->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType);
+            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
 
             $events[] = $this->createTetheredWithNodeForRoot(
                 $contentStreamId,

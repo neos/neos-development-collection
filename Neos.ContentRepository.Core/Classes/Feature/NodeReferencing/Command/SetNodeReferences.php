@@ -12,7 +12,12 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * Create a named reference from source to destination node
+ * Create a named reference from source to one or multiple destination nodes.
+ *
+ * The previously set references will be replaced by this command and not merged.
+ *
+ * Internally, this object is converted into a {@see SetSerializedNodeReferences} command, which is
+ * then processed and stored.
  *
  * @api commands are the write-API of the ContentRepository
  */

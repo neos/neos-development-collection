@@ -70,10 +70,6 @@ trait NodeCreation
         ContentRepository $contentRepository
     ): EventsToPublish {
         $this->requireNodeType($command->nodeTypeName);
-        $this->validateProperties(
-            $this->deserializeDefaultProperties($command->nodeTypeName),
-            $command->nodeTypeName
-        );
         $this->validateProperties($command->initialPropertyValues, $command->nodeTypeName);
 
         $lowLevelCommand = CreateNodeAggregateWithNodeAndSerializedProperties::create(
@@ -85,7 +81,7 @@ trait NodeCreation
             $command->succeedingSiblingNodeAggregateId,
             $command->nodeName,
             $this->getPropertyConverter()->serializePropertyValues(
-                $command->initialPropertyValues,
+                $command->initialPropertyValues->withoutUnsets(),
                 $this->requireNodeType($command->nodeTypeName)
             )
         );
@@ -94,25 +90,6 @@ trait NodeCreation
         }
 
         return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand, $contentRepository);
-    }
-
-    private function deserializeDefaultProperties(NodeTypeName $nodeTypeName): PropertyValuesToWrite
-    {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        $defaultValues = [];
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-            $propertyType = PropertyType::fromNodeTypeDeclaration(
-                $nodeType->getPropertyType($propertyName),
-                PropertyName::fromString($propertyName),
-                $nodeTypeName
-            );
-
-            $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
-                new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
-            );
-        }
-
-        return PropertyValuesToWrite::fromArray($defaultValues);
     }
 
     private function validateProperties(?PropertyValuesToWrite $propertyValues, NodeTypeName $nodeTypeName): void
@@ -137,7 +114,7 @@ trait NodeCreation
             if (!$propertyType->isMatchedBy($propertyValue)) {
                 throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
                     PropertyName::fromString($propertyName),
-                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
+                    get_debug_type($propertyValues),
                     $propertyType->value
                 );
             }
@@ -223,7 +200,7 @@ trait NodeCreation
             );
         }
 
-        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType);
+        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->getPropertyConverter());
         $initialPropertyValues = $defaultPropertyValues->merge($command->initialPropertyValues);
 
         $events = [
@@ -297,7 +274,7 @@ trait NodeCreation
                 : NodePath::fromString($nodeName->value);
             $childNodeAggregateId = $nodeAggregateIds->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType);
+            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
 
             $events[] = $this->createTetheredWithNode(
                 $command,

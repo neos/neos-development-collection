@@ -74,10 +74,14 @@ class UserService
         if (!$currentUser instanceof User) {
             return null;
         }
+        $currentAccount = $this->securityContext->getAccount();
+        if ($currentAccount === null) {
+            return null;
+        }
 
         $username = $this->userDomainService->getUsername(
             $currentUser,
-            $this->securityContext->getAccount()->getAuthenticationProviderName()
+            $currentAccount->getAuthenticationProviderName()
         );
         return ($username === null ? null : UserUtility::getPersonalWorkspaceNameForUsername($username));
     }

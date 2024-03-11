@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
@@ -77,9 +78,6 @@ class PropertyAdjustment
 
                 // detect missing default values
                 foreach ($nodeType->getDefaultValuesForProperties() as $propertyKey => $defaultValue) {
-                    if ($defaultValue instanceof \DateTimeInterface) {
-                        $defaultValue = json_encode($defaultValue);
-                    }
                     if (!array_key_exists($propertyKey, $propertyKeysInNode)) {
                         yield StructureAdjustment::createForNode(
                             $node,
@@ -95,24 +93,24 @@ class PropertyAdjustment
 
     private function removeProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey): EventsToPublish
     {
-        $serializedPropertyValues = SerializedPropertyValues::fromArray([$propertyKey => null]);
-        return $this->publishNodePropertiesWereSet($nodeAggregate, $node, $serializedPropertyValues);
+        return $this->publishNodePropertiesWereSet($nodeAggregate, $node, SerializedPropertyValues::createEmpty(), PropertyNames::fromArray([$propertyKey]));
     }
 
     private function addProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey, mixed $defaultValue): EventsToPublish
     {
         $propertyType = $node->nodeType?->getPropertyType($propertyKey) ?? 'string';
         $serializedPropertyValues = SerializedPropertyValues::fromArray([
-            $propertyKey => new SerializedPropertyValue($defaultValue, $propertyType)
+            $propertyKey => SerializedPropertyValue::create($defaultValue, $propertyType)
         ]);
 
-        return $this->publishNodePropertiesWereSet($nodeAggregate, $node, $serializedPropertyValues);
+        return $this->publishNodePropertiesWereSet($nodeAggregate, $node, $serializedPropertyValues, PropertyNames::createEmpty());
     }
 
     private function publishNodePropertiesWereSet(
         NodeAggregate $nodeAggregate,
         Node $node,
-        SerializedPropertyValues $serializedPropertyValues
+        SerializedPropertyValues $serializedPropertyValues,
+        PropertyNames $propertyNames
     ): EventsToPublish {
         $events = Events::with(
             new NodePropertiesWereSet(
@@ -121,6 +119,7 @@ class PropertyAdjustment
                 $node->originDimensionSpacePoint,
                 $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
                 $serializedPropertyValues,
+                $propertyNames
             )
         );
 

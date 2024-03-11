@@ -52,7 +52,7 @@ Feature: Filter - Property Value
       | initialPropertyValues     | {"text": "value2"}                        |
     And the graph projection is fully up to date
 
-      # no node name (has text value not set)
+      # no node name (has text value not set, and null will be ignored as unset)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
       | nodeAggregateId           | "na-null-value"                           |
@@ -102,9 +102,7 @@ Feature: Filter - Property Value
       | Key  | Value    |
       | text | "value2" |
     Then I expect node aggregate identifier "na-null-value" to lead to node cs-identifier;na-null-value;{}
-    And I expect this node to have the following properties:
-      | Key  | Value |
-      | text | ""    |
+    And I expect this node to have no properties
 
     Then I expect node aggregate identifier "na-no-text" to lead to node cs-identifier;na-no-text;{}
     And I expect this node to not have the property "text"
@@ -121,9 +119,7 @@ Feature: Filter - Property Value
       | Key  | Value    |
       | text | "value2" |
     Then I expect node aggregate identifier "na-null-value" to lead to node migration-cs;na-null-value;{}
-    And I expect this node to have the following properties:
-      | Key  | Value |
-      | text | ""    |
+    And I expect this node to have no properties
 
     Then I expect node aggregate identifier "na-no-text" to lead to node migration-cs;na-no-text;{}
     And I expect this node to not have the property "text"
