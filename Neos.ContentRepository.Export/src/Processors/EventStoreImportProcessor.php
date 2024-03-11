@@ -11,6 +11,8 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -107,9 +109,8 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
                     Event\EventMetadata::fromArray($event->metadata)
                 )
             );
-            if ($domainEvent instanceof ContentStreamWasCreated) {
-                $this->dispatch(Severity::ERROR, 'Skipping explicit content stream creation event. The export format should not contain "ContentStreamWasCreated".');
-                continue;
+            if (in_array($domainEvent::class, [ContentStreamWasCreated::class, ContentStreamWasForked::class, ContentStreamWasRemoved::class], true)) {
+                return ProcessorResult::error(sprintf('Failed to read events. %s is not expected in imported event stream.', $event->type));
             }
             $domainEvent = DecoratedEvent::create($domainEvent, eventId: EventId::fromString($event->identifier), metadata: $event->metadata);
             $domainEvents[] = $this->normalizeEvent($domainEvent);

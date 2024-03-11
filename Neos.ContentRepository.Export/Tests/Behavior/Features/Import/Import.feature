@@ -11,7 +11,7 @@ Feature: As a user of the CR I want to export the event stream
     And using identifier "default", I define a content repository
     And I am in content repository "default"
 
-  Scenario: Import the event stream
+  Scenario: Import the event stream into a specific content stream
     Then I expect exactly 0 events to be published on stream with prefix "ContentStream:cs-identifier"
     Given using the following events.jsonl:
       """
@@ -34,7 +34,7 @@ Feature: As a user of the CR I want to export the event stream
       | nodeAggregateId             | "acme-site"                   |
       | nodeTypeName                | "Vendor.Site:HomePage"        |
 
-  Scenario: Import the event stream into a specific content stream
+  Scenario: Import the event stream
     Then I expect exactly 0 events to be published on stream with prefix "ContentStream:cs-imported-identifier"
     Given using the following events.jsonl:
       """
