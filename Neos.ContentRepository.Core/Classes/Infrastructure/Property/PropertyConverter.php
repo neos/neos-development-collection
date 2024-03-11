@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
@@ -45,9 +44,11 @@ final class PropertyConverter
 
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
-                $nodeType->getPropertyType($propertyName),
-                PropertyName::fromString($propertyName),
-                $nodeType->name,
+                PropertyType::fromNodeTypeDeclaration(
+                    $nodeType->getPropertyType($propertyName),
+                    PropertyName::fromString($propertyName),
+                    $nodeType->name
+                ),
                 $propertyValue
             );
         }
@@ -55,22 +56,14 @@ final class PropertyConverter
         return SerializedPropertyValues::fromArray($serializedPropertyValues);
     }
 
-    private function serializePropertyValue(
-        string $declaredType,
-        PropertyName $propertyName,
-        NodeTypeName $nodeTypeName,
+    public function serializePropertyValue(
+        PropertyType $propertyType,
         mixed $propertyValue
     ): SerializedPropertyValue {
-        $propertyType = PropertyType::fromNodeTypeDeclaration(
-            $declaredType,
-            $propertyName,
-            $nodeTypeName
-        );
-
         if ($propertyValue === null) {
             // should not happen, as we must separate regular properties and unsets beforehand!
             throw new \RuntimeException(
-                sprintf('Property %s with value "null" cannot be serialized as unsets are treated differently.', $propertyName->value),
+                sprintf('Property type %s with value "null" cannot be serialized as unsets are treated differently.', $propertyType->value),
                 1707578784
             );
         }
@@ -80,7 +73,7 @@ final class PropertyConverter
         } catch (NotEncodableValueException | NotNormalizableValueException $e) {
             // todo add custom exception class
             throw new \RuntimeException(
-                sprintf('There was a problem serializing property %s with value "%s".', $propertyName->value, get_debug_type($propertyValue)),
+                sprintf('There was a problem serializing property type %s with value "%s".', $propertyType->value, get_debug_type($propertyValue)),
                 1594842314,
                 $e
             );
@@ -88,14 +81,14 @@ final class PropertyConverter
 
         if ($serializedPropertyValue === null) {
             throw new \RuntimeException(
-                sprintf('While serializing property %s with value "%s" the serializer returned not allowed value "null".', $propertyName->value, get_debug_type($propertyValue)),
+                sprintf('While serializing property type %s with value "%s" the serializer returned not allowed value "null".', $propertyType->value, get_debug_type($propertyValue)),
                 1707578784
             );
         }
 
         return SerializedPropertyValue::create(
             $serializedPropertyValue,
-            $propertyType->value
+            $propertyType->getSerializationType()
         );
     }
 
@@ -110,9 +103,11 @@ final class PropertyConverter
             $declaredType = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]['type'];
 
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
-                $declaredType,
-                PropertyName::fromString($propertyName),
-                $nodeType->name,
+                PropertyType::fromNodeTypeDeclaration(
+                    $declaredType,
+                    PropertyName::fromString($propertyName),
+                    $nodeType->name,
+                ),
                 $propertyValue
             );
         }
@@ -122,9 +117,17 @@ final class PropertyConverter
 
     public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue): mixed
     {
-        return $this->serializer->denormalize(
-            $serializedPropertyValue->value,
-            $serializedPropertyValue->type
-        );
+        try {
+            return $this->serializer->denormalize(
+                $serializedPropertyValue->value,
+                $serializedPropertyValue->type
+            );
+        } catch (NotNormalizableValueException $e) {
+            throw new \RuntimeException(
+                sprintf('TODO: There was a problem deserializing %s', json_encode($serializedPropertyValue)),
+                1708416598,
+                $e
+            );
+        }
     }
 }

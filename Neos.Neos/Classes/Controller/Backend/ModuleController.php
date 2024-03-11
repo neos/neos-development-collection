@@ -114,7 +114,8 @@ class ModuleController extends ActionController
             }
             return $moduleResponse->getContent();
         } else {
-            $user = $this->partyService->getAssignedPartyOfAccount($this->securityContext->getAccount());
+            $authenticatedAccount = $this->securityContext->getAccount();
+            $user = $authenticatedAccount === null ? null : $this->partyService->getAssignedPartyOfAccount($authenticatedAccount);
 
             $sites = $this->menuHelper->buildSiteList($this->controllerContext);
 
