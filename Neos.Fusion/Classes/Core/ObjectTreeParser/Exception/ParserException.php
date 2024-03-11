@@ -18,7 +18,7 @@ use Neos\Fusion\Exception;
 
 /**
  * 'Fluent' exception for the Fusion Parser.
- * @internal although ${exception.headingMessagePart} ${exception.asciiPreviewMessagePart} and ${exception.helperMessagePart} are used outside for custom error display
+ * @internal
  */
 class ParserException extends Exception
 {
