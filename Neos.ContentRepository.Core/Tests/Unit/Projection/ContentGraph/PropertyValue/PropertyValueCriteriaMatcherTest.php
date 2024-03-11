@@ -33,9 +33,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
     public function setUp(): void
     {
         $this->serializedPropertyValues = SerializedPropertyValues::fromArray([
-            'nullProperty' => new SerializedPropertyValue(null, 'null'),
-            'stringProperty' => new SerializedPropertyValue('foo', 'string'),
-            'integerProperty' => new SerializedPropertyValue(123, 'int')
+            'stringProperty' => SerializedPropertyValue::create('foo', 'string'),
+            'integerProperty' => SerializedPropertyValue::create(123, 'int')
         ]);
 
         $this->propertyCollection = new PropertyCollection(
