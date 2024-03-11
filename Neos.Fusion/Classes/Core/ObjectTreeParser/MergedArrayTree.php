@@ -16,6 +16,9 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
 use Neos\Fusion;
 use Neos\Utility\Arrays;
 
+/**
+ * @internal
+ */
 class MergedArrayTree
 {
     public function __construct(

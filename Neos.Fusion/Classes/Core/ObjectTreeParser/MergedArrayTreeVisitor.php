@@ -39,6 +39,7 @@ use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 
 /**
  * Builds the merged array tree for the Fusion runtime
+ * @internal
  */
 class MergedArrayTreeVisitor implements AstNodeVisitorInterface
 {

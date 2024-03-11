@@ -16,8 +16,9 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
+/** @internal */
 #[Flow\Proxy(false)]
-class ValueUnset extends AbstractOperation
+final readonly class ValueUnset extends AbstractOperation
 {
     public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
