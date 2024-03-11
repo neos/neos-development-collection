@@ -39,17 +39,15 @@ use Psr\Log\LoggerInterface;
  */
 class ContentCacheFlusher
 {
-    /**
-     * @Flow\Inject
-     * @var ContentCache
-     */
-    protected $contentCache;
+    #[Flow\InjectConfiguration(path: "fusion.contentCacheDebugMode")]
+    protected bool $debugMode;
 
-    /**
-     * @Flow\Inject
-     * @var LoggerInterface
-     */
-    protected $systemLogger;
+
+    public function __construct(
+        protected ContentCache $contentCache,
+        protected LoggerInterface $systemLogger,
+    ) {
+    }
 
     /**
      * Main entry point to *directly* flush the caches of a given NodeAggregate
@@ -231,15 +229,20 @@ class ContentCacheFlusher
      */
     protected function flushTags(array $tagsToFlush): void
     {
-        foreach ($tagsToFlush as $tag => $logMessage) {
-            $affectedEntries = $this->contentCache->flushByTag($tag);
-            if ($affectedEntries > 0) {
-                $this->systemLogger->debug(sprintf(
-                    'Content cache: Removed %s entries %s',
-                    $affectedEntries,
-                    $logMessage
-                ));
+        if ($this->debugMode) {
+            foreach ($tagsToFlush as $tag => $logMessage) {
+                $affectedEntries = $this->contentCache->flushByTag($tag);
+                if ($affectedEntries > 0) {
+                    $this->systemLogger->debug(sprintf(
+                        'Content cache: Removed %s entries %s',
+                        $affectedEntries,
+                        $logMessage
+                    ));
+                }
             }
+        } else {
+            $affectedEntries = $this->contentCache->flushByTags(array_keys($tagsToFlush));
+            $this->systemLogger->debug(sprintf('Content cache: Removed %s entries', $affectedEntries));
         }
     }
 
