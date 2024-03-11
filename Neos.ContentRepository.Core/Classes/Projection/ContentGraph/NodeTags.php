@@ -30,7 +30,7 @@ use Traversable;
  * @implements \IteratorAggregate<SubtreeTag>
  * @api
  */
-final readonly class NodeSubtreeTags implements \IteratorAggregate, \Countable, \JsonSerializable
+final readonly class NodeTags implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     private function __construct(
         private SubtreeTags $tags,

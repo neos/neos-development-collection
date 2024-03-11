@@ -12,7 +12,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPo
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeSubtreeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
@@ -106,7 +106,7 @@ trait NodeVariation
                             $event->contentStreamId,
                             $uncoveredDimensionSpacePoint
                         ),
-                        NodeSubtreeTags::createEmpty(), // TODO determine subtree tags
+                        NodeTags::createEmpty(), // TODO determine subtree tags
                     );
                     $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->getTableNamePrefix());
                 }

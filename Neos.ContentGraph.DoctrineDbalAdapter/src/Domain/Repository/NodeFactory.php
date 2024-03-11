@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeSubtreeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -322,7 +322,7 @@ final class NodeFactory
         }
     }
 
-    public static function extractSubtreeTagsWithInheritedFromJson(string $subtreeTagsJson): NodeSubtreeTags
+    public static function extractSubtreeTagsWithInheritedFromJson(string $subtreeTagsJson): NodeTags
     {
         $explicitTags = [];
         $inheritedTags = [];
@@ -334,7 +334,7 @@ final class NodeFactory
                 $inheritedTags[] = $tagValue;
             }
         }
-        return NodeSubtreeTags::create(
+        return NodeTags::create(
             tags: SubtreeTags::fromStrings(...$explicitTags),
             inheritedTags: SubtreeTags::fromStrings(...$inheritedTags)
         );

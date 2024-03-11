@@ -11,7 +11,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeSubtreeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
@@ -137,16 +137,16 @@ trait SubtreeTagging
 
     private function moveSubtreeTags(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeAggregateId $newParentNodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint): void
     {
-        $nodeSubtreeTags = $this->subtreeTagsForNode($nodeAggregateId, $contentStreamId, $coveredDimensionSpacePoint);
-        $newParentSubtreeTags = $this->subtreeTagsForNode($newParentNodeAggregateId, $contentStreamId, $coveredDimensionSpacePoint);
+        $nodeTags = $this->nodeTagsForNode($nodeAggregateId, $contentStreamId, $coveredDimensionSpacePoint);
+        $newParentSubtreeTags = $this->nodeTagsForNode($newParentNodeAggregateId, $contentStreamId, $coveredDimensionSpacePoint);
         $newSubtreeTags = [];
-        foreach ($nodeSubtreeTags->withoutInherited() as $tag) {
+        foreach ($nodeTags->withoutInherited() as $tag) {
             $newSubtreeTags[$tag->value] = true;
         }
         foreach ($newParentSubtreeTags as $tag) {
             $newSubtreeTags[$tag->value] = null;
         }
-        if ($newSubtreeTags === [] && $nodeSubtreeTags->isEmpty()) {
+        if ($newSubtreeTags === [] && $nodeTags->isEmpty()) {
             return;
         }
         $this->getDatabaseConnection()->executeStatement('
@@ -192,7 +192,7 @@ trait SubtreeTagging
         ]);
     }
 
-    private function subtreeTagsForNode(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): NodeSubtreeTags
+    private function nodeTagsForNode(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): NodeTags
     {
         $subtreeTagsJson = $this->getDatabaseConnection()->fetchOne('
                 SELECT h.subtreetags FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation h
@@ -212,10 +212,10 @@ trait SubtreeTagging
         return NodeFactory::extractSubtreeTagsWithInheritedFromJson($subtreeTagsJson);
     }
 
-    private function subtreeTagsForHierarchyRelation(ContentStreamId $contentStreamId, NodeRelationAnchorPoint $parentNodeAnchorPoint, DimensionSpacePoint $dimensionSpacePoint): NodeSubtreeTags
+    private function subtreeTagsForHierarchyRelation(ContentStreamId $contentStreamId, NodeRelationAnchorPoint $parentNodeAnchorPoint, DimensionSpacePoint $dimensionSpacePoint): NodeTags
     {
         if ($parentNodeAnchorPoint->equals(NodeRelationAnchorPoint::forRootEdge())) {
-            return NodeSubtreeTags::createEmpty();
+            return NodeTags::createEmpty();
         }
         $subtreeTagsJson = $this->getDatabaseConnection()->fetchOne('
                 SELECT h.subtreetags FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation h
