@@ -16,17 +16,14 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
+/** @internal */
 #[Flow\Proxy(false)]
-class ObjectStatement extends AbstractStatement
+final readonly class ObjectStatement extends AbstractStatement
 {
     public function __construct(
-        /** @psalm-readonly */
         public ObjectPath $path,
-        /** @psalm-readonly */
         public ValueAssignment|ValueCopy|ValueUnset|null $operation,
-        /** @psalm-readonly */
         public ?Block $block,
-        /** @psalm-readonly */
         public int $cursor
     ) {
     }

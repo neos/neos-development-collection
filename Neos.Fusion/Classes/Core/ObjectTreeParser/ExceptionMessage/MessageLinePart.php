@@ -13,6 +13,9 @@ namespace Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage;
  * source code.
  */
 
+/**
+ * @internal
+ */
 class MessageLinePart
 {
     public function __construct(

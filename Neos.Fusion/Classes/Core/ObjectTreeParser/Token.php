@@ -15,6 +15,9 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
 
 use Neos\Flow\Annotations as Flow;
 
+/**
+ * @internal
+ */
 class Token
 {
     public const EOF = 1;

@@ -16,11 +16,11 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
+/** @internal */
 #[Flow\Proxy(false)]
-class PrototypePathSegment extends AbstractPathSegment
+final readonly class PrototypePathSegment extends AbstractPathSegment
 {
     public function __construct(
-        /** @psalm-readonly */
         public string $identifier
     ) {
     }

@@ -51,7 +51,7 @@ class ImportService implements ContentRepositoryServiceInterface
                 $this->resourceManager,
                 $this->persistenceManager,
             ),
-            'Importing events' => new  EventStoreImportProcessor(
+            'Importing events' => new EventStoreImportProcessor(
                 false,
                 $this->filesystem,
                 $this->eventStore,
