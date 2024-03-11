@@ -195,6 +195,7 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
         return ContentStreamId::fromString($payload['contentStreamId']);
     }
 
+    /** @phpstan-ignore-next-line */
     private function dispatch(Severity $severity, string $message, mixed ...$args): void
     {
         $renderedMessage = sprintf($message, ...$args);

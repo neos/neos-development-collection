@@ -68,20 +68,7 @@ Feature: As a user of the CR I want to export the event stream
       """
     And I import the events.jsonl
 
-    And I expect the following errors to be logged
-      | Skipping explicit content stream creation event. The export format should not contain "ContentStreamWasCreated". |
+    And I expect a MigrationError with the message
+      | Failed to read events. ContentStreamWasCreated is not expected in imported event stream. |
 
-    Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-imported-identifier"
-    And event at index 0 is of type "ContentStreamWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-imported-identifier"      |
-    And event at index 1 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-imported-identifier"      |
-      | nodeAggregateId             | "acme-site-sites"             |
-      | nodeTypeName                | "Neos.Neos:Sites"             |
-    And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-imported-identifier"      |
-      | nodeAggregateId             | "acme-site"                   |
-      | nodeTypeName                | "Vendor.Site:HomePage"        |
+    Then I expect exactly 0 events to be published on stream with prefix "ContentStream:cs-imported-identifier"
