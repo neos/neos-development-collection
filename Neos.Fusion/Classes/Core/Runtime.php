@@ -220,7 +220,6 @@ class Runtime
      * @param string $key
      * @param string $value
      * @return void
-     * @api
      */
     public function addCacheTag($key, $value)
     {
