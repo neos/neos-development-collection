@@ -92,7 +92,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     protected PropertyConverter $propertyConverter;
 
     /**
-     * can be disabled in {@see NodeAggregateCommandHandler::withoutAnchestorNodeTypeConstraintChecks()}
+     * can be disabled in {@see NodeAggregateCommandHandler::withoutAncestorNodeTypeConstraintChecks()}
      */
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
