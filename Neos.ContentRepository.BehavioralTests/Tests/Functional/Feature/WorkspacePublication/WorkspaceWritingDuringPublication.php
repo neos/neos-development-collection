@@ -21,7 +21,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimension;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
@@ -36,7 +35,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
@@ -97,7 +96,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
 
         if (is_file(self::SETUP_IS_RUNNING_FLAG_PATH)) {
-            $this->awaitFileRemoval(self::SETUP_IS_RUNNING_FLAG_PATH);
+            $this->awaitFileRemoval(self::SETUP_IS_RUNNING_FLAG_PATH, 60000); // 60s for CR setup
         }
         if (is_file(self::SETUP_IS_DONE_FLAG_PATH)) {
             $this->contentRepository = $this->contentRepositoryRegistry
@@ -113,7 +112,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             WorkspaceName::forLive(),
             new WorkspaceTitle('Live'),
             new WorkspaceDescription('The live workspace'),
-            ContentStreamId::create()
+            ContentStreamId::fromString('live-cs-id')
         ))->block();
         $contentRepository->handle(CreateRootNodeAggregateWithNode::create(
             WorkspaceName::forLive(),
@@ -135,9 +134,9 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             WorkspaceName::forLive(),
             new WorkspaceTitle('User'),
             new WorkspaceDescription('The user workspace'),
-            ContentStreamId::create()
+            ContentStreamId::fromString('user-cs-id')
         ))->block();
-        for ($i = 0; $i <= 500; $i++) {
+        for ($i = 0; $i <= 1000; $i++) {
             $contentRepository->handle(CreateNodeAggregateWithNode::create(
                 WorkspaceName::forLive(),
                 NodeAggregateId::fromString('nody-mc-nodeface-' . $i),
@@ -148,6 +147,8 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
                     'title' => 'title'
                 ])
             ))->block();
+            // give the database lock some time to recover
+            usleep(5000);
         }
         $this->contentRepository = $contentRepository;
 
@@ -167,12 +168,12 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
         try {
             $this->contentRepository->handle(RebaseWorkspace::create(
                 $workspaceName,
-            ))->block();
+            )->withRebasedContentStreamId(ContentStreamId::fromString('user-test-rebased')))->block();
         } catch (\RuntimeException $runtimeException) {
             $exception = $runtimeException;
         }
-        Assert::assertNull($exception);
         unlink(self::REBASE_IS_RUNNING_FLAG_PATH);
+        Assert::assertNull($exception);
     }
 
     /**
@@ -182,8 +183,11 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
     public function thenConcurrentCommandsAreStillAppliedToIt(): void
     {
         $this->awaitFile(self::REBASE_IS_RUNNING_FLAG_PATH);
+        // give the CR some time to close the content stream
+        usleep(10000);
         $origin = OriginDimensionSpacePoint::createWithoutDimensions();
-        $exception = null;
+        $exceptionIsThrownAsExpected = false;
+        $actualException = 'none';
         try {
             $this->contentRepository->handle(SetNodeProperties::create(
                 WorkspaceName::fromString('user-test'),
@@ -193,24 +197,16 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
                     'title' => 'title47b'
                 ])
             ))->block();
-        } catch (\Exception $concurrencyException) {
-            $exception = $concurrencyException;
-        }
-        if ($exception instanceof \Exception) {
-            Assert::assertInstanceOf(ConcurrencyException::class, $exception);
-        } else {
-            $this->awaitFileRemoval(self::REBASE_IS_RUNNING_FLAG_PATH);
-            $node = $this->contentRepository->getContentGraph()->getSubgraph(
-                $this->contentRepository->getWorkspaceFinder()
-                    ->findOneByName(WorkspaceName::fromString('user-test'))
-                    ->currentContentStreamId,
-                DimensionSpacePoint::createWithoutDimensions(),
-                VisibilityConstraints::withoutRestrictions()
-            )->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface'));
-            Assert::assertSame('title47b', $node->getProperty('title'));
+        } catch (\Exception $thrownException) {
+            $exceptionIsThrownAsExpected
+                = $thrownException instanceof ContentStreamIsClosed || $thrownException instanceof ConcurrencyException;
+            $actualException = get_class($thrownException);
         }
 
         unlink(self::SETUP_IS_DONE_FLAG_PATH);
+        Assert::assertTrue($exceptionIsThrownAsExpected, 'Expected exception of type ' . ContentStreamIsClosed::class
+            . ' or ' . ConcurrencyException::class . ', ' . $actualException . ' thrown'
+        );
     }
 
     private function awaitFile(string $filename): void
@@ -220,20 +216,20 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             usleep(1000);
             $waiting++;
             clearstatcache(true, $filename);
-            if ($waiting > 10000) {
+            if ($waiting > 60000) {
                 throw new \Exception('timeout while waiting on file ' . $filename);
             }
         }
     }
 
-    private function awaitFileRemoval(string $filename): void
+    private function awaitFileRemoval(string $filename, int $maximumCycles = 2000): void
     {
         $waiting = 0;
         while (is_file($filename)) {
             usleep(10000);
             $waiting++;
             clearstatcache(true, $filename);
-            if ($waiting > 1000) {
+            if ($waiting > $maximumCycles) {
                 throw new \Exception('timeout while waiting on removal of file ' . $filename);
             }
         }
