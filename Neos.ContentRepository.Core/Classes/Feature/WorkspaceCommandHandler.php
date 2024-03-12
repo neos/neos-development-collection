@@ -360,6 +360,13 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
+        // 0) close old content stream
+        $contentRepository->handle(
+            CloseContentStream::create(
+                $workspace->currentContentStreamId,
+            )
+        );
+
         // - fork a new content stream
         $rebasedContentStreamId = $command->rebasedContentStreamId;
         $contentRepository->handle(
@@ -505,10 +512,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         // 1) separate commands in two parts - the ones MATCHING the nodes from the command, and the REST
-        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
-            $workspace->currentContentStreamId
-        );
-
         /** @var RebasableToOtherWorkspaceInterface[] $matchingCommands */
         $matchingCommands = [];
         $remainingCommands = [];

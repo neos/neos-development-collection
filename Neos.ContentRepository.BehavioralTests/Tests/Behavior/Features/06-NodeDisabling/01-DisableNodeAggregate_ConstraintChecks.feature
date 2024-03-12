@@ -41,6 +41,16 @@ Feature: Constraint checks on node aggregate disabling
       | nodeVariantSelectionStrategy | "allVariants"                          |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
+  Scenario: Try to disable a node aggregate in a workspace whose content stream is closed
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                                  |
+      | nodeAggregateId              | "sir-david-nodenborough"               |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
+
   Scenario: Try to disable a non-existing node aggregate
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                                  |

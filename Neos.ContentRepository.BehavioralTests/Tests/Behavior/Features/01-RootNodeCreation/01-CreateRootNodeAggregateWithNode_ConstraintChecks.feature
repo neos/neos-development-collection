@@ -13,6 +13,9 @@ Feature: Create a root node aggregate
     'Neos.ContentRepository.Testing:AbstractRoot':
       abstract: true
     'Neos.ContentRepository.Testing:NonRoot': []
+    'Neos.ContentRepository.Testing:OtherRoot':
+      superTypes:
+        'Neos.ContentRepository:Root': true
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -38,6 +41,16 @@ Feature: Create a root node aggregate
       | nodeAggregateId | "nody-mc-nodeface"            |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+
+  Scenario: Try to create a root node aggregate in a closed content stream:
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    And the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key             | Value                                      |
+      | nodeAggregateId | "nody-mc-nodeface"                         |
+      | nodeTypeName    | "Neos.ContentRepository.Testing:OtherRoot" |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
 
   Scenario: Try to create a root node aggregate in a content stream where it is already present:
     When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:

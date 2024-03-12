@@ -54,6 +54,17 @@ Feature: Constraint checks on SetNodeReferences
       | anthony-destinode       | Neos.ContentRepository.Testing:ReferencedNode     | lady-eleonode-rootford        |
       | berta-destinode         | Neos.ContentRepository.Testing:ReferencedNode     | lady-eleonode-rootford        |
 
+  Scenario: Try to reference nodes in a workspace whose content stream is closed
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                           | Value                            |
+      | sourceNodeAggregateId         | "source-nodandaise"              |
+      | referenceName                 | "referenceProperty"              |
+      | references                    | [{"target":"anthony-destinode"}] |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
+
   # checks for contentStreamId
   Scenario: Try to reference nodes in a non-existent content stream
     When the command SetNodeReferences is executed with payload and exceptions are caught:

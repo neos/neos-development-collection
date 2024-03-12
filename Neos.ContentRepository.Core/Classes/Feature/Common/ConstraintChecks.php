@@ -19,6 +19,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
+use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -79,6 +81,12 @@ trait ConstraintChecks
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId?->value . '" does not exist yet.',
                 1521386692
+            );
+        }
+        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) === ContentStreamFinder::STATE_CLOSED) {
+            throw new ContentStreamIsClosed(
+                'Content stream "' . $contentStreamId?->value . '" is closed.',
+                1710260081
             );
         }
 

@@ -27,6 +27,8 @@ use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
@@ -105,6 +107,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->sourceContentStreamId, $contentRepository);
+        $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId, $contentRepository);
         $this->requireContentStreamToNotExistYet($command->newContentStreamId, $contentRepository);
 
         $sourceContentStreamVersion = $contentRepository->getContentStreamFinder()
@@ -176,6 +179,18 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692
+            );
+        }
+    }
+
+    protected function requireContentStreamToNotBeClosed(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): void {
+        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) === ContentStreamFinder::STATE_CLOSED) {
+            throw new ContentStreamIsClosed(
+                'Content stream "' . $contentStreamId->value . '" is closed.',
+                1710260081
             );
         }
     }

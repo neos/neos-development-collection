@@ -47,6 +47,17 @@ Feature: Set node properties: Constraint checks
       | propertyValues            | {"text":"New text"}  |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
+  Scenario: Try to set properties in a workspace whose content stream is closed
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    When the command SetNodeProperties is executed with payload and exceptions are caught:
+      | Key                       | Value                |
+      | nodeAggregateId           | "nody-mc-nodeface"   |
+      | originDimensionSpacePoint | {"language":"de"}    |
+      | propertyValues            | {"text":"New text"}  |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
+
   Scenario: Try to set properties on a node aggregate that currently does not exist
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                      |

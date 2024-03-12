@@ -32,7 +32,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWri
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -45,6 +45,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
+use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use PHPUnit\Framework\Assert;
 
@@ -136,6 +137,18 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             new WorkspaceDescription('The user workspace'),
             ContentStreamId::create()
         ))->block();
+        for ($i = 0; $i <= 500; $i++) {
+            $contentRepository->handle(CreateNodeAggregateWithNode::create(
+                WorkspaceName::forLive(),
+                NodeAggregateId::fromString('nody-mc-nodeface-' . $i),
+                NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
+                $origin,
+                NodeAggregateId::fromString('lady-eleonode-rootford'),
+                initialPropertyValues: PropertyValuesToWrite::fromArray([
+                    'title' => 'title'
+                ])
+            ))->block();
+        }
         $this->contentRepository = $contentRepository;
 
         touch(self::SETUP_IS_DONE_FLAG_PATH);
@@ -148,27 +161,14 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
      */
     public function whileAWorkspaceIsBeingRebased(): void
     {
-        $nodeAggregateId = NodeAggregateId::fromString('nody-mc-nodeface');
-        $origin = OriginDimensionSpacePoint::createWithoutDimensions();
-        $workspaceName = WorkspaceName::fromString('user-test');
-        for ($i = 0; $i < 200; $i++) {
-            $this->contentRepository->handle(SetNodeProperties::create(
-                $workspaceName,
-                $nodeAggregateId,
-                $origin,
-                PropertyValuesToWrite::fromArray([
-                    'title' => 'title' . $i
-                ])
-            ))->block();
-        }
         touch(self::REBASE_IS_RUNNING_FLAG_PATH);
+        $workspaceName = WorkspaceName::fromString('user-test');
         $exception = null;
         try {
-            $this->contentRepository->handle(PublishWorkspace::create(
+            $this->contentRepository->handle(RebaseWorkspace::create(
                 $workspaceName,
             ))->block();
         } catch (\RuntimeException $runtimeException) {
-            unlink(self::REBASE_IS_RUNNING_FLAG_PATH);
             $exception = $runtimeException;
         }
         Assert::assertNull($exception);
@@ -193,22 +193,24 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
                     'title' => 'title47b'
                 ])
             ))->block();
-        } catch (\RuntimeException $runtimeException) {
-            unlink(self::SETUP_IS_DONE_FLAG_PATH);
-            $exception = $runtimeException;
+        } catch (\Exception $concurrencyException) {
+            $exception = $concurrencyException;
         }
-        Assert::assertNull($exception, $exception?->getMessage() ?: '');
+        if ($exception instanceof \Exception) {
+            Assert::assertInstanceOf(ConcurrencyException::class, $exception);
+        } else {
+            $this->awaitFileRemoval(self::REBASE_IS_RUNNING_FLAG_PATH);
+            $node = $this->contentRepository->getContentGraph()->getSubgraph(
+                $this->contentRepository->getWorkspaceFinder()
+                    ->findOneByName(WorkspaceName::fromString('user-test'))
+                    ->currentContentStreamId,
+                DimensionSpacePoint::createWithoutDimensions(),
+                VisibilityConstraints::withoutRestrictions()
+            )->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface'));
+            Assert::assertSame('title47b', $node->getProperty('title'));
+        }
 
-        $this->awaitFileRemoval(self::REBASE_IS_RUNNING_FLAG_PATH);
-        $node = $this->contentRepository->getContentGraph()->getSubgraph(
-            $this->contentRepository->getWorkspaceFinder()
-                ->findOneByName(WorkspaceName::fromString('user-test'))
-                ->currentContentStreamId,
-            DimensionSpacePoint::createWithoutDimensions(),
-            VisibilityConstraints::withoutRestrictions()
-        )->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface'));
         unlink(self::SETUP_IS_DONE_FLAG_PATH);
-        Assert::assertSame('title47b', $node->getProperty('title'));
     }
 
     private function awaitFile(string $filename): void
@@ -218,7 +220,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             usleep(1000);
             $waiting++;
             clearstatcache(true, $filename);
-            if ($waiting > 30000) {
+            if ($waiting > 10000) {
                 throw new \Exception('timeout while waiting on file ' . $filename);
             }
         }
@@ -231,7 +233,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             usleep(10000);
             $waiting++;
             clearstatcache(true, $filename);
-            if ($waiting > 3000) {
+            if ($waiting > 1000) {
                 throw new \Exception('timeout while waiting on removal of file ' . $filename);
             }
         }
