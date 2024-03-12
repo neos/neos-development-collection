@@ -238,6 +238,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
         $this->updateContentStreamId($event->newContentStreamId, $event->workspaceName);
+        $this->markWorkspaceAsOutdated($event->workspaceName);
         $this->markDependentWorkspacesAsOutdated($event->workspaceName);
     }
 
@@ -358,6 +359,20 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         ', [
             'outdated' => WorkspaceStatus::OUTDATED->value,
             'baseWorkspaceName' => $baseWorkspaceName->value
+        ]);
+    }
+
+    private function markWorkspaceAsOutdated(WorkspaceName $workspaceName): void
+    {
+        $this->getDatabaseConnection()->executeUpdate('
+            UPDATE ' . $this->tableName . '
+            SET
+                status = :outdated
+            WHERE
+                workspacename = :workspaceName
+        ', [
+            'outdated' => WorkspaceStatus::OUTDATED->value,
+            'workspaceName' => $workspaceName->value
         ]);
     }
 
