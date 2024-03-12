@@ -21,7 +21,9 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\CloseContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
@@ -47,6 +49,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
             CreateContentStream::class => $this->handleCreateContentStream($command, $contentRepository),
+            CloseContentStream::class => $this->handleCloseContentStream($command, $contentRepository),
             ForkContentStream::class => $this->handleForkContentStream($command, $contentRepository),
             RemoveContentStream::class => $this->handleRemoveContentStream($command, $contentRepository),
         };
@@ -71,6 +74,25 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                 )
             ),
             ExpectedVersion::NO_STREAM()
+        );
+    }
+
+    private function handleCloseContentStream(
+        CloseContentStream $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)->getEventStreamName();
+
+        return new EventsToPublish(
+            $streamName,
+            Events::with(
+                new ContentStreamWasClosed(
+                    $command->contentStreamId,
+                ),
+            ),
+            ExpectedVersion::ANY()
         );
     }
 

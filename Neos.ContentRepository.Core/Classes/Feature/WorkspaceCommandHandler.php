@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\ContentStreamIdOverride;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\CloseContentStream;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
@@ -496,7 +497,19 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
+        // 0) close old content stream
+        $contentRepository->handle(
+            CloseContentStream::create(
+                $workspace->currentContentStreamId,
+            )
+        );
+
         // 1) separate commands in two parts - the ones MATCHING the nodes from the command, and the REST
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
+            $workspace->currentContentStreamId
+        );
+
+        /** @var RebasableToOtherWorkspaceInterface[] $matchingCommands */
         $matchingCommands = [];
         $remainingCommands = [];
         $this->separateMatchingAndRemainingCommands($command, $workspace, $matchingCommands, $remainingCommands);

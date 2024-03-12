@@ -101,6 +101,10 @@ final class ContentStreamFinder implements ProjectionStateInterface
     public const STATE_REBASE_ERROR = 'REBASE_ERROR';
 
     /**
+     * the content stream was closed and must no longer accept new events
+     */
+    public const STATE_CLOSED = 'CLOSED';
+    /**
      * the content stream is not used anymore, and can be removed.
      */
     public const STATE_NO_LONGER_IN_USE = 'NO_LONGER_IN_USE';

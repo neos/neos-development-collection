@@ -80,6 +80,7 @@ trait NodeModification
         ContentRepository $contentRepository
     ): EventsToPublish {
         $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $contentStreamVersion = $contentRepository->getContentStreamFinder()->findVersionForContentStream($contentStreamId);
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
@@ -136,7 +137,7 @@ trait NodeModification
                 $command,
                 Events::fromArray($events)
             ),
-            ExpectedVersion::ANY()
+            ExpectedVersion::fromVersion($contentStreamVersion->unwrap())
         );
     }
 

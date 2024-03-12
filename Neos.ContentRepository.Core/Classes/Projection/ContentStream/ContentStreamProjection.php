@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
@@ -157,6 +158,7 @@ class ContentStreamProjection implements ProjectionInterface
                 WorkspaceWasPublished::class,
                 WorkspaceWasRebased::class,
                 WorkspaceRebaseFailed::class,
+                ContentStreamWasClosed::class,
                 ContentStreamWasRemoved::class,
             ])
             || $event instanceof EmbedsContentStreamAndNodeAggregateId;
@@ -179,6 +181,7 @@ class ContentStreamProjection implements ProjectionInterface
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
             WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
+            ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event, $eventEnvelope),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
@@ -319,6 +322,14 @@ class ContentStreamProjection implements ProjectionInterface
         $this->updateStateForContentStream(
             $event->candidateContentStreamId,
             ContentStreamFinder::STATE_REBASE_ERROR
+        );
+    }
+
+    private function whenContentStreamWasClosed(ContentStreamWasClosed $event): void
+    {
+        $this->updateStateForContentStream(
+            $event->contentStreamId,
+            ContentStreamFinder::STATE_CLOSED,
         );
     }
 
