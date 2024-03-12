@@ -135,12 +135,6 @@
 		width: 100%;
 		box-shadow: none;
 
-		@media(max-width: 768px) {
-			min-width: 240px;
-			top: 40px;
-			margin-top: 0;
-		}
-
 		li {
 			height: $unit;
 			background: $grayDarker;
