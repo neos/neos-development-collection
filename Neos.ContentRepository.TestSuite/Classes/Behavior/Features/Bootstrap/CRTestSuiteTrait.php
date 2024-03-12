@@ -175,6 +175,16 @@ trait CRTestSuiteTrait
     }
 
     /**
+     * @Then /^workspace ([^"]*) has status ([^"]*)$/
+     */
+    public function workspaceHasStatus(string $rawWorkspaceName, string $status): void
+    {
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+
+        Assert::assertSame($status, $workspace->status->value);
+    }
+
+    /**
      * @Then /^I expect the graph projection to consist of exactly (\d+) node(?:s)?$/
      * @param int $expectedNumberOfNodes
      */
