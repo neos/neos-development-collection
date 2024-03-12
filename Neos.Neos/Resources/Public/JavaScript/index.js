@@ -1,7 +1,8 @@
 import jQuery from "jquery";
 
-import { DropDownMenu, MenuPanel, UserMenu } from "./Components/TopBar";
-import { UserManagement } from './Module/Administration'
+import { DropDownMenu, MenuPanel } from "./Components/TopBar";
+import { UserManagement } from './Module/Administration';
+import { UserMenu } from "./Components/UserMenu";
 import DropDown from "./Components/DropDown";
 import DropDownGroup from "./Components/DropDownGroup";
 import Tree from "./Components/Tree";
