@@ -22,11 +22,13 @@ Feature: Individual node publication
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | workspaceName   | "live"                        |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
 
     # Create user workspace
     And the command CreateWorkspace is executed with payload:
@@ -41,7 +43,9 @@ Feature: Individual node publication
   ################
   Scenario: It is possible to publish a single node; and only this one is live.
     # create nodes in user WS
-    Given I am in the active content stream of workspace "user-test" and dimension space point {}
+    Given I am in workspace "user-test"
+    And I am in the active content stream of workspace "user-test"
+    And I am in dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName | tetheredDescendantNodeAggregateIds |
       | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document | {}                                 |
@@ -51,9 +55,9 @@ Feature: Individual node publication
       | nody-mc-nodeface | Neos.ContentRepository.Testing:Content | $child2Id             | nody     | {}                                 |
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                                                                                                    |
-      | workspaceName                   | "user-test"                                                                                              |
       | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                           |
+      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                            |
     And the graph projection is fully up to date
 
     And I am in the active content stream of workspace "live"

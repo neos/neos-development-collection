@@ -42,7 +42,9 @@ trait WorkspacePublishing
         $nodesToPublish = NodeIdsToPublishOrDiscard::fromArray($commandArguments['nodesToPublish']);
 
         $command = PublishIndividualNodesFromWorkspace::create(
-            WorkspaceName::fromString($commandArguments['workspaceName']),
+            array_key_exists('workspaceName', $commandArguments)
+                ? WorkspaceName::fromString($commandArguments['workspaceName'])
+                : $this->currentWorkspaceName,
             $nodesToPublish,
         );
         if (isset($commandArguments['contentStreamIdForMatchingPart'])) {

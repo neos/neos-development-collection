@@ -124,4 +124,4 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     And I prune removed content streams from the event stream
 
     # the events should still exist
-    Then I expect exactly 2 events to be published on stream "ContentStream:review-cs-identifier"
+    Then I expect exactly 3 events to be published on stream "ContentStream:review-cs-identifier"

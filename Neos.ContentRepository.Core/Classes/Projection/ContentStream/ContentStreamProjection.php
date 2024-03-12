@@ -27,6 +27,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
@@ -160,6 +161,7 @@ class ContentStreamProjection implements ProjectionInterface
                 WorkspaceRebaseFailed::class,
                 ContentStreamWasClosed::class,
                 ContentStreamWasRemoved::class,
+                DimensionShineThroughWasAdded::class,
             ])
             || $event instanceof EmbedsContentStreamAndNodeAggregateId;
     }
@@ -183,6 +185,7 @@ class ContentStreamProjection implements ProjectionInterface
             WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
             ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event, $eventEnvelope),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
+            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
@@ -325,18 +328,32 @@ class ContentStreamProjection implements ProjectionInterface
         );
     }
 
-    private function whenContentStreamWasClosed(ContentStreamWasClosed $event): void
+    private function whenContentStreamWasClosed(ContentStreamWasClosed $event, EventEnvelope $eventEnvelope): void
     {
         $this->updateStateForContentStream(
             $event->contentStreamId,
             ContentStreamFinder::STATE_CLOSED,
         );
+        $this->getDatabaseConnection()->update($this->tableName, [
+            'version' => self::extractVersion($eventEnvelope),
+        ], [
+            'contentStreamId' => $event->contentStreamId->value
+        ]);
     }
 
     private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event, EventEnvelope $eventEnvelope): void
     {
         $this->getDatabaseConnection()->update($this->tableName, [
             'removed' => true,
+            'version' => self::extractVersion($eventEnvelope),
+        ], [
+            'contentStreamId' => $event->contentStreamId->value
+        ]);
+    }
+
+    private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event, EventEnvelope $eventEnvelope): void
+    {
+        $this->getDatabaseConnection()->update($this->tableName, [
             'version' => self::extractVersion($eventEnvelope),
         ], [
             'contentStreamId' => $event->contentStreamId->value

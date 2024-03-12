@@ -502,16 +502,15 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository,
     ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
-        // 0) close old content stream
+        // 1) close old content stream
         $contentRepository->handle(
-            CloseContentStream::create(
-                $workspace->currentContentStreamId,
-            )
+            CloseContentStream::create($oldWorkspaceContentStreamId)
         );
 
-        // 1) separate commands in two parts - the ones MATCHING the nodes from the command, and the REST
+        // 2) separate commands in two parts - the ones MATCHING the nodes from the command, and the REST
         /** @var RebasableToOtherWorkspaceInterface[] $matchingCommands */
         $matchingCommands = [];
         $remainingCommands = [];
@@ -519,19 +518,18 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $matchingCommands */
         /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $remainingCommands */
 
-        // 2) fork a new contentStream, based on the base WS, and apply MATCHING
-        $matchingContentStreamId = $command->contentStreamIdForMatchingPart;
+        // 3) fork a new contentStream, based on the base WS, and apply MATCHING
         $contentRepository->handle(
             ForkContentStream::create(
-                $matchingContentStreamId,
+                $command->contentStreamIdForMatchingPart,
                 $baseWorkspace->currentContentStreamId,
             )
         )->block();
 
         // 3) using the new content stream, apply the matching commands
         $this->withContentStreamIdToUse(
-            $matchingContentStreamId,
-            function () use ($matchingCommands, $contentRepository, $baseWorkspace, $matchingContentStreamId): void {
+            $command->contentStreamIdForMatchingPart,
+            function () use ($matchingCommands, $contentRepository, $baseWorkspace, $command): void {
                 foreach ($matchingCommands as $matchingCommand) {
                     if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
                         throw new \RuntimeException(
@@ -542,21 +540,27 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
                     $contentRepository->handle($matchingCommand->createCopyForWorkspace(
                         $baseWorkspace->workspaceName,
-                        $matchingContentStreamId
+                        $command->contentStreamIdForMatchingPart
                     ))->block();
                 }
             }
         );
 
-        // 4) fork a new content stream, based on the base WS new content stream, and apply REST
+        // 4) take EVENTS(MATCHING) and apply them to base WS.
+        $this->publishContentStream(
+            $command->contentStreamIdForMatchingPart,
+            $baseWorkspace->currentContentStreamId
+        )?->block();
+
+        // 5) fork a new content stream, based on the base WS, and apply REST
         $contentRepository->handle(
             ForkContentStream::create(
                 $command->contentStreamIdForRemainingPart,
-                $matchingContentStreamId
+                $baseWorkspace->currentContentStreamId
             )
         )->block();
 
-        // 5) apply REMAINING commands to the workspace's new content stream
+        // 6) apply REMAINING commands to the workspace's new content stream
         $this->withContentStreamIdToUse(
             $command->contentStreamIdForRemainingPart,
             function () use ($contentRepository, $remainingCommands) {
@@ -566,34 +570,28 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             }
         );
 
-        // 6) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
-        $this->publishContentStream(
-            $matchingContentStreamId,
-            $baseWorkspace->currentContentStreamId
-        )?->block();
-
-        // 7) also take EVENTS(REMAINING) and apply them to WS.
-        $this->publishContentStream(
-            $command->contentStreamIdForRemainingPart,
-            $workspace->currentContentStreamId
-        )?->block();
-
-        // to avoid dangling content streams, we need to remove our temporary content streams (whose events
-        // have already been published)
+        // 7) to avoid dangling content streams, we need to remove our temporary content stream (whose events
+        // have already been published) as well as the old one
         $contentRepository->handle(RemoveContentStream::create(
-            $matchingContentStreamId
+            $command->contentStreamIdForMatchingPart
         ));
         $contentRepository->handle(RemoveContentStream::create(
-            $command->contentStreamIdForRemainingPart
+            $oldWorkspaceContentStreamId
         ));
 
         $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
 
-        // It is safe to only return the last command result,
-        // as the commands which were rebased are already executed "synchronously"
         return new EventsToPublish(
             $streamName,
-            Events::fromArray([]),
+            Events::fromArray([
+                new WorkspaceWasPartiallyPublished(
+                    $command->workspaceName,
+                    $baseWorkspace->workspaceName,
+                    $command->contentStreamIdForRemainingPart,
+                    $oldWorkspaceContentStreamId,
+                    $command->nodesToPublish
+                )
+            ]),
             ExpectedVersion::ANY()
         );
     }

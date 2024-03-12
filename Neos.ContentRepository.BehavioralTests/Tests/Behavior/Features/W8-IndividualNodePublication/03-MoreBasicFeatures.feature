@@ -105,6 +105,7 @@ Feature: Publishing individual nodes (basics)
       | workspaceName                   | "user-test"                                                                                                             |
       | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                          |
+      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                          |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
