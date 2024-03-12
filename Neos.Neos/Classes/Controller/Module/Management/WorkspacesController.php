@@ -26,6 +26,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Security\Account;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
@@ -106,6 +107,7 @@ class WorkspacesController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
+        /** @var ?Account $currentAccount */
         $currentAccount = $this->securityContext->getAccount();
         if ($currentAccount === null) {
             throw new \RuntimeException('No account is authenticated', 1710068839);
@@ -446,6 +448,7 @@ class WorkspacesController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
+        /** @var ?Account $currentAccount */
         $currentAccount = $this->securityContext->getAccount();
         if ($currentAccount === null) {
             throw new \RuntimeException('No account is authenticated', 1710068880);

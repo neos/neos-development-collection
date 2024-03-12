@@ -54,6 +54,7 @@ class TimeableNodeVisibilityService
         $results = [];
 
         foreach ($nodes as $node) {
+            /** @var Node $node */
             $nodeIsHidden = $this->isHidden($node, $nodeHiddenStateFinder);
             if ($this->needsEnabling($node, $now) && $nodeIsHidden) {
                 $contentRepository->handle(

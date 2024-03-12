@@ -85,7 +85,7 @@ trait ConstraintChecks
         }
         if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) === ContentStreamFinder::STATE_CLOSED) {
             throw new ContentStreamIsClosed(
-                'Content stream "' . $contentStreamId?->value . '" is closed.',
+                'Content stream "' . $contentStreamId->value . '" is closed.',
                 1710260081
             );
         }

@@ -386,7 +386,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $rebaseStatistics = new WorkspaceRebaseStatistics();
         $this->withContentStreamIdToUse(
             $command->rebasedContentStreamId,
-            function () use($originalCommands, $contentRepository, $rebaseStatistics, $workspaceContentStreamName, $baseWorkspace): void {
+            function () use ($originalCommands, $contentRepository, $rebaseStatistics, $workspaceContentStreamName, $baseWorkspace): void {
                 foreach ($originalCommands as $i => $originalCommand) {
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
