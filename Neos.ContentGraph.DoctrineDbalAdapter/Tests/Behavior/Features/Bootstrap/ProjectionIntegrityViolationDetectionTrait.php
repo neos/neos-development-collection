@@ -263,7 +263,6 @@ trait ProjectionIntegrityViolationDetectionTrait
 
         return [
             'contentstreamid' => $dataset['contentStreamId'],
-            'dimensionspacepoint' => $dimensionSpacePoint->toJson(),
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'parentnodeanchor' => $parentNodeAggregateId->isNonExistent()
                 ? 9999999
