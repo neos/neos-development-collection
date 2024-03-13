@@ -54,6 +54,9 @@ final readonly class VisibilityConstraints implements \JsonSerializable
         return new self(SubtreeTags::fromStrings('disabled'));
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return get_object_vars($this);
