@@ -106,3 +106,58 @@ Feature: Workspace discarding - basic functionality
     And I expect this node to have the following properties:
       | Key  | Value                        |
       | text | "Modified in live workspace" |
+
+  Scenario: Conflicting changes lead to OUTDATED_CONFLICT which can be recovered from via discard
+
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                        |
+      | workspaceName      | "user-ws-one"                |
+      | baseWorkspaceName  | "live"                       |
+      | newContentStreamId | "user-cs-one"                |
+      | workspaceOwner     | "owner-identifier"           |
+    And the graph projection is fully up to date
+    And the command CreateWorkspace is executed with payload:
+      | Key                | Value                        |
+      | workspaceName      | "user-ws-two"                |
+      | baseWorkspaceName  | "live"                       |
+      | newContentStreamId | "user-cs-two"                |
+      | workspaceOwner     | "owner-identifier"           |
+    And the graph projection is fully up to date
+
+    When the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | workspaceName                | "user-ws-one"            |
+      | nodeAggregateId              | "nody-mc-nodeface"       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+      | coveredDimensionSpacePoint   | {}                       |
+    And the graph projection is fully up to date
+
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | workspaceName             | "user-ws-two"                |
+      | nodeAggregateId           | "nody-mc-nodeface"           |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "Modified"}         |
+    And the graph projection is fully up to date
+
+    And the command PublishWorkspace is executed with payload:
+      | Key              | Value            |
+      | workspaceName    | "user-ws-one"    |
+    And the graph projection is fully up to date
+
+    Then workspace user-ws-two has status OUTDATED
+
+    When the command RebaseWorkspace is executed with payload:
+      | Key                            | Value                  |
+      | workspaceName                  | "user-ws-two"          |
+      | rebasedContentStreamId         | "user-cs-two-rebased"  |
+
+    Then workspace user-ws-two has status OUTDATED_CONFLICT
+
+    When the command DiscardWorkspace is executed with payload:
+      | Key                | Value                     |
+      | workspaceName      | "user-ws-two"             |
+      | newContentStreamId | "user-cs-two-discarded"   |
+    And the graph projection is fully up to date
+
+    Then workspace user-ws-two has status OUTDATED
