@@ -251,10 +251,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         )?->block();
 
         // After publishing a workspace, we need to again fork from Base.
-        $newContentStream = ContentStreamId::create();
         $contentRepository->handle(
             ForkContentStream::create(
-                $newContentStream,
+                $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
             )
         )->block();
@@ -264,7 +263,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             new WorkspaceWasPublished(
                 $command->workspaceName,
                 $baseWorkspace->workspaceName,
-                $newContentStream,
+                $command->newContentStreamId,
                 $workspace->currentContentStreamId,
             )
         );

@@ -69,6 +69,11 @@ trait WorkspacePublishing
         $command = PublishWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
         );
+        if (array_key_exists('newContentStreamId', $commandArguments)) {
+            $command = $command->withNewContentStreamId(
+                ContentStreamId::fromString($commandArguments['newContentStreamId'])
+            );
+        }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
