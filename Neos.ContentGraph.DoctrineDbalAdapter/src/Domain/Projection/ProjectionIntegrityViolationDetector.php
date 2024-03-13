@@ -118,6 +118,12 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     HAVING COUNT(position) > 1'
         );
 
+        if (empty($ambiguouslySortedHierarchyRelationRecords)) {
+            return $result;
+        }
+
+        $dimensionSpacePoints = $this->findProjectedDimensionSpacePoints();
+
         foreach ($ambiguouslySortedHierarchyRelationRecords as $hierarchyRelationRecord) {
             $ambiguouslySortedNodeRecords = $this->client->getConnection()->executeQuery(
                 'SELECT nodeaggregateid
@@ -133,7 +139,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     return $record['nodeaggregateid'];
                 }, $ambiguouslySortedNodeRecords))
                 . ' are ambiguously sorted in content stream ' . $hierarchyRelationRecord['contentstreamid']
-                . ' and dimension space point ' . $hierarchyRelationRecord['dimensionspacepoint'],
+                . ' and dimension space point ' . $dimensionSpacePoints[$hierarchyRelationRecord['dimensionspacepointhash']]?->toJson(),
                 self::ERROR_CODE_SIBLINGS_ARE_AMBIGUOUSLY_SORTED
             ));
         }
