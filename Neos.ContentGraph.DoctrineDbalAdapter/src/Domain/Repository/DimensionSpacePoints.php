@@ -44,7 +44,6 @@ final class DimensionSpacePoints
 
         $this->dimensionspacePointsRuntimeCache[$dimensionSpacePoint->hash] = $dimensionSpacePoint->toJson();
         $this->writeDimensionSpacePoint($dimensionSpacePoint->hash, $dimensionSpacePoint->toJson());
-
     }
 
     /**
