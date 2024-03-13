@@ -10,11 +10,12 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\TimeableNodeVisibility\Service\TimeableNodeVisibilityService;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -54,23 +55,35 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then I expect this node to be :state
+     * @Then I expect this node to be enabled
      */
-    public function iExpectThisNodeToBeState(string $state): void
+    public function iExpectThisNodeToBeEnabled(): void
     {
-        $hiddenState = $this->currentContentRepository->projectionState(NodeHiddenStateFinder::class)
-            ->findHiddenState(
-                $this->currentContentStreamId,
-                $this->currentDimensionSpacePoint,
-                $this->currentNode->nodeAggregateId
-            );
-        if ($hiddenState->isHidden === false && $state != "enabled"
-            ||
-            $hiddenState->isHidden === true && $state != "disabled"
-        ) {
-            Assert::fail('Node has not the expected state');
-        }
+        Assert::assertNotNull($this->currentNode, 'No current node selected');
+        $subgraph = $this->currentContentRepository->getContentGraph()->getSubgraph(
+            $this->currentContentStreamId,
+            $this->currentDimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions(),
+        );
+        $currentNode = $subgraph->findNodeById($this->currentNode->nodeAggregateId);
+        Assert::assertNotNull($currentNode, sprintf('Failed to find node with id "%s" in subgraph %s', $this->currentNode->nodeAggregateId->value, json_encode($subgraph)));
+        Assert::assertFalse($currentNode->tags->contain(SubtreeTag::fromString('disabled')), sprintf('Node "%s" was expected to be enabled, but it is not', $this->currentNode->nodeAggregateId->value));
+    }
 
+    /**
+     * @Then I expect this node to be disabled
+     */
+    public function iExpectThisNodeToBeDisabled(): void
+    {
+        Assert::assertNotNull($this->currentNode, 'No current node selected');
+        $subgraph = $this->currentContentRepository->getContentGraph()->getSubgraph(
+            $this->currentContentStreamId,
+            $this->currentDimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions(),
+        );
+        $currentNode = $subgraph->findNodeById($this->currentNode->nodeAggregateId);
+        Assert::assertNotNull($currentNode, sprintf('Failed to find node with id "%s" in subgraph %s', $this->currentNode->nodeAggregateId->value, json_encode($subgraph)));
+        Assert::assertTrue($currentNode->tags->contain(SubtreeTag::fromString('disabled')), sprintf('Node "%s" was expected to be disabled, but it is not', $this->currentNode->nodeAggregateId->value));
     }
 
     protected function getContentRepositoryService(
