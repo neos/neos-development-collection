@@ -57,7 +57,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createHierarchyRelationTable(): Table
     {
         $table = new Table($this->tableNamePrefix . '_hierarchyrelation', [
-            (new Column('name', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('name', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
             (new Column('position', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotnull(true),
@@ -66,10 +66,7 @@ class DoctrineDbalContentGraphSchemaBuilder
         ]);
 
         return $table
-            ->addIndex(['childnodeanchor'])
-            ->addIndex(['contentstreamid'])
-            ->addIndex(['parentnodeanchor'])
-            ->addIndex(['contentstreamid', 'childnodeanchor', 'dimensionspacepointhash'])
+            ->setPrimaryKey(['childnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'parentnodeanchor'])
             ->addIndex(['contentstreamid', 'dimensionspacepointhash']);
     }
 

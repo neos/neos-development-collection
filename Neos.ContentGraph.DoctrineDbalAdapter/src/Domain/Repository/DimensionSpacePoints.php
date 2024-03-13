@@ -15,9 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Neos\ContentRepository\Core\DimensionSpace\AbstractDimensionSpacePoint;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
@@ -28,9 +26,9 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 final class DimensionSpacePoints
 {
     /**
-     * @var string[]
+     * @var array<string, string>
      */
-    private array $dimensionspacePoints = [];
+    private array $dimensionspacePointsRuntimeCache = [];
 
     public function __construct(
         private readonly Connection $databaseConnection,
@@ -40,16 +38,13 @@ final class DimensionSpacePoints
 
     public function insertDimensionSpacePoint(AbstractDimensionSpacePoint $dimensionSpacePoint): void
     {
-        try {
-            $this->databaseConnection->executeStatement(
-                'INSERT INTO ' . $this->tableNamePrefix . '_dimensionspacepoints (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
-                [
-                    'dimensionspacepointhash' => $dimensionSpacePoint->hash,
-                    'dimensionspacepoint' => $dimensionSpacePoint->toJson()
-                ]
-            );
-        } catch (UniqueConstraintViolationException $_) {
+        if ($this->getCoordinatesByHashFromRuntimeCache($dimensionSpacePoint->hash) !== null) {
+            return;
         }
+
+        $this->dimensionspacePointsRuntimeCache[$dimensionSpacePoint->hash] = $dimensionSpacePoint->toJson();
+        $this->writeDimensionSpacePoint($dimensionSpacePoint->hash, $dimensionSpacePoint->toJson());
+
     }
 
     /**
@@ -60,39 +55,51 @@ final class DimensionSpacePoints
      */
     public function insertDimensionSpacePointByHashAndCoordinates(string $hash, array $dimensionSpacePointCoordinates): void
     {
-        try {
-            $this->databaseConnection->executeStatement(
-                'INSERT INTO ' . $this->tableNamePrefix . '_dimensionspacepoints (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
-                [
-                    'dimensionspacepointhash' => $hash,
-                    'dimensionspacepoint' => json_encode($dimensionSpacePointCoordinates, JSON_THROW_ON_ERROR)
-                ]
-            );
-        } catch (UniqueConstraintViolationException $_) {
-        }
-    }
-
-    public function getDimensionSpacePointByHash(string $hash): DimensionSpacePoint
-    {
-        if (!isset($this->dimensionspacePoints[$hash])) {
-            $this->fillInternalIndex();
+        if ($this->getCoordinatesByHashFromRuntimeCache($hash) !== null) {
+            return;
         }
 
-        return DimensionSpacePoint::fromJsonString($this->dimensionspacePoints[$hash]);
+        $dimensionSpacePointCoordinatesJson = json_encode($dimensionSpacePointCoordinates, JSON_THROW_ON_ERROR);
+        $this->dimensionspacePointsRuntimeCache[$hash] = $dimensionSpacePointCoordinatesJson;
+        $this->writeDimensionSpacePoint($hash, $dimensionSpacePointCoordinatesJson);
     }
 
     public function getOriginDimensionSpacePointByHash(string $hash): OriginDimensionSpacePoint
     {
-        if (!isset($this->dimensionspacePoints[$hash])) {
-            $this->fillInternalIndex();
+        $coordinates = $this->getCoordinatesByHashFromRuntimeCache($hash);
+        if ($coordinates === null) {
+            $this->fillRuntimeCacheFromDatabase();
+            $coordinates = $this->getCoordinatesByHashFromRuntimeCache($hash);
         }
 
-        return OriginDimensionSpacePoint::fromJsonString($this->dimensionspacePoints[$hash]);
+        if ($coordinates === null) {
+            throw new \RuntimeException(sprintf('A DimensionSpacePoint record with the given hash "%s" was not found in the projection, cannot determine coordinates.', $hash), 1710335509);
+        }
+
+        return OriginDimensionSpacePoint::fromJsonString($coordinates);
     }
 
-    private function fillInternalIndex(): void
+    private function writeDimensionSpacePoint(string $hash, string $dimensionSpacePointCoordinatesJson): void
     {
-        $allDimensionSpacePoints = $this->databaseConnection->fetchAllAssociativeIndexed('SELECT hash,dimensionspacepoint FROM ' . $this->tableNamePrefix . '_dimensionspacepoints');
-        $this->dimensionspacePoints = array_map(static fn ($item) => $item['dimensionspacepoint'], $allDimensionSpacePoints);
+        $this->databaseConnection->executeStatement(
+            'INSERT IGNORE INTO ' . $this->tableNamePrefix . '_dimensionspacepoints (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
+            [
+                'dimensionspacepointhash' => $hash,
+                'dimensionspacepoint' => $dimensionSpacePointCoordinatesJson
+            ]
+        );
+    }
+
+    private function getCoordinatesByHashFromRuntimeCache(string $hash): ?string
+    {
+        return $this->dimensionspacePointsRuntimeCache[$hash] ?? null;
+    }
+
+    private function fillRuntimeCacheFromDatabase(): void
+    {
+        $allDimensionSpacePoints = $this->databaseConnection->fetchAllAssociative('SELECT hash, dimensionspacepoint FROM ' . $this->tableNamePrefix . '_dimensionspacepoints');
+        foreach ($allDimensionSpacePoints as $dimensionSpacePointRow) {
+            $this->dimensionspacePointsRuntimeCache[(string)$dimensionSpacePointRow['hash']] = (string)$dimensionSpacePointRow['dimensionspacepoint'];
+        }
     }
 }
