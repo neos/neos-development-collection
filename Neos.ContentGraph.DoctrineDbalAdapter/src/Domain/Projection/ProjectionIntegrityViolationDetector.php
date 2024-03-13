@@ -118,7 +118,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     HAVING COUNT(position) > 1'
         );
 
-        if (empty($ambiguouslySortedHierarchyRelationRecords)) {
+        if ($ambiguouslySortedHierarchyRelationRecords->columnCount() === 0) {
             return $result;
         }
 
