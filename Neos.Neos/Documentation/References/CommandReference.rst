@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-03-11
+The following reference was automatically generated from code on 2024-03-13
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -2889,6 +2889,33 @@ Arguments
 
 ``--workspace``
   Name of the workspace containing the changes to publish, for example "user-john
+
+
+
+Options
+^^^^^^^
+
+``--content-repository-identifier``
+  
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:rebase`:
+
+``neos.neos:workspace:rebase``
+******************************
+
+**Rebase workspace on base workspace**
+
+This command rebases the given workspace on its base workspace, it may fail if the rebase is not possible.
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "user-john
 
 
 
