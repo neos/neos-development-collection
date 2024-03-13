@@ -13,11 +13,24 @@ namespace Neos\Neos\Tests\Unit\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\Helper\CachingHelper;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Tests the CachingHelper
@@ -27,7 +40,6 @@ class CachingHelperTest extends UnitTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->markTestSkipped('Update with Neos 9.0');
     }
 
     /**
@@ -37,46 +49,26 @@ class CachingHelperTest extends UnitTestCase
      */
     public function nodeTypeTagDataProvider()
     {
-        $this->markTestSkipped('TODO: fix with Neos 9.0');
-
         $nodeTypeName1 = 'Neos.Neos:Foo';
         $nodeTypeName2 = 'Neos.Neos:Bar';
         $nodeTypeName3 = 'Neos.Neos:Moo';
 
-        $nodeTypeObject1 = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $nodeTypeObject1->expects(self::any())->method('getName')->willReturn($nodeTypeName1);
-
-        $nodeTypeObject2 = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $nodeTypeObject2->expects(self::any())->method('getName')->willReturn($nodeTypeName2);
-
-        $nodeTypeObject3 = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $nodeTypeObject3->expects(self::any())->method('getName')->willReturn($nodeTypeName3);
-
         return [
-            [$nodeTypeName1, 'NodeType_' . $nodeTypeName1],
+            [$nodeTypeName1, ['NodeType_90ce081cc57c057ff24ad13818166a6c64a38eda_Neos_Neos-Foo']],
             [[$nodeTypeName1, $nodeTypeName2, $nodeTypeName3],
                 [
-                    'NodeType_' . $nodeTypeName1,
-                    'NodeType_' . $nodeTypeName2,
-                    'NodeType_' . $nodeTypeName3
+                    'NodeType_90ce081cc57c057ff24ad13818166a6c64a38eda_Neos_Neos-Foo',
+                    'NodeType_90ce081cc57c057ff24ad13818166a6c64a38eda_Neos_Neos-Bar',
+                    'NodeType_90ce081cc57c057ff24ad13818166a6c64a38eda_Neos_Neos-Moo',
                 ]
             ],
-            [$nodeTypeObject1, 'NodeType_' . $nodeTypeName1],
-            [[$nodeTypeName1, $nodeTypeObject2, $nodeTypeObject3],
+            [(new \ArrayObject([$nodeTypeName1, $nodeTypeName2, $nodeTypeName3])),
                 [
-                    'NodeType_' . $nodeTypeName1,
-                    'NodeType_' . $nodeTypeName2,
-                    'NodeType_' . $nodeTypeName3
+                    'NodeType_90ce081cc57c057ff24ad13818166a6c64a38eda_Neos_Neos-Foo',
+                    'NodeType_90ce081cc57c057ff24ad13818166a6c64a38eda_Neos_Neos-Bar',
+                    'NodeType_90ce081cc57c057ff24ad13818166a6c64a38eda_Neos_Neos-Moo',
                 ]
             ],
-            [(new \ArrayObject([$nodeTypeObject1, $nodeTypeObject2, $nodeTypeObject3])),
-                [
-                    'NodeType_' . $nodeTypeName1,
-                    'NodeType_' . $nodeTypeName2,
-                    'NodeType_' . $nodeTypeName3
-                ]
-            ],
-            [(object)['stdClass' => 'will do nothing'], '']
         ];
     }
 
@@ -89,85 +81,8 @@ class CachingHelperTest extends UnitTestCase
      */
     public function nodeTypeTagProvidesExpectedResult($input, $expectedResult)
     {
-        $helper = new CachingHelper();
-        $actualResult = $helper->nodeTypeTag($input);
-        self::assertEquals($expectedResult, $actualResult);
-    }
+        $contextNode = $this->createNode(NodeAggregateId::fromString("na"));
 
-    /**
-     * Provides datasets for testing the CachingHelper::nodeTypeTag method with an context node.
-     *
-     * @return array
-     */
-    public function nodeTypeTagWithContextNodeDataProvider()
-    {
-        $this->markTestSkipped('TODO: fix with Neos 9.0');
-
-        $cacheHelper = new CachingHelper();
-
-        $workspaceName = 'live';
-        $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $workspaceMock->expects(self::any())->method('getName')->willReturn($workspaceName);
-
-        $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
-
-        $contextNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
-        $contextNode->expects(self::any())->method('getContext')->willReturn($contextMock);
-
-        $hashedWorkspaceName = $cacheHelper->renderWorkspaceTagForContextNode($workspaceName);
-
-        $nodeTypeName1 = 'Neos.Neos:Foo';
-        $nodeTypeName2 = 'Neos.Neos:Bar';
-        $nodeTypeName3 = 'Neos.Neos:Moo';
-
-        $nodeTypeObject1 = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $nodeTypeObject1->expects(self::any())->method('getName')->willReturn($nodeTypeName1);
-
-        $nodeTypeObject2 = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $nodeTypeObject2->expects(self::any())->method('getName')->willReturn($nodeTypeName2);
-
-        $nodeTypeObject3 = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $nodeTypeObject3->expects(self::any())->method('getName')->willReturn($nodeTypeName3);
-
-        return [
-            [$nodeTypeName1, $contextNode, 'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName1],
-            [[$nodeTypeName1, $nodeTypeName2, $nodeTypeName3], $contextNode,
-                [
-                    'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName1,
-                    'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName2,
-                    'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName3
-                ]
-            ],
-            [$nodeTypeObject1, $contextNode, 'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName1],
-            [[$nodeTypeName1, $nodeTypeObject2, $nodeTypeObject3], $contextNode,
-                [
-                    'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName1,
-                    'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName2,
-                    'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName3
-                ]
-            ],
-            [(new \ArrayObject([$nodeTypeObject1, $nodeTypeObject2, $nodeTypeObject3])), $contextNode,
-                [
-                    'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName1,
-                    'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName2,
-                    'NodeType_' . $hashedWorkspaceName . '_' . $nodeTypeName3
-                ]
-            ],
-            [(object)['stdClass' => 'will do nothing'], $contextNode, '']
-        ];
-    }
-
-    /**
-     * @test
-     * @dataProvider nodeTypeTagWithContextNodeDataProvider
-     *
-     * @param $input
-     * @param $contextNode
-     * @param $expectedResult
-     */
-    public function nodeTypeTagRespectsContextNodesWorkspace($input, $contextNode, $expectedResult)
-    {
         $helper = new CachingHelper();
         $actualResult = $helper->nodeTypeTag($input, $contextNode);
         self::assertEquals($expectedResult, $actualResult);
@@ -178,35 +93,22 @@ class CachingHelperTest extends UnitTestCase
      */
     public function nodeDataProvider()
     {
-        $this->markTestSkipped('TODO: fix with Neos 9.0');
+        $nodeIdentifier1 = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
+        $node1 = $this->createNode(NodeAggregateId::fromString($nodeIdentifier1));
 
-        $cachingHelper = new CachingHelper();
-
-        $workspaceName = 'live';
-        $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $workspaceMock->expects(self::any())->method('getName')->willReturn($workspaceName);
-
-        $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
-
-        $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
-        $node = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
-        $node->expects(self::any())->method('getContext')->willReturn($contextMock);
-        $node->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
-
-        $anotherNodeIdentifier = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
-        $anotherNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
-        $anotherNode->expects(self::any())->method('getContext')->willReturn($contextMock);
-        $anotherNode->expects(self::any())->method('getIdentifier')->willReturn($anotherNodeIdentifier);
-
-        $hashedWorkspaceName = $cachingHelper->renderWorkspaceTagForContextNode($workspaceName);
+        $nodeIdentifier2 = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
+        $node2 = $this->createNode(NodeAggregateId::fromString($nodeIdentifier2));
 
         return [
-            [$node, ['Node_' . $hashedWorkspaceName . '_' . $nodeIdentifier]],
-            [[$node], ['Node_' . $hashedWorkspaceName . '_' . $nodeIdentifier]],
-            [[$node, $anotherNode], [
-                'Node_' . $hashedWorkspaceName . '_' . $nodeIdentifier,
-                'Node_' . $hashedWorkspaceName . '_' . $anotherNodeIdentifier
+            [$node1, ['Node_90ce081cc57c057ff24ad13818166a6c64a38eda_ca511a55-c5c0-f7d7-8d71-8edeffc75306']],
+            [[$node1], ['Node_90ce081cc57c057ff24ad13818166a6c64a38eda_ca511a55-c5c0-f7d7-8d71-8edeffc75306']],
+            [[$node1, $node2], [
+                'Node_90ce081cc57c057ff24ad13818166a6c64a38eda_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'Node_90ce081cc57c057ff24ad13818166a6c64a38eda_7005c7cf-4d19-ce36-0873-476b6cadb71a'
+            ]],
+            [(new \ArrayObject([$node1, $node2])), [
+                'Node_90ce081cc57c057ff24ad13818166a6c64a38eda_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'Node_90ce081cc57c057ff24ad13818166a6c64a38eda_7005c7cf-4d19-ce36-0873-476b6cadb71a'
             ]]
         ];
     }
@@ -232,23 +134,12 @@ class CachingHelperTest extends UnitTestCase
     {
         $helper = new CachingHelper();
 
-        $workspaceName = 'live';
-        $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $workspaceMock->expects(self::any())->method('getName')->willReturn($workspaceName);
-
-        $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
-
         $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
-        $node = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
-        $node->expects(self::any())->method('getContext')->willReturn($contextMock);
-        $node->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
-
-        $hashedWorkspaceName = $helper->renderWorkspaceTagForContextNode($workspaceName);
+        $node = $this->createNode(NodeAggregateId::fromString($nodeIdentifier));
 
         $actual = $helper->nodeTagForIdentifier($nodeIdentifier, $node);
 
-        self::assertEquals('Node_' . $hashedWorkspaceName . '_' . $nodeIdentifier, $actual);
+        self::assertEquals('Node_90ce081cc57c057ff24ad13818166a6c64a38eda_ca511a55-c5c0-f7d7-8d71-8edeffc75306', $actual);
     }
 
     /**
@@ -259,43 +150,31 @@ class CachingHelperTest extends UnitTestCase
         $helper = new CachingHelper();
         $identifier = 'some-uuid-identifier';
 
-        $actual = $helper->nodeTagForIdentifier($identifier);
-        self::assertEquals('Node_' . $identifier, $actual);
+        $contextNode = $this->createNode(NodeAggregateId::fromString("na"));
+
+        $actual = $helper->nodeTagForIdentifier($identifier, $contextNode);
+        self::assertEquals('Node_90ce081cc57c057ff24ad13818166a6c64a38eda_some-uuid-identifier', $actual);
     }
 
-    /**
-     *
-     */
     public function descendantOfDataProvider()
     {
-        $this->markTestSkipped('TODO: fix with Neos 9.0');
-        $cachingHelper = new CachingHelper();
+        $nodeIdentifier1 = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
+        $node1 = $this->createNode(NodeAggregateId::fromString($nodeIdentifier1));
 
-        $workspaceName = 'live';
-        $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $workspaceMock->expects(self::any())->method('getName')->willReturn($workspaceName);
+        $nodeIdentifier2 = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
+        $node2 = $this->createNode(NodeAggregateId::fromString($nodeIdentifier2));
 
-        $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
-
-        $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
-        $node = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
-        $node->expects(self::any())->method('getContext')->willReturn($contextMock);
-        $node->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
-
-        $anotherNodeIdentifier = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
-        $anotherNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
-        $anotherNode->expects(self::any())->method('getContext')->willReturn($contextMock);
-        $anotherNode->expects(self::any())->method('getIdentifier')->willReturn($anotherNodeIdentifier);
-
-        $hashedWorkspaceName = $cachingHelper->renderWorkspaceTagForContextNode($workspaceName);
 
         return [
-            [$node, ['DescendantOf_' . $hashedWorkspaceName . '_' . $nodeIdentifier]],
-            [[$node], ['DescendantOf_' . $hashedWorkspaceName . '_' . $nodeIdentifier]],
-            [[$node, $anotherNode], [
-                'DescendantOf_' . $hashedWorkspaceName . '_' . $nodeIdentifier,
-                'DescendantOf_' . $hashedWorkspaceName . '_' . $anotherNodeIdentifier
+            [$node1, ['DescendantOf_90ce081cc57c057ff24ad13818166a6c64a38eda_ca511a55-c5c0-f7d7-8d71-8edeffc75306']],
+            [[$node1], ['DescendantOf_90ce081cc57c057ff24ad13818166a6c64a38eda_ca511a55-c5c0-f7d7-8d71-8edeffc75306']],
+            [[$node1, $node2], [
+                'DescendantOf_90ce081cc57c057ff24ad13818166a6c64a38eda_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'DescendantOf_90ce081cc57c057ff24ad13818166a6c64a38eda_7005c7cf-4d19-ce36-0873-476b6cadb71a'
+            ]],
+            [(new \ArrayObject([$node1, $node2])), [
+                'DescendantOf_90ce081cc57c057ff24ad13818166a6c64a38eda_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'DescendantOf_90ce081cc57c057ff24ad13818166a6c64a38eda_7005c7cf-4d19-ce36-0873-476b6cadb71a'
             ]]
         ];
     }
@@ -312,5 +191,26 @@ class CachingHelperTest extends UnitTestCase
         $helper = new CachingHelper();
         $actualResult = $helper->descendantOfTag($nodes);
         self::assertEquals($expectedResult, $actualResult);
+    }
+
+    private function createNode(NodeAggregateId $nodeAggregateId): Node
+    {
+        $now = new \DateTimeImmutable();
+        return Node::create(
+            ContentSubgraphIdentity::create(
+                ContentRepositoryId::fromString("default"),
+                ContentStreamId::fromString("cs-identifier"),
+                DimensionSpacePoint::createWithoutDimensions(),
+                VisibilityConstraints::withoutRestrictions()
+            ),
+            $nodeAggregateId,
+            OriginDimensionSpacePoint::createWithoutDimensions(),
+            NodeAggregateClassification::CLASSIFICATION_REGULAR,
+            NodeTypeName::fromString("SomeNodeTypeName"),
+            null,
+            new PropertyCollection(SerializedPropertyValues::fromArray([]), new PropertyConverter(new Serializer([], []))),
+            null,
+            Timestamps::create($now, $now, null, null)
+        );
     }
 }
