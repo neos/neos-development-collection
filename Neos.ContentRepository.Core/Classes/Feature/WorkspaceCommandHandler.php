@@ -365,7 +365,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             CloseContentStream::create(
                 $workspace->currentContentStreamId,
             )
-        );
+        )->block();
 
         // - fork a new content stream
         $rebasedContentStreamId = $command->rebasedContentStreamId;

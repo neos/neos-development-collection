@@ -86,6 +86,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $contentRepository);
+        $this->requireContentStreamToNotBeClosed($command->contentStreamId, $contentRepository);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)->getEventStreamName();
 
         return new EventsToPublish(

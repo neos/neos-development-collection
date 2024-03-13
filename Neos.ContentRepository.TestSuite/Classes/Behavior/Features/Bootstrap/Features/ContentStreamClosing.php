@@ -43,4 +43,16 @@ trait ContentStreamClosing
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
+
+    /**
+     * @Given /^the command CloseContentStream is executed with payload and exceptions are caught:$/
+     */
+    public function theCommandCloseContentStreamIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandCloseContentStreamIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
 }
