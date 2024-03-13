@@ -180,7 +180,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
      * @test
      * @group parallel
      */
-    public function thenConcurrentCommandsAreStillAppliedToIt(): void
+    public function thenConcurrentCommandsLeadToAnException(): void
     {
         $this->awaitFile(self::REBASE_IS_RUNNING_FLAG_PATH);
         // give the CR some time to close the content stream
