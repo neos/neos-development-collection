@@ -51,6 +51,7 @@ trait NodeRemoval
         ContentRepository $contentRepository
     ): EventsToPublish {
         $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
             $command->nodeAggregateId,
@@ -95,7 +96,7 @@ trait NodeRemoval
                 $command,
                 $events
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 

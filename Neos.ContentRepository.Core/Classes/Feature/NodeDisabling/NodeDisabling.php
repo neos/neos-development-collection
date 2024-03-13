@@ -49,6 +49,7 @@ trait NodeDisabling
         ContentRepository $contentRepository
     ): EventsToPublish {
         $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
@@ -87,7 +88,7 @@ trait NodeDisabling
                 $command,
                 $events
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 
@@ -103,6 +104,7 @@ trait NodeDisabling
         ContentRepository $contentRepository
     ): EventsToPublish {
         $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
@@ -137,7 +139,7 @@ trait NodeDisabling
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand($command, $events),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 }

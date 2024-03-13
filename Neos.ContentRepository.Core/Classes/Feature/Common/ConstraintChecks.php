@@ -58,6 +58,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * @internal implementation details of command handlers
@@ -675,5 +676,16 @@ trait ConstraintChecks
                 );
             }
         }
+    }
+
+    protected function getExpectedVersionOfContentStream(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): ExpectedVersion {
+        return ExpectedVersion::fromVersion(
+            $contentRepository->getContentStreamFinder()
+                ->findVersionForContentStream($contentStreamId)
+                ->unwrap()
+        );
     }
 }

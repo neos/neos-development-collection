@@ -83,6 +83,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
     ): EventsToPublish {
         // Basic constraints (Content Stream / Dimension Space Point / Node Type of to-be-inserted root node)
         $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist(
             $command->targetDimensionSpacePoint->toDimensionSpacePoint()
         );
@@ -168,7 +169,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
                 $command,
                 Events::fromArray($events)
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 

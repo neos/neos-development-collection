@@ -71,6 +71,7 @@ trait RootNodeHandling
         ContentRepository $contentRepository
     ): EventsToPublish {
         $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $this->requireProjectedNodeAggregateToNotExist(
             $contentStreamId,
             $command->nodeAggregateId,
@@ -121,7 +122,7 @@ trait RootNodeHandling
                 $command,
                 Events::fromArray($events)
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 
@@ -148,6 +149,7 @@ trait RootNodeHandling
         ContentRepository $contentRepository
     ): EventsToPublish {
         $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
             $command->nodeAggregateId,
@@ -174,7 +176,7 @@ trait RootNodeHandling
                 $command,
                 $events
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 

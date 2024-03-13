@@ -113,6 +113,7 @@ trait NodeTypeChange
          **************/
         // existence of content stream, node type and node aggregate
         $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
@@ -223,7 +224,7 @@ trait NodeTypeChange
                 $command,
                 Events::fromArray($events),
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 

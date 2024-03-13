@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\CloseContentStream;
@@ -84,7 +85,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
-
+        $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $contentRepository);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)->getEventStreamName();
 
         return new EventsToPublish(
@@ -94,7 +95,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                     $command->contentStreamId,
                 ),
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 
@@ -135,6 +136,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $contentRepository);
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
             $command->contentStreamId
@@ -147,7 +149,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                     $command->contentStreamId,
                 ),
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 
@@ -193,5 +195,16 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                 1710260081
             );
         }
+    }
+
+    protected function getExpectedVersionOfContentStream(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): ExpectedVersion {
+        return ExpectedVersion::fromVersion(
+            $contentRepository->getContentStreamFinder()
+                ->findVersionForContentStream($contentStreamId)
+                ->unwrap()
+        );
     }
 }
