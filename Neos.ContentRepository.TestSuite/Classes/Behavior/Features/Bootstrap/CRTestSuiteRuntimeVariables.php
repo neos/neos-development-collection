@@ -112,7 +112,6 @@ trait CRTestSuiteRuntimeVariables
      */
     public function iAmInTheActiveContentStreamOfWorkspace(string $workspaceName): void
     {
-        $this->currentContentRepository->getWorkspaceFinder()->disableRuntimeCache();
         $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
         if ($workspace === null) {
             throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
