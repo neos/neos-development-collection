@@ -13,6 +13,7 @@ namespace Neos\Fusion\Core\Cache;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\TypeHandling;
+use Neos\Utility\Unicode\Functions;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -81,14 +82,22 @@ class RuntimeContentCache
     /**
      * Adds a tag built from the given key and value.
      *
+     * @param string $key
+     * @param string $value
+     * @return void
      * @throws Exception
      */
-    public function addTag(string $tag): void
+    public function addTag($key, $value)
     {
-        $tag = trim($tag);
-        if ($tag === '') {
+        $key = trim($key);
+        if ($key === '') {
+            throw new Exception('Tag Key must not be empty', 1448264366);
+        }
+        $value = trim($value);
+        if ($value === '') {
             throw new Exception('Tag Value must not be empty', 1448264367);
         }
+        $tag = Functions::ucfirst($key) . 'DynamicTag_' . $value;
         $this->tags[$tag] = true;
     }
 

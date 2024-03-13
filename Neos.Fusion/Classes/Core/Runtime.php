@@ -217,14 +217,16 @@ class Runtime
      *
      * During Fusion rendering the method can be used to add tag dynamicaly for the current cache segment.
      *
-     * @throws Exceptions
+     * @param string $key
+     * @param string $value
+     * @return void
      */
-    public function addCacheTag(string $tag): void
+    public function addCacheTag($key, $value)
     {
         if ($this->runtimeContentCache->getEnableContentCache() === false) {
             return;
         }
-        $this->runtimeContentCache->addTag($tag);
+        $this->runtimeContentCache->addTag($key, $value);
     }
 
     /**
@@ -517,7 +519,7 @@ class Runtime
     {
         $output = null;
         $evaluationStatus = self::EVALUATION_SKIPPED;
-        [$cacheHit, $cachedResult] = $this->runtimeContentCache->preEvaluate($cacheContext, $fusionObject);
+        list($cacheHit, $cachedResult) = $this->runtimeContentCache->preEvaluate($cacheContext, $fusionObject);
         if ($cacheHit) {
             return $cachedResult;
         }
