@@ -67,14 +67,6 @@
 		}
 	}
 
-	.neos-user-menu {
-		&.neos-dropdown-open {
-			.neos-dropdown-menu {
-				display: block;
-			}
-		}
-	}
-
 	.neos-user-menu.neos-dropdown-open {
 		.neos-dropdown-menu {
 			display: block;
