@@ -34,11 +34,11 @@ final class MigrateEventsCommandController extends CommandController
     }
 
     /**
-     * Add the workspace name to the events meta-data, so it can be replayed.
+     * Adds a dummy workspace name to the events meta-data, so it can be replayed.
      *
      * Needed for #4708: https://github.com/neos/neos-development-collection/pull/4708
      *
-     * Included in February 2023 - before Neos 9.0 Beta 3.
+     * Included in February 2023 - before final Neos 9.0 release
      *
      * @param string $contentRepository Identifier of the Content Repository to set up
      */
