@@ -117,7 +117,7 @@ class ContentCacheFlusher
             $tagName = CacheTag::forDescendantOfNode($contentRepository->id, $nodeAggregate->contentStreamId, $nodeAggregate->nodeAggregateId);
             $tagsToFlush[$tagName->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',
-                $tagName,
+                $tagName->value,
                 $nodeAggregate->nodeAggregateId->value
             );
 

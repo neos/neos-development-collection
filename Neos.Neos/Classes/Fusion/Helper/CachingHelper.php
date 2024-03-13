@@ -42,7 +42,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      * A cache entry with this tag will be flushed whenever one of the
      * given nodes (for any variant) is updated.
      *
-     * @param iterable|Node $nodes (A single Node or array or \Traversable of Nodes)
+     * @param iterable<Node>|Node $nodes (A single Node or array or \Traversable of Nodes)
      * @return array<int,string>,
      */
     public function nodeTag(iterable|Node $nodes): array
@@ -84,6 +84,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      * (for any variant) that is of the given node type name(s)
      * (including inheritance) is updated.
      *
+     * @param iterable<string>|string $nodeTypes
      * @return array<int,string>
      */
     public function nodeTypeTag(string|iterable $nodeTypes, Node $contextNode): array
@@ -107,7 +108,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      * (for any variant) that is a descendant (child on any level) of one of
      * the given nodes is updated.
      *
-     * @param iterable|Node $nodes (A single Node or array or \Traversable of Nodes)
+     * @param iterable<Node>|Node $nodes (A single Node or array or \Traversable of Nodes)
      * @return array<int,string>
      */
     public function descendantOfTag(iterable|Node $nodes): array
