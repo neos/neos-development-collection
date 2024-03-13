@@ -161,3 +161,70 @@ Feature: Workspace discarding - basic functionality
     And the graph projection is fully up to date
 
     Then workspace user-ws-two has status OUTDATED
+
+  Scenario: Conflicting changes lead to OUTDATED_CONFLICT which can be recovered from via forced rebase
+
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                        |
+      | workspaceName      | "user-ws-one"                |
+      | baseWorkspaceName  | "live"                       |
+      | newContentStreamId | "user-cs-one"                |
+      | workspaceOwner     | "owner-identifier"           |
+    And the graph projection is fully up to date
+    And the command CreateWorkspace is executed with payload:
+      | Key                | Value                        |
+      | workspaceName      | "user-ws-two"                |
+      | baseWorkspaceName  | "live"                       |
+      | newContentStreamId | "user-cs-two"                |
+      | workspaceOwner     | "owner-identifier"           |
+    And the graph projection is fully up to date
+
+    When the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | nodeAggregateId              | "nody-mc-nodeface"       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+      | coveredDimensionSpacePoint   | {}                       |
+      | workspaceName              | "user-ws-one"            |
+    And the graph projection is fully up to date
+
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | workspaceName             | "user-ws-two"                |
+      | nodeAggregateId           | "nody-mc-nodeface"           |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "Modified"}         |
+    And the graph projection is fully up to date
+
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                         | Value                                    |
+      | nodeAggregateId             | "noderus-secundus"                       |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
+      | originDimensionSpacePoint   | {}                                       |
+      | workspaceName               | "user-ws-two"                            |
+    And the graph projection is fully up to date
+
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | workspaceName             | "user-ws-two"                |
+      | nodeAggregateId           | "noderus-secundus"           |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "The other node"}   |
+    And the graph projection is fully up to date
+
+    And the command PublishWorkspace is executed with payload:
+      | Key              | Value            |
+      | workspaceName    | "user-ws-one"    |
+    And the graph projection is fully up to date
+
+    Then workspace user-ws-two has status OUTDATED
+
+    When the command RebaseWorkspace is executed with payload:
+      | Key                            | Value                  |
+      | workspaceName                  | "user-ws-two"          |
+      | rebasedContentStreamId         | "user-cs-two-rebased"  |
+      | rebaseErrorHandlingStrategy    | "force"                |
+    And the graph projection is fully up to date
+
+    Then workspace user-ws-two has status UP_TO_DATE
+    And I expect a node identified by user-cs-two-rebased;noderus-secundus;{} to exist in the content graph
