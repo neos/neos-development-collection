@@ -65,6 +65,19 @@ final class ContentRepositoryRegistry
     }
 
     /**
+     * @return iterable<int, ContentRepositoryId>
+     */
+    public function getAllContentRepositoryIds(): iterable
+    {
+        if (!is_array($this->settings['contentRepositories'] ?? null)) {
+            throw InvalidConfigurationException::fromMessage('No Content Repositories are configured');
+        }
+        foreach (array_keys($this->settings['contentRepositories']) as $contentRepositoryId) {
+            yield ContentRepositoryId::fromString($contentRepositoryId);
+        }
+    }
+
+    /**
      * @internal for test cases only
      */
     public function resetFactoryInstance(ContentRepositoryId $contentRepositoryId): void
