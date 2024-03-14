@@ -11,7 +11,7 @@ use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensi
 
 class GherkinTableNodeBasedContentDimensionSourceFactory implements ContentDimensionSourceFactoryInterface
 {
-    public static function registerContentDimensionsForContentRepository(ContentRepositoryId $contentRepositoryId, GherkinTableNodeBasedContentDimensionSource $contentDimensions)
+    public static function registerContentDimensionsForContentRepository(ContentRepositoryId $contentRepositoryId, GherkinTableNodeBasedContentDimensionSource $contentDimensions): void
     {
         file_put_contents(self::cacheFileName($contentRepositoryId), serialize($contentDimensions));
     }
@@ -21,10 +21,11 @@ class GherkinTableNodeBasedContentDimensionSourceFactory implements ContentDimen
      */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): ContentDimensionSourceInterface
     {
-        if (!file_exists(self::cacheFileName($contentRepositoryId))) {
-            throw new \DomainException(sprintf('Content dimension source uninitialized for ContentRepository "%s"', $contentRepositoryId->value));
+        $contentDimensionSource = file_get_contents(self::cacheFileName($contentRepositoryId));
+        if ($contentDimensionSource === false) {
+            throw new \RuntimeException(sprintf('Content dimension source uninitialized for ContentRepository "%s"', $contentRepositoryId->value));
         }
-        return unserialize(file_get_contents(self::cacheFileName($contentRepositoryId)), ['allowed_classes' => [GherkinTableNodeBasedContentDimensionSource::class]]);
+        return unserialize($contentDimensionSource, ['allowed_classes' => [GherkinTableNodeBasedContentDimensionSource::class]]);
     }
 
     public static function reset(): void

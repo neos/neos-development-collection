@@ -35,10 +35,10 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
      */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): NodeTypeManager
     {
-        if (!file_exists(self::cacheFileName($contentRepositoryId))) {
-            throw new \DomainException(sprintf('NodeTypeManagerFactory uninitialized for ContentRepository "%s"', $contentRepositoryId->value));
-        }
         $nodeTypesConfigurationJson = file_get_contents(self::cacheFileName($contentRepositoryId));
+        if ($nodeTypesConfigurationJson === false) {
+            throw new \RuntimeException(sprintf('NodeTypeManagerFactory uninitialized for ContentRepository "%s"', $contentRepositoryId->value));
+        }
         try {
             $nodeTypesConfiguration = json_decode($nodeTypesConfigurationJson, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
@@ -60,6 +60,9 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
         );
     }
 
+    /**
+     * @param array<mixed> $nodeTypeConfiguration
+     */
     public static function registerNodeTypeConfigurationForContentRepository(ContentRepositoryId $contentRepositoryId, array $nodeTypeConfiguration): void
     {
         file_put_contents(self::cacheFileName($contentRepositoryId), json_encode($nodeTypeConfiguration, JSON_THROW_ON_ERROR));
