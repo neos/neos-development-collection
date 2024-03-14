@@ -78,7 +78,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
      *
      * Needed for #4322: https://github.com/neos/neos-development-collection/pull/4322
      *
-     * Included in February 2023 - before final Neos 9.0 release
+     * Included in February 2024 - before final Neos 9.0 release
      *
      * @param \Closure $outputFn
      * @return void
@@ -232,20 +232,20 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
 
     /**
-     * Adds a dummy workspace name to the events meta-data, so it can be replayed.
+     * Adds a dummy workspace name to the events meta-data, so it can be rebased
      *
      * The value of the payload for `workspaceName` is only required to successfully instantiate a command by its metadata.
      * This is only necessary for rebasing where directly override the workspace name to the target one.
-     * Thus, we simply enter a dummy string "migrated-missing".
+     * Thus, we simply enter a dummy string "missing:{contentStreamId}".
      *
      * Needed for #4708: https://github.com/neos/neos-development-collection/pull/4708
      *
-     * Included in February 2023 - before final Neos 9.0 release
+     * Included in March 2024 - before final Neos 9.0 release
      *
      * @param \Closure $outputFn
      * @return void
      */
-    public function fillWorkspaceNameInCommandPayloadOfEventMetaData(\Closure $outputFn)
+    public function migrateMetaDataToWorkspaceName(\Closure $outputFn)
     {
         $this->eventsModified = [];
 
