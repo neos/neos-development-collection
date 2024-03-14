@@ -152,7 +152,7 @@ final class ContentGraph implements ContentGraphInterface
                 ->andWhere('n.nodetypename = :nodeTypeName')
                 ->setParameter('nodeTypeName', $filter->nodeTypeName->value);
         }
-        return NodeAggregates::fromArray(iterator_to_array($this->mapQueryBuilderToNodeAggregates($queryBuilder)));
+        return NodeAggregates::fromArray(iterator_to_array($this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId)));
     }
 
     public function findNodeAggregatesByType(
@@ -169,7 +169,7 @@ final class ContentGraph implements ContentGraphInterface
                 'contentStreamId' => $contentStreamId->value,
                 'nodeTypeName' => $nodeTypeName->value,
             ]);
-        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId);
     }
 
     public function findNodeAggregateById(
@@ -189,6 +189,7 @@ final class ContentGraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
+            $contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
     }
@@ -214,7 +215,7 @@ final class ContentGraph implements ContentGraphInterface
                 'contentStreamId' => $contentStreamId->value
             ]);
 
-        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId);
     }
 
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
@@ -246,6 +247,7 @@ final class ContentGraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
+            $contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
     }
@@ -258,7 +260,7 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $parentNodeAggregateId
     ): iterable {
         $queryBuilder = $this->buildChildNodeAggregateQuery($parentNodeAggregateId, $contentStreamId);
-        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId);
     }
 
     /**
@@ -272,7 +274,7 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->buildChildNodeAggregateQuery($parentNodeAggregateId, $contentStreamId)
             ->andWhere('ch.name = :relationName')
             ->setParameter('relationName', $name->value);
-        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId);
     }
 
     /**
@@ -285,7 +287,7 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->buildChildNodeAggregateQuery($parentNodeAggregateId, $contentStreamId)
             ->andWhere('cn.classification = :tetheredClassification')
             ->setParameter('tetheredClassification', NodeAggregateClassification::CLASSIFICATION_TETHERED->value);
-        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId);
     }
 
     /**
@@ -390,10 +392,11 @@ final class ContentGraph implements ContentGraphInterface
      * @param QueryBuilder $queryBuilder
      * @return iterable<NodeAggregate>
      */
-    private function mapQueryBuilderToNodeAggregates(QueryBuilder $queryBuilder): iterable
+    private function mapQueryBuilderToNodeAggregates(QueryBuilder $queryBuilder, ContentStreamId $contentStreamId): iterable
     {
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $this->fetchRows($queryBuilder),
+            $contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
     }

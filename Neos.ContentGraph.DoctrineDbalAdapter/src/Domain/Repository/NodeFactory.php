@@ -64,6 +64,7 @@ final class NodeFactory
      */
     public function mapNodeRowToNode(
         array $nodeRow,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
@@ -74,7 +75,7 @@ final class NodeFactory
         return Node::create(
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
-                ContentStreamId::fromString($nodeRow['contentstreamid']),
+                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             ),
@@ -98,10 +99,10 @@ final class NodeFactory
     /**
      * @param array<int, array<string, mixed>> $nodeRows
      */
-    public function mapNodeRowsToNodes(array $nodeRows, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints): Nodes
+    public function mapNodeRowsToNodes(array $nodeRows, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints): Nodes
     {
         return Nodes::fromArray(
-            array_map(fn (array $nodeRow) => $this->mapNodeRowToNode($nodeRow, $dimensionSpacePoint, $visibilityConstraints), $nodeRows)
+            array_map(fn (array $nodeRow) => $this->mapNodeRowToNode($nodeRow, $contentStreamId, $dimensionSpacePoint, $visibilityConstraints), $nodeRows)
         );
     }
 
@@ -118,6 +119,7 @@ final class NodeFactory
      */
     public function mapReferenceRowsToReferences(
         array $nodeRows,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): References {
@@ -125,6 +127,7 @@ final class NodeFactory
         foreach ($nodeRows as $nodeRow) {
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
+                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             );
@@ -146,6 +149,7 @@ final class NodeFactory
      */
     public function mapNodeRowsToNodeAggregate(
         array $nodeRows,
+        ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
     ): ?NodeAggregate {
         if (empty($nodeRows)) {
@@ -173,6 +177,7 @@ final class NodeFactory
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
+                    $contentStreamId,
                     $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                     $visibilityConstraints
                 );
@@ -227,6 +232,7 @@ final class NodeFactory
      */
     public function mapNodeRowsToNodeAggregates(
         iterable $nodeRows,
+        ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
     ): iterable {
         $nodeTypeNames = [];
@@ -254,6 +260,7 @@ final class NodeFactory
                 $nodesByOccupiedDimensionSpacePointsByNodeAggregate
                     [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                         $nodeRow,
+                        $contentStreamId,
                         $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                         $visibilityConstraints
                     );
