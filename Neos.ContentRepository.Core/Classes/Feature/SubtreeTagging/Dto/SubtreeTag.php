@@ -14,13 +14,28 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto;
 
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+
 /**
  * A tag that can be added to Node aggregates that is inherited by all its descendants
  *
  * @api
  */
-final readonly class SubtreeTag implements \JsonSerializable
+final class SubtreeTag implements \JsonSerializable
 {
+    /**
+     * @var array<string,self>
+     */
+    private static array $instances = [];
+
+    private static function instance(string $value): self
+    {
+        if (!array_key_exists($value, self::$instances)) {
+            self::$instances[$value] = new self($value);
+        }
+        return self::$instances[$value];
+    }
+
     private function __construct(public string $value)
     {
         $regexPattern = '/^[a-z0-9_.-]{1,36}$/';
@@ -31,12 +46,17 @@ final readonly class SubtreeTag implements \JsonSerializable
 
     public static function fromString(string $value): self
     {
-        return new self($value);
+        return self::instance($value);
+    }
+
+    public static function disabled(): self
+    {
+        return self::instance('disabled');
     }
 
     public function equals(self $other): bool
     {
-        return $this->value === $other->value;
+        return $this === $other;
     }
 
     public function jsonSerialize(): string

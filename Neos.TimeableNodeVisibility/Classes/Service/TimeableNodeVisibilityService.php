@@ -54,7 +54,7 @@ class TimeableNodeVisibilityService
 
         /** @var Node $node */
         foreach ($nodes as $node) {
-            $nodeIsDisabled = $node->tags->contain(SubtreeTag::fromString('disabled'));
+            $nodeIsDisabled = $node->tags->contain(SubtreeTag::disabled());
             if ($this->needsEnabling($node, $now) && $nodeIsDisabled) {
                 $contentRepository->handle(
                     EnableNodeAggregate::create(

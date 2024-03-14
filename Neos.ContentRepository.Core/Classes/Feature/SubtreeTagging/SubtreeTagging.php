@@ -46,11 +46,10 @@ trait SubtreeTagging
             $command->coveredDimensionSpacePoint
         );
 
-// TODO Adjust to SubtreeTags (is already tagged with same tag => throw exception)
-//        if ($nodeAggregate->disablesDimensionSpacePoint($command->coveredDimensionSpacePoint)) {
-//            // already disabled, so we can return a no-operation.
-//            return EventsToPublish::empty();
-//        }
+        if ($nodeAggregate->isExplicitlyTaggedWithSubtreeTagInDimensionSpacePoint($command->tag, $command->coveredDimensionSpacePoint)) {
+            // already explicitly tagged with the same Subtree Tag, so we can return a no-operation.
+            return EventsToPublish::empty();
+        }
 
         $affectedDimensionSpacePoints = $command->nodeVariantSelectionStrategy
             ->resolveAffectedDimensionSpacePoints(
@@ -93,11 +92,10 @@ trait SubtreeTagging
             $command->coveredDimensionSpacePoint
         );
 
-// TODO Adjust to SubtreeTags (is not tagged with same tag => throw exception)
-//        if ($nodeAggregate->disablesDimensionSpacePoint($command->coveredDimensionSpacePoint)) {
-//            // already disabled, so we can return a no-operation.
-//            return EventsToPublish::empty();
-//        }
+        if (!$nodeAggregate->isExplicitlyTaggedWithSubtreeTagInDimensionSpacePoint($command->tag, $command->coveredDimensionSpacePoint)) {
+            // not explicitly tagged with the given Subtree Tag, so we can return a no-operation.
+            return EventsToPublish::empty();
+        }
 
         $affectedDimensionSpacePoints = $command->nodeVariantSelectionStrategy
             ->resolveAffectedDimensionSpacePoints(

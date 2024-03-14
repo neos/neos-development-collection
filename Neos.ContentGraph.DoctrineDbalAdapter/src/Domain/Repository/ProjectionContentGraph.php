@@ -657,7 +657,7 @@ class ProjectionContentGraph
             DimensionSpacePoint::fromJsonString($rawData['dimensionspacepoint']),
             $rawData['dimensionspacepointhash'],
             (int)$rawData['position'],
-            NodeFactory::extractSubtreeTagsWithInheritedFromJson($rawData['subtreetags']),
+            NodeFactory::extractNodeTagsFromJson($rawData['subtreetags']),
         );
     }
 

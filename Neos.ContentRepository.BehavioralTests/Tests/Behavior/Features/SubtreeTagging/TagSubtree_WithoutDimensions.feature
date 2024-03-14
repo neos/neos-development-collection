@@ -41,6 +41,57 @@ Feature: Tag subtree without dimensions
       | b               | Neos.ContentRepository.Testing:Document | root                  | b        |
       | b1              | Neos.ContentRepository.Testing:Document | b                     | b1       |
 
+  Scenario: Tagging the same node twice with the same subtree tag is ignored
+    When the command TagSubtree is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1"          |
+      | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "tag1"        |
+    And the graph projection is fully up to date
+    Then I expect exactly 14 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 13 is of type "SubtreeWasTagged" with payload:
+      | Key                          | Expected        |
+      | contentStreamId              | "cs-identifier" |
+      | nodeAggregateId              | "a1"            |
+      | affectedDimensionSpacePoints | [[]]            |
+      | tag                          | "tag1"          |
+    When the command TagSubtree is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1"          |
+      | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "tag1"        |
+    Then I expect exactly 14 events to be published on stream with prefix "ContentStream:cs-identifier"
+
+  Scenario: Untagging a node without tags is ignored
+    Then I expect exactly 13 events to be published on stream with prefix "ContentStream:cs-identifier"
+    When the command UntagSubtree is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1"          |
+      | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "tag1"        |
+    Then I expect exactly 13 events to be published on stream with prefix "ContentStream:cs-identifier"
+
+  Scenario: Untagging a node that is only implicitly tagged (inherited) is ignored
+    When the command TagSubtree is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1"          |
+      | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "tag1"        |
+    And the graph projection is fully up to date
+    Then I expect exactly 14 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 13 is of type "SubtreeWasTagged" with payload:
+      | Key                          | Expected        |
+      | contentStreamId              | "cs-identifier" |
+      | nodeAggregateId              | "a1"            |
+      | affectedDimensionSpacePoints | [[]]            |
+      | tag                          | "tag1"          |
+    When the command UntagSubtree is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1a"         |
+      | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "tag1"        |
+    Then I expect exactly 14 events to be published on stream with prefix "ContentStream:cs-identifier"
+
   Scenario: Tagging subtree with arbitrary strategy since dimensions are not involved
     When the command TagSubtree is executed with payload:
       | Key                          | Value         |
@@ -134,7 +185,7 @@ Feature: Tag subtree without dimensions
       | Key                   | Value                                     |
       | nodeAggregateId       | "a1a3"                                    |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
-      | parentNodeAggregateId | "a1a"                                    |
+      | parentNodeAggregateId | "a1a"                                     |
     When I execute the findSubtree query for entry node aggregate id "b" I expect the following tree with tags:
     """
     b (tag2*)
@@ -145,4 +196,21 @@ Feature: Tag subtree without dimensions
         a1a1b (tag4*,tag3,tag2)
        a1a2 (tag4*,tag3,tag2)
        a1a3 (tag4,tag3,tag2)
+    """
+
+    When the command UntagSubtree is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1a"         |
+      | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "tag4"        |
+    When I execute the findSubtree query for entry node aggregate id "b" I expect the following tree with tags:
+    """
+    b (tag2*)
+     b1 (tag3*,tag2)
+      a1a (tag3,tag2)
+       a1a1 (tag4*,tag1*,tag3,tag2)
+        a1a1a (tag4*,tag3,tag2)
+        a1a1b (tag4*,tag3,tag2)
+       a1a2 (tag4*,tag3,tag2)
+       a1a3 (tag3,tag2)
     """

@@ -36,7 +36,7 @@ final readonly class VisibilityConstraints implements \JsonSerializable
 
     public function isDisabledContentShown(): bool
     {
-        return $this->tagConstraints->contain(SubtreeTag::fromString('disabled'));
+        return $this->tagConstraints->contain(SubtreeTag::disabled());
     }
 
     public function getHash(): string

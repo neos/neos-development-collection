@@ -359,7 +359,7 @@ class LinkingService
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
-        $action = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::fromString('disabled')) ? 'show' : 'preview';
+        $action = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::disabled()) ? 'show' : 'preview';
 
         return $uriBuilder
             ->reset()

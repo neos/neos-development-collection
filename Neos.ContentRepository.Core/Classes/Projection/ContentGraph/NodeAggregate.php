@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
@@ -65,11 +66,10 @@ final class NodeAggregate
         private readonly array $nodesByCoveredDimensionSpacePoint,
         private readonly OriginByCoverage $occupationByCovered,
         /**
-         * TODO Adjust to SubtreeTags
          * The dimension space point set this node aggregate disables.
          * This is *not* necessarily the set it is disabled in, since that is determined by its ancestors
          */
-        public readonly DimensionSpacePointSet $disabledDimensionSpacePoints
+        public readonly DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags
     ) {
     }
 
@@ -145,8 +145,8 @@ final class NodeAggregate
         return $occupation;
     }
 
-    public function disablesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
+    public function isExplicitlyTaggedWithSubtreeTagInDimensionSpacePoint(SubtreeTag $tag, DimensionSpacePoint $dimensionSpacePoint): bool
     {
-        return $this->disabledDimensionSpacePoints->contains($dimensionSpacePoint);
+        return $this->dimensionSpacePointsBySubtreeTags->forSubtreeTag($tag)->contains($dimensionSpacePoint);
     }
 }

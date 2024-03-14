@@ -209,7 +209,7 @@ trait SubtreeTagging
         if (!is_string($subtreeTagsJson)) {
             throw new \RuntimeException(sprintf('Failed to fetch SubtreeTags for node "%s" in content subgraph "%s@%s"', $nodeAggregateId->value, $dimensionSpacePoint->toJson(), $contentStreamId->value), 1698838865);
         }
-        return NodeFactory::extractSubtreeTagsWithInheritedFromJson($subtreeTagsJson);
+        return NodeFactory::extractNodeTagsFromJson($subtreeTagsJson);
     }
 
     private function subtreeTagsForHierarchyRelation(ContentStreamId $contentStreamId, NodeRelationAnchorPoint $parentNodeAnchorPoint, DimensionSpacePoint $dimensionSpacePoint): NodeTags
@@ -231,7 +231,7 @@ trait SubtreeTagging
         if (!is_string($subtreeTagsJson)) {
             throw new \RuntimeException(sprintf('Failed to fetch SubtreeTags for hierarchy parent anchor point "%s" in content subgraph "%s@%s"', $parentNodeAnchorPoint->value, $dimensionSpacePoint->toJson(), $contentStreamId->value), 1704199847);
         }
-        return NodeFactory::extractSubtreeTagsWithInheritedFromJson($subtreeTagsJson);
+        return NodeFactory::extractNodeTagsFromJson($subtreeTagsJson);
     }
 
     abstract protected function getDatabaseConnection(): Connection;

@@ -78,7 +78,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $subtreeTagToRemove = SubtreeTag::fromString($dataset['subtreeTag']);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
-        $subtreeTags = NodeFactory::extractSubtreeTagsWithInheritedFromJson($record['subtreetags']);
+        $subtreeTags = NodeFactory::extractNodeTagsFromJson($record['subtreetags']);
         if (!$subtreeTags->contain($subtreeTagToRemove)) {
             throw new \RuntimeException(sprintf('Failed to remove subtree tag "%s" because that tag is not set', $subtreeTagToRemove->value), 1708618267);
         }

@@ -67,7 +67,7 @@ class FeatureContext implements Context
         );
         $currentNode = $subgraph->findNodeById($this->currentNode->nodeAggregateId);
         Assert::assertNotNull($currentNode, sprintf('Failed to find node with id "%s" in subgraph %s', $this->currentNode->nodeAggregateId->value, json_encode($subgraph)));
-        Assert::assertFalse($currentNode->tags->contain(SubtreeTag::fromString('disabled')), sprintf('Node "%s" was expected to be enabled, but it is not', $this->currentNode->nodeAggregateId->value));
+        Assert::assertFalse($currentNode->tags->contain(SubtreeTag::disabled()), sprintf('Node "%s" was expected to be enabled, but it is not', $this->currentNode->nodeAggregateId->value));
     }
 
     /**
@@ -83,7 +83,7 @@ class FeatureContext implements Context
         );
         $currentNode = $subgraph->findNodeById($this->currentNode->nodeAggregateId);
         Assert::assertNotNull($currentNode, sprintf('Failed to find node with id "%s" in subgraph %s', $this->currentNode->nodeAggregateId->value, json_encode($subgraph)));
-        Assert::assertTrue($currentNode->tags->contain(SubtreeTag::fromString('disabled')), sprintf('Node "%s" was expected to be disabled, but it is not', $this->currentNode->nodeAggregateId->value));
+        Assert::assertTrue($currentNode->tags->contain(SubtreeTag::disabled()), sprintf('Node "%s" was expected to be disabled, but it is not', $this->currentNode->nodeAggregateId->value));
     }
 
     protected function getContentRepositoryService(
