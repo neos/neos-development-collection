@@ -1115,8 +1115,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
-        $this->dimensionSpacePoints->insertDimensionSpacePoint($event->target);
         $this->transactional(function () use ($event) {
+            $this->dimensionSpacePoints->insertDimensionSpacePoint($event->target);
+
             // the ordering is important - we first update the OriginDimensionSpacePoints, as we need the
             // hierarchy relations for this query. Then, we update the Hierarchy Relations.
 
@@ -1188,8 +1189,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
-        $this->dimensionSpacePoints->insertDimensionSpacePoint($event->target);
         $this->transactional(function () use ($event) {
+            $this->dimensionSpacePoints->insertDimensionSpacePoint($event->target);
+
             // 1) hierarchy relations
             $this->getDatabaseConnection()->executeStatement(
                 '
