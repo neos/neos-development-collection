@@ -51,7 +51,7 @@ class PropertyTypeTest extends TestCase
         }
     }
 
-    public function declarationAndValueProvider(): array
+    public static function declarationAndValueProvider(): array
     {
         $bool = true;
         $int = 42;
@@ -154,7 +154,7 @@ class PropertyTypeTest extends TestCase
         }
     }
 
-    public function declarationTypeProvider(): array
+    public static function declarationTypeProvider(): array
     {
         return [
             [['bool', 'boolean'], 'boolean'],

@@ -24,7 +24,7 @@ Feature: Disable a node aggregate
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -58,7 +58,6 @@ Feature: Disable a node aggregate
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
@@ -66,7 +65,7 @@ Feature: Disable a node aggregate
       | nodeName                      | "child-document"                          |
 
     When the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{} to exist in the content graph
@@ -77,7 +76,7 @@ Feature: Disable a node aggregate
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points []
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
     Then the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
       | Level | nodeAggregateId |

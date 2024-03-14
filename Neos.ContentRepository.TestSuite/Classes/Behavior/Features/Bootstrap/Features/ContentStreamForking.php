@@ -47,4 +47,18 @@ trait ContentStreamForking
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
+
+    /**
+     * @Given /^the command ForkContentStream is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandForkContentStreamIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandForkContentStreamIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
 }

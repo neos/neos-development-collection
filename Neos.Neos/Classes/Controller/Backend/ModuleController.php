@@ -18,6 +18,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
@@ -114,6 +115,7 @@ class ModuleController extends ActionController
             }
             return $moduleResponse->getContent();
         } else {
+            /** @var ?Account $authenticatedAccount */
             $authenticatedAccount = $this->securityContext->getAccount();
             $user = $authenticatedAccount === null ? null : $this->partyService->getAssignedPartyOfAccount($authenticatedAccount);
 

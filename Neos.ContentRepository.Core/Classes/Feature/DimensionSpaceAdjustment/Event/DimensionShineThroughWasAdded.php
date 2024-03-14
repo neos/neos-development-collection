@@ -32,12 +32,12 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
  *
  * @api events are the persistence-API of the content repository
  */
-final class DimensionShineThroughWasAdded implements EventInterface, PublishableToOtherContentStreamsInterface
+final readonly class DimensionShineThroughWasAdded implements EventInterface, PublishableToOtherContentStreamsInterface
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly DimensionSpacePoint $source,
-        public readonly DimensionSpacePoint $target
+        public ContentStreamId $contentStreamId,
+        public DimensionSpacePoint $source,
+        public DimensionSpacePoint $target
     ) {
     }
 

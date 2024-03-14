@@ -16,8 +16,9 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Move a dimension space point to a new location; basically moving all content to the new dimension space point.
@@ -28,20 +29,22 @@ use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInt
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class MoveDimensionSpacePoint implements
+final readonly class MoveDimensionSpacePoint implements
     \JsonSerializable,
     CommandInterface,
-    RebasableToOtherContentStreamsInterface
+    RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in
+     * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in.
+     *       This content stream is specifically created for this operation and thus not prone to conflicts,
+     *       thus we don't need the workspace name
      * @param DimensionSpacePoint $source source dimension space point
      * @param DimensionSpacePoint $target target dimension space point
      */
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly DimensionSpacePoint $source,
-        public readonly DimensionSpacePoint $target
+        public ContentStreamId $contentStreamId,
+        public DimensionSpacePoint $source,
+        public DimensionSpacePoint $target
     ) {
     }
 
@@ -67,24 +70,22 @@ final class MoveDimensionSpacePoint implements
         );
     }
 
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
+        return new self(
+            $targetContentStreamId,
+            $this->source,
+            $this->target
+        );
+    }
+
     /**
      * @return array<string,\JsonSerializable>
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'source' => $this->source,
-            'target' => $this->target,
-        ];
-    }
-
-    public function createCopyForContentStream(ContentStreamId $target): self
-    {
-        return new self(
-            $target,
-            $this->source,
-            $this->target
-        );
+        return get_object_vars($this);
     }
 }

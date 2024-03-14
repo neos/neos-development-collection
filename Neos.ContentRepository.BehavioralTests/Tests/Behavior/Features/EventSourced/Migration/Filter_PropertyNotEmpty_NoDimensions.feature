@@ -24,16 +24,15 @@ Feature: Filter - Property not empty
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
-      | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     # Node /name1 (has text value set)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "na-name1"                                |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | nodeName                  | "name1"                                   |
@@ -45,7 +44,6 @@ Feature: Filter - Property not empty
     # Node /name2 (has text value empty)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "na-name2"                                |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | nodeName                  | "name2"                                   |
@@ -57,7 +55,6 @@ Feature: Filter - Property not empty
       # no node name (has text value not set)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "na-null-value"                           |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {}                                        |
@@ -68,7 +65,6 @@ Feature: Filter - Property not empty
     # no node name (has text value not set, and null will be ignored as unset)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "na-no-text"                              |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {}                                        |
@@ -95,7 +91,7 @@ Feature: Filter - Property not empty
               newSerializedValue: 'fixed value'
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "na-name1" to lead to node cs-identifier;na-name1;{}
     And I expect this node to have the following properties:
       | Key  | Value            |

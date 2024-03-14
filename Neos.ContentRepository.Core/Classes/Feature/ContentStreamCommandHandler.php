@@ -19,12 +19,21 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Command\ReopenContentStream;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Command\CloseContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsNotClosed;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
@@ -44,11 +53,13 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        /** @phpstan-ignore-next-line */
         return match ($command::class) {
             CreateContentStream::class => $this->handleCreateContentStream($command, $contentRepository),
+            CloseContentStream::class => $this->handleCloseContentStream($command, $contentRepository),
+            ReopenContentStream::class => $this->handleReopenContentStream($command, $contentRepository),
             ForkContentStream::class => $this->handleForkContentStream($command, $contentRepository),
             RemoveContentStream::class => $this->handleRemoveContentStream($command, $contentRepository),
+            default => throw new \DomainException('Cannot handle commands of class ' . get_class($command), 1710408206),
         };
     }
 
@@ -74,6 +85,47 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         );
     }
 
+    private function handleCloseContentStream(
+        CloseContentStream $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $contentRepository);
+        $this->requireContentStreamToNotBeClosed($command->contentStreamId, $contentRepository);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)->getEventStreamName();
+
+        return new EventsToPublish(
+            $streamName,
+            Events::with(
+                new ContentStreamWasClosed(
+                    $command->contentStreamId,
+                ),
+            ),
+            $expectedVersion
+        );
+    }
+
+    private function handleReopenContentStream(
+        ReopenContentStream $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $contentRepository);
+        $this->requireContentStreamToBeClosed($command->contentStreamId, $contentRepository);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)->getEventStreamName();
+
+        return new EventsToPublish(
+            $streamName,
+            Events::with(
+                new ContentStreamWasReopened(
+                    $command->contentStreamId,
+                    $command->previousState,
+                ),
+            ),
+            $expectedVersion
+        );
+    }
+
     /**
      * @throws ContentStreamAlreadyExists
      * @throws ContentStreamDoesNotExistYet
@@ -83,6 +135,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->sourceContentStreamId, $contentRepository);
+        $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId, $contentRepository);
         $this->requireContentStreamToNotExistYet($command->newContentStreamId, $contentRepository);
 
         $sourceContentStreamVersion = $contentRepository->getContentStreamFinder()
@@ -110,6 +163,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $contentRepository);
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
             $command->contentStreamId
@@ -122,7 +176,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                     $command->contentStreamId,
                 ),
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 
@@ -156,5 +210,40 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                 1521386692
             );
         }
+    }
+
+    protected function requireContentStreamToNotBeClosed(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): void {
+        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) === ContentStreamState::STATE_CLOSED) {
+            throw new ContentStreamIsClosed(
+                'Content stream "' . $contentStreamId->value . '" is closed.',
+                1710260081
+            );
+        }
+    }
+
+    protected function requireContentStreamToBeClosed(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): void {
+        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) !== ContentStreamState::STATE_CLOSED) {
+            throw new ContentStreamIsNotClosed(
+                'Content stream "' . $contentStreamId->value . '" is not closed.',
+                1710405911
+            );
+        }
+    }
+
+    protected function getExpectedVersionOfContentStream(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): ExpectedVersion {
+        return ExpectedVersion::fromVersion(
+            $contentRepository->getContentStreamFinder()
+                ->findVersionForContentStream($contentStreamId)
+                ->unwrap()
+        );
     }
 }

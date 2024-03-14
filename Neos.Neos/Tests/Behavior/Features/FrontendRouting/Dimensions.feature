@@ -43,13 +43,12 @@ Feature: Routing functionality with multiple content dimensions
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                                                                                                                                                                     |
-      | contentStreamId             | "cs-identifier"                                                                                                                                                                                           |
       | nodeAggregateId             | "lady-eleonode-rootford"                                                                                                                                                                                  |
       | nodeTypeName                | "Neos.Neos:Sites"                                                                                                                                                                                         |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues           | nodeName |
       | sir-david-nodenborough | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |
@@ -57,14 +56,12 @@ Feature: Routing functionality with multiple content dimensions
       | carl-destinode         | nody-mc-nodeface       | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "carl"}      | node3    |
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "carl-destinode"                 |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"de"} |
     And the graph projection is fully up to date
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
-      | contentStreamId           | "cs-identifier"                  |
       | nodeAggregateId           | "carl-destinode"                 |
       | originDimensionSpacePoint | {"market":"DE", "language":"de"} |
       | propertyValues            | {"uriPathSegment": "karl-de"}    |
@@ -335,14 +332,12 @@ Feature: Routing functionality with multiple content dimensions
     # create variant for fr and sites node
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
     And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "nody-mc-nodeface"               |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
@@ -350,7 +345,6 @@ Feature: Routing functionality with multiple content dimensions
     And the graph projection is fully up to date
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
-      | contentStreamId           | "cs-identifier"                  |
       | nodeAggregateId           | "nody-mc-nodeface"               |
       | originDimensionSpacePoint | {"market":"DE", "language":"fr"} |
       | propertyValues            | {"uriPathSegment": "nody-fr"}    |
@@ -399,14 +393,12 @@ Feature: Routing functionality with multiple content dimensions
     # create variant for fr and sites node
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
     And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "nody-mc-nodeface"               |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
@@ -415,16 +407,13 @@ Feature: Routing functionality with multiple content dimensions
 
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
-      | contentStreamId           | "cs-identifier"                  |
       | nodeAggregateId           | "nody-mc-nodeface"               |
       | originDimensionSpacePoint | {"market":"DE", "language":"fr"} |
       | propertyValues            | {"uriPathSegment": "nody-fr"}    |
     And the graph projection is fully up to date
 
-
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                            |
-      | contentStreamId                     | "cs-identifier"                  |
       | nodeAggregateId                     | "nody-mc-nodeface"               |
       | dimensionSpacePoint                 | {"market":"DE", "language":"fr"} |
       | newParentNodeAggregateId            | "lady-eleonode-rootford"         |

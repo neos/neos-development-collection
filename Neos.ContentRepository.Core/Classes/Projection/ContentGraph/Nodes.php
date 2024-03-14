@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.Core package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -151,9 +151,6 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     /**
      * Returns the node before the given $referenceNode in this set.
      * Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no preceding sibling
-     *
-     * @param Node $referenceNode
-     * @return Node
      */
     public function previous(Node $referenceNode): ?Node
     {

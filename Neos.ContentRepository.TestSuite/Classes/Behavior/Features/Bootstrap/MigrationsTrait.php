@@ -40,7 +40,11 @@ trait MigrationsTrait
             fn (string $cs) => ContentStreamId::fromString($cs),
             explode(',', $contentStreams)
         );
-        $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIds);
+        $command = new ExecuteMigration(
+            $migrationConfiguration,
+            WorkspaceName::fromString($workspaceName),
+            $contentStreamIds
+        );
 
         /** @var NodeMigrationService $nodeMigrationService */
         $nodeMigrationService = $this->getContentRepositoryService(new NodeMigrationServiceFactory());
