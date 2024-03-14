@@ -21,7 +21,7 @@ Feature: Tag subtree without dimensions
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "root"                        |
@@ -111,7 +111,7 @@ Feature: Tag subtree without dimensions
     And I am in content stream "cs-identifier"
     Then I expect the graph projection to consist of exactly 12 nodes
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect the node with aggregate identifier "a1" to be explicitly tagged "tag1"
     Then I expect the node with aggregate identifier "a1a" to inherit the tag "tag1"
     Then I expect the node with aggregate identifier "a1a1" to inherit the tag "tag1"
