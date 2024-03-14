@@ -2,8 +2,15 @@
 #
 prototype(Neos.Neos:NodeUri) {
   @class = 'Neos\\Neos\\Fusion\\NodeUriImplementation'
+  node = null
+  format = null
+  section = null
+  queryParameters = Neos.Fusion:DataStructure
   additionalParams = Neos.Fusion:DataStructure
   arguments = Neos.Fusion:DataStructure
   argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
+  addQueryString = false
+  absolute = false
+  baseNodeName = 'documentNode'
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }

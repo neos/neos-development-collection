@@ -13,8 +13,11 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Fusion\Exception\RuntimeException;
+use Neos\Utility\Arrays;
 
 /**
  * A Fusion ActionUri object
@@ -86,9 +89,21 @@ class ActionUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * Controller arguments that are to be handled by the router
+     *
+     * @return array
+     */
+    public function getRoutingArguments(): array
+    {
+        $routingArguments = $this->fusionValue('routingArguments');
+        return is_array($routingArguments) ? $routingArguments: [];
+    }
+
+    /**
      * Controller arguments
      *
      * @return array|null
+     * @deprecated to be removed with Neos 9
      */
     public function getArguments(): ?array
     {
@@ -120,6 +135,7 @@ class ActionUriImplementation extends AbstractFusionObject
      * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      *
      * @return array|null
+     * @deprecated to be removed with Neos 9
      */
     public function getAdditionalParams(): ?array
     {
@@ -127,9 +143,21 @@ class ActionUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * Query parameters that are appended to the url
+     *
+     * @return array
+     */
+    public function getQueryParameters(): array
+    {
+        $queryParameters = $this->fusionValue('queryParameters');
+        return is_array($queryParameters) ? $queryParameters: [];
+    }
+
+    /**
      * Arguments to be removed from the URI. Only active if addQueryString = true
      *
      * @return array|null
+     * @deprecated to be removed with Neos 9
      */
     public function getArgumentsToBeExcludedFromQueryString(): ?array
     {
@@ -140,6 +168,7 @@ class ActionUriImplementation extends AbstractFusionObject
      * If true, the current query parameters will be kept in the URI
      *
      * @return boolean
+     * @deprecated to be removed with Neos 9
      */
     public function isAddQueryString(): bool
     {
@@ -157,12 +186,21 @@ class ActionUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * @return UriBuilder
+     */
+    public function createUriBuilder(): UriBuilder
+    {
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($this->getRequest());
+        return $uriBuilder;
+    }
+
+    /**
      * @return string
      */
     public function evaluate()
     {
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($this->getRequest());
+        $uriBuilder = $this->createUriBuilder();
 
         $format = $this->getFormat();
         if ($format !== null) {
@@ -195,13 +233,26 @@ class ActionUriImplementation extends AbstractFusionObject
         }
 
         try {
-            return $uriBuilder->uriFor(
+            $arguments = $this->getArguments();
+            $routingArguments = $this->getRoutingArguments();
+            if ($arguments && $routingArguments) {
+                throw new RuntimeException('Neos.Fusion:ActionUri does not allow to combine "arguments" and "routingArguments"', 1665431866);
+            }
+            $uriString = $uriBuilder->uriFor(
                 $this->getAction(),
-                $this->getArguments(),
+                $routingArguments ?: $arguments ?: [],
                 $this->getController(),
                 $this->getPackage(),
                 $this->getSubpackage()
             );
+            $queryParameters = $this->getQueryParameters();
+            if (empty($queryParameters)) {
+                return $uriString;
+            }
+            $uri = new Uri($uriString);
+            parse_str($uri->getQuery(), $queryParametersFromRouting);
+            $mergedQueryParameters = Arrays::arrayMergeRecursiveOverrule($queryParametersFromRouting, $queryParameters);
+            return (string)$uri->withQuery(http_build_query($mergedQueryParameters, '', '&'));
         } catch (\Exception $exception) {
             return $this->runtime->handleRenderingException($this->path, $exception);
         }
