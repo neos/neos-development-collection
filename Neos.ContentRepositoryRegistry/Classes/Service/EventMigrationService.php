@@ -269,7 +269,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
              * Nearly all implementations of {@see RebasableToOtherWorkspaceInterface::createCopyForWorkspace()} have to migrate.
              * The following commands all require the `$workspaceName` field and have no `$contentStreamId`.
              * The commands AddDimensionShineThrough and MoveDimensionSpacePoint are exceptions to the rule, which don't
-             * require workspaces but still operate on content streams.
+             * require workspaces but still operate on content streams. {@link https://github.com/neos/neos-development-collection/issues/4942}
              */
             if (!in_array($commandClassName, [
                 CreateNodeAggregateWithNodeAndSerializedProperties::class,
@@ -295,7 +295,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
             // ... and update the event
             // the payload is only used for rebasing where we override the workspace either way:
-            $eventMetaData['commandPayload']['workspaceName'] = 'missing';
+            $eventMetaData['commandPayload']['workspaceName'] = 'missing:' . ($eventMetaData['commandPayload']['contentStreamId'] ?? '');
             unset($eventMetaData['commandPayload']['contentStreamId']);
 
             $outputRewriteNotice(sprintf('Metadata: Added `workspaceName`'));
