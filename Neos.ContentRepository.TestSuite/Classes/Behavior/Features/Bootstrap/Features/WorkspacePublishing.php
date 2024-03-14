@@ -33,7 +33,6 @@ trait WorkspacePublishing
 
     /**
      * @Given /^the command PublishIndividualNodesFromWorkspace is executed with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theCommandPublishIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
@@ -58,8 +57,19 @@ trait WorkspacePublishing
     }
 
     /**
+     * @Given /^the command PublishIndividualNodesFromWorkspace is executed with payload and exceptions are caught:$/
+     */
+    public function theCommandPublishIndividualNodesFromWorkspaceIsExecutedAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandPublishIndividualNodesFromWorkspaceIsExecuted($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
      * @Given /^the command PublishWorkspace is executed with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theCommandPublishWorkspaceIsExecuted(TableNode $payloadTable): void
@@ -69,14 +79,17 @@ trait WorkspacePublishing
         $command = PublishWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
         );
+        if (array_key_exists('newContentStreamId', $commandArguments)) {
+            $command = $command->withNewContentStreamId(
+                ContentStreamId::fromString($commandArguments['newContentStreamId'])
+            );
+        }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**
      * @Given /^the command PublishWorkspace is executed with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
      */
     public function theCommandPublishWorkspaceIsExecutedAndExceptionsAreCaught(TableNode $payloadTable): void
     {

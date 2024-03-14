@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\ContentStreamForking\Command;
+namespace Neos\ContentRepository\Core\Feature\ContentStreamClosing\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -20,13 +20,13 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 /**
  * @api commands are the write-API of the ContentRepository
  */
-final class CloseContentStream implements CommandInterface
+final readonly class CloseContentStream implements CommandInterface
 {
     /**
      * @param ContentStreamId $contentStreamId The id of the content stream to close
      */
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
+        public ContentStreamId $contentStreamId,
     ) {
     }
 
