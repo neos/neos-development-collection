@@ -30,7 +30,6 @@ class GherkinTableNodeBasedContentDimensionSourceFactory implements ContentDimen
 
     public static function reset(): void
     {
-
     }
 
     private static function cacheFileName(ContentRepositoryId $contentRepositoryId): string

@@ -70,7 +70,6 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
 
     public static function reset(): void
     {
-
     }
 
     private static function cacheFileName(ContentRepositoryId $contentRepositoryId): string
