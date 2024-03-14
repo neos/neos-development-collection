@@ -32,6 +32,7 @@ Feature: Create node aggregate with node
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
+    And I am in workspace "live"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |

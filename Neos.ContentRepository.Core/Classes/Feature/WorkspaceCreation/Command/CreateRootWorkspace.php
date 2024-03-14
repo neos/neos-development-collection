@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class CreateRootWorkspace implements CommandInterface
+final readonly class CreateRootWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Unique name of the workspace to create
@@ -36,10 +36,10 @@ final class CreateRootWorkspace implements CommandInterface
      * @param ContentStreamId $newContentStreamId The id of the content stream the new workspace is assigned to initially
      */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly WorkspaceTitle $workspaceTitle,
-        public readonly WorkspaceDescription $workspaceDescription,
-        public readonly ContentStreamId $newContentStreamId
+        public WorkspaceName $workspaceName,
+        public WorkspaceTitle $workspaceTitle,
+        public WorkspaceDescription $workspaceDescription,
+        public ContentStreamId $newContentStreamId
     ) {
     }
 

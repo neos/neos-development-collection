@@ -69,4 +69,17 @@ trait WorkspaceDiscarding
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
+
+
+    /**
+     * @Given /^the command DiscardIndividualNodesFromWorkspace is executed with payload and exceptions are caught:$/
+     */
+    public function theCommandDiscardIndividualNodesFromWorkspaceIsExecutedAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandDiscardIndividualNodesFromWorkspaceIsExecuted($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
 }

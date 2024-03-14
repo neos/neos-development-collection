@@ -31,7 +31,7 @@ Feature: Create node generalization
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
+    And I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -97,7 +97,7 @@ Feature: Create node generalization
     And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"market":"CH", "language":"gsw"} to exist in the content graph
 
-    When I am in content stream "cs-identifier"
+    When I am in the active content stream of workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
@@ -118,7 +118,7 @@ Feature: Create node generalization
     And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"gsw"}]
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"gsw"}]
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -128,7 +128,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -138,7 +138,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -148,7 +148,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -158,7 +158,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -168,7 +168,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -220,7 +220,7 @@ Feature: Create node generalization
     And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"DE", "language":"gsw"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"market":"CH", "language":"gsw"} to exist in the content graph
 
-    When I am in content stream "cs-identifier"
+    When I am in the active content stream of workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
@@ -241,21 +241,21 @@ Feature: Create node generalization
     And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"gsw"}]
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"gsw"}]
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to no node
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to no node
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"gsw"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -265,21 +265,21 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to no node
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to no node
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -348,7 +348,7 @@ Feature: Create node generalization
     And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"market":"CH", "language":"gsw"} to exist in the content graph
 
-    When I am in content stream "cs-identifier"
+    When I am in the active content stream of workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
@@ -369,7 +369,7 @@ Feature: Create node generalization
     And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"gsw"}]
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"gsw"}]
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -379,7 +379,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -389,7 +389,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -399,7 +399,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -409,7 +409,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -419,7 +419,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -488,7 +488,7 @@ Feature: Create node generalization
     And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"market":"CH", "language":"gsw"} to exist in the content graph
 
-    When I am in content stream "cs-identifier"
+    When I am in the active content stream of workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
@@ -509,7 +509,7 @@ Feature: Create node generalization
     And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"gsw"}]
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"gsw"}]
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -519,7 +519,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -529,7 +529,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -539,7 +539,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -549,7 +549,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -559,7 +559,7 @@ Feature: Create node generalization
     And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}

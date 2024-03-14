@@ -44,7 +44,7 @@ Feature: Set node properties with different scopes
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -128,7 +128,7 @@ Feature: Set node properties with different scopes
       | references                      | [{"target": "anthony-destinode"}] |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "mul"}
     And I expect this node to have the following references:
       | Name                          | Node                                                | Properties |
@@ -141,7 +141,7 @@ Feature: Set node properties with different scopes
       | nodeAggregateScopedReference  | cs-identifier;source-nodandaise;{"language": "mul"} | null       |
       | nodeAggregateScopedReferences | cs-identifier;source-nodandaise;{"language": "mul"} | null       |
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name                            | Node                                                | Properties |
@@ -165,7 +165,7 @@ Feature: Set node properties with different scopes
       | unscopedReference               | cs-identifier;source-nodandaise;{"language": "de"} | null       |
       | unscopedReferences              | cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "gsw"}
     And I expect this node to have the following references:
       | Name                            | Node                                                | Properties |

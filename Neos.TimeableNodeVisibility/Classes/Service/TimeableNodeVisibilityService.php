@@ -58,7 +58,7 @@ class TimeableNodeVisibilityService
             if ($this->needsEnabling($node, $now) && $nodeIsDisabled) {
                 $contentRepository->handle(
                     EnableNodeAggregate::create(
-                        $node->subgraphIdentity->contentStreamId,
+                        $liveWorkspace->workspaceName,
                         $node->nodeAggregateId,
                         $node->subgraphIdentity->dimensionSpacePoint,
                         NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
@@ -72,7 +72,7 @@ class TimeableNodeVisibilityService
             if ($this->needsDisabling($node, $now) && !$nodeIsDisabled) {
                 $contentRepository->handle(
                     DisableNodeAggregate::create(
-                        $node->subgraphIdentity->contentStreamId,
+                        $liveWorkspace->workspaceName,
                         $node->nodeAggregateId,
                         $node->subgraphIdentity->dimensionSpacePoint,
                         NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS

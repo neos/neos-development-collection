@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeCreation\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The properties of {@see CreateNodeAggregateWithNode} are directly serialized; and then this command
@@ -32,14 +33,14 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @internal implementation detail, use {@see CreateNodeAggregateWithNode} instead.
  */
-final class CreateNodeAggregateWithNodeAndSerializedProperties implements
+final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implements
     CommandInterface,
     \JsonSerializable,
-    RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeIdToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface,
+    RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
+     * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of the node type of the new node
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint Origin of the new node in the dimension space. Will also be used to calculate a set of dimension points where the new node will cover from the configured specializations.
@@ -50,20 +51,20 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
      * @param NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds Predefined aggregate ids of tethered child nodes per path. For any tethered node that has no matching entry in this set, the node aggregate id is generated randomly. Since tethered nodes may have tethered child nodes themselves, this works for multiple levels ({@see self::withTetheredDescendantNodeAggregateIds()})
      */
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeTypeName $nodeTypeName,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly NodeAggregateId $parentNodeAggregateId,
-        public readonly SerializedPropertyValues $initialPropertyValues,
-        public readonly ?NodeAggregateId $succeedingSiblingNodeAggregateId,
-        public readonly ?NodeName $nodeName,
-        public readonly NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds
+        public WorkspaceName $workspaceName,
+        public NodeAggregateId $nodeAggregateId,
+        public NodeTypeName $nodeTypeName,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public NodeAggregateId $parentNodeAggregateId,
+        public SerializedPropertyValues $initialPropertyValues,
+        public ?NodeAggregateId $succeedingSiblingNodeAggregateId,
+        public ?NodeName $nodeName,
+        public NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds
     ) {
     }
 
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
+     * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of the node type of the new node
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint Origin of the new node in the dimension space. Will also be used to calculate a set of dimension points where the new node will cover from the configured specializations.
@@ -72,9 +73,9 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
      * @param NodeName|null $nodeName The node's optional name. Set if there is a meaningful relation to its parent that should be named.
      * @param SerializedPropertyValues|null $initialPropertyValues The node's initial property values (serialized). Will be merged over the node type's default property values
      */
-    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, NodeAggregateId $succeedingSiblingNodeAggregateId = null, NodeName $nodeName = null, SerializedPropertyValues $initialPropertyValues = null): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, NodeAggregateId $succeedingSiblingNodeAggregateId = null, NodeName $nodeName = null, SerializedPropertyValues $initialPropertyValues = null): self
     {
-        return new self($contentStreamId, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $parentNodeAggregateId, $initialPropertyValues ?? SerializedPropertyValues::createEmpty(), $succeedingSiblingNodeAggregateId, $nodeName, NodeAggregateIdsByNodePaths::createEmpty());
+        return new self($workspaceName, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $parentNodeAggregateId, $initialPropertyValues ?? SerializedPropertyValues::createEmpty(), $succeedingSiblingNodeAggregateId, $nodeName, NodeAggregateIdsByNodePaths::createEmpty());
     }
 
     /**
@@ -83,7 +84,7 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamId::fromString($array['contentStreamId']),
+            WorkspaceName::fromString($array['workspaceName']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeTypeName::fromString($array['nodeTypeName']),
             OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
@@ -114,7 +115,7 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
         NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds
     ): self {
         return new self(
-            $this->contentStreamId,
+            $this->workspaceName,
             $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
@@ -134,10 +135,21 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
         return get_object_vars($this);
     }
 
-    public function createCopyForContentStream(ContentStreamId $target): self
+    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
+        return (
+            $this->workspaceName === $nodeIdToPublish->workspaceName
+                && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
+                && $this->originDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
+        );
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
         return new self(
-            $target,
+            $targetWorkspaceName,
             $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
@@ -146,15 +158,6 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
             $this->succeedingSiblingNodeAggregateId,
             $this->nodeName,
             $this->tetheredDescendantNodeAggregateIds
-        );
-    }
-
-    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
-    {
-        return (
-            $this->contentStreamId === $nodeIdToPublish->contentStreamId
-                && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
-                && $this->originDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
         );
     }
 }

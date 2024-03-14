@@ -41,6 +41,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -72,7 +73,7 @@ trait NodeCreation
         $this->validateProperties($command->initialPropertyValues, $command->nodeTypeName);
 
         $lowLevelCommand = CreateNodeAggregateWithNodeAndSerializedProperties::create(
-            $command->contentStreamId,
+            $command->workspaceName,
             $command->nodeAggregateId,
             $command->nodeTypeName,
             $command->originDimensionSpacePoint,
@@ -128,7 +129,8 @@ trait NodeCreation
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeType = $this->requireNodeType($command->nodeTypeName);
         $this->requireNodeTypeToNotBeAbstract($nodeType);
@@ -137,7 +139,7 @@ trait NodeCreation
         $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($nodeType);
         if ($this->areAncestorNodeTypeConstraintChecksEnabled()) {
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $command->contentStreamId,
+                $contentStreamId,
                 $nodeType,
                 $command->nodeName,
                 [$command->parentNodeAggregateId],
@@ -145,18 +147,18 @@ trait NodeCreation
             );
         }
         $this->requireProjectedNodeAggregateToNotExist(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
         $parentNodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->parentNodeAggregateId,
             $contentRepository
         );
         if ($command->succeedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->succeedingSiblingNodeAggregateId,
                 $contentRepository
             );
@@ -173,7 +175,7 @@ trait NodeCreation
         );
         if ($command->nodeName) {
             $this->requireNodeNameToBeUnoccupied(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->nodeName,
                 $command->parentNodeAggregateId,
                 $command->originDimensionSpacePoint,
@@ -193,7 +195,7 @@ trait NodeCreation
             $descendantNodeAggregateIds->getNodeAggregateIds() as $descendantNodeAggregateId
         ) {
             $this->requireProjectedNodeAggregateToNotExist(
-                $command->contentStreamId,
+                $contentStreamId,
                 $descendantNodeAggregateId,
                 $contentRepository
             );
@@ -205,6 +207,7 @@ trait NodeCreation
         $events = [
             $this->createRegularWithNode(
                 $command,
+                $contentStreamId,
                 $coveredDimensionSpacePoints,
                 $initialPropertyValues
             )
@@ -212,6 +215,7 @@ trait NodeCreation
 
         array_push($events, ...iterator_to_array($this->handleTetheredChildNodes(
             $command,
+            $contentStreamId,
             $nodeType,
             $coveredDimensionSpacePoints,
             $command->nodeAggregateId,
@@ -221,20 +225,21 @@ trait NodeCreation
         )));
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand($command, Events::fromArray($events)),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 
     private function createRegularWithNode(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
+        ContentStreamId $contentStreamId,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         SerializedPropertyValues $initialPropertyValues
     ): NodeAggregateWithNodeWasCreated {
         return new NodeAggregateWithNodeWasCreated(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $command->nodeTypeName,
             $command->originDimensionSpacePoint,
@@ -253,6 +258,7 @@ trait NodeCreation
      */
     private function handleTetheredChildNodes(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
+        ContentStreamId $contentStreamId,
         NodeType $nodeType,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateId $parentNodeAggregateId,
@@ -271,9 +277,9 @@ trait NodeCreation
                 ?? NodeAggregateId::create();
             $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
 
-            $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
             $events[] = $this->createTetheredWithNode(
                 $command,
+                $contentStreamId,
                 $childNodeAggregateId,
                 $childNodeType->name,
                 $coveredDimensionSpacePoints,
@@ -284,6 +290,7 @@ trait NodeCreation
 
             array_push($events, ...iterator_to_array($this->handleTetheredChildNodes(
                 $command,
+                $contentStreamId,
                 $childNodeType,
                 $coveredDimensionSpacePoints,
                 $childNodeAggregateId,
@@ -298,6 +305,7 @@ trait NodeCreation
 
     private function createTetheredWithNode(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
+        ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
         NodeTypeName $nodeTypeName,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
@@ -307,7 +315,7 @@ trait NodeCreation
         NodeAggregateId $precedingNodeAggregateId = null
     ): NodeAggregateWithNodeWasCreated {
         return new NodeAggregateWithNodeWasCreated(
-            $command->contentStreamId,
+            $contentStreamId,
             $nodeAggregateId,
             $nodeTypeName,
             $command->originDimensionSpacePoint,

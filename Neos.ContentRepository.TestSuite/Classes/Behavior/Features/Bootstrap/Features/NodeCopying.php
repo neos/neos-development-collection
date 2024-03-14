@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdMapping;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 
 /**
@@ -52,9 +53,13 @@ trait NodeCopying
         $targetNodeName = isset($commandArguments['targetNodeName'])
             ? NodeName::fromString($commandArguments['targetNodeName'])
             : null;
+        $workspaceName = isset($commandArguments['workspaceName'])
+            ? WorkspaceName::fromString($commandArguments['workspaceName'])
+            : $this->currentWorkspaceName;
 
         $command = CopyNodesRecursively::createFromSubgraphAndStartNode(
             $subgraph,
+            $workspaceName,
             $this->currentNode,
             $targetDimensionSpacePoint,
             NodeAggregateId::fromString($commandArguments['targetParentNodeAggregateId']),

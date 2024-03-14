@@ -38,16 +38,15 @@ Feature: Add Dimension Specialization
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
-      | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
     And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "sir-david-nodenborough"                  |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {"language": "de"}                        |
@@ -73,13 +72,14 @@ Feature: Add Dimension Specialization
               to: { language: 'ch' }
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "live"
+    And I am in dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     And I expect this node to have the following properties:
       | Key  | Value   |
       | text | "hello" |
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
 
@@ -103,9 +103,10 @@ Feature: Add Dimension Specialization
 
     # finally, we MODIFY the node and ensure that the modification is visible in both DSPs (as otherwise the shine through would not have worked
     # as expected)
+    # migration-cs is the actual name of the temporary workspace
+    And I am in workspace "migration-cs"
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                    |
-      | contentStreamId           | "migration-cs"           |
       | nodeAggregateId           | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {"language": "de"}       |
       | propertyValues            | {"text": "changed"}      |
@@ -123,12 +124,12 @@ Feature: Add Dimension Specialization
       | text | "changed" |
 
     # the original content stream was untouched
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
       | Key  | Value   |
       | text | "hello" |
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I run integrity violation detection
@@ -138,14 +139,13 @@ Feature: Add Dimension Specialization
 
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "de"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the graph projection is fully up to date
 
     # ensure the node is disabled
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
@@ -195,7 +195,6 @@ Feature: Add Dimension Specialization
     # we create a node in CH
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"en"}        |

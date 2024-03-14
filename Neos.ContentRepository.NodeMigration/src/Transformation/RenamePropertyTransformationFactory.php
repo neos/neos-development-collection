@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Remove the property
@@ -58,6 +59,7 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
+                WorkspaceName $workspaceNameForWriting,
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult
             {
@@ -65,7 +67,7 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                 if ($serializedPropertyValue !== null) {
                     return $this->contentRepository->handle(
                         SetSerializedNodeProperties::create(
-                            $contentStreamForWriting,
+                            $workspaceNameForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([

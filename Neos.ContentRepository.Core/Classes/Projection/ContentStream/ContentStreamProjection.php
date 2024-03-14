@@ -22,10 +22,13 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
@@ -44,6 +47,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -157,7 +161,10 @@ class ContentStreamProjection implements ProjectionInterface
                 WorkspaceWasPublished::class,
                 WorkspaceWasRebased::class,
                 WorkspaceRebaseFailed::class,
+                ContentStreamWasClosed::class,
+                ContentStreamWasReopened::class,
                 ContentStreamWasRemoved::class,
+                DimensionShineThroughWasAdded::class,
             ])
             || $event instanceof EmbedsContentStreamAndNodeAggregateId;
     }
@@ -179,7 +186,10 @@ class ContentStreamProjection implements ProjectionInterface
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
             WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
+            ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event, $eventEnvelope),
+            ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event, $eventEnvelope),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
+            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
@@ -205,28 +215,26 @@ class ContentStreamProjection implements ProjectionInterface
         $this->getDatabaseConnection()->insert($this->tableName, [
             'contentStreamId' => $event->contentStreamId->value,
             'version' => self::extractVersion($eventEnvelope),
-            'state' => ContentStreamFinder::STATE_CREATED,
+            'state' => ContentStreamState::STATE_CREATED->value,
         ]);
     }
 
     private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
         // the content stream is in use now
-        $this->getDatabaseConnection()->update($this->tableName, [
-            'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
-        ], [
-            'contentStreamId' => $event->newContentStreamId->value
-        ]);
+        $this->updateStateForContentStream(
+            $event->newContentStreamId,
+            ContentStreamState::STATE_IN_USE_BY_WORKSPACE,
+        );
     }
 
     private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
     {
         // the content stream is in use now
-        $this->getDatabaseConnection()->update($this->tableName, [
-            'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
-        ], [
-            'contentStreamId' => $event->newContentStreamId->value
-        ]);
+        $this->updateStateForContentStream(
+            $event->newContentStreamId,
+            ContentStreamState::STATE_IN_USE_BY_WORKSPACE,
+        );
     }
 
     private function whenContentStreamWasForked(ContentStreamWasForked $event, EventEnvelope $eventEnvelope): void
@@ -235,7 +243,7 @@ class ContentStreamProjection implements ProjectionInterface
             'contentStreamId' => $event->newContentStreamId->value,
             'version' => self::extractVersion($eventEnvelope),
             'sourceContentStreamId' => $event->sourceContentStreamId->value,
-            'state' => ContentStreamFinder::STATE_FORKED,
+            'state' => ContentStreamState::STATE_FORKED->value
         ]);
     }
 
@@ -244,13 +252,13 @@ class ContentStreamProjection implements ProjectionInterface
         // the new content stream is in use now
         $this->updateStateForContentStream(
             $event->newContentStreamId,
-            ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
+            ContentStreamState::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
             $event->previousContentStreamId,
-            ContentStreamFinder::STATE_NO_LONGER_IN_USE
+            ContentStreamState::STATE_NO_LONGER_IN_USE
         );
     }
 
@@ -259,13 +267,13 @@ class ContentStreamProjection implements ProjectionInterface
         // the new content stream is in use now
         $this->updateStateForContentStream(
             $event->newContentStreamId,
-            ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
+            ContentStreamState::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
             $event->previousContentStreamId,
-            ContentStreamFinder::STATE_NO_LONGER_IN_USE
+            ContentStreamState::STATE_NO_LONGER_IN_USE
         );
     }
 
@@ -274,13 +282,13 @@ class ContentStreamProjection implements ProjectionInterface
         // the new content stream is in use now
         $this->updateStateForContentStream(
             $event->newSourceContentStreamId,
-            ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
+            ContentStreamState::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
             $event->previousSourceContentStreamId,
-            ContentStreamFinder::STATE_NO_LONGER_IN_USE
+            ContentStreamState::STATE_NO_LONGER_IN_USE
         );
     }
 
@@ -289,13 +297,13 @@ class ContentStreamProjection implements ProjectionInterface
         // the new content stream is in use now
         $this->updateStateForContentStream(
             $event->newSourceContentStreamId,
-            ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
+            ContentStreamState::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
             $event->previousSourceContentStreamId,
-            ContentStreamFinder::STATE_NO_LONGER_IN_USE
+            ContentStreamState::STATE_NO_LONGER_IN_USE
         );
     }
 
@@ -304,13 +312,13 @@ class ContentStreamProjection implements ProjectionInterface
         // the new content stream is in use now
         $this->updateStateForContentStream(
             $event->newContentStreamId,
-            ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
+            ContentStreamState::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
             $event->previousContentStreamId,
-            ContentStreamFinder::STATE_NO_LONGER_IN_USE
+            ContentStreamState::STATE_NO_LONGER_IN_USE
         );
     }
 
@@ -318,8 +326,34 @@ class ContentStreamProjection implements ProjectionInterface
     {
         $this->updateStateForContentStream(
             $event->candidateContentStreamId,
-            ContentStreamFinder::STATE_REBASE_ERROR
+            ContentStreamState::STATE_REBASE_ERROR
         );
+    }
+
+    private function whenContentStreamWasClosed(ContentStreamWasClosed $event, EventEnvelope $eventEnvelope): void
+    {
+        $this->updateStateForContentStream(
+            $event->contentStreamId,
+            ContentStreamState::STATE_CLOSED,
+        );
+        $this->getDatabaseConnection()->update($this->tableName, [
+            'version' => self::extractVersion($eventEnvelope),
+        ], [
+            'contentStreamId' => $event->contentStreamId->value
+        ]);
+    }
+
+    private function whenContentStreamWasReopened(ContentStreamWasReopened $event, EventEnvelope $eventEnvelope): void
+    {
+        $this->updateStateForContentStream(
+            $event->contentStreamId,
+            $event->previousState,
+        );
+        $this->getDatabaseConnection()->update($this->tableName, [
+            'version' => self::extractVersion($eventEnvelope),
+        ], [
+            'contentStreamId' => $event->contentStreamId->value
+        ]);
     }
 
     private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event, EventEnvelope $eventEnvelope): void
@@ -332,10 +366,19 @@ class ContentStreamProjection implements ProjectionInterface
         ]);
     }
 
-    private function updateStateForContentStream(ContentStreamId $contentStreamId, string $state): void
+    private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event, EventEnvelope $eventEnvelope): void
     {
         $this->getDatabaseConnection()->update($this->tableName, [
-            'state' => $state,
+            'version' => self::extractVersion($eventEnvelope),
+        ], [
+            'contentStreamId' => $event->contentStreamId->value
+        ]);
+    }
+
+    private function updateStateForContentStream(ContentStreamId $contentStreamId, ContentStreamState $state): void
+    {
+        $this->getDatabaseConnection()->update($this->tableName, [
+            'state' => $state->value,
         ], [
             'contentStreamId' => $contentStreamId->value
         ]);

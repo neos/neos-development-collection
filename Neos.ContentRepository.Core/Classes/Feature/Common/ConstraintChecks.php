@@ -19,6 +19,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
+use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -53,6 +55,9 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * @internal implementation details of command handlers
@@ -64,19 +69,28 @@ trait ConstraintChecks
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
     /**
-     * @param ContentStreamId $contentStreamId
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(
-        ContentStreamId $contentStreamId,
+    protected function requireContentStream(
+        WorkspaceName $workspaceName,
         ContentRepository $contentRepository
-    ): void {
-        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
+    ): ContentStreamId {
+        $contentStreamId = ContentStreamIdOverride::$contentStreamIdToUse
+            ?: $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)?->currentContentStreamId;
+        if (!$contentStreamId || !$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamId->value . '" does not exist yet.',
+                'Content stream "' . $contentStreamId?->value . '" does not exist yet.',
                 1521386692
             );
         }
+        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) === ContentStreamState::STATE_CLOSED) {
+            throw new ContentStreamIsClosed(
+                'Content stream "' . $contentStreamId->value . '" is closed.',
+                1710260081
+            );
+        }
+
+        return $contentStreamId;
     }
 
     /**
@@ -661,5 +675,16 @@ trait ConstraintChecks
                 );
             }
         }
+    }
+
+    protected function getExpectedVersionOfContentStream(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): ExpectedVersion {
+        return ExpectedVersion::fromVersion(
+            $contentRepository->getContentStreamFinder()
+                ->findVersionForContentStream($contentStreamId)
+                ->unwrap()
+        );
     }
 }

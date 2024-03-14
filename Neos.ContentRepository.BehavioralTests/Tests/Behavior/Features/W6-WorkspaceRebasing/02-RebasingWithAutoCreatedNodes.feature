@@ -33,10 +33,10 @@ Feature: Rebasing auto-created nodes works
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
-      | contentStreamId     | "cs-identifier"               |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
@@ -52,7 +52,7 @@ Feature: Rebasing auto-created nodes works
     # USER workspace: create a new node with auto-created child nodes
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                    |
-      | contentStreamId       | "user-cs-identifier"                     |
+      | workspaceName       | "user-test"                     |
       | nodeAggregateId       | "nody-mc-nodeface"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | nodeName                      | "mcnodeface"                             |
@@ -67,7 +67,7 @@ Feature: Rebasing auto-created nodes works
     # - then, for the auto-created child node, set a property.
     When the command "SetSerializedNodeProperties" is executed with payload:
       | Key                       | Value                                          |
-      | contentStreamId   | "user-cs-identifier"                           |
+      | workspaceName       | "user-test"                     |
       | nodeAggregateId   | $this->currentNodeAggregateId          |
       | originDimensionSpacePoint | {}                                             |
       | propertyValues            | {"text": {"value":"Modified","type":"string"}} |

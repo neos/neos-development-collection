@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 
@@ -43,15 +44,15 @@ trait NodeDisabling
     public function theCommandDisableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamId = isset($commandArguments['contentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->currentContentStreamId;
+        $workspaceName = isset($commandArguments['workspaceName'])
+            ? WorkspaceName::fromString($commandArguments['workspaceName'])
+            : $this->currentWorkspaceName;
         $coveredDimensionSpacePoint = isset($commandArguments['coveredDimensionSpacePoint'])
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->currentDimensionSpacePoint;
 
         $command = DisableNodeAggregate::create(
-            $contentStreamId,
+            $workspaceName,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
@@ -81,15 +82,15 @@ trait NodeDisabling
     public function theCommandEnableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamId = isset($commandArguments['contentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->currentContentStreamId;
+        $workspaceName = isset($commandArguments['workspaceName'])
+            ? WorkspaceName::fromString($commandArguments['workspaceName'])
+            : $this->currentWorkspaceName;
         $coveredDimensionSpacePoint = isset($commandArguments['coveredDimensionSpacePoint'])
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->currentDimensionSpacePoint;
 
         $command = EnableNodeAggregate::create(
-            $contentStreamId,
+            $workspaceName,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
