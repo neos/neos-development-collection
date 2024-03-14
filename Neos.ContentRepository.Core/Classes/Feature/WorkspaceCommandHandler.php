@@ -383,7 +383,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
         $rebaseStatistics = new WorkspaceRebaseStatistics();
-        $this->withContentStreamIdToUse(
+        ContentStreamIdOverride::withContentStreamIdToUse(
             $command->rebasedContentStreamId,
             function () use ($originalCommands, $contentRepository, $rebaseStatistics, $workspaceContentStreamName, $baseWorkspace): void {
                 foreach ($originalCommands as $i => $originalCommand) {
@@ -531,7 +531,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         try {
             // 4) using the new content stream, apply the matching commands
-            $this->withContentStreamIdToUse(
+            ContentStreamIdOverride::withContentStreamIdToUse(
                 $command->contentStreamIdForMatchingPart,
                 function () use ($matchingCommands, $contentRepository, $baseWorkspace, $command): void {
                     foreach ($matchingCommands as $matchingCommand) {
@@ -565,7 +565,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             )->block();
 
             // 7) apply REMAINING commands to the workspace's new content stream
-            $this->withContentStreamIdToUse(
+            ContentStreamIdOverride::withContentStreamIdToUse(
                 $command->contentStreamIdForRemainingPart,
                 function () use ($contentRepository, $remainingCommands) {
                     foreach ($remainingCommands as $remainingCommand) {
@@ -668,7 +668,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 4) using the new content stream, apply the commands to keep
         try {
-            $this->withContentStreamIdToUse(
+            ContentStreamIdOverride::withContentStreamIdToUse(
                 $command->newContentStreamId,
                 function () use ($commandsToKeep, $contentRepository, $baseWorkspace, $command): void {
                     foreach ($commandsToKeep as $matchingCommand) {
@@ -989,20 +989,5 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         return false;
-    }
-
-    private function withContentStreamIdToUse(ContentStreamId $contentStreamIdToUse, callable $function): void
-    {
-        if (ContentStreamIdOverride::$contentStreamIdToUse !== null) {
-            throw new \Exception('Recursive content stream override is not supported');
-        }
-        ContentStreamIdOverride::useContentStreamId($contentStreamIdToUse);
-        try {
-            $function();
-        } catch (\Exception $exception) {
-            ContentStreamIdOverride::useContentStreamId(null);
-            throw $exception;
-        }
-        ContentStreamIdOverride::useContentStreamId(null);
     }
 }
