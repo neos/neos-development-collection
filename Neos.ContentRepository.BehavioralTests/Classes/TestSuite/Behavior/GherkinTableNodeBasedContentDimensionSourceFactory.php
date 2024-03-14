@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\TestSuite\Behavior;
 
-use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GherkinTableNodeBasedContentDimensionSource;
@@ -12,26 +11,29 @@ use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensi
 
 class GherkinTableNodeBasedContentDimensionSourceFactory implements ContentDimensionSourceFactoryInterface
 {
-    public static ?ContentDimensionSourceInterface $contentDimensionsToUse = null;
+    public static function registerContentDimensionsForContentRepository(ContentRepositoryId $contentRepositoryId, GherkinTableNodeBasedContentDimensionSource $contentDimensions): void
+    {
+        file_put_contents(self::cacheFileName($contentRepositoryId), serialize($contentDimensions));
+    }
 
     /**
      * @param array<string,mixed> $options
      */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): ContentDimensionSourceInterface
     {
-        if (!self::$contentDimensionsToUse) {
-            throw new \DomainException('Content dimension source not initialized.');
+        $contentDimensionSource = file_get_contents(self::cacheFileName($contentRepositoryId));
+        if ($contentDimensionSource === false) {
+            throw new \RuntimeException(sprintf('Content dimension source uninitialized for ContentRepository "%s"', $contentRepositoryId->value));
         }
-        return self::$contentDimensionsToUse;
-    }
-
-    public static function initializeFromTableNode(TableNode $contentDimensionsToUse): void
-    {
-        self::$contentDimensionsToUse = GherkinTableNodeBasedContentDimensionSource::fromGherkinTableNode($contentDimensionsToUse);
+        return unserialize($contentDimensionSource);
     }
 
     public static function reset(): void
     {
-        self::$contentDimensionsToUse = null;
+    }
+
+    private static function cacheFileName(ContentRepositoryId $contentRepositoryId): string
+    {
+        return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'contentDimensionsConfiguration_' . $contentRepositoryId->value . '.json';
     }
 }
