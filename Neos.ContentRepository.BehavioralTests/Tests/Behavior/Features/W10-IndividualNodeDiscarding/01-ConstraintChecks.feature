@@ -48,7 +48,7 @@ Feature: Workspace discarding - complex chained functionality
       | newContentStreamId | "user-cs-id" |
     And the graph projection is fully up to date
 
-  Scenario: Vary to specialization, then delete the origin and discard the result
+  Scenario: Vary to generalization, then delete the origin and discard parts of the result so that an exception is thrown. Ensure that the workspace recovers from this
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |
       | workspaceName   | "user-ws"                |
@@ -72,9 +72,17 @@ Feature: Workspace discarding - complex chained functionality
       | nodeVariantSelectionStrategy | "allSpecializations"     |
     And the graph projection is fully up to date
 
-    And the command DiscardWorkspace is executed with payload:
-      | Key                | Value                |
-      | workspaceName      | "user-ws"            |
-      | newContentStreamId | "user-cs-id-rebased" |
+    When the command DiscardIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
+      | Key                | Value                                                                                                                                                                                                                                                                                                                                                   |
+      | workspaceName      | "user-ws"                                                                                                                                                                                                                                                                                                                                             |
+      | nodesToDiscard     | [{"workspaceName": "user-ws", "dimensionSpacePoint": {"language": "en"}, "nodeAggregateId": "sir-david-nodenborough"}, {"workspaceName": "user-ws", "dimensionSpacePoint": {"language": "en"}, "nodeAggregateId": "sir-david-nodenborough"}] |
+      | newContentStreamId | "user-cs-id-rebased"                                                                                                                                                                                                                                                                                                                                |
+    Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
+
+    When the command DiscardWorkspace is executed with payload:
+      | Key                | Value                                                                                                                                                                                                                                                                                                                                                   |
+      | workspaceName      | "user-ws"                                                                                                                                                                                                                                                                                                                                             |
+      | newContentStreamId | "user-cs-id-yet-again-rebased"                                                                                                                                                                                                                                                                                                                                |
+    And the graph projection is fully up to date
     When I am in the active content stream of workspace "user-ws" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-id-rebased;nody-mc-nodeface;{"language": "de"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-id-yet-again-rebased;nody-mc-nodeface;{"language": "de"}

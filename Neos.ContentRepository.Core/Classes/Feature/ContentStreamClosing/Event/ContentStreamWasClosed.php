@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\ContentStreamForking\Event;
+namespace Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -20,10 +20,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 /**
  * @api events are the persistence-API of the content repository
  */
-final class ContentStreamWasClosed implements EventInterface
+final readonly class ContentStreamWasClosed implements EventInterface
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
+        public ContentStreamId $contentStreamId,
     ) {
     }
 

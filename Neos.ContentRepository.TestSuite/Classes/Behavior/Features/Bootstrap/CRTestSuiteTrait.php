@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamClosing;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
@@ -277,7 +278,7 @@ trait CRTestSuiteTrait
         $contentStreamFinder = $this->currentContentRepository->getContentStreamFinder();
 
         $actual = $contentStreamFinder->findStateForContentStream($contentStreamId);
-        Assert::assertEquals($expectedState, $actual);
+        Assert::assertSame(ContentStreamState::tryFrom($expectedState), $actual);
     }
 
     /**
