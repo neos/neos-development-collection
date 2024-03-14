@@ -114,8 +114,7 @@ final readonly class MoveNodeAggregate implements
 
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
-        return $this->workspaceName === $nodeIdToPublish->workspaceName
-            && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
+        return $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
             && $this->dimensionSpacePoint === $nodeIdToPublish->dimensionSpacePoint;
     }
 
