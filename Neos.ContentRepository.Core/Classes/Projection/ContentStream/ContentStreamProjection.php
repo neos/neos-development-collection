@@ -162,6 +162,7 @@ class ContentStreamProjection implements ProjectionInterface
                 WorkspaceWasRebased::class,
                 WorkspaceRebaseFailed::class,
                 ContentStreamWasClosed::class,
+                ContentStreamWasReopened::class,
                 ContentStreamWasRemoved::class,
                 DimensionShineThroughWasAdded::class,
             ])
