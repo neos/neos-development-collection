@@ -9,8 +9,8 @@
         "neos/flow-development-collection": "9.0.x-dev",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
-        "neos/eventstore": "~1.0.0",
-        "neos/eventstore-doctrineadapter": "~1.0.0",
+        "neos/eventstore": "^1",
+        "neos/eventstore-doctrineadapter": "^1 || ^2",
         "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
@@ -116,7 +116,10 @@
         "test:functional": [
             "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
         ],
-        "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
+        "test:behat-cli": [
+            "Composer\\Config::disableProcessTimeout",
+            "../../bin/behat -f progress --strict --no-interaction"
+        ],
         "test:behavioral": [
             "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",

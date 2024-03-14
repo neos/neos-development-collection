@@ -32,7 +32,10 @@
     "test:functional": [
       "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
     ],
-    "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
+    "test:behat-cli": [
+      "Composer\\Config::disableProcessTimeout",
+      "../../bin/behat -f progress --strict --no-interaction"
+    ],
     "test:behavioral": [
       "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
