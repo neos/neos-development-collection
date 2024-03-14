@@ -25,7 +25,7 @@ class GherkinTableNodeBasedContentDimensionSourceFactory implements ContentDimen
         if ($contentDimensionSource === false) {
             throw new \RuntimeException(sprintf('Content dimension source uninitialized for ContentRepository "%s"', $contentRepositoryId->value));
         }
-        return unserialize($contentDimensionSource, ['allowed_classes' => [GherkinTableNodeBasedContentDimensionSource::class]]);
+        return unserialize($contentDimensionSource);
     }
 
     public static function reset(): void
