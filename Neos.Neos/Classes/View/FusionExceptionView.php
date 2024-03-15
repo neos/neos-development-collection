@@ -36,6 +36,8 @@ use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class FusionExceptionView extends AbstractView
 {
@@ -87,7 +89,7 @@ class FusionExceptionView extends AbstractView
     #[Flow\Inject]
     protected DomainRepository $domainRepository;
 
-    public function render(): string
+    public function render(): ResponseInterface|StreamInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
 
@@ -141,7 +143,7 @@ class FusionExceptionView extends AbstractView
 
         $this->setFallbackRuleFromDimension($dimensionSpacePoint);
 
-        $httpResponse = $fusionRuntime->renderResponse('error', array_merge(
+        return $fusionRuntime->renderResponse('error', array_merge(
             $this->variables,
             [
                 'node' => $currentSiteNode,
@@ -149,14 +151,6 @@ class FusionExceptionView extends AbstractView
                 'site' => $currentSiteNode
             ]
         ));
-
-        /**
-         * Workaround: The http status code will already be sent and
-         * Flow's {@see \Neos\Flow\Error\DebugExceptionHandler::echoExceptionWeb()}
-         * expects a view to return a string to be echo'd.
-         * Thus, we unwrap the repose here:
-         */
-        return $httpResponse->getBody()->getContents();
     }
 
     protected function getFusionRuntime(
@@ -184,7 +178,7 @@ class FusionExceptionView extends AbstractView
         return $this->fusionRuntime;
     }
 
-    private function renderErrorWelcomeScreen(): string
+    private function renderErrorWelcomeScreen(): ResponseInterface|StreamInterface
     {
         // in case no neos site being there or no site node we cannot continue with the fusion exception view,
         // as we wouldn't know the site and cannot get the site's root.fusion
@@ -196,7 +190,6 @@ class FusionExceptionView extends AbstractView
             'enableContentCache' => false,
         ]);
         $view->assignMultiple($this->variables);
-        $output = $view->render();
-        return $output->getBody()->getContents();
+        return $view->render();
     }
 }
