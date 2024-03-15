@@ -2924,6 +2924,8 @@ Options
 
 ``--content-repository-identifier``
   
+``--force``
+  Rebase all events that do not conflict
 
 
 
