@@ -35,7 +35,7 @@ Feature: Tag subtree with dimensions
       | a1              | Neos.ContentRepository.Testing:Document | a                     | a1       | {"language":"de"}         |
       | a1a             | Neos.ContentRepository.Testing:Document | a1                    | a1a      | {"language":"de"}         |
 
-  Scenario:
+  Scenario: Subtree tags are properly copied upon node specializations
     Given I am in dimension space point {"language":"de"}
 
     When the command CreateNodeVariant is executed with payload:
@@ -62,6 +62,7 @@ Feature: Tag subtree with dimensions
       | nodeAggregateId | "a1a"              |
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"mul"} |
+
     And the graph projection is fully up to date
 
     When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
@@ -77,4 +78,112 @@ Feature: Tag subtree with dimensions
     a
      a1
       a1a (tag2*)
+    """
+
+  Scenario: Subtree tags are properly copied upon node generalizations
+    Given I am in dimension space point {"language":"de"}
+
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value              |
+      | nodeAggregateId | "a"                |
+      | sourceOrigin    | {"language":"mul"} |
+      | targetOrigin    | {"language":"de"}  |
+
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a"                  |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag1"               |
+
+    Given I am in dimension space point {"language":"mul"}
+
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a"                  |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag2"               |
+
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value              |
+      | nodeAggregateId | "a1"               |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"mul"} |
+
+    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    """
+    a (tag2*)
+     a1 (tag2)
+    """
+
+    When I am in dimension space point {"language":"de"}
+    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    """
+    a (tag1*,tag2*)
+     a1 (tag1,tag2)
+      a1a (tag1,tag2)
+    """
+
+  Scenario: Subtree tags are properly copied upon node variant recreation
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value        |
+      | workspaceName      | "user-ws"    |
+      | baseWorkspaceName  | "live"       |
+      | newContentStreamId | "user-cs-id" |
+    And the graph projection is fully up to date
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value              |
+      | workspaceName   | "user-ws"          |
+      | nodeAggregateId | "a1"               |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"gsw"} |
+    And the graph projection is fully up to date
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value              |
+      | workspaceName   | "user-ws"          |
+      | nodeAggregateId | "a1a"              |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"gsw"} |
+    And the graph projection is fully up to date
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value            |
+      | workspaceName      | "user-ws"        |
+      | newContentStreamId | "new-user-cs-id" |
+    And the graph projection is fully up to date
+
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | workspaceName                | "user-ws"            |
+      | nodeAggregateId              | "a1"                 |
+      | coveredDimensionSpacePoint   | {"language":"gsw"}   |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
+
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | workspaceName                | "user-ws"            |
+      | nodeAggregateId              | "a"                  |
+      | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag1"               |
+
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value              |
+      | workspaceName   | "user-ws"          |
+      | nodeAggregateId | "a1"               |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"gsw"} |
+    And the graph projection is fully up to date
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value              |
+      | workspaceName   | "user-ws"          |
+      | nodeAggregateId | "a1a"              |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"gsw"} |
+    And the graph projection is fully up to date
+    And I am in the active content stream of workspace "user-ws" and dimension space point {"language":"gsw"}
+    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    """
+    a (tag1*)
+     a1 (tag1)
+      a1a (tag1)
     """

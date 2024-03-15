@@ -781,21 +781,29 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         ?NodeRelationAnchorPoint $newParent = null,
         ?NodeRelationAnchorPoint $newChild = null
     ): HierarchyRelation {
+        if ($newParent === null) {
+            $newParent = $sourceHierarchyRelation->parentNodeAnchor;
+        }
+        if ($newChild === null) {
+            $newChild = $sourceHierarchyRelation->childNodeAnchor;
+        }
+        $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamId, $newParent, $dimensionSpacePoint);
+        $inheritedSubtreeTags = NodeTags::create($sourceHierarchyRelation->subtreeTags->withoutInherited()->all(), $parentSubtreeTags->withoutInherited()->all());
         $copy = new HierarchyRelation(
-            $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
-            $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
+            $newParent,
+            $newChild,
             $sourceHierarchyRelation->name,
             $contentStreamId,
             $dimensionSpacePoint,
             $dimensionSpacePoint->hash,
             $this->getRelationPosition(
-                $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
-                $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
+                $newParent,
+                $newChild,
                 null, // todo: find proper sibling
                 $contentStreamId,
                 $dimensionSpacePoint
             ),
-            $sourceHierarchyRelation->subtreeTags->withoutInherited(),
+            $inheritedSubtreeTags,
         );
         $copy->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
