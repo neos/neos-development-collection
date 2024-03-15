@@ -522,7 +522,6 @@ class WorkspacesController extends AbstractModuleController
             $selectedWorkspace,
             NodeIdsToPublishOrDiscard::create(
                 new NodeIdToPublishOrDiscard(
-                    $selectedWorkspace,
                     $nodeAddress->nodeAggregateId,
                     $nodeAddress->dimensionSpacePoint
                 )
@@ -560,7 +559,6 @@ class WorkspacesController extends AbstractModuleController
             $selectedWorkspace,
             NodeIdsToPublishOrDiscard::create(
                 new NodeIdToPublishOrDiscard(
-                    $selectedWorkspace,
                     $nodeAddress->nodeAggregateId,
                     $nodeAddress->dimensionSpacePoint
                 )
@@ -598,7 +596,6 @@ class WorkspacesController extends AbstractModuleController
         foreach ($nodes as $node) {
             $nodeAddress = $nodeAddressFactory->createFromUriString($node);
             $nodesToPublishOrDiscard[] = new NodeIdToPublishOrDiscard(
-                $selectedWorkspaceName,
                 $nodeAddress->nodeAggregateId,
                 $nodeAddress->dimensionSpacePoint
             );
