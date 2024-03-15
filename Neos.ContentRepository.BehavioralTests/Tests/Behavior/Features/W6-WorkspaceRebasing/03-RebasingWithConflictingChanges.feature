@@ -1,5 +1,5 @@
 @contentrepository @adapters=DoctrineDBAL
-Feature: Workspace discarding - basic functionality
+Feature: Workspace rebasing - conflicting changes
 
   This is an END TO END test; testing all layers of the related functionality step by step together
 
@@ -49,65 +49,7 @@ Feature: Workspace discarding - basic functionality
       | workspaceOwner     | "owner-identifier"   |
     And the graph projection is fully up to date
 
-  Scenario: Discarding a full workspace works
-    When the command SetNodeProperties is executed with payload:
-      | Key                       | Value                |
-      | workspaceName             | "user-test"          |
-      | nodeAggregateId           | "nody-mc-nodeface"   |
-      | originDimensionSpacePoint | {}                   |
-      | propertyValues            | {"text": "Modified"} |
-    And the graph projection is fully up to date
-
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | "Modified" |
-
-    # Discarding
-    When the command DiscardWorkspace is executed with payload:
-      | Key                | Value                         |
-      | workspaceName      | "user-test"                   |
-      | newContentStreamId | "user-cs-identifier-modified" |
-    And the graph projection is fully up to date
-
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
-    And I expect this node to have the following properties:
-      | Key  | Value      |
-      | text | "Original" |
-
-  Scenario: Discarding a full workspace shows the most up-to-date base workspace when the base WS was modified in the meantime
-    When the command SetNodeProperties is executed with payload:
-      | Key                       | Value                |
-      | workspaceName             | "user-test"          |
-      | nodeAggregateId           | "nody-mc-nodeface"   |
-      | originDimensionSpacePoint | {}                   |
-      | propertyValues            | {"text": "Modified"} |
-    And the graph projection is fully up to date
-
-    And the command SetNodeProperties is executed with payload:
-      | Key                       | Value                                  |
-      | workspaceName             | "live"                                 |
-      | nodeAggregateId           | "nody-mc-nodeface"                     |
-      | originDimensionSpacePoint | {}                                     |
-      | propertyValues            | {"text": "Modified in live workspace"} |
-    And the graph projection is fully up to date
-
-    # Discarding
-    When the command DiscardWorkspace is executed with payload:
-      | Key                | Value                         |
-      | workspaceName      | "user-test"                   |
-      | newContentStreamId | "user-cs-identifier-modified" |
-    And the graph projection is fully up to date
-
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
-    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
-    And I expect this node to have the following properties:
-      | Key  | Value                        |
-      | text | "Modified in live workspace" |
-
-  Scenario: Conflicting changes lead to OUTDATED_CONFLICT which can be recovered from via discard
+  Scenario: Conflicting changes lead to OUTDATED_CONFLICT which can be recovered from via forced rebase
 
     When the command CreateWorkspace is executed with payload:
       | Key                | Value                        |
@@ -126,10 +68,10 @@ Feature: Workspace discarding - basic functionality
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | workspaceName                | "user-ws-one"            |
       | nodeAggregateId              | "nody-mc-nodeface"       |
       | nodeVariantSelectionStrategy | "allVariants"            |
       | coveredDimensionSpacePoint   | {}                       |
+      | workspaceName              | "user-ws-one"            |
     And the graph projection is fully up to date
 
     When the command SetNodeProperties is executed with payload:
@@ -138,6 +80,23 @@ Feature: Workspace discarding - basic functionality
       | nodeAggregateId           | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Modified"}         |
+    And the graph projection is fully up to date
+
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                         | Value                                    |
+      | nodeAggregateId             | "noderus-secundus"                       |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
+      | originDimensionSpacePoint   | {}                                       |
+      | workspaceName               | "user-ws-two"                            |
+    And the graph projection is fully up to date
+
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                        |
+      | workspaceName             | "user-ws-two"                |
+      | nodeAggregateId           | "noderus-secundus"           |
+      | originDimensionSpacePoint | {}                           |
+      | propertyValues            | {"text": "The other node"}   |
     And the graph projection is fully up to date
 
     And the command PublishWorkspace is executed with payload:
@@ -151,14 +110,8 @@ Feature: Workspace discarding - basic functionality
       | Key                            | Value                  |
       | workspaceName                  | "user-ws-two"          |
       | rebasedContentStreamId         | "user-cs-two-rebased"  |
-
-    Then workspace user-ws-two has status OUTDATED_CONFLICT
-
-    When the command DiscardWorkspace is executed with payload:
-      | Key                | Value                     |
-      | workspaceName      | "user-ws-two"             |
-      | newContentStreamId | "user-cs-two-discarded"   |
+      | rebaseErrorHandlingStrategy    | "force"                |
     And the graph projection is fully up to date
 
-    Then workspace user-ws-two has status OUTDATED
-
+    Then workspace user-ws-two has status UP_TO_DATE
+    And I expect a node identified by user-cs-two-rebased;noderus-secundus;{} to exist in the content graph

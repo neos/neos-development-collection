@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublis
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
@@ -385,7 +386,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $rebaseStatistics = new WorkspaceRebaseStatistics();
         ContentStreamIdOverride::applyContentStreamIdToClosure(
             $command->rebasedContentStreamId,
-            function () use ($originalCommands, $contentRepository, $rebaseStatistics, $workspaceContentStreamName, $baseWorkspace): void {
+            function () use ($originalCommands, $contentRepository, $rebaseStatistics): void {
                 foreach ($originalCommands as $i => $originalCommand) {
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
@@ -393,25 +394,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                         // if we came this far, we know the command was applied successfully.
                         $rebaseStatistics->commandRebaseSuccess();
                     } catch (\Exception $e) {
-                        $fullCommandListSoFar = '';
-                        for ($a = 0; $a <= $i; $a++) {
-                            $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
-
-                            if ($originalCommands[$a] instanceof \JsonSerializable) {
-                                $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
-                            }
-                        }
-
                         $rebaseStatistics->commandRebaseError(sprintf(
-                            "The content stream %s cannot be rebased. Error with command %d (%s)"
-                            . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
-                            . "\n The full list of commands applied so far is: %s",
-                            $workspaceContentStreamName->value,
-                            $i,
+                            "Error with command %s in sequence-number %d",
                             get_class($originalCommand),
-                            $baseWorkspace->workspaceName->value,
-                            $baseWorkspace->currentContentStreamId->value,
-                            $fullCommandListSoFar
+                            $i
                         ), $e);
                     }
                 }
@@ -419,7 +405,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        if (!$rebaseStatistics->hasErrors()) {
+        if ($command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FORCE || $rebaseStatistics->hasErrors() === false) {
             $events = Events::with(
                 new WorkspaceWasRebased(
                     $command->workspaceName,
@@ -479,7 +465,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                  * The "fromArray" might be declared via {@see RebasableToOtherWorkspaceInterface::fromArray()}
                  * or any other command can just implement it.
                  */
-                $commands[] = $commandToRebaseClass::fromArray($commandToRebasePayload);
+                $commands[$eventEnvelope->sequenceNumber->value] = $commandToRebaseClass::fromArray($commandToRebasePayload);
             }
         }
 
