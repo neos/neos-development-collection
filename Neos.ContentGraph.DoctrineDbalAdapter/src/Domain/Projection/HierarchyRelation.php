@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePoints;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -43,7 +43,7 @@ final class HierarchyRelation
      */
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $dimensionSpacePoints = new DimensionSpacePoints($databaseConnection, $tableNamePrefix);
+        $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
         $dimensionSpacePoints->insertDimensionSpacePoint($this->dimensionSpacePoint);
 
         $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [

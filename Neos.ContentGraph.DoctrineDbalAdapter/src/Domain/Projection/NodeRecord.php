@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePoints;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -139,7 +139,7 @@ final class NodeRecord
         ?NodeName $nodeName,
         Timestamps $timestamps,
     ): self {
-        $dimensionSpacePoints = new DimensionSpacePoints($databaseConnection, $tableNamePrefix);
+        $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
         $dimensionSpacePoints->insertDimensionSpacePointByHashAndCoordinates($originDimensionSpacePointHash, $originDimensionSpacePoint);
 
         $databaseConnection->insert($tableNamePrefix . '_node', [

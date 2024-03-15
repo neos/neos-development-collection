@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
  *
  * @internal you should never need this in userland code
  */
-final class DimensionSpacePoints
+final class DimensionSpacePointsRepository
 {
     /**
      * @var array<string, string>

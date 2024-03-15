@@ -52,7 +52,7 @@ final class NodeFactory
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly PropertyConverter $propertyConverter,
-        private readonly DimensionSpacePoints $dimensionSpacePointRepository
+        private readonly DimensionSpacePointsRepository $dimensionSpacePointRepository
     ) {
     }
 

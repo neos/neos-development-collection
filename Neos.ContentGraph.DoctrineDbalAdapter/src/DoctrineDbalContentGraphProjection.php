@@ -16,7 +16,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePoints;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -84,7 +84,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     private DbalCheckpointStorage $checkpointStorage;
 
-    private DimensionSpacePoints $dimensionSpacePoints;
+    private DimensionSpacePointsRepository $dimensionSpacePointsRepository;
 
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
@@ -100,7 +100,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             self::class
         );
 
-        $this->dimensionSpacePoints = new DimensionSpacePoints($this->dbalClient->getConnection(), $this->tableNamePrefix);
+        $this->dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbalClient->getConnection(), $this->tableNamePrefix);
     }
 
     protected function getProjectionContentGraph(): ProjectionContentGraph
@@ -1116,7 +1116,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
         $this->transactional(function () use ($event) {
-            $this->dimensionSpacePoints->insertDimensionSpacePoint($event->target);
+            $this->dimensionSpacePointsRepository->insertDimensionSpacePoint($event->target);
 
             // the ordering is important - we first update the OriginDimensionSpacePoints, as we need the
             // hierarchy relations for this query. Then, we update the Hierarchy Relations.
@@ -1190,7 +1190,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
         $this->transactional(function () use ($event) {
-            $this->dimensionSpacePoints->insertDimensionSpacePoint($event->target);
+            $this->dimensionSpacePointsRepository->insertDimensionSpacePoint($event->target);
 
             // 1) hierarchy relations
             $this->getDatabaseConnection()->executeStatement(
