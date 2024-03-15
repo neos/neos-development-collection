@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Core\Feature\Common;
  */
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
@@ -87,12 +88,14 @@ trait TetheredNodeInternals
                 foreach ($this->getInterDimensionalVariationGraph()->getRootGeneralizations() as $rootGeneralization) {
                     $rootGeneralizationOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($rootGeneralization);
                     if ($creationOriginDimensionSpacePoint) {
+                        $specializations = $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization);
                         $events[] = new NodePeerVariantWasCreated(
                             $parentNodeAggregate->contentStreamId,
                             $tetheredNodeAggregateId,
                             $creationOriginDimensionSpacePoint,
                             $rootGeneralizationOrigin,
-                            $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization)
+                            $specializations,
+                            array_map(fn(DimensionSpacePoint $dimensionSpacePoint) $specializations)
                         );
                     } else {
                         $events[] = new NodeAggregateWithNodeWasCreated(
