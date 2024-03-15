@@ -17,9 +17,9 @@ Feature: As a user of the CR I want to export the event stream
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
-      | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -39,7 +39,7 @@ Feature: As a user of the CR I want to export the event stream
     When the events are exported
     Then I expect the following jsonl:
       """
-      {"identifier":"random-event-uuid","type":"RootNodeAggregateWithNodeWasCreated","payload":{"contentStreamId":"cs-identifier","nodeAggregateId":"lady-eleonode-rootford","nodeTypeName":"Neos.ContentRepository:Root","coveredDimensionSpacePoints":[{"language":"de"},{"language":"gsw"},{"language":"fr"}],"nodeAggregateClassification":"root"},"metadata":{"commandClass":"Neos\\ContentRepository\\Core\\Feature\\RootNodeCreation\\Command\\CreateRootNodeAggregateWithNode","commandPayload":{"contentStreamId":"cs-identifier","nodeAggregateId":"lady-eleonode-rootford","nodeTypeName":"Neos.ContentRepository:Root","tetheredDescendantNodeAggregateIds":[]},"initiatingUserId":"system","initiatingTimestamp":"random-time"}}
+      {"identifier":"random-event-uuid","type":"RootNodeAggregateWithNodeWasCreated","payload":{"contentStreamId":"cs-identifier","nodeAggregateId":"lady-eleonode-rootford","nodeTypeName":"Neos.ContentRepository:Root","coveredDimensionSpacePoints":[{"language":"de"},{"language":"gsw"},{"language":"fr"}],"nodeAggregateClassification":"root"},"metadata":{"commandClass":"Neos\\ContentRepository\\Core\\Feature\\RootNodeCreation\\Command\\CreateRootNodeAggregateWithNode","commandPayload":{"workspaceName":"live","nodeAggregateId":"lady-eleonode-rootford","nodeTypeName":"Neos.ContentRepository:Root","tetheredDescendantNodeAggregateIds":[]},"initiatingUserId":"system","initiatingTimestamp":"random-time"}}
       {"identifier":"random-event-uuid","type":"NodeAggregateWithNodeWasCreated","payload":{"contentStreamId":"cs-identifier","nodeAggregateId":"nody-mc-nodeface","nodeTypeName":"Neos.ContentRepository.Testing:Document","originDimensionSpacePoint":{"language":"de"},"coveredDimensionSpacePoints":[{"language":"de"},{"language":"gsw"},{"language":"fr"}],"parentNodeAggregateId":"lady-eleonode-rootford","nodeName":"child-document","initialPropertyValues":[],"nodeAggregateClassification":"regular","succeedingNodeAggregateId":null},"metadata":{"initiatingTimestamp":"random-time"}}
 
       """

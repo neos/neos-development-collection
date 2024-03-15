@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Account;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Utility\User as UserUtility;
 
@@ -74,6 +75,7 @@ class UserService
         if (!$currentUser instanceof User) {
             return null;
         }
+        /** @var ?Account $currentAccount */
         $currentAccount = $this->securityContext->getAccount();
         if ($currentAccount === null) {
             return null;

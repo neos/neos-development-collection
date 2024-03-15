@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Add a Dimension Space Point Shine-Through;
@@ -49,7 +50,7 @@ class AddDimensionShineThroughTransformationFactory implements TransformationFac
             }
 
             public function execute(
-                ContentStreamId $contentStreamForReading,
+                WorkspaceName $workspaceNameForReading,
                 ContentStreamId $contentStreamForWriting
             ): CommandResult {
                 return $this->contentRepository->handle(

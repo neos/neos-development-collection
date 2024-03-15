@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 use PHPUnit\Framework\Assert;
@@ -43,8 +44,8 @@ trait NodeModification
     public function theCommandSetPropertiesIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        if (!isset($commandArguments['contentStreamId'])) {
-            $commandArguments['contentStreamId'] = $this->currentContentStreamId->value;
+        if (!isset($commandArguments['workspaceName'])) {
+            $commandArguments['workspaceName'] = $this->currentWorkspaceName->value;
         }
         if (!isset($commandArguments['originDimensionSpacePoint'])) {
             $commandArguments['originDimensionSpacePoint'] = $this->currentDimensionSpacePoint->jsonSerialize();
@@ -52,7 +53,7 @@ trait NodeModification
 
         $rawNodeAggregateId = $commandArguments['nodeAggregateId'];
         $command = SetNodeProperties::create(
-            ContentStreamId::fromString($commandArguments['contentStreamId']),
+            WorkspaceName::fromString($commandArguments['workspaceName']),
             \str_starts_with($rawNodeAggregateId, '$')
                 ? $this->rememberedNodeAggregateIds[\mb_substr($rawNodeAggregateId, 1)]
                 : NodeAggregateId::fromString($rawNodeAggregateId),

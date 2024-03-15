@@ -73,7 +73,7 @@ final class ContentCommandController extends CommandController
             ]);
             $contentRepositoryInstance->handle(
                 UpdateRootNodeAggregateDimensions::create(
-                    $workspaceInstance->currentContentStreamId,
+                    $workspaceInstance->workspaceName,
                     $rootNodeAggregate->nodeAggregateId
                 )
             )->block();
@@ -171,7 +171,7 @@ final class ContentCommandController extends CommandController
                     $rootNodeAggregate->nodeAggregateId,
                     $sourceSubgraph,
                     $targetSpacePoint,
-                    $workspaceInstance->currentContentStreamId,
+                    $workspaceInstance->workspaceName,
                     $contentRepositoryInstance,
                 )
             );
@@ -180,7 +180,7 @@ final class ContentCommandController extends CommandController
         $this->outputLine('<success>Done!</success>');
     }
 
-    private function createVariantRecursivelyInternal(int $level, NodeAggregateId $parentNodeAggregateId, ContentSubgraphInterface $sourceSubgraph, OriginDimensionSpacePoint $target, ContentStreamId $contentStreamId, ContentRepository $contentRepository): void
+    private function createVariantRecursivelyInternal(int $level, NodeAggregateId $parentNodeAggregateId, ContentSubgraphInterface $sourceSubgraph, OriginDimensionSpacePoint $target, WorkspaceName $workspaceName, ContentRepository $contentRepository): void
     {
         $childNodes = $sourceSubgraph->findChildNodes(
             $parentNodeAggregateId,
@@ -199,7 +199,7 @@ final class ContentCommandController extends CommandController
                 try {
                     // Tethered nodes' variants are automatically created when the parent is translated.
                     $contentRepository->handle(CreateNodeVariant::create(
-                        $contentStreamId,
+                        $workspaceName,
                         $childNode->nodeAggregateId,
                         $childNode->originDimensionSpacePoint,
                         $target
@@ -218,7 +218,7 @@ final class ContentCommandController extends CommandController
                 $childNode->nodeAggregateId,
                 $sourceSubgraph,
                 $target,
-                $contentStreamId,
+                $workspaceName,
                 $contentRepository
             );
         }

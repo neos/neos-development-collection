@@ -50,9 +50,10 @@ trait NodeRemoval
         RemoveNodeAggregate $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -64,7 +65,7 @@ trait NodeRemoval
         );
         if ($command->removalAttachmentPoint instanceof NodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->removalAttachmentPoint,
                 $contentRepository
             );
@@ -72,7 +73,7 @@ trait NodeRemoval
 
         $events = Events::with(
             new NodeAggregateWasRemoved(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->nodeAggregateId,
                 $command->nodeVariantSelectionStrategy->resolveAffectedOriginDimensionSpacePoints(
                     $nodeAggregate->getOccupationByCovered($command->coveredDimensionSpacePoint),
@@ -89,13 +90,13 @@ trait NodeRemoval
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 

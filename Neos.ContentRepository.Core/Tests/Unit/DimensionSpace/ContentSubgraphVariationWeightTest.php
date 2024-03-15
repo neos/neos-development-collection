@@ -125,7 +125,7 @@ class ContentSubgraphVariationWeightTest extends TestCase
     /**
      * @return array<int,mixed>
      */
-    public function normalizationProvider(): array
+    public static function normalizationProvider(): array
     {
         return [
             [

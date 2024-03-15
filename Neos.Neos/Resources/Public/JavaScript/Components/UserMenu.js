@@ -1,6 +1,6 @@
-import { isNil } from '../../Helper'
-import {ApiService} from '../../Services'
-import { RestoreButton } from '../../Templates/RestoreButton'
+import { isNil } from '../Helper'
+import {ApiService} from '../Services'
+import { RestoreButton } from '../Templates/RestoreButton'
 
 export default class UserMenu {
     constructor(_root) {

@@ -58,7 +58,7 @@ class OrderingTest extends TestCase
             ->andByTimestampField(TimestampField::CREATED, OrderingDirection::ASCENDING)
             ->andByProperty(PropertyName::fromString('someOtherProperty'), OrderingDirection::DESCENDING)
             ->andByTimestampField(TimestampField::ORIGINAL_LAST_MODIFIED, OrderingDirection::DESCENDING);
-        self::assertCount(4, $ordering);
+        self::assertCount(4, iterator_to_array($ordering));
     }
 
     /**
@@ -77,7 +77,7 @@ class OrderingTest extends TestCase
         self::assertOrderingEquals($array, $ordering);
     }
 
-    public function invalidOrderingArrays(): \Generator
+    public static function invalidOrderingArrays(): \Generator
     {
         yield ['empty array' => []];
         yield ['empty nested array' => [[]]];
