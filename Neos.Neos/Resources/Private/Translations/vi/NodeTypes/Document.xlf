@@ -11,7 +11,7 @@
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
 			<target state="translated">Phân đoạn đường dẫn URL</target></trans-unit>
-      <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
+      <trans-unit id="properties.hiddenInMenu" xml:space="preserve">
 				<source>Hide in menus</source>
 			<target state="translated">Ẩn trong menu</target></trans-unit>
       <trans-unit id="creationDialog.title" xml:space="preserve">

@@ -122,11 +122,9 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
         if ($propertyPath === '_identifier') {
             // TODO: deprecated (Neos <9 case)
             return $element->nodeAggregateId->value;
-        } elseif ($propertyPath[0] === '_' && $propertyPath !== '_hiddenInIndex') {
-            return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
-        } else {
-            return $element->getProperty($propertyPath);
         }
+
+        return $element->getProperty($propertyPath);
     }
 
     /**

@@ -927,7 +927,7 @@ The following properties are passed over to :ref:`Neos_Neos__MenuItems` internal
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
 :startingPoint: (optional, Node) The node where the menu hierarchy starts. If not specified explicitly the startingPoint is calculated from (``node`` and ``entryLevel``), defaults to ``null``
 :filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``. The filter is only used for fetching subItems and is ignored for determining the ``startingPoint``
-:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
+:renderHiddenInMenu: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``.
 :itemCollection: (optional, array of Nodes) Explicitly set the Node items for the menu (taking precedence over ``startingPoints`` and ``entryLevel`` and ``lastLevel``). The children for each ``Node`` will be fetched taking the ``maximumLevels`` property into account.
 
@@ -957,7 +957,7 @@ The following properties are passed over to :ref:`Neos_Neos__BreadcrumbMenuItems
 
 :node: (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
-:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
+:renderHiddenInMenu: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Example::
@@ -986,7 +986,7 @@ The following fusion properties are passed over to :ref:`Neos_Neos__DimensionsMe
 :dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
-:renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
+:renderHiddenInMenu: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 .. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuItems` which
@@ -1017,7 +1017,7 @@ Create a list of menu-items items for nodes.
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
 :startingPoint: (optional, Node) The node where the menu hierarchy starts. If not specified explicitly the startingPoint is calculated from (``node`` and ``entryLevel``), defaults to ``null``
 :filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``. The filter is only used for fetching subItems and is ignored for determining the ``startingPoint``
-:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
+:renderHiddenInMenu: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``.
 :itemCollection: (optional, array of Nodes) Explicitly set the Node items for the menu (taking precedence over ``startingPoints`` and ``entryLevel`` and ``lastLevel``). The children for each ``Node`` will be fetched taking the ``maximumLevels`` property into account.
 
@@ -1084,7 +1084,7 @@ Create a list of of menu-items for the breadcrumb (ancestor documents).
 
 :node: (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
-:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
+:renderHiddenInMenu: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Example::
@@ -1107,7 +1107,7 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 :dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
-:renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
+:renderHiddenInMenu: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Each ``item`` has the following properties:
