@@ -90,7 +90,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $warnings = 0;
 
         $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId)
-            . '_bak_' . date('Y_m_d_H_i_s');
+            . '_bkp_' . date('Y_m_d_H_i_s');
         $outputFn(sprintf('Backup: copying events table to %s', $backupEventTableName));
 
         $this->copyEventTable($backupEventTableName);
@@ -251,7 +251,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $this->eventsModified = [];
 
         $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId)
-            . '_bak_' . date('Y_m_d_H_i_s');
+            . '_bkp_' . date('Y_m_d_H_i_s');
         $outputFn('Backup: copying events table to %s', [$backupEventTableName]);
 
         $this->copyEventTable($backupEventTableName);

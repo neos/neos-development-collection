@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\Common;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -25,14 +26,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 class ContentStreamIdOverride
 {
     /**
-     * A content stream id that to use instead of the workspace one's {@see ConstraintChecks::requireContentStream()}
+     * A content stream id that is used instead of the workspace one's {@see ConstraintChecks::requireContentStream()}
      */
     private static ?ContentStreamId $contentStreamIdToUse = null;
 
     /**
+     * Makes the given content stream id available to be used in the given function {@see WorkspaceCommandHandler::handleRebaseWorkspace()}
      * @internal
      */
-    public static function withContentStreamIdToUse(ContentStreamId $contentStreamIdToUse, \Closure $fn): void
+    public static function applyContentStreamIdToClosure(ContentStreamId $contentStreamIdToUse, \Closure $fn): void
     {
         if (self::$contentStreamIdToUse !== null) {
             throw new \Exception('Recursive content stream override is not supported', 1710426945);
@@ -40,17 +42,15 @@ class ContentStreamIdOverride
         self::$contentStreamIdToUse = $contentStreamIdToUse;
         try {
             $fn();
-        } catch (\Throwable $th) {
+        } finally {
             self::$contentStreamIdToUse = null;
-            throw $th;
         }
-        self::$contentStreamIdToUse = null;
     }
 
     /**
      * @internal
      */
-    public static function findContentStreamIdForWorkspace(ContentRepository $contentRepository, WorkspaceName $workspaceName): ContentStreamId
+    public static function resolveContentStreamIdForWorkspace(ContentRepository $contentRepository, WorkspaceName $workspaceName): ContentStreamId
     {
         $contentStreamId = self::$contentStreamIdToUse
             ?: $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)?->currentContentStreamId;

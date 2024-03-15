@@ -383,7 +383,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
         $rebaseStatistics = new WorkspaceRebaseStatistics();
-        ContentStreamIdOverride::withContentStreamIdToUse(
+        ContentStreamIdOverride::applyContentStreamIdToClosure(
             $command->rebasedContentStreamId,
             function () use ($originalCommands, $contentRepository, $rebaseStatistics, $workspaceContentStreamName, $baseWorkspace): void {
                 foreach ($originalCommands as $i => $originalCommand) {
@@ -531,7 +531,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         try {
             // 4) using the new content stream, apply the matching commands
-            ContentStreamIdOverride::withContentStreamIdToUse(
+            ContentStreamIdOverride::applyContentStreamIdToClosure(
                 $command->contentStreamIdForMatchingPart,
                 function () use ($matchingCommands, $contentRepository, $baseWorkspace, $command): void {
                     foreach ($matchingCommands as $matchingCommand) {
@@ -565,7 +565,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             )->block();
 
             // 7) apply REMAINING commands to the workspace's new content stream
-            ContentStreamIdOverride::withContentStreamIdToUse(
+            ContentStreamIdOverride::applyContentStreamIdToClosure(
                 $command->contentStreamIdForRemainingPart,
                 function () use ($contentRepository, $remainingCommands) {
                     foreach ($remainingCommands as $remainingCommand) {
@@ -668,7 +668,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 4) using the new content stream, apply the commands to keep
         try {
-            ContentStreamIdOverride::withContentStreamIdToUse(
+            ContentStreamIdOverride::applyContentStreamIdToClosure(
                 $command->newContentStreamId,
                 function () use ($commandsToKeep, $contentRepository, $baseWorkspace, $command): void {
                     foreach ($commandsToKeep as $matchingCommand) {
