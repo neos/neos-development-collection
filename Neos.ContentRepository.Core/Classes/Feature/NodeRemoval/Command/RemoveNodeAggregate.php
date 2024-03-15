@@ -104,8 +104,7 @@ final readonly class RemoveNodeAggregate implements
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return (
-            $this->workspaceName === $nodeIdToPublish->workspaceName
-                && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
+            $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
                 && $this->coveredDimensionSpacePoint === $nodeIdToPublish->dimensionSpacePoint
         );
     }

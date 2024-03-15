@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublis
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
@@ -383,9 +384,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
         $rebaseStatistics = new WorkspaceRebaseStatistics();
-        $this->withContentStreamIdToUse(
+        ContentStreamIdOverride::applyContentStreamIdToClosure(
             $command->rebasedContentStreamId,
-            function () use ($originalCommands, $contentRepository, $rebaseStatistics, $workspaceContentStreamName, $baseWorkspace): void {
+            function () use ($originalCommands, $contentRepository, $rebaseStatistics): void {
                 foreach ($originalCommands as $i => $originalCommand) {
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
@@ -393,25 +394,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                         // if we came this far, we know the command was applied successfully.
                         $rebaseStatistics->commandRebaseSuccess();
                     } catch (\Exception $e) {
-                        $fullCommandListSoFar = '';
-                        for ($a = 0; $a <= $i; $a++) {
-                            $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
-
-                            if ($originalCommands[$a] instanceof \JsonSerializable) {
-                                $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
-                            }
-                        }
-
                         $rebaseStatistics->commandRebaseError(sprintf(
-                            "The content stream %s cannot be rebased. Error with command %d (%s)"
-                            . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
-                            . "\n The full list of commands applied so far is: %s",
-                            $workspaceContentStreamName->value,
-                            $i,
+                            "Error with command %s in sequence-number %d",
                             get_class($originalCommand),
-                            $baseWorkspace->workspaceName->value,
-                            $baseWorkspace->currentContentStreamId->value,
-                            $fullCommandListSoFar
+                            $i
                         ), $e);
                     }
                 }
@@ -419,7 +405,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        if (!$rebaseStatistics->hasErrors()) {
+        if ($command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FORCE || $rebaseStatistics->hasErrors() === false) {
             $events = Events::with(
                 new WorkspaceWasRebased(
                     $command->workspaceName,
@@ -479,7 +465,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                  * The "fromArray" might be declared via {@see RebasableToOtherWorkspaceInterface::fromArray()}
                  * or any other command can just implement it.
                  */
-                $commands[] = $commandToRebaseClass::fromArray($commandToRebasePayload);
+                $commands[$eventEnvelope->sequenceNumber->value] = $commandToRebaseClass::fromArray($commandToRebasePayload);
             }
         }
 
@@ -531,7 +517,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         try {
             // 4) using the new content stream, apply the matching commands
-            $this->withContentStreamIdToUse(
+            ContentStreamIdOverride::applyContentStreamIdToClosure(
                 $command->contentStreamIdForMatchingPart,
                 function () use ($matchingCommands, $contentRepository, $baseWorkspace, $command): void {
                     foreach ($matchingCommands as $matchingCommand) {
@@ -565,7 +551,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             )->block();
 
             // 7) apply REMAINING commands to the workspace's new content stream
-            $this->withContentStreamIdToUse(
+            ContentStreamIdOverride::applyContentStreamIdToClosure(
                 $command->contentStreamIdForRemainingPart,
                 function () use ($contentRepository, $remainingCommands) {
                     foreach ($remainingCommands as $remainingCommand) {
@@ -668,7 +654,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 4) using the new content stream, apply the commands to keep
         try {
-            $this->withContentStreamIdToUse(
+            ContentStreamIdOverride::applyContentStreamIdToClosure(
                 $command->newContentStreamId,
                 function () use ($commandsToKeep, $contentRepository, $baseWorkspace, $command): void {
                     foreach ($commandsToKeep as $matchingCommand) {
@@ -989,20 +975,5 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         return false;
-    }
-
-    private function withContentStreamIdToUse(ContentStreamId $contentStreamIdToUse, callable $function): void
-    {
-        if (ContentStreamIdOverride::$contentStreamIdToUse !== null) {
-            throw new \Exception('Recursive content stream override is not supported');
-        }
-        ContentStreamIdOverride::useContentStreamId($contentStreamIdToUse);
-        try {
-            $function();
-        } catch (\Exception $exception) {
-            ContentStreamIdOverride::useContentStreamId(null);
-            throw $exception;
-        }
-        ContentStreamIdOverride::useContentStreamId(null);
     }
 }

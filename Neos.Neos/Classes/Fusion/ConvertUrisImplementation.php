@@ -30,6 +30,7 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
 use Psr\Log\LoggerInterface;
+use Neos\Neos\Fusion\Cache\CacheTag;
 
 /**
  * A Fusion Object that converts link references in the format "<type>://<UUID>" to proper URIs
@@ -102,6 +103,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
+
         $text = $this->fusionValue('value');
 
         if ($text === '' || $text === null) {
@@ -139,7 +141,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $unresolvedUris = [];
         $absolute = $this->fusionValue('absolute');
 
-        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $absolute) {
+        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($contentRepository, $nodeAddress, &$unresolvedUris, $absolute) {
             $resolvedUri = null;
             switch ($matches[1]) {
                 case 'node':
@@ -154,7 +156,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     } catch (NoMatchingRouteException) {
                         $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri. Arguments: %s', $matches[0], json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
                     }
-                    $this->runtime->addCacheTag('node', $matches[2]);
+                    $this->runtime->addCacheTag(
+                        CacheTag::forDynamicNodeAggregate($contentRepository->id, $nodeAddress->contentStreamId, NodeAggregateId::fromString($matches[2]))->value
+                    );
                     break;
                 case 'asset':
                     $asset = $this->assetRepository->findByIdentifier($matches[2]);
@@ -162,7 +166,6 @@ class ConvertUrisImplementation extends AbstractFusionObject
                         $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri(
                             $asset->getResource()
                         );
-                        $this->runtime->addCacheTag('asset', $matches[2]);
                     }
                     break;
             }

@@ -22,7 +22,7 @@ final class MigrateEventsCommandController extends CommandController
      *
      * Needed for #4322: https://github.com/neos/neos-development-collection/pull/4322
      *
-     * Included in February 2023 - before final Neos 9.0 release
+     * Included in February 2024 - before final Neos 9.0 release
      *
      * @param string $contentRepository Identifier of the Content Repository to migrate
      */
@@ -31,5 +31,21 @@ final class MigrateEventsCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
         $eventMigrationService->migratePropertiesToUnset($this->outputLine(...));
+    }
+
+    /**
+     * Adds a dummy workspace name to the events meta-data, so it can be rebased
+     *
+     * Needed for #4708: https://github.com/neos/neos-development-collection/pull/4708
+     *
+     * Included in March 2024 - before final Neos 9.0 release
+     *
+     * @param string $contentRepository Identifier of the Content Repository to migrate
+     */
+    public function migrateMetaDataToWorkspaceNameCommand(string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
+        $eventMigrationService->migrateMetaDataToWorkspaceName($this->outputLine(...));
     }
 }

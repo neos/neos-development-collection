@@ -79,8 +79,7 @@ final readonly class ChangeNodeAggregateType implements
 
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
-        return $this->workspaceName === $nodeIdToPublish->workspaceName
-            && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId);
+        return $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId);
     }
 
     /**

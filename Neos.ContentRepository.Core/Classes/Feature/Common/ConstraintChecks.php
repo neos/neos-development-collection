@@ -75,11 +75,10 @@ trait ConstraintChecks
         WorkspaceName $workspaceName,
         ContentRepository $contentRepository
     ): ContentStreamId {
-        $contentStreamId = ContentStreamIdOverride::$contentStreamIdToUse
-            ?: $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)?->currentContentStreamId;
-        if (!$contentStreamId || !$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
+        $contentStreamId = ContentStreamIdOverride::resolveContentStreamIdForWorkspace($contentRepository, $workspaceName);
+        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamId?->value . '" does not exist yet.',
+                'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692
             );
         }
