@@ -13,6 +13,7 @@ namespace Neos\Fusion\Core;
 
 use GuzzleHttp\Psr7\Message;
 use GuzzleHttp\Psr7\Response;
+use Neos\Http\Factories\StreamFactoryTrait;
 use Psr\Http\Message\ResponseInterface;
 use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
@@ -33,6 +34,7 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\PositionalArraySorter;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Fusion Runtime
@@ -58,6 +60,8 @@ use Neos\Utility\PositionalArraySorter;
  */
 class Runtime
 {
+    use StreamFactoryTrait;
+
     /**
      * Internal constants defining how evaluate should work in case of an error
      */
@@ -265,13 +269,18 @@ class Runtime
     }
 
     /**
-     * Entry point to render a Fusion path as HttpResponse.
+     * Entry point to render a Fusion path with the context.
+     *
+     * A ResponseInterface will be returned, if a Neos.Fusion:Http.Message was defined in the entry path,
+     * or if Neos.Fusion.Form or Neos.Neos:Plugin were used in the path.
+     *
+     * In all other simple cases a StreamInterface will be returned.
      *
      * @param string $entryFusionPath the absolute fusion path to render (without leading slash)
      * @param array $contextVariables the context variables that will be available during the rendering.
      * @throws IllegalEntryFusionPathValueException The Fusion path rendered to a value that is not a compatible http response body: string|\Stringable|null
      */
-    public function renderResponse(string $entryFusionPath, array $contextVariables): ResponseInterface
+    public function renderEntryPathWithContext(string $entryFusionPath, array $contextVariables): ResponseInterface|StreamInterface
     {
         // Like in pushContext, we don't allow to overrule fusion globals
         foreach ($contextVariables as $key => $_) {
@@ -298,11 +307,16 @@ class Runtime
                 return Message::parseResponse($output);
             }
 
+            if ($output instanceof StreamInterface) {
+                // if someone manages to return a stream *g
+                return $output;
+            }
+
             if (!is_string($output) && !$output instanceof \Stringable && $output !== null) {
                 throw new IllegalEntryFusionPathValueException(sprintf('Fusion entry path "%s" is expected to render a compatible http response body: string|\Stringable|null. Got %s instead.', $entryFusionPath, get_debug_type($output)), 1706454898);
             }
 
-            return new Response(body: $output);
+            return $this->createStream((string)$output);
         });
     }
 
@@ -944,9 +958,9 @@ class Runtime
      * While HIGHLY internal behaviour and ONLY to be used by Neos.Fusion.Form or Neos.Neos:Plugin
      * this legacy layer is in place still allows this functionality.
      *
-     * @param \Closure(): ResponseInterface $renderer
+     * @param \Closure(): (ResponseInterface|StreamInterface) $renderer
      */
-    private function withSimulatedLegacyControllerContext(\Closure $renderer): ResponseInterface
+    private function withSimulatedLegacyControllerContext(\Closure $renderer): ResponseInterface|StreamInterface
     {
         if ($this->legacyActionResponseForCurrentRendering !== null) {
             throw new Exception('Recursion detected in `Runtime::renderResponse`. This entry point is only allowed to be invoked once per rendering.', 1706993940);
@@ -955,7 +969,7 @@ class Runtime
 
         // actual rendering
         try {
-            $httpResponse = $renderer();
+            $httpResponseOrStream = $renderer();
         } finally {
             $toBeMergedLegacyActionResponse = $this->legacyActionResponseForCurrentRendering;
             // reset for next render
@@ -964,14 +978,20 @@ class Runtime
 
         // transfer possible headers that have been set dynamically
         foreach ($toBeMergedLegacyActionResponse->buildHttpResponse()->getHeaders() as $name => $values) {
-            $httpResponse = $httpResponse->withAddedHeader($name, $values);
+            if ($httpResponseOrStream instanceof StreamInterface) {
+                $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+            }
+            $httpResponseOrStream = $httpResponseOrStream->withAddedHeader($name, $values);
         }
         // if the status code is 200 we assume it's the default and will not overrule it
         if ($toBeMergedLegacyActionResponse->getStatusCode() !== 200) {
-            $httpResponse = $httpResponse->withStatus($toBeMergedLegacyActionResponse->getStatusCode());
+            if ($httpResponseOrStream instanceof StreamInterface) {
+                $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+            }
+            $httpResponseOrStream = $httpResponseOrStream->withStatus($toBeMergedLegacyActionResponse->getStatusCode());
         }
 
-        return $httpResponse;
+        return $httpResponseOrStream;
     }
 
     /**
@@ -981,7 +1001,7 @@ class Runtime
      *
      * WARNING:
      *      Invoking this backwards-compatible layer is possibly unsafe, if the rendering was not started
-     *      in {@see self::renderResponse()} or no `request` global is available. This will raise an exception.
+     *      in {@see self::renderEntryPathWithContext()} or no `request` global is available. This will raise an exception.
      *
      * @deprecated with Neos 9.0
      * @internal

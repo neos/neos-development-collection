@@ -25,6 +25,7 @@ use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\ValueImplementation;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class RuntimeTest extends UnitTestCase
 {
@@ -219,7 +220,7 @@ class RuntimeTest extends UnitTestCase
         $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
 
-        $runtime->renderResponse('foo', ['request' =>'anything']);
+        $runtime->renderEntryPathWithContext('foo', ['request' =>'anything']);
     }
 
     /**
@@ -238,15 +239,11 @@ class RuntimeTest extends UnitTestCase
         self::assertTrue(true);
     }
 
-    public static function renderResponseExamples(): iterable
+    public static function renderStreamExamples(): iterable
     {
         yield 'simple string' => [
             'rawValue' => 'my string',
-            'response' => <<<'TEXT'
-            HTTP/1.1 200 OK
-
-            my string
-            TEXT
+            'streamContents' => 'my string'
         ];
 
         yield 'string cast object (\Stringable)' => [
@@ -256,31 +253,22 @@ class RuntimeTest extends UnitTestCase
                     return 'my string karsten';
                 }
             },
-            'response' => <<<'TEXT'
-            HTTP/1.1 200 OK
-
-            my string karsten
-            TEXT
+            'streamContents' => 'my string karsten'
         ];
 
         yield 'empty string' => [
             'rawValue' => '',
-            'response' => <<<'TEXT'
-            HTTP/1.1 200 OK
-
-
-            TEXT
+            'streamContents' => ''
         ];
 
         yield 'null value' => [
             'rawValue' => null,
-            'response' => <<<'TEXT'
-            HTTP/1.1 200 OK
-
-
-            TEXT
+            'streamContents' => ''
         ];
+    }
 
+    public function renderResponseExamples(): iterable
+    {
         yield 'stringified http response string is upcasted' => [
             'rawValue' => <<<'TEXT'
             HTTP/1.1 418 OK
@@ -305,9 +293,30 @@ class RuntimeTest extends UnitTestCase
 
     /**
      * @test
+     * @dataProvider renderStreamExamples
+     */
+    public function renderEntryPathStream(mixed $rawValue, string $expectedStreamContents)
+    {
+        $runtime = $this->getMockBuilder(Runtime::class)
+            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
+            ->onlyMethods(['render'])
+            ->getMock();
+
+        $runtime->expects(self::once())->method('render')->willReturn(
+            $rawValue
+        );
+
+        $response = $runtime->renderEntryPathWithContext('path', []);
+
+        self::assertInstanceOf(StreamInterface::class, $response);
+        self::assertSame($expectedStreamContents, $response->getContents());
+    }
+
+    /**
+     * @test
      * @dataProvider renderResponseExamples
      */
-    public function renderResponse(mixed $rawValue, string $expectedHttpResponseString)
+    public function renderEntryPathResponse(mixed $rawValue, string $expectedHttpResponseString)
     {
         $runtime = $this->getMockBuilder(Runtime::class)
             ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
@@ -318,7 +327,7 @@ class RuntimeTest extends UnitTestCase
             is_string($rawValue) ? str_replace("\n", "\r\n", $rawValue) : $rawValue
         );
 
-        $response = $runtime->renderResponse('path', []);
+        $response = $runtime->renderEntryPathWithContext('path', []);
 
         self::assertInstanceOf(ResponseInterface::class, $response);
         self::assertSame(str_replace("\n", "\r\n", $expectedHttpResponseString), Message::toString($response));
@@ -371,6 +380,6 @@ class RuntimeTest extends UnitTestCase
             $illegalValue
         );
 
-        $runtime->renderResponse('path', []);
+        $runtime->renderEntryPathWithContext('path', []);
     }
 }

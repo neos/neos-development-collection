@@ -140,7 +140,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
         if ($sectionName !== null) {
             return $fluidTemplate->renderSection($sectionName);
         } else {
-            return $fluidTemplate->render();
+            return $fluidTemplate->render()->getContents();
         }
     }
 
