@@ -20,12 +20,9 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDe
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The NodeMove projection feature trait
- *
- * Requires RestrictionRelations to work
  *
  * @internal
  */
@@ -61,43 +58,25 @@ trait NodeMove
                         $newLocation->coveredDimensionSpacePoint
                     ]);
 
-                    // remove restriction relations by ancestors. We will reconnect them back after the move.
-                    $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
-                        $event->contentStreamId,
-                        $event->nodeAggregateId,
-                        $affectedDimensionSpacePoints
-                    );
-
                     // do the move (depending on how the move target is specified)
-                    switch (true) {
-                        case $newLocation->destination instanceof SucceedingSiblingNodeMoveDestination:
-                            $newParentNodeAggregateId = $this->moveNodeBeforeSucceedingSibling(
-                                $event->contentStreamId,
-                                $nodeToBeMoved,
-                                $newLocation->coveredDimensionSpacePoint,
-                                $newLocation->destination
-                            );
-                            break;
-                        case $newLocation->destination instanceof ParentNodeMoveDestination:
-                            $newParentNodeAggregateId = $newLocation->destination->nodeAggregateId;
-                            $this->moveNodeIntoParent(
-                                $event->contentStreamId,
-                                $nodeToBeMoved,
-                                $newLocation->coveredDimensionSpacePoint,
-                                $newLocation->destination
-                            );
-                            break;
-                        default:
-                            throw new \RuntimeException('TODO');
+                    $newParentNodeAggregateId = match ($newLocation->destination::class) {
+                        SucceedingSiblingNodeMoveDestination::class => $this->moveNodeBeforeSucceedingSibling(
+                            $event->contentStreamId,
+                            $nodeToBeMoved,
+                            $newLocation->coveredDimensionSpacePoint,
+                            $newLocation->destination
+                        ),
+                        ParentNodeMoveDestination::class => $newLocation->destination->nodeAggregateId,
+                    };
+                    if ($newLocation->destination instanceof ParentNodeMoveDestination) {
+                        $this->moveNodeIntoParent(
+                            $event->contentStreamId,
+                            $nodeToBeMoved,
+                            $newLocation->coveredDimensionSpacePoint,
+                            $newLocation->destination
+                        );
                     }
-
-                    // re-build restriction relations
-                    $this->cascadeRestrictionRelations(
-                        $event->contentStreamId,
-                        $newParentNodeAggregateId,
-                        $event->nodeAggregateId,
-                        $affectedDimensionSpacePoints
-                    );
+                    $this->moveSubtreeTags($event->contentStreamId, $event->nodeAggregateId, $newParentNodeAggregateId, $newLocation->coveredDimensionSpacePoint);
                 }
             }
         });

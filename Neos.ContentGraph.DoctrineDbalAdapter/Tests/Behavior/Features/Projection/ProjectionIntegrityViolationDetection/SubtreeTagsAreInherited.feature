@@ -1,7 +1,7 @@
 @contentrepository
-Feature: Run integrity violation detection regarding restriction relations
+Feature: Run integrity violation detection regarding subtree tag inheritance
 
-  As a user of the CR I want to know whether there are nodes with restriction relations missing from their ancestors
+  As a user of the CR I want to know whether there are nodes with subtree tags that are not inherited from its ancestors
 
   Background:
     Given using the following content dimensions:
@@ -25,7 +25,10 @@ Feature: Run integrity violation detection regarding restriction relations
       | Key                         | Value                                                    |
       | nodeAggregateId             | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    And the graph projection is fully up to date
+
+  Scenario: Create nodes, disable the topmost and remove some restriction edges manually
+    When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "sir-david-nodenborough"                                 |
@@ -38,38 +41,37 @@ Feature: Run integrity violation detection regarding restriction relations
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
       | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateId             | "nody-mc-nodeface"                                       |
+      | nodeAggregateId             | "sir-nodeward-nodington-iii"                             |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | parentNodeAggregateId       | "sir-david-nodenborough"                                 |
+      | nodeName                    | "esquire"                                                |
+      | nodeAggregateClassification | "regular"                                                |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                         | Value                                                    |
+      | contentStreamId             | "cs-identifier"                                          |
+      | nodeAggregateId             | "nody-mc-nodeface"                                       |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
+      | originDimensionSpacePoint   | {"language":"de"}                                        |
+      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+      | parentNodeAggregateId       | "sir-nodeward-nodington-iii"                             |
       | nodeName                    | "child-document"                                         |
       | nodeAggregateClassification | "regular"                                                |
-    And the event NodeAggregateWasDisabled was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                                                    |
       | contentStreamId              | "cs-identifier"                                          |
       | nodeAggregateId              | "sir-david-nodenborough"                                 |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+      | tag                          | "disabled"                                               |
     And the graph projection is fully up to date
-
-  Scenario: Detach a restriction relation from its origin
-    When I detach the following restriction relation from its origin:
-      | Key                     | Value                    |
-      | contentStreamId         | "cs-identifier"          |
-      | dimensionSpacePoint     | {"language":"de"}        |
-      | originNodeAggregateId   | "sir-david-nodenborough" |
-      | affectedNodeAggregateId | "nody-mc-nodeface"       |
+    And I remove the following subtree tag:
+      | Key                   | Value                        |
+      | contentStreamId       | "cs-identifier"              |
+      | dimensionSpacePoint   | {"language":"de"}            |
+      | parentNodeAggregateId | "sir-nodeward-nodington-iii" |
+      | childNodeAggregateId  | "nody-mc-nodeface"           |
+      | subtreeTag            | "disabled"                   |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
-    And I expect integrity violation detection result error number 1 to have code 1597846598
-
-  Scenario: Detach a restriction relation from its target
-    When I detach the following restriction relation from its target:
-      | Key                     | Value                    |
-      | contentStreamId         | "cs-identifier"          |
-      | dimensionSpacePoint     | {"language":"de"}        |
-      | originNodeAggregateId   | "sir-david-nodenborough" |
-      | affectedNodeAggregateId | "sir-david-nodenborough" |
-    And I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 1 error
-    And I expect integrity violation detection result error number 1 to have code 1597846598
+    And I expect integrity violation detection result error number 1 to have code 1597837797

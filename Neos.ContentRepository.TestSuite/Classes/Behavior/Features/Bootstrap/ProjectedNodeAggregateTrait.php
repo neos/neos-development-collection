@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -90,11 +91,12 @@ trait ProjectedNodeAggregateTrait
     {
         $expectedDisabledDimensionSpacePoints = DimensionSpacePointSet::fromJsonString($serializedExpectedDisabledDimensionSpacePoints);
         $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) use ($expectedDisabledDimensionSpacePoints) {
+            $actualDisabledDimensionSpacePoints = $nodeAggregate->getDimensionSpacePointsTaggedWith(SubtreeTag::disabled());
             Assert::assertEquals(
                 $expectedDisabledDimensionSpacePoints,
-                $nodeAggregate->disabledDimensionSpacePoints,
+                $actualDisabledDimensionSpacePoints,
                 'Expected disabled dimension space point set ' . $expectedDisabledDimensionSpacePoints->toJson() . ', got ' .
-                $nodeAggregate->disabledDimensionSpacePoints->toJson()
+                $actualDisabledDimensionSpacePoints->toJson()
             );
         });
     }

@@ -2,6 +2,7 @@
 
 namespace Neos\Neos\FrontendRouting\CatchUpHook;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -13,7 +14,6 @@ use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -43,7 +43,7 @@ final class RouterCacheHook implements CatchUpHookInterface
             NodeAggregateWasRemoved::class => $this->onBeforeNodeAggregateWasRemoved($eventInstance),
             NodePropertiesWereSet::class => $this->onBeforeNodePropertiesWereSet($eventInstance),
             NodeAggregateWasMoved::class => $this->onBeforeNodeAggregateWasMoved($eventInstance),
-            NodeAggregateWasDisabled::class => $this->onBeforeNodeAggregateWasDisabled($eventInstance),
+            SubtreeWasTagged::class => $this->onBeforeSubtreeWasTagged($eventInstance),
             default => null
         };
     }
@@ -54,7 +54,7 @@ final class RouterCacheHook implements CatchUpHookInterface
             NodeAggregateWasRemoved::class => $this->flushAllCollectedTags(),
             NodePropertiesWereSet::class => $this->flushAllCollectedTags(),
             NodeAggregateWasMoved::class => $this->flushAllCollectedTags(),
-            NodeAggregateWasDisabled::class => $this->flushAllCollectedTags(),
+            SubtreeWasTagged::class => $this->flushAllCollectedTags(),
             default => null
         };
     }
@@ -69,7 +69,7 @@ final class RouterCacheHook implements CatchUpHookInterface
         // Nothing to do here
     }
 
-    private function onBeforeNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function onBeforeSubtreeWasTagged(SubtreeWasTagged $event): void
     {
         if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;

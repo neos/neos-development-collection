@@ -17,10 +17,14 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -81,6 +85,7 @@ final class NodeFactory
             $nodeType,
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
+            self::extractNodeTagsFromJson($nodeRow['subtreetags']),
             Timestamps::create(
                 self::parseDateTimeString($nodeRow['created']),
                 self::parseDateTimeString($nodeRow['originalcreated']),
@@ -157,7 +162,7 @@ final class NodeFactory
         $nodesByCoveredDimensionSpacePoints = [];
         $coverageByOccupants = [];
         $occupationByCovering = [];
-        $disabledDimensionSpacePoints = [];
+        $dimensionSpacePointsBySubtreeTags = DimensionSpacePointsBySubtreeTags::create();
 
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
@@ -188,14 +193,13 @@ final class NodeFactory
             $occupationByCovering[$coveredDimensionSpacePoint->hash] = $occupiedDimensionSpacePoint;
             $nodesByCoveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash]
                 = $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash];
-            // ... as we do for disabling
-            if (isset($nodeRow['disableddimensionspacepointhash'])) {
-                $disabledDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
+            // ... as we do for explicit subtree tags
+            foreach (self::extractNodeTagsFromJson($nodeRow['subtreetags'])->withoutInherited() as $explicitTag) {
+                $dimensionSpacePointsBySubtreeTags = $dimensionSpacePointsBySubtreeTags->withSubtreeTagAndDimensionSpacePoint($explicitTag, $coveredDimensionSpacePoint);
             }
         }
         ksort($occupiedDimensionSpacePoints);
         ksort($coveredDimensionSpacePoints);
-        ksort($disabledDimensionSpacePoints);
 
         /** @var Node $primaryNode  a nodeAggregate only exists if it at least contains one node. */
         $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
@@ -212,7 +216,7 @@ final class NodeFactory
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoints,
             OriginByCoverage::fromArray($occupationByCovering),
-            new DimensionSpacePointSet($disabledDimensionSpacePoints)
+            $dimensionSpacePointsBySubtreeTags,
         );
     }
 
@@ -234,7 +238,7 @@ final class NodeFactory
         $classificationByNodeAggregate = [];
         $coverageByOccupantsByNodeAggregate = [];
         $occupationByCoveringByNodeAggregate = [];
-        $disabledDimensionSpacePointsByNodeAggregate = [];
+        $dimensionSpacePointsBySubtreeTagsByNodeAggregate = [];
 
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
@@ -279,10 +283,12 @@ final class NodeFactory
                 = $nodesByOccupiedDimensionSpacePointsByNodeAggregate
                     [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash];
 
-            // ... as we do for disabling
-            if (isset($nodeRow['disableddimensionspacepointhash'])) {
-                $disabledDimensionSpacePointsByNodeAggregate
-                    [$rawNodeAggregateId][$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
+            // ... as we do for explicit subtree tags
+            if (!array_key_exists($rawNodeAggregateId, $dimensionSpacePointsBySubtreeTagsByNodeAggregate)) {
+                $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId] = DimensionSpacePointsBySubtreeTags::create();
+            }
+            foreach (self::extractNodeTagsFromJson($nodeRow['subtreetags'])->withoutInherited() as $explicitTag) {
+                $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId] = $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId]->withSubtreeTagAndDimensionSpacePoint($explicitTag, $coveredDimensionSpacePoint);
             }
         }
 
@@ -310,11 +316,27 @@ final class NodeFactory
                 OriginByCoverage::fromArray(
                     $occupationByCoveringByNodeAggregate[$rawNodeAggregateId]
                 ),
-                new DimensionSpacePointSet(
-                    $disabledDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId] ?? []
-                )
+                $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId],
             );
         }
+    }
+
+    public static function extractNodeTagsFromJson(string $subtreeTagsJson): NodeTags
+    {
+        $explicitTags = [];
+        $inheritedTags = [];
+        $subtreeTagsArray = json_decode($subtreeTagsJson, true, 512, JSON_THROW_ON_ERROR);
+        foreach ($subtreeTagsArray as $tagValue => $explicit) {
+            if ($explicit) {
+                $explicitTags[] = $tagValue;
+            } else {
+                $inheritedTags[] = $tagValue;
+            }
+        }
+        return NodeTags::create(
+            tags: SubtreeTags::fromStrings(...$explicitTags),
+            inheritedTags: SubtreeTags::fromStrings(...$inheritedTags)
+        );
     }
 
     private static function parseDateTimeString(string $string): \DateTimeImmutable

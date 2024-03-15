@@ -13,6 +13,7 @@ namespace Neos\Neos\Tests\Unit\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Tests\UnitTestCase;
@@ -210,6 +211,7 @@ class CachingHelperTest extends UnitTestCase
             null,
             new PropertyCollection(SerializedPropertyValues::fromArray([]), new PropertyConverter(new Serializer([], []))),
             null,
+            NodeTags::createEmpty(),
             Timestamps::create($now, $now, null, null)
         );
     }

@@ -169,20 +169,20 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.contentstreamid')
+            ->select('n.*, h.name, h.subtreetags, h.contentstreamid')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('n.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value)
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash);
-        $this->addRestrictionRelationConstraints($queryBuilder, 'n', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
 
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.contentstreamid')
+            ->select('n.*, h.name, h.subtreetags, h.contentstreamid')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
@@ -190,14 +190,14 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('n.classification = :nodeAggregateClassification')
                 ->setParameter('nodeAggregateClassification', NodeAggregateClassification::CLASSIFICATION_ROOT->value);
-        $this->addRestrictionRelationConstraints($queryBuilder, 'n', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
 
     public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('pn.*, ch.name, ph.contentstreamid')
+            ->select('pn.*, ch.name, ch.subtreetags, ph.contentstreamid')
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
@@ -207,7 +207,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('ch.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('ch.dimensionspacepointhash = :dimensionSpacePointHash');
-        $this->addRestrictionRelationConstraints($queryBuilder, 'cn', 'ch', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilder, 'ph');
         return $this->fetchNode($queryBuilder);
     }
 
@@ -239,7 +239,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('cn.*, h.name, h.contentstreamid')
+            ->select('cn.*, h.name, h.subtreetags, h.contentstreamid')
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = h.childnodeanchor')
@@ -247,7 +247,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('h.name = :edgeName')->setParameter('edgeName', $nodeName->value);
-        $this->addRestrictionRelationConstraints($queryBuilder, 'cn', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
 
@@ -290,16 +290,16 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.name, h.contentstreamid, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
+            ->select('n.*, h.name, h.subtreetags, h.contentstreamid, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('n.nodeaggregateid = :entryNodeAggregateId');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial, 'n', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('c.*, h.name, h.contentstreamid, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
+            ->select('c.*, h.name, h.subtreetags, h.contentstreamid, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
             ->from('tree', 'p')
             ->innerJoin('p', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = p.relationanchorpoint')
             ->innerJoin('p', $this->tableNamePrefix . '_node', 'c', 'c.relationanchorpoint = h.childnodeanchor')
@@ -311,7 +311,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->nodeTypes !== null) {
             $this->addNodeTypeCriteria($queryBuilderRecursive, $filter->nodeTypes, 'c');
         }
-        $this->addRestrictionRelationConstraints($queryBuilderRecursive, 'c', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('*')
@@ -381,33 +381,33 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findClosestNode(NodeAggregateId $entryNodeAggregateId, FindClosestNodeFilter $filter): ?Node
     {
         $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('n.*, ph.name, ph.contentstreamid, ph.parentnodeanchor')
+            ->select('n.*, ph.name, ph.subtreetags, ph.contentstreamid, ph.parentnodeanchor')
             ->from($this->tableNamePrefix . '_node', 'n')
             // we need to join with the hierarchy relation, because we need the node name.
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('n.nodeaggregateid = :entryNodeAggregateId');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial, 'n', 'ph', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('p.*, h.name, h.contentstreamid, h.parentnodeanchor')
-            ->from('ancestry', 'c')
-            ->innerJoin('c', $this->tableNamePrefix . '_node', 'p', 'p.relationanchorpoint = c.parentnodeanchor')
-            ->innerJoin('p', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = p.relationanchorpoint')
+            ->select('pn.*, h.name, h.subtreetags, h.contentstreamid, h.parentnodeanchor')
+            ->from('ancestry', 'cn')
+            ->innerJoin('cn', $this->tableNamePrefix . '_node', 'pn', 'pn.relationanchorpoint = cn.parentnodeanchor')
+            ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = pn.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
-        $this->addRestrictionRelationConstraints($queryBuilderRecursive, 'p', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('*')
-            ->from('ancestry', 'p')
+            ->from('ancestry', 'pn')
             ->setMaxResults(1)
             ->setParameter('contentStreamId', $this->contentStreamId->value)
             ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilderCte, $filter->nodeTypes, 'p');
+            $this->addNodeTypeCriteria($queryBuilderCte, $filter->nodeTypes, 'pn');
         }
         $nodeRows = $this->fetchCteResults(
             $queryBuilderInitial,
@@ -491,36 +491,15 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return 'param_' . (++$this->dynamicParameterCount);
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param string $nodeTableAlias
-     * @param string $hierarchyRelationTableAlias
-     * @param string|null $contentStreamIdParameter if not given, condition will be on the hierachy relation content stream id
-     * @param string|null $dimensionspacePointHashParameter if not given, condition will be on the hierachy relation dimension space point hash
-     * @return void
-     */
-    private function addRestrictionRelationConstraints(QueryBuilder $queryBuilder, string $nodeTableAlias = 'n', string $hierarchyRelationTableAlias = 'h', ?string $contentStreamIdParameter = null, ?string $dimensionspacePointHashParameter = null): void
+
+    private function addSubtreeTagConstraints(QueryBuilder $queryBuilder, string $hierarchyRelationTableAlias = 'h'): void
     {
-        if ($this->visibilityConstraints->isDisabledContentShown()) {
-            return;
-        }
-
-        $nodeTablePrefix = $nodeTableAlias === '' ? '' : $nodeTableAlias . '.';
         $hierarchyRelationTablePrefix = $hierarchyRelationTableAlias === '' ? '' : $hierarchyRelationTableAlias . '.';
-
-        $contentStreamIdCondition = 'r.contentstreamid = ' . ($contentStreamIdParameter ?? ($hierarchyRelationTablePrefix . 'contentstreamid'));
-
-        $dimensionspacePointHashCondition = 'r.dimensionspacepointhash = ' . ($dimensionspacePointHashParameter ?? ($hierarchyRelationTablePrefix . 'dimensionspacepointhash'));
-
-        $subQueryBuilder = $this->createQueryBuilder()
-            ->select('1')
-            ->from($this->tableNamePrefix . '_restrictionrelation', 'r')
-            ->where($contentStreamIdCondition)
-            ->andWhere($dimensionspacePointHashCondition)
-            ->andWhere('r.affectednodeaggregateid = ' . $nodeTablePrefix . 'nodeaggregateid');
-        $queryBuilder->andWhere(
-            'NOT EXISTS (' . $subQueryBuilder->getSQL() . ')'
-        );
+        $i = 0;
+        foreach ($this->visibilityConstraints->tagConstraints as $excludedTag) {
+            $queryBuilder->andWhere('NOT JSON_CONTAINS_PATH(' . $hierarchyRelationTablePrefix . 'subtreetags, \'one\', :tagPath' . $i . ')')->setParameter('tagPath' . $i, '$.' . $excludedTag->value);
+            $i++;
+        }
     }
 
     private function addNodeTypeCriteria(QueryBuilder $queryBuilder, NodeTypeCriteria $nodeTypeCriteria, string $nodeTableAlias = 'n'): void
@@ -621,7 +600,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function buildChildNodesQuery(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter|CountChildNodesFilter $filter): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.contentstreamid')
+            ->select('n.*, h.name, h.subtreetags, h.contentstreamid')
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'n', 'h.childnodeanchor = n.relationanchorpoint')
@@ -637,7 +616,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->propertyValue !== null) {
             $this->addPropertyValueConstraints($queryBuilder, $filter->propertyValue);
         }
-        $this->addRestrictionRelationConstraints($queryBuilder, 'n', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilder);
         return $queryBuilder;
     }
 
@@ -646,7 +625,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $sourceTablePrefix = $backReferences ? 'd' : 's';
         $destinationTablePrefix = $backReferences ? 's' : 'd';
         $queryBuilder = $this->createQueryBuilder()
-            ->select("{$destinationTablePrefix}n.*, {$destinationTablePrefix}h.name, {$destinationTablePrefix}h.contentstreamid, r.name AS referencename, r.properties AS referenceproperties")
+            ->select("{$destinationTablePrefix}n.*, {$destinationTablePrefix}h.name, {$destinationTablePrefix}h.subtreetags, {$destinationTablePrefix}h.contentstreamid, r.name AS referencename, r.properties AS referenceproperties")
             ->from($this->tableNamePrefix . '_hierarchyrelation', 'sh')
             ->innerJoin('sh', $this->tableNamePrefix . '_node', 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->innerJoin('sh', $this->tableNamePrefix . '_referencerelation', 'r', 'r.nodeanchorpoint = sn.relationanchorpoint')
@@ -657,8 +636,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('dh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('sh.contentstreamid = :contentStreamId');
-        $this->addRestrictionRelationConstraints($queryBuilder, 'dn', 'dh', ':contentStreamId', ':dimensionSpacePointHash');
-        $this->addRestrictionRelationConstraints($queryBuilder, 'sn', 'sh', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilder, 'dh');
+        $this->addSubtreeTagConstraints($queryBuilder, 'sh');
         if ($filter->nodeTypes !== null) {
             $this->addNodeTypeCriteria($queryBuilder, $filter->nodeTypes, "{$destinationTablePrefix}n");
         }
@@ -714,7 +693,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash');
 
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.contentstreamid')
+            ->select('n.*, h.name, h.subtreetags, h.contentstreamid')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
@@ -724,7 +703,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('h.position ' . ($preceding ? '<' : '>') . ' (' . $siblingPositionSubQuery->getSQL() . ')')
             ->orderBy('h.position', $preceding ? 'DESC' : 'ASC');
 
-        $this->addRestrictionRelationConstraints($queryBuilder, 'n', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilder);
         if ($filter->nodeTypes !== null) {
             $this->addNodeTypeCriteria($queryBuilder, $filter->nodeTypes);
         }
@@ -746,7 +725,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter|FindClosestNodeFilter $filter): array
     {
         $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('n.*, ph.name, ph.contentstreamid, ph.parentnodeanchor')
+            ->select('n.*, ph.name, ph.subtreetags, ph.contentstreamid, ph.parentnodeanchor')
             ->from($this->tableNamePrefix . '_node', 'n')
             // we need to join with the hierarchy relation, because we need the node name.
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
@@ -757,26 +736,26 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('c.nodeaggregateid = :entryNodeAggregateId');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial, 'n', 'ph', ':contentStreamId', ':dimensionSpacePointHash');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial, 'c', 'ch', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
+        $this->addSubtreeTagConstraints($queryBuilderInitial, 'ch');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('p.*, h.name, h.contentstreamid, h.parentnodeanchor')
-            ->from('ancestry', 'c')
-            ->innerJoin('c', $this->tableNamePrefix . '_node', 'p', 'p.relationanchorpoint = c.parentnodeanchor')
-            ->innerJoin('p', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = p.relationanchorpoint')
+            ->select('pn.*, h.name, h.subtreetags, h.contentstreamid, h.parentnodeanchor')
+            ->from('ancestry', 'cn')
+            ->innerJoin('cn', $this->tableNamePrefix . '_node', 'pn', 'pn.relationanchorpoint = cn.parentnodeanchor')
+            ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = pn.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
-        $this->addRestrictionRelationConstraints($queryBuilderRecursive, 'p', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('*')
-            ->from('ancestry', 'p')
+            ->from('ancestry', 'pn')
             ->setParameter('contentStreamId', $this->contentStreamId->value)
             ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilderCte, $filter->nodeTypes, 'p');
+            $this->addNodeTypeCriteria($queryBuilderCte, $filter->nodeTypes, 'pn');
         }
         return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }
@@ -788,7 +767,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.name, h.contentstreamid, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
+            ->select('n.*, h.name, h.subtreetags, h.contentstreamid, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->tableNamePrefix . '_node', 'n')
             // we need to join with the hierarchy relation, because we need the node name.
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
@@ -799,16 +778,16 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('p.nodeaggregateid = :entryNodeAggregateId');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial, 'n', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('c.*, h.name, h.contentstreamid, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
-            ->from('tree', 'p')
-            ->innerJoin('p', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = p.relationanchorpoint')
-            ->innerJoin('p', $this->tableNamePrefix . '_node', 'c', 'c.relationanchorpoint = h.childnodeanchor')
+            ->select('cn.*, h.name, h.subtreetags, h.contentstreamid, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position')
+            ->from('tree', 'pn')
+            ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('pn', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = h.childnodeanchor')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
-        $this->addRestrictionRelationConstraints($queryBuilderRecursive, 'c', 'h', ':contentStreamId', ':dimensionSpacePointHash');
+        $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('*')

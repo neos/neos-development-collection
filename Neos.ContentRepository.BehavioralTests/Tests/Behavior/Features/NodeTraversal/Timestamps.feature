@@ -249,7 +249,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 |              |                      |
 
-  Scenario: NodeAggregateWasEnabled and NodeAggregateWasDisabled events don't update last modified timestamps
+  Scenario: SubtreeWasTagged and SubtreeWasUntagged events don't update last modified timestamps
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |

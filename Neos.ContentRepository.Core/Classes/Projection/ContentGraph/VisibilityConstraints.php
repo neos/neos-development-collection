@@ -14,44 +14,51 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
+
 /**
- * The context parameters value object
+ * The visibility constraints define a context in which the content graph is accessed.
  *
- * Maybe future: "Node Filter" tree or so as replacement of ReadNodePrivilege?
+ * For example: In the `frontend` context, nodes with the `disabled` tag are excluded. In the `backend` context {@see self::withoutRestrictions()} they are included
  *
  * @api
  */
-final class VisibilityConstraints implements \JsonSerializable
+final readonly class VisibilityConstraints implements \JsonSerializable
 {
-    protected bool $disabledContentShown = false;
-
-    private function __construct(bool $disabledContentShown)
-    {
-        $this->disabledContentShown = $disabledContentShown;
+    /**
+     * @param SubtreeTags $tagConstraints A set of {@see SubtreeTag} instances that will be _excluded_ from the results of any content graph query
+     */
+    private function __construct(
+        public SubtreeTags $tagConstraints,
+    ) {
     }
 
     public function isDisabledContentShown(): bool
     {
-        return $this->disabledContentShown;
+        return $this->tagConstraints->contain(SubtreeTag::disabled());
     }
 
     public function getHash(): string
     {
-        return md5('disabled' . $this->disabledContentShown);
+        return md5(implode('|', $this->tagConstraints->toStringArray()));
     }
 
-    public static function withoutRestrictions(): VisibilityConstraints
+    public static function withoutRestrictions(): self
     {
-        return new VisibilityConstraints(true);
+        return new self(SubtreeTags::createEmpty());
     }
 
     public static function frontend(): VisibilityConstraints
     {
-        return new VisibilityConstraints(false);
+        return new self(SubtreeTags::fromStrings('disabled'));
     }
 
-    public function jsonSerialize(): string
+    /**
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
     {
-        return $this->getHash();
+        return get_object_vars($this);
     }
 }
