@@ -41,7 +41,7 @@ additionalProperties:
 
                   'inline': { type: ['null', 'dictionary'] }
 
-                  'showInCreationDialog': { type: ['null', 'boolean'], description: 'If this property should occur on the CreationDialog of the corresponding node. Inspector configuration is applied from "ui.inspector" configuration in that case' }
+                  'showInCreationDialog': { type: ['null', 'boolean'], description: 'If this property should be promoted into the CreationDialog of the corresponding node. Inspector configuration is applied from "ui.inspector" configuration in that case' }
 
                   'inspector':
                     type:
