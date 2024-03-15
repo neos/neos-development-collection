@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -25,7 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @internal
  */
-final class HierarchyRelation
+final readonly class HierarchyRelation
 {
     public function __construct(
         public NodeRelationAnchorPoint $parentNodeAnchor,
@@ -34,7 +35,8 @@ final class HierarchyRelation
         public ContentStreamId $contentStreamId,
         public DimensionSpacePoint $dimensionSpacePoint,
         public string $dimensionSpacePointHash,
-        public int $position
+        public int $position,
+        public NodeTags $subtreeTags,
     ) {
     }
 
@@ -52,7 +54,8 @@ final class HierarchyRelation
             'name' => $this->name?->value,
             'contentstreamid' => $this->contentStreamId->value,
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
-            'position' => $this->position
+            'position' => $this->position,
+            'subtreetags' => json_encode($this->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
         ]);
     }
 

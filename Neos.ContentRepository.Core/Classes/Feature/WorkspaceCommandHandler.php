@@ -524,7 +524,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                         if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
                             throw new \RuntimeException(
                                 'ERROR: The command ' . get_class($matchingCommand)
-                                . ' does not implement RebasableToOtherContentStreamsInterface; but it should!'
+                                . ' does not implement ' . RebasableToOtherWorkspaceInterface::class . '; but it should!'
                             );
                         }
 
@@ -661,7 +661,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                         if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
                             throw new \RuntimeException(
                                 'ERROR: The command ' . get_class($matchingCommand)
-                                . ' does not implement RebasableToOtherContentStreamsInterface; but it should!'
+                                . ' does not implement ' . RebasableToOtherWorkspaceInterface::class . '; but it should!'
                             );
                         }
 

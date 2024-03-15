@@ -2,11 +2,11 @@
 
 namespace Neos\TimeableNodeVisibility\Service;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
@@ -46,17 +46,16 @@ class TimeableNodeVisibilityService
         if ($liveWorkspace === null) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
-        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateFinder::class);
 
         $now = new \DateTimeImmutable();
 
         $nodes = $this->getNodesWithExceededDates($contentRepository, $liveWorkspace, $now);
         $results = [];
 
+        /** @var Node $node */
         foreach ($nodes as $node) {
-            /** @var Node $node */
-            $nodeIsHidden = $this->isHidden($node, $nodeHiddenStateFinder);
-            if ($this->needsEnabling($node, $now) && $nodeIsHidden) {
+            $nodeIsDisabled = $node->tags->contain(SubtreeTag::disabled());
+            if ($this->needsEnabling($node, $now) && $nodeIsDisabled) {
                 $contentRepository->handle(
                     EnableNodeAggregate::create(
                         $liveWorkspace->workspaceName,
@@ -70,7 +69,7 @@ class TimeableNodeVisibilityService
                 $this->logResult($result);
 
             }
-            if ($this->needsDisabling($node, $now) && !$nodeIsHidden) {
+            if ($this->needsDisabling($node, $now) && !$nodeIsDisabled) {
                 $contentRepository->handle(
                     DisableNodeAggregate::create(
                         $liveWorkspace->workspaceName,
@@ -133,15 +132,6 @@ class TimeableNodeVisibilityService
                 yield $node;
             }
         }
-    }
-
-    private function isHidden(Node $node, NodeHiddenStateFinder $nodeHiddenStateFinder): bool
-    {
-        return $nodeHiddenStateFinder->findHiddenState(
-            $node->subgraphIdentity->contentStreamId,
-            $node->subgraphIdentity->dimensionSpacePoint,
-            $node->nodeAggregateId
-        )->isHidden;
     }
 
     private function needsEnabling(Node $node, \DateTimeImmutable $now): bool

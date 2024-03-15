@@ -155,11 +155,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event NodeAggregateWasDisabled was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
@@ -184,11 +185,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event NodeAggregateWasDisabled was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                   |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | affectedDimensionSpacePoints | [{}]                    |
+      | tag                          | "disabled"              |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
@@ -200,11 +202,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event NodeAggregateWasEnabled was published with payload:
+    And the event SubtreeWasUntagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     When I am on URL "/david-nodenborough"
