@@ -159,7 +159,7 @@ final class NodeAggregate
      *
      * @internal This is a low level concept that is not meant to be used outside the core or tests
      */
-    public function subtreeTagsDimensionSpacePoints(SubtreeTag $subtreeTag): DimensionSpacePointSet
+    public function getDimensionSpacePointsTaggedWith(SubtreeTag $subtreeTag): DimensionSpacePointSet
     {
         return $this->dimensionSpacePointsBySubtreeTags->forSubtreeTag($subtreeTag);
     }
