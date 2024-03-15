@@ -16,6 +16,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\Core\IllegalEntryFusionPathValueException;
 use Neos\Fusion\View\FusionView;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Testcase for the Fusion View
@@ -29,7 +30,7 @@ class FusionViewTest extends FunctionalTestCase
     public function fusionViewIsUsedForRendering()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
-        self::assertEquals('X', $view->render()->getBody()->getContents());
+        self::assertEquals('X', $view->render()->getContents());
     }
 
     /**
@@ -39,7 +40,7 @@ class FusionViewTest extends FunctionalTestCase
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->setFusionPath('foo/bar');
-        self::assertEquals('Xfoobar', $view->render()->getBody()->getContents());
+        self::assertEquals('Xfoobar', $view->render()->getContents());
     }
 
     /**
@@ -49,19 +50,19 @@ class FusionViewTest extends FunctionalTestCase
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->assign('test', 'Hallo Welt');
-        self::assertEquals('XHallo Welt', $view->render()->getBody()->getContents());
+        self::assertEquals('XHallo Welt', $view->render()->getContents());
     }
 
     /**
      * @test
      */
-    public function fusionVieReturnsHttpResponse()
+    public function fusionVieReturnsStreamInterface()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->assign('test', 'Hallo Welt');
         $response = $view->render();
-        self::assertInstanceOf(ResponseInterface::class, $response);
-        self::assertEquals('XHallo Welt', $view->render()->getBody()->getContents());
+        self::assertInstanceOf(StreamInterface::class, $response);
+        self::assertEquals('XHallo Welt', $response->getContents());
     }
 
     /**

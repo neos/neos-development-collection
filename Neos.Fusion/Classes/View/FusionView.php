@@ -23,6 +23,7 @@ use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * View for using Fusion for standard MVC controllers.
@@ -173,15 +174,16 @@ class FusionView extends AbstractView
     }
 
     /**
-     * Render the view
+     * Render the view to a full response in case a Neos.Fusion:Http.Message was used.
+     * If the fusion path contains a simple string a stream will be rendered.
      *
-     * @return ResponseInterface The rendered view
+     * @return ResponseInterface|StreamInterface
      * @api
      */
-    public function render(): ResponseInterface
+    public function render(): ResponseInterface|StreamInterface
     {
         $this->initializeFusionRuntime();
-        return $this->fusionRuntime->renderResponse(
+        return $this->fusionRuntime->renderEntryPathWithContext(
             $this->getFusionPathForCurrentRequest(),
             $this->variables
         );

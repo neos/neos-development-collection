@@ -13,8 +13,6 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
@@ -46,8 +44,6 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
      * Instead we want to refactor our tests to behat at some point.
      *
      * Thus the hack.
-     *
-     * @return ViewInterface
      */
     protected function buildView()
     {
@@ -62,7 +58,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
         $runtime->pushContext('fixtureDirectory', __DIR__ . '/Fixtures/');
 
         // todo rewrite everything as behat test :D
-        return new class($runtime) implements ViewInterface {
+        return new class($runtime) {
             private string $fusionPath;
             public function __construct(
                 private readonly Runtime $runtime
@@ -96,18 +92,6 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
                 } catch (RuntimeException $e) {
                     throw $e->getWrappedException();
                 }
-            }
-            public static function createWithOptions(array $options)
-            {
-                throw new \BadMethodCallException();
-            }
-            public function setControllerContext(ControllerContext $controllerContext)
-            {
-                throw new \BadMethodCallException();
-            }
-            public function canRender(ControllerContext $controllerContext)
-            {
-                throw new \BadMethodCallException();
             }
         };
     }

@@ -33,6 +33,7 @@ use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\Exception;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * A Fusion view for Neos
@@ -61,13 +62,13 @@ class FusionView extends AbstractView
     protected ?ActionRequest $assignedActionRequest = null;
 
     /**
-     * Renders the view
+     * Render the view to a full response in case a Neos.Fusion:Http.Message was used.
+     * If the fusion path contains a simple string a stream will be rendered.
      *
-     * @return ResponseInterface The rendered view
      * @throws \Exception if no node is given
      * @api
      */
-    public function render(): ResponseInterface
+    public function render(): ResponseInterface|StreamInterface
     {
         $currentNode = $this->getCurrentNode();
 
@@ -82,7 +83,7 @@ class FusionView extends AbstractView
 
         $this->setFallbackRuleFromDimension($currentNode->subgraphIdentity->dimensionSpacePoint);
 
-        return $fusionRuntime->renderResponse($this->fusionPath, [
+        return $fusionRuntime->renderEntryPathWithContext($this->fusionPath, [
             'node' => $currentNode,
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSiteNode

@@ -105,7 +105,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
             'node' => $node
         ]);
 
-        return $this->wrapHttpResponse($exception, $fluidView->render());
+        return $this->wrapHttpResponse($exception, $fluidView->render()->getContents());
     }
 
     /**

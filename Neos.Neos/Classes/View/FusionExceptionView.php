@@ -143,7 +143,7 @@ class FusionExceptionView extends AbstractView
 
         $this->setFallbackRuleFromDimension($dimensionSpacePoint);
 
-        return $fusionRuntime->renderResponse('error', array_merge(
+        return $fusionRuntime->renderEntryPathWithContext('error', array_merge(
             $this->variables,
             [
                 'node' => $currentSiteNode,
