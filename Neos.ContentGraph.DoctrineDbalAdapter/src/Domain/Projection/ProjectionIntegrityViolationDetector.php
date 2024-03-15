@@ -178,6 +178,10 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     public function subtreeTagsAreInherited(): Result
     {
         $result = new Result();
+
+        // NOTE:
+        // This part determines if a parent hierarchy relation contains subtree tags that are not existing in the child relation.
+        // This could probably be solved with JSON_ARRAY_INTERSECT(JSON_KEYS(ph.subtreetags), JSON_KEYS(h.subtreetags) but unfortunately that's only available with MariaDB 11.2+ according to https://mariadb.com/kb/en/json_array_intersect/
         $hierarchyRelationsWithMissingSubtreeTags = $this->client->getConnection()->executeQuery(
             'SELECT
               ph.name
