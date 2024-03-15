@@ -37,6 +37,7 @@ Feature: Tethered Nodes integrity violations
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                                | Value                                               |
       | contentStreamId                    | "cs-identifier"                                     |
@@ -203,7 +204,7 @@ Feature: Tethered Nodes integrity violations
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
     When I adjust the node structure for node type "Neos.ContentRepository:Root"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "nodewyn-tetherton" to lead to no node
     Then I expect node aggregate identifier "nodimer-tetherton" to lead to no node
     And  I expect path "tethered-node" to lead to no node

@@ -14,7 +14,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class RenameWorkspace implements CommandInterface
+final readonly class RenameWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Name of the workspace to rename
@@ -22,9 +22,9 @@ final class RenameWorkspace implements CommandInterface
      * @param WorkspaceDescription $workspaceDescription New description of the workspace
      */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly WorkspaceTitle $workspaceTitle,
-        public readonly WorkspaceDescription $workspaceDescription,
+        public WorkspaceName $workspaceName,
+        public WorkspaceTitle $workspaceTitle,
+        public WorkspaceDescription $workspaceDescription,
     ) {
     }
 

@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 
 class PropertyValueCriteriaParserTest extends TestCase
 {
-    public function validQueries(): \Generator
+    public static function validQueries(): \Generator
     {
         yield ['query' => 'prop1 = "foo"', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => true]];
         yield ['query' => 'prop1=   \'foo\'', 'expectedResult' => ['type' => 'PropertyValueEquals', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => true]];
@@ -57,7 +57,7 @@ class PropertyValueCriteriaParserTest extends TestCase
         self::assertSame($expectedResult, self::propertyValueCriteriaToArray(PropertyValueCriteriaParser::parse($query)));
     }
 
-    public function invalidQueries(): \Generator
+    public static function invalidQueries(): \Generator
     {
         yield ['query' => '', 'expectedExceptionMessage' => "Query must not be empty"];
         yield ['query' => '     ', 'expectedExceptionMessage' => "Query must not be empty"];

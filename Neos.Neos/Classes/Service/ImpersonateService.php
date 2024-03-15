@@ -60,6 +60,7 @@ class ImpersonateService
     public function impersonate(Account $account): void
     {
         $currentAccount = $this->securityContext->getAccount();
+        /** @var ?Account $currentAccount */
         if ($currentAccount === null) {
             throw new \RuntimeException('No account is authenticated', 1710068887);
         }

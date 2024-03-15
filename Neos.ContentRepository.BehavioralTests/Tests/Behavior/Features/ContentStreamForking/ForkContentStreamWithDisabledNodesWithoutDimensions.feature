@@ -23,9 +23,9 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
-      | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -51,7 +51,6 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | contentStreamId              | "cs-identifier"    |
       | nodeAggregateId              | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |

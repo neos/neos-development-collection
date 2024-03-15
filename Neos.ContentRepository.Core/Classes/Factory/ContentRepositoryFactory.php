@@ -137,7 +137,7 @@ final class ContentRepositoryFactory
                 new WorkspaceCommandHandler(
                     $this->buildEventPersister(),
                     $this->projectionFactoryDependencies->eventStore,
-                    $this->projectionFactoryDependencies->eventNormalizer
+                    $this->projectionFactoryDependencies->eventNormalizer,
                 ),
                 new NodeAggregateCommandHandler(
                     $this->projectionFactoryDependencies->nodeTypeManager,

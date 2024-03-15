@@ -31,7 +31,7 @@ Feature: Create node peer variant
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    And I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -97,7 +97,7 @@ Feature: Create node peer variant
     And I expect a node identified by cs-identifier;nodesis-prime;{"market":"CH", "language":"fr"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodesis-mediocre;{"market":"CH", "language":"fr"} to exist in the content graph
 
-    When I am in content stream "cs-identifier"
+    When I am in the active content stream of workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"DE", "language":"fr"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"},{"market":"CH", "language":"fr"}]
@@ -134,7 +134,7 @@ Feature: Create node peer variant
     And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"fr"}]
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"fr"}]
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -145,7 +145,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to no node
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -156,7 +156,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to no node
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -167,7 +167,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to no node
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"fr"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"fr"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
@@ -178,7 +178,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to no node
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -189,7 +189,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to no node
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -200,7 +200,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to no node
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -211,7 +211,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to no node
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"fr"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"fr"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"fr"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
@@ -300,7 +300,7 @@ Feature: Create node peer variant
     And I expect a node identified by cs-identifier;nodesis-mediocre;{"market":"DE", "language":"de"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodesis-mediocre;{"market":"DE", "language":"en"} to exist in the content graph
 
-    When I am in content stream "cs-identifier"
+    When I am in the active content stream of workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"DE", "language":"fr"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"},{"market":"CH", "language":"fr"}]
@@ -337,7 +337,7 @@ Feature: Create node peer variant
     And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"fr"},{"market":"DE", "language":"de"},{"market":"DE", "language":"en"}]
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"fr"},{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -348,7 +348,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to node cs-identifier;nodesis-prime;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"en"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -359,7 +359,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to node cs-identifier;nodesis-prime;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -370,7 +370,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to node cs-identifier;nodesis-prime;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"fr"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"fr"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
@@ -381,7 +381,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to no node
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -392,7 +392,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to node cs-identifier;nodesis-prime;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"en"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -403,7 +403,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to node cs-identifier;nodesis-prime;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -415,7 +415,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to node cs-identifier;nodesis-prime;{"market":"DE", "language":"de"}
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"fr"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"fr"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
@@ -504,7 +504,7 @@ Feature: Create node peer variant
     And I expect a node identified by cs-identifier;nodesis-mediocre;{"market":"DE", "language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodesis-mediocre;{"market":"DE", "language":"de"} to exist in the content graph
 
-    When I am in content stream "cs-identifier"
+    When I am in the active content stream of workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"DE", "language":"fr"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"},{"market":"CH", "language":"fr"}]
@@ -541,7 +541,7 @@ Feature: Create node peer variant
     And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"fr"},{"market":"DE", "language":"de"},{"market":"DE", "language":"en"}]
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"fr"},{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -559,7 +559,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;nodesis-prime;{"market":"DE", "language":"en"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -578,7 +578,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"de"}
     And I expect this node to be a child of node cs-identifier;nodesis-prime;{"market":"DE", "language":"de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -596,7 +596,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"de"}
     And I expect this node to be a child of node cs-identifier;nodesis-prime;{"market":"DE", "language":"de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"fr"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"fr"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
@@ -607,7 +607,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and node path "peer-document/tethered-document" to lead to no node
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to no node
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -625,7 +625,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;nodesis-prime;{"market":"DE", "language":"en"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -644,7 +644,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"de"}
     And I expect this node to be a child of node cs-identifier;nodesis-prime;{"market":"DE", "language":"de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -662,7 +662,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-mediocre" and node path "peer-document/tethered-document/tethered" to lead to node cs-identifier;nodesis-mediocre;{"market":"DE", "language":"de"}
     And I expect this node to be a child of node cs-identifier;nodesis-prime;{"market":"DE", "language":"de"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"fr"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"fr"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
@@ -736,7 +736,7 @@ Feature: Create node peer variant
     And I expect a node identified by cs-identifier;nodesis-prime;{"market":"CH", "language":"fr"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodesis-mediocre;{"market":"CH", "language":"fr"} to exist in the content graph
 
-    When I am in content stream "cs-identifier"
+    When I am in the active content stream of workspace "live"
 
     # only nodenborough and mc-nodeface are affected
 
@@ -749,42 +749,42 @@ Feature: Create node peer variant
     And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"DE", "language":"fr"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"},{"market":"CH", "language":"fr"}]
 
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"fr"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"fr"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"fr"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"fr"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"fr"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"en"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
 
-    When I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"fr"}
+    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"fr"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"fr"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"fr"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"fr"}

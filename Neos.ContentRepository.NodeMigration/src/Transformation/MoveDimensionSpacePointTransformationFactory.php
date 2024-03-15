@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * move a dimension space point globally
@@ -47,7 +48,7 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
             }
 
             public function execute(
-                ContentStreamId $contentStreamForReading,
+                WorkspaceName $workspaceNameForReading,
                 ContentStreamId $contentStreamForWriting
             ): CommandResult {
                 return $this->contentRepository->handle(
