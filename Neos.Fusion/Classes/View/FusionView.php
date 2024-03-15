@@ -224,10 +224,13 @@ class FusionView extends AbstractView
      */
     public function getFusionPathPatterns(): array
     {
-        $packageKey = $this->getPackageKey();
         $fusionPathPatterns = array_map(
-            function ($fusionPathPattern) use ($packageKey) {
-                return str_replace('@package', $packageKey, $fusionPathPattern);
+            function ($fusionPathPattern) {
+                if (!str_contains($fusionPathPattern, '@package')) {
+                    return $fusionPathPattern;
+                }
+
+                return str_replace('@package', $this->getPackageKey(), $fusionPathPattern);
             },
             $this->getOption('fusionPathPatterns')
         );
@@ -247,8 +250,10 @@ class FusionView extends AbstractView
         if ($packageKey !== null) {
             return $packageKey;
         } else {
-            /** @var $request ActionRequest */
-            $request = $this->controllerContext->getRequest();
+            $request = $this->controllerContext?->getRequest();
+            if (!$request) {
+                throw new \RuntimeException(sprintf('To resolve the @package in all fusionPathPatterns, either packageKey has to be specified, or the current request be available.'));
+            }
             return $request->getControllerPackageKey();
         }
     }

@@ -78,6 +78,7 @@ Prerequisites
 =============
 
 - You need PHP 8.2 installed.
+- You need a recent MySQL/MariaDB (PostgreSQL ist not yet supported)
 - Please be sure to run off the Neos-Development-Distribution in Branch 9.0, to avoid dependency issues (as described above).
 
 Setup

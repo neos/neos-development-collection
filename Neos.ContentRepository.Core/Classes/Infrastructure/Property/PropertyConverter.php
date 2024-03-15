@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
@@ -44,54 +43,53 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
-            if (!isset($nodeType->getProperties()[$propertyName]) && $propertyValue === null) {
-                // The property is undefined and the value null => we want to remove it, so we set it to null
-                $serializedPropertyValues[$propertyName] = null;
-            } else {
-                $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
+            $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
+                PropertyType::fromNodeTypeDeclaration(
                     $nodeType->getPropertyType($propertyName),
                     PropertyName::fromString($propertyName),
-                    $nodeType->name,
-                    $propertyValue
-                );
-            }
+                    $nodeType->name
+                ),
+                $propertyValue
+            );
         }
 
         return SerializedPropertyValues::fromArray($serializedPropertyValues);
     }
 
-    private function serializePropertyValue(
-        string $declaredType,
-        PropertyName $propertyName,
-        NodeTypeName $nodeTypeName,
+    public function serializePropertyValue(
+        PropertyType $propertyType,
         mixed $propertyValue
     ): SerializedPropertyValue {
-        $propertyType = PropertyType::fromNodeTypeDeclaration(
-            $declaredType,
-            $propertyName,
-            $nodeTypeName
-        );
-
-        if ($propertyValue !== null) {
-            try {
-                $propertyValue = $this->serializer->normalize($propertyValue);
-            } catch (NotEncodableValueException | NotNormalizableValueException $e) {
-                throw new \RuntimeException(
-                    'TODO: There was a problem serializing ' . get_class($propertyValue),
-                    1594842314,
-                    $e
-                );
-            }
-
-            return new SerializedPropertyValue(
-                $propertyValue,
-                $propertyType->value
+        if ($propertyValue === null) {
+            // should not happen, as we must separate regular properties and unsets beforehand!
+            throw new \RuntimeException(
+                sprintf('Property type %s with value "null" cannot be serialized as unsets are treated differently.', $propertyType->value),
+                1707578784
             );
-        } else {
-            // $propertyValue == null and defined in node types (we have a resolved type)
-            // -> we want to set the $propertyName to NULL
-            return new SerializedPropertyValue(null, $propertyType->value);
         }
+
+        try {
+            $serializedPropertyValue = $this->serializer->normalize($propertyValue);
+        } catch (NotEncodableValueException | NotNormalizableValueException $e) {
+            // todo add custom exception class
+            throw new \RuntimeException(
+                sprintf('There was a problem serializing property type %s with value "%s".', $propertyType->value, get_debug_type($propertyValue)),
+                1594842314,
+                $e
+            );
+        }
+
+        if ($serializedPropertyValue === null) {
+            throw new \RuntimeException(
+                sprintf('While serializing property type %s with value "%s" the serializer returned not allowed value "null".', $propertyType->value, get_debug_type($propertyValue)),
+                1707578784
+            );
+        }
+
+        return SerializedPropertyValue::create(
+            $serializedPropertyValue,
+            $propertyType->getSerializationType()
+        );
     }
 
     public function serializeReferencePropertyValues(
@@ -102,14 +100,14 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
-            // reference properties are always completely overwritten,
-            // so we don't need the node properties' unset option
             $declaredType = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]['type'];
 
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
-                $declaredType,
-                PropertyName::fromString($propertyName),
-                $nodeType->name,
+                PropertyType::fromNodeTypeDeclaration(
+                    $declaredType,
+                    PropertyName::fromString($propertyName),
+                    $nodeType->name,
+                ),
                 $propertyValue
             );
         }
@@ -119,13 +117,17 @@ final class PropertyConverter
 
     public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue): mixed
     {
-        if (is_null($serializedPropertyValue->value)) {
-            return null;
+        try {
+            return $this->serializer->denormalize(
+                $serializedPropertyValue->value,
+                $serializedPropertyValue->type
+            );
+        } catch (NotNormalizableValueException $e) {
+            throw new \RuntimeException(
+                sprintf('TODO: There was a problem deserializing %s', json_encode($serializedPropertyValue)),
+                1708416598,
+                $e
+            );
         }
-
-        return $this->serializer->denormalize(
-            $serializedPropertyValue->value,
-            $serializedPropertyValue->type
-        );
     }
 }

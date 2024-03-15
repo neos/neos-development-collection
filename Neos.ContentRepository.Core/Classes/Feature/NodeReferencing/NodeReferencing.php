@@ -50,10 +50,10 @@ trait NodeReferencing
         SetNodeReferences $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->sourceNodeAggregateId,
             $contentRepository
         );
@@ -71,7 +71,7 @@ trait NodeReferencing
         }
 
         $lowLevelCommand = SetSerializedNodeReferences::create(
-            $command->contentStreamId,
+            $command->workspaceName,
             $command->sourceNodeAggregateId,
             $command->sourceOriginDimensionSpacePoint,
             $command->referenceName,
@@ -100,12 +100,13 @@ trait NodeReferencing
         SetSerializedNodeReferences $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist(
             $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
         );
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->sourceNodeAggregateId,
             $contentRepository
         );
@@ -119,7 +120,7 @@ trait NodeReferencing
         foreach ($command->references as $reference) {
             assert($reference instanceof SerializedNodeReference);
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
-                $command->contentStreamId,
+                $contentStreamId,
                 $reference->targetNodeAggregateId,
                 $contentRepository
             );
@@ -147,7 +148,7 @@ trait NodeReferencing
 
         $events = Events::with(
             new NodeReferencesWereSet(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->sourceNodeAggregateId,
                 $affectedOrigins,
                 $command->referenceName,
@@ -156,13 +157,13 @@ trait NodeReferencing
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 }

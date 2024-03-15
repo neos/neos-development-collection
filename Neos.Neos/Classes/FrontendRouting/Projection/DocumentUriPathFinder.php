@@ -242,7 +242,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to load node for query "%s": %s',
+                'Failed to fetch a node, please ensure the projection is setup. Query "%s". %s',
                 $where,
                 $e->getMessage()
             ), 1599664746, $e);
@@ -273,7 +273,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to load node for query "%s": %s',
+                'Failed to fetch multiple nodes, please ensure the projection is setup. Query "%s". %s',
                 $where,
                 $e->getMessage()
             ), 1683808640, $e);
@@ -314,7 +314,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     public function getDescendantsOfNode(DocumentNodeInfo $node): DocumentNodeInfos
     {
         return $this->fetchMultiple(
-            'dimensionSpacePointHash = :dimensionSpacePointHash 
+            'dimensionSpacePointHash = :dimensionSpacePointHash
             AND nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix',
             [
                 'dimensionSpacePointHash' => $node->getDimensionSpacePointHash(),

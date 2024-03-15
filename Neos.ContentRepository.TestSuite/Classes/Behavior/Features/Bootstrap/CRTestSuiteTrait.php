@@ -31,7 +31,9 @@ use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamClosing;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCopying;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCreation;
@@ -64,6 +66,7 @@ trait CRTestSuiteTrait
     use GenericCommandExecutionAndEventPublication;
 
     use ContentStreamForking;
+    use ContentStreamClosing;
 
     use NodeCreation;
     use NodeCopying;
@@ -175,6 +178,16 @@ trait CRTestSuiteTrait
     }
 
     /**
+     * @Then /^workspace ([^"]*) has status ([^"]*)$/
+     */
+    public function workspaceHasStatus(string $rawWorkspaceName, string $status): void
+    {
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+
+        Assert::assertSame($status, $workspace->status->value);
+    }
+
+    /**
      * @Then /^I expect the graph projection to consist of exactly (\d+) node(?:s)?$/
      * @param int $expectedNumberOfNodes
      */
@@ -265,7 +278,7 @@ trait CRTestSuiteTrait
         $contentStreamFinder = $this->currentContentRepository->getContentStreamFinder();
 
         $actual = $contentStreamFinder->findStateForContentStream($contentStreamId);
-        Assert::assertEquals($expectedState, $actual);
+        Assert::assertSame(ContentStreamState::tryFrom($expectedState), $actual);
     }
 
     /**

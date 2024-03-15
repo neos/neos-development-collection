@@ -34,6 +34,7 @@ use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Party\Domain\Service\PartyService;
 
@@ -95,7 +96,11 @@ final class EditorContentStreamZookeeper
             // we might be in testing context
             return;
         }
-        $siteDetectionResult = SiteDetectionResult::fromRequest($requestHandler->getHttpRequest());
+        try {
+            $siteDetectionResult = SiteDetectionResult::fromRequest($requestHandler->getHttpRequest());
+        } catch (SiteDetectionFailedException) {
+            return;
+        }
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
         $isEditor = false;
@@ -131,8 +136,10 @@ final class EditorContentStreamZookeeper
             return;
         }
 
-        /** @var Workspace $baseWorkspace */
         $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+        if (!$baseWorkspace) {
+            return;
+        }
         $editorsNewContentStreamId = ContentStreamId::create();
         $contentRepository->handle(
             CreateWorkspace::create(

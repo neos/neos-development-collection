@@ -48,6 +48,13 @@ use Neos\Utility\PositionalArraySorter;
  * The Fusion object can then add or replace variables to this context using pushContext()
  * or pushContextArray(), before rendering sub-Fusion objects. After rendering
  * these, it must call popContext() to reset the context to the last state.
+ *
+ * @internal The Fusion Runtime is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
+ *           But custom Fusion object implementations might rely on manipulating/calling the Runtime directly,
+ *           if the abstractions in the AbstractFusionObject doesn't suffice.
+ *           TODO For that use case we should implement a more powerful and clean abstraction:
+ *           https://github.com/neos/neos-development-collection/issues/4910
  */
 class Runtime
 {
@@ -137,7 +144,7 @@ class Runtime
     protected ?AbstractRenderingExceptionHandler $overriddenExceptionHandler = null;
 
     /**
-     * @internal use {@see RuntimeFactory} for instantiating.
+     * @internal the {@see RuntimeFactory} must be used for instantiating, to make the EEL helpers available.
      */
     public function __construct(
         FusionConfiguration $fusionConfiguration,
@@ -210,17 +217,14 @@ class Runtime
      *
      * During Fusion rendering the method can be used to add tag dynamicaly for the current cache segment.
      *
-     * @param string $key
-     * @param string $value
-     * @return void
-     * @api
+     * @throws Exceptions
      */
-    public function addCacheTag($key, $value)
+    public function addCacheTag(string $tag): void
     {
         if ($this->runtimeContentCache->getEnableContentCache() === false) {
             return;
         }
-        $this->runtimeContentCache->addTag($key, $value);
+        $this->runtimeContentCache->addTag($tag);
     }
 
     /**
@@ -513,7 +517,7 @@ class Runtime
     {
         $output = null;
         $evaluationStatus = self::EVALUATION_SKIPPED;
-        list($cacheHit, $cachedResult) = $this->runtimeContentCache->preEvaluate($cacheContext, $fusionObject);
+        [$cacheHit, $cachedResult] = $this->runtimeContentCache->preEvaluate($cacheContext, $fusionObject);
         if ($cacheHit) {
             return $cachedResult;
         }

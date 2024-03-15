@@ -32,9 +32,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
+    And I am in workspace "live"
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
     And the graph projection is fully up to date
@@ -43,11 +44,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  -----|Enable|++++++++++++++|+++|+++++++++++++|Disable|-----
   Scenario: A enabled node with enableAfter in past and disableAfter in future must stay enabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2030-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 
@@ -58,11 +58,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  -----|Enable|++++++++++++++|---|+++++++++++++|Disable|-----
   Scenario: A disabled node with enableAfter in past and disableAfter in future must be enabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2030-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                  |
@@ -78,11 +77,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  +++++|Disable|-------------|+++|--------------|Enable|+++++
   Scenario: A enabled node with enableAfter in future and disableAfter past in must be disabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                            |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                               |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2030-01-01 10:10:10"},"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+10 days"},"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 
@@ -93,11 +91,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  +++++|Disable|-------------|---|--------------|Enable|+++++
   Scenario: A disabled node with enableAfter in future and disableAfter past in must stay disabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                            |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                               |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2030-01-01 10:10:10"},"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+10 days"},"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                  |
@@ -113,11 +110,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  ---|Enable|+++|Disable|----|+++|---------------------------
   Scenario: A enabled node with enableAfter and disableAfter in past, but enableAfter before disableAfter must be disabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1995-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-9 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 
@@ -128,11 +124,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  ---|Enable|+++|Disable|----|---|---------------------------
   Scenario: A disabled node with enableAfter and disableAfter in past, but enableAfter before disableAfter must stay disabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1995-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-9 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                  |
@@ -148,11 +143,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  +++|Disable|---|Enable|++++|+++|+++++++++++++++++++++++++++
   Scenario: A enabled node with enableAfter and disableAfter in past, but disableAfter before enableAfter must stay enabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1995-01-01 10:10:10"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-9 days"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 
@@ -163,11 +157,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  +++|Disable|---|Enable|++++|---|+++++++++++++++++++++++++++
   Scenario: A disabled node with enableAfter and disableAfter in past, but disableAfter before enableAfter must be enabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1995-01-01 10:10:10"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-9 days"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                  |
@@ -183,11 +176,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  +++++|Disable|-------------|+++|---------------------------
   Scenario: A enabled node with disableAfter past in must be disabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                            |
-      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                               |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}} |
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                     |
+      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                        |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 
@@ -198,11 +190,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  +++++|Disable|-------------|---|---------------------------
   Scenario: A enabled node with disableAfter past in must stay disabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                            |
-      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                               |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}} |
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                     |
+      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                        |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                  |
@@ -218,11 +209,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  -----|Enable|++++++++++++++|+++|+++++++++++++++++++++++++++
   Scenario: A enabled node with enableAfter past in must stay enabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                            |
-      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                               |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}} |
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                    |
+      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                       |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 
@@ -233,11 +223,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  -----|Enable|++++++++++++++|---|+++++++++++++++++++++++++++
   Scenario: A disabled node with enableAfter past in must be enabled
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                            |
-      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                               |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "1990-01-01 10:10:10"}} |
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                    |
+      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                       |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "-10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                  |
@@ -253,11 +242,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  ---------------------------|---|---|Enable|+++++|Disable|--
   Scenario: A disabled node with enableAfter and disableAfter in future must not be changed
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2029-01-01 10:10:10"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2030-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+9 days"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                  |
@@ -273,11 +261,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  ---------------------------|+++|---|Enable|+++++|Disable|--
   Scenario: A enabled node with enableAfter and disableAfter in future must not be changed
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2029-01-01 10:10:10"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2030-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+9 days"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 
@@ -289,11 +276,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  +++++++++++++++++++++++++++|---|+++|Disable|-----|Enable|++
   Scenario: A disabled node with disableAfter and enableAfter in future must not be changed
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2029-01-01 10:10:10"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2030-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+9 days"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                  |
@@ -308,11 +294,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  +++++++++++++++++++++++++++|+++|+++|Disable|-----|Enable|++
   Scenario: A enabled node with disableAfter and enableAfter in future must not be changed
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
+    When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2029-01-01 10:10:10"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2030-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+9 days"}, "disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 
@@ -324,11 +309,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  ---------------------------|---|---|Enable|+++++++++++++++
   Scenario: A disabled node with enableAfter in future must not be changed
-    When I am in content stream "cs-identifier" and dimension space point {}
-    And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
-      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2029-01-01 10:10:10"}} |
+    When the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                    |
+      | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                       |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+9 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                  |
@@ -344,11 +328,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  ---------------------------|+++|---|Enable|+++++++++++++++
   Scenario: A enabled node with enableAfter in future must not be changed
-    When I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2029-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"enableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+9 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 
@@ -360,11 +343,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  +++++++++++++++++++++++++++|---|+++|Disable|---------------
   Scenario: A disabled node with disableAfter in future must not be changed
-    When I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2030-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                  |
@@ -379,11 +361,10 @@ Feature: Simple handling of nodes with exceeded enableAfter and disableAfter dat
   # <===========================|now|===========================>
   #  +++++++++++++++++++++++++++|+++|+++|Disable|---------------
   Scenario: A enabled node with disableAfter and enableAfter in future must not be changed
-    When I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | parentNodeAggregateId  | nodeTypeName          | initialPropertyValues                                                                                                                                                             |
       | shernode-homes       | lady-eleonode-rootford | Some.Package:Homepage | {}                                                                                                                                                                                |
-      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "2030-01-01 10:10:10"}} |
+      | duke-of-contentshire | shernode-homes         | Some.Package:Content  | {"disableAfterDateTime": {"__type": "DateTimeImmutable", "value": "+10 days"}} |
     Then I expect node aggregate identifier "duke-of-contentshire" to lead to node cs-identifier;duke-of-contentshire;{}
     And I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
 

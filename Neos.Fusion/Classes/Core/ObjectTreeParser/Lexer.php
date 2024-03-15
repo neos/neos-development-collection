@@ -13,6 +13,9 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
  * source code.
  */
 
+/**
+ * @internal
+ */
 class Lexer
 {
     // Difference to: Neos\Eel\Package::EelExpressionRecognizer
@@ -44,12 +47,14 @@ class Lexer
         Token::MULTILINE_COMMENT => <<<'REGEX'
         `^
           /\*               # start of a comment '/*'
-          [^*]*             # match everything until special case '*'
+          [^*]*             # consume until special case '*'
+          \*+               # consume all '*'
           (?:
-            \*[^/]          # if after the '*' there is a '/' break, else continue
-            [^*]*           # until the special case '*' is encountered - unrolled loop following Jeffrey Friedl
+            [^/]            # break if its the end: '/'
+            [^*]*           # unrolled loop following Jeffrey E.F. Friedl
+            \*+
           )*
-          \*/               # the end of a comment.
+          /                 # the end of a comment.
         `x
         REGEX,
 

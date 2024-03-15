@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\TestSuite\Unit;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ArrayNormalizer;
 use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer;
@@ -85,14 +84,7 @@ final class NodeSubjectProvider
         SerializedPropertyValues $propertyValues = null,
         ?NodeName $nodeName = null
     ): Node {
-        $defaultPropertyValues = [];
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-            $defaultPropertyValues[$propertyName] = new SerializedPropertyValue(
-                $propertyValue,
-                $nodeType->getPropertyType($propertyName)
-            );
-        }
-        $serializedDefaultPropertyValues = SerializedPropertyValues::fromArray($defaultPropertyValues);
+        $serializedDefaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->propertyConverter);
         return Node::create(
             ContentSubgraphIdentity::create(
                 ContentRepositoryId::fromString('default'),

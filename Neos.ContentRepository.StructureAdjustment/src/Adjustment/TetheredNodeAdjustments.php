@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -41,6 +42,7 @@ class TetheredNodeAdjustments
         private readonly ProjectedNodeIterator $projectedNodeIterator,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        private readonly PropertyConverter $propertyConverter
     ) {
     }
 
@@ -209,6 +211,11 @@ class TetheredNodeAdjustments
     protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph
     {
         return $this->interDimensionalVariationGraph;
+    }
+
+    protected function getPropertyConverter(): PropertyConverter
+    {
+        return $this->propertyConverter;
     }
 
     /**

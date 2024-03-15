@@ -8,8 +8,11 @@ use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -24,7 +27,6 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
-use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\Flow\Utility\Algorithms;
@@ -32,18 +34,23 @@ use Neos\Flow\Utility\Algorithms;
 /**
  * Processor that imports all events from an "events.jsonl" file to the event store
  */
-final class EventStoreImportProcessor implements ProcessorInterface
+final class EventStoreImportProcessor implements ProcessorInterface, ContentRepositoryServiceInterface
 {
     /** @var array<int, \Closure> */
     private array $callbacks = [];
+
+    private ?ContentStreamId $contentStreamId = null;
 
     public function __construct(
         private readonly bool $keepEventIds,
         private readonly Filesystem $files,
         private readonly EventStoreInterface $eventStore,
         private readonly EventNormalizer $eventNormalizer,
-        private ?ContentStreamId $contentStreamId,
+        ?ContentStreamId $overrideContentStreamId
     ) {
+        if ($overrideContentStreamId) {
+            $this->contentStreamId = $overrideContentStreamId;
+        }
     }
 
     public function onMessage(\Closure $callback): void
@@ -102,6 +109,9 @@ final class EventStoreImportProcessor implements ProcessorInterface
                     Event\EventMetadata::fromArray($event->metadata)
                 )
             );
+            if (in_array($domainEvent::class, [ContentStreamWasCreated::class, ContentStreamWasForked::class, ContentStreamWasRemoved::class], true)) {
+                return ProcessorResult::error(sprintf('Failed to read events. %s is not expected in imported event stream.', $event->type));
+            }
             $domainEvent = DecoratedEvent::create($domainEvent, eventId: EventId::fromString($event->identifier), metadata: $event->metadata);
             $domainEvents[] = $this->normalizeEvent($domainEvent);
         }

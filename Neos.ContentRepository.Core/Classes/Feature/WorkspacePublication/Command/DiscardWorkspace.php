@@ -23,15 +23,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class DiscardWorkspace implements CommandInterface
+final readonly class DiscardWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Name of the affected workspace
      * @param ContentStreamId $newContentStreamId The id of the newly created content stream that will contain the remaining changes that were not discarded
      */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly ContentStreamId $newContentStreamId
+        public WorkspaceName $workspaceName,
+        public ContentStreamId $newContentStreamId
     ) {
     }
 

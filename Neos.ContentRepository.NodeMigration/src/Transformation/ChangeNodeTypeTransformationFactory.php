@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChan
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /** @codingStandardsIgnoreStart */
 /** @codingStandardsIgnoreEnd */
@@ -62,10 +63,11 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
 
             public function execute(
                 NodeAggregate $nodeAggregate,
+                WorkspaceName $workspaceNameForWriting,
                 ContentStreamId $contentStreamForWriting
             ): CommandResult {
                 return $this->contentRepository->handle(ChangeNodeAggregateType::create(
-                    $contentStreamForWriting,
+                    $workspaceNameForWriting,
                     $nodeAggregate->nodeAggregateId,
                     NodeTypeName::fromString($this->newType),
                     $this->strategy,

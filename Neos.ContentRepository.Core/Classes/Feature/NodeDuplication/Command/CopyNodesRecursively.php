@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeDuplication\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdMapping;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * CopyNodesRecursively command
@@ -36,14 +37,14 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class CopyNodesRecursively implements
+final readonly class CopyNodesRecursively implements
     CommandInterface,
     \JsonSerializable,
     MatchableWithNodeIdToPublishOrDiscardInterface,
-    RebasableToOtherContentStreamsInterface
+    RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param ContentStreamId $contentStreamId The id of the content stream this command is to be handled in
+     * @param WorkspaceName $workspaceName The name of the workspace this command is to be handled in
      * @param NodeSubtreeSnapshot $nodeTreeToInsert The snapshot of nodes to copy {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
      * @param OriginDimensionSpacePoint $targetDimensionSpacePoint the dimension space point which is the target of the copy
      * @param NodeAggregateId $targetParentNodeAggregateId Node aggregate id of the target node's parent. If not given, the node will be added as the parent's first child
@@ -52,18 +53,18 @@ final class CopyNodesRecursively implements
      * @param NodeAggregateIdMapping $nodeAggregateIdMapping An assignment of "old" to "new" NodeAggregateIds ({@see NodeAggregateIdMapping})
      */
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeSubtreeSnapshot $nodeTreeToInsert,
-        public readonly OriginDimensionSpacePoint $targetDimensionSpacePoint,
-        public readonly NodeAggregateId $targetParentNodeAggregateId,
-        public readonly ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId,
-        public readonly ?NodeName $targetNodeName,
-        public readonly NodeAggregateIdMapping $nodeAggregateIdMapping
+        public WorkspaceName $workspaceName,
+        public NodeSubtreeSnapshot $nodeTreeToInsert,
+        public OriginDimensionSpacePoint $targetDimensionSpacePoint,
+        public NodeAggregateId $targetParentNodeAggregateId,
+        public ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId,
+        public ?NodeName $targetNodeName,
+        public NodeAggregateIdMapping $nodeAggregateIdMapping
     ) {
     }
 
     /**
-     * @param ContentStreamId $contentStreamId The id of the content stream this command is to be handled in
+     * @param WorkspaceName $workspaceName The name of the workspace this command is to be handled in
      * @param NodeSubtreeSnapshot $nodeTreeToInsert The snapshot of nodes to copy {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
      * @param OriginDimensionSpacePoint $targetDimensionSpacePoint the dimension space point which is the target of the copy
      * @param NodeAggregateId $targetParentNodeAggregateId Node aggregate id of the target node's parent. If not given, the node will be added as the parent's first child
@@ -71,9 +72,9 @@ final class CopyNodesRecursively implements
      * @param NodeName|null $targetNodeName the root node name of the root-inserted-node
      * @param NodeAggregateIdMapping $nodeAggregateIdMapping An assignment of "old" to "new" NodeAggregateIds ({@see NodeAggregateIdMapping})
      */
-    public static function create(ContentStreamId $contentStreamId, NodeSubtreeSnapshot $nodeTreeToInsert, OriginDimensionSpacePoint $targetDimensionSpacePoint, NodeAggregateId $targetParentNodeAggregateId, ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId, ?NodeName $targetNodeName, NodeAggregateIdMapping $nodeAggregateIdMapping): self
+    public static function create(WorkspaceName $workspaceName, NodeSubtreeSnapshot $nodeTreeToInsert, OriginDimensionSpacePoint $targetDimensionSpacePoint, NodeAggregateId $targetParentNodeAggregateId, ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId, ?NodeName $targetNodeName, NodeAggregateIdMapping $nodeAggregateIdMapping): self
     {
-        return new self($contentStreamId, $nodeTreeToInsert, $targetDimensionSpacePoint, $targetParentNodeAggregateId, $targetSucceedingSiblingNodeAggregateId, $targetNodeName, $nodeAggregateIdMapping);
+        return new self($workspaceName, $nodeTreeToInsert, $targetDimensionSpacePoint, $targetParentNodeAggregateId, $targetSucceedingSiblingNodeAggregateId, $targetNodeName, $nodeAggregateIdMapping);
     }
 
     /**
@@ -81,6 +82,7 @@ final class CopyNodesRecursively implements
      */
     public static function createFromSubgraphAndStartNode(
         ContentSubgraphInterface $subgraph,
+        WorkspaceName $workspaceName,
         Node $startNode,
         OriginDimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $targetParentNodeAggregateId,
@@ -90,7 +92,7 @@ final class CopyNodesRecursively implements
         $nodeSubtreeSnapshot = NodeSubtreeSnapshot::fromSubgraphAndStartNode($subgraph, $startNode);
 
         return new self(
-            $startNode->subgraphIdentity->contentStreamId,
+            $workspaceName,
             $nodeSubtreeSnapshot,
             $dimensionSpacePoint,
             $targetParentNodeAggregateId,
@@ -106,7 +108,7 @@ final class CopyNodesRecursively implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamId::fromString($array['contentStreamId']),
+            WorkspaceName::fromString($array['workspaceName']),
             NodeSubtreeSnapshot::fromArray($array['nodeTreeToInsert']),
             OriginDimensionSpacePoint::fromArray($array['targetDimensionSpacePoint']),
             NodeAggregateId::fromString($array['targetParentNodeAggregateId']),
@@ -133,22 +135,8 @@ final class CopyNodesRecursively implements
         );
         return (
             !is_null($targetNodeAggregateId)
-                && $this->contentStreamId === $nodeIdToPublish->contentStreamId
                 && $this->targetDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
                 && $targetNodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
-        );
-    }
-
-    public function createCopyForContentStream(ContentStreamId $target): self
-    {
-        return new self(
-            $target,
-            $this->nodeTreeToInsert,
-            $this->targetDimensionSpacePoint,
-            $this->targetParentNodeAggregateId,
-            $this->targetSucceedingSiblingNodeAggregateId,
-            $this->targetNodeName,
-            $this->nodeAggregateIdMapping
         );
     }
 
@@ -156,13 +144,28 @@ final class CopyNodesRecursively implements
         NodeAggregateIdMapping $nodeAggregateIdMapping
     ): self {
         return new self(
-            $this->contentStreamId,
+            $this->workspaceName,
             $this->nodeTreeToInsert,
             $this->targetDimensionSpacePoint,
             $this->targetParentNodeAggregateId,
             $this->targetSucceedingSiblingNodeAggregateId,
             $this->targetNodeName,
             $nodeAggregateIdMapping
+        );
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
+        return new self(
+            $targetWorkspaceName,
+            $this->nodeTreeToInsert,
+            $this->targetDimensionSpacePoint,
+            $this->targetParentNodeAggregateId,
+            $this->targetSucceedingSiblingNodeAggregateId,
+            $this->targetNodeName,
+            $this->nodeAggregateIdMapping
         );
     }
 }

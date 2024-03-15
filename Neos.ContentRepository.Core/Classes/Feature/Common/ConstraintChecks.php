@@ -19,6 +19,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
+use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -55,6 +57,9 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * @internal implementation details of command handlers
@@ -66,19 +71,27 @@ trait ConstraintChecks
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
     /**
-     * @param ContentStreamId $contentStreamId
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(
-        ContentStreamId $contentStreamId,
+    protected function requireContentStream(
+        WorkspaceName $workspaceName,
         ContentRepository $contentRepository
-    ): void {
+    ): ContentStreamId {
+        $contentStreamId = ContentStreamIdOverride::resolveContentStreamIdForWorkspace($contentRepository, $workspaceName);
         if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692
             );
         }
+        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) === ContentStreamState::STATE_CLOSED) {
+            throw new ContentStreamIsClosed(
+                'Content stream "' . $contentStreamId->value . '" is closed.',
+                1710260081
+            );
+        }
+
+        return $contentStreamId;
     }
 
     /**
@@ -100,7 +113,7 @@ trait ConstraintChecks
     protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType
     {
         try {
-            return $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+            return $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         } catch (NodeTypeNotFoundException $exception) {
             throw new NodeTypeNotFound(
                 'Node type "' . $nodeTypeName->value . '" is unknown to the node type manager.',
@@ -189,14 +202,14 @@ trait ConstraintChecks
 
     protected function requireNodeTypeToDeclareProperty(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         if (!isset($nodeType->getProperties()[$propertyName->value])) {
         }
     }
 
     protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $propertyName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         if (isset($nodeType->getProperties()[$propertyName->value])) {
             $propertyType = $nodeType->getPropertyType($propertyName->value);
             if ($propertyType === 'reference' || $propertyType === 'references') {
@@ -211,7 +224,7 @@ trait ConstraintChecks
         ReferenceName $referenceName,
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         $propertyDeclaration = $nodeType->getProperties()[$referenceName->value] ?? null;
         if (is_null($propertyDeclaration)) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
@@ -250,12 +263,14 @@ trait ConstraintChecks
                 $parentNodeAggregateId,
                 $contentRepository
             );
-            try {
-                $parentsNodeType = $this->requireNodeType($parentAggregate->nodeTypeName);
-                $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeName, $nodeType);
-            } catch (NodeTypeNotFound $e) {
-                // skip constraint check; Once the parent is changed to be of an available type,
-                // the constraint checks are executed again. See handleChangeNodeAggregateType
+            if (!$parentAggregate->classification->isTethered()) {
+                try {
+                    $parentsNodeType = $this->requireNodeType($parentAggregate->nodeTypeName);
+                    $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeName, $nodeType);
+                } catch (NodeTypeNotFound $e) {
+                    // skip constraint check; Once the parent is changed to be of an available type,
+                    // the constraint checks are executed again. See handleChangeNodeAggregateType
+                }
             }
 
             foreach (
@@ -273,7 +288,7 @@ trait ConstraintChecks
                         $nodeType
                     );
                 } catch (NodeTypeNotFound $e) {
-                    // skip constraint check; Once the grand parent is changed to be of an available type,
+                    // skip constraint check; Once the grandparent is changed to be of an available type,
                     // the constraint checks are executed again. See handleChangeNodeAggregateType
                 }
             }
@@ -293,7 +308,8 @@ trait ConstraintChecks
         if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
             throw new NodeConstraintException(
                 'Node type "' . $nodeType->name->value . '" is not allowed for child nodes of type '
-                    . $parentsNodeType->name->value
+                    . $parentsNodeType->name->value,
+                1707561400
             );
         }
         if (
@@ -305,7 +321,8 @@ trait ConstraintChecks
                 'Node type "' . $nodeType->name->value . '" does not match configured "'
                     . $this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->value
                     . '" for auto created child nodes for parent type "' . $parentsNodeType->name->value
-                    . '" with name "' . $nodeName->value . '"'
+                    . '" with name "' . $nodeName->value . '"',
+                1707561404
             );
         }
     }
@@ -631,7 +648,7 @@ trait ConstraintChecks
         PropertyValuesToWrite $referenceProperties,
         NodeTypeName $nodeTypeName
     ): void {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 
         foreach ($referenceProperties->values as $propertyName => $propertyValue) {
             $referencePropertyConfig = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]
@@ -659,5 +676,16 @@ trait ConstraintChecks
                 );
             }
         }
+    }
+
+    protected function getExpectedVersionOfContentStream(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): ExpectedVersion {
+        return ExpectedVersion::fromVersion(
+            $contentRepository->getContentStreamFinder()
+                ->findVersionForContentStream($contentStreamId)
+                ->unwrap()
+        );
     }
 }

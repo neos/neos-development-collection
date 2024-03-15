@@ -42,7 +42,7 @@ Feature: Constraint checks on SetNodeReferences
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -54,15 +54,26 @@ Feature: Constraint checks on SetNodeReferences
       | anthony-destinode       | Neos.ContentRepository.Testing:ReferencedNode     | lady-eleonode-rootford        |
       | berta-destinode         | Neos.ContentRepository.Testing:ReferencedNode     | lady-eleonode-rootford        |
 
+  Scenario: Try to reference nodes in a workspace whose content stream is closed
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                           | Value                            |
+      | sourceNodeAggregateId         | "source-nodandaise"              |
+      | referenceName                 | "referenceProperty"              |
+      | references                    | [{"target":"anthony-destinode"}] |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
+
   # checks for contentStreamId
   Scenario: Try to reference nodes in a non-existent content stream
     When the command SetNodeReferences is executed with payload and exceptions are caught:
       | Key                           | Value                           |
-      | contentStreamId       | "i-do-not-exist"                |
+      | workspaceName       | "i-do-not-exist"                |
       | sourceNodeAggregateId | "source-nodandaise"             |
       | referenceName                 | "referenceProperty"             |
       | references                    | [{"target":"anthony-destinode"}] |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet" with code 1521386692
+    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet" with code 1710407870
 
   # checks for sourceNodeAggregateId
   Scenario: Try to reference nodes in a non-existent node aggregate

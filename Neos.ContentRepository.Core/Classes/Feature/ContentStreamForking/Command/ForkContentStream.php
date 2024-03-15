@@ -22,15 +22,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class ForkContentStream implements CommandInterface
+final readonly class ForkContentStream implements CommandInterface
 {
     /**
      * @param ContentStreamId $newContentStreamId The id of the new content stream
      * @param ContentStreamId $sourceContentStreamId The id of the content stream to fork
      */
     private function __construct(
-        public readonly ContentStreamId $newContentStreamId,
-        public readonly ContentStreamId $sourceContentStreamId,
+        public ContentStreamId $newContentStreamId,
+        public ContentStreamId $sourceContentStreamId,
     ) {
     }
 
