@@ -61,9 +61,7 @@ trait NodeDisabling
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
         );
-        $tag = SubtreeTag::disabled();
-
-        if ($nodeAggregate->isExplicitlyTaggedWithSubtreeTagInDimensionSpacePoint($tag, $command->coveredDimensionSpacePoint)) {
+        if ($nodeAggregate->subtreeTagsDimensionSpacePoints(SubtreeTag::disabled())->contains($command->coveredDimensionSpacePoint)) {
             // already disabled, so we can return a no-operation.
             return EventsToPublish::empty();
         }
@@ -80,7 +78,7 @@ trait NodeDisabling
                 $contentStreamId,
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
-                $tag,
+                SubtreeTag::disabled(),
             ),
         );
 
@@ -118,9 +116,7 @@ trait NodeDisabling
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
         );
-        $tag = SubtreeTag::disabled();
-
-        if (!$nodeAggregate->isExplicitlyTaggedWithSubtreeTagInDimensionSpacePoint($tag, $command->coveredDimensionSpacePoint)) {
+        if (!$nodeAggregate->subtreeTagsDimensionSpacePoints(SubtreeTag::disabled())->contains($command->coveredDimensionSpacePoint)) {
             // already enabled, so we can return a no-operation.
             return EventsToPublish::empty();
         }
@@ -137,7 +133,7 @@ trait NodeDisabling
                 $contentStreamId,
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
-                $tag,
+                SubtreeTag::disabled(),
             )
         );
 

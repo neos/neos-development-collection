@@ -46,7 +46,7 @@ trait SubtreeTagging
             $command->coveredDimensionSpacePoint
         );
 
-        if ($nodeAggregate->isExplicitlyTaggedWithSubtreeTagInDimensionSpacePoint($command->tag, $command->coveredDimensionSpacePoint)) {
+        if ($nodeAggregate->subtreeTagsDimensionSpacePoints($command->tag)->contains($command->coveredDimensionSpacePoint)) {
             // already explicitly tagged with the same Subtree Tag, so we can return a no-operation.
             return EventsToPublish::empty();
         }
@@ -92,7 +92,7 @@ trait SubtreeTagging
             $command->coveredDimensionSpacePoint
         );
 
-        if (!$nodeAggregate->isExplicitlyTaggedWithSubtreeTagInDimensionSpacePoint($command->tag, $command->coveredDimensionSpacePoint)) {
+        if (!$nodeAggregate->subtreeTagsDimensionSpacePoints($command->tag)->contains($command->coveredDimensionSpacePoint)) {
             // not explicitly tagged with the given Subtree Tag, so we can return a no-operation.
             return EventsToPublish::empty();
         }

@@ -10,7 +10,9 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 
 /**
- * @api used by {@see NodeAggregate}
+ * DTO that holds the dimension space points any subtree tag is explicitly set for in a {@see NodeAggregate}
+ *
+ * @internal used by {@see NodeAggregate} but this is a low level concept that should not be relied upon outside the core and in tests
  */
 final readonly class DimensionSpacePointsBySubtreeTags implements JsonSerializable
 {
@@ -40,6 +42,9 @@ final readonly class DimensionSpacePointsBySubtreeTags implements JsonSerializab
         return new self($dimensionSpacePointsBySubtreeTags);
     }
 
+    /**
+     * Returns the dimension space points the specified $subtreeTag is _explicitly_ set in, or an empty set if none of the variants are tagged with $subtreeTag
+     */
     public function forSubtreeTag(SubtreeTag $subtreeTag): DimensionSpacePointSet
     {
         return $this->dimensionSpacePointsBySubtreeTags[$subtreeTag->value] ?? DimensionSpacePointSet::fromArray([]);
