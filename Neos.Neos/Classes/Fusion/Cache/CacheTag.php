@@ -22,6 +22,12 @@ class CacheTag
     private function __construct(
         public readonly string $value
     ) {
+        if (preg_match(self::PATTERN, $value) !== 1) {
+            throw new \InvalidArgumentException(
+                'Given value "' . $value . '" is no valid cache tag, must match the defined pattern.',
+                1658093413
+            );
+        }
     }
 
     final public static function forNodeAggregate(
@@ -113,13 +119,6 @@ class CacheTag
 
     final public static function fromString(string $string): self
     {
-        if (preg_match(self::PATTERN, $string) !== 1) {
-            throw new \InvalidArgumentException(
-                'Given value "' . $string . '" is no valid cache tag, must match the defined pattern.',
-                1658093413
-            );
-        }
-
         return new self($string);
     }
 
