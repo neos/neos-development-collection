@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Factory;
+namespace Neos\ContentRepository\Core\SharedModel\ContentRepository;
 
 /**
  * Identifies a given content repository

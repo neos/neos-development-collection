@@ -6,7 +6,7 @@ namespace Neos\Neos\AssetUsage\Command;
 
 use Neos\Flow\Cli\CommandController;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 use Neos\Neos\AssetUsage\Service\AssetUsageSyncServiceFactory;
