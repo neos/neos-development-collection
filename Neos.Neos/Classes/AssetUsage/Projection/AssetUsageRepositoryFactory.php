@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\AssetUsage\Projection;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
  * @internal

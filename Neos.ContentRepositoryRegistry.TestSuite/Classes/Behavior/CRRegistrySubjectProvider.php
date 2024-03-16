@@ -15,7 +15,7 @@ namespace Neos\ContentRepositoryRegistry\TestSuite\Behavior;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
