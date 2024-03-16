@@ -137,13 +137,6 @@ trait TetheredNodeInternals
             }
 
             $rootDimensionSpacePoints = $this->interDimensionalVariationGraph->getRootGeneralizations();
-            if (empty($rootDimensionSpacePoints)) {
-                // safeguard
-                throw new \RuntimeException(
-                    'The dimension space is empty, please check your configuration.',
-                    1706864056
-                );
-            }
             $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
             $childNodeSource = $childNodeAggregate->getNodeByCoveredDimensionSpacePoint($arbitraryRootDimensionSpacePoint);
 
