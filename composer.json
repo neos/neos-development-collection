@@ -152,7 +152,8 @@
             "@test:functional",
             "@test:behavioral",
             "@test:parallel"
-        ]
+        ],
+        "build:composer-json": "php ../../Build/BuildEssentials/ComposerManifestMerger.php"
     },
     "autoload": {
         "psr-4": {
