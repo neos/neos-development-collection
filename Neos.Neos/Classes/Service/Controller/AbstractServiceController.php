@@ -14,17 +14,19 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\Controller;
 
+use GuzzleHttp\Psr7\Response;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Domain\Service\UserService;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Abstract Service Controller
@@ -84,36 +86,35 @@ abstract class AbstractServiceController extends ActionController
     /**
      * Catch exceptions while processing an exception and respond to JSON format
      * TODO: This is an explicit exception handling that will be replaced by format-enabled exception handlers.
-     *
-     * @param ActionRequest $request The request object
-     * @param ActionResponse $response The response, modified by this handler
-     * @return void
-     * @throws StopActionException
-     * @throws \Exception
      */
-    public function processRequest(ActionRequest $request, ActionResponse $response)
+    public function processRequest(ActionRequest $request): ResponseInterface
     {
         try {
-            parent::processRequest($request, $response);
-        } catch (StopActionException $exception) {
+            $response = parent::processRequest($request);
+        } catch (StopActionException | ForwardException $exception) {
             throw $exception;
         } catch (\Exception $exception) {
             if ($this->request->getFormat() !== 'json') {
                 throw $exception;
             }
             $exceptionData = $this->convertException($exception);
-            $response->setContentType('application/json');
-            if ($exception instanceof FlowException) {
-                $response->setStatusCode($exception->getStatusCode());
-            } else {
-                $response->setStatusCode(500);
-            }
-            $response->setContent(json_encode(['error' => $exceptionData], JSON_THROW_ON_ERROR));
+            $body = json_encode(['error' => $exceptionData], JSON_THROW_ON_ERROR);
+            $response = new Response(
+                status: $exception instanceof FlowException
+                    ? $exception->getStatusCode()
+                    : 500,
+                headers: [
+                    'Content-Type' => 'application/json'
+                ],
+                body: $body
+            );
             $this->logger->error(
                 $this->throwableStorage2->logThrowable($exception),
                 LogEnvironment::fromMethodName(__METHOD__)
             );
         }
+
+        return $response;
     }
 
     /**

@@ -12,6 +12,7 @@ namespace Neos\Fusion\Tests\Unit\Core\ExceptionHandlers;
  */
 
 use Neos\Flow\Exception;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
@@ -99,7 +100,7 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     public function neverHandleStopActionException()
     {
         $this->expectException(StopActionException::class);
-        $this->handler->handleRenderingException('path', new StopActionException());
+        $this->handler->handleRenderingException('path', StopActionException::createForResponse(new ActionResponse(), ''));
     }
 
 

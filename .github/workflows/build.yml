@@ -132,6 +132,8 @@ jobs:
           git -C ../${{ env.NEOS_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
+          # TODO REMOVE BEFORE MERGE!!!
+          composer require --no-update neos/flow-development-collection:"dev-feature/dispatcher-returns-psr-responses as ${{ env.NEOS_BRANCH_ALIAS }}"
 
       - name: Cache Composer packages
         id: composer-cache
