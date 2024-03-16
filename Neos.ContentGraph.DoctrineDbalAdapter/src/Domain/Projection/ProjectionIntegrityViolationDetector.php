@@ -182,20 +182,25 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         // NOTE:
         // This part determines if a parent hierarchy relation contains subtree tags that are not existing in the child relation.
         // This could probably be solved with JSON_ARRAY_INTERSECT(JSON_KEYS(ph.subtreetags), JSON_KEYS(h.subtreetags) but unfortunately that's only available with MariaDB 11.2+ according to https://mariadb.com/kb/en/json_array_intersect/
-        $hierarchyRelationsWithMissingSubtreeTags = $this->client->getConnection()->executeQuery(
-            'SELECT
-              ph.name
-            FROM
-              ' . $this->tableNamePrefix . '_hierarchyrelation h
-              INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
-                ON ph.childnodeanchor = h.parentnodeanchor
-                AND ph.contentstreamid = h.contentstreamid
-                AND ph.dimensionspacepointhash = h.dimensionspacepointhash
-            WHERE
-              EXISTS (
-                SELECT t.tag FROM JSON_TABLE(JSON_KEYS(ph.subtreetags), \'$[*]\' COLUMNS(tag VARCHAR(30) PATH \'$\')) t WHERE NOT JSON_EXISTS(h.subtreetags, CONCAT(\'$.\', t.tag))
-              )'
-        )->fetchAllAssociative();
+        $query = 'SELECT
+          ph.name
+        FROM
+          ' . $this->tableNamePrefix . '_hierarchyrelation h
+          INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
+            ON ph.childnodeanchor = h.parentnodeanchor
+            AND ph.contentstreamid = h.contentstreamid
+            AND ph.dimensionspacepointhash = h.dimensionspacepointhash
+        WHERE
+          EXISTS (
+            SELECT t.tag FROM JSON_TABLE(JSON_KEYS(ph.subtreetags), \'$[*]\' COLUMNS(tag VARCHAR(30) PATH \'$\')) t WHERE NOT JSON_EXISTS(h.subtreetags, CONCAT(\'$.\', t.tag))
+          )';
+
+        try {
+            $hierarchyRelationsWithMissingSubtreeTags = $this->client->getConnection()->executeQuery($query)->fetchAllAssociative();
+        } catch (\Doctrine\DBAL\Exception\SyntaxErrorException $syntaxErrorException) {
+            // Hierarchy relation subtree tags could not be validated as the database doesn't support "JSON_TABLE" feature.
+            return $result;
+        }
 
         foreach ($hierarchyRelationsWithMissingSubtreeTags as $hierarchyRelation) {
             $result->addError(new Error(
