@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\NodeTypePostprocessor;
 
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\NodeType\NodeTypePostprocessorInterface;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\Utility\Arrays;
+use Neos\ContentRepository\Core\NodeType\NodeTypePostprocessorInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Exception;
+use Neos\Utility\Arrays;
 
 /**
  * Add default editor configurations for properties based on type and editor

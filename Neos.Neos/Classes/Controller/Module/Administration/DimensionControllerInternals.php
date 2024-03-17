@@ -17,8 +17,8 @@ namespace Neos\Neos\Controller\Module\Administration;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\Neos\Presentation\Dimensions\VisualIntraDimensionalVariationGraph;
 use Neos\Neos\Presentation\Dimensions\VisualInterDimensionalVariationGraph;
+use Neos\Neos\Presentation\Dimensions\VisualIntraDimensionalVariationGraph;
 
 /**
  * @deprecated really un-nice :D

@@ -2,11 +2,9 @@
 
 namespace Neos\Neos\FrontendRouting\CatchUpHook;
 
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
-use Neos\RedirectHandler\NeosAdapter\Service\NodeRedirectService;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 
 final class RouterCacheHookFactory implements CatchUpHookFactoryInterface

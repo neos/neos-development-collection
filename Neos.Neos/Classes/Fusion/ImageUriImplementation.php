@@ -15,10 +15,10 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Service\AssetService;
-use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Media\Domain\Service\ThumbnailService;
 
 /**

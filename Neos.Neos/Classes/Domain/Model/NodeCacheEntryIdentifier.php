@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Model;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The cache entry identifier data transfer object for nodes
