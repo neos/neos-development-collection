@@ -100,11 +100,14 @@
     "scripts": {
         "lint:phpcs": "../../bin/phpcs --colors",
         "lint:phpcs:fix": "../../bin/phpcbf --colors",
+        "lint:php-cs-fixer": "../../bin/php-cs-fixer check",
+        "lint:php-cs-fixer:fix": "../../bin/php-cs-fixer fix",
         "lint:phpstan": "../../bin/phpstan analyse",
         "lint:phpstan-generate-baseline": "../../bin/phpstan analyse --generate-baseline",
         "lint:distributionintegrity": "[ -d 'Neos.ContentRepository' ] && { echo 'Package Neos.ContentRepository should not exist.' 1>&2; exit 1; } || exit 0;",
         "lint": [
             "@lint:phpcs",
+            "@lint:php-cs-fixer",
             "@lint:phpstan",
             "@lint:distributionintegrity"
         ],
@@ -311,6 +314,7 @@
         "roave/security-advisories": "dev-latest",
         "phpstan/phpstan": "^1.8",
         "squizlabs/php_codesniffer": "^3.6",
+        "friendsofphp/php-cs-fixer": "^3.5",
         "phpunit/phpunit": "^9.0",
         "neos/behat": "*",
         "league/flysystem-memory": "^3"
