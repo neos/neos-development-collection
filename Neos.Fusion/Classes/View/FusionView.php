@@ -103,7 +103,10 @@ class FusionView extends AbstractView
         parent::setOption($optionName, $value);
     }
 
-    public function assign($key, $value)
+    /**
+     * @return $this for chaining
+     */
+    public function assign(string $key, mixed $value): self
     {
         if ($key === 'request') {
             // the request cannot be used as "normal" fusion variable and must be treated as FusionGlobal
