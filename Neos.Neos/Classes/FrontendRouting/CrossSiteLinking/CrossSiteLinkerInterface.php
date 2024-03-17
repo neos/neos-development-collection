@@ -15,10 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\CrossSiteLinking;
 
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
-use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 
 /**
  * The {@see CrossSiteLinkerInterface} is responsible for adjusting a built URL in case it needs to

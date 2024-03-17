@@ -13,10 +13,8 @@
   "provide": {
   },
   "scripts": {
-    "lint:phpcs-psr12": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.TestSuite/Classes ./Neos.ContentRepository.Core/Classes ./Neos.Neos/Classes",
-    "lint:phpcs": [
-      "@lint:phpcs-psr12 --exclude=Generic.Files.LineLength,PSR1.Files.SideEffects"
-    ],
+    "lint:phpcs": "../../bin/phpcs --colors",
+    "lint:phpcs:fix": "../../bin/phpcbf --colors",
     "lint:phpstan": "../../bin/phpstan analyse",
     "lint:phpstan-generate-baseline": "../../bin/phpstan analyse --generate-baseline",
     "lint:distributionintegrity": "[ -d 'Neos.ContentRepository' ] && { echo 'Package Neos.ContentRepository should not exist.' 1>&2; exit 1; } || exit 0;",
@@ -47,6 +45,10 @@
       "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
       "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml"
     ],
+    "test:behavioral:sync": [
+      "@putenv CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1",
+      "@test:behavioral"
+    ],
     "test:behavioral:stop-on-failure": [
       "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
@@ -56,12 +58,17 @@
       "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
       "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml"
     ],
+    "test:behavioral:stop-on-failure:sync": [
+      "@putenv CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1",
+      "@test:behavioral:stop-on-failure"
+    ],
     "test": [
       "@test:unit",
       "@test:functional",
       "@test:behavioral",
       "@test:parallel"
-    ]
+    ],
+    "build:composer-json": "php ../../Build/BuildEssentials/ComposerManifestMerger.php"
   },
   "autoload": {
   },

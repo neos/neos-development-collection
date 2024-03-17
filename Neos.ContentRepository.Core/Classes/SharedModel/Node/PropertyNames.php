@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
-use Neos\ContentRepository\Core\NodeType\NodeType;
-
 /**
  * @implements \IteratorAggregate<int, PropertyName>
  * @api

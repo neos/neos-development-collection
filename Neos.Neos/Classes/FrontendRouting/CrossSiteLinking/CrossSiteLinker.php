@@ -16,12 +16,9 @@ namespace Neos\Neos\FrontendRouting\CrossSiteLinking;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
  * Default implementation for cross-site linking.

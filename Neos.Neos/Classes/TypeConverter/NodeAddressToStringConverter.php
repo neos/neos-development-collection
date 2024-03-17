@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\TypeConverter;
 
-use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
+use Neos\Neos\FrontendRouting\NodeAddress;
 
 /**
  * An Object Converter for Node Addresses which can be used for routing (but also for other

@@ -22,12 +22,10 @@ use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
-use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -36,7 +34,6 @@ use Neos\Flow\Utility\Environment;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 class CrCommandController extends CommandController
 {

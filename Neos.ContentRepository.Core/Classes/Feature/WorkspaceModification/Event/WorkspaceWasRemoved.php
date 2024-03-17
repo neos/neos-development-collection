@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspaceModification\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Event triggered to indicate that a workspace got removed.

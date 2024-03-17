@@ -14,9 +14,9 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Utility\ObjectAccess;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * This filter implementation contains specific behavior for use on ContentRepository

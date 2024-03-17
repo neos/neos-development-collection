@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\PendingChangesProjection;
 
-use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Change Read Model

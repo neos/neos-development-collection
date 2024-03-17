@@ -22,10 +22,10 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
 use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\Domain\Model\Site;
 
 /**
  * The Site Command Controller

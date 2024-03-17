@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\NodeTypePostprocessor;
 
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\NodeType\NodeTypePostprocessorInterface;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypePostprocessorInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
 

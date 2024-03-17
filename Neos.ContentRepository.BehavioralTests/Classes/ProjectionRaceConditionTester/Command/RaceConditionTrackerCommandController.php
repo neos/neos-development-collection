@@ -16,8 +16,8 @@ namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\C
 
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntries;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntry;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Utility\Files;
 use Symfony\Component\Console\Helper\Table;

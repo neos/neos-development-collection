@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Neos\Domain\Model\Site;
 
 /**

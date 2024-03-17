@@ -18,10 +18,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Mvc\Routing\RoutingMiddleware;
-use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\AbstractRoutePart;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
@@ -30,17 +26,21 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
+use Neos\Flow\Mvc\Routing\RoutingMiddleware;
+use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
-use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
+use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\Exception\ResolvedSiteNotFoundException;
+use Neos\Neos\FrontendRouting\Exception\TargetSiteNotFoundException;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
-use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\FrontendRouting\Exception\TargetSiteNotFoundException;
-use Neos\Neos\FrontendRouting\Exception\ResolvedSiteNotFoundException;
 
 /**
  * A route part handler for finding nodes in the website's frontend. Like every RoutePartHandler,

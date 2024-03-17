@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Command;
 
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Cli\CommandController;
-use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
-use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Symfony\Component\Console\Output\Output;
 
 final class CrCommandController extends CommandController

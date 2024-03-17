@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\NodeAccess\FlowQueryOperations\RemoveOperation;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery RemoveOperation

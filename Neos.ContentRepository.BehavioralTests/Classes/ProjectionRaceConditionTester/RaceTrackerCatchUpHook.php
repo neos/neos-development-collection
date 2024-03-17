@@ -16,11 +16,11 @@ namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester;
 
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntries;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
-use Neos\EventStore\Model\EventEnvelope;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTrigger;
+use Neos\EventStore\Model\EventEnvelope;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * We had some race conditions in projections, where {@see \Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage} was not working properly.

@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\TypeConverter;
 
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 
 /**
  * To be removed legacy fragment for property mapping nodes in controllers.

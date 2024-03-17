@@ -5,7 +5,6 @@ namespace Neos\ContentRepository\Export\Processors;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;

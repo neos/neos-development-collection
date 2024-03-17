@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Dto;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * @api

@@ -14,23 +14,23 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
-use Psr\Log\LoggerInterface;
+use Neos\Neos\Domain\Model\RenderingMode;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\Fusion\Cache\CacheTag;
+use Psr\Log\LoggerInterface;
 
 /**
  * A Fusion Object that converts link references in the format "<type>://<UUID>" to proper URIs

@@ -16,9 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\Workspace;
 
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<WorkspaceProjection>

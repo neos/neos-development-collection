@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\OrderingDirection;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\TimestampField;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
  * Immutable filter DTO for {@see ContentSubgraphInterface::findDescendantNodes()}

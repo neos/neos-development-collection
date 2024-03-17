@@ -249,7 +249,7 @@ jobs:
           # DEBUG MODE: ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
           set +e
-          CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1 composer test:behavioral:stop-on-failure
+          composer test:behavioral:stop-on-failure:sync
           retVal=$?
 
           # automatically search for race conditions

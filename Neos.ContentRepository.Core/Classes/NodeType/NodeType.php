@@ -15,11 +15,11 @@ namespace Neos\ContentRepository\Core\NodeType;
  */
 
 use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\Utility\ObjectAccess;
-use Neos\Utility\Arrays;
-use Neos\Utility\PositionalArraySorter;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * A Node Type

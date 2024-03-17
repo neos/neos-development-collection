@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto;
 
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-
 /**
  * A tag that can be added to Node aggregates that is inherited by all its descendants
  *

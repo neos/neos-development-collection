@@ -13,9 +13,7 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
-use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Events;
-use Neos\EventStore\Model\EventStore\CommitResult;
 
 /**
  * Internal service to persist {@see EventInterface} with the proper normalization, and triggering the

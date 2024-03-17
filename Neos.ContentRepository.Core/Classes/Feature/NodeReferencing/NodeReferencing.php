@@ -19,18 +19,16 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * @internal implementation detail of Command Handlers

@@ -6,9 +6,9 @@ namespace Neos\ContentRepository\BehavioralTests\PhpstanRules;
 
 use Neos\ContentRepository\BehavioralTests\PhpstanRules\Utility\ClassClassification;
 use PhpParser\Node;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
-use PHPStan\Analyser\Scope;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
