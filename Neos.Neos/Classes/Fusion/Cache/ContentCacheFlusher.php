@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
@@ -56,6 +57,7 @@ class ContentCacheFlusher
         protected readonly LoggerInterface $systemLogger,
         protected readonly GlobalAssetUsageService $globalAssetUsageService,
         protected readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        protected readonly PersistenceManagerInterface $persistenceManager,
     ) {
     }
 
@@ -276,13 +278,9 @@ class ContentCacheFlusher
             $asset = $asset->getOriginalAsset();
         }
 
-        if ($asset->getAssetSourceIdentifier() === null) {
-            return;
-        }
-
         $tagsToFlush = [];
         $filter = AssetUsageFilter::create()
-            ->withAsset($asset->getAssetSourceIdentifier())
+            ->withAsset($this->persistenceManager->getIdentifierByObject($asset))
             ->includeVariantsOfAsset();
 
         foreach ($this->globalAssetUsageService->findByFilter($filter) as $contentRepositoryId => $usages) {
