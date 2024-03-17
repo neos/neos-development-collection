@@ -4,14 +4,22 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Service;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Core\Projection\CatchUpOptions;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
+use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\EventStoreInterface;
@@ -70,7 +78,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
      *
      * Needed for #4322: https://github.com/neos/neos-development-collection/pull/4322
      *
-     * Included in February 2023 - before final Neos 9.0 release
+     * Included in February 2024 - before final Neos 9.0 release
      *
      * @param \Closure $outputFn
      * @return void
@@ -81,7 +89,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $warnings = 0;
 
         $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId)
-            . '_bak_' . date('Y_m_d_H_i_s');
+            . '_bkp_' . date('Y_m_d_H_i_s');
         $outputFn(sprintf('Backup: copying events table to %s', $backupEventTableName));
 
         $this->copyEventTable($backupEventTableName);
@@ -220,6 +228,88 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         if ($warnings) {
             $outputFn(sprintf('WARNING: Finished but %d warnings emitted.', $warnings));
         }
+    }
+
+
+    /**
+     * Adds a dummy workspace name to the events meta-data, so it can be rebased
+     *
+     * The value of the payload for `workspaceName` is only required to successfully instantiate a command by its metadata.
+     * This is only necessary for rebasing where directly override the workspace name to the target one.
+     * Thus, we simply enter a dummy string "missing:{contentStreamId}".
+     *
+     * Needed for #4708: https://github.com/neos/neos-development-collection/pull/4708
+     *
+     * Included in March 2024 - before final Neos 9.0 release
+     *
+     * @param \Closure $outputFn
+     * @return void
+     */
+    public function migrateMetaDataToWorkspaceName(\Closure $outputFn)
+    {
+        $this->eventsModified = [];
+
+        $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId)
+            . '_bkp_' . date('Y_m_d_H_i_s');
+        $outputFn('Backup: copying events table to %s', [$backupEventTableName]);
+
+        $this->copyEventTable($backupEventTableName);
+
+        $streamName = VirtualStreamName::all();
+        $eventStream = $this->eventStore->load($streamName);
+        foreach ($eventStream as $eventEnvelope) {
+            $outputRewriteNotice = fn(string $message) => $outputFn(sprintf('%s@%s %s', $eventEnvelope->sequenceNumber->value, $eventEnvelope->event->type->value, $message));
+            $eventMetaData = $eventEnvelope->event->metadata?->value;
+
+            if (!$eventMetaData || !($commandClassName = $eventMetaData['commandClass'] ?? null)) {
+                continue;
+            }
+
+            /**
+             * Nearly all implementations of {@see RebasableToOtherWorkspaceInterface::createCopyForWorkspace()} have to migrate.
+             * The following commands all require the `$workspaceName` field and have no `$contentStreamId`.
+             * The commands AddDimensionShineThrough and MoveDimensionSpacePoint are exceptions to the rule, which don't
+             * require workspaces but still operate on content streams. {@link https://github.com/neos/neos-development-collection/issues/4942}
+             */
+            if (!in_array($commandClassName, [
+                CreateNodeAggregateWithNodeAndSerializedProperties::class,
+                DisableNodeAggregate::class,
+                EnableNodeAggregate::class,
+                CopyNodesRecursively::class,
+                SetSerializedNodeProperties::class,
+                MoveNodeAggregate::class,
+                SetSerializedNodeReferences::class,
+                RemoveNodeAggregate::class,
+                ChangeNodeAggregateName::class,
+                ChangeNodeAggregateType::class,
+                CreateNodeVariant::class,
+                CreateRootNodeAggregateWithNode::class,
+                UpdateRootNodeAggregateDimensions::class,
+            ])) {
+                continue;
+            }
+
+            if (isset($eventMetaData['commandPayload']['workspaceName'])) {
+                continue;
+            }
+
+            // ... and update the event
+            // the payload is only used for rebasing where we override the workspace either way:
+            $eventMetaData['commandPayload']['workspaceName'] = 'missing:' . ($eventMetaData['commandPayload']['contentStreamId'] ?? '');
+            unset($eventMetaData['commandPayload']['contentStreamId']);
+
+            $outputRewriteNotice(sprintf('Metadata: Added `workspaceName`'));
+
+            $this->updateEventMetaData($eventEnvelope->sequenceNumber, $eventMetaData);
+        }
+
+        if (!count($this->eventsModified)) {
+            $outputFn('Migration was not necessary.');
+            return;
+        }
+
+        $outputFn();
+        $outputFn(sprintf('Migration applied to %s events.', count($this->eventsModified)));
     }
 
     /**

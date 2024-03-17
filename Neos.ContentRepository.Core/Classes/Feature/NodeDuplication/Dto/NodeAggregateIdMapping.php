@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Core\Feature\NodeDuplication\Dto;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**

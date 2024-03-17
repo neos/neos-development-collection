@@ -56,7 +56,7 @@ Feature: Constraint checks on node aggregate disabling
       | Key                          | Value                                  |
       | nodeAggregateId      | "i-do-not-exist"                       |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
+      | tag                          | "disabled"                    |
 
   Scenario: Try to disable an already disabled node aggregate
     Given the command DisableNodeAggregate is executed with payload:
@@ -73,11 +73,12 @@ Feature: Constraint checks on node aggregate disabling
       | coveredDimensionSpacePoint   | {"language": "de"}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
     Then I expect exactly 4 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 3 is of type "NodeAggregateWasDisabled" with payload:
+    And event at index 3 is of type "SubtreeWasTagged" with payload:
       | Key                          | Expected                               |
       | contentStreamId              | "cs-identifier"                        |
       | nodeAggregateId              | "sir-david-nodenborough"               |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
+      | tag                          | "disabled"                             |
 
 
   Scenario: Try to disable a node aggregate in a non-existing dimension space point

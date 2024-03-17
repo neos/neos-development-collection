@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * A node id (Content Stream, NodeAggregateId, DimensionSpacePoint); used when
@@ -30,8 +29,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class NodeIdToPublishOrDiscard implements \JsonSerializable
 {
     public function __construct(
-        /** @todo do we really need this? should be unique per command, not per node in the command */
-        public WorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public DimensionSpacePoint $dimensionSpacePoint,
     ) {
@@ -43,7 +40,6 @@ final readonly class NodeIdToPublishOrDiscard implements \JsonSerializable
     public static function fromArray(array $array): self
     {
         return new self(
-            WorkspaceName::fromString($array['workspaceName']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
         );

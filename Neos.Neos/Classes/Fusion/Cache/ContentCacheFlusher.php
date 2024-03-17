@@ -15,13 +15,14 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\Cache;
 
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
@@ -65,7 +66,7 @@ class ContentCacheFlusher
 
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
-        $this->registerChangeOnNodeIdentifier($contentStreamId, $nodeAggregateId, $tagsToFlush);
+        $this->registerChangeOnNodeIdentifier($contentRepository->id, $contentStreamId, $nodeAggregateId, $tagsToFlush);
         $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
             $contentStreamId,
             $nodeAggregateId
@@ -77,6 +78,7 @@ class ContentCacheFlusher
 
         $this->registerChangeOnNodeType(
             $nodeAggregate->nodeTypeName,
+            $contentRepository->id,
             $contentStreamId,
             $nodeAggregateId,
             $tagsToFlush,
@@ -112,19 +114,10 @@ class ContentCacheFlusher
             }
             $processedNodeAggregateIds[$nodeAggregate->nodeAggregateId->value] = true;
 
-            $tagName = 'DescendantOf_%' . $nodeAggregate->contentStreamId->value
-                . '%_' . $nodeAggregate->nodeAggregateId->value;
-            $tagsToFlush[$tagName] = sprintf(
+            $tagName = CacheTag::forDescendantOfNode($contentRepository->id, $nodeAggregate->contentStreamId, $nodeAggregate->nodeAggregateId);
+            $tagsToFlush[$tagName->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',
-                $tagName,
-                $nodeAggregate->nodeAggregateId->value
-            );
-
-            // Legacy
-            $legacyTagName = 'DescendantOf_' . $nodeAggregate->nodeAggregateId->value;
-            $tagsToFlush[$legacyTagName] = sprintf(
-                'which were tagged with legacy "%s" because node "%s" has changed.',
-                $legacyTagName,
+                $tagName->value,
                 $nodeAggregate->nodeAggregateId->value
             );
 
@@ -150,33 +143,23 @@ class ContentCacheFlusher
      * @param array<string,string> &$tagsToFlush
      */
     private function registerChangeOnNodeIdentifier(
+        ContentRepositoryId $contentRepositoryId,
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
         array &$tagsToFlush
     ): void {
-        $cacheIdentifier = '%' . $contentStreamId->value . '%_' . $nodeAggregateId->value;
-        $tagsToFlush['Node_' . $cacheIdentifier] = sprintf(
-            'which were tagged with "Node_%s" because that identifier has changed.',
-            $cacheIdentifier
-        );
-        $tagName = 'DescendantOf_' . $cacheIdentifier;
-        $tagsToFlush[$tagName] = sprintf(
-            'which were tagged with "%s" because node "%s" has changed.',
-            $tagName,
-            $cacheIdentifier
+
+        $nodeCacheIdentifier = CacheTag::forNodeAggregate($contentRepositoryId, $contentStreamId, $nodeAggregateId);
+        $tagsToFlush[$nodeCacheIdentifier->value] = sprintf(
+            'which were tagged with "%s" because that identifier has changed.',
+            $nodeCacheIdentifier->value
         );
 
-        // Legacy
-        $cacheIdentifier = $nodeAggregateId->value;
-        $tagsToFlush['Node_' . $cacheIdentifier] = sprintf(
-            'which were tagged with "Node_%s" because that identifier has changed.',
-            $cacheIdentifier
-        );
-        $tagName = 'DescendantOf_' . $cacheIdentifier;
-        $tagsToFlush[$tagName] = sprintf(
+        $descandantOfNodeCacheIdentifier = CacheTag::forDescendantOfNode($contentRepositoryId, $contentStreamId, $nodeAggregateId);
+        $tagsToFlush[$descandantOfNodeCacheIdentifier->value] = sprintf(
             'which were tagged with "%s" because node "%s" has changed.',
-            $tagName,
-            $cacheIdentifier
+            $descandantOfNodeCacheIdentifier->value,
+            $nodeCacheIdentifier->value
         );
     }
 
@@ -189,33 +172,27 @@ class ContentCacheFlusher
      */
     private function registerChangeOnNodeType(
         NodeTypeName $nodeTypeName,
+        ContentRepositoryId $contentRepositoryId,
         ContentStreamId $contentStreamId,
         ?NodeAggregateId $referenceNodeIdentifier,
         array &$tagsToFlush,
         ContentRepository $contentRepository
     ): void {
         try {
-            $nodeTypesToFlush = $this->getAllImplementedNodeTypeNames(
+            $nodeTypesNamesToFlush = $this->getAllImplementedNodeTypeNames(
                 $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName)
             );
         } catch (NodeTypeNotFoundException $e) {
             // as a fallback, we flush the single NodeType
-            $nodeTypesToFlush = [$nodeTypeName->value];
+            $nodeTypesNamesToFlush = [$nodeTypeName->value];
         }
 
-        foreach ($nodeTypesToFlush as $nodeTypeNameToFlush) {
-            $tagsToFlush['NodeType_%' . $contentStreamId->value . '%_' . $nodeTypeNameToFlush] = sprintf(
-                'which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".',
-                $nodeTypeNameToFlush,
+        foreach ($nodeTypesNamesToFlush as $nodeTypeNameToFlush) {
+            $nodeTypeNameCacheIdentifier = CacheTag::forNodeTypeName($contentRepositoryId, $contentStreamId, NodeTypeName::fromString($nodeTypeNameToFlush));
+            $tagsToFlush[$nodeTypeNameCacheIdentifier->value] = sprintf(
+                'which were tagged with "%s" because node "%s" has changed and was of type "%s".',
+                $nodeTypeNameCacheIdentifier->value,
                 ($referenceNodeIdentifier?->value ?? ''),
-                $nodeTypeName->value
-            );
-
-            // Legacy, but still used
-            $tagsToFlush['NodeType_' . $nodeTypeNameToFlush] = sprintf(
-                'which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".',
-                $nodeTypeNameToFlush,
-                ($referenceNodeIdentifier->value ?? ''),
                 $nodeTypeName->value
             );
         }
@@ -250,7 +227,7 @@ class ContentCacheFlusher
      * @param NodeType $nodeType
      * @return array<string>
      */
-    protected function getAllImplementedNodeTypeNames(NodeType $nodeType)
+    protected function getAllImplementedNodeTypeNames(NodeType $nodeType): array
     {
         $self = $this;
         $types = array_reduce(
@@ -261,8 +238,7 @@ class ContentCacheFlusher
             [$nodeType->name->value]
         );
 
-        $types = array_unique($types);
-        return $types;
+        return array_unique($types);
     }
 
 

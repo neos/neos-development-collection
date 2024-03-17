@@ -161,3 +161,4 @@ Feature: Workspace discarding - basic functionality
     And the graph projection is fully up to date
 
     Then workspace user-ws-two has status OUTDATED
+

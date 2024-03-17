@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
@@ -23,8 +22,11 @@ use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWork
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -32,7 +34,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
@@ -112,23 +113,33 @@ class WorkspaceCommandController extends CommandController
      *
      * @param string $workspace Name of the workspace, for example "user-john"
      * @param string $contentRepositoryIdentifier
+     * @param bool $force Rebase all events that do not conflict
      * @throws StopCommandException
      */
-    public function rebaseCommand(string $workspace, string $contentRepositoryIdentifier = 'default'): void
+    public function rebaseCommand(string $workspace, string $contentRepositoryIdentifier = 'default', bool $force = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         try {
-            $contentRepository->handle(
-                RebaseWorkspace::create(
-                    WorkspaceName::fromString($workspace),
-                )
-            )->block();
+            $rebaseCommand = RebaseWorkspace::create(
+                WorkspaceName::fromString($workspace),
+            );
+            if ($force) {
+                $rebaseCommand = $rebaseCommand->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::STRATEGY_FORCE);
+            }
+            $contentRepository->handle($rebaseCommand)->block();
         } catch (WorkspaceDoesNotExist $exception) {
             $this->outputLine('Workspace "%s" does not exist', [$workspace]);
             $this->quit(1);
         }
+
+        $workspaceObject = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
+        if ($workspaceObject && $workspaceObject->status === WorkspaceStatus::OUTDATED_CONFLICT) {
+            $this->outputLine('Rebasing of workspace %s is not possible due to conflicts. You can try the --force option.', [$workspace]);
+            $this->quit(1);
+        }
+
         $this->outputLine('Rebased workspace %s', [$workspace]);
     }
 

@@ -16,11 +16,9 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
@@ -74,42 +72,6 @@ trait NodeDisabling
             $this->lastCommandException = $exception;
         }
     }
-
-    /**
-     * @Given /^the event NodeAggregateWasDisabled was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theEventNodeAggregateWasDisabledWasPublishedWithPayload(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            array_key_exists('contentStreamId', $eventPayload)
-                ? ContentStreamId::fromString($eventPayload['contentStreamId'])
-                : $this->currentContentStreamId
-        );
-
-        $this->publishEvent('NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
-    }
-
-
-    /**
-     * @Given /^the event NodeAggregateWasEnabled was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theEventNodeAggregateWasEnabledWasPublishedWithPayload(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            array_key_exists('contentStreamId', $eventPayload)
-                ? ContentStreamId::fromString($eventPayload['contentStreamId'])
-                : $this->currentContentStreamId
-        );
-
-        $this->publishEvent('NodeAggregateWasEnabled', $streamName->getEventStreamName(), $eventPayload);
-    }
-
 
     /**
      * @Given /^the command EnableNodeAggregate is executed with payload:$/

@@ -15,12 +15,13 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -104,6 +105,9 @@ trait WorkspaceCreation
         );
         if (isset($commandArguments['rebasedContentStreamId'])) {
             $command = $command->withRebasedContentStreamId(ContentStreamId::fromString($commandArguments['rebasedContentStreamId']));
+        }
+        if (isset($commandArguments['rebaseErrorHandlingStrategy'])) {
+            $command = $command->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::from($commandArguments['rebaseErrorHandlingStrategy']));
         }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);

@@ -16,15 +16,16 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Node aggregate read model. Returned mainly from {@see ContentGraphInterface}.
@@ -50,6 +51,20 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
  */
 final class NodeAggregate
 {
+    /**
+     * @param ContentStreamId $contentStreamId ID of the content stream of this node aggregate
+     * @param NodeAggregateId $nodeAggregateId ID of this node aggregate
+     * @param NodeAggregateClassification $classification whether this aggregate represents a root, regular or tethered node
+     * @param NodeTypeName $nodeTypeName name of the node type of this aggregate
+     * @param NodeName|null $nodeName optional name of this aggregate
+     * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints dimension space points this aggregate occupies
+     * @param array<string,Node> $nodesByOccupiedDimensionSpacePoint
+     * @param CoverageByOrigin $coverageByOccupant
+     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
+     * @param array<string,Node> $nodesByCoveredDimensionSpacePoint
+     * @param OriginByCoverage $occupationByCovered
+     * @param DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags dimension space points for every subtree tag this aggregate is *explicitly* tagged with (excluding inherited tags)
+     */
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
@@ -57,18 +72,12 @@ final class NodeAggregate
         public readonly NodeTypeName $nodeTypeName,
         public readonly ?NodeName $nodeName,
         public readonly OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
-        /** @var array<string,Node> */
         private readonly array $nodesByOccupiedDimensionSpacePoint,
         private readonly CoverageByOrigin $coverageByOccupant,
         public readonly DimensionSpacePointSet $coveredDimensionSpacePoints,
-        /** @var array<string,Node> */
         private readonly array $nodesByCoveredDimensionSpacePoint,
         private readonly OriginByCoverage $occupationByCovered,
-        /**
-         * The dimension space point set this node aggregate disables.
-         * This is *not* necessarily the set it is disabled in, since that is determined by its ancestors
-         */
-        public readonly DimensionSpacePointSet $disabledDimensionSpacePoints
+        private readonly DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
     ) {
     }
 
@@ -144,8 +153,14 @@ final class NodeAggregate
         return $occupation;
     }
 
-    public function disablesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
+    /**
+     * Returns the dimension space points this aggregate is *explicitly* tagged in with the specified $subtreeTag
+     * NOTE: This won't respect inherited subtree tags!
+     *
+     * @internal This is a low level concept that is not meant to be used outside the core or tests
+     */
+    public function getDimensionSpacePointsTaggedWith(SubtreeTag $subtreeTag): DimensionSpacePointSet
     {
-        return $this->disabledDimensionSpacePoints->contains($dimensionSpacePoint);
+        return $this->dimensionSpacePointsBySubtreeTags->forSubtreeTag($subtreeTag);
     }
 }

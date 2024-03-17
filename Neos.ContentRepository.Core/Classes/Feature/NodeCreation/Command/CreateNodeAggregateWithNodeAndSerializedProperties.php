@@ -138,8 +138,7 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return (
-            $this->workspaceName === $nodeIdToPublish->workspaceName
-                && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
+            $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
                 && $this->originDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
         );
     }
