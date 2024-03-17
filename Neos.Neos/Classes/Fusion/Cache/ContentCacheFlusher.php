@@ -276,6 +276,10 @@ class ContentCacheFlusher
             $asset = $asset->getOriginalAsset();
         }
 
+        if ($asset->getAssetSourceIdentifier() === null) {
+            return;
+        }
+
         $tagsToFlush = [];
         $filter = AssetUsageFilter::create()
             ->withAsset($asset->getAssetSourceIdentifier())
