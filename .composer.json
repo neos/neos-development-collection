@@ -26,6 +26,10 @@
       "@lint:phpstan",
       "@lint:distributionintegrity"
     ],
+    "lint:fix": [
+      "@lint:phpcs:fix",
+      "@lint:php-cs-fixer:fix"
+    ],
     "test:unit": [
       "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository.Core/Tests/Unit",
       "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepositoryRegistry/Tests/Unit"
