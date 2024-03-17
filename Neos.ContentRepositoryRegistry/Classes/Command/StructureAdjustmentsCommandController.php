@@ -12,14 +12,13 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandController;
 
 final class StructureAdjustmentsCommandController extends CommandController
 {

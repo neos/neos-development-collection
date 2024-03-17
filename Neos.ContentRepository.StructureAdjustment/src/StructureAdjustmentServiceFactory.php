@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\StructureAdjustment;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<StructureAdjustmentService>

@@ -15,11 +15,11 @@ declare(strict_types=1);
 namespace Neos\Neos\Routing;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 
 /**
  * Aspect to convert a node object to its context node path. This is used in URI

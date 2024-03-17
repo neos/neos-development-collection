@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
-
 /**
  * Unary operation that negates a criteria:
  *   "NOT (prop1 = 'foo' OR prop1 = 'bar')"

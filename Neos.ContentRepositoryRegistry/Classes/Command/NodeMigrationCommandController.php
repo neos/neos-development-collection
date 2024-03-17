@@ -12,17 +12,17 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
-use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
+use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
+use Neos\ContentRepository\NodeMigration\MigrationException;
+use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Migration\Factory\MigrationFactory;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Service\NodeMigrationGeneratorService;
-use Neos\Flow\Cli\CommandController;
-use Neos\ContentRepository\NodeMigration\MigrationException;
-use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\PackageManager;
