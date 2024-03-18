@@ -39,6 +39,10 @@ final readonly class VisibilityConstraints implements \JsonSerializable
         return md5(implode('|', $this->tagConstraints->toStringArray()));
     }
 
+    /**
+     * A non restricted subgraph can find all nodes without filtering.
+     * Disabled nodes are this way also findable.
+     */
     public static function withoutRestrictions(): self
     {
         return new self(SubtreeTags::createEmpty());
