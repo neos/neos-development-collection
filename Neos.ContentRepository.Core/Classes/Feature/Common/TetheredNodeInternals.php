@@ -136,10 +136,19 @@ trait TetheredNodeInternals
                 );
             }
 
-            $rootDimensionSpacePoints = $this->interDimensionalVariationGraph->getRootGeneralizations();
-            $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
-            $childNodeSource = $childNodeAggregate->getNodeByCoveredDimensionSpacePoint($arbitraryRootDimensionSpacePoint);
-
+            // todo use this instead?
+            // $rootDimensionSpacePoints = $this->interDimensionalVariationGraph->getRootGeneralizations();
+            // $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
+            // $childNodeSource = $childNodeAggregate->getNodeByCoveredDimensionSpacePoint($arbitraryRootDimensionSpacePoint);
+            // or that???
+            // $occupiedDimensionSpacePoints = $childNodeAggregate->occupiedDimensionSpacePoints->getPoints();
+            // $arbitraryOccupiedDimensionSpacePoint = array_shift($occupiedDimensionSpacePoints);
+            $childNodeSource = null;
+            foreach ($childNodeAggregate->getNodes() as $node) {
+                $childNodeSource = $node;
+                break;
+            }
+            /** @var Node $childNodeSource Node aggregates are never empty */
             return $this->createEventsForVariations(
                 $parentNodeAggregate->contentStreamId,
                 $childNodeSource->originDimensionSpacePoint,
