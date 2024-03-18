@@ -190,7 +190,7 @@ readonly class WorkspacePublisher
         NodeTypeName $ancestorNodeTypeName
     ): NodeIdsToPublishOrDiscard {
         /** @var ChangeFinder $changeFinder */
-        $changeFinder = $contentRepository->projectionState(ChangeProjection::class);
+        $changeFinder = $contentRepository->projectionState(ChangeFinder::class);
         $contentStreamId = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)->currentContentStreamId;
         $changes = $changeFinder->findByContentStreamId($contentStreamId);
         $nodeIdsToPublishOrDiscard = [];
