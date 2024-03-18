@@ -111,7 +111,7 @@ final class NodeTypeManager
      *
      * @throws NodeTypeNotFoundException
      */
-    public function getNodeType(string|NodeTypeName $nodeTypeName): NodeType
+    public function getNodeType(string|NodeTypeName $nodeTypeName): ?NodeType
     {
         if ($nodeTypeName instanceof NodeTypeName) {
             $nodeTypeName = $nodeTypeName->value;
@@ -122,6 +122,8 @@ final class NodeTypeManager
         if (isset($this->cachedNodeTypes[$nodeTypeName])) {
             return $this->cachedNodeTypes[$nodeTypeName];
         }
+        return null;
+    }
 
         throw new NodeTypeNotFoundException(
             sprintf(

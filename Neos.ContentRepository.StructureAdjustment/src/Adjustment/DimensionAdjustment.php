@@ -24,9 +24,8 @@ class DimensionAdjustment
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): iterable
     {
-        try {
-            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        } catch (NodeTypeNotFoundException) {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType) {
             return [];
         }
         if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
