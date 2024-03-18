@@ -7,7 +7,6 @@ namespace Neos\Neos\AssetUsage\Projection;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\Media\Domain\Repository\AssetRepository;
 
 /**
