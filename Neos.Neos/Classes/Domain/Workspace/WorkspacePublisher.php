@@ -27,8 +27,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\PendingChangesProjection\Change;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
-use Neos\Neos\PendingChangesProjection\ChangeProjection;
 
 /**
  * Neos' workspace publisher service
@@ -195,16 +197,13 @@ readonly class WorkspacePublisher
         $changes = $changeFinder->findByContentStreamId($contentStreamId);
         $nodeIdsToPublishOrDiscard = [];
         foreach ($changes as $change) {
-            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            if (!$this->isChangePublishableWithinAncestorScope(
+                $contentRepository,
                 $contentStreamId,
-                $change->originDimensionSpacePoint->toDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
-            );
-            $documentNode = $subgraph->findClosestNode(
-                $change->nodeAggregateId,
-                FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
-            );
-            if (!($documentNode?->nodeAggregateId->equals($ancestorId))) {
+                $change,
+                $ancestorNodeTypeName,
+                $ancestorId
+            )) {
                 continue;
             }
 
@@ -215,5 +214,60 @@ readonly class WorkspacePublisher
         }
 
         return NodeIdsToPublishOrDiscard::create(...$nodeIdsToPublishOrDiscard);
+    }
+
+    private function isChangePublishableWithinAncestorScope(
+        ContentRepository $contentRepository,
+        ContentStreamId $contentStreamId,
+        Change $change,
+        NodeTypeName $ancestorNodeTypeName,
+        NodeAggregateId $ancestorId
+    ): bool {
+        // see method comment for `isChangeWithSelfReferencingRemovalAttachmentPoint`
+        // to get explanation for this condition
+        if ($this->isChangeWithSelfReferencingRemovalAttachmentPoint($change)) {
+            if ($ancestorNodeTypeName->equals(NodeTypeNameFactory::forSite())) {
+                return true;
+            }
+        }
+
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $contentStreamId,
+            $change->originDimensionSpacePoint->toDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+
+        // A Change is publishable if the respective node (or the respective
+        // removal attachment point) has a closest ancestor that matches our
+        // current ancestor scope (Document/Site)
+        $actualAncestorNode = $subgraph->findClosestNode(
+            $change->removalAttachmentPoint ?? $change->nodeAggregateId,
+            FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
+        );
+
+        return $actualAncestorNode?->nodeAggregateId->equals($ancestorId) ?? false;
+    }
+
+    /**
+     * Before the introduction of the WorkspacePublisher, the UI only ever
+     * referenced the closest document node as a removal attachment point.
+     *
+     * Removed document nodes therefore were referencing themselves.
+     *
+     * In order to enable publish/discard of removed documents, the removal
+     * attachment point of a document MUST refer to an ancestor. The UI now
+     * references the site node in those cases.
+     *
+     * Workspaces that were created before this change was introduced may
+     * contain removed documents, for which the site node can longer be
+     * located, because we have no reference to their respective site.
+     *
+     * Every document node that matches that description will be published
+     * or discarded by WorkspacePublisher::publishSite, regardless of what
+     * the current site is.
+     */
+    private function isChangeWithSelfReferencingRemovalAttachmentPoint(Change $change): bool
+    {
+        return $change->removalAttachmentPoint?->equals($change->nodeAggregateId) ?? false;
     }
 }
