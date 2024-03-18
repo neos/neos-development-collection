@@ -57,11 +57,11 @@ final class ContentRepositoryRegistry
 
     /**
      * This is the main entry point for Neos / Flow installations to fetch a content repository.
-     * A content repository is not a singleton and must be fetched by CR identifier.
+     * A content repository is not a singleton and must be fetched by its identifier.
      *
-     * To get a hold of a CR identifier, it has to be passed along.
+     * To get a hold of a content repository identifier, it has to be passed along.
      *
-     * For Neos web request, the current content repository can be inferred by the domain and the connected site:
+     * For Neos web requests, the current content repository can be inferred by the domain and the connected site:
      * {@see \Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult::fromRequest()}
      * Or it has to be encoded manually as part of a query parameter.
      *
