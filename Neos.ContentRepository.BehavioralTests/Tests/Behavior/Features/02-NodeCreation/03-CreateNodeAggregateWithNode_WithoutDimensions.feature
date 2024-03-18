@@ -30,7 +30,7 @@ Feature: Create node aggregate with node
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -149,7 +149,7 @@ Feature: Create node aggregate with node
       | Key         | Value        |
       | defaultText | "my default" |
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect the subgraph projection to consist of exactly 4 nodes
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no parent node
@@ -201,7 +201,7 @@ Feature: Create node aggregate with node
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -242,7 +242,7 @@ Feature: Create node aggregate with node
       | succeedingNodeAggregateId   | "sir-david-nodenborough"                                       |
 
     When the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
@@ -286,7 +286,7 @@ Feature: Create node aggregate with node
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -408,7 +408,7 @@ Feature: Create node aggregate with node
       | Key  | Value                |
       | text | "my sub sub default" |
 
-    When I am in content stream "cs-identifier" and dimension space point []
+    When I am in the active content stream of workspace "live" and dimension space point []
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no parent node
     And I expect this node to have the following child nodes:
@@ -470,7 +470,7 @@ Feature: Create node aggregate with node
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:

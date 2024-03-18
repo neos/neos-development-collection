@@ -16,8 +16,6 @@ namespace Neos\ContentRepository\TestSuite\Unit;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ArrayNormalizer;
 use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer;
@@ -32,9 +30,11 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -85,14 +85,7 @@ final class NodeSubjectProvider
         SerializedPropertyValues $propertyValues = null,
         ?NodeName $nodeName = null
     ): Node {
-        $defaultPropertyValues = [];
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-            $defaultPropertyValues[$propertyName] = new SerializedPropertyValue(
-                $propertyValue,
-                $nodeType->getPropertyType($propertyName)
-            );
-        }
-        $serializedDefaultPropertyValues = SerializedPropertyValues::fromArray($defaultPropertyValues);
+        $serializedDefaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->propertyConverter);
         return Node::create(
             ContentSubgraphIdentity::create(
                 ContentRepositoryId::fromString('default'),
@@ -112,6 +105,7 @@ final class NodeSubjectProvider
                 $this->propertyConverter
             ),
             $nodeName,
+            NodeTags::createEmpty(),
             Timestamps::create(
                 new \DateTimeImmutable(),
                 new \DateTimeImmutable(),

@@ -16,11 +16,11 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
+/** @internal */
 #[Flow\Proxy(false)]
-class ValueCopy extends AbstractOperation
+final readonly class ValueCopy extends AbstractOperation
 {
     public function __construct(
-        /** @psalm-readonly */
         public AssignedObjectPath $assignedObjectPath
     ) {
     }

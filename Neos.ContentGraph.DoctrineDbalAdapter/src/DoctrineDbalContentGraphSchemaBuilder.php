@@ -4,7 +4,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
@@ -29,7 +28,6 @@ class DoctrineDbalContentGraphSchemaBuilder
             $this->createNodeTable(),
             $this->createHierarchyRelationTable(),
             $this->createReferenceRelationTable(),
-            $this->createRestrictionRelationTable()
         ]);
     }
 
@@ -64,7 +62,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForDimensionSpacePoint('dimensionspacepoint')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor'),
-            DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor')
+            DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor'),
+            (new Column('subtreetags', Type::getType(Types::JSON)))->setDefault('{}'),
         ]);
 
         return $table
@@ -87,22 +86,5 @@ class DoctrineDbalContentGraphSchemaBuilder
 
         return $table
             ->setPrimaryKey(['name', 'position', 'nodeanchorpoint']);
-    }
-
-    private function createRestrictionRelationTable(): Table
-    {
-        $table = new Table($this->tableNamePrefix . '_restrictionrelation', [
-            DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotnull(true),
-            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotnull(true),
-            DbalSchemaFactory::columnForNodeAggregateId('originnodeaggregateid')->setNotnull(false),
-            DbalSchemaFactory::columnForNodeAggregateId('affectednodeaggregateid')->setNotnull(false),
-        ]);
-
-        return $table->setPrimaryKey([
-            'contentstreamid',
-            'dimensionspacepointhash',
-            'originnodeaggregateid',
-            'affectednodeaggregateid'
-        ]);
     }
 }

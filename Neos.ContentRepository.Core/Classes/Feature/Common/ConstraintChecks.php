@@ -18,11 +18,18 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
-use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
-use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
@@ -40,23 +47,18 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDisablesDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateTypeIsAlreadyOccupied;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
-use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * @internal implementation details of command handlers
@@ -68,19 +70,27 @@ trait ConstraintChecks
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
     /**
-     * @param ContentStreamId $contentStreamId
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(
-        ContentStreamId $contentStreamId,
+    protected function requireContentStream(
+        WorkspaceName $workspaceName,
         ContentRepository $contentRepository
-    ): void {
+    ): ContentStreamId {
+        $contentStreamId = ContentStreamIdOverride::resolveContentStreamIdForWorkspace($contentRepository, $workspaceName);
         if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692
             );
         }
+        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) === ContentStreamState::STATE_CLOSED) {
+            throw new ContentStreamIsClosed(
+                'Content stream "' . $contentStreamId->value . '" is closed.',
+                1710260081
+            );
+        }
+
+        return $contentStreamId;
     }
 
     /**
@@ -102,7 +112,7 @@ trait ConstraintChecks
     protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType
     {
         try {
-            return $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+            return $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         } catch (NodeTypeNotFoundException $exception) {
             throw new NodeTypeNotFound(
                 'Node type "' . $nodeTypeName->value . '" is unknown to the node type manager.',
@@ -191,7 +201,7 @@ trait ConstraintChecks
 
     protected function requireNodeTypeToDeclareProperty(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         if (!$nodeType->hasProperty($propertyName->value)) {
             throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
                 $propertyName,
@@ -202,7 +212,7 @@ trait ConstraintChecks
 
     protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $referenceName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         if ($nodeType->hasReference($referenceName->value)) {
             return;
         }
@@ -214,7 +224,7 @@ trait ConstraintChecks
         ReferenceName $referenceName,
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
         $constraints = $nodeType->getReferences()[$referenceName->value]['constraints']['nodeTypes'] ?? [];
 
         if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($this->getNodeTypeManager()->getNodeType($nodeTypeNameInQuestion))) {
@@ -266,12 +276,14 @@ trait ConstraintChecks
                 $parentNodeAggregateId,
                 $contentRepository
             );
-            try {
-                $parentsNodeType = $this->requireNodeType($parentAggregate->nodeTypeName);
-                $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeName, $nodeType);
-            } catch (NodeTypeNotFound $e) {
-                // skip constraint check; Once the parent is changed to be of an available type,
-                // the constraint checks are executed again. See handleChangeNodeAggregateType
+            if (!$parentAggregate->classification->isTethered()) {
+                try {
+                    $parentsNodeType = $this->requireNodeType($parentAggregate->nodeTypeName);
+                    $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeName, $nodeType);
+                } catch (NodeTypeNotFound $e) {
+                    // skip constraint check; Once the parent is changed to be of an available type,
+                    // the constraint checks are executed again. See handleChangeNodeAggregateType
+                }
             }
 
             foreach (
@@ -289,7 +301,7 @@ trait ConstraintChecks
                         $nodeType
                     );
                 } catch (NodeTypeNotFound $e) {
-                    // skip constraint check; Once the grand parent is changed to be of an available type,
+                    // skip constraint check; Once the grandparent is changed to be of an available type,
                     // the constraint checks are executed again. See handleChangeNodeAggregateType
                 }
             }
@@ -309,7 +321,8 @@ trait ConstraintChecks
         if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
             throw new NodeConstraintException(
                 'Node type "' . $nodeType->name->value . '" is not allowed for child nodes of type '
-                    . $parentsNodeType->name->value
+                    . $parentsNodeType->name->value,
+                1707561400
             );
         }
         if (
@@ -321,7 +334,8 @@ trait ConstraintChecks
                 'Node type "' . $nodeType->name->value . '" does not match configured "'
                     . $this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->value
                     . '" for auto created child nodes for parent type "' . $parentsNodeType->name->value
-                    . '" with name "' . $nodeName->value . '"'
+                    . '" with name "' . $nodeName->value . '"',
+                1707561404
             );
         }
     }
@@ -647,7 +661,7 @@ trait ConstraintChecks
         PropertyValuesToWrite $referenceProperties,
         NodeTypeName $nodeTypeName
     ): void {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 
         foreach ($referenceProperties->values as $propertyName => $propertyValue) {
             $referencePropertyConfig = $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]
@@ -675,5 +689,16 @@ trait ConstraintChecks
                 );
             }
         }
+    }
+
+    protected function getExpectedVersionOfContentStream(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): ExpectedVersion {
+        return ExpectedVersion::fromVersion(
+            $contentRepository->getContentStreamFinder()
+                ->findVersionForContentStream($contentStreamId)
+                ->unwrap()
+        );
     }
 }

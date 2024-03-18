@@ -65,6 +65,7 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
+        // doctrine is running and we could fetch a site. This makes no promise if the content repository is set up.
         $siteDetectionResult = SiteDetectionResult::create($site->getNodeName(), $site->getConfiguration()->contentRepositoryId);
         return $handler->handle($siteDetectionResult->storeInRequest($request));
     }

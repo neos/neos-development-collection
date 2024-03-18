@@ -20,6 +20,7 @@ use Neos\Fusion;
  * This dsl factory takes care of instantiating a Fusion dsl transpilers.
  *
  * @Flow\Scope("singleton")
+ * @internal the factory is internal but implementing a DSL is api.
  */
 class DslFactory
 {

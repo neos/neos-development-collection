@@ -78,6 +78,7 @@ Prerequisites
 =============
 
 - You need PHP 8.2 installed.
+- You need a recent MySQL/MariaDB (PostgreSQL ist not yet supported)
 - Please be sure to run off the Neos-Development-Distribution in Branch 9.0, to avoid dependency issues (as described above).
 
 Setup
@@ -184,14 +185,15 @@ we use the right versions etc).
 
    .. code-block:: bash
 
-       bin/behat -c Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
+       cd Packages/Neos
+       composer test:behavioral
 
 Running all tests can take a long time, depending on the hardware.
-To speed up the process, Behat tests can be executed in a "synchronous" mode by setting the `CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION` environment variable:
+To speed up the process, Behat tests can be executed in a "synchronous" mode:
 
    .. code-block:: bash
 
-       CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1 bin/behat -c Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
+       composer test:behavioral:sync
 
 Alternatively, if you want to reproduce errors as they happen inside the CI system, but you
 develop on Mac OS, you might want to run the Behat tests in a Docker container (= a linux environment)
@@ -209,8 +211,5 @@ described below also makes it easy to run the race-condition-detector:
        FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:reset
 
        ../../../../../bin/behat -c behat.yml.dist
-
-       # To run tests in speed mode, run CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1
-       CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1 ../../../../../bin/behat -c behat.yml.dist
 
        FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:analyzeTrace

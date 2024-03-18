@@ -8,6 +8,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 final class Transformations
 {
@@ -90,30 +91,32 @@ final class Transformations
     }
 
     public function executeGlobalAndBlock(
-        ContentStreamId $contentStreamForReading,
+        WorkspaceName $workspaceNameForReading,
         ContentStreamId $contentStreamForWriting
     ): void {
         foreach ($this->globalTransformations as $globalTransformation) {
-            $globalTransformation->execute($contentStreamForReading, $contentStreamForWriting)->block();
+            $globalTransformation->execute($workspaceNameForReading, $contentStreamForWriting)->block();
         }
     }
 
     public function executeNodeAggregateBasedAndBlock(
         NodeAggregate $nodeAggregate,
+        WorkspaceName $workspaceNameForWriting,
         ContentStreamId $contentStreamForWriting
     ): void {
         foreach ($this->nodeAggregateBasedTransformations as $nodeAggregateBasedTransformation) {
-            $nodeAggregateBasedTransformation->execute($nodeAggregate, $contentStreamForWriting)->block();
+            $nodeAggregateBasedTransformation->execute($nodeAggregate, $workspaceNameForWriting, $contentStreamForWriting)->block();
         }
     }
 
     public function executeNodeBasedAndBlock(
         Node $node,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
+        WorkspaceName $workspaceNameForWriting,
         ContentStreamId $contentStreamForWriting
     ): void {
         foreach ($this->nodeBasedTransformations as $nodeBasedTransformation) {
-            $nodeBasedTransformation->execute($node, $coveredDimensionSpacePoints, $contentStreamForWriting)?->block();
+            $nodeBasedTransformation->execute($node, $coveredDimensionSpacePoints, $workspaceNameForWriting, $contentStreamForWriting)?->block();
         }
     }
 }

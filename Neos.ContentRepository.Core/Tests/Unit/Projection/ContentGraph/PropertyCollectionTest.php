@@ -48,16 +48,7 @@ class PropertyCollectionTest extends TestCase
         $this->mockSerializer->expects($this->never())->method($this->anything());
         $collection = new PropertyCollection(SerializedPropertyValues::fromArray(['someProperty' => ['value' => 'some string', 'type' => 'string']]), $this->mockPropertyConverter);
         self::assertNull($collection['non-existing']);
-    }
-
-    /**
-     * @test
-     */
-    public function offsetGetReturnsNullIfSerializedPropertyValueIsNull(): void
-    {
-        $this->mockSerializer->expects($this->never())->method($this->anything());
-        $collection = new PropertyCollection(SerializedPropertyValues::fromArray(['someProperty' => ['value' => null, 'type' => 'string']]), $this->mockPropertyConverter);
-        self::assertNull($collection['someProperty']);
+        self::assertFalse(isset($collection['non-existing']));
     }
 
     /**
@@ -68,6 +59,35 @@ class PropertyCollectionTest extends TestCase
         $this->mockSerializer->expects($this->once())->method('denormalize')->with('some string', 'string', null, [])->willReturn('some deserialized value');
         $collection = new PropertyCollection(SerializedPropertyValues::fromArray(['someProperty' => ['value' => 'some string', 'type' => 'string']]), $this->mockPropertyConverter);
         self::assertSame('some deserialized value', $collection['someProperty']);
+        self::assertTrue(isset($collection['someProperty']));
+    }
+
+    /**
+     * @test
+     */
+    public function deserializedValueMightEvaluateToNull(): void
+    {
+        $this->mockSerializer->expects($this->once())->method('denormalize')
+            ->with('protected-image-123', 'ImageEntity', null, [])
+            ->willReturn(null);
+
+        $collection = new PropertyCollection(
+            SerializedPropertyValues::fromArray([
+                'myImage' => [
+                    'value' => 'protected-image-123',
+                    'type' => 'ImageEntity'
+                ]
+            ]),
+            $this->mockPropertyConverter
+        );
+
+        // $node->hasProperty("myImage") will be true
+        self::assertTrue(isset($collection['myImage']));
+
+        // An entity privilege would result in a referenced object being null if the user reading
+        // the node doesn't have permission to see it.
+        // $node->getProperty("myImage") will be null!!!
+        self::assertNull($collection['myImage']);
     }
 
     /**
@@ -107,7 +127,6 @@ class PropertyCollectionTest extends TestCase
     {
         $serializedPropertyValues = SerializedPropertyValues::fromArray(['someProperty' => ['value' => 'some string', 'type' => 'string']]);
         $collection = new PropertyCollection($serializedPropertyValues, $this->mockPropertyConverter);
-        self::assertSame($serializedPropertyValues, $collection->serialized());
+        self::assertEquals($serializedPropertyValues, $collection->serialized());
     }
-
 }

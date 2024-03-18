@@ -11,12 +11,12 @@ namespace Neos\ContentRepositoryRegistry\Migration\Configuration;
  * source code.
  */
 
+use Neos\ContentRepository\NodeMigration\MigrationException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files as Files;
-use Neos\ContentRepository\NodeMigration\MigrationException;
 
 /**
  * Migration Configuration using YAML files.

@@ -33,13 +33,12 @@ Feature: Tests for the "Neos.Neos:ContentCase" Fusion prototype
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
-      | contentStreamId | "cs-identifier"   |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  |
       | a               | root                  | Neos.Neos:Site                |

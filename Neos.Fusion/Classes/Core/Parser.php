@@ -25,7 +25,8 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The Fusion Parser
  *
- * @api
+ * @internal The Fusion parsing is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
  */
 class Parser
 {
@@ -54,7 +55,6 @@ class Parser
      * @param FusionSourceCodeCollection $sourceCode The Fusion source code to parse
      * @return FusionConfiguration The fusion configuration for the Fusion runtime
      * @throws Fusion\Exception
-     * @api
      */
     public function parseFromSource(FusionSourceCodeCollection $sourceCode): FusionConfiguration
     {
@@ -80,7 +80,6 @@ class Parser
      * @return array<int|string, mixed> The merged array tree for the Fusion runtime, generated from the source code
      * @throws Fusion\Exception
      * @deprecated with Neos 8.3 – will be removed with Neos 9.0, use {@link parseFromSource} instead
-     * @api
      */
     public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $mergedArrayTreeUntilNow = []): array
     {

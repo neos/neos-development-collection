@@ -15,12 +15,12 @@ namespace Neos\ContentRepository\Core\NodeType;
  */
 
 use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
+use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
 use Neos\Utility\PositionalArraySorter;
-use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
 
 /**
  * A Node Type
@@ -484,7 +484,7 @@ final class NodeType
      *
      * The default value is configured for each property under the "default" key.
      *
-     * @return array<string,mixed>
+     * @return array<string,int|float|string|bool|array<int|string,mixed>>
      * @api
      */
     public function getDefaultValuesForProperties(): array

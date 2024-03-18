@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\EventStore;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
@@ -24,21 +26,24 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
-use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event;
+use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event\EventType;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
 
 /**
  * Central authority to convert Content Repository domain events to Event Store EventData and EventType, vice versa.
@@ -67,8 +72,10 @@ final class EventNormalizer
     public function __construct()
     {
         $supportedEventClassNames = [
+            ContentStreamWasClosed::class,
             ContentStreamWasCreated::class,
             ContentStreamWasForked::class,
+            ContentStreamWasReopened::class,
             ContentStreamWasRemoved::class,
             DimensionShineThroughWasAdded::class,
             DimensionSpacePointWasMoved::class,
@@ -87,6 +94,8 @@ final class EventNormalizer
             RootNodeAggregateWithNodeWasCreated::class,
             RootWorkspaceWasCreated::class,
             RootNodeAggregateDimensionsWereUpdated::class,
+            SubtreeWasTagged::class,
+            SubtreeWasUntagged::class,
             WorkspaceRebaseFailed::class,
             WorkspaceWasCreated::class,
             WorkspaceWasRenamed::class,
@@ -157,6 +166,13 @@ final class EventNormalizer
             );
         }
         assert(is_array($eventDataAsArray));
-        return $eventClassName::fromArray($eventDataAsArray);
+        /** {@see EventInterface::fromArray()} */
+        $eventInstance = $eventClassName::fromArray($eventDataAsArray);
+        return match ($eventInstance::class) {
+            // upcast disabled / enabled events to the corresponding SubtreeTag events
+            NodeAggregateWasDisabled::class => new SubtreeWasTagged($eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::disabled()),
+            NodeAggregateWasEnabled::class => new SubtreeWasUntagged($eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::disabled()),
+            default => $eventInstance,
+        };
     }
 }

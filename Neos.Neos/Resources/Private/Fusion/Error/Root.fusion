@@ -11,3 +11,8 @@ Neos.Fusion.DatabaseConnectionExceptions = Neos.Neos:Error.View.Welcome {
   exception = ${exception}
   renderingGroupName = ${renderingOptions.renderingGroup}
 }
+
+Neos.Fusion.NotFoundExceptions = Neos.Neos:Error.View.Welcome {
+  exception = ${exception}
+  renderingGroupName = ${renderingOptions.renderingGroup}
+}

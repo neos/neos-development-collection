@@ -15,11 +15,11 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
-use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
 use Symfony\Component\Yaml\Yaml;
 
@@ -40,7 +40,11 @@ trait MigrationsTrait
             fn (string $cs) => ContentStreamId::fromString($cs),
             explode(',', $contentStreams)
         );
-        $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIds);
+        $command = new ExecuteMigration(
+            $migrationConfiguration,
+            WorkspaceName::fromString($workspaceName),
+            $contentStreamIds
+        );
 
         /** @var NodeMigrationService $nodeMigrationService */
         $nodeMigrationService = $this->getContentRepositoryService(new NodeMigrationServiceFactory());

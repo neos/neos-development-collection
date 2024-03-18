@@ -18,6 +18,7 @@ use Neos\Fusion\Exception;
 
 /**
  * 'Fluent' exception for the Fusion Parser.
+ * @internal
  */
 class ParserException extends Exception
 {

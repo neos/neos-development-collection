@@ -15,19 +15,21 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
-use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
@@ -108,22 +110,14 @@ trait GenericCommandExecutionAndEventPublication
             'SetSerializedNodeProperties' => SetSerializedNodeProperties::class,
             'DisableNodeAggregate' => DisableNodeAggregate::class,
             'EnableNodeAggregate' => EnableNodeAggregate::class,
+            'TagSubtree' => TagSubtree::class,
+            'UntagSubtree' => UntagSubtree::class,
             'MoveNodeAggregate' => MoveNodeAggregate::class,
             'SetNodeReferences' => SetNodeReferences::class,
             default => throw new \Exception(
                 'The short command name "' . $shortCommandName . '" is currently not supported by the tests.'
             ),
         };
-    }
-
-    /**
-     * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
-     * @throws \Exception
-     */
-    public function theEventWasPublishedToStreamWithPayload(string $eventType, string $streamName, TableNode $payloadTable): void
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        $this->publishEvent($eventType, StreamName::fromString($streamName), $eventPayload);
     }
 
     /**
@@ -225,8 +219,7 @@ trait GenericCommandExecutionAndEventPublication
             $key = $assertionTableRow['Key'];
             $actualValue = Arrays::getValueByPath($actualEventPayload, $key);
 
-            // Note: For dimension space points we switch to an array comparison because the order is not deterministic (@see https://github.com/neos/neos-development-collection/issues/4769)
-            if ($key === 'affectedDimensionSpacePoints' || $key === 'affectedOccupiedDimensionSpacePoints') {
+            if ($key === 'affectedDimensionSpacePoints') {
                 $expected = DimensionSpacePointSet::fromJsonString($assertionTableRow['Expected']);
                 $actual = DimensionSpacePointSet::fromArray($actualValue);
                 Assert::assertTrue($expected->equals($actual), 'Actual Dimension Space Point set "' . json_encode($actualValue) . '" does not match expected Dimension Space Point set "' . $assertionTableRow['Expected'] . '"');

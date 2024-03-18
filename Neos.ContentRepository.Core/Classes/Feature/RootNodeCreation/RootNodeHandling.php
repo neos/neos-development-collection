@@ -19,29 +19,29 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNotRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -69,9 +69,10 @@ trait RootNodeHandling
         CreateRootNodeAggregateWithNode $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $this->requireProjectedNodeAggregateToNotExist(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -80,7 +81,7 @@ trait RootNodeHandling
         $this->requireNodeTypeToBeOfTypeRoot($nodeType);
         $this->requireRootNodeTypeToBeUnoccupied(
             $nodeType->name,
-            $command->contentStreamId,
+            $contentStreamId,
             $contentRepository
         );
 
@@ -95,13 +96,14 @@ trait RootNodeHandling
         $events = [
             $this->createRootWithNode(
                 $command,
+                $contentStreamId,
                 $this->getAllowedDimensionSubspace()
             )
         ];
 
         foreach ($this->getInterDimensionalVariationGraph()->getRootGeneralizations() as $rootGeneralization) {
             array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
-                $command,
+                $contentStreamId,
                 $nodeType,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootGeneralization),
                 $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization, true),
@@ -112,25 +114,24 @@ trait RootNodeHandling
             )));
         }
 
-        $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId(
-            $command->contentStreamId
-        );
+        $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
         return new EventsToPublish(
             $contentStreamEventStream->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 Events::fromArray($events)
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 
     private function createRootWithNode(
         CreateRootNodeAggregateWithNode $command,
+        ContentStreamId $contentStreamId,
         DimensionSpacePointSet $coveredDimensionSpacePoints
     ): RootNodeAggregateWithNodeWasCreated {
         return new RootNodeAggregateWithNodeWasCreated(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $command->nodeTypeName,
             $coveredDimensionSpacePoints,
@@ -146,9 +147,10 @@ trait RootNodeHandling
         UpdateRootNodeAggregateDimensions $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -158,14 +160,14 @@ trait RootNodeHandling
 
         $events = Events::with(
             new RootNodeAggregateDimensionsWereUpdated(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->nodeAggregateId,
                 $this->getAllowedDimensionSubspace()
             )
         );
 
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId(
-            $command->contentStreamId
+            $contentStreamId
         );
         return new EventsToPublish(
             $contentStreamEventStream->getEventStreamName(),
@@ -173,7 +175,7 @@ trait RootNodeHandling
                 $command,
                 $events
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 
@@ -182,7 +184,7 @@ trait RootNodeHandling
      * @throws NodeTypeNotFoundException
      */
     private function handleTetheredRootChildNodes(
-        CreateRootNodeAggregateWithNode $command,
+        ContentStreamId $contentStreamId,
         NodeType $nodeType,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
@@ -200,11 +202,10 @@ trait RootNodeHandling
                 : NodePath::fromString($nodeName->value);
             $childNodeAggregateId = $nodeAggregateIdsByNodePath->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType);
+            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
 
-            $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
             $events[] = $this->createTetheredWithNodeForRoot(
-                $command,
+                $contentStreamId,
                 $childNodeAggregateId,
                 $childNodeType->name,
                 $originDimensionSpacePoint,
@@ -215,7 +216,7 @@ trait RootNodeHandling
             );
 
             array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
-                $command,
+                $contentStreamId,
                 $childNodeType,
                 $originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
@@ -230,7 +231,7 @@ trait RootNodeHandling
     }
 
     private function createTetheredWithNodeForRoot(
-        CreateRootNodeAggregateWithNode $command,
+        ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
         NodeTypeName $nodeTypeName,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
@@ -241,7 +242,7 @@ trait RootNodeHandling
         NodeAggregateId $precedingNodeAggregateId = null
     ): NodeAggregateWithNodeWasCreated {
         return new NodeAggregateWithNodeWasCreated(
-            $command->contentStreamId,
+            $contentStreamId,
             $nodeAggregateId,
             $nodeTypeName,
             $originDimensionSpacePoint,

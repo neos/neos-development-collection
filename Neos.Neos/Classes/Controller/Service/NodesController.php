@@ -298,7 +298,7 @@ class NodesController extends ActionController
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
             CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
                 $this->adoptNodeAndParents(
-                    $workspace->currentContentStreamId,
+                    $workspace->workspaceName,
                     $nodeAggregateId,
                     $sourceSubgraph,
                     $targetSubgraph,
@@ -382,22 +382,18 @@ class NodesController extends ActionController
     /**
      * Adopt (translate) the given node and parents that are not yet visible to the given context
      *
-     * @param NodeAggregateId $nodeAggregateId
-     * @param ContentSubgraphInterface $sourceSubgraph
-     * @param ContentSubgraphInterface $targetSubgraph
-     * @param ContentRepository $contentRepository
      * @param boolean $copyContent true if the content from the nodes that are translated should be copied
      * @return void
      */
     protected function adoptNodeAndParents(
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
         ContentSubgraphInterface $sourceSubgraph,
         ContentSubgraphInterface $targetSubgraph,
         DimensionSpacePoint $targetDimensionSpacePoint,
         ContentRepository $contentRepository,
         bool $copyContent
-    ) {
+    ): void {
         $identifiersFromRootlineToTranslate = [];
         while (
             $nodeAggregateId
@@ -423,7 +419,7 @@ class NodesController extends ActionController
             }
             $contentRepository->handle(
                 CreateNodeVariant::create(
-                    $contentStreamId,
+                    $workspaceName,
                     $identifier,
                     $sourceNode->originDimensionSpacePoint,
                     OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
@@ -433,7 +429,7 @@ class NodesController extends ActionController
             if ($copyContent === true) {
                 $contentNodeConstraint = NodeTypeCriteria::fromFilterString('!' . NodeTypeNameFactory::NAME_DOCUMENT);
                 $this->createNodeVariantsForChildNodes(
-                    $contentStreamId,
+                    $workspaceName,
                     $identifier,
                     $contentNodeConstraint,
                     $sourceSubgraph,
@@ -446,7 +442,7 @@ class NodesController extends ActionController
     }
 
     private function createNodeVariantsForChildNodes(
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $parentNodeId,
         NodeTypeCriteria $constraints,
         ContentSubgraphInterface $sourceSubgraph,
@@ -465,7 +461,7 @@ class NodesController extends ActionController
                 // TODO: DOES THIS MAKE SENSE?
                 $contentRepository->handle(
                     CreateNodeVariant::create(
-                        $contentStreamId,
+                        $workspaceName,
                         $childNode->nodeAggregateId,
                         $childNode->originDimensionSpacePoint,
                         OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
@@ -474,7 +470,7 @@ class NodesController extends ActionController
             }
 
             $this->createNodeVariantsForChildNodes(
-                $contentStreamId,
+                $workspaceName,
                 $childNode->nodeAggregateId,
                 $constraints,
                 $sourceSubgraph,

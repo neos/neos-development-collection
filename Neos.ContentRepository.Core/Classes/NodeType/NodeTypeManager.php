@@ -24,24 +24,27 @@ use Neos\Utility\Exception\PropertyNotAccessibleException;
 
 /**
  * Manager for node types
- * @api
+ * @api Note: The constructor is not part of the public API
  */
-class NodeTypeManager
+final class NodeTypeManager
 {
     /**
      * Node types, indexed by name
      *
      * @var array<string,NodeType>
      */
-    protected array $cachedNodeTypes = [];
+    private array $cachedNodeTypes = [];
 
     /**
      * Node types, indexed by supertype (also including abstract node types)
      *
      * @var array<string,array<string,NodeType>>
      */
-    protected array $cachedSubNodeTypes = [];
+    private array $cachedSubNodeTypes = [];
 
+    /**
+     * @internal
+     */
     public function __construct(
         private readonly \Closure $nodeTypeConfigLoader,
         private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
@@ -53,7 +56,6 @@ class NodeTypeManager
      *
      * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to true
      * @return array<string,NodeType> All node types registered in the system, indexed by node type name
-     * @api
      */
     public function getNodeTypes(bool $includeAbstractNodeTypes = true): array
     {
@@ -75,7 +77,6 @@ class NodeTypeManager
      *
      * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to true
      * @return array<NodeType> Sub node types of the given super type, indexed by node type name
-     * @api
      */
     public function getSubNodeTypes(string|NodeTypeName $superTypeName, bool $includeAbstractNodeTypes = true): array
     {
@@ -109,7 +110,6 @@ class NodeTypeManager
      * Returns the specified node type (which could be abstract)
      *
      * @throws NodeTypeNotFoundException
-     * @api
      */
     public function getNodeType(string|NodeTypeName $nodeTypeName): NodeType
     {
@@ -137,7 +137,6 @@ class NodeTypeManager
      *
      * @param string|NodeTypeName $nodeTypeName Name of the node type
      * @return boolean true if it exists, otherwise false
-     * @api
      */
     public function hasNodeType(string|NodeTypeName $nodeTypeName): bool
     {
@@ -153,7 +152,7 @@ class NodeTypeManager
     /**
      * Loads all node types into memory.
      */
-    protected function loadNodeTypes(): void
+    private function loadNodeTypes(): void
     {
         $completeNodeTypeConfiguration = ($this->nodeTypeConfigLoader)();
 
@@ -178,6 +177,7 @@ class NodeTypeManager
      * In order to reset the node type override, an empty array can be passed in.
      * In this case, the system-node-types are used again.
      *
+     * @internal
      * @param array<string,mixed> $completeNodeTypeConfiguration
      */
     public function overrideNodeTypes(array $completeNodeTypeConfiguration): void
@@ -202,7 +202,7 @@ class NodeTypeManager
      * @param NodeType $nodeType
      * @param NodeName $tetheredNodeName
      * @return NodeType
-     *@throws TetheredNodeNotConfigured if the requested tethered node is not configured. Check via {@see NodeType::hasTetheredNode()}.
+     * @throws TetheredNodeNotConfigured if the requested tethered node is not configured. Check via {@see NodeType::hasTetheredNode()}.
      */
     public function getTypeOfTetheredNode(NodeType $nodeType, NodeName $tetheredNodeName): NodeType
     {
@@ -214,7 +214,6 @@ class NodeTypeManager
      * Return an array with child nodes which should be automatically created
      *
      * @return array<string,NodeType> the key of this array is the name of the child, and the value its NodeType.
-     * @api
      */
     public function getTetheredNodesConfigurationForNodeType(NodeType $nodeType): array
     {
@@ -280,7 +279,7 @@ class NodeTypeManager
      * @throws NodeTypeIsFinalException
      * @throws NodeTypeNotFoundException
      */
-    protected function loadNodeType(string $nodeTypeName, array &$completeNodeTypeConfiguration): NodeType
+    private function loadNodeType(string $nodeTypeName, array &$completeNodeTypeConfiguration): NodeType
     {
         if (isset($this->cachedNodeTypes[$nodeTypeName])) {
             return $this->cachedNodeTypes[$nodeTypeName];
@@ -342,7 +341,7 @@ class NodeTypeManager
      * @param array<string,mixed> $completeNodeTypeConfiguration
      * @return array<string,NodeType|null>
      */
-    protected function evaluateSuperTypesConfiguration(
+    private function evaluateSuperTypesConfiguration(
         array $superTypesConfiguration,
         array $completeNodeTypeConfiguration
     ): array {
@@ -371,7 +370,7 @@ class NodeTypeManager
      * @throws NodeConfigurationException
      * @throws NodeTypeIsFinalException
      */
-    protected function evaluateSuperTypeConfiguration(
+    private function evaluateSuperTypeConfiguration(
         string $superTypeName,
         ?bool $enabled,
         array &$completeNodeTypeConfiguration

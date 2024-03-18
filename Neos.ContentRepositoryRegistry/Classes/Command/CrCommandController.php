@@ -3,17 +3,16 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Command;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
-use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Cli\CommandController;
-use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
-use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Symfony\Component\Console\Output\Output;
 
 final class CrCommandController extends CommandController
@@ -33,17 +32,35 @@ final class CrCommandController extends CommandController
      * Note: This command is non-destructive, i.e. it can be executed without side effects even if all dependencies are up-to-date
      * Therefore it makes sense to include this command into the Continuous Integration
      *
+     * To check if the content repository needs to be setup look into cr:status.
+     * That command will also display information what is about to be migrated.
+     *
      * @param string $contentRepository Identifier of the Content Repository to set up
+     * @param bool $resetProjections Advanced. Can be used in rare cases when the projections cannot be migrated to reset everything in advance. This requires a full replay afterwards.
      */
-    public function setupCommand(string $contentRepository = 'default'): void
+    public function setupCommand(string $contentRepository = 'default', bool $resetProjections = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+
+        if ($resetProjections) {
+            if (!$this->output->askConfirmation(sprintf('> Advanced Mode. The flag --reset-projections will reset all projections in "%s", which leaves you with empty projections to be replayed. Are you sure to proceed? (y/n) ', $contentRepositoryId->value), false)) {
+                $this->outputLine('<comment>Abort.</comment>');
+                return;
+            }
+
+            $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
+            $projectionService->resetAllProjections();
+            $this->outputLine('<success>All projections of Content Repository "%s" were resettet.</success>', [$contentRepositoryId->value]);
+        }
+
         $this->contentRepositoryRegistry->get($contentRepositoryId)->setUp();
         $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
     }
 
     /**
      * Determine and output the status of the event store and all registered projections for a given Content Repository
+     *
+     * In verbose mode it will also display information what should and will be migrated when cr:setup is used.
      *
      * @param string $contentRepository Identifier of the Content Repository to determine the status for
      * @param bool $verbose If set, more details will be shown
@@ -57,8 +74,6 @@ final class CrCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $status = $this->contentRepositoryRegistry->get($contentRepositoryId)->status();
 
-        $hasErrorsOrWarnings = false;
-
         $this->output('Event Store: ');
         $this->outputLine(match ($status->eventStoreStatus->type) {
             StatusType::OK => '<success>OK</success>',
@@ -67,9 +82,6 @@ final class CrCommandController extends CommandController
         });
         if ($verbose && $status->eventStoreStatus->details !== '') {
             $this->outputFormatted($status->eventStoreStatus->details, [], 2);
-        }
-        if ($status->eventStoreStatus->type !== StatusType::OK) {
-            $hasErrorsOrWarnings = true;
         }
         $this->outputLine();
         foreach ($status->projectionStatuses as $projectionName => $projectionStatus) {
@@ -80,9 +92,6 @@ final class CrCommandController extends CommandController
                 ProjectionStatusType::REPLAY_REQUIRED => '<comment>Replay required!</comment>',
                 ProjectionStatusType::ERROR => '<error>ERROR</error>',
             });
-            if ($projectionStatus->type !== ProjectionStatusType::OK) {
-                $hasErrorsOrWarnings = true;
-            }
             if ($verbose && ($projectionStatus->type !== ProjectionStatusType::OK || $projectionStatus->details)) {
                 $lines = explode(chr(10), $projectionStatus->details ?: '<comment>No details available.</comment>');
                 foreach ($lines as $line) {
@@ -91,21 +100,32 @@ final class CrCommandController extends CommandController
                 $this->outputLine();
             }
         }
-        if ($hasErrorsOrWarnings) {
+        if (!$status->isOk()) {
             $this->quit(1);
         }
     }
 
     /**
-     * Replays the specified projection of a Content Repository by resetting its state and performing a full catchup
+     * Replays the specified projection of a Content Repository by resetting its state and performing a full catchup.
      *
      * @param string $projection Full Qualified Class Name or alias of the projection to replay (e.g. "contentStream")
      * @param string $contentRepository Identifier of the Content Repository instance to operate on
-     * @param bool $quiet If set only fatal errors are rendered to the output
+     * @param bool $force Replay the projection without confirmation. This may take some time!
+     * @param bool $quiet If set only fatal errors are rendered to the output (must be used with --force flag to avoid user input)
      * @param int $until Until which sequence number should projections be replayed? useful for debugging
      */
-    public function replayCommand(string $projection, string $contentRepository = 'default', bool $quiet = false, int $until = 0): void
+    public function projectionReplayCommand(string $projection, string $contentRepository = 'default', bool $force = false, bool $quiet = false, int $until = 0): void
     {
+        if (!$force && $quiet) {
+            $this->outputLine('Cannot run in quiet mode without --force. Please acknowledge that this command will reset and replay this projection. This may take some time.');
+            $this->quit(1);
+        }
+
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will replay the projection "%s" in "%s", which may take some time. Are you sure to proceed? (y/n) ', $projection, $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
 
@@ -131,19 +151,29 @@ final class CrCommandController extends CommandController
      * Replays all projections of the specified Content Repository by resetting their states and performing a full catchup
      *
      * @param string $contentRepository Identifier of the Content Repository instance to operate on
-     * @param bool $quiet If set only fatal errors are rendered to the output
+     * @param bool $force Replay the projection without confirmation. This may take some time!
+     * @param bool $quiet If set only fatal errors are rendered to the output (must be used with --force flag to avoid user input)
      */
-    public function replayAllCommand(string $contentRepository = 'default', bool $quiet = false): void
+    public function projectionReplayAllCommand(string $contentRepository = 'default', bool $force = false, bool $quiet = false): void
     {
+        if (!$force && $quiet) {
+            $this->outputLine('Cannot run in quiet mode without --force. Please acknowledge that this command will reset and replay this projection. This may take some time.');
+            $this->quit(1);
+        }
+
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will replay all projections in "%s", which may take some time. Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
         if (!$quiet) {
             $this->outputLine('Replaying events for all projections of Content Repository "%s" ...', [$contentRepositoryId->value]);
-            // TODO start progress bar
         }
-        $projectionService->replayAllProjections(CatchUpOptions::create());
+        // TODO progress bar with all events? Like projectionReplayCommand?
+        $projectionService->replayAllProjections(CatchUpOptions::create(), fn (string $projectionAlias) => $this->outputLine(sprintf(' * replaying %s projection', $projectionAlias)));
         if (!$quiet) {
-            // TODO finish progress bar
             $this->outputLine('<success>Done.</success>');
         }
     }
@@ -151,12 +181,14 @@ final class CrCommandController extends CommandController
     /**
      * This will completely prune the data of the specified content repository.
      *
-     * @param string $contentRepository name of the content repository where the data should be pruned from.
+     * @param string $contentRepository Name of the content repository where the data should be pruned from.
+     * @param bool $force Prune the cr without confirmation. This cannot be reverted!
      * @return void
      */
-    public function pruneCommand(string $contentRepository = 'default'): void
+    public function pruneCommand(string $contentRepository = 'default', bool $force = false): void
     {
-        if (!$this->output->askConfirmation(sprintf("This will prune your content repository \"%s\". Are you sure to proceed? (y/n) ", $contentRepository), false)) {
+        if (!$force && !$this->output->askConfirmation(sprintf('> This will prune your content repository "%s". Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
             return;
         }
 
@@ -166,14 +198,23 @@ final class CrCommandController extends CommandController
             $contentRepositoryId,
             new ContentStreamPrunerFactory()
         );
-        $contentStreamPruner->pruneAll();
 
         $workspaceMaintenanceService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new WorkspaceMaintenanceServiceFactory()
         );
-        $workspaceMaintenanceService->pruneAll();
 
-        $this->replayAllCommand($contentRepository);
+        $projectionService = $this->contentRepositoryRegistry->buildService(
+            $contentRepositoryId,
+            $this->projectionServiceFactory
+        );
+
+        // reset the events table
+        $contentStreamPruner->pruneAll();
+        $workspaceMaintenanceService->pruneAll();
+        // reset the projections state
+        $projectionService->resetAllProjections();
+
+        $this->outputLine('<success>Done.</success>');
     }
 }

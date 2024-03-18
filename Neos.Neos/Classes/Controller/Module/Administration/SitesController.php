@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Administration;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -216,7 +216,7 @@ class SitesController extends AbstractModuleController
 
                 foreach ($siteNodeAggregates as $siteNodeAggregate) {
                     $contentRepository->handle(ChangeNodeAggregateName::create(
-                        $workspace->currentContentStreamId,
+                        $workspace->workspaceName,
                         $siteNodeAggregate->nodeAggregateId,
                         NodeName::fromString($newSiteNodeName),
                     ));

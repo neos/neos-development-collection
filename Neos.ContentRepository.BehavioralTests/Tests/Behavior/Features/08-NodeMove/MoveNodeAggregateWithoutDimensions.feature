@@ -24,9 +24,9 @@ Feature: Move a node without content dimensions
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
-      | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -64,7 +64,6 @@ Feature: Move a node without content dimensions
   Scenario: Move a node to the end of its siblings
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
-      | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "sir-david-nodenborough" |
       | dimensionSpacePoint                 | {}                       |
       | newParentNodeAggregateId            | null                     |
@@ -79,7 +78,7 @@ Feature: Move a node without content dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -100,7 +99,6 @@ Feature: Move a node without content dimensions
   Scenario: Move a node before one of its siblings
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                        |
-      | contentStreamId                     | "cs-identifier"              |
       | nodeAggregateId                     | "sir-nodeward-nodington-iii" |
       | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | null                         |
@@ -115,7 +113,7 @@ Feature: Move a node without content dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -147,7 +145,6 @@ Feature: Move a node without content dimensions
     And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload:
       | Key                      | Value                        |
-      | contentStreamId          | "cs-identifier"              |
       | nodeAggregateId          | "sir-david-nodenborough"     |
       | dimensionSpacePoint      | {}                           |
       | newParentNodeAggregateId | "sir-nodeward-nodington-iii" |
@@ -169,7 +166,7 @@ Feature: Move a node without content dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -194,7 +191,6 @@ Feature: Move a node without content dimensions
   Scenario: Move a node to a new parent and before one of its children
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                        |
-      | contentStreamId                     | "cs-identifier"              |
       | nodeAggregateId                     | "nody-mc-nodeface"           |
       | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | "lady-eleonode-rootford"     |
@@ -215,7 +211,7 @@ Feature: Move a node without content dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings

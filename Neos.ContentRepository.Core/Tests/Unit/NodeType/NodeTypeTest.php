@@ -13,8 +13,8 @@ namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
  */
 
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use PHPUnit\Framework\TestCase;
 

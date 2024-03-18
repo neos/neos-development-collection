@@ -19,16 +19,16 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\Neos\Domain\Exception;
 use Neos\Neos\Presentation\VisualNodePath;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Eel helper for ContentRepository Nodes

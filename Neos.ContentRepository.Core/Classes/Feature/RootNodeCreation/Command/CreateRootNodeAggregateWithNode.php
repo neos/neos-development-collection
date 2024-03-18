@@ -15,11 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\RootNodeCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Create root node aggregate with node command
@@ -32,16 +33,16 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 final readonly class CreateRootNodeAggregateWithNode implements
     CommandInterface,
     \JsonSerializable,
-    RebasableToOtherContentStreamsInterface
+    RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the root node should be created in
+     * @param WorkspaceName $workspaceName The workspace in which the root node should be created in
      * @param NodeAggregateId $nodeAggregateId The id of the root node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of type of the new node to create
      * @param NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds Predefined aggregate ids of tethered child nodes per path. For any tethered node that has no matching entry in this set, the node aggregate id is generated randomly. Since tethered nodes may have tethered child nodes themselves, this works for multiple levels ({@see self::withTetheredDescendantNodeAggregateIds()})
      */
     private function __construct(
-        public ContentStreamId $contentStreamId,
+        public WorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public NodeTypeName $nodeTypeName,
         public NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds,
@@ -49,14 +50,14 @@ final readonly class CreateRootNodeAggregateWithNode implements
     }
 
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the root node should be created in
+     * @param WorkspaceName $workspaceName The workspace in which the root node should be created in
      * @param NodeAggregateId $nodeAggregateId The id of the root node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of type of the new node to create
      */
-    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName): self
     {
         return new self(
-            $contentStreamId,
+            $workspaceName,
             $nodeAggregateId,
             $nodeTypeName,
             NodeAggregateIdsByNodePaths::createEmpty()
@@ -94,7 +95,7 @@ final readonly class CreateRootNodeAggregateWithNode implements
     public function withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds): self
     {
         return new self(
-            $this->contentStreamId,
+            $this->workspaceName,
             $this->nodeAggregateId,
             $this->nodeTypeName,
             $tetheredDescendantNodeAggregateIds,
@@ -107,7 +108,7 @@ final readonly class CreateRootNodeAggregateWithNode implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamId::fromString($array['contentStreamId']),
+            WorkspaceName::fromString($array['workspaceName']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeTypeName::fromString($array['nodeTypeName']),
             isset($array['tetheredDescendantNodeAggregateIds'])
@@ -124,10 +125,12 @@ final readonly class CreateRootNodeAggregateWithNode implements
         return get_object_vars($this);
     }
 
-    public function createCopyForContentStream(ContentStreamId $target): self
-    {
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
         return new self(
-            $target,
+            $targetWorkspaceName,
             $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->tetheredDescendantNodeAggregateIds
