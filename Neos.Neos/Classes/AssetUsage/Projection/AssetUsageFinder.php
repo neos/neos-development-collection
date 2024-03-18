@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Neos\Neos\AssetUsage\Projection;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Neos\AssetUsage\Dto\AssetUsages;
-use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\Neos\AssetUsage\GlobalAssetUsageService;
 
 /**

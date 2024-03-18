@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Command;
 
-use Neos\Flow\Cli\CommandController;
-use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Cli\CommandController;
+use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 use Neos\Neos\AssetUsage\Service\AssetUsageSyncServiceFactory;
 

@@ -14,15 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Neos\Domain\Model\Site;
 
 /**
  * Entry Point to the dimension resolution process - called from {@see EventSourcedFrontendNodeRoutePartHandler}.

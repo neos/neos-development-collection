@@ -2,21 +2,21 @@
 
 namespace Neos\Neos\FrontendRouting\CatchUpHook;
 
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
-use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\EventStore\Model\EventEnvelope;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
-use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
-use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Flow\Mvc\Routing\RouterCachingService;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\EventStore\Model\EventEnvelope;
+use Neos\Flow\Mvc\Routing\RouterCachingService;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 
 final class RouterCacheHook implements CatchUpHookInterface
 {

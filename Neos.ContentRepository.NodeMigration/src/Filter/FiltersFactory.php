@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
-use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\NodeMigration\MigrationException;
+use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 
 /**
  * Implementation detail of {@see NodeMigrationService}

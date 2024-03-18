@@ -14,8 +14,8 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph\Filter\
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\AndCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\NegateCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\OrCriteria;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\CriteriaParser\ParserException;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\CriteriaParser\ParserException;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
 use PHPUnit\Framework\TestCase;
 
