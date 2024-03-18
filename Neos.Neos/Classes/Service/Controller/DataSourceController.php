@@ -18,10 +18,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Service\DataSource\DataSourceInterface;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Data Source Controller

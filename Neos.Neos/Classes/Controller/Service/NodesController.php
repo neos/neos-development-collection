@@ -295,7 +295,7 @@ class NodesController extends ActionController
             );
 
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
-            CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
+            CatchUpTriggerWithSynchronousOption::synchronously(fn () =>
                 $this->adoptNodeAndParents(
                     $workspace->workspaceName,
                     $nodeAggregateId,

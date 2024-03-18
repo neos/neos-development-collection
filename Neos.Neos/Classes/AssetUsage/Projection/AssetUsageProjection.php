@@ -184,7 +184,7 @@ final class AssetUsageProjection implements ProjectionInterface
             );
 
             $assetIds[$propertyName] = array_map(
-                fn($assetId) => new AssetIdAndOriginalAssetId($assetId, $this->findOriginalAssetId($assetId)),
+                fn ($assetId) => new AssetIdAndOriginalAssetId($assetId, $this->findOriginalAssetId($assetId)),
                 $extractedAssetIds
             );
         }
@@ -200,7 +200,7 @@ final class AssetUsageProjection implements ProjectionInterface
     {
         if (is_string($value)) {
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', $value, $matches, PREG_SET_ORDER);
-            return array_map(static fn(array $match) => $match['assetId'], $matches);
+            return array_map(static fn (array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class)) {
             return isset($value['__identifier']) ? [$value['__identifier']] : [];

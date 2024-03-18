@@ -187,7 +187,7 @@ final class ContentRepository
 
         if ($catchUpHook !== null) {
             $catchUpHook->onBeforeCatchUp();
-            $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
+            $catchUp = $catchUp->withOnBeforeBatchCompleted(fn () => $catchUpHook->onBeforeBatchCompleted());
         }
         $catchUp->run($eventStream);
         $catchUpHook?->onAfterCatchUp();

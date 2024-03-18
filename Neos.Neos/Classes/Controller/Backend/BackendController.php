@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Backend;
 
 use Neos\Cache\Exception\InvalidDataException;
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\Mvc\Controller\ActionController;

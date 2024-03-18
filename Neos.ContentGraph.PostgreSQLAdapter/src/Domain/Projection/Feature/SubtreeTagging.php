@@ -42,7 +42,7 @@ trait SubtreeTagging
 
             /** @codingStandardsIgnoreStart */
             foreach ($descendantNodeAggregateIdsByAffectedDimensionSpacePoint as $dimensionSpacePointHash => $descendantNodeAggregateIds) {
-            /** @codingStandardsIgnoreEnd */
+                /** @codingStandardsIgnoreEnd */
                 $restrictionRelation = new RestrictionHyperrelationRecord(
                     $event->contentStreamId,
                     $dimensionSpacePointHash,

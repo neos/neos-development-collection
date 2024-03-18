@@ -67,7 +67,7 @@ final class AssetUsages implements \IteratorAggregate, \Countable
             function () use ($assetUsages) {
                 return array_reduce(
                     $assetUsages,
-                    static fn($globalCount, AssetUsages $assetUsage) => $globalCount + $assetUsage->count(),
+                    static fn ($globalCount, AssetUsages $assetUsage) => $globalCount + $assetUsage->count(),
                     0
                 );
             }

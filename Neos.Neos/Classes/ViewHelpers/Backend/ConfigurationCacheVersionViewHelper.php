@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;

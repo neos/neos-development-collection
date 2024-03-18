@@ -44,7 +44,7 @@ final class EventPersister
         // the following logic could also be done in an AppEventStore::commit method (being called
         // directly from the individual Command Handlers).
         $normalizedEvents = Events::fromArray(
-            $eventsToPublish->events->map(fn(EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event))
+            $eventsToPublish->events->map(fn (EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event))
         );
         $commitResult = $this->eventStore->commit(
             $eventsToPublish->streamName,

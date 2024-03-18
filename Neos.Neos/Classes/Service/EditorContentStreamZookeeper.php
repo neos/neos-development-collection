@@ -127,7 +127,7 @@ final class EditorContentStreamZookeeper
                 return;
             }
 
-            CatchUpTriggerWithSynchronousOption::synchronously(fn() => $contentRepository->handle(
+            CatchUpTriggerWithSynchronousOption::synchronously(fn () => $contentRepository->handle(
                 RebaseWorkspace::create(
                     $workspace->workspaceName,
                 )
