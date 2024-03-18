@@ -41,7 +41,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
             $projectionFactoryDependencies->contentRepositoryId
         );
 
-
+        $dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbalClient->getConnection(), $tableNamePrefix);
 
         return new ContentGraphProjection(
             new DoctrineDbalContentGraphProjection(
@@ -50,7 +50,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
                     $projectionFactoryDependencies->contentRepositoryId,
                     $projectionFactoryDependencies->nodeTypeManager,
                     $projectionFactoryDependencies->propertyConverter,
-                    new DimensionSpacePointsRepository($this->dbalClient->getConnection(), $tableNamePrefix)
+                    $dimensionSpacePointsRepository
                 ),
                 $projectionFactoryDependencies->contentRepositoryId,
                 $projectionFactoryDependencies->nodeTypeManager,
@@ -58,7 +58,8 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
                     $this->dbalClient,
                     $tableNamePrefix
                 ),
-                $tableNamePrefix
+                $tableNamePrefix,
+                $dimensionSpacePointsRepository
             )
         );
     }

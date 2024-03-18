@@ -84,8 +84,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     private DbalCheckpointStorage $checkpointStorage;
 
-    private DimensionSpacePointsRepository $dimensionSpacePointsRepository;
-
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeFactory $nodeFactory,
@@ -93,14 +91,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly string $tableNamePrefix,
+        private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository
     ) {
         $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->tableNamePrefix . '_checkpoint',
             self::class
         );
-
-        $this->dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbalClient->getConnection(), $this->tableNamePrefix);
     }
 
     protected function getProjectionContentGraph(): ProjectionContentGraph

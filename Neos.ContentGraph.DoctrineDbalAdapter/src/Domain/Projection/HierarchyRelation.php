@@ -45,18 +45,22 @@ final readonly class HierarchyRelation
      */
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
-        $dimensionSpacePoints->insertDimensionSpacePoint($this->dimensionSpacePoint);
+        $databaseConnection->transactional(function ($databaseConnection) use (
+            $tableNamePrefix
+        ) {
+            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
+            $dimensionSpacePoints->insertDimensionSpacePoint($this->dimensionSpacePoint);
 
-        $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
-            'parentnodeanchor' => $this->parentNodeAnchor->value,
-            'childnodeanchor' => $this->childNodeAnchor->value,
-            'name' => $this->name?->value,
-            'contentstreamid' => $this->contentStreamId->value,
-            'dimensionspacepointhash' => $this->dimensionSpacePointHash,
-            'position' => $this->position,
-            'subtreetags' => json_encode($this->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
-        ]);
+            $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
+                'parentnodeanchor' => $this->parentNodeAnchor->value,
+                'childnodeanchor' => $this->childNodeAnchor->value,
+                'name' => $this->name?->value,
+                'contentstreamid' => $this->contentStreamId->value,
+                'dimensionspacepointhash' => $this->dimensionSpacePointHash,
+                'position' => $this->position,
+                'subtreetags' => json_encode($this->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
+            ]);
+        });
     }
 
     /**
