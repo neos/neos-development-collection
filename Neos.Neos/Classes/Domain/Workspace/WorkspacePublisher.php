@@ -209,7 +209,6 @@ readonly class WorkspacePublisher
             }
 
             $nodeIdsToPublishOrDiscard[] = new NodeIdToPublishOrDiscard(
-                $workspaceName,
                 $change->nodeAggregateId,
                 $change->originDimensionSpacePoint->toDimensionSpacePoint()
             );
