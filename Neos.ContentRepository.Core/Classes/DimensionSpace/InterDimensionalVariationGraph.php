@@ -117,7 +117,10 @@ final class InterDimensionalVariationGraph
     /**
      * Returns the root generalizations indexed by hash
      *
-     * @return array<string,DimensionSpacePoint>
+     * Even in a zero-dimensional content repository the array will have at least one entry
+     * of an empty dimension space point {@see DimensionSpacePoint::createWithoutDimensions()}
+     *
+     * @return non-empty-array<string,DimensionSpacePoint>
      */
     public function getRootGeneralizations(): array
     {
@@ -127,7 +130,13 @@ final class InterDimensionalVariationGraph
                 $rootGeneralizations[$dimensionSpacePointHash] = $weightedDimensionSpacePoint->dimensionSpacePoint;
             }
         }
-
+        if (empty($rootGeneralizations)) {
+            // safeguard, should not happen here:
+            throw new \RuntimeException(
+                'The dimension space is empty, please check your configuration.',
+                1710613747
+            );
+        }
         return $rootGeneralizations;
     }
 

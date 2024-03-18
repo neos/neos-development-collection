@@ -47,21 +47,22 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * This interface is called *Readable* because it exposes read operations on the set of nodes inside
  * a single NodeAggregate; often used for constraint checks (in command handlers).
  *
- * @api
+ * @api except its constructor.
  */
 final class NodeAggregate
 {
     /**
+     * @internal
      * @param ContentStreamId $contentStreamId ID of the content stream of this node aggregate
      * @param NodeAggregateId $nodeAggregateId ID of this node aggregate
      * @param NodeAggregateClassification $classification whether this aggregate represents a root, regular or tethered node
      * @param NodeTypeName $nodeTypeName name of the node type of this aggregate
      * @param NodeName|null $nodeName optional name of this aggregate
      * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints dimension space points this aggregate occupies
-     * @param array<string,Node> $nodesByOccupiedDimensionSpacePoint
+     * @param non-empty-array<string,Node> $nodesByOccupiedDimensionSpacePoint At least one node will be occupied.
      * @param CoverageByOrigin $coverageByOccupant
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
-     * @param array<string,Node> $nodesByCoveredDimensionSpacePoint
+     * @param DimensionSpacePointSet $coveredDimensionSpacePoints At least one node will be covered.
+     * @param non-empty-array<string,Node> $nodesByCoveredDimensionSpacePoint
      * @param OriginByCoverage $occupationByCovered
      * @param DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags dimension space points for every subtree tag this aggregate is *explicitly* tagged with (excluding inherited tags)
      */
@@ -79,6 +80,9 @@ final class NodeAggregate
         private readonly OriginByCoverage $occupationByCovered,
         private readonly DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
     ) {
+        // this nodeAggregate can only exist if it at least contains one node.
+        assert($this->nodesByOccupiedDimensionSpacePoint !== []);
+        assert($this->nodesByCoveredDimensionSpacePoint !== []);
     }
 
     public function occupiesDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): bool
