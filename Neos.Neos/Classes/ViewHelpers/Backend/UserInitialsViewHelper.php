@@ -18,8 +18,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Security\AccountRepository;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Neos\Service\UserService;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
+use Neos\Neos\Service\UserService;
 use Neos\Party\Domain\Model\Person;
 
 /**

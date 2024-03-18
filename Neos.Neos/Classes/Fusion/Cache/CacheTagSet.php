@@ -38,7 +38,7 @@ final class CacheTagSet
         Nodes $nodes
     ): self {
         return new self(...array_map(
-            fn(Node $node): CacheTag => CacheTag::forDescendantOfNodeFromNode(
+            fn (Node $node): CacheTag => CacheTag::forDescendantOfNodeFromNode(
                 $node
             ),
             iterator_to_array($nodes)
@@ -49,7 +49,7 @@ final class CacheTagSet
         Nodes $nodes
     ): self {
         return new self(...array_map(
-            fn(Node $node): CacheTag => CacheTag::forNodeAggregateFromNode(
+            fn (Node $node): CacheTag => CacheTag::forNodeAggregateFromNode(
                 $node
             ),
             iterator_to_array($nodes)
@@ -63,7 +63,7 @@ final class CacheTagSet
         NodeTypeNames $nodeTypeNames
     ): self {
         return new self(...array_map(
-            fn(NodeTypeName $nodeTypeName): CacheTag => CacheTag::forNodeTypeName(
+            fn (NodeTypeName $nodeTypeName): CacheTag => CacheTag::forNodeTypeName(
                 $contentRepositoryId,
                 $contentStreamId,
                 $nodeTypeName
@@ -86,7 +86,7 @@ final class CacheTagSet
     public function toStringArray(): array
     {
         return array_map(
-            fn(CacheTag $tag): string => $tag->value,
+            fn (CacheTag $tag): string => $tag->value,
             array_values($this->tags)
         );
     }

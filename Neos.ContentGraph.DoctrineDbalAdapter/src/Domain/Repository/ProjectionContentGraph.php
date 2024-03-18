@@ -203,7 +203,7 @@ class ProjectionContentGraph
         )->fetchAllAssociative();
 
         return array_map(
-            fn($row) => NodeRelationAnchorPoint::fromInteger($row['relationanchorpoint']),
+            fn ($row) => NodeRelationAnchorPoint::fromInteger($row['relationanchorpoint']),
             $rows
         );
     }

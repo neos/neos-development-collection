@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 
 /**
  * Service to build and find RenderingMode objects

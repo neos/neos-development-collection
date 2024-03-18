@@ -12,8 +12,8 @@ namespace Neos\Neos\Controller\Module\User;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Property\PropertyMappingConfiguration;

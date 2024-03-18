@@ -12,8 +12,8 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\FusionConfiguration;
 use Neos\Neos\Domain\Model\Site;
 

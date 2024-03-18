@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Rendering;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 use Neos\Neos\Domain\Model\RenderingMode;

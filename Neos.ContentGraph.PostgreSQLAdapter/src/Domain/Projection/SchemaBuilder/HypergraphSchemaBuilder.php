@@ -145,6 +145,6 @@ class HypergraphSchemaBuilder
             ->addIndex(['contentstreamid'])
             ->addIndex(['dimensionspacepointhash'])
             ->addIndex(['originnodeaggregateid']);
-            /** NOTE: the GIN index on affectednodeaggregateids is added in {@see HypergraphProjection::setupTables()} */
+        /** NOTE: the GIN index on affectednodeaggregateids is added in {@see HypergraphProjection::setupTables()} */
     }
 }
