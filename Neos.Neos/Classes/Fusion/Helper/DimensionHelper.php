@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
@@ -142,19 +143,18 @@ final class DimensionHelper implements ProtectedContextAwareInterface
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
         $contentDimensionValue = is_string($dimensionValue) ? new ContentDimensionValue($dimensionValue) : $dimensionValue;
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->address->contentRepositoryId);
 
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($node->subgraphIdentity->contentStreamId);
-        if (is_null($workspace)) {
+        try {
+            return $contentRepository
+                ->getContentGraph($node->address->workspaceName)
+                ->getSubgraph(
+                    $node->address->dimensionSpacePoint->vary($contentDimensionId, $contentDimensionValue->value),
+                    $node->subgraphIdentity->visibilityConstraints
+                )->findNodeById($node->nodeAggregateId);
+        } catch (WorkspaceDoesNotExist) {
             return null;
         }
-        // FIXME: node->workspaceName
-        return $contentRepository
-            ->getContentGraph($workspace->workspaceName)
-            ->getSubgraph(
-                $node->subgraphIdentity->dimensionSpacePoint->vary($contentDimensionId, $contentDimensionValue->value),
-                $node->subgraphIdentity->visibilityConstraints
-            )->findNodeById($node->nodeAggregateId);
     }
 
     public function allowsCallOfMethod($methodName): bool

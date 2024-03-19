@@ -8,6 +8,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -73,20 +74,20 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
 
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($serializedNode['workspaceName']));
-        if (!$workspace) {
+        try {
+            $workspaceName = WorkspaceName::fromString($serializedNode['workspaceName']);
+            $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
+                DimensionSpacePoint::fromArray($serializedNode['dimensionSpacePoint']),
+                $workspaceName->isLive()
+                    ? VisibilityConstraints::frontend()
+                    : VisibilityConstraints::withoutRestrictions()
+            );
+        } catch (WorkspaceDoesNotExist $exception) {
             // in case the workspace was deleted the rendering should probably not come to this very point
             // still if it does we fail silently
             // this is also the behaviour for when the property mapper is used
             return null;
         }
-
-        $subgraph = $contentRepository->getContentGraph($workspace->workspaceName)->getSubgraph(
-            DimensionSpacePoint::fromArray($serializedNode['dimensionSpacePoint']),
-            $workspace->isPublicWorkspace()
-                ? VisibilityConstraints::frontend()
-                : VisibilityConstraints::withoutRestrictions()
-        );
 
         $node = $subgraph->findNodeById(NodeAggregateId::fromString($serializedNode['nodeAggregateId']));
         if (!$node) {
