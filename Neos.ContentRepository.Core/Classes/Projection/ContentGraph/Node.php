@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -34,11 +35,14 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  * call findChildNodes() {@see ContentSubgraphInterface::findChildNodes()}
  * on the subgraph.
  *
+ * The identity of a node is summarized here {@see NodeAddress}
+ *
  * @api Note: The constructor is not part of the public API
  */
 final readonly class Node
 {
     /**
+     * @param NodeAddress $address The node's "Read Model" identity.
      * @param ContentSubgraphIdentity $subgraphIdentity This is part of the node's "Read Model" identity which is defined by: {@see self::subgraphIdentity} and {@see self::nodeAggregateId}. With this information, you can fetch a Subgraph using {@see ContentGraphInterface::getSubgraph()}.
      * @param NodeAggregateId $nodeAggregateId NodeAggregateId (identifier) of this node. This is part of the node's "Read Model" identity which is defined by: {@see self::subgraphIdentity} and {@see self::nodeAggregateId}
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint The DimensionSpacePoint the node originates in. Usually needed to address a Node in a NodeAggregate in order to update it.
@@ -51,6 +55,8 @@ final readonly class Node
      * @param Timestamps $timestamps Creation and modification timestamps of this node
      */
     private function __construct(
+        public NodeAddress $address,
+        /** @deprecated will be removed before the final 9.0 release */
         public ContentSubgraphIdentity $subgraphIdentity,
         public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
@@ -70,9 +76,9 @@ final readonly class Node
     /**
      * @internal The signature of this method can change in the future!
      */
-    public static function create(ContentSubgraphIdentity $subgraphIdentity, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, ?NodeType $nodeType, PropertyCollection $properties, ?NodeName $nodeName, NodeTags $tags, Timestamps $timestamps): self
+    public static function create(NodeAddress $address, ContentSubgraphIdentity $subgraphIdentity, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, ?NodeType $nodeType, PropertyCollection $properties, ?NodeName $nodeName, NodeTags $tags, Timestamps $timestamps): self
     {
-        return new self($subgraphIdentity, $nodeAggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $nodeType, $properties, $nodeName, $tags, $timestamps);
+        return new self($address, $subgraphIdentity, $nodeAggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $nodeType, $properties, $nodeName, $tags, $timestamps);
     }
 
     /**

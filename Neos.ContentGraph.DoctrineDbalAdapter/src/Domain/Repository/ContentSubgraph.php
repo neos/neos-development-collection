@@ -92,7 +92,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
-        /** @phpstan-ignore-next-line  */
         private readonly WorkspaceName $workspaceName,
         private readonly ContentStreamId $contentStreamId,
         private readonly DimensionSpacePoint $dimensionSpacePoint,
@@ -290,7 +289,13 @@ final class ContentSubgraph implements ContentSubgraphInterface
         foreach (array_reverse($result) as $nodeData) {
             $nodeAggregateId = $nodeData['nodeaggregateid'];
             $parentNodeAggregateId = $nodeData['parentNodeAggregateId'];
-            $node = $this->nodeFactory->mapNodeRowToNode($nodeData, $this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+            $node = $this->nodeFactory->mapNodeRowToNode(
+                $nodeData,
+                $this->workspaceName,
+                $this->contentStreamId,
+                $this->dimensionSpacePoint,
+                $this->visibilityConstraints
+            );
             $subtree = new Subtree((int)$nodeData['level'], $node, array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ? array_reverse($subtreesByParentNodeId[$nodeAggregateId]) : []);
             if ($subtree->level === 0) {
                 return $subtree;
@@ -319,6 +324,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodes(
             $nodeRows,
+            $this->workspaceName,
             $this->contentStreamId,
             $this->dimensionSpacePoint,
             $this->visibilityConstraints
@@ -374,6 +380,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         );
         return $this->nodeFactory->mapNodeRowsToNodes(
             $nodeRows,
+            $this->workspaceName,
             $this->contentStreamId,
             $this->dimensionSpacePoint,
             $this->visibilityConstraints
@@ -391,7 +398,13 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
         $queryBuilderCte->addOrderBy('level')->addOrderBy('position');
         $nodeRows = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
-        return $this->nodeFactory->mapNodeRowsToNodes($nodeRows, $this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $nodeRows,
+            $this->workspaceName,
+            $this->contentStreamId,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, CountDescendantNodesFilter $filter): int
@@ -668,6 +681,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
         return $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
+            $this->workspaceName,
             $this->contentStreamId,
             $this->dimensionSpacePoint,
             $this->visibilityConstraints
@@ -681,7 +695,13 @@ final class ContentSubgraph implements ContentSubgraphInterface
         } catch (DbalDriverException | DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch nodes: %s', $e->getMessage()), 1678292896, $e);
         }
-        return $this->nodeFactory->mapNodeRowsToNodes($nodeRows, $this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $nodeRows,
+            $this->workspaceName,
+            $this->contentStreamId,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     private function fetchCount(QueryBuilder $queryBuilder): int
@@ -700,7 +720,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         } catch (DbalDriverException | DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch references: %s', $e->getMessage()), 1678364944, $e);
         }
-        return $this->nodeFactory->mapReferenceRowsToReferences($referenceRows, $this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        return $this->nodeFactory->mapReferenceRowsToReferences($referenceRows, $this->workspaceName, $this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
     }
 
     /**
