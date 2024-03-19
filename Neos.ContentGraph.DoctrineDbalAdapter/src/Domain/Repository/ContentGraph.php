@@ -306,7 +306,7 @@ final class ContentGraph implements ContentGraphInterface
         try {
             return (int)$result->fetchOne();
         } catch (DriverException | DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444590, $e);
+            throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
         }
     }
 

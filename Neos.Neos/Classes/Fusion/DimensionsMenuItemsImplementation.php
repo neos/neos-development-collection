@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
@@ -59,12 +60,11 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         $interDimensionalVariationGraph = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph;
         $currentDimensionSpacePoint = $currentNode->subgraphIdentity->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
-        // FIXME: node->workspaceName
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($currentNode->subgraphIdentity->contentStreamId);
-        if (is_null($workspace)) {
+        try {
+            $contentGraph = $contentRepository->getContentGraph($currentNode->address->workspaceName);
+        } catch (WorkspaceDoesNotExist) {
             return $menuItems;
         }
-        $contentGraph = $contentRepository->getContentGraph($workspace->workspaceName);
 
         foreach ($interDimensionalVariationGraph->getDimensionSpacePoints() as $dimensionSpacePoint) {
             $variant = null;

@@ -870,10 +870,10 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function getOriginalNode(
         Node $modifiedNode,
-        WorkspaceName $workspaceName,
+        WorkspaceName $baseWorkspaceName,
         ContentRepository $contentRepository,
     ): ?Node {
-        $baseSubgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
+        $baseSubgraph = $contentRepository->getContentGraph($baseWorkspaceName)->getSubgraph(
             $modifiedNode->subgraphIdentity->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
