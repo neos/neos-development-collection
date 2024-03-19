@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublish
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -193,17 +194,26 @@ readonly class WorkspacePublisher
     ): NodeIdsToPublishOrDiscard {
         /** @var ChangeFinder $changeFinder */
         $changeFinder = $contentRepository->projectionState(ChangeFinder::class);
-        $contentStreamId = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)->currentContentStreamId;
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        if (!$workspace instanceof Workspace) {
+            throw new \DomainException(
+                'Cannot publish anything from unknown workspace ' . $workspaceName->value,
+                1710891954
+            );
+        }
+        $contentStreamId = $workspace->currentContentStreamId;
         $changes = $changeFinder->findByContentStreamId($contentStreamId);
         $nodeIdsToPublishOrDiscard = [];
         foreach ($changes as $change) {
-            if (!$this->isChangePublishableWithinAncestorScope(
-                $contentRepository,
-                $contentStreamId,
-                $change,
-                $ancestorNodeTypeName,
-                $ancestorId
-            )) {
+            if (
+                !$this->isChangePublishableWithinAncestorScope(
+                    $contentRepository,
+                    $contentStreamId,
+                    $change,
+                    $ancestorNodeTypeName,
+                    $ancestorId
+                )
+            ) {
                 continue;
             }
 
