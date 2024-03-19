@@ -7,6 +7,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\CurrentWorkspaceContentStreamId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
@@ -43,6 +44,15 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
@@ -69,7 +79,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     use SubtreeTagging;
     use NodeRemoval;
     use NodeMove;
-
+    use CurrentWorkspaceContentStreamId;
 
     public const RELATION_DEFAULT_OFFSET = 128;
 
@@ -157,6 +167,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         $connection->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
         $connection->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
         $connection->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNames->workspaces());
     }
 
     public function canHandle(EventInterface $event): bool
@@ -180,6 +191,21 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             NodePeerVariantWasCreated::class,
             SubtreeWasTagged::class,
             SubtreeWasUntagged::class,
+
+            /**
+             * Workspace related commands, see {@see CurrentWorkspaceContentStreamId}
+             * We are not interested in the events WorkspaceWasRenamed, WorkspaceRebaseFailed and WorkspaceOwnerWasChanged
+             * As they do not change the current content stream id
+             */
+            WorkspaceWasCreated::class,
+            RootWorkspaceWasCreated::class,
+            WorkspaceWasDiscarded::class,
+            WorkspaceWasPartiallyDiscarded::class,
+            WorkspaceWasPartiallyPublished::class,
+            WorkspaceWasPublished::class,
+            WorkspaceWasRebased::class,
+            WorkspaceWasRemoved::class,
+            WorkspaceBaseWorkspaceWasChanged::class,
         ]);
     }
 
@@ -204,6 +230,15 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event, $eventEnvelope),
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
+            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
+            WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
+            WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),
+            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
+            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
+            WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
+            WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }

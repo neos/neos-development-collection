@@ -28,7 +28,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             $this->createNodeTable(),
             $this->createHierarchyRelationTable(),
             $this->createReferenceRelationTable(),
-            $this->createDimensionSpacePointsTable()
+            $this->createDimensionSpacePointsTable(),
+            $this->createWorkspacesTable()
         ]);
     }
 
@@ -96,5 +97,15 @@ class DoctrineDbalContentGraphSchemaBuilder
 
         return $table
             ->setPrimaryKey(['name', 'position', 'nodeanchorpoint']);
+    }
+
+    private function createWorkspacesTable(): Table
+    {
+        $workspaceTable = new Table($this->contentGraphTableNames->workspaces(), [
+            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            DbalSchemaFactory::columnForContentStreamId('currentcontentstreamid')->setNotNull(true),
+        ]);
+
+        return $workspaceTable->setPrimaryKey(['workspacename']);
     }
 }
