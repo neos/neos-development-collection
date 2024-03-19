@@ -37,8 +37,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -87,13 +89,19 @@ final class NodeSubjectProvider
     ): Node {
         $serializedDefaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->propertyConverter);
         return Node::create(
+            NodeIdentity::create(
+                ContentRepositoryId::fromString('default'),
+                WorkspaceName::forLive(),
+                DimensionSpacePoint::createWithoutDimensions(),
+                $id = NodeAggregateId::create()
+            ),
             ContentSubgraphIdentity::create(
                 ContentRepositoryId::fromString('default'),
                 ContentStreamId::fromString('cs-id'),
                 DimensionSpacePoint::createWithoutDimensions(),
                 VisibilityConstraints::withoutRestrictions()
             ),
-            NodeAggregateId::create(),
+            $id,
             OriginDimensionSpacePoint::createWithoutDimensions(),
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
             $nodeType->name,

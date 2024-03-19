@@ -40,6 +40,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The Doctrine DBAL adapter content graph
@@ -88,6 +89,8 @@ final class ContentGraph implements ContentGraphInterface
             $this->subgraphs[$index] = new ContentSubgraphWithRuntimeCaches(
                 new ContentSubgraph(
                     $this->contentRepositoryId,
+                    // todo accept Workspace
+                    WorkspaceName::forLive(),
                     $contentStreamId,
                     $dimensionSpacePoint,
                     $visibilityConstraints,

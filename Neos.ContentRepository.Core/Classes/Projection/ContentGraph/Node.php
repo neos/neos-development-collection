@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
@@ -33,6 +34,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  * $subgraphIdentity {@see Node::$subgraphIdentity}. and then
  * call findChildNodes() {@see ContentSubgraphInterface::findChildNodes()}
  * on the subgraph.
+ *
+ * The identity of a node is summarized here {@see NodeIdentity}
  *
  * @api Note: The constructor is not part of the public API
  */
@@ -51,6 +54,8 @@ final readonly class Node
      * @param Timestamps $timestamps Creation and modification timestamps of this node
      */
     private function __construct(
+        public NodeIdentity $identity,
+        /** @deprecated will be removed before the final 9.0 release */
         public ContentSubgraphIdentity $subgraphIdentity,
         public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
@@ -70,9 +75,9 @@ final readonly class Node
     /**
      * @internal The signature of this method can change in the future!
      */
-    public static function create(ContentSubgraphIdentity $subgraphIdentity, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, ?NodeType $nodeType, PropertyCollection $properties, ?NodeName $nodeName, NodeTags $tags, Timestamps $timestamps): self
+    public static function create(NodeIdentity $identity, ContentSubgraphIdentity $subgraphIdentity, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, ?NodeType $nodeType, PropertyCollection $properties, ?NodeName $nodeName, NodeTags $tags, Timestamps $timestamps): self
     {
-        return new self($subgraphIdentity, $nodeAggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $nodeType, $properties, $nodeName, $tags, $timestamps);
+        return new self($identity, $subgraphIdentity, $nodeAggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $nodeType, $properties, $nodeName, $tags, $timestamps);
     }
 
     /**
