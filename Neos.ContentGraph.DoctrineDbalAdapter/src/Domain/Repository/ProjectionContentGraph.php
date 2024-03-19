@@ -30,7 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * The read only content graph for use by the {@see GraphProjector}. This is the class for low-level operations
+ * The read only content graph for use by the {@see DoctrineDbalContentGraphProjection}. This is the class for low-level operations
  * within the projector, where implementation details of the graph structure are known.
  *
  * This is NO PUBLIC API in any way.
