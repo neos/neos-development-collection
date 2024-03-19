@@ -46,6 +46,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -149,7 +150,8 @@ trait NodeMove
             $originNodeMoveMappings[] = new OriginNodeMoveMapping(
                 $movedNodeOrigin,
                 $this->resolveCoverageNodeMoveMappings(
-                    $contentStreamId,
+                    // todo UNSAFE as override via ContentStreamIdOverride will NOT be taken into account!!!
+                    $command->workspaceName,
                     $nodeAggregate,
                     $command->newParentNodeAggregateId,
                     $command->newPrecedingSiblingNodeAggregateId,
@@ -188,18 +190,18 @@ trait NodeMove
      *
      * If no parent node aggregate is defined, it will be resolved from the already evaluated new succeeding siblings.
      *
-     * @todo move to content graph for more efficient calculation, if possible
+     * @todo move to content graph for more efficient calculation, if possible !!!
      */
     private function resolveNewParentAssignments(
-        /** The content stream the move operation is performed in */
-        ContentStreamId $contentStreamId,
+        /** The workspace the move operation is performed in */
+        WorkspaceName $workspaceName,
         /** The parent node aggregate's id*/
         NodeAggregateId $parentId,
         DimensionSpace\DimensionSpacePoint $coveredDimensionSpacePoint,
         ContentRepository $contentRepository
     ): CoverageNodeMoveMapping {
         $contentSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
+            $workspaceName,
             $coveredDimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -328,8 +330,8 @@ trait NodeMove
     }
 
     private function resolveCoverageNodeMoveMappings(
-        /** The content stream the move operation is performed in */
-        ContentStreamId $contentStreamId,
+        /** The workspace the move operation is performed in */
+        WorkspaceName $workspaceName,
         /** The node aggregate to be moved */
         NodeAggregate $nodeAggregate,
         /** The parent node aggregate id, has precedence over siblings when in doubt */
@@ -349,7 +351,7 @@ trait NodeMove
 
         $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
         $originContentSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
+            $workspaceName,
             $originDimensionSpacePoint->toDimensionSpacePoint(),
             $visibilityConstraints
         );
@@ -358,7 +360,7 @@ trait NodeMove
                 ->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint
         ) {
             $contentSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $contentStreamId,
+                $workspaceName,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             );
@@ -426,7 +428,7 @@ trait NodeMove
                     }
                 }
                 $coverageNodeMoveMappings[] = $this->resolveNewParentAssignments(
-                    $contentStreamId,
+                    $workspaceName,
                     $parentId,
                     $dimensionSpacePoint,
                     $contentRepository

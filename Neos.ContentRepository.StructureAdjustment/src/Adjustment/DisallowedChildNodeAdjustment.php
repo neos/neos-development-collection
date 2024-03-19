@@ -17,6 +17,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class DisallowedChildNodeAdjustment
@@ -52,7 +53,7 @@ class DisallowedChildNodeAdjustment
             // Then, we only want to remove the single edge.
             foreach ($nodeAggregate->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
                 $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                    $nodeAggregate->contentStreamId,
+                    WorkspaceName::forLive(), // structure adjustments are only carried out live
                     $coveredDimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()
                 );
