@@ -36,14 +36,17 @@ final class WorkspaceRuntimeCache
      */
     private array $cachedWorkspacesByContentStreamId = [];
 
+    public function enableCache(): void
+    {
+        $this->resetCache(true);
+    }
+
     /**
      * @return void
      */
     public function disableCache(): void
     {
-        $this->cacheEnabled = false;
-        $this->cachedWorkspacesByName = [];
-        $this->cachedWorkspacesByContentStreamId = [];
+        $this->resetCache(false);
     }
 
     public function getWorkspaceByName(WorkspaceName $name): ?Workspace
@@ -73,5 +76,15 @@ final class WorkspaceRuntimeCache
             return $this->cachedWorkspacesByContentStreamId[$contentStreamId->value];
         }
         return null;
+    }
+
+    /**
+     * @param bool $isEnabled if TRUE, the caches work; if FALSE, they do not store anything.
+     */
+    private function resetCache(bool $isEnabled): void
+    {
+        $this->cacheEnabled = $isEnabled;
+        $this->cachedWorkspacesByName = [];
+        $this->cachedWorkspacesByContentStreamId = [];
     }
 }
