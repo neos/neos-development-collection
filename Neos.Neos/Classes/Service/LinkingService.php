@@ -315,7 +315,7 @@ class LinkingService
                 $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
                 $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                    $nodeAddress->contentStreamId,
+                    $nodeAddress->workspaceName,
                     $nodeAddress->dimensionSpacePoint,
                     $workspace && !$workspace->isPublicWorkspace()
                         ? VisibilityConstraints::withoutRestrictions()

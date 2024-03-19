@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotEx
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * This is the MAIN ENTRY POINT for the Content Repository. This class exists only
@@ -40,7 +41,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @api main API method of ContentGraph
      */
     public function getSubgraph(
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface;

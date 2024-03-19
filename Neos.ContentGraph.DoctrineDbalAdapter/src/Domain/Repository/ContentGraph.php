@@ -36,6 +36,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -80,17 +81,20 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     final public function getSubgraph(
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
-        $index = $contentStreamId->value . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
+        $index = $workspaceName->value . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
+            $contentStreamId = $this->findCurrentContentStreamIdForWorkspaceName($workspaceName);
+            if (!$contentStreamId) {
+                throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+            }
             $this->subgraphs[$index] = new ContentSubgraphWithRuntimeCaches(
                 new ContentSubgraph(
                     $this->contentRepositoryId,
-                    // todo accept Workspace
-                    WorkspaceName::forLive(),
+                    $workspaceName,
                     $contentStreamId,
                     $dimensionSpacePoint,
                     $visibilityConstraints,
@@ -356,7 +360,7 @@ final class ContentGraph implements ContentGraphInterface
         try {
             return (int)$result->fetchOne();
         } catch (DriverException | DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444590, $e);
+            throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
         }
     }
 
@@ -427,6 +431,29 @@ final class ContentGraph implements ContentGraphInterface
             return $result->fetchAllAssociative();
         } catch (DriverException | DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
+        }
+    }
+
+    private function findCurrentContentStreamIdForWorkspaceName(WorkspaceName $workspaceName): ?ContentStreamId
+    {
+        $query = $this->createQueryBuilder()
+            ->select('workspaces.currentContentStreamId')
+            ->from($this->tableNamePrefix . '_workspaces', 'workspaces')
+            ->where('workspaces.workspaceName = :workspaceName')
+            ->setParameter(':workspaceName', $workspaceName->value);
+
+        $result = $query->execute();
+        if (!$result instanceof Result) {
+            throw new \RuntimeException(sprintf('Failed to fetch contents stream for workspace. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1710883555);
+        }
+        try {
+            $contentStreamId = $result->fetchOne();
+            if ($contentStreamId === false) {
+                return null;
+            }
+            return ContentStreamId::fromString((string)$contentStreamId);
+        } catch (DriverException | DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch row in database: %s', $e->getMessage()), 1710883554, $e);
         }
     }
 }

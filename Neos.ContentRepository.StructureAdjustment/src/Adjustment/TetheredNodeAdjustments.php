@@ -138,6 +138,7 @@ class TetheredNodeAdjustments
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($originDimensionSpacePoints as $originDimensionSpacePoint) {
                     $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
+                        // todo add workspace to node aggregate
                         $nodeAggregate->contentStreamId,
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()

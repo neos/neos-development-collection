@@ -154,7 +154,7 @@ class ContentController extends ActionController
 
         $node = $contentRepository->getContentGraph()
             ->getSubgraph(
-                $nodeAddress->contentStreamId,
+                $nodeAddress->workspaceName,
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             )

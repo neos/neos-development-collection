@@ -66,7 +66,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 } else {
                     $variant = $contentRepository->getContentGraph()
                         ->getSubgraph(
-                            $currentNode->subgraphIdentity->contentStreamId,
+                            $currentNode->identity->workspaceName,
                             $dimensionSpacePoint,
                             $currentNode->subgraphIdentity->visibilityConstraints,
                         )
@@ -159,7 +159,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             ) {
                 $variant = $contentRepository->getContentGraph()
                     ->getSubgraph(
-                        $this->currentNode->subgraphIdentity->contentStreamId,
+                        $this->currentNode->identity->workspaceName,
                         $generalization,
                         $this->currentNode->subgraphIdentity->visibilityConstraints,
                     )

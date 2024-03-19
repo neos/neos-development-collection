@@ -15,9 +15,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  * By using the content graph for the content repository
  * one can build a subgraph with the right perspective to find this node:
  *
- *      $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($identity->workspaceName);
  *      $subgraph = $contentGraph->getSubgraph(
- *          $workspace->currentContentStreamId,
+ *          $identity->workspaceName,
  *          $nodeIdentity->dimensionSpacePoint,
  *          // resolve also all disabled nodes
  *          VisibilityConstraints::withoutRestrictions()
