@@ -161,11 +161,13 @@ final class EventNormalizer
             $eventDataAsArray = json_decode($event->data->value, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
             throw new \InvalidArgumentException(
-                sprintf('Failed to decode data of event "%s": %s', $event->id->value, $exception->getMessage()),
+                sprintf('Failed to decode data of event with type "%s" and id "%s": %s', $event->type->value, $event->id->value, $exception->getMessage()),
                 1651839461
             );
         }
-        assert(is_array($eventDataAsArray));
+        if (!is_array($eventDataAsArray)) {
+            throw new \RuntimeException(sprintf('Expected array got %s', $eventDataAsArray));
+        }
         /** {@see EventInterface::fromArray()} */
         $eventInstance = $eventClassName::fromArray($eventDataAsArray);
         return match ($eventInstance::class) {
