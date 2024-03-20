@@ -49,7 +49,7 @@ final readonly class WorkspacePublisher
     /**
      * @return int The amount of changes that were published
      */
-    public function publishSite(PublishSite $command): int
+    public function publishChangesInSite(PublishChangesInSite $command): int
     {
         $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
 
@@ -72,7 +72,7 @@ final readonly class WorkspacePublisher
     /**
      * @return int The amount of changes that were published
      */
-    public function publishDocument(PublishDocument $command): int
+    public function publishChangesInDocument(PublishChangesInDocument $command): int
     {
         $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
 
@@ -95,7 +95,7 @@ final readonly class WorkspacePublisher
     /**
      * @return int The amount of changes that were discarded
      */
-    public function discardSite(DiscardSite $command): int
+    public function discardChangesInSite(DiscardChangesInSite $command): int
     {
         $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
         $nodeIdsToDiscard = $this->resolveNodeIdsToPublishOrDiscard(
@@ -117,7 +117,7 @@ final readonly class WorkspacePublisher
     /**
      * @return int The amount of changes that were discarded
      */
-    public function discardDocument(DiscardDocument $command): int
+    public function discardChangesInDocument(DiscardChangesInDocument $command): int
     {
         $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
         $nodeIdsToDiscard = $this->resolveNodeIdsToPublishOrDiscard(

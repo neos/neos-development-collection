@@ -10,7 +10,6 @@
  * source code.
  */
 
-
 declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Workspace;
@@ -18,11 +17,13 @@ namespace Neos\Neos\Domain\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Annotations as Flow;
 
-final readonly class PublishSite
+#[Flow\Proxy(false)]
+final readonly class PublishChangesInDocument
 {
     public function __construct(
-        public NodeAggregateId $siteId,
+        public NodeAggregateId $documentId,
         public ContentRepositoryId $contentRepositoryId,
         public WorkspaceName $workspaceName
     ) {
@@ -34,7 +35,7 @@ final readonly class PublishSite
     public static function fromArray(array $values): self
     {
         return new self(
-            NodeAggregateId::fromString($values['siteId']),
+            NodeAggregateId::fromString($values['documentId']),
             ContentRepositoryId::fromString($values['contentRepositoryId']),
             WorkspaceName::fromString($values['workspaceName']),
         );
