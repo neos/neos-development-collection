@@ -18,11 +18,13 @@ namespace Neos\Neos\Domain\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Annotations as Flow;
 
-final readonly class DiscardSite
+#[Flow\Proxy(false)]
+final readonly class DiscardChangesInDocument
 {
     public function __construct(
-        public NodeAggregateId $siteId,
+        public NodeAggregateId $documentId,
         public ContentRepositoryId $contentRepositoryId,
         public WorkspaceName $workspaceName
     ) {
@@ -34,7 +36,7 @@ final readonly class DiscardSite
     public static function fromArray(array $values): self
     {
         return new self(
-            NodeAggregateId::fromString($values['siteId']),
+            NodeAggregateId::fromString($values['documentId']),
             ContentRepositoryId::fromString($values['contentRepositoryId']),
             WorkspaceName::fromString($values['workspaceName']),
         );

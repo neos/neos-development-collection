@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
-final readonly class PublishSite
+final readonly class PublishChangesInSite
 {
     public function __construct(
         public NodeAggregateId $siteId,
