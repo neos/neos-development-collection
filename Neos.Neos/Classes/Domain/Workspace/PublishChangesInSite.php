@@ -21,9 +21,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class PublishChangesInSite
 {
     public function __construct(
-        public NodeAggregateId $siteId,
         public ContentRepositoryId $contentRepositoryId,
-        public WorkspaceName $workspaceName
+        public WorkspaceName $workspaceName,
+        public NodeAggregateId $siteId,
     ) {
     }
 
@@ -33,9 +33,9 @@ final readonly class PublishChangesInSite
     public static function fromArray(array $values): self
     {
         return new self(
-            NodeAggregateId::fromString($values['siteId']),
             ContentRepositoryId::fromString($values['contentRepositoryId']),
             WorkspaceName::fromString($values['workspaceName']),
+            NodeAggregateId::fromString($values['siteId']),
         );
     }
 }

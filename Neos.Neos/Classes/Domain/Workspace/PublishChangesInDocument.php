@@ -23,9 +23,9 @@ use Neos\Flow\Annotations as Flow;
 final readonly class PublishChangesInDocument
 {
     public function __construct(
-        public NodeAggregateId $documentId,
         public ContentRepositoryId $contentRepositoryId,
-        public WorkspaceName $workspaceName
+        public WorkspaceName $workspaceName,
+        public NodeAggregateId $documentId,
     ) {
     }
 
@@ -35,9 +35,9 @@ final readonly class PublishChangesInDocument
     public static function fromArray(array $values): self
     {
         return new self(
-            NodeAggregateId::fromString($values['documentId']),
             ContentRepositoryId::fromString($values['contentRepositoryId']),
             WorkspaceName::fromString($values['workspaceName']),
+            NodeAggregateId::fromString($values['documentId']),
         );
     }
 }
