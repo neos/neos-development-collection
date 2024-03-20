@@ -21,8 +21,10 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublis
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -52,12 +54,20 @@ final readonly class WorkspacePublisher
     public function publishChangesInSite(PublishChangesInSite $command): int
     {
         $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
+        $contentStreamId = $this->requireContentStream($contentRepository, $command->workspaceName);
+        $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
+        $this->requireNodeToBeOfType(
+            $contentRepository,
+            $contentStreamId,
+            $command->siteId,
+            $ancestorNodeTypeName
+        );
 
         $nodeIdsToPublish = $this->resolveNodeIdsToPublishOrDiscard(
             $contentRepository,
             $command->workspaceName,
             $command->siteId,
-            NodeTypeNameFactory::forSite()
+            $ancestorNodeTypeName
         );
 
         $this->publishNodes(
@@ -75,12 +85,20 @@ final readonly class WorkspacePublisher
     public function publishChangesInDocument(PublishChangesInDocument $command): int
     {
         $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
+        $contentStreamId = $this->requireContentStream($contentRepository, $command->workspaceName);
+        $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
+        $this->requireNodeToBeOfType(
+            $contentRepository,
+            $contentStreamId,
+            $command->documentId,
+            $ancestorNodeTypeName
+        );
 
         $nodeIdsToPublish = $this->resolveNodeIdsToPublishOrDiscard(
             $contentRepository,
             $command->workspaceName,
             $command->documentId,
-            NodeTypeNameFactory::forDocument()
+            $ancestorNodeTypeName
         );
 
         $this->publishNodes(
@@ -98,6 +116,15 @@ final readonly class WorkspacePublisher
     public function discardChangesInSite(DiscardChangesInSite $command): int
     {
         $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
+        $contentStreamId = $this->requireContentStream($contentRepository, $command->workspaceName);
+        $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
+        $this->requireNodeToBeOfType(
+            $contentRepository,
+            $contentStreamId,
+            $command->siteId,
+            $ancestorNodeTypeName
+        );
+
         $nodeIdsToDiscard = $this->resolveNodeIdsToPublishOrDiscard(
             $contentRepository,
             $command->workspaceName,
@@ -120,11 +147,20 @@ final readonly class WorkspacePublisher
     public function discardChangesInDocument(DiscardChangesInDocument $command): int
     {
         $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
+        $contentStreamId = $this->requireContentStream($contentRepository, $command->workspaceName);
+        $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
+        $this->requireNodeToBeOfType(
+            $contentRepository,
+            $contentStreamId,
+            $command->documentId,
+            $ancestorNodeTypeName
+        );
+
         $nodeIdsToDiscard = $this->resolveNodeIdsToPublishOrDiscard(
             $contentRepository,
             $command->workspaceName,
             $command->documentId,
-            NodeTypeNameFactory::forDocument()
+            $ancestorNodeTypeName
         );
 
         $this->discardNodes(
@@ -134,6 +170,47 @@ final readonly class WorkspacePublisher
         );
 
         return count($nodeIdsToDiscard);
+    }
+
+    private function requireContentStream(
+        ContentRepository $contentRepository,
+        WorkspaceName $workspaceName
+    ): ContentStreamId {
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        if (!$workspace instanceof Workspace) {
+            throw new \DomainException('Workspace "' . $workspaceName->value . '" is missing', 1710967842);
+        }
+
+        return $workspace->currentContentStreamId;
+    }
+
+    private function requireNodeToBeOfType(
+        ContentRepository $contentRepository,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        NodeTypeName $nodeTypeName,
+    ) {
+        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
+            $contentStreamId,
+            $nodeAggregateId,
+        );
+        if (!$nodeAggregate instanceof NodeAggregate) {
+            throw new NodeAggregateCurrentlyDoesNotExist(
+                'Node aggregate ' . $nodeAggregateId->value . ' does currently not exist',
+                1710967964
+            );
+        }
+
+        if (
+            !$contentRepository->getNodeTypeManager()
+                ->getNodeType($nodeAggregate->nodeTypeName)
+                ->isOfType($nodeTypeName)
+        ) {
+            throw new \DomainException(
+                'Node aggregate ' . $nodeAggregateId->value . ' is not of expected type ' . $nodeTypeName->value,
+                1710968108
+            );
+        }
     }
 
     private function publishNodes(
