@@ -57,7 +57,7 @@ final readonly class WorkspacePublisher
             $contentRepository,
             $command->workspaceName,
             $command->siteId,
-            NodeTypeName::fromString('Neos.Neos:Site')
+            NodeTypeNameFactory::forSite()
         );
 
         $this->publishNodes(
@@ -80,7 +80,7 @@ final readonly class WorkspacePublisher
             $contentRepository,
             $command->workspaceName,
             $command->documentId,
-            NodeTypeName::fromString('Neos.Neos:Document')
+            NodeTypeNameFactory::forDocument()
         );
 
         $this->publishNodes(
@@ -102,7 +102,7 @@ final readonly class WorkspacePublisher
             $contentRepository,
             $command->workspaceName,
             $command->siteId,
-            NodeTypeName::fromString('Neos.Neos:Site')
+            NodeTypeNameFactory::forSite()
         );
 
         $this->discardNodes(
@@ -124,7 +124,7 @@ final readonly class WorkspacePublisher
             $contentRepository,
             $command->workspaceName,
             $command->documentId,
-            NodeTypeName::fromString('Neos.Neos:Document')
+            NodeTypeNameFactory::forDocument()
         );
 
         $this->discardNodes(
