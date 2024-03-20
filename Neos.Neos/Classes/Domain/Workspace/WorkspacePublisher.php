@@ -39,7 +39,7 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
  * @api
  */
 #[Flow\Scope('singleton')]
-readonly class WorkspacePublisher
+final readonly class WorkspacePublisher
 {
     public function __construct(
         private ContentRepositoryRegistry $contentRepositoryRegistry
