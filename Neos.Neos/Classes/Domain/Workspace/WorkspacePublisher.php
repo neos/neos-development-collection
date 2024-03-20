@@ -189,7 +189,7 @@ final readonly class WorkspacePublisher
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
         NodeTypeName $nodeTypeName,
-    ) {
+    ): void {
         $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
             $contentStreamId,
             $nodeAggregateId,
