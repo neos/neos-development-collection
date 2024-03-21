@@ -352,6 +352,11 @@ final readonly class WorkspacePublisher
      * Every document node that matches that description will be published
      * or discarded by WorkspacePublisher::publishSite, regardless of what
      * the current site is.
+     *
+     * @deprecated remove once we are sure this check is no longer needed due to
+     * * the UI sending proper commands
+     * * the ChangeFinder being refactored / rewritten
+     * (whatever happens first)
      */
     private function isChangeWithSelfReferencingRemovalAttachmentPoint(Change $change): bool
     {
