@@ -24,15 +24,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  */
 final class PropertyTypeIsInvalid extends \DomainException
 {
-    public static function becauseItIsReference(PropertyName $propertyName, NodeTypeName $nodeTypeName): self
-    {
-        return new self(
-            'Given property "' . $propertyName->value . '" is declared as "reference" in node type "'
-                . $nodeTypeName->value . '" and must be treated as such.',
-            1630063201
-        );
-    }
-
     public static function becauseItIsUndefined(
         PropertyName $propertyName,
         string $declaredType,

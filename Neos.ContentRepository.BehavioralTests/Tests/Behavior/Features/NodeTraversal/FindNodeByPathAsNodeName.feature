@@ -12,13 +12,14 @@ Feature: Find nodes using the findNodeByPath query with node name as path argume
       properties:
         text:
           type: string
+      references:
         refs:
-          type: references
           properties:
             foo:
               type: string
         ref:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             foo:
               type: string

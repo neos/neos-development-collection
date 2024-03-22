@@ -10,19 +10,21 @@ Feature: Node References without Dimensions
     'Neos.ContentRepository.Testing:ReferencedNode': []
 
     'Neos.ContentRepository.Testing:NodeWithReferences':
+      # legacy notation
       properties:
         referenceProperty:
           type: reference
         referencesProperty:
           type: references
+      references:
         restrictedReferenceProperty:
-          type: reference
           constraints:
             nodeTypes:
               '*': false
               'Neos.ContentRepository.Testing:ReferencedNode': true
         referencePropertyWithProperty:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             text:
               type: string
@@ -31,7 +33,6 @@ Feature: Node References without Dimensions
             postalAddress:
               type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
         referencesPropertyWithProperty:
-          type: references
           properties:
             text:
               type: string

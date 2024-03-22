@@ -46,6 +46,29 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
     public function process(NodeType $nodeType, array &$configuration, array $options): void
     {
         $nodeTypeName = $nodeType->name->value;
+
+        foreach ($configuration['references'] as $referenceName => &$referenceConfiguration) {
+            if (!isset($referenceConfiguration['ui']['inspector'])) {
+                // we presume that these are properties wich are not shown
+                continue;
+            }
+
+            $editor = $referenceConfiguration['ui']['inspector']['editor'] ?? null;
+
+            if (!$editor) {
+                $maxAllowedItems = $referenceConfiguration['constraints']['maxItems'] ?? null;
+                $editor = $maxAllowedItems === 1 ? 'Neos.Neos/Inspector/Editors/ReferenceEditor' : 'Neos.Neos/Inspector/Editors/ReferencesEditor';
+            }
+
+            $mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor] ?? [];
+            $mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule(
+                $mergedInspectorConfiguration,
+                $referenceConfiguration['ui']['inspector']
+            );
+            $referenceConfiguration['ui']['inspector'] = $mergedInspectorConfiguration;
+            $referenceConfiguration['ui']['inspector']['editor'] = $editor;
+        }
+
         if (isset($configuration['properties']) && is_array($configuration['properties'])) {
             foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
                 if (!isset($propertyConfiguration['type'])) {
@@ -55,6 +78,7 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
                 $type = $propertyConfiguration['type'];
 
                 if (!isset($propertyConfiguration['ui']['inspector'])) {
+                    // we presume that these are properties wich are not shown
                     continue;
                 }
 

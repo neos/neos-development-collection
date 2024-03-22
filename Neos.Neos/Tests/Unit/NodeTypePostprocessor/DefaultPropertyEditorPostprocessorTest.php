@@ -44,6 +44,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
     public function processConvertsPropertyConfiguration(): void
     {
         $configuration = [
+            'references' => [],
             'properties' => [
                 'propertyWithoutType' => [
                     'ui' => [
@@ -154,6 +155,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         ];
 
         $expectedResult = [
+            'references' => [],
             'properties' => [
                 'propertyWithoutType' => [
                     'ui' => [
@@ -268,6 +270,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         $this->expectException(\Neos\Neos\Exception::class);
 
         $configuration = [
+            'references' => [],
             'properties' => [
                 'someProperty' => [
                     'type' => 'string',

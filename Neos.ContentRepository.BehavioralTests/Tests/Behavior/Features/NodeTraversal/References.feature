@@ -22,13 +22,14 @@ Feature: Find and count references and their target nodes using the findReferenc
           type: integer
         dateProperty:
           type: DateTime
+      references:
         refs:
-          type: references
           properties:
             foo:
               type: string
         ref:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             foo:
               type: string

@@ -230,6 +230,7 @@ class NodesController extends ActionController
             $this->throwStatus(404);
         }
 
+        // @todo illegal dependency direction. Neos Neos has no business calling the ui
         $convertedNodeProperties = $this->nodePropertyConverterService->getPropertiesArray($node);
         array_walk($convertedNodeProperties, function (&$value) {
             if (is_array($value)) {
