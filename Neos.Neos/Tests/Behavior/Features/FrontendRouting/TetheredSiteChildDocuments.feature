@@ -46,8 +46,9 @@ Feature: Tests for site node child documents. These are special in that they hav
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'site':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory

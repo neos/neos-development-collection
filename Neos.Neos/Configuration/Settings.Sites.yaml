@@ -1,0 +1,18 @@
+#                                                                        #
+# Site specific settings                                                 #
+#                                                                        #
+# This file contains settings specific to Neos Sites                     #
+
+Neos:
+
+  Neos:
+    sitePresets:
+      'default':
+        uriPathSuffix: '.html'
+        contentRepository: default
+        contentDimensions:
+          resolver:
+            factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolverFactory
+    sites:
+      '*':
+        preset: 'default'
