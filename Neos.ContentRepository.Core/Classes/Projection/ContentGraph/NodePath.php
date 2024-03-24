@@ -36,17 +36,17 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @api
  */
-final class NodePath implements \JsonSerializable
+final readonly class NodePath implements \JsonSerializable
 {
     /**
      * @deprecated use {@see self::serializeToString()} instead
      */
-    public readonly string $value;
+    public string $value;
 
     /**
      * @var array<NodeName>
      */
-    private readonly array $nodeNames;
+    private array $nodeNames;
 
     private function __construct(NodeName ...$nodeNames)
     {

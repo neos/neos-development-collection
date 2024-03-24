@@ -9,11 +9,11 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class VisitedNodeVariant
+final readonly class VisitedNodeVariant
 {
 
     public function __construct(
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly NodeAggregateId $parentNodeAggregateId
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public NodeAggregateId $parentNodeAggregateId
     ) {}
 }

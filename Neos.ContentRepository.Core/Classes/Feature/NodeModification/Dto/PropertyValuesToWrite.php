@@ -28,13 +28,13 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
  *
  * @api used as part of commands
  */
-final class PropertyValuesToWrite
+final readonly class PropertyValuesToWrite
 {
     /**
      * @param array<string,mixed> $values
      */
     private function __construct(
-        public readonly array $values
+        public array $values
     ) {
     }
 

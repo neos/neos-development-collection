@@ -20,10 +20,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 /**
  * @api events are the persistence-API of the content repository
  */
-final class ContentStreamWasRemoved implements EventInterface
+final readonly class ContentStreamWasRemoved implements EventInterface
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
+        public ContentStreamId $contentStreamId,
     ) {
     }
 

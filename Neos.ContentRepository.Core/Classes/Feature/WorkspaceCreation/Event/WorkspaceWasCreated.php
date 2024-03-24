@@ -30,15 +30,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  *
  * @api events are the persistence-API of the content repository
  */
-final class WorkspaceWasCreated implements EventInterface
+final readonly class WorkspaceWasCreated implements EventInterface
 {
     public function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly WorkspaceName $baseWorkspaceName,
-        public readonly WorkspaceTitle $workspaceTitle,
-        public readonly WorkspaceDescription $workspaceDescription,
-        public readonly ContentStreamId $newContentStreamId,
-        public readonly ?UserId $workspaceOwner = null
+        public WorkspaceName $workspaceName,
+        public WorkspaceName $baseWorkspaceName,
+        public WorkspaceTitle $workspaceTitle,
+        public WorkspaceDescription $workspaceDescription,
+        public ContentStreamId $newContentStreamId,
+        public ?UserId $workspaceOwner = null
     ) {
     }
 

@@ -9,12 +9,12 @@ use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 
-final class SerializedImageAdjustment implements \JsonSerializable
+final readonly class SerializedImageAdjustment implements \JsonSerializable
 {
     /** @param array<string, mixed> $properties */
     private function __construct(
-        public readonly ImageAdjustmentType $type,
-        public readonly array $properties,
+        public ImageAdjustmentType $type,
+        public array $properties,
     ) {}
 
     public static function fromImageAdjustment(ImageAdjustmentInterface $adjustment): self

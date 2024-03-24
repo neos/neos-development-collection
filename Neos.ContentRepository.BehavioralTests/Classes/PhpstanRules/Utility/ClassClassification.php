@@ -6,11 +6,11 @@ namespace Neos\ContentRepository\BehavioralTests\PhpstanRules\Utility;
 
 use PHPStan\Reflection\ClassReflection;
 
-final class ClassClassification
+final readonly class ClassClassification
 {
     private function __construct(
-        public readonly bool $isInternal,
-        public readonly bool $isApi,
+        public bool $isInternal,
+        public bool $isApi,
     ) {
     }
 

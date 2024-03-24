@@ -29,15 +29,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * @deprecated This event will never be emitted, it is up-casted to a corresponding {@see SubtreeWasUntagged} event instead in the {@see EventNormalizer}. This implementation is just kept for backwards-compatibility
  * @internal
  */
-final class NodeAggregateWasEnabled implements
+final readonly class NodeAggregateWasEnabled implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public DimensionSpacePointSet $affectedDimensionSpacePoints,
     ) {
     }
 

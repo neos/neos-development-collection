@@ -18,11 +18,11 @@ use Neos\EventStore\Model\EventStore\CommitResult;
  *
  * @api
  */
-final class CommandResult
+final readonly class CommandResult
 {
     public function __construct(
-        private readonly PendingProjections $pendingProjections,
-        public readonly CommitResult $commitResult,
+        private PendingProjections $pendingProjections,
+        public CommitResult $commitResult,
     ) {
     }
 

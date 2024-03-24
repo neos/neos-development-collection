@@ -11,11 +11,11 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyVal
  * @see PropertyValueCriteriaParser
  * @api
  */
-final class AndCriteria implements PropertyValueCriteriaInterface
+final readonly class AndCriteria implements PropertyValueCriteriaInterface
 {
     private function __construct(
-        public readonly PropertyValueCriteriaInterface $criteria1,
-        public readonly PropertyValueCriteriaInterface $criteria2,
+        public PropertyValueCriteriaInterface $criteria1,
+        public PropertyValueCriteriaInterface $criteria2,
     ) {
     }
 

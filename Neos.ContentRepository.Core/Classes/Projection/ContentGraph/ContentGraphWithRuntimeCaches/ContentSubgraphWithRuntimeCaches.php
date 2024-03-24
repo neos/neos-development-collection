@@ -43,12 +43,12 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @internal the parent {@see ContentSubgraphInterface} is API
  */
-final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
+final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 {
-    public readonly InMemoryCache $inMemoryCache;
+    public InMemoryCache $inMemoryCache;
 
     public function __construct(
-        private readonly ContentSubgraphInterface $wrappedContentSubgraph,
+        private ContentSubgraphInterface $wrappedContentSubgraph,
     ) {
         $this->inMemoryCache = new InMemoryCache();
     }

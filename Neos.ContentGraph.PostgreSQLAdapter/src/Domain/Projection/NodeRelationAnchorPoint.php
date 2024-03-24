@@ -21,10 +21,10 @@ use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
  *
  * @internal
  */
-final class NodeRelationAnchorPoint implements \JsonSerializable, \Stringable
+final readonly class NodeRelationAnchorPoint implements \JsonSerializable, \Stringable
 {
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
     }
 

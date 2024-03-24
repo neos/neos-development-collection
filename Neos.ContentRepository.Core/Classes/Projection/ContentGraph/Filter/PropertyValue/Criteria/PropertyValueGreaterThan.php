@@ -13,11 +13,11 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  * @see PropertyValueCriteriaParser
  * @api
  */
-final class PropertyValueGreaterThan implements PropertyValueCriteriaInterface
+final readonly class PropertyValueGreaterThan implements PropertyValueCriteriaInterface
 {
     private function __construct(
-        public readonly PropertyName $propertyName,
-        public readonly string|int|float $value,
+        public PropertyName $propertyName,
+        public string|int|float $value,
     ) {
     }
 

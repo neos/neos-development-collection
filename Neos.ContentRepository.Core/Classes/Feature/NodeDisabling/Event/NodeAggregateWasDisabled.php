@@ -28,16 +28,16 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * @deprecated This event will never be emitted, it is up-casted to a corresponding {@see SubtreeWasTagged} event instead in the {@see EventNormalizer}. This implementation is just kept for backwards-compatibility
  * @internal
  */
-final class NodeAggregateWasDisabled implements
+final readonly class NodeAggregateWasDisabled implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
         /** The dimension space points the node aggregate was disabled in */
-        public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
+        public DimensionSpacePointSet $affectedDimensionSpacePoints,
     ) {
     }
 
