@@ -37,6 +37,7 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelatives;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
@@ -391,7 +392,16 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $variantCreatedEvent = match ($variantType) {
                 VariantType::TYPE_SPECIALIZATION => new NodeSpecializationVariantWasCreated($this->contentStreamId, $nodeAggregateId, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints),
                 VariantType::TYPE_GENERALIZATION => new NodeGeneralizationVariantWasCreated($this->contentStreamId, $nodeAggregateId, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints),
-                VariantType::TYPE_PEER => new NodePeerVariantWasCreated($this->contentStreamId, $nodeAggregateId, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints),
+                VariantType::TYPE_PEER => new NodePeerVariantWasCreated(
+                    $this->contentStreamId,
+                    $nodeAggregateId,
+                    $alreadyVisitedOriginDimensionSpacePoint,
+                    $originDimensionSpacePoint,
+                    InterdimensionalRelatives::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                        $coveredDimensionSpacePoints,
+                        $parentNodeAggregate->nodeAggregateId
+                    ),
+                ),
                 VariantType::TYPE_SAME => null,
             };
             $variantSourceOriginDimensionSpacePoint = $alreadyVisitedOriginDimensionSpacePoint;

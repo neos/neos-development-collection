@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelatives;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -92,7 +93,10 @@ trait TetheredNodeInternals
                             $tetheredNodeAggregateId,
                             $creationOriginDimensionSpacePoint,
                             $rootGeneralizationOrigin,
-                            $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization)
+                            InterdimensionalRelatives::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                                $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization),
+                                $parentNodeAggregate->nodeAggregateId
+                            )
                         );
                     } else {
                         $events[] = new NodeAggregateWithNodeWasCreated(

@@ -23,7 +23,12 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelative;
+use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelatives;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -228,12 +233,45 @@ trait NodeVariationInternals
         array $events,
         ContentRepository $contentRepository
     ): array {
+        $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $contentStreamId,
+            $sourceOrigin->toDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+        $originParent = $originSubgraph->findParentNode($nodeAggregate->nodeAggregateId);
+        /** Root node aggregates cannot be varied, so a parent must exist */
+        assert($originParent instanceof Node);
+        $originSiblings = $originSubgraph->findSucceedingSiblingNodes(
+            $nodeAggregate->nodeAggregateId,
+            FindSucceedingSiblingNodesFilter::create()
+        );
+        $interDimensionalRelatives = [];
+        foreach ($peerVisibility as $peerDimensionSpacePoint) {
+            $peerSubgraph = $contentRepository->getContentGraph()->getSubgraph(
+                $contentStreamId,
+                $peerDimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $peerSibling = null;
+            foreach ($originSiblings as $originSibling) {
+                $peerSibling = $peerSubgraph->findNodeById($originSibling->nodeAggregateId);
+                if ($peerSibling instanceof Node) {
+                    break;
+                }
+            }
+            $interDimensionalRelatives[] = new InterdimensionalRelative(
+                $peerDimensionSpacePoint,
+                /** When creating variants, the parent will always stay the same */
+                $originParent->nodeAggregateId,
+                $peerSibling?->nodeAggregateId,
+            );
+        }
         $events[] = new NodePeerVariantWasCreated(
             $contentStreamId,
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
-            $peerVisibility,
+            new InterdimensionalRelatives(...$interDimensionalRelatives),
         );
 
         foreach (

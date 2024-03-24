@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelatives;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
@@ -35,7 +36,7 @@ final readonly class NodePeerVariantWasCreated implements
         public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePoint $sourceOrigin,
         public OriginDimensionSpacePoint $peerOrigin,
-        public DimensionSpacePointSet $peerCoverage,
+        public InterdimensionalRelatives $peerRelatives,
     ) {
     }
 
@@ -56,7 +57,7 @@ final readonly class NodePeerVariantWasCreated implements
             $this->nodeAggregateId,
             $this->sourceOrigin,
             $this->peerOrigin,
-            $this->peerCoverage,
+            $this->peerRelatives,
         );
     }
 
@@ -67,7 +68,12 @@ final readonly class NodePeerVariantWasCreated implements
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($values['peerOrigin']),
-            DimensionSpacePointSet::fromArray($values['peerCoverage']),
+            array_key_exists('peerRelatives', $values)
+                ? InterdimensionalRelatives::fromArray($values['peerRelatives'])
+                : InterdimensionalRelatives::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                    DimensionSpacePointSet::fromArray($values['peerCoverage']),
+                    null
+                ),
         );
     }
 

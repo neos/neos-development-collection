@@ -262,26 +262,18 @@ trait NodeVariation
             if (is_null($sourceNode)) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
-            $sourceParentNode = $this->getProjectionContentGraph()->findParentNode(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->sourceOrigin
-            );
-            if (is_null($sourceParentNode)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(get_class($event));
-            }
             $peerNode = $this->copyNodeToDimensionSpacePoint(
                 $sourceNode,
                 $event->peerOrigin,
                 $eventEnvelope
             );
 
-            $unassignedIngoingDimensionSpacePoints = $event->peerCoverage;
+            $unassignedIngoingDimensionSpacePoints = $event->peerRelatives->toDimensionSpacePointSet();
             foreach (
                 $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $event->nodeAggregateId,
-                    $event->peerCoverage
+                    $event->peerRelatives->toDimensionSpacePointSet()
                 ) as $existingIngoingHierarchyRelation
             ) {
                 $existingIngoingHierarchyRelation->assignNewChildNode(
@@ -300,7 +292,7 @@ trait NodeVariation
                 $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $event->nodeAggregateId,
-                    $event->peerCoverage
+                    $event->peerRelatives->toDimensionSpacePointSet()
                 ) as $existingOutgoingHierarchyRelation
             ) {
                 $existingOutgoingHierarchyRelation->assignNewParentNode(
@@ -311,24 +303,48 @@ trait NodeVariation
                 );
             }
 
+            $sourceParentNodeAggregateId = null;
             foreach ($unassignedIngoingDimensionSpacePoints as $coveredDimensionSpacePoint) {
                 // The parent node aggregate might be varied as well,
                 // so we need to find a parent node for each covered dimension space point
+                $peerParentNodeAggregateId = $event->peerRelatives->getRelativeForDimensionSpacePoint($coveredDimensionSpacePoint)?->parentNodeAggregateId;
+                if (!$peerParentNodeAggregateId) {
+                    if (!$sourceParentNodeAggregateId) {
+                        $sourceParentNode = $this->getProjectionContentGraph()->findParentNode(
+                            $event->contentStreamId,
+                            $event->nodeAggregateId,
+                            $event->sourceOrigin
+                        );
+                        if (is_null($sourceParentNode)) {
+                            throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(get_class($event));
+                        }
+                        $sourceParentNodeAggregateId = $sourceParentNode->nodeAggregateId;
+                    }
+                    $peerParentNodeAggregateId = $sourceParentNodeAggregateId;
+                }
                 $peerParentNode = $this->getProjectionContentGraph()->findNodeInAggregate(
                     $event->contentStreamId,
-                    $sourceParentNode->nodeAggregateId,
+                    $peerParentNodeAggregateId,
                     $coveredDimensionSpacePoint
                 );
                 if (is_null($peerParentNode)) {
                     throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
                 }
+                $peerSucceedingSiblingNodeAggregateId = $event->peerRelatives->getRelativeForDimensionSpacePoint($coveredDimensionSpacePoint)?->succeedingSiblingNodeAggregateId;
+                $peerSucceedingSiblingNode = $peerSucceedingSiblingNodeAggregateId
+                    ? $this->getProjectionContentGraph()->findNodeInAggregate(
+                        $event->contentStreamId,
+                        $peerSucceedingSiblingNodeAggregateId,
+                        $coveredDimensionSpacePoint
+                    )
+                    : null;
 
                 $this->connectHierarchy(
                     $event->contentStreamId,
                     $peerParentNode->relationAnchorPoint,
                     $peerNode->relationAnchorPoint,
                     new DimensionSpacePointSet([$coveredDimensionSpacePoint]),
-                    null, // @todo fetch appropriate sibling
+                    $peerSucceedingSiblingNode?->relationAnchorPoint,
                     $sourceNode->nodeName
                 );
             }
