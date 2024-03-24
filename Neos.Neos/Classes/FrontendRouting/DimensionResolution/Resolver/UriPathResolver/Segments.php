@@ -11,12 +11,12 @@ use Neos\Utility\PositionalArraySorter;
 /**
  * @Flow\Proxy(false)
  */
-final class Segments
+final readonly class Segments
 {
     /**
      * @var Segment[]
      */
-    public readonly array $segments;
+    public array $segments;
 
     private function __construct(Segment ...$segments)
     {

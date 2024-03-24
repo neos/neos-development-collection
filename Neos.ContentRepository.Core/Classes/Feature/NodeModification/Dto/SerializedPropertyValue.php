@@ -26,14 +26,14 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNo
  *
  * @api used as part of commands/events
  */
-final class SerializedPropertyValue implements \JsonSerializable
+final readonly class SerializedPropertyValue implements \JsonSerializable
 {
     /**
      * @param Value $value
      */
     private function __construct(
-        public readonly int|float|string|bool|array|\ArrayObject $value,
-        public readonly string $type
+        public int|float|string|bool|array|\ArrayObject $value,
+        public string $type
     ) {
     }
 

@@ -15,14 +15,14 @@ use Neos\Neos\Domain\Model\Site;
  * @Flow\Proxy(false)
  * @api
  */
-final class RequestToDimensionSpacePointContext
+final readonly class RequestToDimensionSpacePointContext
 {
     private function __construct(
-        public readonly string $initialUriPath,
-        public readonly RouteParameters $routeParameters,
-        public readonly string $remainingUriPath,
-        public readonly DimensionSpacePoint $resolvedDimensionSpacePoint,
-        public readonly Site $resolvedSite,
+        public string $initialUriPath,
+        public RouteParameters $routeParameters,
+        public string $remainingUriPath,
+        public DimensionSpacePoint $resolvedDimensionSpacePoint,
+        public Site $resolvedSite,
     ) {
     }
 

@@ -25,20 +25,20 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
  *
  * @api for the factory methods; NOT for the inner state.
  */
-final class FindBackReferencesFilter
+final readonly class FindBackReferencesFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly ?NodeTypeCriteria $nodeTypes,
-        public readonly ?SearchTerm $nodeSearchTerm,
-        public readonly ?PropertyValueCriteriaInterface $nodePropertyValue,
-        public readonly ?SearchTerm $referenceSearchTerm,
-        public readonly ?PropertyValueCriteriaInterface $referencePropertyValue,
-        public readonly ?ReferenceName $referenceName,
-        public readonly ?Ordering $ordering,
-        public readonly ?Pagination $pagination,
+        public ?NodeTypeCriteria $nodeTypes,
+        public ?SearchTerm $nodeSearchTerm,
+        public ?PropertyValueCriteriaInterface $nodePropertyValue,
+        public ?SearchTerm $referenceSearchTerm,
+        public ?PropertyValueCriteriaInterface $referencePropertyValue,
+        public ?ReferenceName $referenceName,
+        public ?Ordering $ordering,
+        public ?Pagination $pagination,
     ) {
     }
 

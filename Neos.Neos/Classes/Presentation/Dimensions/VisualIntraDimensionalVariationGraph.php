@@ -21,13 +21,13 @@ use Neos\Flow\Annotations as Flow;
  * The IntraDimensionalFallbackGraph presentation model for SVG
  */
 #[Flow\Proxy(false)]
-final class VisualIntraDimensionalVariationGraph
+final readonly class VisualIntraDimensionalVariationGraph
 {
     private function __construct(
         /** @var array<string,VisualContentDimension> $dimensions */
-        public readonly array $dimensions,
-        public readonly int $width,
-        public readonly int $height
+        public array $dimensions,
+        public int $width,
+        public int $height
     ) {
     }
 

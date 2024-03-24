@@ -24,10 +24,10 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class SiteNodeName
+final readonly class SiteNodeName
 {
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
     }
 

@@ -20,7 +20,7 @@ use Neos\Neos\Domain\Exception;
  * Describes the mode in which the Neos interface is rendering currently,
  * mainly distinguishing between edit and preview modes currently.
  */
-final class RenderingMode
+final readonly class RenderingMode
 {
     public const FRONTEND = 'frontend';
 
@@ -28,12 +28,12 @@ final class RenderingMode
      * @param array<string,mixed> $options
      */
     private function __construct(
-        public readonly string $name,
-        public readonly bool $isEdit,
-        public readonly bool $isPreview,
-        public readonly string $title,
-        public readonly string $fusionPath,
-        public readonly array $options
+        public string $name,
+        public bool $isEdit,
+        public bool $isPreview,
+        public string $title,
+        public string $fusionPath,
+        public array $options
     ) {
     }
 

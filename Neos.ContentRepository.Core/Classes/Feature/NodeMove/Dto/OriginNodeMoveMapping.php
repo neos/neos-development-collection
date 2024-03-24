@@ -14,11 +14,11 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
  *
  * @api DTO of {@see NodeAggregateWasMoved} event
  */
-final class OriginNodeMoveMapping implements \JsonSerializable
+final readonly class OriginNodeMoveMapping implements \JsonSerializable
 {
     public function __construct(
-        public readonly OriginDimensionSpacePoint $movedNodeOrigin,
-        public readonly CoverageNodeMoveMappings $newLocations
+        public OriginDimensionSpacePoint $movedNodeOrigin,
+        public CoverageNodeMoveMappings $newLocations
     ) {
     }
 

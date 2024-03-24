@@ -31,22 +31,22 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api events are the persistence-API of the content repository
  */
-final class NodeAggregateWithNodeWasCreated implements
+final readonly class NodeAggregateWithNodeWasCreated implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeTypeName $nodeTypeName,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly DimensionSpacePointSet $coveredDimensionSpacePoints,
-        public readonly NodeAggregateId $parentNodeAggregateId,
-        public readonly ?NodeName $nodeName,
-        public readonly SerializedPropertyValues $initialPropertyValues,
-        public readonly NodeAggregateClassification $nodeAggregateClassification,
-        public readonly ?NodeAggregateId $succeedingNodeAggregateId = null
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public NodeTypeName $nodeTypeName,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public DimensionSpacePointSet $coveredDimensionSpacePoints,
+        public NodeAggregateId $parentNodeAggregateId,
+        public ?NodeName $nodeName,
+        public SerializedPropertyValues $initialPropertyValues,
+        public NodeAggregateClassification $nodeAggregateClassification,
+        public ?NodeAggregateId $succeedingNodeAggregateId = null
     ) {
     }
 

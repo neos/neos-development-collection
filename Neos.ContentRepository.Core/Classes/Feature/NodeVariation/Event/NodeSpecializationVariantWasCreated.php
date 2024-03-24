@@ -27,17 +27,17 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api events are the persistence-API of the content repository
  */
-final class NodeSpecializationVariantWasCreated implements
+final readonly class NodeSpecializationVariantWasCreated implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $sourceOrigin,
-        public readonly OriginDimensionSpacePoint $specializationOrigin,
-        public readonly DimensionSpacePointSet $specializationCoverage,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $sourceOrigin,
+        public OriginDimensionSpacePoint $specializationOrigin,
+        public DimensionSpacePointSet $specializationCoverage,
     ) {
     }
 

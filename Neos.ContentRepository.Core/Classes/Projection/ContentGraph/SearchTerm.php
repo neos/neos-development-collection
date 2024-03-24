@@ -19,9 +19,9 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
  *
  * @api DTO for {@see ContentSubgraphInterface}
  */
-final class SearchTerm
+final readonly class SearchTerm
 {
-    private function __construct(public readonly string $term)
+    private function __construct(public string $term)
     {
     }
 

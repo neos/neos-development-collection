@@ -10,11 +10,11 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class SegmentMappingElement
+final readonly class SegmentMappingElement
 {
     private function __construct(
-        public readonly ContentDimensionValue $dimensionValue,
-        public readonly string $uriPathSegmentValue
+        public ContentDimensionValue $dimensionValue,
+        public string $uriPathSegmentValue
     ) {
     }
 

@@ -19,19 +19,19 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @internal You'll never create this class yourself; see {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
  */
-final class NodeSubtreeSnapshot implements \JsonSerializable
+final readonly class NodeSubtreeSnapshot implements \JsonSerializable
 {
     /**
      * @param NodeSubtreeSnapshot[] $childNodes
      */
     private function __construct(
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeTypeName $nodeTypeName,
-        public readonly ?NodeName $nodeName,
-        public readonly NodeAggregateClassification $nodeAggregateClassification,
-        public readonly SerializedPropertyValues $propertyValues,
-        public readonly NodeReferencesSnapshot $nodeReferences,
-        public readonly array $childNodes
+        public NodeAggregateId $nodeAggregateId,
+        public NodeTypeName $nodeTypeName,
+        public ?NodeName $nodeName,
+        public NodeAggregateClassification $nodeAggregateClassification,
+        public SerializedPropertyValues $propertyValues,
+        public NodeReferencesSnapshot $nodeReferences,
+        public array $childNodes
     ) {
         foreach ($childNodes as $childNode) {
             if (!$childNode instanceof NodeSubtreeSnapshot) {

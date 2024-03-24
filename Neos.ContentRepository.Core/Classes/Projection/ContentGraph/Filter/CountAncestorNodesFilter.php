@@ -15,13 +15,13 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeType
  *
  * @api for the factory methods; NOT for the inner state.
  */
-final class CountAncestorNodesFilter
+final readonly class CountAncestorNodesFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly ?NodeTypeCriteria $nodeTypes,
+        public ?NodeTypeCriteria $nodeTypes,
     ) {
     }
 

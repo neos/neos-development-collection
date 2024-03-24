@@ -30,13 +30,13 @@ use Neos\ContentRepository\Core\Dimension;
  * @see Dimension\ContentDimensionValueSpecializationDepth
  * @internal
  */
-final class ContentSubgraphVariationWeight implements \JsonSerializable
+final readonly class ContentSubgraphVariationWeight implements \JsonSerializable
 {
     public function __construct(
         /**
          * @var array<string,Dimension\ContentDimensionValueSpecializationDepth>
          */
-        public readonly array $value
+        public array $value
     ) {
         foreach ($value as $dimensionId => $specializationDepth) {
             if (!$specializationDepth instanceof Dimension\ContentDimensionValueSpecializationDepth) {
