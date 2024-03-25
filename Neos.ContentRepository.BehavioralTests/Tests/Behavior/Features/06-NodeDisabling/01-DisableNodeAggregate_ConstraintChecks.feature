@@ -11,7 +11,11 @@ Feature: Constraint checks on node aggregate disabling
       | language   | de, gsw, en | gsw->de, en     |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository.Testing:Document': []
+    'Neos.ContentRepository.Testing:Tethered': []
+    'Neos.ContentRepository.Testing:Document':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:Tethered'
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -30,8 +34,8 @@ Feature: Constraint checks on node aggregate disabling
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
-      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName | tetheredDescendantNodeAggregateIds |
+      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document | {"tethered": "nodewyn-tetherton"}                   |
 
   Scenario: Try to disable a node aggregate in a non-existing content stream
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
@@ -58,6 +62,13 @@ Feature: Constraint checks on node aggregate disabling
       | nodeVariantSelectionStrategy | "allVariants"                          |
       | tag                          | "disabled"                    |
 
+  Scenario: Try to disable a tethered node aggregate
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                                  |
+      | nodeAggregateId              | "nodewyn-tetherton"                    |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+    Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
+
   Scenario: Try to disable an already disabled node aggregate
     Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                                  |
@@ -72,14 +83,13 @@ Feature: Constraint checks on node aggregate disabling
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {"language": "de"}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-    Then I expect exactly 4 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 3 is of type "SubtreeWasTagged" with payload:
+    Then I expect exactly 5 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 4 is of type "SubtreeWasTagged" with payload:
       | Key                          | Expected                               |
       | contentStreamId              | "cs-identifier"                        |
       | nodeAggregateId              | "sir-david-nodenborough"               |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
       | tag                          | "disabled"                             |
-
 
   Scenario: Try to disable a node aggregate in a non-existing dimension space point
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
