@@ -15,6 +15,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
@@ -37,7 +38,6 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelatives;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
@@ -397,9 +397,8 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     $nodeAggregateId,
                     $alreadyVisitedOriginDimensionSpacePoint,
                     $originDimensionSpacePoint,
-                    InterdimensionalRelatives::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                    InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
                         $coveredDimensionSpacePoints,
-                        $parentNodeAggregate->nodeAggregateId
                     ),
                 ),
                 VariantType::TYPE_SAME => null,

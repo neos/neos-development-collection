@@ -18,8 +18,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelatives;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
@@ -36,7 +36,7 @@ final readonly class NodePeerVariantWasCreated implements
         public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePoint $sourceOrigin,
         public OriginDimensionSpacePoint $peerOrigin,
-        public InterdimensionalRelatives $peerRelatives,
+        public InterdimensionalSiblings $peerSucceedingSiblings,
     ) {
     }
 
@@ -57,7 +57,7 @@ final readonly class NodePeerVariantWasCreated implements
             $this->nodeAggregateId,
             $this->sourceOrigin,
             $this->peerOrigin,
-            $this->peerRelatives,
+            $this->peerSucceedingSiblings,
         );
     }
 
@@ -68,11 +68,10 @@ final readonly class NodePeerVariantWasCreated implements
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($values['peerOrigin']),
-            array_key_exists('peerRelatives', $values)
-                ? InterdimensionalRelatives::fromArray($values['peerRelatives'])
-                : InterdimensionalRelatives::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+            array_key_exists('peerSucceedingSiblings', $values)
+                ? InterdimensionalSiblings::fromArray($values['peerSucceedingSiblings'])
+                : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
                     DimensionSpacePointSet::fromArray($values['peerCoverage']),
-                    null
                 ),
         );
     }

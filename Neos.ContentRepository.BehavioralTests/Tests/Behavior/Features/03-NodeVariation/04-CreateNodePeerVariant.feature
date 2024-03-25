@@ -87,28 +87,28 @@ Feature: Create node peer variant
       | nodeAggregateId | "nody-mc-nodeface"                                                                                                                                                                                                                                                            |
       | sourceOrigin    | {"example":"source"}                                                                                                                                                                                                                                                          |
       | peerOrigin      | {"example":"peer"}                                                                                                                                                                                                                                                            |
-      | peerRelatives   | [{"dimensionSpacePoint":{"example":"peer"},"parentNodeAggregateId":"lady-eleonode-rootford","succeedingSiblingNodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"parentNodeAggregateId":"lady-eleonode-rootford","succeedingSiblingNodeAggregateId":null}] |
+      | peerSucceedingSiblings   | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":null}] |
     And event at index 10 is of type "NodePeerVariantWasCreated" with payload:
       | Key             | Expected                                                                                                                                                                                                                                                          |
       | contentStreamId | "cs-identifier"                                                                                                                                                                                                                                                   |
       | nodeAggregateId | "nodewyn-tetherton"                                                                                                                                                                                                                                               |
       | sourceOrigin    | {"example":"source"}                                                                                                                                                                                                                                              |
       | peerOrigin      | {"example":"peer"}                                                                                                                                                                                                                                                |
-      | peerRelatives   | [{"dimensionSpacePoint":{"example":"peer"},"parentNodeAggregateId":"nody-mc-nodeface","succeedingSiblingNodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"parentNodeAggregateId":"nody-mc-nodeface","succeedingSiblingNodeAggregateId":null}] |
+      | peerSucceedingSiblings   | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":null}] |
     And event at index 11 is of type "NodePeerVariantWasCreated" with payload:
       | Key             | Expected                                                                                                                                                                                                                                                            |
       | contentStreamId | "cs-identifier"                                                                                                                                                                                                                                                     |
       | nodeAggregateId | "nodimer-tetherton"                                                                                                                                                                                                                                                 |
       | sourceOrigin    | {"example":"source"}                                                                                                                                                                                                                                                |
       | peerOrigin      | {"example":"peer"}                                                                                                                                                                                                                                                  |
-      | peerRelatives   | [{"dimensionSpacePoint":{"example":"peer"},"parentNodeAggregateId":"nodewyn-tetherton","succeedingSiblingNodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"parentNodeAggregateId":"nodewyn-tetherton","succeedingSiblingNodeAggregateId":null}] |
+      | peerSucceedingSiblings   | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":null}] |
     And event at index 12 is of type "NodePeerVariantWasCreated" with payload:
       | Key             | Expected                                                                                                                                                                                                                                                                                                  |
       | contentStreamId | "cs-identifier"                                                                                                                                                                                                                                                                                           |
       | nodeAggregateId | "elder-mc-nodeface"                                                                                                                                                                                                                                                                                       |
       | sourceOrigin    | {"example":"source"}                                                                                                                                                                                                                                                                                      |
       | peerOrigin      | {"example":"peer"}                                                                                                                                                                                                                                                                                        |
-      | peerRelatives   | [{"dimensionSpacePoint":{"example":"peer"},"parentNodeAggregateId":"lady-eleonode-rootford","succeedingSiblingNodeAggregateId":"nody-mc-nodeface"},{"dimensionSpacePoint":{"example":"peerSpec"},"parentNodeAggregateId":"lady-eleonode-rootford","succeedingSiblingNodeAggregateId":"nody-mc-nodeface"}] |
+      | peerSucceedingSiblings   | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":"nody-mc-nodeface"},{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":"nody-mc-nodeface"}] |
     # 13 is the additional creation event
     And event at index 14 is of type "NodePeerVariantWasCreated" with payload:
       | Key             | Expected                                                                                                                                                                                                                                                                      |
@@ -116,7 +116,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "youngest-mc-nodeface"                                                                                                                                                                                                                                                        |
       | sourceOrigin    | {"example":"source"}                                                                                                                                                                                                                                                          |
       | peerOrigin      | {"example":"peer"}                                                                                                                                                                                                                                                            |
-      | peerRelatives   | [{"dimensionSpacePoint":{"example":"peer"},"parentNodeAggregateId":"lady-eleonode-rootford","succeedingSiblingNodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"parentNodeAggregateId":"lady-eleonode-rootford","succeedingSiblingNodeAggregateId":null}] |
+      | peerSucceedingSiblings   | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":null}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 14 nodes
@@ -346,21 +346,21 @@ Feature: Create node peer variant
       | nodeAggregateId | "madame-lanode"                                                                                                                         |
       | sourceOrigin    | {"example":"peer"}                                                                                                                      |
       | peerOrigin      | {"market":"DE", "language":"de"}                                                                                                        |
-      | peerRelatives   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | peerSucceedingSiblings   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key             | Value                                                                                                                                   |
       | contentStreamId | "cs-identifier"                                                                                                                         |
       | nodeAggregateId | "nodesis-prime"                                                                                                                         |
       | sourceOrigin    | {"example":"peer"}                                                                                                                      |
       | peerOrigin      | {"market":"DE", "language":"de"}                                                                                                        |
-      | peerRelatives   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | peerSucceedingSiblings   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key             | Value                                                                                                                                   |
       | contentStreamId | "cs-identifier"                                                                                                                         |
       | nodeAggregateId | "nodesis-mediocre"                                                                                                                      |
       | sourceOrigin    | {"example":"peer"}                                                                                                                      |
       | peerOrigin      | {"market":"DE", "language":"de"}                                                                                                        |
-      | peerRelatives   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | peerSucceedingSiblings   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -378,7 +378,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "madame-lanode"                                         |
       | sourceOrigin    | {"example":"peer"}                                      |
       | peerOrigin      | {"example":"source"}                                    |
-      | peerRelatives   | [{"example":"source"},{"market":"CH", "language":"en"}] |
+      | peerSucceedingSiblings   | [{"example":"source"},{"market":"CH", "language":"en"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the second above
     And event at index 14 is of type "NodePeerVariantWasCreated" with payload:
@@ -387,7 +387,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "nodesis-prime"                                         |
       | sourceOrigin    | {"example":"peer"}                                      |
       | peerOrigin      | {"example":"source"}                                    |
-      | peerRelatives   | [{"example":"source"},{"market":"CH", "language":"en"}] |
+      | peerSucceedingSiblings   | [{"example":"source"},{"market":"CH", "language":"en"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the third above
     And event at index 15 is of type "NodePeerVariantWasCreated" with payload:
@@ -396,7 +396,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "nodesis-mediocre"                                      |
       | sourceOrigin    | {"example":"peer"}                                      |
       | peerOrigin      | {"example":"source"}                                    |
-      | peerRelatives   | [{"example":"source"},{"market":"CH", "language":"en"}] |
+      | peerSucceedingSiblings   | [{"example":"source"},{"market":"CH", "language":"en"}] |
     # No peer node creation for non-auto created child nodes
 
     When the graph projection is fully up to date
@@ -550,21 +550,21 @@ Feature: Create node peer variant
       | nodeAggregateId | "madame-lanode"                                                                                                                                                                               |
       | sourceOrigin    | {"example":"peer"}                                                                                                                                                                            |
       | peerOrigin      | {"example":"source"}                                                                                                                                                                          |
-      | peerRelatives   | [{"example":"source"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | peerSucceedingSiblings   | [{"example":"source"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key             | Value                                                                                                                                                                                         |
       | contentStreamId | "cs-identifier"                                                                                                                                                                               |
       | nodeAggregateId | "nodesis-prime"                                                                                                                                                                               |
       | sourceOrigin    | {"example":"peer"}                                                                                                                                                                            |
       | peerOrigin      | {"example":"source"}                                                                                                                                                                          |
-      | peerRelatives   | [{"example":"source"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | peerSucceedingSiblings   | [{"example":"source"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key             | Value                                                                                                                                                                                         |
       | contentStreamId | "cs-identifier"                                                                                                                                                                               |
       | nodeAggregateId | "nodesis-mediocre"                                                                                                                                                                            |
       | sourceOrigin    | {"example":"peer"}                                                                                                                                                                            |
       | peerOrigin      | {"example":"source"}                                                                                                                                                                          |
-      | peerRelatives   | [{"example":"source"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | peerSucceedingSiblings   | [{"example":"source"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -582,7 +582,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "madame-lanode"                                                                                                                         |
       | sourceOrigin    | {"example":"peer"}                                                                                                                      |
       | peerOrigin      | {"market":"DE", "language":"de"}                                                                                                        |
-      | peerRelatives   | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | peerSucceedingSiblings   | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the second above
     And event at index 14 is of type "NodePeerVariantWasCreated" with payload:
@@ -591,7 +591,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "nodesis-prime"                                                                                                                         |
       | sourceOrigin    | {"example":"peer"}                                                                                                                      |
       | peerOrigin      | {"market":"DE", "language":"de"}                                                                                                        |
-      | peerRelatives   | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | peerSucceedingSiblings   | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the third above
     And event at index 15 is of type "NodePeerVariantWasCreated" with payload:
@@ -600,7 +600,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "nodesis-mediocre"                                                                                                                      |
       | sourceOrigin    | {"example":"peer"}                                                                                                                      |
       | peerOrigin      | {"market":"DE", "language":"de"}                                                                                                        |
-      | peerRelatives   | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | peerSucceedingSiblings   | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     # No peer node creation for non-auto created child nodes
 
     When the graph projection is fully up to date
@@ -832,7 +832,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "nody-mc-nodeface"                                    |
       | sourceOrigin    | {"example":"source"}                                  |
       | peerOrigin      | {"market":"DE", "language":"fr"}                      |
-      | peerRelatives   | [{"market":"DE", "language":"fr"},{"example":"peer"}] |
+      | peerSucceedingSiblings   | [{"market":"DE", "language":"fr"},{"example":"peer"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 16 nodes

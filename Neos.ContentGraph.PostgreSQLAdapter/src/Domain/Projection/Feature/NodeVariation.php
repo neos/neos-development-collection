@@ -186,7 +186,7 @@ trait NodeVariation
             $this->replaceNodeRelationAnchorPoint(
                 $event->contentStreamId,
                 $event->nodeAggregateId,
-                $event->peerRelatives->toDimensionSpacePointSet(),
+                $event->peerSucceedingSiblings->toDimensionSpacePointSet(),
                 $peerNode->relationAnchorPoint
             );
             $this->addMissingHierarchyRelations(
@@ -194,7 +194,7 @@ trait NodeVariation
                 $event->nodeAggregateId,
                 $event->sourceOrigin,
                 $peerNode->relationAnchorPoint,
-                $event->peerRelatives->toDimensionSpacePointSet(),
+                $event->peerSucceedingSiblings->toDimensionSpacePointSet(),
                 get_class($event)
             );
             $this->copyReferenceRelations(

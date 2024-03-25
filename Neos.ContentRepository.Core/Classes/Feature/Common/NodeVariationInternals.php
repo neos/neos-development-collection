@@ -238,14 +238,11 @@ trait NodeVariationInternals
             $sourceOrigin->toDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         );
-        $originParent = $originSubgraph->findParentNode($nodeAggregate->nodeAggregateId);
-        /** Root node aggregates cannot be varied, so a parent must exist */
-        assert($originParent instanceof Node);
         $originSiblings = $originSubgraph->findSucceedingSiblingNodes(
             $nodeAggregate->nodeAggregateId,
             FindSucceedingSiblingNodesFilter::create()
         );
-        $interDimensionalRelatives = [];
+        $interdimensionalSiblings = [];
         foreach ($peerVisibility as $peerDimensionSpacePoint) {
             $peerSubgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamId,
@@ -259,10 +256,8 @@ trait NodeVariationInternals
                     break;
                 }
             }
-            $interDimensionalRelatives[] = new InterdimensionalRelative(
+            $interdimensionalSiblings[] = new InterdimensionalSibling(
                 $peerDimensionSpacePoint,
-                /** When creating variants, the parent will always stay the same */
-                $originParent->nodeAggregateId,
                 $peerSibling?->nodeAggregateId,
             );
         }
@@ -271,7 +266,7 @@ trait NodeVariationInternals
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
-            new InterdimensionalRelatives(...$interDimensionalRelatives),
+            new InterdimensionalSiblings(...$interdimensionalSiblings),
         );
 
         foreach (
