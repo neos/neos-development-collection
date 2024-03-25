@@ -1302,7 +1302,7 @@ class NodeDataRepository extends Repository
             // Find the position of the workspace, a smaller value means more priority
             $workspacePosition = array_search($node->getWorkspace()->getName(), $workspaceNames);
             if ($workspacePosition === false) {
-                throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode($workspaceNames, ', ')), 1413902143);
+                throw new Exception\NodeException(sprintf('Node workspace "%s" not found in allowed workspaces (%s), this could result from a detached workspace entity in the context.', $node->getWorkspace()->getName(), implode(', ', $workspaceNames)), 1413902143);
             }
 
             // Find positions in dimensions, add workspace in front for highest priority
