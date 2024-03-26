@@ -107,23 +107,4 @@ trait NodeVariation
 
         $this->publishEvent('NodeSpecializationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
-
-    /**
-     * @Given /^the event NodePeerVariantWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theEventNodePeerVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = $this->currentContentStreamId->value;
-        }
-        $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            $contentStreamId
-        );
-
-        $this->publishEvent('NodePeerVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
-    }
 }
