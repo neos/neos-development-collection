@@ -167,12 +167,12 @@ trait NodeVariation
                 $eventEnvelope
             );
 
-            $unassignedIngoingDimensionSpacePoints = $event->generalizationCoverage;
+            $unassignedIngoingDimensionSpacePoints = $event->variantSucceedingSiblings->toDimensionSpacePointSet();
             foreach (
                 $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $event->nodeAggregateId,
-                    $event->generalizationCoverage
+                    $event->variantSucceedingSiblings->toDimensionSpacePointSet()
                 ) as $existingIngoingHierarchyRelation
             ) {
                 $existingIngoingHierarchyRelation->assignNewChildNode(
@@ -191,7 +191,7 @@ trait NodeVariation
                 $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $event->nodeAggregateId,
-                    $event->generalizationCoverage
+                    $event->variantSucceedingSiblings->toDimensionSpacePointSet()
                 ) as $existingOutgoingHierarchyRelation
             ) {
                 $existingOutgoingHierarchyRelation->assignNewParentNode(
@@ -229,12 +229,23 @@ trait NodeVariation
                         );
                     }
 
+                    $generalizationSucceedingSiblingNodeAggregateId = $event->variantSucceedingSiblings
+                        ->getSucceedingSiblingIdForDimensionSpacePoint($unassignedDimensionSpacePoint);
+                    $generalizationSucceedingSiblingNode = $generalizationSucceedingSiblingNodeAggregateId
+                        ? $this->getProjectionContentGraph()->findNodeInAggregate(
+                            $event->contentStreamId,
+                            $generalizationSucceedingSiblingNodeAggregateId,
+                            $unassignedDimensionSpacePoint
+                        )
+                        : null;
+
                     $this->copyHierarchyRelationToDimensionSpacePoint(
                         $ingoingSourceHierarchyRelation,
                         $event->contentStreamId,
                         $unassignedDimensionSpacePoint,
                         $generalizationParentNode->relationAnchorPoint,
-                        $generalizedNode->relationAnchorPoint
+                        $generalizedNode->relationAnchorPoint,
+                        $generalizationSucceedingSiblingNode?->relationAnchorPoint
                     );
                 }
             }
@@ -360,8 +371,9 @@ trait NodeVariation
         HierarchyRelation $sourceHierarchyRelation,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        ?NodeRelationAnchorPoint $newParent = null,
-        ?NodeRelationAnchorPoint $newChild = null
+        NodeRelationAnchorPoint $newParent,
+        NodeRelationAnchorPoint $newChild,
+        ?NodeRelationAnchorPoint $newSucceedingSibling = null,
     ): HierarchyRelation;
 
     abstract protected function connectHierarchy(

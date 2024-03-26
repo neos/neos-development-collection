@@ -149,7 +149,7 @@ trait NodeVariation
             $this->replaceNodeRelationAnchorPoint(
                 $event->contentStreamId,
                 $event->nodeAggregateId,
-                $event->generalizationCoverage,
+                $event->variantSucceedingSiblings->toDimensionSpacePointSet(),
                 $generalizedNode->relationAnchorPoint
             );
             $this->addMissingHierarchyRelations(
@@ -157,7 +157,7 @@ trait NodeVariation
                 $event->nodeAggregateId,
                 $event->sourceOrigin,
                 $generalizedNode->relationAnchorPoint,
-                $event->generalizationCoverage,
+                $event->variantSucceedingSiblings->toDimensionSpacePointSet(),
                 get_class($event)
             );
             $this->copyReferenceRelations(

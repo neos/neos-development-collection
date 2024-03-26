@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -37,7 +38,7 @@ final readonly class NodeGeneralizationVariantWasCreated implements
         public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePoint $sourceOrigin,
         public OriginDimensionSpacePoint $generalizationOrigin,
-        public DimensionSpacePointSet $generalizationCoverage,
+        public InterdimensionalSiblings $variantSucceedingSiblings,
     ) {
     }
 
@@ -59,7 +60,7 @@ final readonly class NodeGeneralizationVariantWasCreated implements
             $this->nodeAggregateId,
             $this->sourceOrigin,
             $this->generalizationOrigin,
-            $this->generalizationCoverage,
+            $this->variantSucceedingSiblings,
         );
     }
 
@@ -70,7 +71,11 @@ final readonly class NodeGeneralizationVariantWasCreated implements
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($values['generalizationOrigin']),
-            DimensionSpacePointSet::fromArray($values['generalizationCoverage']),
+            array_key_exists('variantSucceedingSiblings', $values)
+                ? InterdimensionalSiblings::fromArray($values['variantSucceedingSiblings'])
+                : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                    DimensionSpacePointSet::fromArray($values['generalizationCoverage']),
+                ),
         );
     }
 

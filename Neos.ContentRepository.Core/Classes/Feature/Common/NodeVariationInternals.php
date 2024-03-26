@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelative;
 use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelatives;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -176,7 +177,13 @@ trait NodeVariationInternals
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
-            $generalizationVisibility,
+            $this->resolveInterdimensionalSiblings(
+                $contentRepository,
+                $contentStreamId,
+                $nodeAggregate->nodeAggregateId,
+                $sourceOrigin,
+                $generalizationVisibility
+            )
         );
 
         foreach (
@@ -233,40 +240,18 @@ trait NodeVariationInternals
         array $events,
         ContentRepository $contentRepository
     ): array {
-        $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
-            $sourceOrigin->toDimensionSpacePoint(),
-            VisibilityConstraints::withoutRestrictions()
-        );
-        $originSiblings = $originSubgraph->findSucceedingSiblingNodes(
-            $nodeAggregate->nodeAggregateId,
-            FindSucceedingSiblingNodesFilter::create()
-        );
-        $interdimensionalSiblings = [];
-        foreach ($peerVisibility as $peerDimensionSpacePoint) {
-            $peerSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $contentStreamId,
-                $peerDimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            );
-            $peerSibling = null;
-            foreach ($originSiblings as $originSibling) {
-                $peerSibling = $peerSubgraph->findNodeById($originSibling->nodeAggregateId);
-                if ($peerSibling instanceof Node) {
-                    break;
-                }
-            }
-            $interdimensionalSiblings[] = new InterdimensionalSibling(
-                $peerDimensionSpacePoint,
-                $peerSibling?->nodeAggregateId,
-            );
-        }
         $events[] = new NodePeerVariantWasCreated(
             $contentStreamId,
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
-            new InterdimensionalSiblings(...$interdimensionalSiblings),
+            $this->resolveInterdimensionalSiblings(
+                $contentRepository,
+                $contentStreamId,
+                $nodeAggregate->nodeAggregateId,
+                $sourceOrigin,
+                $peerVisibility
+            ),
         );
 
         foreach (
@@ -287,6 +272,46 @@ trait NodeVariationInternals
         }
 
         return $events;
+    }
+
+    private function resolveInterdimensionalSiblings(
+        ContentRepository $contentRepository,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $sourceOrigin,
+        DimensionSpacePointSet $variantVisibility,
+    ): InterdimensionalSiblings {
+        $interdimensionalSiblings = [];
+        $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $contentStreamId,
+            $sourceOrigin->toDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+        $originSiblings = $originSubgraph->findSucceedingSiblingNodes(
+            $nodeAggregateId,
+            FindSucceedingSiblingNodesFilter::create()
+        );
+
+        foreach ($variantVisibility as $variantDimensionSpacePoint) {
+            $peerSubgraph = $contentRepository->getContentGraph()->getSubgraph(
+                $contentStreamId,
+                $variantDimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $variantSibling = null;
+            foreach ($originSiblings as $originSibling) {
+                $variantSibling = $peerSubgraph->findNodeById($originSibling->nodeAggregateId);
+                if ($variantSibling instanceof Node) {
+                    break;
+                }
+            }
+            $interdimensionalSiblings[] = new InterdimensionalSibling(
+                $variantDimensionSpacePoint,
+                $variantSibling?->nodeAggregateId,
+            );
+        }
+
+        return new InterdimensionalSiblings(...$interdimensionalSiblings);
     }
 
     private function calculateEffectiveVisibility(

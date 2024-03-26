@@ -767,27 +767,16 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     }
 
     /**
-     * @param HierarchyRelation $sourceHierarchyRelation
-     * @param ContentStreamId $contentStreamId
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeRelationAnchorPoint|null $newParent
-     * @param NodeRelationAnchorPoint|null $newChild
-     * @return HierarchyRelation
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function copyHierarchyRelationToDimensionSpacePoint(
         HierarchyRelation $sourceHierarchyRelation,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        ?NodeRelationAnchorPoint $newParent = null,
-        ?NodeRelationAnchorPoint $newChild = null
+        NodeRelationAnchorPoint $newParent,
+        NodeRelationAnchorPoint $newChild,
+        ?NodeRelationAnchorPoint $newSucceedingSibling = null,
     ): HierarchyRelation {
-        if ($newParent === null) {
-            $newParent = $sourceHierarchyRelation->parentNodeAnchor;
-        }
-        if ($newChild === null) {
-            $newChild = $sourceHierarchyRelation->childNodeAnchor;
-        }
         $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamId, $newParent, $dimensionSpacePoint);
         $inheritedSubtreeTags = NodeTags::create($sourceHierarchyRelation->subtreeTags->withoutInherited()->all(), $parentSubtreeTags->withoutInherited()->all());
         $copy = new HierarchyRelation(
@@ -800,7 +789,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $this->getRelationPosition(
                 $newParent,
                 $newChild,
-                null, // todo: find proper sibling
+                $newSucceedingSibling,
                 $contentStreamId,
                 $dimensionSpacePoint
             ),
