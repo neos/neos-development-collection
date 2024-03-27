@@ -509,7 +509,7 @@ Feature: Create node generalization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "invariable-document" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "specB"}
     Then I expect the subgraph projection to consist of exactly 6 nodes
@@ -548,7 +548,7 @@ Feature: Create node generalization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "invariable-document" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
   Scenario: Create generalization of a node to dimension space point with specializations that are partially covered
     Given the command CreateNodeVariant is executed with payload:
@@ -672,7 +672,7 @@ Feature: Create node generalization
       | NodeDiscriminator                                       |
       | cs-identifier;nody-mc-nodeface;{"example":"general"}    |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "youngest-document" to lead to no node
+    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                     |
@@ -695,7 +695,7 @@ Feature: Create node generalization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "youngest-document" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "specB"}
     Then I expect the subgraph projection to consist of exactly 6 nodes
@@ -711,7 +711,7 @@ Feature: Create node generalization
       | NodeDiscriminator                                       |
       | cs-identifier;nody-mc-nodeface;{"example":"specB"}      |
       | cs-identifier;younger-mc-nodeface;{"example":"general"} |
-    And I expect node aggregate identifier "elder-mc-nodeface" and node path "youngest-document" to lead to no node
+    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"specB"}
     And I expect this node to have the following child nodes:
       | Name              | NodeDiscriminator                                   |
@@ -734,7 +734,7 @@ Feature: Create node generalization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "invariable-document" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
   Scenario: Create generalization of a node to a dimension space point that is already covered by a more general generalization
     Given the command CreateNodeVariant is executed with payload:
@@ -865,7 +865,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-document/tethered" to lead to node cs-identifier;nodimer-tetherton;{"example":"rootGeneral"}
     And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to no node
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "youngest-document" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect the subgraph projection to consist of exactly 6 nodes
@@ -904,7 +904,7 @@ Feature: Create node generalization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "invariable-document" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "specB"}
     Then I expect the subgraph projection to consist of exactly 6 nodes
@@ -943,4 +943,4 @@ Feature: Create node generalization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"} |
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
-    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "invariable-document" to lead to no node
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
