@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.Core package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -41,12 +42,11 @@ final readonly class NodeAggregateWithNodeWasCreated implements
         public NodeAggregateId $nodeAggregateId,
         public NodeTypeName $nodeTypeName,
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public DimensionSpacePointSet $coveredDimensionSpacePoints,
+        public InterdimensionalSiblings $succeedingSiblingsForCoverage,
         public NodeAggregateId $parentNodeAggregateId,
         public ?NodeName $nodeName,
         public SerializedPropertyValues $initialPropertyValues,
         public NodeAggregateClassification $nodeAggregateClassification,
-        public ?NodeAggregateId $succeedingNodeAggregateId = null
     ) {
     }
 
@@ -72,12 +72,11 @@ final readonly class NodeAggregateWithNodeWasCreated implements
             $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
-            $this->coveredDimensionSpacePoints,
+            $this->succeedingSiblingsForCoverage,
             $this->parentNodeAggregateId,
             $this->nodeName,
             $this->initialPropertyValues,
             $this->nodeAggregateClassification,
-            $this->succeedingNodeAggregateId
         );
     }
 
@@ -88,14 +87,18 @@ final readonly class NodeAggregateWithNodeWasCreated implements
             NodeAggregateId::fromString($values['nodeAggregateId']),
             NodeTypeName::fromString($values['nodeTypeName']),
             OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']),
-            DimensionSpacePointSet::fromArray($values['coveredDimensionSpacePoints']),
+            array_key_exists('succeedingSiblingsForCoverage', $values)
+                ? InterdimensionalSiblings::fromArray($values['succeedingSiblingsForCoverage'])
+                : InterdimensionalSiblings::fromDimensionSpacePointSetWithSingleSucceedingSiblings(
+                    DimensionSpacePointSet::fromArray($values['coveredDimensionSpacePoints']),
+                    array_key_exists('succeedingNodeAggregateId', $values)
+                        ? NodeAggregateId::fromString($values['succeedingNodeAggregateId'])
+                        : null,
+                ),
             NodeAggregateId::fromString($values['parentNodeAggregateId']),
             isset($values['nodeName']) ? NodeName::fromString($values['nodeName']) : null,
             SerializedPropertyValues::fromArray($values['initialPropertyValues']),
             NodeAggregateClassification::from($values['nodeAggregateClassification']),
-            isset($values['succeedingNodeAggregateId'])
-                ? NodeAggregateId::fromString($values['succeedingNodeAggregateId'])
-                : null,
         );
     }
 

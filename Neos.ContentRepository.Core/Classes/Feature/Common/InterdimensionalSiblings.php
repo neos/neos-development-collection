@@ -32,13 +32,13 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 final readonly class InterdimensionalSiblings implements \JsonSerializable, \IteratorAggregate
 {
     /**
-     * @var array<InterdimensionalSibling>
+     * @var array<int,InterdimensionalSibling>
      */
     public array $items;
 
     public function __construct(InterdimensionalSibling ...$items)
     {
-        $this->items = $items;
+        $this->items = array_values($items);
     }
 
     /**
@@ -58,6 +58,17 @@ final readonly class InterdimensionalSiblings implements \JsonSerializable, \Ite
         return new self(...array_map(
             fn (DimensionSpacePoint $dimensionSpacePoint): InterdimensionalSibling
                 => new InterdimensionalSibling($dimensionSpacePoint, null),
+            iterator_to_array($dimensionSpacePointSet),
+        ));
+    }
+
+    public static function fromDimensionSpacePointSetWithSingleSucceedingSiblings(
+        DimensionSpacePointSet $dimensionSpacePointSet,
+        ?NodeAggregateId $succeedingSiblingId,
+    ): self {
+        return new self(...array_map(
+            fn (DimensionSpacePoint $dimensionSpacePoint): InterdimensionalSibling
+                => new InterdimensionalSibling($dimensionSpacePoint, $succeedingSiblingId),
             iterator_to_array($dimensionSpacePointSet),
         ));
     }

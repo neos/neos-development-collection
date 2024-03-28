@@ -290,7 +290,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             ];
         }
 
-        foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
+        foreach ($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet() as $dimensionSpacePoint) {
             $parentNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
                 $event->parentNodeAggregateId,
                 $dimensionSpacePoint->hash
@@ -302,7 +302,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             /** @var DocumentNodeInfo|null $precedingNode */
             $precedingNode = null;
 
-            if ($event->succeedingNodeAggregateId === null) {
+            $succeedingSiblingNodeAggregateId = $event->succeedingSiblingsForCoverage->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
+            if ($succeedingSiblingNodeAggregateId === null) {
                 $precedingNode = $this->tryGetNode(fn () => $this->getState()->getLastChildNode(
                     $parentNode->getNodeAggregateId(),
                     $dimensionSpacePoint->hash
@@ -316,7 +317,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 }
             } else {
                 $precedingNode = $this->tryGetNode(fn () => $this->getState()->getPrecedingNode(
-                    $event->succeedingNodeAggregateId,
+                    $succeedingSiblingNodeAggregateId,
                     $parentNode->getNodeAggregateId(),
                     $dimensionSpacePoint->hash
                 ));
@@ -328,7 +329,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                     ]);
                 }
                 $this->updateNodeByIdAndDimensionSpacePointHash(
-                    $event->succeedingNodeAggregateId,
+                    $succeedingSiblingNodeAggregateId,
                     $dimensionSpacePoint->hash,
                     ['precedingNodeAggregateId' => $event->nodeAggregateId->value]
                 );
@@ -354,7 +355,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
                 'parentNodeAggregateId' => $parentNode->getNodeAggregateId()->value,
                 'precedingNodeAggregateId' => $precedingNode?->getNodeAggregateId()->value,
-                'succeedingNodeAggregateId' => $event->succeedingNodeAggregateId?->value,
+                'succeedingNodeAggregateId' => $succeedingSiblingNodeAggregateId?->value,
                 'shortcutTarget' => $shortcutTarget,
                 'nodeTypeName' => $event->nodeTypeName->value,
                 'disabled' => $parentNode->getDisableLevel(),
