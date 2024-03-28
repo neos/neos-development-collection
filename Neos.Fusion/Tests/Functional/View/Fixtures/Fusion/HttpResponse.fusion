@@ -1,0 +1,9 @@
+
+response = Neos.Fusion:Http.Message {
+  httpResponseHead {
+    statusCode = 404
+    headers.Content-Type = 'application/json'
+  }
+
+  body = '{"some":"json"}'
+}

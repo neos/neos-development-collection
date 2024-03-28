@@ -11,13 +11,14 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Fusion\View\FusionView;
+use Neos\Fusion\Core\FusionGlobals;
+use Neos\Fusion\Core\FusionSourceCodeCollection;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Core\RuntimeFactory;
+use Neos\Fusion\Exception\RuntimeException;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**
@@ -27,40 +28,72 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 abstract class AbstractFusionObjectTest extends FunctionalTestCase
 {
     /**
-     * @var ControllerContext
+     * @var ActionRequest
      */
-    protected $controllerContext;
+    protected $request;
 
     /**
-     * Helper to build a Fusion view object
+     * TODO THIS IS HACKY AS WE CREATE AN OWN VIEW
      *
-     * @return FusionView
+     * We do that as the FusionView (rightfully) does return mixed anymore.
+     *
+     * We could instead also rewrite all tests to use the Runtime instead.
+     *
+     * But that would be a lot of effort for nothing.
+     *
+     * Instead we want to refactor our tests to behat at some point.
+     *
+     * Thus the hack.
      */
     protected function buildView()
     {
-        $view = new FusionView();
-
         /** @var ServerRequestFactoryInterface $httpRequestFactory */
-        $httpRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
-        $httpRequest = $httpRequestFactory->createServerRequest('GET', 'http://localhost/');
-        $request = ActionRequest::fromHttpRequest($httpRequest);
+        $this->request = ActionRequest::fromHttpRequest(new ServerRequest('GET', 'http://localhost/'));
 
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
-
-        $this->controllerContext = new ControllerContext(
-            $request,
-            new ActionResponse(),
-            new Arguments([]),
-            $uriBuilder
+        $runtime = $this->objectManager->get(RuntimeFactory::class)->createFromSourceCode(
+            FusionSourceCodeCollection::fromFilePath(__DIR__ . '/Fixtures/Fusion/Root.fusion'),
+            FusionGlobals::fromArray(['request' => $this->request])
         );
 
-        $view->setControllerContext($this->controllerContext);
-        $view->setPackageKey('Neos.Fusion');
-        $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
-        $view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
+        $runtime->pushContext('fixtureDirectory', __DIR__ . '/Fixtures/');
 
-        return $view;
+        // todo rewrite everything as behat test :D
+        return new class($runtime) {
+            private string $fusionPath;
+            public function __construct(
+                private readonly Runtime $runtime
+            ) {
+            }
+            public function setFusionPath(string $fusionPath)
+            {
+                $this->fusionPath = $fusionPath;
+            }
+            public function assign($key, $value)
+            {
+                $this->runtime->pushContext($key, $value);
+            }
+            public function setOption($key, $value)
+            {
+                match ($key) {
+                    'enableContentCache' => $this->runtime->setEnableContentCache($value),
+                    'debugMode' => $this->runtime->setDebugMode($value)
+                };
+            }
+            public function assignMultiple(array $values)
+            {
+                foreach ($values as $key => $value) {
+                    $this->runtime->pushContext($key, $value);
+                }
+            }
+            public function render()
+            {
+                try {
+                    return $this->runtime->render($this->fusionPath);
+                } catch (RuntimeException $e) {
+                    throw $e->getWrappedException();
+                }
+            }
+        };
     }
 
     /**

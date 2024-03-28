@@ -11,6 +11,9 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**
  * A Fusion UriBuilder object
@@ -150,8 +153,19 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        $controllerContext = $this->runtime->getControllerContext();
-        $uriBuilder = $controllerContext->getUriBuilder()->reset();
+        $uriBuilder = new UriBuilder();
+        $possibleRequest = $this->runtime->fusionGlobals->get('request');
+        if ($possibleRequest instanceof ActionRequest) {
+            $uriBuilder->setRequest($possibleRequest);
+        } else {
+            // unfortunately, the uri-builder always needs a request at hand and cannot build uris without
+            // even, if the default param merging would not be required
+            // this will improve with a reformed uri building:
+            // https://github.com/neos/flow-development-collection/pull/2744
+            $uriBuilder->setRequest(
+                ActionRequest::fromHttpRequest(ServerRequest::fromGlobals())
+            );
+        }
 
         $format = $this->getFormat();
         if ($format !== null) {

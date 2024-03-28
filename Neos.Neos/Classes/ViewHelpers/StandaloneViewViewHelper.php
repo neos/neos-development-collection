@@ -74,6 +74,6 @@ class StandaloneViewViewHelper extends AbstractViewHelper
     {
         $standaloneView = new StandaloneView($this->controllerContext->getRequest());
         $standaloneView->setTemplatePathAndFilename($this->arguments['templatePathAndFilename']);
-        return $standaloneView->assignMultiple($this->arguments['arguments'])->render();
+        return $standaloneView->assignMultiple($this->arguments['arguments'])->render()->getContents();
     }
 }

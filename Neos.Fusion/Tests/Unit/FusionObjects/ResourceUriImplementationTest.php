@@ -13,10 +13,11 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
 
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion\Core\FusionConfiguration;
+use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception;
 use Neos\Fusion\FusionObjects\ResourceUriImplementation;
@@ -47,25 +48,18 @@ class ResourceUriImplementationTest extends UnitTestCase
     protected $mockI18nService;
 
     /**
-     * @var ControllerContext
-     */
-    protected $mockControllerContext;
-
-    /**
      * @var ActionRequest
      */
     protected $mockActionRequest;
 
     public function setUp(): void
     {
-        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-
-        $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->mockActionRequest));
 
-        $this->mockRuntime->expects(self::any())->method('getControllerContext')->will(self::returnValue($this->mockControllerContext));
+        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->setConstructorArgs([
+            FusionConfiguration::fromArray([]),
+            FusionGlobals::fromArray(['request' => $this->mockActionRequest])
+        ])->getMock();
 
         $this->resourceUriImplementation = new ResourceUriImplementation($this->mockRuntime, 'resourceUri/test', 'Neos.Fusion:ResourceUri');
 

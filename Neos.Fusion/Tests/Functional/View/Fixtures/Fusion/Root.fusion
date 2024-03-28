@@ -1,1 +1,5 @@
 include: ./**/*.fusion
+include: 'resource://Neos.Fusion/Private/Fusion/Prototypes/Join.fusion'
+include: 'resource://Neos.Fusion/Private/Fusion/Prototypes/DataStructure.fusion'
+include: 'resource://Neos.Fusion/Private/Fusion/Prototypes/Http.Message.fusion'
+include: 'resource://Neos.Fusion/Private/Fusion/Prototypes/Http.ResponseHead.fusion'

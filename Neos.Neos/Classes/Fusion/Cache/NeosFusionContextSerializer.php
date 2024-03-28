@@ -16,18 +16,16 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
- * Serializer for Fusion's [at]cache.context values
+ * Serializer for Fusion's \@cache.context values
  *
  * Implements special handing for serializing {@see Node} objects in fusions cache context:
  *
- * ```
- * [at]cache {
- *   mode = 'uncached'
- *   context {
- *     1 = 'node'
- *   }
- * }
- * ```
+ *     \@cache {
+ *       mode = 'uncached'
+ *       context {
+ *         1 = 'node'
+ *       }
+ *     }
  *
  * The property mapper cannot be relied upon to serialize nodes, as this is willingly not implemented.
  *

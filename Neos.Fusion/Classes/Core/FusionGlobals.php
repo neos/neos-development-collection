@@ -5,21 +5,31 @@ declare(strict_types=1);
 namespace Neos\Fusion\Core;
 
 /**
- * Fusion allows to add variable to the context either via
- * \@context.foo = "bar" or by leveraging the php api {@see Runtime::pushContext()}.
+ * Fusion differentiates between dynamic context variables and fixed Fusion globals.
  *
- * Those approaches are highly dynamic and don't guarantee the existence of variables,
+ * Context variables are allowed to be set via Fusion's \@context.foo = "bar"
+ * or by leveraging the php api {@see Runtime::pushContext()}.
+ *
+ * Context variables are highly dynamic and don't guarantee the existence of a specific variables,
  * as they have to be explicitly preserved in uncached \@cache segments,
  * or might accidentally be popped from the stack.
  *
- * The Fusion runtime is instantiated with a set of global variables which contain the EEL helper definitions
- * or functions like FlowQuery. Also, variables like "request" are made available via it.
+ * The Fusion globals are immutable and part of the runtime's constructor.
+ * A fixed set of global variables which might contain the EEL helper definitions
+ * or functions like FlowQuery can be passed this way.
  *
- * The "${request}" special case: To make the request available in uncached segments, it would need to be serialized,
- * but we don't allow this currently and despite that, it would be absurd to cache a random request.
+ * Additionally, also special variables like "request" are made available.
+ *
+ * The speciality with "request" and similar is that they should be always available but never cached.
+ * Regular context variables must be serialized to be available in uncached segments,
+ * but the current request must not be serialized into the cache as it contains user specific information.
  * This is avoided by always exposing the current action request via the global variable.
  *
  * Overriding Fusion globals is disallowed via \@context and {@see Runtime::pushContext()}.
+ *
+ * Fusion globals are case-sensitive, though it's not recommend to leverage this behaviour.
+ *
+ * @internal The globals will be set inside the FusionView as declared
  */
 final readonly class FusionGlobals
 {
@@ -45,8 +55,13 @@ final readonly class FusionGlobals
     }
 
     /**
-     * You can access the current request like via this getter:
-     * `$runtime->fusionGlobals->get('request')`
+     * Access the possible current request or other globals:
+     *
+     *     $actionRequest = $this->runtime->fusionGlobals->get('request');
+     *     if (!$actionRequest instanceof ActionRequest) {
+     *         // fallback or error
+     *     }
+     *
      */
     public function get(string $name): mixed
     {
