@@ -124,8 +124,6 @@ trait NodeVariation
                 }
             }
 
-            \Neos\Flow\var_dump('handled unassigned');
-
             foreach (
                 $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
@@ -140,14 +138,12 @@ trait NodeVariation
                     $this->getTableNamePrefix()
                 );
             }
-            \Neos\Flow\var_dump('handled outgoing');
 
             // Copy Reference Edges
             $this->copyReferenceRelations(
                 $sourceNode->relationAnchorPoint,
                 $specializedNode->relationAnchorPoint
             );
-            \Neos\Flow\var_dump('handled references');
         });
     }
 
