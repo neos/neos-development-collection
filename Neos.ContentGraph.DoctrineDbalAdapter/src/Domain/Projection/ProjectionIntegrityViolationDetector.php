@@ -199,6 +199,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             $hierarchyRelationsWithMissingSubtreeTags = $this->client->getConnection()->executeQuery($query)->fetchAllAssociative();
         } catch (\Doctrine\DBAL\Exception\SyntaxErrorException $syntaxErrorException) {
             // Hierarchy relation subtree tags could not be validated as the database doesn't support "JSON_TABLE" feature.
+            // TODO drop this check once the db requirements are clear: https://github.com/neos/neos-development-collection/issues/4337
             return $result;
         }
 
