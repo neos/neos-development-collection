@@ -56,6 +56,7 @@ class AssetUsageSyncService implements ContentRepositoryServiceInterface
         $dimensionSpacePoint = $usage->originDimensionSpacePoint->toDimensionSpacePoint();
 
         $subGraph = $this->contentGraph->getSubgraph(
+            // todo use workspace name instead!!!
             $usage->contentStreamId,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()

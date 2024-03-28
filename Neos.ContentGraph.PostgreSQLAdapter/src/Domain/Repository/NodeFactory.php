@@ -39,9 +39,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The node factory for mapping database rows to nodes and node aggregates
@@ -77,13 +79,20 @@ final class NodeFactory
             : null;
 
         return Node::create(
+            NodeIdentity::create(
+                $this->contentRepositoryId,
+                // todo use actual workspace name
+                WorkspaceName::fromString('missing'),
+                $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
+                $nodeId = NodeAggregateId::fromString($nodeRow['nodeaggregateid'])
+            ),
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
                 $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
                 $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
                 $visibilityConstraints
             ),
-            NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
+            $nodeId,
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),

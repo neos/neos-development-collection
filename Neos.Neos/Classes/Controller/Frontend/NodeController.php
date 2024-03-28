@@ -133,7 +133,7 @@ class NodeController extends ActionController
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
 
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamId,
+            $nodeAddress->workspaceName,
             $nodeAddress->dimensionSpacePoint,
             $visibilityConstraints
         );
@@ -202,7 +202,7 @@ class NodeController extends ActionController
         }
 
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamId,
+            $nodeAddress->workspaceName,
             $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::frontend()
         );

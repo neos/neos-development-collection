@@ -279,7 +279,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
         $subgraph = $contentRepository->getContentGraph()
             ->getSubgraph(
-                $nodeAddress->contentStreamId,
+                $nodeAddress->workspaceName,
                 $nodeAddress->dimensionSpacePoint,
                 $node->subgraphIdentity->visibilityConstraints
             );
@@ -371,7 +371,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             );
         }
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $documentNodeAddress->contentStreamId,
+            $documentNodeAddress->workspaceName,
             $documentNodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );

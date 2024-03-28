@@ -16,7 +16,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
@@ -40,9 +39,11 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
@@ -64,22 +65,29 @@ final class NodeFactory
      */
     public function mapNodeRowToNode(
         array $nodeRow,
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        VisibilityConstraints $visibilityConstraints
+        VisibilityConstraints $visibilityConstraints,
     ): Node {
         $nodeType = $this->nodeTypeManager->hasNodeType($nodeRow['nodetypename'])
             ? $this->nodeTypeManager->getNodeType($nodeRow['nodetypename'])
             : null;
 
         return Node::create(
+            NodeIdentity::create(
+                $this->contentRepositoryId,
+                $workspaceName,
+                $dimensionSpacePoint,
+                $nodeId = NodeAggregateId::fromString($nodeRow['nodeaggregateid'])
+            ),
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
                 $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             ),
-            NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
+            $nodeId,
             $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
@@ -99,10 +107,21 @@ final class NodeFactory
     /**
      * @param array<int, array<string, mixed>> $nodeRows
      */
-    public function mapNodeRowsToNodes(array $nodeRows, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints): Nodes
-    {
+    public function mapNodeRowsToNodes(
+        array $nodeRows,
+        WorkspaceName $workspaceName,
+        ContentStreamId $contentStreamId,
+        DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints
+    ): Nodes {
         return Nodes::fromArray(
-            array_map(fn (array $nodeRow) => $this->mapNodeRowToNode($nodeRow, $contentStreamId, $dimensionSpacePoint, $visibilityConstraints), $nodeRows)
+            array_map(fn (array $nodeRow) => $this->mapNodeRowToNode(
+                $nodeRow,
+                $workspaceName,
+                $contentStreamId,
+                $dimensionSpacePoint,
+                $visibilityConstraints
+            ), $nodeRows)
         );
     }
 
@@ -119,6 +138,7 @@ final class NodeFactory
      */
     public function mapReferenceRowsToReferences(
         array $nodeRows,
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
@@ -127,6 +147,7 @@ final class NodeFactory
         foreach ($nodeRows as $nodeRow) {
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
+                $workspaceName,
                 $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
@@ -175,6 +196,7 @@ final class NodeFactory
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
+                    WorkspaceName::forLive(), // todo use workspace name in content graph api
                     $contentStreamId,
                     $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                     $visibilityConstraints
@@ -255,10 +277,11 @@ final class NodeFactory
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePointsByNodeAggregate
                     [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
-                        $nodeRow,
-                        $contentStreamId,
-                        $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
-                        $visibilityConstraints
+                    $nodeRow,
+                    WorkspaceName::forLive(), // todo use workspace name in content graph api
+                    $contentStreamId,
+                    $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
+                    $visibilityConstraints
                     );
                 $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId][]
                     = $occupiedDimensionSpacePoint;

@@ -65,6 +65,7 @@ final readonly class NodeAggregate
      * @param OriginByCoverage $occupationByCovered
      * @param DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags dimension space points for every subtree tag this aggregate is *explicitly* tagged with (excluding inherited tags)
      */
+    // todo add workspace name and content repository id and remove cs id
     public function __construct(
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,

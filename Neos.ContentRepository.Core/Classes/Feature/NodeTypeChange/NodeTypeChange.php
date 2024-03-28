@@ -193,7 +193,7 @@ trait NodeTypeChange
                 $tetheredNodeName = NodeName::fromString($serializedTetheredNodeName);
 
                 $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                    $node->subgraphIdentity->contentStreamId,
+                    $node->identity->workspaceName,
                     $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                     VisibilityConstraints::withoutRestrictions()
                 );

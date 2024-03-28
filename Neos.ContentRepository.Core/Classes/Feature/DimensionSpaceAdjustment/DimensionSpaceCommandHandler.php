@@ -71,6 +71,8 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
             ->getEventStreamName();
 
+        // todo use WorkspaceName here as well but the command doesnt expose it
+        // https://github.com/neos/neos-development-collection/issues/4942
         self::requireDimensionSpacePointToBeEmptyInContentStream(
             $command->target,
             $command->contentStreamId,
@@ -99,6 +101,8 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
             ->getEventStreamName();
 
+        // todo use WorkspaceName here as well but the command doesnt expose it
+        // https://github.com/neos/neos-development-collection/issues/4942
         self::requireDimensionSpacePointToBeEmptyInContentStream(
             $command->target,
             $command->contentStreamId,
@@ -134,18 +138,18 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
 
     private static function requireDimensionSpacePointToBeEmptyInContentStream(
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         ContentGraphInterface $contentGraph
     ): void {
         $subgraph = $contentGraph->getSubgraph(
-            $contentStreamId,
+            $workspaceName,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
         if ($subgraph->countNodes() > 0) {
             throw new DimensionSpacePointAlreadyExists(sprintf(
-                'the content stream %s already contained nodes in dimension space point %s - this is not allowed.',
-                $contentStreamId->value,
+                'the workspace %s already contained nodes in dimension space point %s - this is not allowed.',
+                $workspaceName->value,
                 $dimensionSpacePoint->toJson(),
             ), 1612898126);
         }

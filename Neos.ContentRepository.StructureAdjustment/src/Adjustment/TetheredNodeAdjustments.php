@@ -27,6 +27,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class TetheredNodeAdjustments
@@ -70,7 +71,7 @@ class TetheredNodeAdjustments
                     $tetheredNodeName = NodeName::fromString($tetheredNodeName);
 
                     $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                        $nodeAggregate->contentStreamId,
+                        WorkspaceName::forLive(), // structure adjustments are only carried out live
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
@@ -138,7 +139,7 @@ class TetheredNodeAdjustments
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($originDimensionSpacePoints as $originDimensionSpacePoint) {
                     $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                        $nodeAggregate->contentStreamId,
+                        WorkspaceName::forLive(), // structure adjustments are only carried out live
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );

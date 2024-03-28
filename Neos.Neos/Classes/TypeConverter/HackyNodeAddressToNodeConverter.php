@@ -82,7 +82,7 @@ class HackyNodeAddressToNodeConverter extends AbstractTypeConverter
 
         $subgraph = $contentRepository->getContentGraph()
             ->getSubgraph(
-                $nodeAddress->contentStreamId,
+                $nodeAddress->workspaceName,
                 $nodeAddress->dimensionSpacePoint,
                 $nodeAddress->isInLiveWorkspace()
                     ? VisibilityConstraints::frontend()

@@ -161,7 +161,7 @@ trait CRTestSuiteRuntimeVariables
     public function getCurrentSubgraph(): ContentSubgraphInterface
     {
         return $this->currentContentRepository->getContentGraph()->getSubgraph(
-            $this->currentContentStreamId,
+            $this->currentWorkspaceName,
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints
         );

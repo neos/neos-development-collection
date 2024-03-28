@@ -35,6 +35,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotEx
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The PostgreSQL adapter content hypergraph
@@ -50,6 +51,7 @@ final class ContentHypergraph implements ContentGraphInterface
     private NodeFactory $nodeFactory;
 
     /**
+     * @phpstan-ignore-next-line unused
      * @var array|ContentSubhypergraph[]
      */
     private array $subhypergraphs;
@@ -57,7 +59,9 @@ final class ContentHypergraph implements ContentGraphInterface
     public function __construct(
         PostgresDbalClientInterface $databaseClient,
         NodeFactory $nodeFactory,
+        /** @phpstan-ignore-next-line unused */
         private readonly ContentRepositoryId $contentRepositoryId,
+        /** @phpstan-ignore-next-line unused */
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix
     ) {
@@ -66,10 +70,13 @@ final class ContentHypergraph implements ContentGraphInterface
     }
 
     public function getSubgraph(
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
+        throw new \BadMethodCallException('The postgres adapter is not functional.');
+
+        /*
         $index = $contentStreamId->value . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subhypergraphs[$index])) {
             $this->subhypergraphs[$index] = new ContentSubhypergraph(
@@ -85,6 +92,7 @@ final class ContentHypergraph implements ContentGraphInterface
         }
 
         return $this->subhypergraphs[$index];
+        */
     }
 
     public function findRootNodeAggregateByType(
