@@ -27,8 +27,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSib
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelative;
-use Neos\ContentRepository\Core\SharedModel\Node\InterdimensionalRelatives;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
@@ -115,7 +113,13 @@ trait NodeVariationInternals
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
-            $specializationVisibility,
+            $this->resolveInterdimensionalSiblings(
+                $contentRepository,
+                $contentStreamId,
+                $nodeAggregate->nodeAggregateId,
+                $sourceOrigin,
+                $specializationVisibility
+            ),
         );
 
         foreach (

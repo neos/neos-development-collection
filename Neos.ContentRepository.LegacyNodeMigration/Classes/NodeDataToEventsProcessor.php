@@ -390,7 +390,15 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         foreach ($alreadyVisitedOriginDimensionSpacePoints as $alreadyVisitedOriginDimensionSpacePoint) {
             $variantType = $this->interDimensionalVariationGraph->getVariantType($originDimensionSpacePoint->toDimensionSpacePoint(), $alreadyVisitedOriginDimensionSpacePoint->toDimensionSpacePoint());
             $variantCreatedEvent = match ($variantType) {
-                VariantType::TYPE_SPECIALIZATION => new NodeSpecializationVariantWasCreated($this->contentStreamId, $nodeAggregateId, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints),
+                VariantType::TYPE_SPECIALIZATION => new NodeSpecializationVariantWasCreated(
+                    $this->contentStreamId,
+                    $nodeAggregateId,
+                    $alreadyVisitedOriginDimensionSpacePoint,
+                    $originDimensionSpacePoint,
+                    InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                        $coveredDimensionSpacePoints
+                    )
+                ),
                 VariantType::TYPE_GENERALIZATION => new NodeGeneralizationVariantWasCreated(
                     $this->contentStreamId,
                     $nodeAggregateId,

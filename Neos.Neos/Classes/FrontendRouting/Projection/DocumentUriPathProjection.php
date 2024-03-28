@@ -419,7 +419,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             $event->nodeAggregateId,
             $event->sourceOrigin,
             $event->specializationOrigin,
-            $event->specializationCoverage
+            $event->specializationSiblings->toDimensionSpacePointSet()
         );
     }
 

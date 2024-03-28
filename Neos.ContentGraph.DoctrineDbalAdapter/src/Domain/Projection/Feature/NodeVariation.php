@@ -57,12 +57,12 @@ trait NodeVariation
                 $eventEnvelope
             );
 
-            $uncoveredDimensionSpacePoints = $event->specializationCoverage->points;
+            $uncoveredDimensionSpacePoints = $event->specializationSiblings->toDimensionSpacePointSet()->points;
             foreach (
                 $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $sourceNode->nodeAggregateId,
-                    $event->specializationCoverage
+                    $event->specializationSiblings->toDimensionSpacePointSet()
                 ) as $hierarchyRelation
             ) {
                 $hierarchyRelation->assignNewChildNode(
@@ -93,6 +93,17 @@ trait NodeVariation
                         );
                     }
                     $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($event->contentStreamId, $parentNode->relationAnchorPoint, $uncoveredDimensionSpacePoint);
+
+                    $specializationSucceedingSiblingNodeAggregateId = $event->specializationSiblings
+                        ->getSucceedingSiblingIdForDimensionSpacePoint($uncoveredDimensionSpacePoint);
+                    $specializationSucceedingSiblingNode = $specializationSucceedingSiblingNodeAggregateId
+                        ? $this->getProjectionContentGraph()->findNodeInAggregate(
+                            $event->contentStreamId,
+                            $specializationSucceedingSiblingNodeAggregateId,
+                            $uncoveredDimensionSpacePoint
+                        )
+                        : null;
+
                     $hierarchyRelation = new HierarchyRelation(
                         $parentNode->relationAnchorPoint,
                         $specializedNode->relationAnchorPoint,
@@ -103,7 +114,7 @@ trait NodeVariation
                         $this->projectionContentGraph->determineHierarchyRelationPosition(
                             $parentNode->relationAnchorPoint,
                             $specializedNode->relationAnchorPoint,
-                            null,
+                            $specializationSucceedingSiblingNode?->relationAnchorPoint,
                             $event->contentStreamId,
                             $uncoveredDimensionSpacePoint
                         ),
@@ -113,11 +124,13 @@ trait NodeVariation
                 }
             }
 
+            \Neos\Flow\var_dump('handled unassigned');
+
             foreach (
                 $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $sourceNode->nodeAggregateId,
-                    $event->specializationCoverage
+                    $event->specializationSiblings->toDimensionSpacePointSet()
                 ) as $hierarchyRelation
             ) {
                 $hierarchyRelation->assignNewParentNode(
@@ -127,12 +140,14 @@ trait NodeVariation
                     $this->getTableNamePrefix()
                 );
             }
+            \Neos\Flow\var_dump('handled outgoing');
 
             // Copy Reference Edges
             $this->copyReferenceRelations(
                 $sourceNode->relationAnchorPoint,
                 $specializedNode->relationAnchorPoint
             );
+            \Neos\Flow\var_dump('handled references');
         });
     }
 
