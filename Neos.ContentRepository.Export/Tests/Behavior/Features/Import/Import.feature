@@ -1,5 +1,6 @@
 @contentrepository
 Feature: As a user of the CR I want to export the event stream
+
   Background:
     Given using no content dimensions
     And using the following node types:
@@ -21,18 +22,18 @@ Feature: As a user of the CR I want to export the event stream
     And I import the events.jsonl into "cs-identifier"
     Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 0 is of type "ContentStreamWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-identifier"               |
+      | Key             | Expected        |
+      | contentStreamId | "cs-identifier" |
     And event at index 1 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-identifier"               |
-      | nodeAggregateId             | "acme-site-sites"             |
-      | nodeTypeName                | "Neos.Neos:Sites"             |
+      | Key             | Expected          |
+      | contentStreamId | "cs-identifier"   |
+      | nodeAggregateId | "acme-site-sites" |
+      | nodeTypeName    | "Neos.Neos:Sites" |
     And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-identifier"               |
-      | nodeAggregateId             | "acme-site"                   |
-      | nodeTypeName                | "Vendor.Site:HomePage"        |
+      | Key             | Expected               |
+      | contentStreamId | "cs-identifier"        |
+      | nodeAggregateId | "acme-site"            |
+      | nodeTypeName    | "Vendor.Site:HomePage" |
 
   Scenario: Import the event stream
     Then I expect exactly 0 events to be published on stream with prefix "ContentStream:cs-imported-identifier"
@@ -44,21 +45,21 @@ Feature: As a user of the CR I want to export the event stream
     And I import the events.jsonl
     Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-imported-identifier"
     And event at index 0 is of type "ContentStreamWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-imported-identifier"      |
+      | Key             | Expected                 |
+      | contentStreamId | "cs-imported-identifier" |
     And event at index 1 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-imported-identifier"      |
-      | nodeAggregateId             | "acme-site-sites"             |
-      | nodeTypeName                | "Neos.Neos:Sites"             |
+      | Key             | Expected                 |
+      | contentStreamId | "cs-imported-identifier" |
+      | nodeAggregateId | "acme-site-sites"        |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
     And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-imported-identifier"      |
-      | nodeAggregateId             | "acme-site"                   |
-      | nodeTypeName                | "Vendor.Site:HomePage"        |
+      | Key             | Expected                 |
+      | contentStreamId | "cs-imported-identifier" |
+      | nodeAggregateId | "acme-site"              |
+      | nodeTypeName    | "Vendor.Site:HomePage"   |
 
   Scenario: Import faulty event stream with explicit "ContentStreamWasCreated" does not duplicate content-stream
-    see issue https://github.com/neos/neos-development-collection/issues/4298
+  see issue https://github.com/neos/neos-development-collection/issues/4298
 
     Given using the following events.jsonl:
       """

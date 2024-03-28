@@ -1,5 +1,6 @@
 @contentrepository
 Feature: As a user of the CR I want to export the event stream
+
   Background:
     Given using the following content dimensions:
       | Identifier | Values      | Generalizations |
@@ -19,9 +20,9 @@ Feature: As a user of the CR I want to export the event stream
     And the graph projection is fully up to date
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
       | contentStreamId             | "cs-identifier"                                          |
