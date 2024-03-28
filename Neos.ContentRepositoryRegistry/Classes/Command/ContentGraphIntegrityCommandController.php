@@ -11,8 +11,12 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Error\Messages\Result;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
 final class ContentGraphIntegrityCommandController extends CommandController
@@ -20,20 +24,22 @@ final class ContentGraphIntegrityCommandController extends CommandController
     private const OUTPUT_MODE_CONSOLE = 'console';
     private const OUTPUT_MODE_LOG = 'log';
 
-    private ProjectionIntegrityViolationDetectionRunner $detectionRunner;
+    #[Flow\Inject()]
+    protected DbalClientInterface $dbalClient;
 
+    #[Flow\Inject()]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
-    public function __construct(ProjectionIntegrityViolationDetectionRunner $detectionRunner)
+    public function runViolationDetectionCommand(string $contentRepository = 'default', string $outputMode = null): void
     {
-        $this->detectionRunner = $detectionRunner;
-        parent::__construct();
-    }
+        $detectionRunner = $this->contentRepositoryRegistry->buildService(
+            ContentRepositoryId::fromString($contentRepository),
+            new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbalClient)
+        );
 
-    public function runViolationDetectionCommand(string $outputMode = null): void
-    {
         $outputMode = $this->resolveOutputMode($outputMode);
         /** @var Result $result */
-        $result = $this->detectionRunner->run();
+        $result = $detectionRunner->run();
         switch ($outputMode) {
             case self::OUTPUT_MODE_CONSOLE:
                 foreach ($result->getErrors() as $error) {
