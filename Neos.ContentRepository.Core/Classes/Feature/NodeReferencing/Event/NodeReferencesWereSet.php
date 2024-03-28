@@ -20,23 +20,23 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api events are the persistence-API of the content repository
  */
-final class NodeReferencesWereSet implements
+final readonly class NodeReferencesWereSet implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $sourceNodeAggregateId,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $sourceNodeAggregateId,
         /**
          * While only one origin dimension space point is selected when initializing the command,
          * a whole set of origin dimension space points might be affected depending on the
          * {@see \Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope} scope
          * declared for the given reference in the node aggregate's type
          */
-        public readonly OriginDimensionSpacePointSet $affectedSourceOriginDimensionSpacePoints,
-        public readonly ReferenceName $referenceName,
-        public readonly SerializedNodeReferences $references,
+        public OriginDimensionSpacePointSet $affectedSourceOriginDimensionSpacePoints,
+        public ReferenceName $referenceName,
+        public SerializedNodeReferences $references,
     ) {
     }
 

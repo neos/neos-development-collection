@@ -18,12 +18,12 @@ use Neos\Flow\Annotations as Flow;
  * @internal
  */
 #[Flow\Proxy(false)]
-final class AssetUsageNodeAddress
+final readonly class AssetUsageNodeAddress
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly DimensionSpacePoint $dimensionSpacePoint,
-        public readonly NodeAggregateId $nodeAggregateId,
+        public ContentStreamId $contentStreamId,
+        public DimensionSpacePoint $dimensionSpacePoint,
+        public NodeAggregateId $nodeAggregateId,
     ) {
     }
 }

@@ -34,16 +34,16 @@ use Neos\Flow\Annotations as Flow;
  * @api
  */
 #[Flow\Proxy(false)]
-final class NodeAddress
+final readonly class NodeAddress
 {
     /**
      * @internal use NodeAddressFactory, if you want to create a NodeAddress
      */
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly DimensionSpacePoint $dimensionSpacePoint,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly WorkspaceName $workspaceName
+        public ContentStreamId $contentStreamId,
+        public DimensionSpacePoint $dimensionSpacePoint,
+        public NodeAggregateId $nodeAggregateId,
+        public WorkspaceName $workspaceName
     ) {
     }
 

@@ -43,11 +43,11 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  *
  * @api DTO of {@see NodeAggregateWasMoved} event
  */
-final class ParentNodeMoveDestination implements \JsonSerializable
+final readonly class ParentNodeMoveDestination implements \JsonSerializable
 {
     private function __construct(
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
     }
 

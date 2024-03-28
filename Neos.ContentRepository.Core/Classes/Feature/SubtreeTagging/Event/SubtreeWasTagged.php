@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api events are the persistence-API of the content repository
  */
-final class SubtreeWasTagged implements
+final readonly class SubtreeWasTagged implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
@@ -39,10 +39,10 @@ final class SubtreeWasTagged implements
      * @param SubtreeTag $tag The tag that was added
      */
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
-        public readonly SubtreeTag $tag,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public DimensionSpacePointSet $affectedDimensionSpacePoints,
+        public SubtreeTag $tag,
     ) {
     }
 

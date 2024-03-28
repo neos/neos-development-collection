@@ -19,17 +19,14 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  *
  * @internal
  */
-class NodeRelationAnchorPoint implements \JsonSerializable
+final readonly class NodeRelationAnchorPoint implements \JsonSerializable
 {
-    public readonly int $value;
-
-    private function __construct(int $value)
-    {
+    private function __construct(
+        public int $value
+    ) {
         if ($value < 0) {
             throw new \InvalidArgumentException('A NodeRelationAnchorPoint cannot be negative, got %d', $value);
         }
-
-        $this->value = $value;
     }
 
     public static function forRootEdge(): self

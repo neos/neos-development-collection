@@ -16,12 +16,12 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
  *
  * @internal only used during event publishing (from within command handlers) - and their implementation is not API
  */
-final class EventsToPublish
+final readonly class EventsToPublish
 {
     public function __construct(
-        public readonly StreamName $streamName,
-        public readonly Events $events,
-        public readonly ExpectedVersion $expectedVersion,
+        public StreamName $streamName,
+        public Events $events,
+        public ExpectedVersion $expectedVersion,
     ) {
     }
 
