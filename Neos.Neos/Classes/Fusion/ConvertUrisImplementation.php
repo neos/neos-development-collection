@@ -14,21 +14,23 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\NodeHackToIdentity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
 use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\NodeUriSpecification;
 use Neos\Neos\Fusion\Cache\CacheTag;
 use Psr\Log\LoggerInterface;
 
@@ -93,6 +95,12 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected $systemLogger;
 
     /**
+     * @Flow\Inject
+     * @var NodeUriBuilderFactory
+     */
+    protected $nodeUriBuilderFactory;
+
+    /**
      * Convert URIs matching a supported scheme with generated URIs
      *
      * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
@@ -103,7 +111,6 @@ class ConvertUrisImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-
         $text = $this->fusionValue('value');
 
         if ($text === '' || $text === null) {
@@ -132,32 +139,36 @@ class ConvertUrisImplementation extends AbstractFusionObject
             return $text;
         }
 
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
-        );
-
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
+        $nodeIdentity = (new NodeHackToIdentity())->convertNodeToIdentity($node);
 
         $unresolvedUris = [];
         $absolute = $this->fusionValue('absolute');
 
-        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($contentRepository, $nodeAddress, &$unresolvedUris, $absolute) {
+        $possibleRequest = $this->runtime->fusionGlobals->get('request');
+        if ($possibleRequest instanceof ActionRequest) {
+            $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest($possibleRequest->getHttpRequest());
+        } else {
+            // todo correct?
+            $nodeUriBuilder = $this->nodeUriBuilderFactory->forBaseUri(new Uri());
+        }
+
+        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeIdentity, &$unresolvedUris, $nodeUriBuilder, $absolute) {
             $resolvedUri = null;
             switch ($matches[1]) {
                 case 'node':
-                    $nodeAddress = $nodeAddress->withNodeAggregateId(
+                    $nodeIdentity = $nodeIdentity->withNodeAggregateId(
                         NodeAggregateId::fromString($matches[2])
                     );
-                    $uriBuilder = new UriBuilder();
-                    $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
-                    $uriBuilder->setCreateAbsoluteUri($absolute);
                     try {
-                        $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
+                        $resolvedUri = $absolute
+                            ? (string)$nodeUriBuilder->absoluteUriFor(NodeUriSpecification::create($nodeIdentity))
+                            : (string)$nodeUriBuilder->uriFor(NodeUriSpecification::create($nodeIdentity));
                     } catch (NoMatchingRouteException) {
-                        $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri. Arguments: %s', $matches[0], json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
+                        // todo log also arguments?
+                        $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri.', $matches[0]), LogEnvironment::fromMethodName(__METHOD__));
                     }
                     $this->runtime->addCacheTag(
-                        CacheTag::forDynamicNodeAggregate($contentRepository->id, $nodeAddress->contentStreamId, NodeAggregateId::fromString($matches[2]))->value
+                        CacheTag::forDynamicNodeAggregate($nodeIdentity->contentRepositoryId, $nodeIdentity->workspaceName, $nodeIdentity->nodeAggregateId)->value
                     );
                     break;
                 case 'asset':

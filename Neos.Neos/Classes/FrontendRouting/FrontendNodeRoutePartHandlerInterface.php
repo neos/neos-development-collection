@@ -20,8 +20,6 @@ use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
  * Marker interface which can be used to replace the currently used FrontendNodeRoutePartHandler,
  * to e.g. use the one with localization support.
  *
- * TODO CORE MIGRATION
- *
  * **See {@see EventSourcedFrontendNodeRoutePartHandler} documentation for a
  * detailed explanation of the Frontend Routing process.**
  */

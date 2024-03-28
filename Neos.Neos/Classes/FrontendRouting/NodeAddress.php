@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
@@ -31,7 +33,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * It is used in Neos Routing to build a URI to a node.
  *
- * @api
+ * @deprecated will be removed before Final 9.0
  */
 #[Flow\Proxy(false)]
 final readonly class NodeAddress
@@ -45,6 +47,17 @@ final readonly class NodeAddress
         public NodeAggregateId $nodeAggregateId,
         public WorkspaceName $workspaceName
     ) {
+    }
+
+    // todo temporary hack
+    public function toNodeIdentity(ContentRepositoryId $contentRepositoryId): NodeIdentity
+    {
+        return NodeIdentity::create(
+            $contentRepositoryId,
+            $this->workspaceName,
+            $this->dimensionSpacePoint,
+            $this->nodeAggregateId
+        );
     }
 
     public function withNodeAggregateId(NodeAggregateId $nodeAggregateId): self

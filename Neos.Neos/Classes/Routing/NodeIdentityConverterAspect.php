@@ -15,11 +15,12 @@ declare(strict_types=1);
 namespace Neos\Neos\Routing;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeIdentity;
+use Neos\ContentRepositoryRegistry\NodeHackToIdentity;
+use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 
 /**
  * Aspect to convert a node object to its context node path. This is used in URI
@@ -27,6 +28,8 @@ use Neos\Neos\FrontendRouting\NodeAddressFactory;
  *
  * On the long term, type converters should be able to convert the reverse direction
  * as well, and then this aspect could be removed.
+ *
+ * TODO LOL?
  *
  * @Flow\Scope("singleton")
  * @Flow\Aspect
@@ -45,14 +48,13 @@ class NodeIdentityConverterAspect
      */
     public function convertNodeToContextPathForRouting(JoinPointInterface $joinPoint): array|string
     {
+        // todo whyyyy does `Route::resolves` even call `convertObjectsToIdentityArrays`? And why nodes?
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof Node) {
-            $contentRepository = $this->contentRepositoryRegistry->get(
-                $objectArgument->subgraphIdentity->contentRepositoryId
-            );
-            $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-            $nodeAddress = $nodeAddressFactory->createFromNode($objectArgument);
-            return ['__contextNodePath' => $nodeAddress->serializeForUri()];
+            $nodeAddress = (new NodeHackToIdentity())->convertNodeToIdentity($objectArgument);
+            return ['__contextNodePath' => $nodeAddress->toJson()];
+        } elseif ($objectArgument instanceof NodeIdentity) {
+            return ['__contextNodePath' => $objectArgument->toJson()];
         } elseif ($objectArgument instanceof NodeAddress) {
             return ['__contextNodePath' => $objectArgument->serializeForUri()];
         }

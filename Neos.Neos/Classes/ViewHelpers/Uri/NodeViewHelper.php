@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFi
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepositoryRegistry\NodeHackToIdentity;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
@@ -33,6 +34,8 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\NodeUriSpecification;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -117,6 +120,13 @@ class NodeViewHelper extends AbstractViewHelper
      * @var ThrowableStorageInterface
      */
     protected $throwableStorage;
+
+    /**
+     * @Flow\Inject
+     * @var NodeUriBuilderFactory
+     */
+    protected $nodeUriBuilderFactory;
+
 
     /**
      * Initialize arguments
@@ -206,14 +216,17 @@ class NodeViewHelper extends AbstractViewHelper
             $node = $this->getContextVariable($this->arguments['baseNodeName']);
         }
 
+        /* @var Node $documentNode */
+        $documentNode = $this->getContextVariable('documentNode');
+
         if ($node instanceof Node) {
-            $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->subgraphIdentity->contentRepositoryId
-            );
-            $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-            $nodeAddress = $nodeAddressFactory->createFromNode($node);
+            $nodeIdentity = (new NodeHackToIdentity())->convertNodeToIdentity($node);
         } elseif (is_string($node)) {
-            $nodeAddress = $this->resolveNodeAddressFromString($node);
+            $nodeIdentity = $this->resolveNodeAddressFromString($node, $documentNode)
+                ?->toNodeIdentity($documentNode->subgraphIdentity->contentRepositoryId);
+            if (!$nodeIdentity) {
+                return '';
+            }
         } else {
             throw new ViewHelperException(sprintf(
                 'The "node" argument can only be a string or an instance of %s. Given: %s',
@@ -222,33 +235,32 @@ class NodeViewHelper extends AbstractViewHelper
             ), 1601372376);
         }
 
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($this->controllerContext->getRequest());
-        $uriBuilder->setFormat($this->arguments['format'])
-            ->setCreateAbsoluteUri($this->arguments['absolute'])
-            ->setArguments($this->arguments['arguments'])
-            ->setSection($this->arguments['section'])
-            ->setAddQueryString($this->arguments['addQueryString'])
-            ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
+        $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest($this->controllerContext->getRequest()->getHttpRequest());
+
+        // todo ->setAddQueryString($this->arguments['addQueryString'])
+        // todo ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
 
         $uri = '';
-        if (!$nodeAddress) {
-            return '';
-        }
+        $specification = NodeUriSpecification::create($nodeIdentity)
+            ->withFormat($this->arguments['format'])
+            ->withRoutingArguments($this->arguments['arguments']);
+
         try {
-            $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
-        } catch (
-            HttpException
-            | NoMatchingRouteException
-            | MissingActionNameException $e
-        ) {
+            $uri = $this->arguments['absolute']
+                ? $nodeUriBuilder->absoluteUriFor($specification)
+                : $nodeUriBuilder->uriFor($specification);
+
+            if ($this->arguments['section'] !== '') {
+                $uri = $uri->withFragment($this->arguments['section']);
+            }
+        } catch (NoMatchingRouteException $e) {
             $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                 'Failed to build URI for node: %s: %s',
-                $nodeAddress,
+                $nodeIdentity->toJson(),
                 $e->getMessage()
             ), 1601372594, $e));
         }
-        return $uri;
+        return (string)$uri;
     }
 
     /**
@@ -259,10 +271,8 @@ class NodeViewHelper extends AbstractViewHelper
      * @return \Neos\Neos\FrontendRouting\NodeAddress
      * @throws ViewHelperException
      */
-    private function resolveNodeAddressFromString(string $path): ?NodeAddress
+    private function resolveNodeAddressFromString(string $path, Node $documentNode): ?NodeAddress
     {
-        /* @var Node $documentNode */
-        $documentNode = $this->getContextVariable('documentNode');
         $contentRepository = $this->contentRepositoryRegistry->get(
             $documentNode->subgraphIdentity->contentRepositoryId
         );

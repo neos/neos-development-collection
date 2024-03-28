@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -107,12 +108,14 @@ class CacheTag
 
     final public static function forDynamicNodeAggregate(
         ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
         return new self(
             'DynamicNodeTag_'
-            . self::getHashForContentStreamIdAndContentRepositoryId($contentStreamId, $contentRepositoryId)
+            // todo discuss if we should use the $workspaceName, and do we even flush this?
+            // https://github.com/neos/neos-development-collection/pull/4940/files#r1531217463
+            // . self::getHashForContentStreamIdAndContentRepositoryId($workspaceName, $contentRepositoryId)
             . '_' . $nodeAggregateId->value
         );
     }
