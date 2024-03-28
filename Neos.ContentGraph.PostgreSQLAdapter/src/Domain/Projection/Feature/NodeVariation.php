@@ -71,13 +71,13 @@ trait NodeVariation
                     $event->contentStreamId,
                     $oldCoveringNode->relationAnchorPoint,
                     $specializedNode->relationAnchorPoint,
-                    $event->specializationCoverage
+                    $event->specializationSiblings->toDimensionSpacePointSet()
                 );
                 $this->assignNewParentNodeToAffectedHierarchyRelations(
                     $event->contentStreamId,
                     $oldCoveringNode->relationAnchorPoint,
                     $specializedNode->relationAnchorPoint,
-                    $event->specializationCoverage
+                    $event->specializationSiblings->toDimensionSpacePointSet()
                 );
             } else {
                 // the dimension space point is not yet covered by the node aggregate,
@@ -92,7 +92,7 @@ trait NodeVariation
                         (get_class($event))
                     );
                 }
-                foreach ($event->specializationCoverage as $specializedDimensionSpacePoint) {
+                foreach ($event->specializationSiblings->toDimensionSpacePointSet() as $specializedDimensionSpacePoint) {
                     $parentNode = $this->projectionHypergraph->findNodeRecordByCoverage(
                         $event->contentStreamId,
                         $specializedDimensionSpacePoint,
@@ -149,7 +149,7 @@ trait NodeVariation
             $this->replaceNodeRelationAnchorPoint(
                 $event->contentStreamId,
                 $event->nodeAggregateId,
-                $event->generalizationCoverage,
+                $event->variantSucceedingSiblings->toDimensionSpacePointSet(),
                 $generalizedNode->relationAnchorPoint
             );
             $this->addMissingHierarchyRelations(
@@ -157,7 +157,7 @@ trait NodeVariation
                 $event->nodeAggregateId,
                 $event->sourceOrigin,
                 $generalizedNode->relationAnchorPoint,
-                $event->generalizationCoverage,
+                $event->variantSucceedingSiblings->toDimensionSpacePointSet(),
                 get_class($event)
             );
             $this->copyReferenceRelations(
@@ -186,7 +186,7 @@ trait NodeVariation
             $this->replaceNodeRelationAnchorPoint(
                 $event->contentStreamId,
                 $event->nodeAggregateId,
-                $event->peerCoverage,
+                $event->peerSucceedingSiblings->toDimensionSpacePointSet(),
                 $peerNode->relationAnchorPoint
             );
             $this->addMissingHierarchyRelations(
@@ -194,7 +194,7 @@ trait NodeVariation
                 $event->nodeAggregateId,
                 $event->sourceOrigin,
                 $peerNode->relationAnchorPoint,
-                $event->peerCoverage,
+                $event->peerSucceedingSiblings->toDimensionSpacePointSet(),
                 get_class($event)
             );
             $this->copyReferenceRelations(

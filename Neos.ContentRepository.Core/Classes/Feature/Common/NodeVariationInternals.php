@@ -23,7 +23,11 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -109,7 +113,13 @@ trait NodeVariationInternals
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
-            $specializationVisibility,
+            $this->resolveInterdimensionalSiblings(
+                $contentRepository,
+                $contentStreamId,
+                $nodeAggregate->nodeAggregateId,
+                $sourceOrigin,
+                $specializationVisibility
+            ),
         );
 
         foreach (
@@ -171,7 +181,13 @@ trait NodeVariationInternals
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
-            $generalizationVisibility,
+            $this->resolveInterdimensionalSiblings(
+                $contentRepository,
+                $contentStreamId,
+                $nodeAggregate->nodeAggregateId,
+                $sourceOrigin,
+                $generalizationVisibility
+            )
         );
 
         foreach (
@@ -233,7 +249,13 @@ trait NodeVariationInternals
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
-            $peerVisibility,
+            $this->resolveInterdimensionalSiblings(
+                $contentRepository,
+                $contentStreamId,
+                $nodeAggregate->nodeAggregateId,
+                $sourceOrigin,
+                $peerVisibility
+            ),
         );
 
         foreach (
@@ -254,6 +276,46 @@ trait NodeVariationInternals
         }
 
         return $events;
+    }
+
+    private function resolveInterdimensionalSiblings(
+        ContentRepository $contentRepository,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $sourceOrigin,
+        DimensionSpacePointSet $variantVisibility,
+    ): InterdimensionalSiblings {
+        $interdimensionalSiblings = [];
+        $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $contentStreamId,
+            $sourceOrigin->toDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+        $originSiblings = $originSubgraph->findSucceedingSiblingNodes(
+            $nodeAggregateId,
+            FindSucceedingSiblingNodesFilter::create()
+        );
+
+        foreach ($variantVisibility as $variantDimensionSpacePoint) {
+            $peerSubgraph = $contentRepository->getContentGraph()->getSubgraph(
+                $contentStreamId,
+                $variantDimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $variantSibling = null;
+            foreach ($originSiblings as $originSibling) {
+                $variantSibling = $peerSubgraph->findNodeById($originSibling->nodeAggregateId);
+                if ($variantSibling instanceof Node) {
+                    break;
+                }
+            }
+            $interdimensionalSiblings[] = new InterdimensionalSibling(
+                $variantDimensionSpacePoint,
+                $variantSibling?->nodeAggregateId,
+            );
+        }
+
+        return new InterdimensionalSiblings(...$interdimensionalSiblings);
     }
 
     private function calculateEffectiveVisibility(

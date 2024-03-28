@@ -233,6 +233,10 @@ trait ProjectedNodeAggregateTrait
                 ))
             ));
 
+            /** we can't ensure the ordering of children on node aggregate level */
+            sort($expectedDiscriminators);
+            sort($actualDiscriminators);
+
             Assert::assertSame(
                 $expectedDiscriminators,
                 $actualDiscriminators,

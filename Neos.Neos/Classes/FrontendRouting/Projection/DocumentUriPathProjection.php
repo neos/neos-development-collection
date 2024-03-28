@@ -393,7 +393,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             $event->nodeAggregateId,
             $event->sourceOrigin,
             $event->peerOrigin,
-            $event->peerCoverage
+            $event->peerSucceedingSiblings->toDimensionSpacePointSet()
         );
     }
 
@@ -406,7 +406,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             $event->nodeAggregateId,
             $event->sourceOrigin,
             $event->generalizationOrigin,
-            $event->generalizationCoverage
+            $event->variantSucceedingSiblings->toDimensionSpacePointSet()
         );
     }
 
@@ -419,7 +419,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             $event->nodeAggregateId,
             $event->sourceOrigin,
             $event->specializationOrigin,
-            $event->specializationCoverage
+            $event->specializationSiblings->toDimensionSpacePointSet()
         );
     }
 

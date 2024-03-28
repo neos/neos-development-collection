@@ -92,7 +92,9 @@ trait TetheredNodeInternals
                             $tetheredNodeAggregateId,
                             $creationOriginDimensionSpacePoint,
                             $rootGeneralizationOrigin,
-                            $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization)
+                            InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                                $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization),
+                            )
                         );
                     } else {
                         $events[] = new NodeAggregateWithNodeWasCreated(

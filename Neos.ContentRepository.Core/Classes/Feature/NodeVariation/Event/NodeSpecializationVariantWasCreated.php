@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -37,7 +38,7 @@ final readonly class NodeSpecializationVariantWasCreated implements
         public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePoint $sourceOrigin,
         public OriginDimensionSpacePoint $specializationOrigin,
-        public DimensionSpacePointSet $specializationCoverage,
+        public InterdimensionalSiblings $specializationSiblings,
     ) {
     }
 
@@ -57,7 +58,7 @@ final readonly class NodeSpecializationVariantWasCreated implements
             $this->nodeAggregateId,
             $this->sourceOrigin,
             $this->specializationOrigin,
-            $this->specializationCoverage,
+            $this->specializationSiblings,
         );
     }
 
@@ -68,7 +69,11 @@ final readonly class NodeSpecializationVariantWasCreated implements
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($values['specializationOrigin']),
-            DimensionSpacePointSet::fromArray($values['specializationCoverage']),
+            array_key_exists('specializationSiblings', $values)
+                ? InterdimensionalSiblings::fromArray($values['specializationSiblings'])
+                : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                    DimensionSpacePointSet::fromArray($values['specializationCoverage'])
+                ),
         );
     }
 
