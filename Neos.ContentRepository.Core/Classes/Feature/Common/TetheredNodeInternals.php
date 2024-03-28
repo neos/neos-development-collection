@@ -78,7 +78,7 @@ trait TetheredNodeInternals
 
         if (count($childNodeAggregates) === 0) {
             // there is no tethered child node aggregate already; let's create it!
-            $nodeType = $this->nodeTypeManager->getNodeType($parentNodeAggregate->nodeTypeName);
+            $nodeType = $this->nodeTypeManager->requireNodeType($parentNodeAggregate->nodeTypeName);
             if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 $events = [];
                 $tetheredNodeAggregateId = $tetheredNodeAggregateId ?: NodeAggregateId::create();

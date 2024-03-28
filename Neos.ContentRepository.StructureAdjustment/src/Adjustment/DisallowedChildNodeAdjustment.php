@@ -41,11 +41,11 @@ class DisallowedChildNodeAdjustment
         }
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
-            if (!$this->nodeTypeManager->hasNodeType($nodeAggregate->nodeTypeName)) {
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName);
+            if (!$nodeType) {
                 // unknown child node type, so we skip this test as we won't be able to find out node type constraints
                 continue;
             }
-            $nodeType = $this->nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName);
 
             // Here, we iterate over the covered dimension space points of the node aggregate one by one;
             // as it can happen that the constraint is only violated in e.g. "AT", but not in "DE".
@@ -65,8 +65,8 @@ class DisallowedChildNodeAdjustment
                 $allowedByParent = true;
                 $parentNodeType = null;
                 if ($parentNode !== null) {
-                    if ($this->nodeTypeManager->hasNodeType($parentNode->nodeTypeName)) {
-                        $parentNodeType = $this->nodeTypeManager->getNodeType($parentNode->nodeTypeName);
+                    $parentNodeType = $this->nodeTypeManager->getNodeType($parentNode->nodeTypeName);
+                    if ($parentNodeType) {
                         $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType)
                             || $nodeAggregate->nodeName && $parentNodeType->hasTetheredNode($nodeAggregate->nodeName);
                     }

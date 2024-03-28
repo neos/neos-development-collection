@@ -30,11 +30,11 @@ class PropertyAdjustment
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType) {
             // In case we cannot find the expected tethered nodes, this fix cannot do anything.
             return;
         }
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 
         $expectedPropertiesFromNodeType = array_filter($nodeType->getProperties(), fn ($value) => $value !== null);
 

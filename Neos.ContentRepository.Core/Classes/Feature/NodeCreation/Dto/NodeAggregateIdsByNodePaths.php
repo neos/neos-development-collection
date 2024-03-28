@@ -128,7 +128,7 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
         ?string $pathPrefix = null
     ): array {
         $nodeAggregateIds = [];
-        foreach ($nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeTypeManager->getNodeType($nodeTypeName)) as $nodeName => $childNodeType) {
+        foreach ($nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeTypeManager->requireNodeType($nodeTypeName)) as $nodeName => $childNodeType) {
             $path = $pathPrefix ? $pathPrefix . '/' . $nodeName : $nodeName;
             $nodeAggregateIds[$path] = NodeAggregateId::create();
             $nodeAggregateIds = array_merge(

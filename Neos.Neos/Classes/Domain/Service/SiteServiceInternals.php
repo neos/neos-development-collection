@@ -87,13 +87,11 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             $liveWorkspace,
             NodeTypeNameFactory::forSites()
         );
-        try {
-            $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        } catch (NodeTypeNotFoundException $exception) {
+        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$siteNodeType) {
             throw new NodeTypeNotFoundException(
                 'Cannot create a site using a non-existing node type.',
-                1412372375,
-                $exception
+                1412372375
             );
         }
 

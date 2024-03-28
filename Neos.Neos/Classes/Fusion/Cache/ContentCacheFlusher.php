@@ -178,11 +178,10 @@ class ContentCacheFlusher
         array &$tagsToFlush,
         ContentRepository $contentRepository
     ): void {
-        try {
-            $nodeTypesNamesToFlush = $this->getAllImplementedNodeTypeNames(
-                $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName)
-            );
-        } catch (NodeTypeNotFoundException $e) {
+        $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName);
+        if ($nodeType) {
+            $nodeTypesNamesToFlush = $this->getAllImplementedNodeTypeNames($nodeType);
+        } else {
             // as a fallback, we flush the single NodeType
             $nodeTypesNamesToFlush = [$nodeTypeName->value];
         }
