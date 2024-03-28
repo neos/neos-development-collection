@@ -34,11 +34,11 @@ use Neos\Neos\PendingChangesProjection\Change;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 
 /**
- * Neos' workspace publisher service
+ * Neos' workspace model
  *
  * @api
  */
-#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 final readonly class Workspace
 {
     public function __construct(
