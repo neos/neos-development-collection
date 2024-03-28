@@ -120,7 +120,6 @@ Feature: Create node peer variant
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"peer"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodewyn-tetherton;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodewyn-tetherton;{"example":"peer"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimer-tetherton;{"example":"source"} to exist in the content graph
