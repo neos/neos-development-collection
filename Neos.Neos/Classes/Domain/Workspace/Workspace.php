@@ -23,11 +23,9 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -41,40 +39,32 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
  * @api
  */
 #[Flow\Scope('singleton')]
-final readonly class WorkspacePublisher
+final readonly class Workspace
 {
     public function __construct(
-        private ContentRepositoryRegistry $contentRepositoryRegistry
+        private ContentStreamId $currentContentStreamId,
+        public WorkspaceName $name,
+        private ContentRepository $contentRepository,
     ) {
     }
 
     /**
      * @return int The amount of changes that were published
      */
-    public function publishChangesInSite(PublishChangesInSite $command): int
+    public function publishChangesInSite(NodeAggregateId $siteId): int
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
-        $contentStreamId = $this->requireContentStream($contentRepository, $command->workspaceName);
         $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
         $this->requireNodeToBeOfType(
-            $contentRepository,
-            $contentStreamId,
-            $command->siteId,
+            $siteId,
             $ancestorNodeTypeName
         );
 
         $nodeIdsToPublish = $this->resolveNodeIdsToPublishOrDiscard(
-            $contentRepository,
-            $command->workspaceName,
-            $command->siteId,
+            $siteId,
             $ancestorNodeTypeName
         );
 
-        $this->publishNodes(
-            $contentRepository,
-            $command->workspaceName,
-            $nodeIdsToPublish
-        );
+        $this->publishNodes($nodeIdsToPublish);
 
         return count($nodeIdsToPublish);
     }
@@ -82,30 +72,20 @@ final readonly class WorkspacePublisher
     /**
      * @return int The amount of changes that were published
      */
-    public function publishChangesInDocument(PublishChangesInDocument $command): int
+    public function publishChangesInDocument(NodeAggregateId $documentId): int
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
-        $contentStreamId = $this->requireContentStream($contentRepository, $command->workspaceName);
         $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
         $this->requireNodeToBeOfType(
-            $contentRepository,
-            $contentStreamId,
-            $command->documentId,
+            $documentId,
             $ancestorNodeTypeName
         );
 
         $nodeIdsToPublish = $this->resolveNodeIdsToPublishOrDiscard(
-            $contentRepository,
-            $command->workspaceName,
-            $command->documentId,
+            $documentId,
             $ancestorNodeTypeName
         );
 
-        $this->publishNodes(
-            $contentRepository,
-            $command->workspaceName,
-            $nodeIdsToPublish
-        );
+        $this->publishNodes($nodeIdsToPublish);
 
         return count($nodeIdsToPublish);
     }
@@ -113,30 +93,20 @@ final readonly class WorkspacePublisher
     /**
      * @return int The amount of changes that were discarded
      */
-    public function discardChangesInSite(DiscardChangesInSite $command): int
+    public function discardChangesInSite(NodeAggregateId $siteId): int
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
-        $contentStreamId = $this->requireContentStream($contentRepository, $command->workspaceName);
         $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
         $this->requireNodeToBeOfType(
-            $contentRepository,
-            $contentStreamId,
-            $command->siteId,
+            $siteId,
             $ancestorNodeTypeName
         );
 
         $nodeIdsToDiscard = $this->resolveNodeIdsToPublishOrDiscard(
-            $contentRepository,
-            $command->workspaceName,
-            $command->siteId,
+            $siteId,
             NodeTypeNameFactory::forSite()
         );
 
-        $this->discardNodes(
-            $contentRepository,
-            $command->workspaceName,
-            $nodeIdsToDiscard,
-        );
+        $this->discardNodes($nodeIdsToDiscard);
 
         return count($nodeIdsToDiscard);
     }
@@ -144,54 +114,30 @@ final readonly class WorkspacePublisher
     /**
      * @return int The amount of changes that were discarded
      */
-    public function discardChangesInDocument(DiscardChangesInDocument $command): int
+    public function discardChangesInDocument(NodeAggregateId $documentId): int
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($command->contentRepositoryId);
-        $contentStreamId = $this->requireContentStream($contentRepository, $command->workspaceName);
         $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
         $this->requireNodeToBeOfType(
-            $contentRepository,
-            $contentStreamId,
-            $command->documentId,
+            $documentId,
             $ancestorNodeTypeName
         );
 
         $nodeIdsToDiscard = $this->resolveNodeIdsToPublishOrDiscard(
-            $contentRepository,
-            $command->workspaceName,
-            $command->documentId,
+            $documentId,
             $ancestorNodeTypeName
         );
 
-        $this->discardNodes(
-            $contentRepository,
-            $command->workspaceName,
-            $nodeIdsToDiscard
-        );
+        $this->discardNodes($nodeIdsToDiscard);
 
         return count($nodeIdsToDiscard);
     }
 
-    private function requireContentStream(
-        ContentRepository $contentRepository,
-        WorkspaceName $workspaceName
-    ): ContentStreamId {
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
-        if (!$workspace instanceof Workspace) {
-            throw new \DomainException('Workspace "' . $workspaceName->value . '" is missing', 1710967842);
-        }
-
-        return $workspace->currentContentStreamId;
-    }
-
     private function requireNodeToBeOfType(
-        ContentRepository $contentRepository,
-        ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
         NodeTypeName $nodeTypeName,
     ): void {
-        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
-            $contentStreamId,
+        $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateById(
+            $this->currentContentStreamId,
             $nodeAggregateId,
         );
         if (!$nodeAggregate instanceof NodeAggregate) {
@@ -202,7 +148,7 @@ final readonly class WorkspacePublisher
         }
 
         if (
-            !$contentRepository->getNodeTypeManager()
+            !$this->contentRepository->getNodeTypeManager()
                 ->getNodeType($nodeAggregate->nodeTypeName)
                 ->isOfType($nodeTypeName)
         ) {
@@ -214,46 +160,42 @@ final readonly class WorkspacePublisher
     }
 
     private function publishNodes(
-        ContentRepository $contentRepository,
-        WorkspaceName $workspaceName,
         NodeIdsToPublishOrDiscard $nodeIdsToPublish
     ): void {
         /**
          * TODO: only rebase if necessary!
          * Also, isn't this already included in @see WorkspaceCommandHandler::handlePublishIndividualNodesFromWorkspace ?
          */
-        $contentRepository->handle(
+        $this->contentRepository->handle(
             RebaseWorkspace::create(
-                $workspaceName
+                $this->name
             )
         )->block();
 
-        $contentRepository->handle(
+        $this->contentRepository->handle(
             PublishIndividualNodesFromWorkspace::create(
-                $workspaceName,
+                $this->name,
                 $nodeIdsToPublish
             )
         )->block();
     }
 
     private function discardNodes(
-        ContentRepository $contentRepository,
-        WorkspaceName $workspaceName,
         NodeIdsToPublishOrDiscard $nodeIdsToDiscard
     ): void {
         /**
          * TODO: only rebase if necessary!
          * Also, isn't this already included in @see WorkspaceCommandHandler::handleDiscardIndividualNodesFromWorkspace ?
          */
-        $contentRepository->handle(
+        $this->contentRepository->handle(
             RebaseWorkspace::create(
-                $workspaceName
+                $this->name
             )
         )->block();
 
-        $contentRepository->handle(
+        $this->contentRepository->handle(
             DiscardIndividualNodesFromWorkspace::create(
-                $workspaceName,
+                $this->name,
                 $nodeIdsToDiscard
             )
         )->block();
@@ -264,28 +206,16 @@ final readonly class WorkspacePublisher
      * @param NodeTypeName $ancestorNodeTypeName The type of the ancestor node of all affected nodes
      */
     private function resolveNodeIdsToPublishOrDiscard(
-        ContentRepository $contentRepository,
-        WorkspaceName $workspaceName,
         NodeAggregateId $ancestorId,
         NodeTypeName $ancestorNodeTypeName
     ): NodeIdsToPublishOrDiscard {
         /** @var ChangeFinder $changeFinder */
-        $changeFinder = $contentRepository->projectionState(ChangeFinder::class);
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
-        if (!$workspace instanceof Workspace) {
-            throw new \DomainException(
-                'Cannot publish anything from unknown workspace ' . $workspaceName->value,
-                1710891954
-            );
-        }
-        $contentStreamId = $workspace->currentContentStreamId;
-        $changes = $changeFinder->findByContentStreamId($contentStreamId);
+        $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
+        $changes = $changeFinder->findByContentStreamId($this->currentContentStreamId);
         $nodeIdsToPublishOrDiscard = [];
         foreach ($changes as $change) {
             if (
                 !$this->isChangePublishableWithinAncestorScope(
-                    $contentRepository,
-                    $contentStreamId,
                     $change,
                     $ancestorNodeTypeName,
                     $ancestorId
@@ -304,8 +234,6 @@ final readonly class WorkspacePublisher
     }
 
     private function isChangePublishableWithinAncestorScope(
-        ContentRepository $contentRepository,
-        ContentStreamId $contentStreamId,
         Change $change,
         NodeTypeName $ancestorNodeTypeName,
         NodeAggregateId $ancestorId
@@ -318,8 +246,8 @@ final readonly class WorkspacePublisher
             }
         }
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
+        $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
+            $this->currentContentStreamId,
             $change->originDimensionSpacePoint->toDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         );
