@@ -3,7 +3,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
 
   As a user of the CR I want to change the type of a node aggregate.
 
-  # @todo change type to a type with a tethered child with the same name as one of the original one's but of different type
   Background:
     Given using the following content dimensions:
       | Identifier | Values  | Generalizations |
