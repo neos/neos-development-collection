@@ -40,8 +40,10 @@ final readonly class WorkspaceFactory
         $contentRepositoryWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
 
         return new Workspace(
-            $contentRepositoryWorkspace->currentContentStreamId,
             $workspaceName,
+            $contentRepositoryWorkspace->currentContentStreamId,
+            $contentRepositoryWorkspace->status,
+            $contentRepositoryWorkspace->baseWorkspaceName,
             $contentRepository
         );
     }

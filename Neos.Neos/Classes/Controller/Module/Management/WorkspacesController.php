@@ -23,9 +23,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWork
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
@@ -62,6 +60,9 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
+use Neos\Neos\Domain\Workspace\DiscardAllChanges;
+use Neos\Neos\Domain\Workspace\PublishAllChanges;
+use Neos\Neos\Domain\Workspace\WorkspaceFactory;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
@@ -95,6 +96,9 @@ class WorkspacesController extends AbstractModuleController
 
     #[Flow\Inject]
     protected PackageManager $packageManager;
+
+    #[Flow\Inject]
+    protected WorkspaceFactory $workspaceFactory;
 
     /**
      * Display a list of unpublished content
@@ -648,20 +652,23 @@ class WorkspacesController extends AbstractModuleController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepository->handle(
-            PublishWorkspace::create(
-                $workspace
-            )
-        )->block();
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace);
-        /** @var Workspace $workspace Otherwise the command handler would have thrown an exception */
+        /** @todo send from UI */
+        $command = new PublishAllChanges(
+            $contentRepositoryId,
+            $workspace
+        );
+
+        $workspace = $this->workspaceFactory->create(
+            $command->contentRepositoryId,
+            $command->workspaceName
+        );
+        $workspace->publishAllChanges();
         /** @var WorkspaceName $baseWorkspaceName Otherwise the command handler would have thrown an exception */
-        $baseWorkspaceName = $workspace->baseWorkspaceName;
+        $baseWorkspaceName = $workspace->getCurrentBaseWorkspaceName();
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.allChangesInWorkspaceHaveBeenPublished',
             [
-                htmlspecialchars($workspace->workspaceName->value),
+                htmlspecialchars($workspace->name->value),
                 htmlspecialchars($baseWorkspaceName->value)
             ],
             null,
@@ -681,16 +688,20 @@ class WorkspacesController extends AbstractModuleController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepository->handle(
-            DiscardWorkspace::create(
-                $workspace,
-            )
-        )->block();
+        /** @todo send from UI */
+        $command = new DiscardAllChanges(
+            $contentRepositoryId,
+            $workspace
+        );
+        $workspace = $this->workspaceFactory->create(
+            $command->contentRepositoryId,
+            $command->workspaceName
+        );
+        $workspace->discardAllChanges();
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.allChangesInWorkspaceHaveBeenDiscarded',
-            [htmlspecialchars($workspace->value)],
+            [htmlspecialchars($workspace->name->value)],
             null,
             null,
             'Modules',

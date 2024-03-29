@@ -15,15 +15,22 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Workspace;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
@@ -39,13 +46,80 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
  * @api
  */
 #[Flow\Proxy(false)]
-final readonly class Workspace
+final class Workspace
 {
     public function __construct(
+        public readonly WorkspaceName $name,
         private ContentStreamId $currentContentStreamId,
-        public WorkspaceName $name,
-        private ContentRepository $contentRepository,
+        private WorkspaceStatus $currentStatus,
+        private ?WorkspaceName $currentBaseWorkspaceName,
+        private readonly ContentRepository $contentRepository,
     ) {
+    }
+
+    public function getCurrentContentStreamId(): ContentStreamId
+    {
+        return $this->currentContentStreamId;
+    }
+
+    public function getCurrentStatus(): WorkspaceStatus
+    {
+        return $this->currentStatus;
+    }
+
+    public function getCurrentBaseWorkspaceName(): ?WorkspaceName
+    {
+        return $this->currentBaseWorkspaceName;
+    }
+
+    public function countAllChanges(): int
+    {
+        $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
+        $changes = $changeFinder->findByContentStreamId($this->currentContentStreamId);
+
+        return count($changes);
+    }
+
+    public function countChangesInSite(NodeAggregateId $siteId): int
+    {
+        $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
+        $this->requireNodeToBeOfType(
+            $siteId,
+            $ancestorNodeTypeName
+        );
+
+        $changes = $this->resolveNodeIdsToPublishOrDiscard(
+            $siteId,
+            $ancestorNodeTypeName
+        );
+
+        return count($changes);
+    }
+
+    public function countChangesInDocument(NodeAggregateId $documentId): int
+    {
+        $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
+        $this->requireNodeToBeOfType(
+            $documentId,
+            $ancestorNodeTypeName
+        );
+
+        $changes = $this->resolveNodeIdsToPublishOrDiscard(
+            $documentId,
+            $ancestorNodeTypeName
+        );
+
+        return count($changes);
+    }
+
+    public function publishAllChanges(): int
+    {
+        $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
+        $changes = $changeFinder->findByContentStreamId($this->currentContentStreamId);
+
+        $this->publish();
+
+        return count($changes);
     }
 
     /**
@@ -90,6 +164,16 @@ final readonly class Workspace
         return count($nodeIdsToPublish);
     }
 
+    public function discardAllChanges(): int
+    {
+        $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
+        $changes = $changeFinder->findByContentStreamId($this->currentContentStreamId);
+
+        $this->discard();
+
+        return count($changes);
+    }
+
     /**
      * @return int The amount of changes that were discarded
      */
@@ -132,6 +216,31 @@ final readonly class Workspace
         return count($nodeIdsToDiscard);
     }
 
+    public function rebase(bool $force): void
+    {
+        $rebaseCommand = RebaseWorkspace::create(
+            $this->name
+        );
+        if ($force) {
+            $rebaseCommand = $rebaseCommand->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::STRATEGY_FORCE);
+        }
+        $this->contentRepository->handle($rebaseCommand)->block();
+
+        $this->updateCurrentState();
+    }
+
+    public function changeBaseWorkspace(WorkspaceName $baseWorkspaceName): void
+    {
+        $this->contentRepository->handle(
+            ChangeBaseWorkspace::create(
+                $this->name,
+                $baseWorkspaceName
+            )
+        )->block();
+
+        $this->updateCurrentState();
+    }
+
     private function requireNodeToBeOfType(
         NodeAggregateId $nodeAggregateId,
         NodeTypeName $nodeTypeName,
@@ -159,6 +268,17 @@ final readonly class Workspace
         }
     }
 
+    private function publish(): void
+    {
+        $this->contentRepository->handle(
+            PublishWorkspace::create(
+                $this->name,
+            )
+        )->block();
+
+        $this->updateCurrentState();
+    }
+
     private function publishNodes(
         NodeIdsToPublishOrDiscard $nodeIdsToPublish
     ): void {
@@ -178,6 +298,19 @@ final readonly class Workspace
                 $nodeIdsToPublish
             )
         )->block();
+
+        $this->updateCurrentState();
+    }
+
+    private function discard(): void
+    {
+        $this->contentRepository->handle(
+            DiscardWorkspace::create(
+                $this->name,
+            )
+        )->block();
+
+        $this->updateCurrentState();
     }
 
     private function discardNodes(
@@ -199,6 +332,8 @@ final readonly class Workspace
                 $nodeIdsToDiscard
             )
         )->block();
+
+        $this->updateCurrentState();
     }
 
     /**
@@ -289,5 +424,19 @@ final readonly class Workspace
     private function isChangeWithSelfReferencingRemovalAttachmentPoint(Change $change): bool
     {
         return $change->removalAttachmentPoint?->equals($change->nodeAggregateId) ?? false;
+    }
+
+    private function updateCurrentState(): void
+    {
+        /** The workspace projection should have been marked stale via @see WithMarkStaleInterface in the meantime */
+        $contentRepositoryWorkspace = $this->contentRepository->getWorkspaceFinder()
+            ->findOneByName($this->name);
+        if (!$contentRepositoryWorkspace) {
+            throw new WorkspaceDoesNotExist('Cannot update state of non-existent workspace ' . $this->name->value, 1711704397);
+        }
+
+        $this->currentContentStreamId = $contentRepositoryWorkspace->currentContentStreamId;
+        $this->currentStatus = $contentRepositoryWorkspace->status;
+        $this->currentBaseWorkspaceName = $contentRepositoryWorkspace->baseWorkspaceName;
     }
 }
