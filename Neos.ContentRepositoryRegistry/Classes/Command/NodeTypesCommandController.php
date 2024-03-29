@@ -40,12 +40,11 @@ class NodeTypesCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $nodeTypeManager = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeTypeManager();
 
-        if (!$nodeTypeManager->hasNodeType($nodeTypeName)) {
+        $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType) {
             $this->outputLine('<error>NodeType "%s" was not found!</error>', [$nodeTypeName]);
             $this->quit();
         }
-
-        $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
 
         if ($path && !$nodeType->hasConfiguration($path)) {
             $this->outputLine('<b>NodeType "%s" does not have configuration "%s".</b>', [$nodeTypeName, $path]);
