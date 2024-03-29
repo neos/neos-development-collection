@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspac
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
@@ -317,14 +318,16 @@ class WorkspaceCommandController extends CommandController
     /**
      * Rebase all outdated content streams
      */
-    public function rebaseOutdatedCommand(string $contentRepositoryIdentifier = 'default'): void
+    public function rebaseOutdatedCommand(string $contentRepositoryIdentifier = 'default', bool $force = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $workspaceMaintenanceService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new WorkspaceMaintenanceServiceFactory()
         );
-        $outdatedWorkspaces = $workspaceMaintenanceService->rebaseOutdatedWorkspaces();
+        $outdatedWorkspaces = $workspaceMaintenanceService->rebaseOutdatedWorkspaces(
+            $force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL
+        );
 
         if (!count($outdatedWorkspaces)) {
             $this->outputLine('There are no outdated workspaces.');
