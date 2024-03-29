@@ -760,7 +760,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             // Note: We could add some hash over all node type decisions to the projected read model
             // to tell whether a replay is required (e.g. if a document node type was changed to a content type vice versa)
             // With https://github.com/neos/neos-development-collection/issues/4468 this can be compared in the `getStatus()` implementation
-            $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value] = $this->nodeTypeManager->hasNodeType($nodeTypeName) && $this->nodeTypeManager->getNodeType($nodeTypeName)->isOfType($superNodeTypeName);
+            $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value] = $this->nodeTypeManager->getNodeType($nodeTypeName)?->isOfType($superNodeTypeName) ?? false;
         }
         return $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value];
     }

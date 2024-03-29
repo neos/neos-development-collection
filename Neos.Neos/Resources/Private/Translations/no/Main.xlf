@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
         <source>Please specify a valid email address.</source>
-        <target state="translated">Angi en gyldig epostadresse.</target>
+        <target state="translated">Angi en gyldig e-postadresse.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
         <source>A valid float number is expected.</source>
