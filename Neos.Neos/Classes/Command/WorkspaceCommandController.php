@@ -99,10 +99,10 @@ class WorkspaceCommandController extends CommandController
         try {
             $workspace->discardAllChanges();
         } catch (WorkspaceDoesNotExist $exception) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
+            $this->outputLine('Workspace "%s" does not exist', [$workspace->name->value]);
             $this->quit(1);
         }
-        $this->outputLine('Discarded all nodes in workspace %s', [$workspace]);
+        $this->outputLine('Discarded all nodes in workspace %s', [$workspace->name->value]);
     }
 
     /**
@@ -126,7 +126,7 @@ class WorkspaceCommandController extends CommandController
         try {
             $workspace->rebase($force);
         } catch (WorkspaceDoesNotExist $exception) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
+            $this->outputLine('Workspace "%s" does not exist', [$workspace->name->value]);
             $this->quit(1);
         }
 
@@ -135,7 +135,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(1);
         }
 
-        $this->outputLine('Rebased workspace %s', [$workspace]);
+        $this->outputLine('Rebased workspace %s', [$workspace->name->value]);
     }
 
     /**
