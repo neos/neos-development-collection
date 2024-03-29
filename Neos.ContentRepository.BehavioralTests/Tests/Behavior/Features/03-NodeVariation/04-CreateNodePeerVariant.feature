@@ -55,7 +55,6 @@ Feature: Create node peer variant
   Scenario: Create peer variant of node to dimension space point without specializations
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"CH", "language":"fr"} |
@@ -248,7 +247,6 @@ Feature: Create node peer variant
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "madame-lanode"                  |
       | sourceOrigin    | {"market":"CH", "language":"fr"} |
       | targetOrigin    | {"market":"DE", "language":"en"} |
@@ -452,7 +450,6 @@ Feature: Create node peer variant
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "madame-lanode"                  |
       | sourceOrigin    | {"market":"CH", "language":"fr"} |
       | targetOrigin    | {"market":"DE", "language":"de"} |
@@ -680,14 +677,12 @@ Feature: Create node peer variant
   Scenario: Create a peer node variant to a dimension space point with specializations and where the parent node aggregate is already specialized in
     Given the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
     And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin    | {"market":"DE", "language":"fr"} |
       | targetOrigin    | {"market":"CH", "language":"fr"} |
@@ -695,7 +690,6 @@ Feature: Create node peer variant
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "nody-mc-nodeface"               |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |

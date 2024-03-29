@@ -88,7 +88,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     And the current date and time is "2023-03-16T12:30:00+01:00"
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value             |
-      | contentStreamId | "cs-user"         |
       | nodeAggregateId | "a"               |
       | sourceOrigin    | {"language":"de"} |
       | targetOrigin    | {"language":"ch"} |
