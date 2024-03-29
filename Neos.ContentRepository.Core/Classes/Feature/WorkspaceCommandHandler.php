@@ -388,14 +388,15 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $commandsThatFailed = new CommandsThatFailedDuringRebase();
         ContentStreamIdOverride::applyContentStreamIdToClosure(
             $command->rebasedContentStreamId,
-            function () use ($originalCommands, $contentRepository, $commandsThatFailed): void {
-                foreach ($originalCommands as $i => $originalCommand) {
+            function () use ($originalCommands, $contentRepository, &$commandsThatFailed): void {
+                foreach ($originalCommands as $sequenceNumber => $originalCommand) {
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
                         $contentRepository->handle($originalCommand)->block();
                     } catch (\Exception $e) {
-                        $commandsThatFailed->add(
+                        $commandsThatFailed = $commandsThatFailed->add(
                             new CommandThatFailedDuringRebase(
+                                $sequenceNumber,
                                 $originalCommand,
                                 $e
                             )

@@ -21,7 +21,13 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
  */
 final readonly class CommandThatFailedDuringRebase
 {
+    /**
+     * @param int $sequenceNumber the event store sequence number of the event containing the command to be rebased
+     * @param CommandInterface $command the command that failed
+     * @param \Throwable $exception how the command failed
+     */
     public function __construct(
+        public int $sequenceNumber,
         public CommandInterface $command,
         public \Throwable $exception
     ) {

@@ -112,4 +112,16 @@ trait WorkspaceCreation
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
+
+    /**
+     * @When /^the command RebaseWorkspace is executed with payload and exceptions are caught:$/
+     */
+    public function theCommandRebaseWorkspaceIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandRebaseWorkspaceIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $e) {
+            $this->lastCommandException = $e;
+        }
+    }
 }
