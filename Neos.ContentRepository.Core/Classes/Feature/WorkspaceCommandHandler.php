@@ -363,6 +363,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
         $oldWorkspaceContentStreamIdState = $contentRepository->getContentStreamFinder()
             ->findStateForContentStream($oldWorkspaceContentStreamId);
+        if ($oldWorkspaceContentStreamIdState === null) {
+            throw new \DomainException('Cannot rebase a workspace with a stateless content stream', 1711718314);
+        }
 
         // 0) close old content stream
         $contentRepository->handle(

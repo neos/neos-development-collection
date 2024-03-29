@@ -118,14 +118,12 @@ class WorkspaceCommandController extends CommandController
      */
     public function rebaseCommand(string $workspace, string $contentRepositoryIdentifier = 'default', bool $force = false): void
     {
-        // @todo: bypass access control
-        $workspace = $this->workspaceFactory->create(
-            ContentRepositoryId::fromString($contentRepositoryIdentifier),
-            WorkspaceName::fromString($workspace)
-        );
-
         try {
-            $workspace->rebase($force);
+            // @todo: bypass access control
+            $workspace = $this->workspaceFactory->create(
+                ContentRepositoryId::fromString($contentRepositoryIdentifier),
+                WorkspaceName::fromString($workspace)
+            );
         } catch (WorkspaceDoesNotExist $exception) {
             $this->outputLine('Workspace "%s" does not exist', [$workspace]);
             $this->quit(1);

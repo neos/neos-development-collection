@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase;
 
 /**
- * @internal implementation detail of WorkspaceCommandHandler
+ * @implements \IteratorAggregate<int,CommandThatFailedDuringRebase>
+ *
+ * @api part of the exception exposed when rebasing failed
  */
 final readonly class CommandsThatFailedDuringRebase implements \IteratorAggregate
 {
