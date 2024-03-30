@@ -229,3 +229,21 @@ Feature: Tethered Nodes integrity violations
       | Type                     | nodeAggregateId   |
       | TETHERED_NODE_TYPE_WRONG | nodewyn-tetherton |
 
+  Scenario: Tethered child node is missing in new dimension space point
+  We specialize/generalize/... the other tethered Node
+    Then I expect exactly 7 events to be published on stream "ContentStream:cs-identifier"
+    When I change the content dimensions in content repository "default" to:
+      | Identifier | Values           | Generalizations   |
+      | market     | DE, CH           | CH->DE            |
+      | language   | en, de, gsw, new | gsw->de->en, new  |
+
+    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+    And the graph projection is fully up to date
+
+    Then I expect the following structure adjustments for type "Neos.ContentRepository:Root":
+      | Type                     | nodeAggregateId        |
+      | TETHERED_NODE_MISSING    | lady-eleonode-rootford |
+    When I adjust the node structure for node type "Neos.ContentRepository:Root"
+    Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
