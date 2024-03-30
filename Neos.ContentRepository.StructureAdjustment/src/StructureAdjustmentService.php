@@ -20,6 +20,7 @@ use Neos\ContentRepository\StructureAdjustment\Adjustment\PropertyAdjustment;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\TetheredNodeAdjustments;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\UnknownNodeTypeAdjustment;
+use Neos\EventStore\Model\Event\EventMetadata;
 
 class StructureAdjustmentService implements ContentRepositoryServiceInterface
 {
@@ -95,7 +96,14 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
             $remediation = $adjustment->remediation;
             $eventsToPublish = $remediation();
             assert($eventsToPublish instanceof EventsToPublish);
-            $this->eventPersister->publishEvents($eventsToPublish)->block();
+
+            $enrichedEventsToPublish = $eventsToPublish->withCausationOfFirstEventAndAdditionalMetaData(
+                EventMetadata::fromArray([
+                    'structureAdjustment' => mb_strimwidth($adjustment->render() , 0, 250, '…')
+                ])
+            );
+
+            $this->eventPersister->publishEvents($enrichedEventsToPublish);
         }
     }
 }
