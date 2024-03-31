@@ -125,21 +125,20 @@ trait TetheredNodeInternals
         } else {
             if (!$childNodeAggregate->classification->isTethered()) {
                 throw new \RuntimeException(
-                    'We found a child node aggregate through the given node path; but it is not tethered.'
+                    'TODO: We found a child node aggregate through the given node path; but it is not tethered.'
                         . ' We do not support re-tethering yet'
-                        . ' (as this case should happen very rarely as far as we think).'
+                        . ' (as this case should happen very rarely as far as we think).',
+                    1711897665
                 );
             }
 
-            $childNodeSource = null;
-            foreach ($childNodeAggregate->getNodes() as $node) {
-                $childNodeSource = $node;
-                break;
-            }
-            /** @var Node $childNodeSource Node aggregates are never empty */
+            $occupiedDimensionSpacePoints = $childNodeAggregate->occupiedDimensionSpacePoints->getPoints();
+            assert($occupiedDimensionSpacePoints !== []);
+            $arbitraryOccupiedDimensionSpacePoint = array_shift($occupiedDimensionSpacePoints);
+
             return $this->createEventsForVariations(
                 $contentGraph,
-                $childNodeSource->originDimensionSpacePoint,
+                $arbitraryOccupiedDimensionSpacePoint,
                 $originDimensionSpacePoint,
                 $childNodeAggregate
             );
