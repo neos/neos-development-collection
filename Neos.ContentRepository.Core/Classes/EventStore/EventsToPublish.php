@@ -38,7 +38,7 @@ final readonly class EventsToPublish
 
     public function withCausationOfFirstEventAndAdditionalMetaData(EventMetadata $metadata): self
     {
-        /** @var list<EventInterface|DecoratedEvent> $firstEvent */
+        /** @var list<EventInterface|DecoratedEvent> $restEvents */
         $restEvents = iterator_to_array($this->events);
         if (empty($restEvents)) {
             return $this;
