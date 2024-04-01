@@ -18,7 +18,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -28,6 +27,14 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 trait NodeCreationInternals
 {
+    /**
+     * Resolves the succeeding sibling anchor where a node should be created.
+     *
+     * a) The requested anchor point will be taken into account if existing in the covered dimension
+     * b) If the requested sibling does not exist, all the other succeeding siblings of the requested
+     * will be checked and the first one used if existing in the covered dimension.
+     * c) As fallback no succeeding sibling will be specified
+     */
     private function resolveInterdimensionalSiblingsForCreation(
         ContentRepository $contentRepository,
         ContentStreamId $contentStreamId,
@@ -35,7 +42,6 @@ trait NodeCreationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
     ): InterdimensionalSiblings {
-        $interdimensionalSiblings = [];
         $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
             $contentStreamId,
             $sourceOrigin->toDimensionSpacePoint(),
@@ -46,6 +52,7 @@ trait NodeCreationInternals
             FindSucceedingSiblingNodesFilter::create()
         );
 
+        $interdimensionalSiblings = [];
         foreach ($coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
             $variantSubgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamId,
@@ -53,18 +60,32 @@ trait NodeCreationInternals
                 VisibilityConstraints::withoutRestrictions()
             );
             $variantSucceedingSibling = $variantSubgraph->findNodeById($requestedSucceedingSiblingNodeAggregateId);
-            if (!$variantSucceedingSibling) {
-                foreach ($originAlternativeSucceedingSiblings as $originSibling) {
-                    $variantSucceedingSibling = $variantSubgraph->findNodeById($originSibling->nodeAggregateId);
-                    if ($variantSucceedingSibling instanceof Node) {
-                        break;
-                    }
-                }
+            if ($variantSucceedingSibling) {
+                // a) happy case, the node also exist in this dimension
+                $interdimensionalSiblings[] = new InterdimensionalSibling(
+                    $coveredDimensionSpacePoint,
+                    $variantSucceedingSibling->nodeAggregateId,
+                );
+                continue;
             }
 
+            foreach ($originAlternativeSucceedingSiblings as $originSibling) {
+                $alternativeVariantSucceedingSibling = $variantSubgraph->findNodeById($originSibling->nodeAggregateId);
+                if (!$alternativeVariantSucceedingSibling) {
+                    continue;
+                }
+                // b) one of the other alternative succeeding siblings also exist in this dimension
+                $interdimensionalSiblings[] = new InterdimensionalSibling(
+                    $coveredDimensionSpacePoint,
+                    $alternativeVariantSucceedingSibling->nodeAggregateId,
+                );
+                continue 2;
+            }
+
+            // c) fallback, there is no succeeding sibling in this dimension
             $interdimensionalSiblings[] = new InterdimensionalSibling(
                 $coveredDimensionSpacePoint,
-                $variantSucceedingSibling?->nodeAggregateId,
+                null,
             );
         }
 
