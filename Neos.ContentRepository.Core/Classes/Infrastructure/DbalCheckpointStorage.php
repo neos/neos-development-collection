@@ -115,6 +115,9 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
         if (!$this->connection->isTransactionActive()) {
             throw new \RuntimeException(sprintf('Failed to update and commit checkpoint for subscriber "%s" because no transaction is active', $this->subscriberId), 1652279314);
         }
+        if ($this->connection->isRollbackOnly()) {
+            throw new \RuntimeException(sprintf('Failed to update and commit checkpoint for subscriber "%s" because the transaction has been marked for rollback only', $this->subscriberId), 1711964313);
+        }
         try {
             if (!$this->lockedSequenceNumber->equals($sequenceNumber)) {
                 $this->connection->update($this->tableName, ['appliedsequencenumber' => $sequenceNumber->value], ['subscriberid' => $this->subscriberId]);
