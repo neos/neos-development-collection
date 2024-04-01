@@ -1093,23 +1093,43 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="no">
         <source>Switched to the new user "{0}".</source>
-        <target state="needs-translation">Alternado para o novo utilizador "{0}".</target>
+        <target state="translated">Alternado para o novo utilizador "{0}".</target>
       </trans-unit>
       <trans-unit id="impersonate.error.impersonateUser" xml:space="preserve" approved="no">
         <source>Could not switch to the selected user.</source>
-        <target state="needs-translation">Não foi possível alternar para o utilizador selecionado.</target>
+        <target state="translated">Não foi possível alternar para o utilizador selecionado.</target>
       </trans-unit>
       <trans-unit id="impersonate.error.restoreUser" xml:space="preserve" approved="no">
         <source>Could not switch back to the original user.</source>
-        <target state="needs-translation">Não foi possível voltar ao utilizador original.</target>
+        <target state="translated">Não foi possível voltar ao utilizador original.</target>
       </trans-unit>
       <trans-unit id="impersonate.success.restoreUser" xml:space="preserve" approved="no">
         <source>Switched back from "{0}" to the orginal user "{1}"</source>
-        <target state="needs-translation">Voltado de "{0}" ao utilizador original "{1}"</target>
+        <target state="translated">Voltado de "{0}" ao utilizador original "{1}"</target>
       </trans-unit>
       <trans-unit id="impersonate.title.restoreUserButton" xml:space="preserve" approved="no">
         <source>Switch back to the orginal user account</source>
-        <target state="needs-translation">Voltar à conta de utilizador original</target>
+        <target state="translated">Voltar à conta do utilizador original</target>
+      </trans-unit>
+      <trans-unit id="documentTree" xml:space="preserve">
+        <source>Document Tree</source>
+        <target state="translated">Árvore do documento</target>
+      </trans-unit>
+      <trans-unit id="cantPublishSingleNodeInNewPage" xml:space="preserve">
+        <source>Can't publish a single node in a new page</source>
+        <target state="translated">Não pode publicar um único nó numa página nova</target>
+      </trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.setupMessage" xml:space="preserve">
+        <source>You might want to import or create a new site in the setup.</source>
+        <target state="translated">Pode importar ou criar um site na configuração.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.label.restoreUserButton" xml:space="preserve" approved="no">
+        <source>Back to user "{0}"</source>
+        <target state="translated">Voltar ao utilizador "{0}"</target>
+      </trans-unit>
+      <trans-unit id="contentTree" xml:space="preserve">
+        <source>Content Tree</source>
+        <target state="translated">Árvore de conteúdo</target>
       </trans-unit>
     </body>
   </file>
