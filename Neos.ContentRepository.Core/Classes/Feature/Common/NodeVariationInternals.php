@@ -297,14 +297,14 @@ trait NodeVariationInternals
         );
 
         foreach ($variantVisibility as $variantDimensionSpacePoint) {
-            $peerSubgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $variantSubgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamId,
                 $variantDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
             $variantSibling = null;
             foreach ($originSiblings as $originSibling) {
-                $variantSibling = $peerSubgraph->findNodeById($originSibling->nodeAggregateId);
+                $variantSibling = $variantSubgraph->findNodeById($originSibling->nodeAggregateId);
                 if ($variantSibling instanceof Node) {
                     break;
                 }

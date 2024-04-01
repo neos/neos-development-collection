@@ -30,9 +30,9 @@ trait NodeCreationInternals
     /**
      * Resolves the succeeding sibling anchor where a node should be created.
      *
-     * a) The requested anchor point will be taken into account if existing in the covered dimension
-     * b) If the requested sibling does not exist, all the other succeeding siblings of the requested
-     * will be checked and the first one used if existing in the covered dimension.
+     * a) The requested anchor point will be taken into account if existing in the covered dimension space point
+     * b) If the requested sibling does not exist, all the other succeeding siblings of the requested one
+     * will be checked and the first one existing in the covered dimension space point is used.
      * c) As fallback no succeeding sibling will be specified
      */
     private function resolveInterdimensionalSiblingsForCreation(
@@ -61,7 +61,7 @@ trait NodeCreationInternals
             );
             $variantSucceedingSibling = $variantSubgraph->findNodeById($requestedSucceedingSiblingNodeAggregateId);
             if ($variantSucceedingSibling) {
-                // a) happy case, the node also exist in this dimension
+                // a) happy path, the explicitly requested succeeding sibling also exists in this dimension space point
                 $interdimensionalSiblings[] = new InterdimensionalSibling(
                     $coveredDimensionSpacePoint,
                     $variantSucceedingSibling->nodeAggregateId,
@@ -69,12 +69,13 @@ trait NodeCreationInternals
                 continue;
             }
 
+            // check the other siblings succeeding in the origin dimension space point
             foreach ($originAlternativeSucceedingSiblings as $originSibling) {
                 $alternativeVariantSucceedingSibling = $variantSubgraph->findNodeById($originSibling->nodeAggregateId);
                 if (!$alternativeVariantSucceedingSibling) {
                     continue;
                 }
-                // b) one of the other alternative succeeding siblings also exist in this dimension
+                // b) one of the further succeeding sibling exists in this dimension space point
                 $interdimensionalSiblings[] = new InterdimensionalSibling(
                     $coveredDimensionSpacePoint,
                     $alternativeVariantSucceedingSibling->nodeAggregateId,
@@ -82,7 +83,7 @@ trait NodeCreationInternals
                 continue 2;
             }
 
-            // c) fallback, there is no succeeding sibling in this dimension
+            // c) fallback; there is no succeeding sibling in this dimension space point
             $interdimensionalSiblings[] = new InterdimensionalSibling(
                 $coveredDimensionSpacePoint,
                 null,
