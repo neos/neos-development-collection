@@ -27,7 +27,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -42,6 +41,10 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
 
 /**
  * Neos' workspace model
+ *
+ * Provides a high-level API to evaluate, publish or discard changes in a given workspace.
+ * Uses the low-level content repository workspace read model for information retrieval,
+ * @see \Neos\ContentRepository\Core\Projection\Workspace\Workspace
  *
  * @api
  */
@@ -112,20 +115,19 @@ final class Workspace
         return count($changes);
     }
 
-    public function publishAllChanges(): int
+    public function publishAllChanges(): PublishingResult
     {
         $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
         $changes = $changeFinder->findByContentStreamId($this->currentContentStreamId);
 
         $this->publish();
 
-        return count($changes);
+        return new PublishingResult(
+            count($changes)
+        );
     }
 
-    /**
-     * @return int The amount of changes that were published
-     */
-    public function publishChangesInSite(NodeAggregateId $siteId): int
+    public function publishChangesInSite(NodeAggregateId $siteId): PublishingResult
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
         $this->requireNodeToBeOfType(
@@ -140,13 +142,12 @@ final class Workspace
 
         $this->publishNodes($nodeIdsToPublish);
 
-        return count($nodeIdsToPublish);
+        return new PublishingResult(
+            count($nodeIdsToPublish)
+        );
     }
 
-    /**
-     * @return int The amount of changes that were published
-     */
-    public function publishChangesInDocument(NodeAggregateId $documentId): int
+    public function publishChangesInDocument(NodeAggregateId $documentId): PublishingResult
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
         $this->requireNodeToBeOfType(
@@ -161,23 +162,24 @@ final class Workspace
 
         $this->publishNodes($nodeIdsToPublish);
 
-        return count($nodeIdsToPublish);
+        return new PublishingResult(
+            count($nodeIdsToPublish)
+        );
     }
 
-    public function discardAllChanges(): int
+    public function discardAllChanges(): DiscardingResult
     {
         $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
         $changes = $changeFinder->findByContentStreamId($this->currentContentStreamId);
 
         $this->discard();
 
-        return count($changes);
+        return new DiscardingResult(
+            count($changes)
+        );
     }
 
-    /**
-     * @return int The amount of changes that were discarded
-     */
-    public function discardChangesInSite(NodeAggregateId $siteId): int
+    public function discardChangesInSite(NodeAggregateId $siteId): DiscardingResult
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
         $this->requireNodeToBeOfType(
@@ -192,13 +194,12 @@ final class Workspace
 
         $this->discardNodes($nodeIdsToDiscard);
 
-        return count($nodeIdsToDiscard);
+        return new DiscardingResult(
+            count($nodeIdsToDiscard)
+        );
     }
 
-    /**
-     * @return int The amount of changes that were discarded
-     */
-    public function discardChangesInDocument(NodeAggregateId $documentId): int
+    public function discardChangesInDocument(NodeAggregateId $documentId): DiscardingResult
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
         $this->requireNodeToBeOfType(
@@ -213,7 +214,9 @@ final class Workspace
 
         $this->discardNodes($nodeIdsToDiscard);
 
-        return count($nodeIdsToDiscard);
+        return new DiscardingResult(
+            count($nodeIdsToDiscard)
+        );
     }
 
     public function rebase(bool $force): void
