@@ -568,6 +568,14 @@
         <source>No document node found for this node</source>
         <target state="translated">Não foi encontrado nenhum documento de nó para este nó</target>
       </trans-unit>
+      <trans-unit id="message.assetContainsMaliciousContent" xml:space="preserve">
+        <source>This asset might contain malicious content!</source>
+        <target state="translated">Este recurso pode conter conteúdo malicioso!</target>
+      </trans-unit>
+      <trans-unit id="createMissingVariants" xml:space="preserve">
+        <source>Create missing variants</source>
+        <target state="translated">Criar variantes que faltam</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
