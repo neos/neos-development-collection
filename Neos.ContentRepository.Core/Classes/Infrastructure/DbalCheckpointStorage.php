@@ -116,7 +116,8 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
             throw new \RuntimeException(sprintf('Failed to update and commit checkpoint for subscriber "%s" because no transaction is active', $this->subscriberId), 1652279314);
         }
         if ($this->connection->isRollbackOnly()) {
-            throw new \RuntimeException(sprintf('Failed to update and commit checkpoint for subscriber "%s" because the transaction has been marked for rollback only', $this->subscriberId), 1711964313);
+            // TODO as described in https://github.com/neos/neos-development-collection/issues/4970 we are in a bad state and cannot commit after a nested transaction was rolled back.
+            throw new \RuntimeException(sprintf('Failed to update and commit checkpoint for subscriber "%s" because the transaction has been marked for rollback only. See https://github.com/neos/neos-development-collection/issues/4970', $this->subscriberId), 1711964313);
         }
         try {
             if (!$this->lockedSequenceNumber->equals($sequenceNumber)) {
