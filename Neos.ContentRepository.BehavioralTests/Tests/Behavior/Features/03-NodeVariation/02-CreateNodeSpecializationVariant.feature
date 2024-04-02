@@ -413,10 +413,6 @@ Feature: Create node specialization
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
 
-    # @todo test based on NodeSpecializationVariantWasCreated ({"market":"CH", "language":"DE"})
-    # and VirtualNodeVariantWasRemoved ({"market":"CH", "language":"gsw"})
-    # to test that explicitly removed virtual variants are not implicitly created again
-
   Scenario: Create specialization of node to dimension space point that is already covered
     Given the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
