@@ -658,7 +658,7 @@ class WorkspacesController extends AbstractModuleController
             $workspace
         );
 
-        $workspace = $this->workspaceFactory->create(
+        $workspace = $this->workspaceFactory->createFromContentRepositoryIdAndWorkspaceName(
             $command->contentRepositoryId,
             $command->workspaceName
         );
@@ -693,7 +693,7 @@ class WorkspacesController extends AbstractModuleController
             $contentRepositoryId,
             $workspace
         );
-        $workspace = $this->workspaceFactory->create(
+        $workspace = $this->workspaceFactory->createFromContentRepositoryIdAndWorkspaceName(
             $command->contentRepositoryId,
             $command->workspaceName
         );

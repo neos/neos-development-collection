@@ -67,7 +67,7 @@ class WorkspaceCommandController extends CommandController
     public function publishCommand(string $workspace, string $contentRepositoryIdentifier = 'default'): void
     {
         // @todo: bypass access control
-        $workspace = $this->workspaceFactory->create(
+        $workspace = $this->workspaceFactory->createFromContentRepositoryIdAndWorkspaceName(
             ContentRepositoryId::fromString($contentRepositoryIdentifier),
             WorkspaceName::fromString($workspace)
         );
@@ -91,7 +91,7 @@ class WorkspaceCommandController extends CommandController
     public function discardCommand(string $workspace, string $contentRepositoryIdentifier = 'default'): void
     {
         // @todo: bypass access control
-        $workspace = $this->workspaceFactory->create(
+        $workspace = $this->workspaceFactory->createFromContentRepositoryIdAndWorkspaceName(
             ContentRepositoryId::fromString($contentRepositoryIdentifier),
             WorkspaceName::fromString($workspace)
         );
@@ -118,7 +118,7 @@ class WorkspaceCommandController extends CommandController
     public function rebaseCommand(string $workspace, string $contentRepositoryIdentifier = 'default', bool $force = false): void
     {
         // @todo: bypass access control
-        $workspace = $this->workspaceFactory->create(
+        $workspace = $this->workspaceFactory->createFromContentRepositoryIdAndWorkspaceName(
             ContentRepositoryId::fromString($contentRepositoryIdentifier),
             WorkspaceName::fromString($workspace)
         );
@@ -299,7 +299,7 @@ class WorkspaceCommandController extends CommandController
                 $this->quit(5);
             }
             // @todo bypass access control?
-            $workspace = $this->workspaceFactory->create(
+            $workspace = $this->workspaceFactory->createFromContentRepositoryIdAndWorkspaceName(
                 $contentRepositoryId,
                 $workspaceName
             );

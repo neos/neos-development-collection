@@ -34,8 +34,10 @@ final readonly class WorkspaceFactory
     ) {
     }
 
-    public function create(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): Workspace
-    {
+    public function createFromContentRepositoryIdAndWorkspaceName(
+        ContentRepositoryId $contentRepositoryId,
+        WorkspaceName $workspaceName,
+    ): Workspace {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $contentRepositoryWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
 
