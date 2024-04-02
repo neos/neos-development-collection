@@ -91,16 +91,6 @@ final readonly class NodeAggregate
         return $this->occupiedDimensionSpacePoints->contains($originDimensionSpacePoint);
     }
 
-    /**
-     * Returns the nodes belonging to this aggregate, i.e. the "real materialized" node rows.
-     *
-     * @return iterable<int,Node>
-     */
-    public function getNodes(): iterable
-    {
-        return array_values($this->nodesByOccupiedDimensionSpacePoint);
-    }
-
     public function getNodeByOccupiedDimensionSpacePoint(
         OriginDimensionSpacePoint $occupiedDimensionSpacePoint
     ): Node {
@@ -167,5 +157,16 @@ final readonly class NodeAggregate
     public function getDimensionSpacePointsTaggedWith(SubtreeTag $subtreeTag): DimensionSpacePointSet
     {
         return $this->dimensionSpacePointsBySubtreeTags->forSubtreeTag($subtreeTag);
+    }
+
+    /**
+     * Returns the nodes belonging to this aggregate, i.e. the "real materialized" node rows.
+     *
+     * @internal Using this method to access all occupied nodes or possibly extract a single arbitrary node is not intended for use outside the core.
+     * @return iterable<int,Node>
+     */
+    public function getNodes(): iterable
+    {
+        return array_values($this->nodesByOccupiedDimensionSpacePoint);
     }
 }
