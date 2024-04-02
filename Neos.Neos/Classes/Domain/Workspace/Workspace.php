@@ -262,7 +262,7 @@ final class Workspace
         if (
             !$this->contentRepository->getNodeTypeManager()
                 ->getNodeType($nodeAggregate->nodeTypeName)
-                ->isOfType($nodeTypeName)
+                ?->isOfType($nodeTypeName)
         ) {
             throw new \DomainException(
                 'Node aggregate ' . $nodeAggregateId->value . ' is not of expected type ' . $nodeTypeName->value,
