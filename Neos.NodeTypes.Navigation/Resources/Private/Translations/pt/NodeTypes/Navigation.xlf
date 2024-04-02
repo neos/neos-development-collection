@@ -3,75 +3,75 @@
   <file original="" product-name="Neos.NodeTypes.Navigation" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>Menu</source>
-        <target state="needs-translation">Menu</target>
+        <source>Menu</source>
+        <target state="translated">Menu</target>
       </trans-unit>
       <trans-unit id="groups.options" xml:space="preserve">
-				<source>Options</source>
+        <source>Options</source>
         <target state="translated">Opções</target>
       </trans-unit>
       <trans-unit id="properties.startLevel" xml:space="preserve">
-				<source>Starting Level</source>
+        <source>Starting Level</source>
         <target state="translated">Nível Inicial</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve">
-				<source>Four Levels Above Current Page</source>
+        <source>Four Levels Above Current Page</source>
         <target state="translated">Quatro níveis acima da página atual</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve">
-				<source>Three Levels Above Current Page</source>
+        <source>Three Levels Above Current Page</source>
         <target state="translated">Três níveis acima da página atual</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve">
-				<source>Two Levels Above Current Page</source>
+        <source>Two Levels Above Current Page</source>
         <target state="translated">Dois níveis acima da página atual</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve">
-				<source>One Level Above Current Page</source>
+        <source>One Level Above Current Page</source>
         <target state="translated">Um nível acima da página atual</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.0" xml:space="preserve">
-				<source>Same Level As Current Page</source>
+        <source>Same Level As Current Page</source>
         <target state="translated">Mesmo nível que a página atual</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve">
-				<source>First Level Of Website</source>
+        <source>First Level Of Website</source>
         <target state="translated">Primeiro nível do site</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.2" xml:space="preserve">
-				<source>Second Level Of Website</source>
+        <source>Second Level Of Website</source>
         <target state="translated">Segundo nível do site</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.3" xml:space="preserve">
-				<source>Third Level Of Website</source>
+        <source>Third Level Of Website</source>
         <target state="translated">Terceiro nível do site</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.4" xml:space="preserve">
-				<source>Fourth Level Of Website</source>
+        <source>Fourth Level Of Website</source>
         <target state="translated">Quarto nível do site</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.5" xml:space="preserve">
-				<source>Fifth Level Of Website</source>
+        <source>Fifth Level Of Website</source>
         <target state="translated">Quinto nível do site</target>
       </trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.6" xml:space="preserve">
-				<source>Sixth Level Of Website</source>
+        <source>Sixth Level Of Website</source>
         <target state="translated">Sexto nível do site</target>
       </trans-unit>
       <trans-unit id="properties.selection" xml:space="preserve">
-				<source>Selection</source>
+        <source>Selection</source>
         <target state="translated">Seleção</target>
       </trans-unit>
       <trans-unit id="properties.startingPoint" xml:space="preserve">
-				<source>Starting Point</source>
+        <source>Starting Point</source>
         <target state="translated">Ponto de partida</target>
       </trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve">
-				<source>Maximum Levels</source>
+        <source>Maximum Levels</source>
         <target state="translated">Níveis Máximos</target>
       </trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve">
-				<source>Empty Menu</source>
+        <source>Empty Menu</source>
         <target state="translated">Menu Vazio</target>
       </trans-unit>
     </body>

@@ -41,7 +41,6 @@ use Symfony\Component\Serializer\Serializer;
 #[Flow\Scope("singleton")]
 final class ContentRepositoryRegistry
 {
-
     /**
      * @var array<string, ContentRepositoryFactory>
      */
@@ -57,6 +56,23 @@ final class ContentRepositoryRegistry
     }
 
     /**
+     * This is the main entry point for Neos / Flow installations to fetch a content repository.
+     * A content repository is not a singleton and must be fetched by its identifier.
+     *
+     * To get a hold of a content repository identifier, it has to be passed along.
+     *
+     * For Neos web requests, the current content repository can be inferred by the domain and the connected site:
+     * {@see \Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult::fromRequest()}
+     * Or it has to be encoded manually as part of a query parameter.
+     *
+     * For CLI applications, it's a necessity to specify the content repository as argument from the outside,
+     * generally via `--content-repository default`
+     *
+     * The content repository identifier should never be hard-coded without being aware of its implications.
+     *
+     * Hint: in case you are already in a service that is scoped to a content repository or a projection catchup hook,
+     * the content repository will likely be already available via e.g. the service factory.
+     *
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
     public function get(ContentRepositoryId $contentRepositoryId): ContentRepository

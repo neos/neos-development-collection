@@ -11,11 +11,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
  *
  * @api
  */
-final class Pagination
+final readonly class Pagination
 {
     private function __construct(
-        public readonly int $limit,
-        public readonly int $offset,
+        public int $limit,
+        public int $offset,
     ) {
         if ($this->limit < 1) {
             throw new \InvalidArgumentException(sprintf('Limit must not be less than 1, given: %d', $this->limit), 1680195505);

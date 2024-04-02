@@ -18,14 +18,14 @@ namespace Neos\ContentRepository\Core\Dimension;
  * Content dimension constraints across multiple dimensions
  * @internal
  */
-final class ContentDimensionConstraints
+final readonly class ContentDimensionConstraints
 {
     public function __construct(
         /**
          * if TRUE, the logic is "all allowed, except..." (blacklist approach).
          * if FALSE, the logic is "nothing allowed, except..." (whitelist approach).
          */
-        public readonly bool $isWildcardAllowed = true,
+        public bool $isWildcardAllowed = true,
         /**
          * An array of identifier restrictions, defined via value => bool, e.g.
          * [
@@ -35,7 +35,7 @@ final class ContentDimensionConstraints
          *
          * @var array<string,bool>
          */
-        public readonly array $identifierRestrictions = []
+        public array $identifierRestrictions = []
     ) {
     }
 

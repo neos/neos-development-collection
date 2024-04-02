@@ -27,12 +27,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * * the node's aggregate's external id
  * * the dimension space point the node originates in within its aggregate
  */
-final class NodeDiscriminator implements \JsonSerializable
+final readonly class NodeDiscriminator implements \JsonSerializable
 {
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
     }
 

@@ -22,11 +22,11 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  *
  * @internal
  */
-final class SerializedNodeReference implements \JsonSerializable
+final readonly class SerializedNodeReference implements \JsonSerializable
 {
     public function __construct(
-        public readonly NodeAggregateId $targetNodeAggregateId,
-        public readonly ?SerializedPropertyValues $properties
+        public NodeAggregateId $targetNodeAggregateId,
+        public ?SerializedPropertyValues $properties
     ) {
     }
 

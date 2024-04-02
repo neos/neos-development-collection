@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
@@ -55,7 +57,6 @@ final class NodeRecord
             $tableNamePrefix . '_node',
             [
                 'nodeaggregateid' => $this->nodeAggregateId->value,
-                'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
                 'nodetypename' => $this->nodeTypeName->value,
@@ -138,25 +139,38 @@ final class NodeRecord
         ?NodeName $nodeName,
         Timestamps $timestamps,
     ): self {
-        $databaseConnection->insert($tableNamePrefix . '_node', [
-            'nodeaggregateid' => $nodeAggregateId->value,
-            'origindimensionspacepoint' => json_encode($originDimensionSpacePoint),
-            'origindimensionspacepointhash' => $originDimensionSpacePointHash,
-            'properties' => json_encode($properties),
-            'nodetypename' => $nodeTypeName->value,
-            'classification' => $classification->value,
-            'created' => $timestamps->created,
-            'originalcreated' => $timestamps->originalCreated,
-            'lastmodified' => $timestamps->lastModified,
-            'originallastmodified' => $timestamps->originalLastModified,
-        ], [
-            'created' => Types::DATETIME_IMMUTABLE,
-            'originalcreated' => Types::DATETIME_IMMUTABLE,
-            'lastmodified' => Types::DATETIME_IMMUTABLE,
-            'originallastmodified' => Types::DATETIME_IMMUTABLE,
-        ]);
+        $relationAnchorPoint = $databaseConnection->transactional(function ($databaseConnection) use (
+            $tableNamePrefix,
+            $nodeAggregateId,
+            $originDimensionSpacePoint,
+            $originDimensionSpacePointHash,
+            $properties,
+            $nodeTypeName,
+            $classification,
+            $timestamps
+        ) {
+            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
+            $dimensionSpacePoints->insertDimensionSpacePointByHashAndCoordinates($originDimensionSpacePointHash, $originDimensionSpacePoint);
 
-        $relationAnchorPoint = NodeRelationAnchorPoint::fromInteger((int)$databaseConnection->lastInsertId());
+            $databaseConnection->insert($tableNamePrefix . '_node', [
+                'nodeaggregateid' => $nodeAggregateId->value,
+                'origindimensionspacepointhash' => $originDimensionSpacePointHash,
+                'properties' => json_encode($properties),
+                'nodetypename' => $nodeTypeName->value,
+                'classification' => $classification->value,
+                'created' => $timestamps->created,
+                'originalcreated' => $timestamps->originalCreated,
+                'lastmodified' => $timestamps->lastModified,
+                'originallastmodified' => $timestamps->originalLastModified,
+            ], [
+                'created' => Types::DATETIME_IMMUTABLE,
+                'originalcreated' => Types::DATETIME_IMMUTABLE,
+                'lastmodified' => Types::DATETIME_IMMUTABLE,
+                'originallastmodified' => Types::DATETIME_IMMUTABLE,
+            ]);
+
+            return NodeRelationAnchorPoint::fromInteger((int)$databaseConnection->lastInsertId());
+        });
 
         return new self(
             $relationAnchorPoint,

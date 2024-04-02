@@ -21,18 +21,18 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 /**
  * @api events are the persistence-API of the content repository
  */
-final class WorkspaceWasDiscarded implements EventInterface
+final readonly class WorkspaceWasDiscarded implements EventInterface
 {
     public function __construct(
-        public readonly WorkspaceName $workspaceName,
+        public WorkspaceName $workspaceName,
         /**
          * The new, empty, content stream
          */
-        public readonly ContentStreamId $newContentStreamId,
+        public ContentStreamId $newContentStreamId,
         /**
          * The old content stream (which contains the discarded data)
          */
-        public readonly ContentStreamId $previousContentStreamId,
+        public ContentStreamId $previousContentStreamId,
     ) {
     }
 

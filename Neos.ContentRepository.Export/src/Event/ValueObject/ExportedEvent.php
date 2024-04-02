@@ -4,7 +4,7 @@ namespace Neos\ContentRepository\Export\Event\ValueObject;
 
 use Neos\EventStore\Model\Event;
 
-final class ExportedEvent implements \JsonSerializable
+final readonly class ExportedEvent implements \JsonSerializable
 {
     /**
      * The Neos.ContentRepository.Core's domain events require the payload to be a json array string
@@ -15,10 +15,10 @@ final class ExportedEvent implements \JsonSerializable
      * @param array<mixed> $metadata
      */
     public function __construct(
-        public readonly string $identifier,
-        public readonly string $type,
-        public readonly array $payload,
-        public readonly array $metadata,
+        public string $identifier,
+        public string $type,
+        public array $payload,
+        public array $metadata,
     ) {
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
@@ -40,13 +41,16 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
             $projectionFactoryDependencies->contentRepositoryId
         );
 
+        $dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbalClient->getConnection(), $tableNamePrefix);
+
         return new ContentGraphProjection(
             new DoctrineDbalContentGraphProjection(
                 $this->dbalClient,
                 new NodeFactory(
                     $projectionFactoryDependencies->contentRepositoryId,
                     $projectionFactoryDependencies->nodeTypeManager,
-                    $projectionFactoryDependencies->propertyConverter
+                    $projectionFactoryDependencies->propertyConverter,
+                    $dimensionSpacePointsRepository
                 ),
                 $projectionFactoryDependencies->contentRepositoryId,
                 $projectionFactoryDependencies->nodeTypeManager,
@@ -54,7 +58,8 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
                     $this->dbalClient,
                     $tableNamePrefix
                 ),
-                $tableNamePrefix
+                $tableNamePrefix,
+                $dimensionSpacePointsRepository
             )
         );
     }

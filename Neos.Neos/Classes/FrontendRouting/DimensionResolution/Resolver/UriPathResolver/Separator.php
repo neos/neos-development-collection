@@ -9,10 +9,10 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class Separator
+final readonly class Separator
 {
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
     }
 

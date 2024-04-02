@@ -14,12 +14,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  *
  * @api events are the persistence-API of the content repository
  */
-final class WorkspaceWasRenamed implements EventInterface
+final readonly class WorkspaceWasRenamed implements EventInterface
 {
     public function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly WorkspaceTitle $workspaceTitle,
-        public readonly WorkspaceDescription $workspaceDescription,
+        public WorkspaceName $workspaceName,
+        public WorkspaceTitle $workspaceTitle,
+        public WorkspaceDescription $workspaceDescription,
     ) {
     }
 

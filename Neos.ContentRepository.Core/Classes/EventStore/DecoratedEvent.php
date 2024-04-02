@@ -14,14 +14,14 @@ use Neos\EventStore\Model\Event\EventMetadata;
  *
  * @internal because no external entity can publish new events (only command handlers can)
  */
-final class DecoratedEvent
+final readonly class DecoratedEvent
 {
     private function __construct(
-        public readonly EventInterface $innerEvent,
-        public readonly ?EventId $eventId,
-        public readonly ?EventMetadata $eventMetadata,
-        public readonly ?CausationId $causationId,
-        public readonly ?CorrelationId $correlationId,
+        public EventInterface $innerEvent,
+        public ?EventId $eventId,
+        public ?EventMetadata $eventMetadata,
+        public ?CausationId $causationId,
+        public ?CorrelationId $correlationId,
     ) {
     }
 

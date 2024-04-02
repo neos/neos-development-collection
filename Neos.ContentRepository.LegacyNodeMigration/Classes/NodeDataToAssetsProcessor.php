@@ -48,11 +48,11 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
                 continue;
             }
             $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
-            if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+            if (!$nodeType) {
                 $this->dispatch(Severity::ERROR, 'The node type "%s" is not available. Node: "%s"', $nodeTypeName->value, $nodeDataRow['identifier']);
                 continue;
             }
-            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
             try {
                 $properties = json_decode($nodeDataRow['properties'], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $exception) {

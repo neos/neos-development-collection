@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -44,16 +45,22 @@ final readonly class HierarchyRelation
      */
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
-            'parentnodeanchor' => $this->parentNodeAnchor->value,
-            'childnodeanchor' => $this->childNodeAnchor->value,
-            'name' => $this->name?->value,
-            'contentstreamid' => $this->contentStreamId->value,
-            'dimensionspacepoint' => $this->dimensionSpacePoint->toJson(),
-            'dimensionspacepointhash' => $this->dimensionSpacePointHash,
-            'position' => $this->position,
-            'subtreetags' => json_encode($this->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
-        ]);
+        $databaseConnection->transactional(function ($databaseConnection) use (
+            $tableNamePrefix
+        ) {
+            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
+            $dimensionSpacePoints->insertDimensionSpacePoint($this->dimensionSpacePoint);
+
+            $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
+                'parentnodeanchor' => $this->parentNodeAnchor->value,
+                'childnodeanchor' => $this->childNodeAnchor->value,
+                'name' => $this->name?->value,
+                'contentstreamid' => $this->contentStreamId->value,
+                'dimensionspacepointhash' => $this->dimensionSpacePointHash,
+                'position' => $this->position,
+                'subtreetags' => json_encode($this->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
+            ]);
+        });
     }
 
     /**

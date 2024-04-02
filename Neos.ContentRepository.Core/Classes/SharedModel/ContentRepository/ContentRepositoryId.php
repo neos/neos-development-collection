@@ -19,10 +19,10 @@ namespace Neos\ContentRepository\Core\SharedModel\ContentRepository;
  *
  * @api
  */
-final class ContentRepositoryId implements \JsonSerializable
+final readonly class ContentRepositoryId implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
         if (!preg_match('/^[a-z][a-z\d_]*[a-z]$/', $this->value)) {
             throw new \InvalidArgumentException(

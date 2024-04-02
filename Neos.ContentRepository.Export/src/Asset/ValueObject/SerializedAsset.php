@@ -11,16 +11,16 @@ use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\Video;
 use Neos\Utility\TypeHandling;
 
-final class SerializedAsset implements \JsonSerializable
+final readonly class SerializedAsset implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $identifier,
-        public readonly AssetType $type,
-        public readonly string $title,
-        public readonly string $copyrightNotice,
-        public readonly string $caption,
-        public readonly string $assetSourceIdentifier,
-        public readonly SerializedResource $resource,
+        public string $identifier,
+        public AssetType $type,
+        public string $title,
+        public string $copyrightNotice,
+        public string $caption,
+        public string $assetSourceIdentifier,
+        public SerializedResource $resource,
     ) {}
 
     public static function fromAsset(Asset $asset): self
