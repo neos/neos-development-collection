@@ -88,7 +88,6 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
     And the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeProperties is executed with payload:
       | Key             | Value                   |
-      | contentStreamId | "cs-identifier"         |
       | nodeAggregateId | "a2a2b"                 |
       | propertyValues  | {"integerProperty": 20} |
     And the command DisableNodeAggregate is executed with payload:

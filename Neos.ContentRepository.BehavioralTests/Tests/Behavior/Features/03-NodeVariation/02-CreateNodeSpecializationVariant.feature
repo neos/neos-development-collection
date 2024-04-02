@@ -304,7 +304,6 @@ Feature: Create node specialization
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
-      | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"CH", "language":"en"} |
