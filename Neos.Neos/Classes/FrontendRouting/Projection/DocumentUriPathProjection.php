@@ -8,9 +8,9 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -394,7 +394,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             $event->nodeAggregateId,
             $event->sourceOrigin,
             $event->peerOrigin,
-            $event->peerSucceedingSiblings->toDimensionSpacePointSet()
+            $event->peerSucceedingSiblings
         );
     }
 
@@ -407,7 +407,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             $event->nodeAggregateId,
             $event->sourceOrigin,
             $event->generalizationOrigin,
-            $event->variantSucceedingSiblings->toDimensionSpacePointSet()
+            $event->variantSucceedingSiblings
         );
     }
 
@@ -420,7 +420,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             $event->nodeAggregateId,
             $event->sourceOrigin,
             $event->specializationOrigin,
-            $event->specializationSiblings->toDimensionSpacePointSet()
+            $event->specializationSiblings
         );
     }
 
@@ -428,7 +428,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        DimensionSpacePointSet $coveredSpacePoints
+        InterdimensionalSiblings $interdimensionalSiblings,
     ): void {
         $sourceNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $nodeAggregateId,
@@ -438,17 +438,18 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             // Probably not a document node
             return;
         }
-        foreach ($coveredSpacePoints as $coveredSpacePoint) {
+        foreach ($interdimensionalSiblings as $interdimensionalSibling) {
             // Especially when importing a site it can happen that variants are created in a "non-deterministic" order,
             // so we need to first make sure a target variant doesn't exist:
-            $this->deleteNodeByIdAndDimensionSpacePointHash($nodeAggregateId, $coveredSpacePoint->hash);
+            $this->deleteNodeByIdAndDimensionSpacePointHash($nodeAggregateId, $interdimensionalSibling->dimensionSpacePoint->hash);
 
-            $this->insertNode(
-                $sourceNode
-                ->withDimensionSpacePoint($coveredSpacePoint)
+            $targetNode = $sourceNode
+                ->withDimensionSpacePoint($interdimensionalSibling->dimensionSpacePoint)
                 ->withOriginDimensionSpacePoint($targetOrigin)
-                ->toArray()
-            );
+                ->withoutSiblings();
+
+            $this->insertNode($targetNode->toArray());
+            $this->connectNodeWithSiblings($targetNode, $targetNode->getParentNodeAggregateId(), $interdimensionalSibling->nodeAggregateId, false);
         }
     }
 
@@ -657,7 +658,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     ): void {
         $this->disconnectNodeFromSiblings($node);
 
-        $this->connectNodeWithSiblings($node, $newParentNodeAggregateId, $newSucceedingNodeAggregateId);
+        $this->connectNodeWithSiblings($node, $newParentNodeAggregateId, $newSucceedingNodeAggregateId, true);
 
         if ($newParentNodeAggregateId->equals($node->getParentNodeAggregateId())) {
             return;
@@ -908,10 +909,14 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
     }
 
+    /**
+     * @param bool $includingSelf whether the node itself is to be considered its own sibling. true for moving, false for variation
+     */
     private function connectNodeWithSiblings(
         DocumentNodeInfo $node,
         NodeAggregateId $parentNodeAggregateId,
-        ?NodeAggregateId $newSucceedingNodeAggregateId
+        ?NodeAggregateId $newSucceedingNodeAggregateId,
+        bool $includingSelf,
     ): void {
         if ($newSucceedingNodeAggregateId !== null) {
             $newPrecedingNode = $this->tryGetNode(fn () => $this->getState()->getPrecedingNode(
@@ -927,24 +932,40 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 ['precedingNodeAggregateId' => $node->getNodeAggregateId()->value]
             );
         } else {
-            $newPrecedingNode = $this->tryGetNode(fn () => $this->getState()->getLastChildNode(
-                $parentNodeAggregateId,
-                $node->getDimensionSpacePointHash()
-            ));
+            $newPrecedingNode = $this->tryGetNode(fn () => $includingSelf
+                ? $this->getState()->getLastChildNode(
+                    $parentNodeAggregateId,
+                    $node->getDimensionSpacePointHash(),
+                )
+                : $this->getState()->getLastChildNodeNotBeing(
+                    $parentNodeAggregateId,
+                    $node->getDimensionSpacePointHash(),
+                    $node->getNodeAggregateId()
+                )
+            );
         }
-        if ($newPrecedingNode !== null) {
+        if (
+            $newPrecedingNode !== null
+            && ($includingSelf || !$newPrecedingNode->getNodeAggregateId()->equals($node->getNodeAggregateId()))
+        ) {
             $this->updateNode(
                 $newPrecedingNode,
                 ['succeedingNodeAggregateId' => $node->getNodeAggregateId()->value]
             );
         }
 
-        // update node itself
-        $this->updateNode($node, [
+        $updatedNodeData = [
             'parentNodeAggregateId' => $parentNodeAggregateId->value,
-            'precedingNodeAggregateId' => $newPrecedingNode?->getNodeAggregateId()->value,
             'succeedingNodeAggregateId' => $newSucceedingNodeAggregateId?->value,
-        ]);
+        ];
+        if (
+            $includingSelf || !$newPrecedingNode?->getNodeAggregateId()->equals($node->getNodeAggregateId())
+        ) {
+            $updatedNodeData['precedingNodeAggregateId'] = $newPrecedingNode?->getNodeAggregateId()->value;
+        }
+
+        // update node itself
+        $this->updateNode($node, $updatedNodeData);
     }
 
 
