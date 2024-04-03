@@ -382,9 +382,9 @@ final class NodeTypeManager
     }
 
     /**
-     * @internal helper to throw if the NodeType doesn't exit
+     * Helper to throw if the NodeType doesn't exit
      */
-    public function requireNodeType(string|NodeTypeName $nodeTypeName): NodeType
+    private function requireNodeType(string|NodeTypeName $nodeTypeName): NodeType
     {
         return $this->getNodeType($nodeTypeName) ?? throw new NodeTypeNotFoundException(
             sprintf(

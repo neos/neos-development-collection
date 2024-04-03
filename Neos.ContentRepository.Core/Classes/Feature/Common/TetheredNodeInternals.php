@@ -69,8 +69,8 @@ trait TetheredNodeInternals
 
         if ($childNodeAggregate === null) {
             // there is no tethered child node aggregate already; let's create it!
-            $nodeType = $this->nodeTypeManager->requireNodeType($parentNodeAggregate->nodeTypeName);
-            if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
+            $nodeType = $this->nodeTypeManager->getNodeType($parentNodeAggregate->nodeTypeName);
+            if ($nodeType?->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 $events = [];
                 $tetheredNodeAggregateId = $tetheredNodeAggregateId ?: NodeAggregateId::create();
                 // we create in one origin DSP and vary in the others
