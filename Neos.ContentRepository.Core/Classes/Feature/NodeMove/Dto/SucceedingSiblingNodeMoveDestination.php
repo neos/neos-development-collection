@@ -42,13 +42,13 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  *
  * @api DTO of {@see NodeAggregateWasMoved} event
  */
-final class SucceedingSiblingNodeMoveDestination implements \JsonSerializable
+final readonly class SucceedingSiblingNodeMoveDestination implements \JsonSerializable
 {
     private function __construct(
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly NodeAggregateId $parentNodeAggregateId,
-        public readonly OriginDimensionSpacePoint $parentOriginDimensionSpacePoint
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public NodeAggregateId $parentNodeAggregateId,
+        public OriginDimensionSpacePoint $parentOriginDimensionSpacePoint
     ) {
     }
 

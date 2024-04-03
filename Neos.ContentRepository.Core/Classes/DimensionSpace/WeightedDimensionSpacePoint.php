@@ -20,16 +20,16 @@ use Neos\ContentRepository\Core\Dimension;
  * A weighted dimension space point
  * @internal
  */
-final class WeightedDimensionSpacePoint
+final readonly class WeightedDimensionSpacePoint
 {
     /**
      * @var array<string,Dimension\ContentDimensionValue>
      */
-    public readonly array $dimensionValues;
+    public array $dimensionValues;
 
-    public readonly DimensionSpacePoint $dimensionSpacePoint;
+    public DimensionSpacePoint $dimensionSpacePoint;
 
-    public readonly ContentSubgraphVariationWeight $weight;
+    public ContentSubgraphVariationWeight $weight;
 
     /**
      * @param array<string,Dimension\ContentDimensionValue> $dimensionValues

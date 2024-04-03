@@ -17,10 +17,10 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
 /**
  * @api
  */
-final class PropertyName implements \JsonSerializable
+final readonly class PropertyName implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
         if ($value === '') {
             throw new \InvalidArgumentException('Property name must not be empty.', 1519745994);

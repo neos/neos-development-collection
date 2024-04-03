@@ -54,7 +54,8 @@ final class NodeFactory
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
-        private readonly PropertyConverter $propertyConverter
+        private readonly PropertyConverter $propertyConverter,
+        private readonly DimensionSpacePointsRepository $dimensionSpacePointRepository
     ) {
     }
 
@@ -79,7 +80,7 @@ final class NodeFactory
                 $visibilityConstraints
             ),
             NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
-            OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
+            $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
@@ -169,9 +170,7 @@ final class NodeFactory
 
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
-            $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString(
-                $nodeRow['origindimensionspacepoint']
-            );
+            $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
             if (!isset($nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash])) {
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
@@ -248,9 +247,7 @@ final class NodeFactory
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
             $rawNodeAggregateId = $nodeRow['nodeaggregateid'];
-            $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString(
-                $nodeRow['origindimensionspacepoint']
-            );
+            $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
             if (
                 !isset($nodesByOccupiedDimensionSpacePointsByNodeAggregate
                 [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash])

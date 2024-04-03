@@ -28,12 +28,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api events are the persistence-API of the content repository
  */
-final class DimensionSpacePointWasMoved implements EventInterface, PublishableToOtherContentStreamsInterface
+final readonly class DimensionSpacePointWasMoved implements EventInterface, PublishableToOtherContentStreamsInterface
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly DimensionSpacePoint $source,
-        public readonly DimensionSpacePoint $target
+        public ContentStreamId $contentStreamId,
+        public DimensionSpacePoint $source,
+        public DimensionSpacePoint $target
     ) {
     }
 

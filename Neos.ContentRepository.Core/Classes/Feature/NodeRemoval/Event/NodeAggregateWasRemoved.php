@@ -26,18 +26,18 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 /**
  * @api events are the persistence-API of the content repository
  */
-final class NodeAggregateWasRemoved implements
+final readonly class NodeAggregateWasRemoved implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePointSet $affectedOccupiedDimensionSpacePoints,
-        public readonly DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePointSet $affectedOccupiedDimensionSpacePoints,
+        public DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
         /** {@see RemoveNodeAggregate::$removalAttachmentPoint} for detailed docs what this is used for. */
-        public readonly ?NodeAggregateId $removalAttachmentPoint = null
+        public ?NodeAggregateId $removalAttachmentPoint = null
     ) {
     }
 

@@ -9,14 +9,14 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class SerializedPropertyValuesAndReferences
+final readonly class SerializedPropertyValuesAndReferences
 {
 
     /**
      * @param array<string, NodeAggregateIds> $references
      */
     public function __construct(
-        public readonly SerializedPropertyValues $serializedPropertyValues,
-        public readonly array $references,
+        public SerializedPropertyValues $serializedPropertyValues,
+        public array $references,
     ) {}
 }

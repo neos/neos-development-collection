@@ -59,7 +59,6 @@ Feature: Copy nodes (without dimensions)
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     When the command CopyNodesRecursively is executed, copying the current node aggregate with payload:
       | Key                                            | Value                                                             |
-      | contentStreamId                        | "cs-identifier"                                                   |
       | targetDimensionSpacePoint                      | {}                                                                |
       | targetParentNodeAggregateId            | "nody-mc-nodeface"                                                |
       | targetNodeName                                 | "target-nn"                                                       |

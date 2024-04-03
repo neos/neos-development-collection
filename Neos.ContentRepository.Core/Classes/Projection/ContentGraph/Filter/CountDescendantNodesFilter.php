@@ -22,15 +22,15 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
  *
  * @api for the factory methods; NOT for the inner state.
  */
-final class CountDescendantNodesFilter
+final readonly class CountDescendantNodesFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly ?NodeTypeCriteria $nodeTypes,
-        public readonly ?SearchTerm $searchTerm,
-        public readonly ?PropertyValueCriteriaInterface $propertyValue,
+        public ?NodeTypeCriteria $nodeTypes,
+        public ?SearchTerm $searchTerm,
+        public ?PropertyValueCriteriaInterface $propertyValue,
     ) {
     }
 

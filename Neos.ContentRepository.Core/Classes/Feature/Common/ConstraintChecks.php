@@ -111,14 +111,10 @@ trait ConstraintChecks
      */
     protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType
     {
-        try {
-            return $this->getNodeTypeManager()->getNodeType($nodeTypeName);
-        } catch (NodeTypeNotFoundException $exception) {
-            throw new NodeTypeNotFound(
-                'Node type "' . $nodeTypeName->value . '" is unknown to the node type manager.',
-                1541671070
-            );
-        }
+        return $this->getNodeTypeManager()->getNodeType($nodeTypeName) ?? throw new NodeTypeNotFound(
+            'Node type "' . $nodeTypeName->value . '" is unknown to the node type manager.',
+            1541671070
+        );
     }
 
     protected function requireNodeTypeToNotBeAbstract(NodeType $nodeType): void
@@ -201,7 +197,7 @@ trait ConstraintChecks
 
     protected function requireNodeTypeToDeclareProperty(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
+        $nodeType = $this->requireNodeType($nodeTypeName);
         if (!$nodeType->hasProperty($propertyName->value)) {
             throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
                 $propertyName,
@@ -212,7 +208,7 @@ trait ConstraintChecks
 
     protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $referenceName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
+        $nodeType = $this->requireNodeType($nodeTypeName);
         if ($nodeType->hasReference($referenceName->value)) {
             return;
         }
@@ -224,10 +220,10 @@ trait ConstraintChecks
         ReferenceName $referenceName,
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
-        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName);
+        $nodeType = $this->requireNodeType($nodeTypeName);
         $constraints = $nodeType->getReferences()[$referenceName->value]['constraints']['nodeTypes'] ?? [];
 
-        if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($this->getNodeTypeManager()->getNodeType($nodeTypeNameInQuestion))) {
+        if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($this->requireNodeType($nodeTypeNameInQuestion))) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeConstraintsAreNotMatched(
                 $referenceName,
                 $nodeTypeName,
@@ -661,7 +657,7 @@ trait ConstraintChecks
         PropertyValuesToWrite $referenceProperties,
         NodeTypeName $nodeTypeName
     ): void {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        $nodeType = $this->requireNodeType($nodeTypeName);
 
         foreach ($referenceProperties->values as $propertyName => $propertyValue) {
             $referencePropertyConfig = $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]

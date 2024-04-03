@@ -26,17 +26,17 @@ use Neos\EventStore\EventStoreInterface;
 /**
  * @api because it is used inside the ProjectionsFactory
  */
-final class ProjectionFactoryDependencies
+final readonly class ProjectionFactoryDependencies
 {
     public function __construct(
-        public readonly ContentRepositoryId $contentRepositoryId,
-        public readonly EventStoreInterface $eventStore,
-        public readonly EventNormalizer $eventNormalizer,
-        public readonly NodeTypeManager $nodeTypeManager,
-        public readonly ContentDimensionSourceInterface $contentDimensionSource,
-        public readonly ContentDimensionZookeeper $contentDimensionZookeeper,
-        public readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        public readonly PropertyConverter $propertyConverter,
+        public ContentRepositoryId $contentRepositoryId,
+        public EventStoreInterface $eventStore,
+        public EventNormalizer $eventNormalizer,
+        public NodeTypeManager $nodeTypeManager,
+        public ContentDimensionSourceInterface $contentDimensionSource,
+        public ContentDimensionZookeeper $contentDimensionZookeeper,
+        public InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        public PropertyConverter $propertyConverter,
     ) {
     }
 }

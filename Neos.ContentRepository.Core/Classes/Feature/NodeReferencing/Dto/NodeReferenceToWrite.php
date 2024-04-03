@@ -26,11 +26,11 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  * (this is validated in the command handler).
  * @api used as part of commands
  */
-final class NodeReferenceToWrite implements \JsonSerializable
+final readonly class NodeReferenceToWrite implements \JsonSerializable
 {
     public function __construct(
-        public readonly NodeAggregateId $targetNodeAggregateId,
-        public readonly ?PropertyValuesToWrite $properties
+        public NodeAggregateId $targetNodeAggregateId,
+        public ?PropertyValuesToWrite $properties
     ) {
     }
 

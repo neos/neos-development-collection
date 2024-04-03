@@ -111,7 +111,7 @@ final class NodeTypeManager
      *
      * @throws NodeTypeNotFoundException
      */
-    public function getNodeType(string|NodeTypeName $nodeTypeName): NodeType
+    public function getNodeType(string|NodeTypeName $nodeTypeName): ?NodeType
     {
         if ($nodeTypeName instanceof NodeTypeName) {
             $nodeTypeName = $nodeTypeName->value;
@@ -122,14 +122,7 @@ final class NodeTypeManager
         if (isset($this->cachedNodeTypes[$nodeTypeName])) {
             return $this->cachedNodeTypes[$nodeTypeName];
         }
-
-        throw new NodeTypeNotFoundException(
-            sprintf(
-                'The node type "%s" is not available',
-                $nodeTypeName
-            ),
-            1316598370
-        );
+        return null;
     }
 
     /**
@@ -207,7 +200,7 @@ final class NodeTypeManager
     public function getTypeOfTetheredNode(NodeType $nodeType, NodeName $tetheredNodeName): NodeType
     {
         $nameOfTetheredNode = $nodeType->getNodeTypeNameOfTetheredNode($tetheredNodeName);
-        return $this->getNodeType($nameOfTetheredNode);
+        return $this->requireNodeType($nameOfTetheredNode);
     }
 
     /**
@@ -221,7 +214,7 @@ final class NodeTypeManager
         $autoCreatedChildNodes = [];
         foreach ($childNodeConfiguration ?? [] as $childNodeName => $configurationForChildNode) {
             if (isset($configurationForChildNode['type'])) {
-                $autoCreatedChildNodes[NodeName::transliterateFromString($childNodeName)->value] = $this->getNodeType($configurationForChildNode['type']);
+                $autoCreatedChildNodes[NodeName::transliterateFromString($childNodeName)->value] = $this->requireNodeType($configurationForChildNode['type']);
             }
         }
         return $autoCreatedChildNodes;
@@ -386,5 +379,19 @@ final class NodeTypeManager
         }
 
         return $superType;
+    }
+
+    /**
+     * @internal helper to throw if the NodeType doesn't exit
+     */
+    public function requireNodeType(string|NodeTypeName $nodeTypeName): NodeType
+    {
+        return $this->getNodeType($nodeTypeName) ?? throw new NodeTypeNotFoundException(
+            sprintf(
+                'The node type "%s" is not available',
+                $nodeTypeName instanceof NodeTypeName ? $nodeTypeName->value : $nodeTypeName
+            ),
+            1316598370
+        );
     }
 }

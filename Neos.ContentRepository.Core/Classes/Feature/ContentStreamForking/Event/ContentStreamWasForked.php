@@ -21,15 +21,15 @@ use Neos\EventStore\Model\Event\Version;
 /**
  * @api events are the persistence-API of the content repository
  */
-final class ContentStreamWasForked implements EventInterface
+final readonly class ContentStreamWasForked implements EventInterface
 {
     public function __construct(
         /**
          * Content stream identifier for the new content stream
          */
-        public readonly ContentStreamId $newContentStreamId,
-        public readonly ContentStreamId $sourceContentStreamId,
-        public readonly Version $versionOfSourceContentStream,
+        public ContentStreamId $newContentStreamId,
+        public ContentStreamId $sourceContentStreamId,
+        public Version $versionOfSourceContentStream,
     ) {
     }
 

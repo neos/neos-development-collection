@@ -19,14 +19,14 @@ use Psr\Http\Message\ServerRequestInterface;
  * @Flow\Proxy(false)
  * @api
  */
-final class SiteDetectionResult
+final readonly class SiteDetectionResult
 {
     private const ROUTINGPARAMETER_SITENODENAME = 'siteNodeName';
     private const ROUTINGPARAMETER_CONTENTREPOSITORYID = 'contentRepositoryId';
 
     private function __construct(
-        public readonly SiteNodeName $siteNodeName,
-        public readonly ContentRepositoryId $contentRepositoryId,
+        public SiteNodeName $siteNodeName,
+        public ContentRepositoryId $contentRepositoryId,
     ) {
     }
 

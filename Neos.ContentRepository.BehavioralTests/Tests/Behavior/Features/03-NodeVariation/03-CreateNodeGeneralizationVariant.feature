@@ -182,7 +182,6 @@ Feature: Create node generalization
   Scenario: Create generalization of node to dimension space point with further generalizations
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                             |
-      | contentStreamId | "cs-identifier"                   |
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin    | {"market":"CH", "language":"gsw"} |
       | targetOrigin    | {"market":"DE", "language":"gsw"} |
@@ -293,7 +292,6 @@ Feature: Create node generalization
   Scenario: Create generalization of node to dimension space point with specializations that are partially occupied and covered
     Given the command CreateNodeVariant is executed with payload:
       | Key             | Value                             |
-      | contentStreamId | "cs-identifier"                   |
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin    | {"market":"CH", "language":"gsw"} |
       | targetOrigin    | {"market":"DE", "language":"de"}  |
@@ -301,7 +299,6 @@ Feature: Create node generalization
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                             |
-      | contentStreamId | "cs-identifier"                   |
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin    | {"market":"CH", "language":"gsw"} |
       | targetOrigin    | {"market":"DE", "language":"en"}  |
@@ -433,7 +430,6 @@ Feature: Create node generalization
   Scenario: Create generalization of a node to a dimension space point that is already covered by a more general generalization
     Given the command CreateNodeVariant is executed with payload:
       | Key             | Value                             |
-      | contentStreamId | "cs-identifier"                   |
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin    | {"market":"CH", "language":"gsw"} |
       | targetOrigin    | {"market":"DE", "language":"en"}  |
@@ -441,7 +437,6 @@ Feature: Create node generalization
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                             |
-      | contentStreamId | "cs-identifier"                   |
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin    | {"market":"CH", "language":"gsw"} |
       | targetOrigin    | {"market":"DE", "language":"de"}  |

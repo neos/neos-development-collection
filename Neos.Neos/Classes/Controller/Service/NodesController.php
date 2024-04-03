@@ -339,7 +339,7 @@ class NodesController extends ActionController
             // materialized recursively upwards in the rootline. To find the node path for the given identifier,
             // we just use the first result. This is a safe assumption at least for "Document" nodes (aggregate=true),
             // because they are always moved in-sync.
-            if ($nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName)->isAggregate()) {
+            if ($nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName)?->isAggregate()) {
                 // TODO: we would need the SourceDimensions parameter (as in Create()) to ensure the correct
                 // rootline is traversed. Here, we, as a workaround, simply use the 1st aggregate for now.
 

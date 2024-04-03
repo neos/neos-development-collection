@@ -19,10 +19,10 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
  *
  * @api
  */
-final class WorkspaceTitle implements \JsonSerializable
+final readonly class WorkspaceTitle implements \JsonSerializable
 {
     public function __construct(
-        public readonly string $value
+        public string $value
     ) {
         if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $this->value) !== 1) {
             throw new \InvalidArgumentException('Invalid workspace title given.', 1505827170288);

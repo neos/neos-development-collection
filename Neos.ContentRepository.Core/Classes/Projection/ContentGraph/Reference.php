@@ -23,12 +23,12 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
  *
  * @api
  */
-final class Reference
+final readonly class Reference
 {
     public function __construct(
-        public readonly Node $node,
-        public readonly ReferenceName $name,
-        public readonly ?PropertyCollection $properties
+        public Node $node,
+        public ReferenceName $name,
+        public ?PropertyCollection $properties
     ) {
     }
 }

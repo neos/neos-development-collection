@@ -107,7 +107,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     public function setSitesNodeType(NodeTypeName $nodeTypeName): void
     {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        if (!$nodeType->isOfType(NodeTypeNameFactory::NAME_SITES)) {
+        if (!$nodeType?->isOfType(NodeTypeNameFactory::NAME_SITES)) {
             throw new \InvalidArgumentException(
                 sprintf('Sites NodeType "%s" must be of type "%s"', $nodeTypeName->value, NodeTypeNameFactory::NAME_SITES),
                 1695802415
@@ -259,7 +259,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         assert($nodeName !== false);
         $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
 
-        $nodeType = $this->nodeTypeManager->hasNodeType($nodeTypeName) ? $this->nodeTypeManager->getNodeType($nodeTypeName) : null;
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 
         $isSiteNode = $nodeDataRow['parentpath'] === '/sites';
         if ($isSiteNode && !$nodeType?->isOfType(NodeTypeNameFactory::NAME_SITE)) {
@@ -273,7 +273,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             return;
         }
 
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
 
         if ($this->isAutoCreatedChildNode($parentNodeAggregate->nodeTypeName, $nodeName) && !$this->visitedNodes->containsNodeAggregate($nodeAggregateId)) {
@@ -446,10 +445,10 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
     private function isAutoCreatedChildNode(NodeTypeName $parentNodeTypeName, NodeName $nodeName): bool
     {
-        if (!$this->nodeTypeManager->hasNodeType($parentNodeTypeName)) {
+        $nodeTypeOfParent = $this->nodeTypeManager->getNodeType($parentNodeTypeName);
+        if (!$nodeTypeOfParent) {
             return false;
         }
-        $nodeTypeOfParent = $this->nodeTypeManager->getNodeType($parentNodeTypeName);
         return $nodeTypeOfParent->hasTetheredNode($nodeName);
     }
 

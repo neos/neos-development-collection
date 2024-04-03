@@ -22,26 +22,26 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 /**
  * @api events are the persistence-API of the content repository
  */
-final class WorkspaceWasPartiallyPublished implements EventInterface
+final readonly class WorkspaceWasPartiallyPublished implements EventInterface
 {
     public function __construct(
         /**
          * From which workspace have changes been partially published?
          */
-        public readonly WorkspaceName $sourceWorkspaceName,
+        public WorkspaceName $sourceWorkspaceName,
         /**
          * The target workspace where the changes have been published to.
          */
-        public readonly WorkspaceName $targetWorkspaceName,
+        public WorkspaceName $targetWorkspaceName,
         /**
          * The new content stream for the $sourceWorkspaceName
          */
-        public readonly ContentStreamId $newSourceContentStreamId,
+        public ContentStreamId $newSourceContentStreamId,
         /**
          * The old content stream, which contains ALL the data (discarded and non-discarded)
          */
-        public readonly ContentStreamId $previousSourceContentStreamId,
-        public readonly NodeIdsToPublishOrDiscard $publishedNodes,
+        public ContentStreamId $previousSourceContentStreamId,
+        public NodeIdsToPublishOrDiscard $publishedNodes,
     ) {
     }
 

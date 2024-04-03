@@ -13,14 +13,14 @@ use Neos\Flow\Annotations as Flow;
  * @api
  */
 #[Flow\Proxy(false)]
-final class AssetUsage
+final readonly class AssetUsage
 {
     public function __construct(
-        public readonly string $assetId,
-        public readonly ContentStreamId $contentStreamId,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly string $propertyName,
+        public string $assetId,
+        public ContentStreamId $contentStreamId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public NodeAggregateId $nodeAggregateId,
+        public string $propertyName,
     ) {
     }
 }

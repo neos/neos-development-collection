@@ -21,13 +21,13 @@ use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionIdIsInvalid;
  *
  * @api
  */
-final class ContentDimensionId implements \JsonSerializable
+final readonly class ContentDimensionId implements \JsonSerializable
 {
     /**
      * @throws ContentDimensionIdIsInvalid
      */
     public function __construct(
-        public readonly string $value
+        public string $value
     ) {
         if (empty($value)) {
             throw ContentDimensionIdIsInvalid::becauseItMustNotBeEmpty();

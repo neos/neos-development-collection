@@ -49,7 +49,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api
  */
-final class NodeAggregate
+final readonly class NodeAggregate
 {
     /**
      * @param ContentStreamId $contentStreamId ID of the content stream of this node aggregate
@@ -66,18 +66,18 @@ final class NodeAggregate
      * @param DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags dimension space points for every subtree tag this aggregate is *explicitly* tagged with (excluding inherited tags)
      */
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeAggregateClassification $classification,
-        public readonly NodeTypeName $nodeTypeName,
-        public readonly ?NodeName $nodeName,
-        public readonly OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
-        private readonly array $nodesByOccupiedDimensionSpacePoint,
-        private readonly CoverageByOrigin $coverageByOccupant,
-        public readonly DimensionSpacePointSet $coveredDimensionSpacePoints,
-        private readonly array $nodesByCoveredDimensionSpacePoint,
-        private readonly OriginByCoverage $occupationByCovered,
-        private readonly DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public NodeAggregateClassification $classification,
+        public NodeTypeName $nodeTypeName,
+        public ?NodeName $nodeName,
+        public OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
+        private array $nodesByOccupiedDimensionSpacePoint,
+        private CoverageByOrigin $coverageByOccupant,
+        public DimensionSpacePointSet $coveredDimensionSpacePoints,
+        private array $nodesByCoveredDimensionSpacePoint,
+        private OriginByCoverage $occupationByCovered,
+        private DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
     ) {
     }
 
