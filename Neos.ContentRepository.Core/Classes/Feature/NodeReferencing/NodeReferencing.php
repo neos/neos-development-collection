@@ -115,7 +115,7 @@ trait NodeReferencing
         );
         $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->nodeTypeName, $command->referenceName);
 
-        $this->requireNodeTypeToAllowCountOfReferencesInReference(
+        $this->requireNodeTypeToAllowNumberOfReferencesInReference(
             $command->references,
             $command->referenceName,
             $sourceNodeAggregate->nodeTypeName

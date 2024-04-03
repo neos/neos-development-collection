@@ -232,7 +232,7 @@ trait ConstraintChecks
         }
     }
 
-    protected function requireNodeTypeToAllowCountOfReferencesInReference(SerializedNodeReferences $nodeReferences, ReferenceName $referenceName, NodeTypeName $nodeTypeName): void
+    protected function requireNodeTypeToAllowNumberOfReferencesInReference(SerializedNodeReferences $nodeReferences, ReferenceName $referenceName, NodeTypeName $nodeTypeName): void
     {
         $nodeType = $this->requireNodeType($nodeTypeName);
 

@@ -51,11 +51,11 @@ final class ReferenceCannotBeSet extends \DomainException
     public static function becauseTheItemsCountConstraintsAreNotMatched(
         ReferenceName $referenceName,
         NodeTypeName $nodeTypeName,
-        int $countOfAttemptedReferencesToWrite
+        int $numberOfAttemptedReferencesToWrite
     ): self {
         return new self(
             'Reference "' . $referenceName->value . '" cannot be set for node type "'
-            . $nodeTypeName->value . '" because the constraints do not allow to set ' . $countOfAttemptedReferencesToWrite . ' references',
+            . $nodeTypeName->value . '" because the constraints do not allow to set ' . $numberOfAttemptedReferencesToWrite . ' references',
             1700150156
         );
     }
