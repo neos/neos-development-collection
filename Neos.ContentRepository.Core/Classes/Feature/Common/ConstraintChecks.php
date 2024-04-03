@@ -234,7 +234,7 @@ trait ConstraintChecks
 
     protected function requireNodeTypeToAllowCountOfReferencesInReference(SerializedNodeReferences $nodeReferences, ReferenceName $referenceName, NodeTypeName $nodeTypeName): void
     {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
+        $nodeType = $this->requireNodeType($nodeTypeName);
 
         $maxItems = $nodeType->getReferences()[$referenceName->value]['constraints']['maxItems'] ?? null;
         if ($maxItems === null) {
