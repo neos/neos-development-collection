@@ -941,8 +941,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                     $parentNodeAggregateId,
                     $node->getDimensionSpacePointHash(),
                     $node->getNodeAggregateId()
-                )
-            );
+                ));
         }
         if (
             $newPrecedingNode !== null
