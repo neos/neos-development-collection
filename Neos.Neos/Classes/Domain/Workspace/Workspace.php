@@ -51,6 +51,7 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
 #[Flow\Proxy(false)]
 final class Workspace
 {
+    /** @internal please use the {@see WorkspaceFactory} instead */
     public function __construct(
         public readonly WorkspaceName $name,
         private ContentStreamId $currentContentStreamId,
@@ -58,11 +59,6 @@ final class Workspace
         private ?WorkspaceName $currentBaseWorkspaceName,
         private readonly ContentRepository $contentRepository,
     ) {
-    }
-
-    public function getCurrentContentStreamId(): ContentStreamId
-    {
-        return $this->currentContentStreamId;
     }
 
     public function getCurrentStatus(): WorkspaceStatus
@@ -75,6 +71,7 @@ final class Workspace
         return $this->currentBaseWorkspaceName;
     }
 
+    /** @internal experimental api, until actually used by the Neos.Ui */
     public function countAllChanges(): int
     {
         $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
@@ -83,6 +80,7 @@ final class Workspace
         return count($changes);
     }
 
+    /** @internal experimental api, until actually used by the Neos.Ui */
     public function countChangesInSite(NodeAggregateId $siteId): int
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
@@ -99,6 +97,7 @@ final class Workspace
         return count($changes);
     }
 
+    /** @internal experimental api, until actually used by the Neos.Ui */
     public function countChangesInDocument(NodeAggregateId $documentId): int
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
@@ -113,6 +112,12 @@ final class Workspace
         );
 
         return count($changes);
+    }
+
+    /** @internal should not be necessary in user land code */
+    public function getCurrentContentStreamId(): ContentStreamId
+    {
+        return $this->currentContentStreamId;
     }
 
     public function publishAllChanges(): PublishingResult
@@ -418,8 +423,7 @@ final class Workspace
      * the current site is.
      *
      * @deprecated remove once we are sure this check is no longer needed due to
-     * * the UI sending proper commands
-     * * the ChangeFinder being refactored / rewritten
+     * the UI sending proper commands the ChangeFinder being refactored / rewritten
      * (whatever happens first)
      */
     private function isChangeWithSelfReferencingRemovalAttachmentPoint(Change $change): bool
