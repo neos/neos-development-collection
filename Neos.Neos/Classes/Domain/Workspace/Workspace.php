@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFi
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -54,14 +55,20 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
 #[Flow\Proxy(false)]
 final class Workspace
 {
+    public readonly WorkspaceName $name;
+    public readonly ContentRepositoryId $contentRepositoryId;
+
     /** @internal please use the {@see WorkspaceFactory} instead */
     public function __construct(
-        public readonly WorkspaceName $name,
+        WorkspaceName $name,
         private ContentStreamId $currentContentStreamId,
         private WorkspaceStatus $currentStatus,
         private ?WorkspaceName $currentBaseWorkspaceName,
         private readonly ContentRepository $contentRepository,
     ) {
+        // public properties
+        $this->name = $name;
+        $this->contentRepositoryId = $contentRepository->id;
     }
 
     public function getCurrentStatus(): WorkspaceStatus
