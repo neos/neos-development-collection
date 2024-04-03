@@ -61,8 +61,8 @@ final readonly class NodeAggregate
      * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints dimension space points this aggregate occupies
      * @param non-empty-array<string,Node> $nodesByOccupiedDimensionSpacePoint At least one node will be occupied.
      * @param CoverageByOrigin $coverageByOccupant
-     * @param DimensionSpacePointSet $coveredDimensionSpacePoints At least one node will be covered.
-     * @param non-empty-array<string,Node> $nodesByCoveredDimensionSpacePoint
+     * @param DimensionSpacePointSet $coveredDimensionSpacePoints This node aggregate will cover at least one dimension space.
+     * @param non-empty-array<string,Node> $nodesByCoveredDimensionSpacePoint At least one node will be covered.
      * @param OriginByCoverage $occupationByCovered
      * @param DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags dimension space points for every subtree tag this aggregate is *explicitly* tagged with (excluding inherited tags)
      */
@@ -81,9 +81,6 @@ final readonly class NodeAggregate
         private OriginByCoverage $occupationByCovered,
         private DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
     ) {
-        // this nodeAggregate can only exist if it at least contains one node.
-        assert($this->nodesByOccupiedDimensionSpacePoint !== []);
-        assert($this->nodesByCoveredDimensionSpacePoint !== []);
     }
 
     public function occupiesDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): bool
