@@ -121,11 +121,9 @@ final class CatchUp
                 if ($this->onBeforeBatchCompletedHook) {
                     ($this->onBeforeBatchCompletedHook)();
                 }
-            } catch (\Throwable $e) {
+            } finally {
                 $this->checkpointStorage->updateAndReleaseLock($highestAppliedSequenceNumber);
-                throw $e;
             }
-            $this->checkpointStorage->updateAndReleaseLock($highestAppliedSequenceNumber);
         }
         return $highestAppliedSequenceNumber;
     }

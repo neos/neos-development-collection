@@ -159,7 +159,6 @@ Feature: Tag subtree without dimensions
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                      | Value           |
-      | contentStreamId          | "cs-identifier" |
       | nodeAggregateId          | "a1a"           |
       | newParentNodeAggregateId | "b1"            |
     And the graph projection is fully up to date
