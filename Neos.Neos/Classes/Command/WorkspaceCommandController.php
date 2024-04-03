@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspac
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
@@ -124,7 +125,7 @@ class WorkspaceCommandController extends CommandController
         );
 
         try {
-            $workspace->rebase($force);
+            $workspace->rebase($force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL);
         } catch (WorkspaceDoesNotExist $exception) {
             $this->outputLine('Workspace "%s" does not exist', [$workspace->name->value]);
             $this->quit(1);

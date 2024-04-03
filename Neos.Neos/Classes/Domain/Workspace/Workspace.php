@@ -219,14 +219,12 @@ final class Workspace
         );
     }
 
-    public function rebase(bool $force): void
+    public function rebase(RebaseErrorHandlingStrategy $rebaseErrorHandlingStrategy = RebaseErrorHandlingStrategy::STRATEGY_FAIL): void
     {
         $rebaseCommand = RebaseWorkspace::create(
             $this->name
-        );
-        if ($force) {
-            $rebaseCommand = $rebaseCommand->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::STRATEGY_FORCE);
-        }
+        )->withErrorHandlingStrategy($rebaseErrorHandlingStrategy);
+
         $this->contentRepository->handle($rebaseCommand)->block();
 
         $this->updateCurrentState();
