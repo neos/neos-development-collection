@@ -27,8 +27,13 @@ use Neos\Flow\Annotations as Flow;
  * @api
  */
 #[Flow\Scope('singleton')]
-final readonly class WorkspaceFactory
+final class WorkspaceFactory
 {
+    /**
+     * @var array<string, Workspace>
+     */
+    private array $instances;
+
     public function __construct(
         private ContentRepositoryRegistry $contentRepositoryRegistry
     ) {
@@ -38,10 +43,15 @@ final readonly class WorkspaceFactory
         ContentRepositoryId $contentRepositoryId,
         WorkspaceName $workspaceName,
     ): Workspace {
+        $index = $contentRepositoryId->value . '-' . $workspaceName->value;
+        if (isset($this->instances[$index])) {
+            return $this->instances[$index];
+        }
+
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $contentRepositoryWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
 
-        return new Workspace(
+        return $this->instances[$index] = new Workspace(
             $workspaceName,
             $contentRepositoryWorkspace->currentContentStreamId,
             $contentRepositoryWorkspace->status,
