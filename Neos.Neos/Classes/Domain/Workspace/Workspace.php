@@ -44,7 +44,10 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
  *
  * Provides a high-level API to evaluate, publish or discard changes in a given workspace.
  * Uses the low-level content repository workspace read model for information retrieval,
- * @see \Neos\ContentRepository\Core\Projection\Workspace\Workspace
+ * {@see \Neos\ContentRepository\Core\Projection\Workspace\Workspace}
+ *
+ * This model is mutable and will for example update itself after publishing, or changing the base workspace.
+ * Mutations in the content repository that are not triggered by this model (by using the low level API) will not be reflected.
  *
  * @api
  */
