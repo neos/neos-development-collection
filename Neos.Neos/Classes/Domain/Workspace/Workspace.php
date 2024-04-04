@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFi
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -44,25 +45,30 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
  *
  * Provides a high-level API to evaluate, publish or discard changes in a given workspace.
  * Uses the low-level content repository workspace read model for information retrieval,
- * @see \Neos\ContentRepository\Core\Projection\Workspace\Workspace
+ * {@see \Neos\ContentRepository\Core\Projection\Workspace\Workspace}
+ *
+ * This model is mutable and will for example update itself after publishing, or changing the base workspace.
+ * Mutations in the content repository that are not triggered by this model (by using the low level API) will not be reflected.
  *
  * @api
  */
 #[Flow\Proxy(false)]
 final class Workspace
 {
+    public readonly WorkspaceName $name;
+    public readonly ContentRepositoryId $contentRepositoryId;
+
+    /** @internal please use the {@see WorkspaceFactory} instead */
     public function __construct(
-        public readonly WorkspaceName $name,
+        WorkspaceName $name,
         private ContentStreamId $currentContentStreamId,
         private WorkspaceStatus $currentStatus,
         private ?WorkspaceName $currentBaseWorkspaceName,
         private readonly ContentRepository $contentRepository,
     ) {
-    }
-
-    public function getCurrentContentStreamId(): ContentStreamId
-    {
-        return $this->currentContentStreamId;
+        // public properties
+        $this->name = $name;
+        $this->contentRepositoryId = $contentRepository->id;
     }
 
     public function getCurrentStatus(): WorkspaceStatus
@@ -75,6 +81,7 @@ final class Workspace
         return $this->currentBaseWorkspaceName;
     }
 
+    /** @internal experimental api, until actually used by the Neos.Ui */
     public function countAllChanges(): int
     {
         $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
@@ -83,6 +90,7 @@ final class Workspace
         return count($changes);
     }
 
+    /** @internal experimental api, until actually used by the Neos.Ui */
     public function countChangesInSite(NodeAggregateId $siteId): int
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
@@ -99,6 +107,7 @@ final class Workspace
         return count($changes);
     }
 
+    /** @internal experimental api, until actually used by the Neos.Ui */
     public function countChangesInDocument(NodeAggregateId $documentId): int
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
@@ -113,6 +122,12 @@ final class Workspace
         );
 
         return count($changes);
+    }
+
+    /** @internal should not be necessary in user land code */
+    public function getCurrentContentStreamId(): ContentStreamId
+    {
+        return $this->currentContentStreamId;
     }
 
     public function publishAllChanges(): PublishingResult
@@ -418,8 +433,7 @@ final class Workspace
      * the current site is.
      *
      * @deprecated remove once we are sure this check is no longer needed due to
-     * * the UI sending proper commands
-     * * the ChangeFinder being refactored / rewritten
+     * the UI sending proper commands the ChangeFinder being refactored / rewritten
      * (whatever happens first)
      */
     private function isChangeWithSelfReferencingRemovalAttachmentPoint(Change $change): bool
