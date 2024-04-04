@@ -55,19 +55,16 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
 #[Flow\Proxy(false)]
 final class Workspace
 {
-    public readonly WorkspaceName $name;
     public readonly ContentRepositoryId $contentRepositoryId;
 
     /** @internal please use the {@see WorkspaceFactory} instead */
     public function __construct(
-        WorkspaceName $name,
+        public readonly WorkspaceName $name,
         private ContentStreamId $currentContentStreamId,
         private WorkspaceStatus $currentStatus,
         private ?WorkspaceName $currentBaseWorkspaceName,
         private readonly ContentRepository $contentRepository,
     ) {
-        // public properties
-        $this->name = $name;
         $this->contentRepositoryId = $contentRepository->id;
     }
 
@@ -433,7 +430,8 @@ final class Workspace
      * the current site is.
      *
      * @deprecated remove once we are sure this check is no longer needed due to
-     * the UI sending proper commands the ChangeFinder being refactored / rewritten
+     * * the UI sending proper commands
+     * * the ChangeFinder being refactored / rewritten
      * (whatever happens first)
      */
     private function isChangeWithSelfReferencingRemovalAttachmentPoint(Change $change): bool
