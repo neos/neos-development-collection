@@ -22,12 +22,12 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Neos' factory for its own workspace instances
+ * Neos' provider for its own workspace instances
  *
  * @api
  */
 #[Flow\Scope('singleton')]
-final class WorkspaceFactory
+final class WorkspaceProvider
 {
     /**
      * @var array<string, Workspace>
@@ -39,7 +39,7 @@ final class WorkspaceFactory
     ) {
     }
 
-    public function createFromContentRepositoryIdAndWorkspaceName(
+    public function getForWorkspaceName(
         ContentRepositoryId $contentRepositoryId,
         WorkspaceName $workspaceName,
     ): Workspace {

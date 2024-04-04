@@ -36,7 +36,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\Domain\Workspace\WorkspaceFactory;
+use Neos\Neos\Domain\Workspace\WorkspaceProvider;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 
 /**
@@ -55,7 +55,7 @@ class WorkspaceCommandController extends CommandController
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
-    protected WorkspaceFactory $workspaceFactory;
+    protected WorkspaceProvider $workspaceFactory;
 
     /**
      * Publish changes of a workspace
@@ -68,7 +68,7 @@ class WorkspaceCommandController extends CommandController
     public function publishCommand(string $workspace, string $contentRepositoryIdentifier = 'default'): void
     {
         // @todo: bypass access control
-        $workspace = $this->workspaceFactory->createFromContentRepositoryIdAndWorkspaceName(
+        $workspace = $this->workspaceFactory->getForWorkspaceName(
             ContentRepositoryId::fromString($contentRepositoryIdentifier),
             WorkspaceName::fromString($workspace)
         );
@@ -92,7 +92,7 @@ class WorkspaceCommandController extends CommandController
     public function discardCommand(string $workspace, string $contentRepositoryIdentifier = 'default'): void
     {
         // @todo: bypass access control
-        $workspace = $this->workspaceFactory->createFromContentRepositoryIdAndWorkspaceName(
+        $workspace = $this->workspaceFactory->getForWorkspaceName(
             ContentRepositoryId::fromString($contentRepositoryIdentifier),
             WorkspaceName::fromString($workspace)
         );
@@ -119,7 +119,7 @@ class WorkspaceCommandController extends CommandController
     public function rebaseCommand(string $workspace, string $contentRepositoryIdentifier = 'default', bool $force = false): void
     {
         // @todo: bypass access control
-        $workspace = $this->workspaceFactory->createFromContentRepositoryIdAndWorkspaceName(
+        $workspace = $this->workspaceFactory->getForWorkspaceName(
             ContentRepositoryId::fromString($contentRepositoryIdentifier),
             WorkspaceName::fromString($workspace)
         );
@@ -300,7 +300,7 @@ class WorkspaceCommandController extends CommandController
                 $this->quit(5);
             }
             // @todo bypass access control?
-            $workspace = $this->workspaceFactory->createFromContentRepositoryIdAndWorkspaceName(
+            $workspace = $this->workspaceFactory->getForWorkspaceName(
                 $contentRepositoryId,
                 $workspaceName
             );

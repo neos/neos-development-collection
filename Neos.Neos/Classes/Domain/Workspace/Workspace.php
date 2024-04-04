@@ -57,7 +57,7 @@ final class Workspace
 {
     public readonly ContentRepositoryId $contentRepositoryId;
 
-    /** @internal please use the {@see WorkspaceFactory} instead */
+    /** @internal please use the {@see WorkspaceProvider} instead */
     public function __construct(
         public readonly WorkspaceName $name,
         private ContentStreamId $currentContentStreamId,
