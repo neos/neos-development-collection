@@ -15,12 +15,14 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentGraph\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
 use Neos\ContentRepositoryRegistry\Factory\Clock\ClockFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensionSourceFactoryInterface;
+use Neos\ContentRepositoryRegistry\Factory\ContentGraphAdapter\ContentGraphAdapterFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\ProjectionCatchUpTriggerFactoryInterface;
@@ -158,6 +160,7 @@ final class ContentRepositoryRegistry
                 $this->buildProjectionCatchUpTrigger($contentRepositoryId, $contentRepositorySettings),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
                 $clock,
+                $this->buildContentGraphAdapter($contentRepositoryId, $contentRepositorySettings),
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryId, $exception);
@@ -280,5 +283,16 @@ final class ContentRepositoryRegistry
             throw InvalidConfigurationException::fromMessage('clock.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ClockFactoryInterface::class, get_debug_type($clockFactory));
         }
         return $clockFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['clock']['options'] ?? []);
+    }
+
+    /** @param array<string, mixed> $contentRepositorySettings */
+    private function buildContentGraphAdapter(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings): ContentGraphAdapterInterface
+    {
+        isset($contentRepositorySettings['contentGraphAdapter']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have contentGraphAdapter.factoryObjectName configured.', $contentRepositoryIdentifier->value);
+        $contentGraphAdapterFactory = $this->objectManager->get($contentRepositorySettings['contentGraphAdapter']['factoryObjectName']);
+        if (!$contentGraphAdapterFactory instanceof ContentGraphAdapterFactoryInterface) {
+            throw InvalidConfigurationException::fromMessage('contentGraphAdapter.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ContentGraphAdapterFactoryInterface::class, get_debug_type($contentGraphAdapterFactory));
+        }
+        return $contentGraphAdapterFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['contentGraphAdapter']['options'] ?? []);
     }
 }

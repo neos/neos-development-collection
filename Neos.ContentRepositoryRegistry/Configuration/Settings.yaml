@@ -40,6 +40,10 @@ Neos:
         clock:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\Clock\SystemClockFactory
 
+        # NOTE: the following adapter factory has to be configured
+        #contentGraphAdapter:
+        #  factoryObjectName: Neos\ContentGraph\…Adapter\…ContentGraphAdapterFactory
+
         propertyConverters:
           DateTimeNormalizer:
             className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
