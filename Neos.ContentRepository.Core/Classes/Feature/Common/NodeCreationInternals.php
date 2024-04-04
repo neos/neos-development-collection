@@ -28,12 +28,17 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 trait NodeCreationInternals
 {
     /**
-     * Resolves the succeeding sibling anchor where a node should be created.
+     * Resolves the succeeding siblings for the node to be created in each dimension space points it will cover.
      *
-     * a) The requested anchor point will be taken into account if existing in the covered dimension space point
-     * b) If the requested sibling does not exist, all the other succeeding siblings of the requested one
-     * will be checked and the first one existing in the covered dimension space point is used.
-     * c) As fallback no succeeding sibling will be specified
+     * For each covered dimension space point
+     * a) The requested succeeding sibling is selected it if also covers this dimension space point
+     * b) If the requested succeeding sibling does not exist, all the other succeeding siblings of the node in the origin
+     * will be checked and the first one covering this dimension space point is used
+     * c) As fallback no succeeding sibling is specified
+     *
+     * Developers hint:
+     * Similar to {@see NodeVariationInternals::resolveInterdimensionalSiblings()} except this
+     * operates on the explicitly set succeeding sibling instead of the node itself.
      */
     private function resolveInterdimensionalSiblingsForCreation(
         ContentRepository $contentRepository,

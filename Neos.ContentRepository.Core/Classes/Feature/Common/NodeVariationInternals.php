@@ -279,21 +279,23 @@ trait NodeVariationInternals
     }
 
     /**
-     * Resolves the succeeding siblings where a node variant should be created.
+     * Resolves the succeeding siblings for the node variant to be created and all dimension space points the variant will cover.
      *
-     * Similar to {@see NodeCreationInternals::resolveInterdimensionalSiblingsForCreation()} except the creation
-     * operates on the explicitly set succeeding sibling while the variation operates on the to-be-varied node itself.
+     * For each dimension space point in the variant coverage
+     * a) All the succeeding siblings of the node aggregate in the source origin are checked
+     * and the first one existing in this dimension space point is used
+     * b) As fallback no succeeding sibling is specified
      *
-     * a) All the succeeding siblings of the varying node aggregate will be checked
-     * and the first one existing in the covered dimension space point is used.
-     * b) As fallback no succeeding sibling will be specified
+     * Developers hint:
+     * Similar to {@see NodeCreationInternals::resolveInterdimensionalSiblingsForCreation()}
+     * except this operates on the to-be-varied node itself instead of an explicitly set succeeding sibling
      */
     private function resolveInterdimensionalSiblings(
         ContentRepository $contentRepository,
         ContentStreamId $contentStreamId,
         NodeAggregateId $varyingNodeAggregateId,
         OriginDimensionSpacePoint $sourceOrigin,
-        DimensionSpacePointSet $variantVisibility,
+        DimensionSpacePointSet $variantCoverage,
     ): InterdimensionalSiblings {
         $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
             $contentStreamId,
@@ -306,7 +308,7 @@ trait NodeVariationInternals
         );
 
         $interdimensionalSiblings = [];
-        foreach ($variantVisibility as $variantDimensionSpacePoint) {
+        foreach ($variantCoverage as $variantDimensionSpacePoint) {
             $variantSubgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamId,
                 $variantDimensionSpacePoint,
