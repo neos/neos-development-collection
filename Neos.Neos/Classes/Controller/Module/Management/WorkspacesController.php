@@ -97,7 +97,7 @@ class WorkspacesController extends AbstractModuleController
     protected PackageManager $packageManager;
 
     #[Flow\Inject]
-    protected WorkspaceProvider $workspaceFactory;
+    protected WorkspaceProvider $workspaceProvider;
 
     /**
      * Display a list of unpublished content
@@ -657,7 +657,7 @@ class WorkspacesController extends AbstractModuleController
             $workspace
         );
 
-        $workspace = $this->workspaceFactory->getForWorkspaceName(
+        $workspace = $this->workspaceProvider->retrieveForWorkspaceName(
             $command->contentRepositoryId,
             $command->workspaceName
         );
@@ -692,7 +692,7 @@ class WorkspacesController extends AbstractModuleController
             $contentRepositoryId,
             $workspace
         );
-        $workspace = $this->workspaceFactory->getForWorkspaceName(
+        $workspace = $this->workspaceProvider->retrieveForWorkspaceName(
             $command->contentRepositoryId,
             $command->workspaceName
         );

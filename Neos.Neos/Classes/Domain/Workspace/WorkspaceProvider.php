@@ -39,7 +39,7 @@ final class WorkspaceProvider
     ) {
     }
 
-    public function getForWorkspaceName(
+    public function retrieveForWorkspaceName(
         ContentRepositoryId $contentRepositoryId,
         WorkspaceName $workspaceName,
     ): Workspace {
