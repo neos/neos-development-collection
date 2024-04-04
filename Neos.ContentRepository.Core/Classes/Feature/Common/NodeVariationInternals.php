@@ -278,40 +278,59 @@ trait NodeVariationInternals
         return $events;
     }
 
+    /**
+     * Resolves the succeeding siblings where a node variant should be created.
+     *
+     * Similar to {@see NodeCreationInternals::resolveInterdimensionalSiblingsForCreation()} except the creation
+     * operates on the explicitly set succeeding sibling while the variation operates on the to-be-varied node itself.
+     *
+     * a) All the succeeding siblings of the varying node aggregate will be checked
+     * and the first one existing in the covered dimension space point is used.
+     * b) As fallback no succeeding sibling will be specified
+     */
     private function resolveInterdimensionalSiblings(
         ContentRepository $contentRepository,
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
+        NodeAggregateId $varyingNodeAggregateId,
         OriginDimensionSpacePoint $sourceOrigin,
         DimensionSpacePointSet $variantVisibility,
     ): InterdimensionalSiblings {
-        $interdimensionalSiblings = [];
         $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
             $contentStreamId,
             $sourceOrigin->toDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         );
         $originSiblings = $originSubgraph->findSucceedingSiblingNodes(
-            $nodeAggregateId,
+            $varyingNodeAggregateId,
             FindSucceedingSiblingNodesFilter::create()
         );
 
+        $interdimensionalSiblings = [];
         foreach ($variantVisibility as $variantDimensionSpacePoint) {
             $variantSubgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamId,
                 $variantDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
-            $variantSibling = null;
+
+            // check the siblings succeeding in the origin dimension space point
             foreach ($originSiblings as $originSibling) {
                 $variantSibling = $variantSubgraph->findNodeById($originSibling->nodeAggregateId);
-                if ($variantSibling instanceof Node) {
-                    break;
+                if (!$variantSibling) {
+                    continue;
                 }
+                // a) one of the further succeeding sibling exists in this dimension space point
+                $interdimensionalSiblings[] = new InterdimensionalSibling(
+                    $variantDimensionSpacePoint,
+                    $variantSibling->nodeAggregateId,
+                );
+                continue 2;
             }
+
+            // b) fallback; there is no succeeding sibling in this dimension space point
             $interdimensionalSiblings[] = new InterdimensionalSibling(
                 $variantDimensionSpacePoint,
-                $variantSibling?->nodeAggregateId,
+                null,
             );
         }
 
