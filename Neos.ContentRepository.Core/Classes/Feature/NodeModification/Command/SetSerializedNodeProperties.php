@@ -110,7 +110,6 @@ final readonly class SetSerializedNodeProperties implements
 
     public function createCopyForWorkspace(
         WorkspaceName $targetWorkspaceName,
-        ContentStreamId $targetContentStreamId
     ): self {
         return new self(
             $targetWorkspaceName,

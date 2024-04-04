@@ -145,7 +145,6 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
 
     public function createCopyForWorkspace(
         WorkspaceName $targetWorkspaceName,
-        ContentStreamId $targetContentStreamId
     ): self {
         return new self(
             $targetWorkspaceName,

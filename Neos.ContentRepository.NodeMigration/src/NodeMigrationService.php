@@ -128,7 +128,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
         }
 
         if ($transformations->containsGlobal()) {
-            $transformations->executeGlobalAndBlock($workspaceForReading->workspaceName, $contentStreamForWriting);
+            $transformations->executeGlobalAndBlock($workspaceNameForWriting);
         } elseif ($transformations->containsNodeAggregateBased()) {
             foreach ($this->contentRepository->getContentGraph()->findUsedNodeTypeNames() as $nodeTypeName) {
                 foreach (

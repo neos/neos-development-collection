@@ -114,7 +114,7 @@ final class ContentCommandController extends CommandController
 
         $contentRepositoryInstance->handle(
             MoveDimensionSpacePoint::create(
-                $workspaceInstance->currentContentStreamId,
+                $workspaceInstance->workspaceName,
                 $sourceDimensionSpacePoint,
                 $targetDimensionSpacePoint
             )

@@ -78,7 +78,7 @@ final readonly class TagSubtree implements
         );
     }
 
-    public function createCopyForWorkspace(WorkspaceName $targetWorkspaceName, ContentStreamId $targetContentStreamId): self
+    public function createCopyForWorkspace(WorkspaceName $targetWorkspaceName): self
     {
         return new self(
             $targetWorkspaceName,

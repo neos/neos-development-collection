@@ -67,22 +67,22 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         MoveDimensionSpacePoint $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStream($command->contentStreamId, $contentRepository);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
+        $contentStreamId = $this->requireContentStreamForWorkspaceName($command->workspaceName, $contentRepository);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
             ->getEventStreamName();
 
         self::requireDimensionSpacePointToBeEmptyInContentStream(
             $command->target,
-            $command->contentStreamId,
+            $contentStreamId,
             $contentRepository->getContentGraph()
         );
-        $this->requireDimensionSpacePointToExistInConfiguration($command->target);
+        $this->requireDimensionSpacePointToExist($command->target);
 
         return new EventsToPublish(
             $streamName,
             Events::with(
                 new DimensionSpacePointWasMoved(
-                    $command->contentStreamId,
+                    $contentStreamId,
                     $command->source,
                     $command->target
                 ),
@@ -95,16 +95,16 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         AddDimensionShineThrough $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStream($command->contentStreamId, $contentRepository);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
+        $contentStreamId = $this->requireContentStreamForWorkspaceName($command->workspaceName, $contentRepository);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
             ->getEventStreamName();
 
         self::requireDimensionSpacePointToBeEmptyInContentStream(
             $command->target,
-            $command->contentStreamId,
+            $contentStreamId,
             $contentRepository->getContentGraph()
         );
-        $this->requireDimensionSpacePointToExistInConfiguration($command->target);
+        $this->requireDimensionSpacePointToExist($command->target);
 
         $this->requireDimensionSpacePointToBeSpecialization($command->target, $command->source);
 
@@ -112,7 +112,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             $streamName,
             Events::with(
                 new DimensionShineThroughWasAdded(
-                    $command->contentStreamId,
+                    $contentStreamId,
                     $command->source,
                     $command->target
                 )
@@ -124,7 +124,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
     /**
      * @throws DimensionSpacePointNotFound
      */
-    protected function requireDimensionSpacePointToExistInConfiguration(DimensionSpacePoint $dimensionSpacePoint): void
+    protected function requireDimensionSpacePointToExist(DimensionSpacePoint $dimensionSpacePoint): void
     {
         $allowedDimensionSubspace = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
         if (!$allowedDimensionSubspace->contains($dimensionSpacePoint)) {
@@ -182,20 +182,5 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         }
 
         return $contentStreamId;
-    }
-
-    /**
-     * @throws ContentStreamDoesNotExistYet
-     */
-    protected function requireContentStream(
-        ContentStreamId $contentStreamId,
-        ContentRepository $contentRepository
-    ): void {
-        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
-            throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamId->value . '" does not exist yet.',
-                1521386692
-            );
-        }
     }
 }

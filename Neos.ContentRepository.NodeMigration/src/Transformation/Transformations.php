@@ -91,11 +91,10 @@ final class Transformations
     }
 
     public function executeGlobalAndBlock(
-        WorkspaceName $workspaceNameForReading,
-        ContentStreamId $contentStreamForWriting
+        WorkspaceName $workspaceNameForWriting,
     ): void {
         foreach ($this->globalTransformations as $globalTransformation) {
-            $globalTransformation->execute($workspaceNameForReading, $contentStreamForWriting)->block();
+            $globalTransformation->execute($workspaceNameForWriting)->block();
         }
     }
 

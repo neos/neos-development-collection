@@ -120,7 +120,6 @@ final readonly class MoveNodeAggregate implements
 
     public function createCopyForWorkspace(
         WorkspaceName $targetWorkspaceName,
-        ContentStreamId $targetContentStreamId
     ): self {
         return new self(
             $targetWorkspaceName,
