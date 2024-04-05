@@ -30,7 +30,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
@@ -242,11 +241,6 @@ final class ContentRepository
     public function getWorkspaceFinder(): WorkspaceFinder
     {
         return $this->projectionState(WorkspaceFinder::class);
-    }
-
-    public function getContentStreamFinder(): ContentStreamFinder
-    {
-        return $this->projectionState(ContentStreamFinder::class);
     }
 
     public function getVariationGraph(): InterDimensionalVariationGraph

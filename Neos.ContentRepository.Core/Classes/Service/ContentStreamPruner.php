@@ -9,7 +9,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\EventStoreInterface;
 
@@ -46,7 +45,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      */
     public function prune(bool $removeTemporary = false): iterable
     {
-        $unusedContentStreams = $this->contentRepository->getContentStreamFinder()->findUnusedContentStreams(
+        $unusedContentStreams = $this->contentRepository->getContentGraph()->findUnusedContentStreams(
             $removeTemporary
         );
 
@@ -72,7 +71,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      */
     public function pruneRemovedFromEventStream(): iterable
     {
-        $removedContentStreams = $this->contentRepository->getContentStreamFinder()
+        $removedContentStreams = $this->contentRepository->getContentGraph()
             ->findUnusedAndRemovedContentStreams();
 
         foreach ($removedContentStreams as $removedContentStream) {
@@ -86,7 +85,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
 
     public function pruneAll(): void
     {
-        $contentStreamIds = $this->contentRepository->getContentStreamFinder()->findAllIds();
+        $contentStreamIds = $this->contentRepository->getContentGraph()->findAllContentStreamIds();
 
         foreach ($contentStreamIds as $contentStreamId) {
             $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName();

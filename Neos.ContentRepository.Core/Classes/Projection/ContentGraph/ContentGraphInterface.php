@@ -24,6 +24,8 @@ use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotEx
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
  * This is the MAIN ENTRY POINT for the Content Repository. This class exists only
@@ -158,4 +160,39 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @internal only for consumption in testcases
      */
     public function countNodes(): int;
+
+    /**
+     * @return iterable<ContentStreamId>
+     * @internal To be moved to ContentGraphAdapter, see https://github.com/neos/neos-development-collection/pull/4979
+     */
+    public function findAllContentStreamIds(): iterable;
+
+    /**
+     * @param bool $findTemporaryContentStreams if TRUE, will find all content streams not bound to a workspace
+     * @return array<int,ContentStreamId>
+     * @internal To be moved to ContentGraphAdapter, see https://github.com/neos/neos-development-collection/pull/4979
+     */
+    public function findUnusedContentStreams(bool $findTemporaryContentStreams): iterable;
+
+    /**
+     * @internal To be moved to ContentGraphAdapter, see https://github.com/neos/neos-development-collection/pull/4979
+     */
+    public function findStateForContentStream(ContentStreamId $contentStreamId): ?ContentStreamState;
+
+    /**
+     * @return array<int,ContentStreamId>
+     * @internal To be moved to ContentGraphAdapter, see https://github.com/neos/neos-development-collection/pull/4979
+     */
+    public function findUnusedAndRemovedContentStreams(): iterable;
+
+    /**
+     * @internal To be moved to ContentGraphAdapter, see https://github.com/neos/neos-development-collection/pull/4979
+     */
+    public function findVersionForContentStream(ContentStreamId $contentStreamId): MaybeVersion;
+
+    /**
+     * @internal To be moved to ContentGraphAdapter, see https://github.com/neos/neos-development-collection/pull/4979
+     */
+    public function hasContentStream(ContentStreamId $contentStreamId): bool;
+
 }

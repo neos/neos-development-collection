@@ -40,6 +40,9 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\EventStore\Model\Event\Version;
+use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
  * The Doctrine DBAL adapter content graph
@@ -346,23 +349,14 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->createQueryBuilder()
             ->select('COUNT(*)')
             ->from($this->tableNamePrefix . '_node');
-        $result = $queryBuilder->execute();
-        if (!$result instanceof Result) {
-            throw new \RuntimeException(sprintf('Failed to count nodes. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);
-        }
-        try {
-            return (int)$result->fetchOne();
-        } catch (DriverException | DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444590, $e);
-        }
+        return (int)$this->fetchOne($queryBuilder);
     }
 
     public function findUsedNodeTypeNames(): iterable
     {
-        $rows = $this->fetchRows($this->createQueryBuilder()
+        return array_map(NodeTypeName::fromString(...), $this->fetchFirstColumn($this->createQueryBuilder()
             ->select('DISTINCT nodetypename')
-            ->from($this->tableNamePrefix . '_node'));
-        return array_map(static fn (array $row) => NodeTypeName::fromString($row['nodetypename']), $rows);
+            ->from($this->tableNamePrefix . '_node')));
     }
 
     /**
@@ -373,6 +367,93 @@ final class ContentGraph implements ContentGraphInterface
     {
         return $this->subgraphs;
     }
+
+    public function findAllContentStreamIds(): iterable
+    {
+        $queryBuilder = $this->createQueryBuilder()
+            ->select('contentstreamid')
+            ->from($this->tableNamePrefix . '_contentstream');
+        return array_map(ContentStreamId::fromString(...), $this->fetchFirstColumn($queryBuilder));
+    }
+
+    public function findUnusedContentStreams(bool $findTemporaryContentStreams): iterable
+    {
+        $states = [
+            ContentStreamState::STATE_NO_LONGER_IN_USE->value,
+            ContentStreamState::STATE_REBASE_ERROR->value,
+        ];
+        if ($findTemporaryContentStreams === true) {
+            $states[] = ContentStreamState::STATE_CREATED->value;
+            $states[] = ContentStreamState::STATE_FORKED->value;
+        }
+        $queryBuilder = $this->createQueryBuilder()
+            ->select('contentstreamid')
+            ->from($this->tableNamePrefix . '_contentstream')
+            ->where('removed = 0')
+            ->andWhere('state IN (:states)')
+            ->setParameter('states', $states, Connection::PARAM_STR_ARRAY);
+        return array_map(ContentStreamId::fromString(...), $this->fetchFirstColumn($queryBuilder));
+    }
+
+    public function findStateForContentStream(ContentStreamId $contentStreamId): ?ContentStreamState
+    {
+        $queryBuilder = $this->createQueryBuilder()
+            ->select('state')
+            ->from($this->tableNamePrefix . '_contentstream')
+            ->where('contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
+            ->andWhere('removed = 0');
+        return ContentStreamState::tryFrom($this->fetchOne($queryBuilder) ?: '');
+    }
+
+    public function findUnusedAndRemovedContentStreams(): iterable
+    {
+        // initial case: find all content streams currently in direct use by a workspace
+        $queryBuilderDirectlyUsedContentStreamIds = $this->createQueryBuilder()
+            ->select('contentstreamid')
+            ->from($this->tableNamePrefix . '_contentstream')
+            ->where('state = :inUseState')->setParameter('inUseState', ContentStreamState::STATE_IN_USE_BY_WORKSPACE->value)
+            ->andWhere('removed = 0');
+
+        // now, when a content stream is in use by a workspace, its source content stream is also "transitively" in use.
+        $queryBuilderTransitivelyUsedContentStreamIds = $this->createQueryBuilder()
+            ->select('cs.sourceContentStreamId')
+            ->from($this->tableNamePrefix . '_contentstream', 'cs')
+            ->join('cs', 'cte', 'transitiveUsedContentStreams', 'cs.contentStreamId = transitiveUsedContentStreams.contentStreamId')
+            ->where('sourcecontentstreamid IS NOT NULL');
+
+        // now, we check for removed content streams which we do not need anymore transitively
+        $queryBuilderCte = $this->createQueryBuilder()
+            ->select('cs.contentstreamid')
+            ->from($this->tableNamePrefix . '_contentstream', 'cs')
+            ->where('removed = 1')
+            ->andWhere('NOT EXISTS (SELECT 1 FROM cte WHERE cs.contentstreamid = cte.contentstreamid)');
+
+        return array_map(static fn (array $row) => ContentStreamId::fromString($row['contentstreamid']), $this->fetchCteResults($queryBuilderDirectlyUsedContentStreamIds, $queryBuilderTransitivelyUsedContentStreamIds, $queryBuilderCte));
+    }
+
+    public function findVersionForContentStream(ContentStreamId $contentStreamId): MaybeVersion
+    {
+        $queryBuilder = $this->createQueryBuilder()
+            ->select('version')
+            ->from($this->tableNamePrefix . '_contentstream')
+            ->where('contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value);
+        $version = $this->fetchOne($queryBuilder);
+        return MaybeVersion::fromVersionOrNull($version === false ? null : Version::fromInteger((int)$version));
+    }
+
+    public function hasContentStream(ContentStreamId $contentStreamId): bool
+    {
+        $queryBuilder = $this->createQueryBuilder()
+            ->select('version')
+            ->from($this->tableNamePrefix . '_contentstream')
+            ->where('contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value);
+        $version = $this->fetchOne($queryBuilder);
+        return $version !== false;
+    }
+
+
+    // ----------------------------
+
 
     private function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId): QueryBuilder
     {
@@ -424,6 +505,50 @@ final class ContentGraph implements ContentGraphInterface
             return $result->fetchAllAssociative();
         } catch (DriverException | DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
+        }
+    }
+
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    private function fetchFirstColumn(QueryBuilder $queryBuilder): array
+    {
+        $result = $queryBuilder->execute();
+        if (!$result instanceof Result) {
+            throw new \RuntimeException(sprintf('Failed to execute query. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1712331889);
+        }
+        try {
+            return $result->fetchFirstColumn();
+        } catch (DriverException | DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch column from database: %s', $e->getMessage()), 1712331886, $e);
+        }
+    }
+
+    private function fetchOne(QueryBuilder $queryBuilder): mixed
+    {
+        $result = $queryBuilder->execute();
+        if (!$result instanceof Result) {
+            throw new \RuntimeException(sprintf('Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);
+        }
+        try {
+            return $result->fetchOne();
+        } catch (DriverException | DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444590, $e);
+        }
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function fetchCteResults(QueryBuilder $queryBuilderInitial, QueryBuilder $queryBuilderRecursive, QueryBuilder $queryBuilderCte, string $cteTableName = 'cte'): array
+    {
+        $query = 'WITH RECURSIVE ' . $cteTableName . ' AS (' . $queryBuilderInitial->getSQL() . ' UNION ' . $queryBuilderRecursive->getSQL() . ') ' . $queryBuilderCte->getSQL();
+        $parameters = array_merge($queryBuilderInitial->getParameters(), $queryBuilderRecursive->getParameters(), $queryBuilderCte->getParameters());
+        $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());
+        try {
+            return $this->client->getConnection()->fetchAllAssociative($query, $parameters, $parameterTypes);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch CTE result: %s', $e->getMessage()), 1712327066, $e);
         }
     }
 }

@@ -75,13 +75,13 @@ trait ConstraintChecks
         ContentRepository $contentRepository
     ): ContentStreamId {
         $contentStreamId = ContentStreamIdOverride::resolveContentStreamIdForWorkspace($contentRepository, $workspaceName);
-        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
+        if (!$contentRepository->getContentGraph()->hasContentStream($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692
             );
         }
-        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) === ContentStreamState::STATE_CLOSED) {
+        if ($contentRepository->getContentGraph()->findStateForContentStream($contentStreamId) === ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
                 1710260081
@@ -676,7 +676,7 @@ trait ConstraintChecks
         ContentRepository $contentRepository
     ): ExpectedVersion {
         return ExpectedVersion::fromVersion(
-            $contentRepository->getContentStreamFinder()
+            $contentRepository->getContentGraph()
                 ->findVersionForContentStream($contentStreamId)
                 ->unwrap()
         );

@@ -28,7 +28,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             $this->createNodeTable(),
             $this->createHierarchyRelationTable(),
             $this->createReferenceRelationTable(),
-            $this->createDimensionSpacePointsTable()
+            $this->createDimensionSpacePointsTable(),
+            $this->createContentStreamTable(),
         ]);
     }
 
@@ -93,5 +94,19 @@ class DoctrineDbalContentGraphSchemaBuilder
 
         return $table
             ->setPrimaryKey(['name', 'position', 'nodeanchorpoint']);
+    }
+
+    private function createContentStreamTable(): Table
+    {
+        $table = new Table($this->tableNamePrefix . '_contentstream', [
+            DbalSchemaFactory::columnForContentStreamId('contentStreamid')->setNotnull(true),
+            (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
+            DbalSchemaFactory::columnForContentStreamId('sourcecontentstreamid')->setNotnull(false),
+            // Should become a DB ENUM (unclear how to configure with DBAL) or int (latter needs adaption to code)
+            (new Column('state', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
+            (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
+        ]);
+        return $table
+            ->setPrimaryKey(['contentStreamid']);
     }
 }

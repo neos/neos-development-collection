@@ -35,6 +35,8 @@ use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotEx
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
  * The PostgreSQL adapter content hypergraph
@@ -317,5 +319,35 @@ final class ContentHypergraph implements ContentGraphInterface
     private function getDatabaseConnection(): DatabaseConnection
     {
         return $this->databaseClient->getConnection();
+    }
+
+    public function findAllContentStreamIds(): iterable
+    {
+        // TODO: Implement findAllContentStreamIds() method.
+    }
+
+    public function findUnusedContentStreams(bool $findTemporaryContentStreams): iterable
+    {
+        // TODO: Implement findUnusedContentStreams() method.
+    }
+
+    public function findStateForContentStream(ContentStreamId $contentStreamId): ?ContentStreamState
+    {
+        // TODO: Implement findStateForContentStream() method.
+    }
+
+    public function findUnusedAndRemovedContentStreams(): iterable
+    {
+        // TODO: Implement findUnusedAndRemovedContentStreams() method.
+    }
+
+    public function findVersionForContentStream(ContentStreamId $contentStreamId): MaybeVersion
+    {
+        // TODO: Implement findVersionForContentStream() method.
+    }
+
+    public function hasContentStream(ContentStreamId $contentStreamId): bool
+    {
+        // TODO: Implement hasContentStream() method.
     }
 }

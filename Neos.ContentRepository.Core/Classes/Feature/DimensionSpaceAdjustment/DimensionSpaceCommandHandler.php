@@ -174,7 +174,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
     ): ContentStreamId {
         $contentStreamId = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
             ?->currentContentStreamId;
-        if (!$contentStreamId || !$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
+        if (!$contentStreamId || !$contentRepository->getContentGraph()->hasContentStream($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId?->value . '" does not exist yet.',
                 1521386692

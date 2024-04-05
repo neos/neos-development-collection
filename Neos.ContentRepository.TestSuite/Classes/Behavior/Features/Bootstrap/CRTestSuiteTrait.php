@@ -277,9 +277,7 @@ trait CRTestSuiteTrait
     public function theContentStreamHasState(string $contentStreamId, string $expectedState): void
     {
         $contentStreamId = ContentStreamId::fromString($contentStreamId);
-        $contentStreamFinder = $this->currentContentRepository->getContentStreamFinder();
-
-        $actual = $contentStreamFinder->findStateForContentStream($contentStreamId);
+        $actual = $this->currentContentRepository->getContentGraph()->findStateForContentStream($contentStreamId);
         Assert::assertSame(ContentStreamState::tryFrom($expectedState), $actual);
     }
 

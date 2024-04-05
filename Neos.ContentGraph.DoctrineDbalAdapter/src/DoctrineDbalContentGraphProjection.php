@@ -7,6 +7,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\ContentStream;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
@@ -22,7 +23,11 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
+use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
@@ -44,6 +49,14 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
@@ -60,6 +73,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -73,6 +87,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     use SubtreeTagging;
     use NodeRemoval;
     use NodeMove;
+    use ContentStream;
 
 
     public const RELATION_DEFAULT_OFFSET = 128;
@@ -178,53 +193,79 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_hierarchyrelation');
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_referencerelation');
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_dimensionspacepoints');
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_contentstream');
     }
 
     public function canHandle(EventInterface $event): bool
     {
         return in_array($event::class, [
-            RootNodeAggregateWithNodeWasCreated::class,
-            RootNodeAggregateDimensionsWereUpdated::class,
-            NodeAggregateWithNodeWasCreated::class,
-            NodeAggregateNameWasChanged::class,
+            ContentStreamWasClosed::class,
+            ContentStreamWasCreated::class,
             ContentStreamWasForked::class,
             ContentStreamWasRemoved::class,
-            NodePropertiesWereSet::class,
-            NodeReferencesWereSet::class,
-            NodeAggregateTypeWasChanged::class,
-            DimensionSpacePointWasMoved::class,
+            ContentStreamWasReopened::class,
             DimensionShineThroughWasAdded::class,
-            NodeAggregateWasRemoved::class,
+            DimensionSpacePointWasMoved::class,
+            NodeAggregateNameWasChanged::class,
+            NodeAggregateTypeWasChanged::class,
             NodeAggregateWasMoved::class,
-            NodeSpecializationVariantWasCreated::class,
+            NodeAggregateWasRemoved::class,
+            NodeAggregateWithNodeWasCreated::class,
             NodeGeneralizationVariantWasCreated::class,
             NodePeerVariantWasCreated::class,
+            NodePropertiesWereSet::class,
+            NodeReferencesWereSet::class,
+            NodeSpecializationVariantWasCreated::class,
+            RootNodeAggregateDimensionsWereUpdated::class,
+            RootNodeAggregateWithNodeWasCreated::class,
+            RootWorkspaceWasCreated::class,
             SubtreeWasTagged::class,
             SubtreeWasUntagged::class,
-        ]);
+            WorkspaceRebaseFailed::class,
+            WorkspaceWasCreated::class,
+            WorkspaceWasDiscarded::class,
+            WorkspaceWasPartiallyDiscarded::class,
+            WorkspaceWasPartiallyPublished::class,
+            WorkspaceWasPublished::class,
+            WorkspaceWasRebased::class,
+        ]) || $event instanceof EmbedsContentStreamAndNodeAggregateId;
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        if ($event instanceof EmbedsContentStreamAndNodeAggregateId) {
+            $this->setContentStreamVersion($event->getContentStreamId(), $eventEnvelope->version);
+        }
         match ($event::class) {
-            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
-            RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
-            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
-            NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($event, $eventEnvelope),
-            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
-            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
-            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
-            NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event, $eventEnvelope),
-            NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event, $eventEnvelope),
+            ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event, $eventEnvelope),
+            ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event, $eventEnvelope),
+            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event, $eventEnvelope),
+            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
+            ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event, $eventEnvelope),
+            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
             DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
-            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
-            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
+            NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($event, $eventEnvelope),
+            NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event, $eventEnvelope),
             NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
-            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event, $eventEnvelope),
+            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
+            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event, $eventEnvelope),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event, $eventEnvelope),
+            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
+            NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event, $eventEnvelope),
+            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event, $eventEnvelope),
+            RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
+            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
+            WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
+            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
+            WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
+            WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),
+            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
+            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
@@ -589,9 +630,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     /**
      * @throws \Throwable
      */
-    private function whenContentStreamWasForked(ContentStreamWasForked $event): void
+    private function whenContentStreamWasForked(ContentStreamWasForked $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
 
             //
             // 1) Copy HIERARCHY RELATIONS (this is the MAIN OPERATION here)
@@ -623,12 +664,14 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
             // NOTE: as reference edges are attached to Relation Anchor Points (and they are lazily copy-on-written),
             // we do not need to copy reference edges here (but we need to do it during copy on write).
+
+            $this->markContentStreamForked($event->newContentStreamId, $eventEnvelope->version, $event->sourceContentStreamId);
         });
     }
 
-    private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
+    private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
 
             // Drop hierarchy relations
             $this->getDatabaseConnection()->executeUpdate('
@@ -660,6 +703,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                                   = ' . $this->tableNamePrefix . '_referencerelation.nodeanchorpoint
                     )
             ');
+
+            $this->markContentStreamRemoved($event->contentStreamId, $eventEnvelope->version);
         });
     }
 
@@ -991,9 +1036,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         });
     }
 
-    private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
+    private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
             $this->dimensionSpacePointsRepository->insertDimensionSpacePoint($event->target);
 
             // 1) hierarchy relations
@@ -1026,6 +1071,142 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     'newDimensionSpacePointHash' => $event->target->hash,
                 ]
             );
+
+            $this->setContentStreamVersion($event->contentStreamId, $eventEnvelope->version);
+        });
+    }
+
+    private function whenContentStreamWasCreated(ContentStreamWasCreated $event, EventEnvelope $eventEnvelope): void
+    {
+        $this->transactional(fn () => $this->addContentStream($event->contentStreamId, $eventEnvelope->version));
+    }
+
+    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
+    {
+        // the content stream is in use now
+        $this->transactional(fn () => $this->setContentStreamState($event->newContentStreamId, ContentStreamState::STATE_IN_USE_BY_WORKSPACE));
+    }
+
+    private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
+    {
+        // the content stream is in use now
+        $this->transactional(fn () => $this->setContentStreamState($event->newContentStreamId, ContentStreamState::STATE_IN_USE_BY_WORKSPACE));
+    }
+
+    private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
+    {
+        $this->transactional(function () use ($event) {
+            // the new content stream is in use now
+            $this->setContentStreamState(
+                $event->newContentStreamId,
+                ContentStreamState::STATE_IN_USE_BY_WORKSPACE
+            );
+
+            // the previous content stream is no longer in use
+            $this->setContentStreamState(
+                $event->previousContentStreamId,
+                ContentStreamState::STATE_NO_LONGER_IN_USE
+            );
+        });
+    }
+
+    private function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
+    {
+        $this->transactional(function () use ($event) {
+            // the new content stream is in use now
+            $this->setContentStreamState(
+                $event->newContentStreamId,
+                ContentStreamState::STATE_IN_USE_BY_WORKSPACE
+            );
+
+            // the previous content stream is no longer in use
+            $this->setContentStreamState(
+                $event->previousContentStreamId,
+                ContentStreamState::STATE_NO_LONGER_IN_USE
+            );
+        });
+    }
+
+    private function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event): void
+    {
+        $this->transactional(function () use ($event) {
+            // the new content stream is in use now
+            $this->setContentStreamState(
+                $event->newSourceContentStreamId,
+                ContentStreamState::STATE_IN_USE_BY_WORKSPACE
+            );
+
+            // the previous content stream is no longer in use
+            $this->setContentStreamState(
+                $event->previousSourceContentStreamId,
+                ContentStreamState::STATE_NO_LONGER_IN_USE
+            );
+        });
+    }
+
+    private function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
+    {
+        $this->transactional(function () use ($event) {
+            // the new content stream is in use now
+            $this->setContentStreamState(
+                $event->newSourceContentStreamId,
+                ContentStreamState::STATE_IN_USE_BY_WORKSPACE
+            );
+
+            // the previous content stream is no longer in use
+            $this->setContentStreamState(
+                $event->previousSourceContentStreamId,
+                ContentStreamState::STATE_NO_LONGER_IN_USE
+            );
+        });
+    }
+
+    private function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
+    {
+        $this->transactional(function () use ($event) {
+            // the new content stream is in use now
+            $this->setContentStreamState(
+                $event->newContentStreamId,
+                ContentStreamState::STATE_IN_USE_BY_WORKSPACE
+            );
+
+            // the previous content stream is no longer in use
+            $this->setContentStreamState(
+                $event->previousContentStreamId,
+                ContentStreamState::STATE_NO_LONGER_IN_USE
+            );
+        });
+    }
+
+    private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
+    {
+        $this->transactional(function () use ($event) {
+            $this->setContentStreamState(
+                $event->candidateContentStreamId,
+                ContentStreamState::STATE_REBASE_ERROR
+            );
+        });
+    }
+
+    private function whenContentStreamWasClosed(ContentStreamWasClosed $event, EventEnvelope $eventEnvelope): void
+    {
+        $this->transactional(function () use ($event, $eventEnvelope) {
+            $this->setContentStreamState(
+                $event->contentStreamId,
+                ContentStreamState::STATE_CLOSED,
+            );
+            $this->setContentStreamVersion($event->contentStreamId, $eventEnvelope->version);
+        });
+    }
+
+    private function whenContentStreamWasReopened(ContentStreamWasReopened $event, EventEnvelope $eventEnvelope): void
+    {
+        $this->transactional(function () use ($event, $eventEnvelope) {
+            $this->setContentStreamState(
+                $event->contentStreamId,
+                $event->previousState,
+            );
+            $this->setContentStreamVersion($event->contentStreamId, $eventEnvelope->version);
         });
     }
 

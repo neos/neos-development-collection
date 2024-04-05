@@ -488,7 +488,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        $oldWorkspaceContentStreamIdState = $contentRepository->getContentStreamFinder()->findStateForContentStream($oldWorkspaceContentStreamId);
+        $oldWorkspaceContentStreamIdState = $contentRepository->getContentGraph()->findStateForContentStream($oldWorkspaceContentStreamId);
         if ($oldWorkspaceContentStreamIdState === null) {
             throw new \DomainException('Cannot publish nodes on a workspace with a stateless content stream', 1710410114);
         }
@@ -624,7 +624,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        $oldWorkspaceContentStreamIdState = $contentRepository->getContentStreamFinder()->findStateForContentStream($oldWorkspaceContentStreamId);
+        $oldWorkspaceContentStreamIdState = $contentRepository->getContentGraph()->findStateForContentStream($oldWorkspaceContentStreamId);
         if ($oldWorkspaceContentStreamIdState === null) {
             throw new \DomainException('Cannot discard nodes on a workspace with a stateless content stream', 1710408112);
         }
