@@ -35,11 +35,11 @@ final class WorkspaceProvider
     private array $instances;
 
     public function __construct(
-        private ContentRepositoryRegistry $contentRepositoryRegistry
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry
     ) {
     }
 
-    public function retrieveForWorkspaceName(
+    public function provideForWorkspaceName(
         ContentRepositoryId $contentRepositoryId,
         WorkspaceName $workspaceName,
     ): Workspace {
