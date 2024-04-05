@@ -78,7 +78,7 @@ trait TetheredNodeInternals
 
         if (count($childNodeAggregates) === 0) {
             // there is no tethered child node aggregate already; let's create it!
-            $nodeType = $this->nodeTypeManager->getNodeType($parentNodeAggregate->nodeTypeName);
+            $nodeType = $this->nodeTypeManager->requireNodeType($parentNodeAggregate->nodeTypeName);
             if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 $events = [];
                 $tetheredNodeAggregateId = $tetheredNodeAggregateId ?: NodeAggregateId::create();
@@ -92,7 +92,9 @@ trait TetheredNodeInternals
                             $tetheredNodeAggregateId,
                             $creationOriginDimensionSpacePoint,
                             $rootGeneralizationOrigin,
-                            $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization)
+                            InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                                $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization),
+                            )
                         );
                     } else {
                         $events[] = new NodeAggregateWithNodeWasCreated(
@@ -100,7 +102,9 @@ trait TetheredNodeInternals
                             $tetheredNodeAggregateId,
                             $expectedTetheredNodeType->name,
                             $rootGeneralizationOrigin,
-                            $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization),
+                            InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                                $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization)
+                            ),
                             $parentNodeAggregate->nodeAggregateId,
                             $tetheredNodeName,
                             SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter()),
@@ -117,7 +121,9 @@ trait TetheredNodeInternals
                         $tetheredNodeAggregateId ?: NodeAggregateId::create(),
                         $expectedTetheredNodeType->name,
                         $originDimensionSpacePoint,
-                        $parentNodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
+                        InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                            $parentNodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
+                        ),
                         $parentNodeAggregate->nodeAggregateId,
                         $tetheredNodeName,
                         SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter()),

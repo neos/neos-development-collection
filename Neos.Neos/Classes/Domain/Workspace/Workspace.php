@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFi
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -43,11 +44,21 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
 /**
  * Neos' workspace model
  *
+ * Provides a high-level API to evaluate, publish or discard changes in a given workspace.
+ * Uses the low-level content repository workspace read model for information retrieval,
+ * {@see \Neos\ContentRepository\Core\Projection\Workspace\Workspace}
+ *
+ * This model is mutable and will for example update itself after publishing, or changing the base workspace.
+ * Mutations in the content repository that are not triggered by this model (by using the low level API) will not be reflected.
+ *
  * @api
  */
 #[Flow\Proxy(false)]
 final class Workspace
 {
+    public readonly ContentRepositoryId $contentRepositoryId;
+
+    /** @internal please use the {@see WorkspaceProvider} instead */
     public function __construct(
         public readonly WorkspaceName $name,
         private ContentStreamId $currentContentStreamId,
@@ -55,11 +66,7 @@ final class Workspace
         private ?WorkspaceName $currentBaseWorkspaceName,
         private readonly ContentRepository $contentRepository,
     ) {
-    }
-
-    public function getCurrentContentStreamId(): ContentStreamId
-    {
-        return $this->currentContentStreamId;
+        $this->contentRepositoryId = $contentRepository->id;
     }
 
     public function getCurrentStatus(): WorkspaceStatus
@@ -72,6 +79,7 @@ final class Workspace
         return $this->currentBaseWorkspaceName;
     }
 
+    /** @internal experimental api, until actually used by the Neos.Ui */
     public function countAllChanges(): int
     {
         $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
@@ -80,6 +88,7 @@ final class Workspace
         return count($changes);
     }
 
+    /** @internal experimental api, until actually used by the Neos.Ui */
     public function countChangesInSite(NodeAggregateId $siteId): int
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
@@ -96,6 +105,7 @@ final class Workspace
         return count($changes);
     }
 
+    /** @internal experimental api, until actually used by the Neos.Ui */
     public function countChangesInDocument(NodeAggregateId $documentId): int
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
@@ -112,20 +122,25 @@ final class Workspace
         return count($changes);
     }
 
-    public function publishAllChanges(): int
+    /** @internal should not be necessary in user land code */
+    public function getCurrentContentStreamId(): ContentStreamId
+    {
+        return $this->currentContentStreamId;
+    }
+
+    public function publishAllChanges(): PublishingResult
     {
         $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
         $changes = $changeFinder->findByContentStreamId($this->currentContentStreamId);
 
         $this->publish();
 
-        return count($changes);
+        return new PublishingResult(
+            count($changes)
+        );
     }
 
-    /**
-     * @return int The amount of changes that were published
-     */
-    public function publishChangesInSite(NodeAggregateId $siteId): int
+    public function publishChangesInSite(NodeAggregateId $siteId): PublishingResult
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
         $this->requireNodeToBeOfType(
@@ -140,13 +155,12 @@ final class Workspace
 
         $this->publishNodes($nodeIdsToPublish);
 
-        return count($nodeIdsToPublish);
+        return new PublishingResult(
+            count($nodeIdsToPublish)
+        );
     }
 
-    /**
-     * @return int The amount of changes that were published
-     */
-    public function publishChangesInDocument(NodeAggregateId $documentId): int
+    public function publishChangesInDocument(NodeAggregateId $documentId): PublishingResult
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
         $this->requireNodeToBeOfType(
@@ -161,23 +175,24 @@ final class Workspace
 
         $this->publishNodes($nodeIdsToPublish);
 
-        return count($nodeIdsToPublish);
+        return new PublishingResult(
+            count($nodeIdsToPublish)
+        );
     }
 
-    public function discardAllChanges(): int
+    public function discardAllChanges(): DiscardingResult
     {
         $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
         $changes = $changeFinder->findByContentStreamId($this->currentContentStreamId);
 
         $this->discard();
 
-        return count($changes);
+        return new DiscardingResult(
+            count($changes)
+        );
     }
 
-    /**
-     * @return int The amount of changes that were discarded
-     */
-    public function discardChangesInSite(NodeAggregateId $siteId): int
+    public function discardChangesInSite(NodeAggregateId $siteId): DiscardingResult
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forSite();
         $this->requireNodeToBeOfType(
@@ -192,13 +207,12 @@ final class Workspace
 
         $this->discardNodes($nodeIdsToDiscard);
 
-        return count($nodeIdsToDiscard);
+        return new DiscardingResult(
+            count($nodeIdsToDiscard)
+        );
     }
 
-    /**
-     * @return int The amount of changes that were discarded
-     */
-    public function discardChangesInDocument(NodeAggregateId $documentId): int
+    public function discardChangesInDocument(NodeAggregateId $documentId): DiscardingResult
     {
         $ancestorNodeTypeName = NodeTypeNameFactory::forDocument();
         $this->requireNodeToBeOfType(
@@ -213,20 +227,20 @@ final class Workspace
 
         $this->discardNodes($nodeIdsToDiscard);
 
-        return count($nodeIdsToDiscard);
+        return new DiscardingResult(
+            count($nodeIdsToDiscard)
+        );
     }
 
     /**
      * @throws WorkspaceRebaseFailed
      */
-    public function rebase(bool $force): void
+    public function rebase(RebaseErrorHandlingStrategy $rebaseErrorHandlingStrategy = RebaseErrorHandlingStrategy::STRATEGY_FAIL): void
     {
         $rebaseCommand = RebaseWorkspace::create(
             $this->name
-        );
-        if ($force) {
-            $rebaseCommand = $rebaseCommand->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::STRATEGY_FORCE);
-        }
+        )->withErrorHandlingStrategy($rebaseErrorHandlingStrategy);
+
         $this->contentRepository->handle($rebaseCommand)->block();
 
         $this->updateCurrentState();
@@ -262,7 +276,7 @@ final class Workspace
         if (
             !$this->contentRepository->getNodeTypeManager()
                 ->getNodeType($nodeAggregate->nodeTypeName)
-                ->isOfType($nodeTypeName)
+                ?->isOfType($nodeTypeName)
         ) {
             throw new \DomainException(
                 'Node aggregate ' . $nodeAggregateId->value . ' is not of expected type ' . $nodeTypeName->value,

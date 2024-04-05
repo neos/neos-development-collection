@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Module\Management;
 
 use Doctrine\DBAL\DBALException;
-use JsonException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
@@ -62,7 +61,7 @@ use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
 use Neos\Neos\Domain\Workspace\DiscardAllChanges;
 use Neos\Neos\Domain\Workspace\PublishAllChanges;
-use Neos\Neos\Domain\Workspace\WorkspaceFactory;
+use Neos\Neos\Domain\Workspace\WorkspaceProvider;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
@@ -98,7 +97,7 @@ class WorkspacesController extends AbstractModuleController
     protected PackageManager $packageManager;
 
     #[Flow\Inject]
-    protected WorkspaceFactory $workspaceFactory;
+    protected WorkspaceProvider $workspaceProvider;
 
     /**
      * Display a list of unpublished content
@@ -658,7 +657,7 @@ class WorkspacesController extends AbstractModuleController
             $workspace
         );
 
-        $workspace = $this->workspaceFactory->create(
+        $workspace = $this->workspaceProvider->provideForWorkspaceName(
             $command->contentRepositoryId,
             $command->workspaceName
         );
@@ -693,7 +692,7 @@ class WorkspacesController extends AbstractModuleController
             $contentRepositoryId,
             $workspace
         );
-        $workspace = $this->workspaceFactory->create(
+        $workspace = $this->workspaceProvider->provideForWorkspaceName(
             $command->contentRepositoryId,
             $command->workspaceName
         );
@@ -714,7 +713,7 @@ class WorkspacesController extends AbstractModuleController
      * Computes the number of added, changed and removed nodes for the given workspace
      *
      * @return array<string,int>
-     * @throws JsonException
+     * @throws \JsonException
      */
     protected function computeChangesCount(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {
@@ -740,7 +739,7 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Builds an array of changes for sites in the given workspace
      * @return array<string,mixed>
-     * @throws JsonException
+     * @throws \JsonException
      */
     protected function computeSiteChanges(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {

@@ -104,7 +104,11 @@ final class CatchUp
                 if ($eventEnvelope->sequenceNumber->value <= $highestAppliedSequenceNumber->value) {
                     continue;
                 }
-                ($this->eventHandler)($eventEnvelope);
+                try {
+                    ($this->eventHandler)($eventEnvelope);
+                } catch (\Exception $e) {
+                    throw new \RuntimeException(sprintf('Exception while catching up to sequence number %d', $eventEnvelope->sequenceNumber->value), 1710707311, $e);
+                }
                 $iteration++;
                 if ($this->batchSize === 1 || $iteration % $this->batchSize === 0) {
                     if ($this->onBeforeBatchCompletedHook) {
@@ -121,11 +125,9 @@ final class CatchUp
                 if ($this->onBeforeBatchCompletedHook) {
                     ($this->onBeforeBatchCompletedHook)();
                 }
-            } catch (\Throwable $e) {
+            } finally {
                 $this->checkpointStorage->updateAndReleaseLock($highestAppliedSequenceNumber);
-                throw $e;
             }
-            $this->checkpointStorage->updateAndReleaseLock($highestAppliedSequenceNumber);
         }
         return $highestAppliedSequenceNumber;
     }

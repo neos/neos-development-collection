@@ -523,7 +523,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             // 4) using the new content stream, apply the matching commands
             ContentStreamIdOverride::applyContentStreamIdToClosure(
                 $command->contentStreamIdForMatchingPart,
-                function () use ($matchingCommands, $contentRepository, $baseWorkspace, $command): void {
+                function () use ($matchingCommands, $contentRepository, $baseWorkspace): void {
                     foreach ($matchingCommands as $matchingCommand) {
                         if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
                             throw new \RuntimeException(
@@ -534,7 +534,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
                         $contentRepository->handle($matchingCommand->createCopyForWorkspace(
                             $baseWorkspace->workspaceName,
-                            $command->contentStreamIdForMatchingPart
                         ))->block();
                     }
                 }
@@ -660,7 +659,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         try {
             ContentStreamIdOverride::applyContentStreamIdToClosure(
                 $command->newContentStreamId,
-                function () use ($commandsToKeep, $contentRepository, $baseWorkspace, $command): void {
+                function () use ($commandsToKeep, $contentRepository, $baseWorkspace): void {
                     foreach ($commandsToKeep as $matchingCommand) {
                         if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
                             throw new \RuntimeException(
@@ -671,7 +670,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
                         $contentRepository->handle($matchingCommand->createCopyForWorkspace(
                             $baseWorkspace->workspaceName,
-                            $command->newContentStreamId
                         ))->block();
                     }
                 }

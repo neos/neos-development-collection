@@ -158,7 +158,6 @@ Feature: Create node aggregate with node
   Scenario: Try to create a node aggregate with a property the node type does not declare
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                 |
-      | contentStreamId       | "cs-identifier"                       |
       | nodeAggregateId       | "nody-mc-nodeface"                    |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |

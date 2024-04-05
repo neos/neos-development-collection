@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspac
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
@@ -36,7 +37,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\Domain\Workspace\WorkspaceFactory;
+use Neos\Neos\Domain\Workspace\WorkspaceProvider;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 
 /**
@@ -55,7 +56,7 @@ class WorkspaceCommandController extends CommandController
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
-    protected WorkspaceFactory $workspaceFactory;
+    protected WorkspaceProvider $workspaceProvider;
 
     /**
      * Publish changes of a workspace
@@ -68,7 +69,7 @@ class WorkspaceCommandController extends CommandController
     public function publishCommand(string $workspace, string $contentRepositoryIdentifier = 'default'): void
     {
         // @todo: bypass access control
-        $workspace = $this->workspaceFactory->create(
+        $workspace = $this->workspaceProvider->provideForWorkspaceName(
             ContentRepositoryId::fromString($contentRepositoryIdentifier),
             WorkspaceName::fromString($workspace)
         );
@@ -92,7 +93,7 @@ class WorkspaceCommandController extends CommandController
     public function discardCommand(string $workspace, string $contentRepositoryIdentifier = 'default'): void
     {
         // @todo: bypass access control
-        $workspace = $this->workspaceFactory->create(
+        $workspace = $this->workspaceProvider->provideForWorkspaceName(
             ContentRepositoryId::fromString($contentRepositoryIdentifier),
             WorkspaceName::fromString($workspace)
         );
@@ -100,10 +101,10 @@ class WorkspaceCommandController extends CommandController
         try {
             $workspace->discardAllChanges();
         } catch (WorkspaceDoesNotExist $exception) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
+            $this->outputLine('Workspace "%s" does not exist', [$workspace->name->value]);
             $this->quit(1);
         }
-        $this->outputLine('Discarded all nodes in workspace %s', [$workspace]);
+        $this->outputLine('Discarded all nodes in workspace %s', [$workspace->name->value]);
     }
 
     /**
@@ -120,21 +121,20 @@ class WorkspaceCommandController extends CommandController
     {
         try {
             // @todo: bypass access control
-            $workspace = $this->workspaceFactory->create(
+            $workspace = $this->workspaceProvider->provideForWorkspaceName(
                 ContentRepositoryId::fromString($contentRepositoryIdentifier),
                 WorkspaceName::fromString($workspace)
             );
+            $workspace->rebase($force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL);
         } catch (WorkspaceDoesNotExist $exception) {
             $this->outputLine('Workspace "%s" does not exist', [$workspace]);
             $this->quit(1);
-        }
-
-        if ($workspace->getCurrentStatus() === WorkspaceStatus::OUTDATED_CONFLICT) {
+        } catch (WorkspaceRebaseFailed $exception) {
             $this->outputLine('Rebasing of workspace %s is not possible due to conflicts. You can try the --force option.', [$workspace]);
             $this->quit(1);
         }
 
-        $this->outputLine('Rebased workspace %s', [$workspace]);
+        $this->outputLine('Rebased workspace %s', [$workspace->name->value]);
     }
 
     /**
@@ -298,7 +298,7 @@ class WorkspaceCommandController extends CommandController
                 $this->quit(5);
             }
             // @todo bypass access control?
-            $workspace = $this->workspaceFactory->create(
+            $workspace = $this->workspaceProvider->provideForWorkspaceName(
                 $contentRepositoryId,
                 $workspaceName
             );

@@ -114,7 +114,7 @@ final class ContentCommandController extends CommandController
 
         $contentRepositoryInstance->handle(
             MoveDimensionSpacePoint::create(
-                $workspaceInstance->currentContentStreamId,
+                $workspaceInstance->workspaceName,
                 $sourceDimensionSpacePoint,
                 $targetDimensionSpacePoint
             )
@@ -189,7 +189,7 @@ final class ContentCommandController extends CommandController
         foreach ($childNodes as $childNode) {
             if ($childNode->classification->isRegular()) {
                 $childNodeType = $contentRepository->getNodeTypeManager()->getNodeType($childNode->nodeTypeName);
-                if ($childNodeType->isOfType('Neos.Neos:Document')) {
+                if ($childNodeType?->isOfType('Neos.Neos:Document')) {
                     $this->output("%s- %s\n", [
                         str_repeat('  ', $level),
                         $childNode->getProperty('uriPathSegment') ?? $childNode->nodeAggregateId->value
@@ -204,7 +204,7 @@ final class ContentCommandController extends CommandController
                         $target
                     ))->block();
                 } catch (DimensionSpacePointIsAlreadyOccupied $e) {
-                    if ($childNodeType->isOfType('Neos.Neos:Document')) {
+                    if ($childNodeType?->isOfType('Neos.Neos:Document')) {
                         $this->output("%s  (already exists)\n", [
                             str_repeat('  ', $level)
                         ]);
