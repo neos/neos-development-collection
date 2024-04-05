@@ -95,66 +95,6 @@ interface ContentGraphInterface extends ProjectionStateInterface
     public function findUsedNodeTypeNames(): iterable;
 
     /**
-     * @internal only for consumption inside the Command Handler
-     */
-    public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $childNodeAggregateId,
-        OriginDimensionSpacePoint $childOriginDimensionSpacePoint
-    ): ?NodeAggregate;
-
-    /**
-     * @return iterable<NodeAggregate>
-     * @internal only for consumption inside the Command Handler
-     */
-    public function findParentNodeAggregates(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $childNodeAggregateId
-    ): iterable;
-
-    /**
-     * @return iterable<NodeAggregate>
-     * @internal only for consumption inside the Command Handler
-     */
-    public function findChildNodeAggregates(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $parentNodeAggregateId
-    ): iterable;
-
-    /**
-     * A node aggregate may have multiple child node aggregates with the same name
-     * as long as they do not share dimension space coverage
-     *
-     * @return iterable<NodeAggregate>
-     * @internal only for consumption inside the Command Handler
-     */
-    public function findChildNodeAggregatesByName(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $parentNodeAggregateId,
-        NodeName $name
-    ): iterable;
-
-    /**
-     * @return iterable<NodeAggregate>
-     * @internal only for consumption inside the Command Handler
-     */
-    public function findTetheredChildNodeAggregates(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $parentNodeAggregateId
-    ): iterable;
-
-    /**
-     * @internal only for consumption inside the Command Handler
-     */
-    public function getDimensionSpacePointsOccupiedByChildNodeName(
-        ContentStreamId $contentStreamId,
-        NodeName $nodeName,
-        NodeAggregateId $parentNodeAggregateId,
-        OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
-        DimensionSpacePointSet $dimensionSpacePointsToCheck
-    ): DimensionSpacePointSet;
-
-    /**
      * @internal only for consumption in testcases
      */
     public function countNodes(): int;

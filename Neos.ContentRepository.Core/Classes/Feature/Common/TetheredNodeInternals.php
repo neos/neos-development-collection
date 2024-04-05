@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Core\Feature\Common;
  * source code.
  */
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -43,8 +42,7 @@ trait TetheredNodeInternals
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        NodeAggregate $nodeAggregate,
-        ContentRepository $contentRepository
+        NodeAggregate $nodeAggregate
     ): Events;
 
     /**
@@ -60,11 +58,14 @@ trait TetheredNodeInternals
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeName $tetheredNodeName,
         ?NodeAggregateId $tetheredNodeAggregateId,
-        NodeType $expectedTetheredNodeType,
-        ContentRepository $contentRepository
+        NodeType $expectedTetheredNodeType
     ): Events {
-        $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
+        // TODO: We should probably just directly use the workspace AND contentStreamId from the $parentNodeAggregate
+        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($parentNodeAggregate->contentStreamId);
+
+        $childNodeAggregates = $this->getContentGraphAdapter()->findChildNodeAggregatesByName(
             $parentNodeAggregate->contentStreamId,
+            $workspace?->workspaceName,
             $parentNodeAggregate->nodeAggregateId,
             $tetheredNodeName
         );
@@ -152,8 +153,7 @@ trait TetheredNodeInternals
                 $parentNodeAggregate->contentStreamId,
                 $childNodeSource->originDimensionSpacePoint,
                 $originDimensionSpacePoint,
-                $parentNodeAggregate,
-                $contentRepository
+                $parentNodeAggregate
             );
         } else {
             throw new \RuntimeException(

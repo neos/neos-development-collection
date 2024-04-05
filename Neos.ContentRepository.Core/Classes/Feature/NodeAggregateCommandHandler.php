@@ -73,39 +73,18 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     use TetheredNodeInternals;
 
     /**
-     * Used for constraint checks against the current outside configuration state of node types
-     */
-    private NodeTypeManager $nodeTypeManager;
-
-    /**
-     * Used for variation resolution from the current outside state of content dimensions
-     */
-    private DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph;
-
-    /**
-     * Used for constraint checks against the current outside configuration state of content dimensions
-     */
-    private DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper;
-
-    protected PropertyConverter $propertyConverter;
-
-    /**
      * can be disabled in {@see NodeAggregateCommandHandler::withoutAncestorNodeTypeConstraintChecks()}
      */
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
     public function __construct(
-        NodeTypeManager $nodeTypeManager,
-        DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
-        DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        PropertyConverter $propertyConverter
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
+        private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        private readonly PropertyConverter $propertyConverter,
+        protected readonly ContentGraphAdapterInterface $contentGraphAdapter
     ) {
-        $this->nodeTypeManager = $nodeTypeManager;
-        $this->contentDimensionZookeeper = $contentDimensionZookeeper;
-        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
-        $this->propertyConverter = $propertyConverter;
     }
-
 
     public function canHandle(CommandInterface $command): bool
     {
@@ -116,29 +95,29 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
-            SetNodeProperties::class => $this->handleSetNodeProperties($command, $contentRepository),
+            SetNodeProperties::class => $this->handleSetNodeProperties($command),
             SetSerializedNodeProperties::class
-                => $this->handleSetSerializedNodeProperties($command, $contentRepository),
-            SetNodeReferences::class => $this->handleSetNodeReferences($command, $contentRepository),
+            => $this->handleSetSerializedNodeProperties($command),
+            SetNodeReferences::class => $this->handleSetNodeReferences($command),
             SetSerializedNodeReferences::class
-                => $this->handleSetSerializedNodeReferences($command, $contentRepository),
-            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $contentRepository),
-            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $contentRepository),
+            => $this->handleSetSerializedNodeReferences($command),
+            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command),
+            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command),
             CreateNodeAggregateWithNode::class
-                => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
+            => $this->handleCreateNodeAggregateWithNode($command),
             CreateNodeAggregateWithNodeAndSerializedProperties::class
-                => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository),
-            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $contentRepository),
-            CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $contentRepository),
+            => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command),
+            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command),
+            CreateNodeVariant::class => $this->handleCreateNodeVariant($command),
             CreateRootNodeAggregateWithNode::class
-                => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
+            => $this->handleCreateRootNodeAggregateWithNode($command),
             UpdateRootNodeAggregateDimensions::class
-                => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
-            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
-            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
-            TagSubtree::class => $this->handleTagSubtree($command, $contentRepository),
-            UntagSubtree::class => $this->handleUntagSubtree($command, $contentRepository),
-            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $contentRepository),
+            => $this->handleUpdateRootNodeAggregateDimensions($command),
+            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command),
+            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command),
+            TagSubtree::class => $this->handleTagSubtree($command),
+            UntagSubtree::class => $this->handleUntagSubtree($command),
+            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
         };
     }
 
@@ -165,6 +144,11 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     public function getPropertyConverter(): PropertyConverter
     {
         return $this->propertyConverter;
+    }
+
+    protected function getContentGraphAdapter(): ContentGraphAdapterInterface
+    {
+        return $this->contentGraphAdapter;
     }
 
     /**

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
@@ -40,20 +39,17 @@ trait NodeModification
 
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        ContentRepository $contentRepository
+        NodeAggregateId $nodeAggregateId
     ): NodeAggregate;
 
     private function handleSetNodeProperties(
-        SetNodeProperties $command,
-        ContentRepository $contentRepository
+        SetNodeProperties $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $command->nodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $nodeTypeName = $nodeAggregate->nodeTypeName;
@@ -71,20 +67,18 @@ trait NodeModification
             $command->propertyValues->getPropertiesToUnset()
         );
 
-        return $this->handleSetSerializedNodeProperties($lowLevelCommand, $contentRepository);
+        return $this->handleSetSerializedNodeProperties($lowLevelCommand);
     }
 
     private function handleSetSerializedNodeProperties(
-        SetSerializedNodeProperties $command,
-        ContentRepository $contentRepository
+        SetSerializedNodeProperties $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $command->nodeAggregateId
         );
         $nodeType = $this->requireNodeType($nodeAggregate->nodeTypeName);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);

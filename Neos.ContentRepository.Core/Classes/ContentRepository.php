@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
@@ -257,5 +258,13 @@ final class ContentRepository
     public function getContentDimensionSource(): ContentDimensionSourceInterface
     {
         return $this->contentDimensionSource;
+    }
+
+    /**
+     * @internal
+     */
+    public function getContentGraphAdapter(): ContentGraphAdapterInterface
+    {
+        return $this->getContentGraph();
     }
 }

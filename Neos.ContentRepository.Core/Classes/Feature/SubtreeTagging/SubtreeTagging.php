@@ -36,11 +36,11 @@ trait SubtreeTagging
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
-    private function handleTagSubtree(TagSubtree $command, ContentRepository $contentRepository): EventsToPublish
+    private function handleTagSubtree(TagSubtree $command): EventsToPublish
     {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
-        $nodeAggregate = $this->requireProjectedNodeAggregate($contentStreamId, $command->nodeAggregateId, $contentRepository);
+        $nodeAggregate = $this->requireProjectedNodeAggregate($contentStreamId, $command->nodeAggregateId);
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
@@ -78,14 +78,13 @@ trait SubtreeTagging
         );
     }
 
-    public function handleUntagSubtree(UntagSubtree $command, ContentRepository $contentRepository): EventsToPublish
+    public function handleUntagSubtree(UntagSubtree $command): EventsToPublish
     {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $command->nodeAggregateId
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,

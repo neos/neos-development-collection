@@ -45,16 +45,14 @@ trait NodeDisabling
      * @throws NodeAggregatesTypeIsAmbiguous
      */
     private function handleDisableNodeAggregate(
-        DisableNodeAggregate $command,
-        ContentRepository $contentRepository
+        DisableNodeAggregate $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $command->nodeAggregateId
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,
@@ -100,16 +98,14 @@ trait NodeDisabling
      * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function handleEnableNodeAggregate(
-        EnableNodeAggregate $command,
-        ContentRepository $contentRepository
+        EnableNodeAggregate $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $command->nodeAggregateId
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,

@@ -71,7 +71,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
-            CopyNodesRecursively::class => $this->handleCopyNodesRecursively($command, $contentRepository),
+            CopyNodesRecursively::class => $this->handleCopyNodesRecursively($command),
         };
     }
 
@@ -79,12 +79,11 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
      * @throws NodeConstraintException
      */
     private function handleCopyNodesRecursively(
-        CopyNodesRecursively $command,
-        ContentRepository $contentRepository
+        CopyNodesRecursively $command
     ): EventsToPublish {
         // Basic constraints (Content Stream / Dimension Space Point / Node Type of to-be-inserted root node)
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
         $this->requireDimensionSpacePointToExist(
             $command->targetDimensionSpacePoint->toDimensionSpacePoint()
         );
@@ -98,28 +97,24 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             $contentStreamId,
             $nodeType,
             $command->targetNodeName,
-            [$command->targetParentNodeAggregateId],
-            $contentRepository
+            [$command->targetParentNodeAggregateId]
         );
 
         // Constraint: The new nodeAggregateIds are not allowed to exist yet.
         $this->requireNewNodeAggregateIdsToNotExist(
             $contentStreamId,
-            $command->nodeAggregateIdMapping,
-            $contentRepository
+            $command->nodeAggregateIdMapping
         );
 
         // Constraint: the parent node must exist in the command's DimensionSpacePoint as well
         $parentNodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->targetParentNodeAggregateId,
-            $contentRepository
+            $command->targetParentNodeAggregateId
         );
         if ($command->targetSucceedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
                 $contentStreamId,
-                $command->targetSucceedingSiblingNodeAggregateId,
-                $contentRepository
+                $command->targetSucceedingSiblingNodeAggregateId
             );
         }
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -143,8 +138,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
                 $command->targetNodeName,
                 $command->targetParentNodeAggregateId,
                 $command->targetDimensionSpacePoint,
-                $coveredDimensionSpacePoints,
-                $contentRepository
+                $coveredDimensionSpacePoints
             );
         }
 
@@ -177,14 +171,12 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 
     private function requireNewNodeAggregateIdsToNotExist(
         ContentStreamId $contentStreamId,
-        Dto\NodeAggregateIdMapping $nodeAggregateIdMapping,
-        ContentRepository $contentRepository
+        Dto\NodeAggregateIdMapping $nodeAggregateIdMapping
     ): void {
         foreach ($nodeAggregateIdMapping->getAllNewNodeAggregateIds() as $nodeAggregateId) {
             $this->requireProjectedNodeAggregateToNotExist(
                 $contentStreamId,
-                $nodeAggregateId,
-                $contentRepository
+                $nodeAggregateId
             );
         }
     }

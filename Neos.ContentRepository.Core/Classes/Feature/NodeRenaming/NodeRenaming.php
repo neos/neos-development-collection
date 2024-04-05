@@ -30,26 +30,24 @@ trait NodeRenaming
 {
     use ConstraintChecks;
 
-    private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command, ContentRepository $contentRepository): EventsToPublish
+    private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): EventsToPublish
     {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $command->nodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be renamed');
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
-        foreach ($contentRepository->getContentGraph()->findParentNodeAggregates($contentStreamId, $command->nodeAggregateId) as $parentNodeAggregate) {
+        foreach ($this->getContentGraphAdapter()->findParentNodeAggregates($contentStreamId, $command->workspaceName, $command->nodeAggregateId) as $parentNodeAggregate) {
             foreach ($parentNodeAggregate->occupiedDimensionSpacePoints as $occupiedParentDimensionSpacePoint) {
                 $this->requireNodeNameToBeUnoccupied(
                     $contentStreamId,
                     $command->newNodeName,
                     $parentNodeAggregate->nodeAggregateId,
                     $occupiedParentDimensionSpacePoint,
-                    $parentNodeAggregate->coveredDimensionSpacePoints,
-                    $contentRepository
+                    $parentNodeAggregate->coveredDimensionSpacePoints
                 );
             }
         }

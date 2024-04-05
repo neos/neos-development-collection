@@ -88,6 +88,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         private EventPersister $eventPersister,
         private EventStoreInterface $eventStore,
         private EventNormalizer $eventNormalizer,
+        private ContentGraphAdapterInterface $contentGraphAdapter
     ) {
     }
 
@@ -101,7 +102,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
             CreateWorkspace::class => $this->handleCreateWorkspace($command, $contentRepository),
-            RenameWorkspace::class => $this->handleRenameWorkspace($command, $contentRepository),
+            RenameWorkspace::class => $this->handleRenameWorkspace($command),
             CreateRootWorkspace::class => $this->handleCreateRootWorkspace($command, $contentRepository),
             PublishWorkspace::class => $this->handlePublishWorkspace($command, $contentRepository),
             RebaseWorkspace::class => $this->handleRebaseWorkspace($command, $contentRepository),
@@ -109,7 +110,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository),
             DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $contentRepository),
             DeleteWorkspace::class => $this->handleDeleteWorkspace($command, $contentRepository),
-            ChangeWorkspaceOwner::class => $this->handleChangeWorkspaceOwner($command, $contentRepository),
+            ChangeWorkspaceOwner::class => $this->handleChangeWorkspaceOwner($command),
             ChangeBaseWorkspace::class => $this->handleChangeBaseWorkspace($command, $contentRepository),
         };
     }
@@ -124,7 +125,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         CreateWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $existingWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->workspaceName);
+        $existingWorkspace = $this->contentGraphAdapter->findWorkspaceByName($command->workspaceName);
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
                 'The workspace %s already exists',
@@ -132,7 +133,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ), 1505830958921);
         }
 
-        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->baseWorkspaceName);
+        $baseWorkspace = $this->contentGraphAdapter->findWorkspaceByName($command->baseWorkspaceName);
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf(
                 'The workspace %s (base workspace of %s) does not exist',
@@ -170,9 +171,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     /**
      * @throws WorkspaceDoesNotExist
      */
-    private function handleRenameWorkspace(RenameWorkspace $command, ContentRepository $contentRepository): EventsToPublish
+    private function handleRenameWorkspace(RenameWorkspace $command): EventsToPublish
     {
-        $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $this->requireWorkspace($command->workspaceName);
 
         $events = Events::with(
             new WorkspaceWasRenamed(
@@ -199,7 +200,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         CreateRootWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $existingWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->workspaceName);
+        $existingWorkspace = $this->contentGraphAdapter->findWorkspaceByName($command->workspaceName);
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
                 'The workspace %s already exists',
@@ -243,8 +244,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         PublishWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         $this->publishContentStream(
             $workspace->currentContentStreamId,
@@ -357,8 +358,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         RebaseWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         // 0) close old content stream
         $contentRepository->handle(
@@ -486,13 +487,13 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         PublishIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName);
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        $oldWorkspaceContentStreamIdState = $contentRepository->getContentStreamFinder()->findStateForContentStream($oldWorkspaceContentStreamId);
+        $oldWorkspaceContentStreamIdState = $this->contentGraphAdapter->findStateForContentStream($oldWorkspaceContentStreamId);
         if ($oldWorkspaceContentStreamIdState === null) {
             throw new \DomainException('Cannot publish nodes on a workspace with a stateless content stream', 1710410114);
         }
-        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         // 1) close old content stream
         $contentRepository->handle(
@@ -622,13 +623,13 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         DiscardIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName);
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        $oldWorkspaceContentStreamIdState = $contentRepository->getContentStreamFinder()->findStateForContentStream($oldWorkspaceContentStreamId);
+        $oldWorkspaceContentStreamIdState = $this->contentGraphAdapter->findStateForContentStream($oldWorkspaceContentStreamId);
         if ($oldWorkspaceContentStreamIdState === null) {
             throw new \DomainException('Cannot discard nodes on a workspace with a stateless content stream', 1710408112);
         }
-        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         // 1) close old content stream
         $contentRepository->handle(
@@ -765,8 +766,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         DiscardWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace);
 
         $newContentStream = $command->newContentStreamId;
         $contentRepository->handle(
@@ -807,13 +808,13 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         ChangeBaseWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName);
         $this->requireEmptyWorkspace($workspace);
-        $this->requireBaseWorkspace($workspace, $contentRepository);
+        $this->requireBaseWorkspace($workspace);
 
-        $baseWorkspace = $this->requireWorkspace($command->baseWorkspaceName, $contentRepository);
+        $baseWorkspace = $this->requireWorkspace($command->baseWorkspaceName);
 
-        $this->requireNonCircularRelationBetweenWorkspaces($workspace, $baseWorkspace, $contentRepository);
+        $this->requireNonCircularRelationBetweenWorkspaces($workspace, $baseWorkspace);
 
         $contentRepository->handle(
             ForkContentStream::create(
@@ -845,7 +846,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         DeleteWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName);
 
         $contentRepository->handle(
             RemoveContentStream::create(
@@ -871,10 +872,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceDoesNotExist
      */
     private function handleChangeWorkspaceOwner(
-        ChangeWorkspaceOwner $command,
-        ContentRepository $contentRepository,
+        ChangeWorkspaceOwner $command
     ): EventsToPublish {
-        $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $this->requireWorkspace($command->workspaceName);
 
         $events = Events::with(
             new WorkspaceOwnerWasChanged(
@@ -894,9 +894,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     /**
      * @throws WorkspaceDoesNotExist
      */
-    private function requireWorkspace(WorkspaceName $workspaceName, ContentRepository $contentRepository): Workspace
+    private function requireWorkspace(WorkspaceName $workspaceName): Workspace
     {
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspace = $this->contentGraphAdapter->findWorkspaceByName($workspaceName);
         if (is_null($workspace)) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
@@ -908,13 +908,13 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceHasNoBaseWorkspaceName
      * @throws BaseWorkspaceDoesNotExist
      */
-    private function requireBaseWorkspace(Workspace $workspace, ContentRepository $contentRepository): Workspace
+    private function requireBaseWorkspace(Workspace $workspace): Workspace
     {
         if (is_null($workspace->baseWorkspaceName)) {
             throw WorkspaceHasNoBaseWorkspaceName::butWasSupposedTo($workspace->workspaceName);
         }
 
-        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace->baseWorkspaceName);
+        $baseWorkspace = $this->contentGraphAdapter->findWorkspaceByName($workspace->baseWorkspaceName);
         if ($baseWorkspace === null) {
             throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->workspaceName);
         }
@@ -926,7 +926,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws BaseWorkspaceEqualsWorkspaceException
      * @throws CircularRelationBetweenWorkspacesException
      */
-    private function requireNonCircularRelationBetweenWorkspaces(Workspace $workspace, Workspace $baseWorkspace, ContentRepository $contentRepository): void
+    private function requireNonCircularRelationBetweenWorkspaces(Workspace $workspace, Workspace $baseWorkspace): void
     {
         if ($workspace->workspaceName->equals($baseWorkspace->workspaceName)) {
             throw new BaseWorkspaceEqualsWorkspaceException(sprintf('The base workspace of the target must be different from the given workspace "%s".', $workspace->workspaceName->value));
@@ -937,7 +937,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             if ($workspace->workspaceName->equals($nextBaseWorkspace->baseWorkspaceName)) {
                 throw new CircularRelationBetweenWorkspacesException(sprintf('The workspace "%s" is already on the path of the target workspace "%s".', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value));
             }
-            $nextBaseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($nextBaseWorkspace->baseWorkspaceName);
+            $nextBaseWorkspace = $this->contentGraphAdapter->findWorkspaceByName($nextBaseWorkspace->baseWorkspaceName);
         }
     }
 

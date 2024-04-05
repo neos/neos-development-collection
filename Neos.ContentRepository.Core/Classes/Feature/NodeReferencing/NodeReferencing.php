@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
@@ -39,21 +38,18 @@ trait NodeReferencing
 
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        ContentRepository $contentRepository
+        NodeAggregateId $nodeAggregateId
     ): NodeAggregate;
 
 
     private function handleSetNodeReferences(
-        SetNodeReferences $command,
-        ContentRepository $contentRepository
+        SetNodeReferences $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->sourceNodeAggregateId,
-            $contentRepository
+            $command->sourceNodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
         $nodeTypeName = $sourceNodeAggregate->nodeTypeName;
@@ -88,25 +84,23 @@ trait NodeReferencing
             )),
         );
 
-        return $this->handleSetSerializedNodeReferences($lowLevelCommand, $contentRepository);
+        return $this->handleSetSerializedNodeReferences($lowLevelCommand);
     }
 
     /**
      * @throws \Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet
      */
     private function handleSetSerializedNodeReferences(
-        SetSerializedNodeReferences $command,
-        ContentRepository $contentRepository
+        SetSerializedNodeReferences $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
         $this->requireDimensionSpacePointToExist(
             $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
         );
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->sourceNodeAggregateId,
-            $contentRepository
+            $command->sourceNodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint(
@@ -119,8 +113,7 @@ trait NodeReferencing
             assert($reference instanceof SerializedNodeReference);
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
                 $contentStreamId,
-                $reference->targetNodeAggregateId,
-                $contentRepository
+                $reference->targetNodeAggregateId
             );
             $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
             $this->requireNodeAggregateToCoverDimensionSpacePoint(

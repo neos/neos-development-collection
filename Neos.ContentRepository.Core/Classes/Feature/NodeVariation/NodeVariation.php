@@ -47,15 +47,13 @@ trait NodeVariation
      * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
      */
     private function handleCreateNodeVariant(
-        CreateNodeVariant $command,
-        ContentRepository $contentRepository
+        CreateNodeVariant $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $command->nodeAggregateId
         );
         // we do this check first, because it gives a more meaningful error message on what you need to do.
         // we cannot use sentences with "." because the UI will only print the 1st sentence :/
@@ -68,8 +66,7 @@ trait NodeVariation
         $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
             $contentStreamId,
             $command->nodeAggregateId,
-            $command->sourceOrigin,
-            $contentRepository
+            $command->sourceOrigin
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $parentNodeAggregate,
@@ -80,8 +77,7 @@ trait NodeVariation
             $contentStreamId,
             $command->sourceOrigin,
             $command->targetOrigin,
-            $nodeAggregate,
-            $contentRepository
+            $nodeAggregate
         );
 
         return new EventsToPublish(

@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraphAdapter;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -50,10 +52,10 @@ class ContentStreamIdOverride
     /**
      * @internal
      */
-    public static function resolveContentStreamIdForWorkspace(ContentRepository $contentRepository, WorkspaceName $workspaceName): ContentStreamId
+    public static function resolveContentStreamIdForWorkspace(ContentGraphAdapterInterface $contentGraphAdapter, WorkspaceName $workspaceName): ContentStreamId
     {
         $contentStreamId = self::$contentStreamIdToUse
-            ?: $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)?->currentContentStreamId;
+            ?: $contentGraphAdapter->findWorkspaceByName($workspaceName)?->currentContentStreamId;
 
         if (!$contentStreamId) {
             throw new ContentStreamDoesNotExistYet(

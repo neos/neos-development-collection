@@ -94,8 +94,7 @@ class TetheredNodeAdjustments
                                     $originDimensionSpacePoint,
                                     $tetheredNodeName,
                                     null,
-                                    $expectedTetheredNodeType,
-                                    $this->contentRepository
+                                    $expectedTetheredNodeType
                                 );
 
                                 $streamName = ContentStreamEventStreamName::fromContentStreamId($nodeAggregate->contentStreamId);

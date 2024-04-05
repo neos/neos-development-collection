@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
@@ -37,12 +37,13 @@ trait NodeVariationInternals
 {
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
+    abstract protected function getContentGraphAdapter(): ContentGraphAdapterInterface;
+
     protected function createEventsForVariations(
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        NodeAggregate $nodeAggregate,
-        ContentRepository $contentRepository
+        NodeAggregate $nodeAggregate
     ): Events {
         return match (
             $this->getInterDimensionalVariationGraph()->getVariantType(
@@ -54,22 +55,19 @@ trait NodeVariationInternals
                 $contentStreamId,
                 $sourceOrigin,
                 $targetOrigin,
-                $nodeAggregate,
-                $contentRepository
+                $nodeAggregate
             ),
             DimensionSpace\VariantType::TYPE_GENERALIZATION => $this->handleCreateNodeGeneralizationVariant(
                 $contentStreamId,
                 $sourceOrigin,
                 $targetOrigin,
-                $nodeAggregate,
-                $contentRepository
+                $nodeAggregate
             ),
             default => $this->handleCreateNodePeerVariant(
                 $contentStreamId,
                 $sourceOrigin,
                 $targetOrigin,
-                $nodeAggregate,
-                $contentRepository
+                $nodeAggregate
             ),
         };
     }
@@ -78,8 +76,7 @@ trait NodeVariationInternals
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        NodeAggregate $nodeAggregate,
-        ContentRepository $contentRepository
+        NodeAggregate $nodeAggregate
     ): Events {
         $specializationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
@@ -88,8 +85,7 @@ trait NodeVariationInternals
             $targetOrigin,
             $nodeAggregate,
             $specializationVisibility,
-            [],
-            $contentRepository
+            []
         );
 
         return Events::fromArray($events);
@@ -105,9 +101,9 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $specializationVisibility,
-        array $events,
-        ContentRepository $contentRepository
+        array $events
     ): array {
+        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($contentStreamId);
         $events[] = new NodeSpecializationVariantWasCreated(
             $contentStreamId,
             $nodeAggregate->nodeAggregateId,
@@ -123,8 +119,9 @@ trait NodeVariationInternals
         );
 
         foreach (
-            $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
+            $this->getContentGraphAdapter()->findTetheredChildNodeAggregates(
                 $contentStreamId,
+                $workspace?->workspaceName,
                 $nodeAggregate->nodeAggregateId
             ) as $tetheredChildNodeAggregate
         ) {
@@ -134,8 +131,7 @@ trait NodeVariationInternals
                 $targetOrigin,
                 $tetheredChildNodeAggregate,
                 $specializationVisibility,
-                $events,
-                $contentRepository
+                $events
             );
         }
 
@@ -146,8 +142,7 @@ trait NodeVariationInternals
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        NodeAggregate $nodeAggregate,
-        ContentRepository $contentRepository
+        NodeAggregate $nodeAggregate
     ): Events {
         $generalizationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
@@ -156,8 +151,7 @@ trait NodeVariationInternals
             $targetOrigin,
             $nodeAggregate,
             $generalizationVisibility,
-            [],
-            $contentRepository
+            []
         );
 
         return Events::fromArray($events);
@@ -173,9 +167,9 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $generalizationVisibility,
-        array $events,
-        ContentRepository $contentRepository
+        array $events
     ): array {
+        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($contentStreamId);
         $events[] = new NodeGeneralizationVariantWasCreated(
             $contentStreamId,
             $nodeAggregate->nodeAggregateId,
@@ -191,8 +185,9 @@ trait NodeVariationInternals
         );
 
         foreach (
-            $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
+            $this->getContentGraphAdapter()->findTetheredChildNodeAggregates(
                 $contentStreamId,
+                $workspace?->workspaceName,
                 $nodeAggregate->nodeAggregateId
             ) as $tetheredChildNodeAggregate
         ) {
@@ -202,8 +197,7 @@ trait NodeVariationInternals
                 $targetOrigin,
                 $tetheredChildNodeAggregate,
                 $generalizationVisibility,
-                $events,
-                $contentRepository
+                $events
             );
         }
 
@@ -214,8 +208,7 @@ trait NodeVariationInternals
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        NodeAggregate $nodeAggregate,
-        ContentRepository $contentRepository
+        NodeAggregate $nodeAggregate
     ): Events {
         $peerVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
@@ -224,8 +217,7 @@ trait NodeVariationInternals
             $targetOrigin,
             $nodeAggregate,
             $peerVisibility,
-            [],
-            $contentRepository
+            []
         );
 
         return Events::fromArray($events);
@@ -241,9 +233,9 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $peerVisibility,
-        array $events,
-        ContentRepository $contentRepository
+        array $events
     ): array {
+        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($contentStreamId);
         $events[] = new NodePeerVariantWasCreated(
             $contentStreamId,
             $nodeAggregate->nodeAggregateId,
@@ -259,8 +251,9 @@ trait NodeVariationInternals
         );
 
         foreach (
-            $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
+            $this->getContentGraphAdapter()->findTetheredChildNodeAggregates(
                 $contentStreamId,
+                $workspace?->workspaceName,
                 $nodeAggregate->nodeAggregateId
             ) as $tetheredChildNodeAggregate
         ) {
@@ -270,8 +263,7 @@ trait NodeVariationInternals
                 $targetOrigin,
                 $tetheredChildNodeAggregate,
                 $peerVisibility,
-                $events,
-                $contentRepository
+                $events
             );
         }
 

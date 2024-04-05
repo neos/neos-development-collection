@@ -46,15 +46,13 @@ trait NodeRemoval
      * @throws DimensionSpacePointNotFound
      */
     private function handleRemoveNodeAggregate(
-        RemoveNodeAggregate $command,
-        ContentRepository $contentRepository
+        RemoveNodeAggregate $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $command->nodeAggregateId
         );
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $this->requireNodeAggregateNotToBeTethered($nodeAggregate);
@@ -65,8 +63,7 @@ trait NodeRemoval
         if ($command->removalAttachmentPoint instanceof NodeAggregateId) {
             $this->requireProjectedNodeAggregate(
                 $contentStreamId,
-                $command->removalAttachmentPoint,
-                $contentRepository
+                $command->removalAttachmentPoint
             );
         }
 

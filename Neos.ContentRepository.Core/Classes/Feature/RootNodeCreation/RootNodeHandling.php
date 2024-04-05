@@ -67,23 +67,20 @@ trait RootNodeHandling
      * @throws NodeTypeIsNotOfTypeRoot
      */
     private function handleCreateRootNodeAggregateWithNode(
-        CreateRootNodeAggregateWithNode $command,
-        ContentRepository $contentRepository
+        CreateRootNodeAggregateWithNode $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
         $this->requireProjectedNodeAggregateToNotExist(
             $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $command->nodeAggregateId
         );
         $nodeType = $this->requireNodeType($command->nodeTypeName);
         $this->requireNodeTypeToNotBeAbstract($nodeType);
         $this->requireNodeTypeToBeOfTypeRoot($nodeType);
         $this->requireRootNodeTypeToBeUnoccupied(
             $nodeType->name,
-            $contentStreamId,
-            $contentRepository
+            $contentStreamId
         );
 
         $descendantNodeAggregateIds = $command->tetheredDescendantNodeAggregateIds->completeForNodeOfType(
@@ -110,8 +107,7 @@ trait RootNodeHandling
                 $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization, true),
                 $command->nodeAggregateId,
                 $command->tetheredDescendantNodeAggregateIds,
-                null,
-                $contentRepository
+                null
             )));
         }
 
@@ -145,15 +141,13 @@ trait RootNodeHandling
      * @return EventsToPublish
      */
     private function handleUpdateRootNodeAggregateDimensions(
-        UpdateRootNodeAggregateDimensions $command,
-        ContentRepository $contentRepository
+        UpdateRootNodeAggregateDimensions $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $command->nodeAggregateId
         );
         if (!$nodeAggregate->classification->isRoot()) {
             throw new NodeAggregateIsNotRoot('The node aggregate ' . $nodeAggregate->nodeAggregateId->value . ' is not classified as root, but should be for command UpdateRootNodeAggregateDimensions.', 1678647355);
@@ -191,8 +185,7 @@ trait RootNodeHandling
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateId $parentNodeAggregateId,
         NodeAggregateIdsByNodePaths $nodeAggregateIdsByNodePath,
-        ?NodePath $nodePath,
-        ContentRepository $contentRepository,
+        ?NodePath $nodePath
     ): Events {
         $events = [];
         foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $rawNodeName => $childNodeType) {
@@ -223,8 +216,7 @@ trait RootNodeHandling
                 $coveredDimensionSpacePoints,
                 $childNodeAggregateId,
                 $nodeAggregateIdsByNodePath,
-                $childNodePath,
-                $contentRepository
+                $childNodePath
             )));
         }
 
