@@ -64,7 +64,6 @@ Feature: Set node properties with different scopes
   Scenario: Set node properties
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                                                                                                                                                      |
-      | contentStreamId   | "cs-identifier"                                                                                                                                                            |
       | nodeAggregateId   | "nody-mc-nodeface"                                                                                                                                                         |
       | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                         |
       | propertyValues            | {"unscopedProperty":"My new string", "nodeScopedProperty":"My new string", "specializationsScopedProperty":"My new string", "nodeAggregateScopedProperty":"My new string"} |

@@ -72,56 +72,48 @@ Feature: Set node properties with different scopes
   Scenario: Set node properties
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamId         | "cs-identifier"                   |
       | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "unscopedReference"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamId         | "cs-identifier"                   |
       | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "unscopedReferences"              |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamId         | "cs-identifier"                   |
       | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "nodeScopedReference"             |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamId         | "cs-identifier"                   |
       | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "nodeScopedReferences"            |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamId         | "cs-identifier"                   |
       | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "nodeAggregateScopedReference"    |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamId         | "cs-identifier"                   |
       | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "nodeAggregateScopedReferences"   |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamId         | "cs-identifier"                   |
       | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "specializationsScopedReference"  |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamId         | "cs-identifier"                   |
       | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "specializationsScopedReferences" |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |

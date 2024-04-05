@@ -7,22 +7,27 @@ use Neos\EventStore\Model\Event;
 final readonly class ExportedEvent implements \JsonSerializable
 {
     /**
+     * The Neos.ContentRepository.Core's domain events require the payload to be a json array string
+     * {@see \Neos\ContentRepository\Core\EventStore\EventInterface}
+     * This exporter will enforce this as well (by using array as payload type).
+     *
      * @param array<mixed> $payload
      * @param array<mixed> $metadata
      */
     public function __construct(
         public string $identifier,
         public string $type,
-        public array $payload, // TODO: string
+        public array $payload,
         public array $metadata,
-    ) {}
+    ) {
+    }
 
     public static function fromRawEvent(Event $event): self
     {
         return new self(
             $event->id->value,
             $event->type->value,
-            \json_decode($event->data->value, true),
+            \json_decode($event->data->value, true, 512, JSON_THROW_ON_ERROR),
             $event->metadata?->value ?? [],
         );
     }
@@ -30,16 +35,11 @@ final readonly class ExportedEvent implements \JsonSerializable
     public static function fromJson(string $json): self
     {
         try {
-            ///** @var array{identifier: string, type: string, payload: array<mixed>, metadata: array<mixed>} $data */
-            /** @var array<mixed> $data */
+            /** @var array{identifier: string, type: string, payload: array<mixed>, metadata: array<mixed>} $data */
             $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             throw new \InvalidArgumentException(sprintf('Failed to decode JSON "%s": %s', $json, $e->getMessage()), 1638432979, $e);
         }
-        assert(isset($data['identifier']) && is_string($data['identifier']));
-        assert(isset($data['type']) && is_string($data['type']));
-        assert(isset($data['payload']) && is_array($data['payload']));
-        assert(isset($data['metadata']) && is_array($data['metadata']));
         return new self(
             $data['identifier'],
             $data['type'],
@@ -80,12 +80,8 @@ final readonly class ExportedEvent implements \JsonSerializable
         }
     }
 
-    /**
-     * @return array{identifier: string, type: string, payload: array<mixed>, metadata?: ?array<mixed>, streamName?: string, version?: int, sequenceNumber?: int, recordedAt?: string}
-     */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
-        /** @phpstan-ignore-next-line */
         return get_object_vars($this);
     }
 }
