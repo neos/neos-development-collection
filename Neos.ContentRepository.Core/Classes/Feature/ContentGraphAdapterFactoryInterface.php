@@ -11,5 +11,10 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
  */
 interface ContentGraphAdapterFactoryInterface
 {
-    public function build(ContentRepositoryId $contentRepositoryId): ContentGraphAdapterInterface;
+    /**
+     * @param ContentRepositoryId $contentRepositoryId
+     * @param array<mixed, mixed> $options
+     * @return ContentGraphAdapterInterface
+     */
+    public function build(ContentRepositoryId $contentRepositoryId, array $options): ContentGraphAdapterInterface;
 }

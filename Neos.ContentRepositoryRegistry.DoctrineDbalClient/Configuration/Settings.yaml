@@ -7,3 +7,5 @@ Neos:
           # catchUpHooks for content cache flushing
           'Neos.ContentRepository:ContentGraph':
             factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+        contentGraphAdapter:
+          factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphAdapterFactory

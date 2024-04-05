@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
+namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -9,10 +9,14 @@ use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
  *
@@ -86,7 +90,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
         // TODO: Implement findChildNodeByNameInSubgraph() method.
     }
 
-    public function findPreceedingSiblingNodesInSubgraph(ContentStreamId $contentStreamId, WorkspaceName $workspaceName, DimensionSpacePoint $coveredDimensionSpacePoint, NodeAggregateId $startingSiblingNodeAggregateId): Nodes
+    public function findPreceedingSiblingNodesInSubgraph(ContentStreamId $contentStreamId, WorkspaceName $workspaceName, DimensionSpacePoint $coveredDimensionSpacePoint, NodeAggregateId $startingSiblingNodeAggregateId): Nodesy
     {
         // TODO: Implement findPreceedingSiblingNodesInSubgraph() method.
     }
@@ -120,4 +124,21 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
     {
         // TODO: Implement findWorkspaceByCurrentContentStreamId() method.
     }
+
+    private function getTablenameForNode(): string
+    {
+        return $this->tableNamePrefix . '_node';
+    }
+
+    private function getTablenameForHierachyRelation(): string
+    {
+        return $this->tableNamePrefix . '_hierarchyrelation';
+    }
+
+    private function getTablenameForDimensionSpacePoints(): string
+    {
+        return $this->tableNamePrefix . '_dimensionspacepoints';
+    }
+
+
 }

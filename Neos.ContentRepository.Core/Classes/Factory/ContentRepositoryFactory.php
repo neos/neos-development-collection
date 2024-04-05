@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
-use Neos\ContentRepository\Core\Feature\ContentGraphAdapterFactoryInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamCommandHandler;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
@@ -57,7 +57,7 @@ final class ContentRepositoryFactory
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
-        private readonly ContentGraphAdapterFactoryInterface $contentGraphAdapterFactory,
+        private readonly ContentGraphAdapterInterface $contentGraphAdapter,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
@@ -134,27 +134,27 @@ final class ContentRepositoryFactory
     private function buildCommandBus(): CommandBus
     {
         if (!$this->commandBus) {
-            $contentGraphAdapter = $this->contentGraphAdapterFactory->build($this->projectionFactoryDependencies->contentRepositoryId);
             $this->commandBus = new CommandBus(
                 new ContentStreamCommandHandler(
-                    $contentGraphAdapter
+                    $this->contentGraphAdapter
                 ),
                 new WorkspaceCommandHandler(
                     $this->buildEventPersister(),
                     $this->projectionFactoryDependencies->eventStore,
                     $this->projectionFactoryDependencies->eventNormalizer,
-                    $contentGraphAdapter
+                    $this->contentGraphAdapter
                 ),
                 new NodeAggregateCommandHandler(
                     $this->projectionFactoryDependencies->nodeTypeManager,
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
                     $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                     $this->projectionFactoryDependencies->propertyConverter,
-                    $contentGraphAdapter
+                    $this->contentGraphAdapter
                 ),
                 new DimensionSpaceCommandHandler(
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
-                    $this->projectionFactoryDependencies->interDimensionalVariationGraph
+                    $this->projectionFactoryDependencies->interDimensionalVariationGraph,
+                    $this->contentGraphAdapter
                 ),
                 new NodeDuplicationCommandHandler(
                     $this->projectionFactoryDependencies->nodeTypeManager,

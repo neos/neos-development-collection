@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraphAdapter;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;

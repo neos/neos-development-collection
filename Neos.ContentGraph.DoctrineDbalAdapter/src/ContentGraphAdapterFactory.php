@@ -1,8 +1,7 @@
 <?php
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
+namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterFactoryInterface;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -17,7 +16,7 @@ class ContentGraphAdapterFactory implements ContentGraphAdapterFactoryInterface
     ) {
     }
 
-    public function build(ContentRepositoryId $contentRepositoryId): ContentGraphAdapterInterface
+    public function build(ContentRepositoryId $contentRepositoryId, array $options): ContentGraphAdapterInterface
     {
         $tableNamePrefix = DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
             $contentRepositoryId
