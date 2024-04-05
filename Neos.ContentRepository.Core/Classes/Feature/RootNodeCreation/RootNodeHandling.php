@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
@@ -239,19 +240,17 @@ trait RootNodeHandling
         NodeAggregateId $parentNodeAggregateId,
         NodeName $nodeName,
         SerializedPropertyValues $initialPropertyValues,
-        NodeAggregateId $precedingNodeAggregateId = null
     ): NodeAggregateWithNodeWasCreated {
         return new NodeAggregateWithNodeWasCreated(
             $contentStreamId,
             $nodeAggregateId,
             $nodeTypeName,
             $originDimensionSpacePoint,
-            $coveredDimensionSpacePoints,
+            InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings($coveredDimensionSpacePoints),
             $parentNodeAggregateId,
             $nodeName,
             $initialPropertyValues,
             NodeAggregateClassification::CLASSIFICATION_TETHERED,
-            $precedingNodeAggregateId
         );
     }
 }

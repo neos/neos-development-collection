@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -132,7 +133,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
                     $nodeAggregateId,
                     NodeTypeName::fromString('Neos.ContentRepository:Testing'),
                     OriginDimensionSpacePoint::fromArray(['language' => 'mul']),
-                    $this->dimensionSpacePoints,
+                    InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings($this->dimensionSpacePoints),
                     $parentNodeAggregateId,
                     null,
                     SerializedPropertyValues::createEmpty(),

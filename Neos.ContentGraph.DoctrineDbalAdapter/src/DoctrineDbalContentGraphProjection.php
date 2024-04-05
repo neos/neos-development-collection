@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
@@ -343,10 +344,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $event->nodeTypeName,
                 $event->parentNodeAggregateId,
                 $event->originDimensionSpacePoint,
-                $event->coveredDimensionSpacePoints,
+                $event->succeedingSiblingsForCoverage,
                 $event->initialPropertyValues,
                 $event->nodeAggregateClassification,
-                $event->succeedingNodeAggregateId,
                 $event->nodeName,
                 $eventEnvelope,
             );
@@ -393,10 +393,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         NodeTypeName $nodeTypeName,
         NodeAggregateId $parentNodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        DimensionSpacePointSet $visibleInDimensionSpacePoints,
+        InterdimensionalSiblings $coverageSucceedingSiblings,
         SerializedPropertyValues $propertyDefaultValuesAndTypes,
         NodeAggregateClassification $nodeAggregateClassification,
-        ?NodeAggregateId $succeedingSiblingNodeAggregateId,
         ?NodeName $nodeName,
         EventEnvelope $eventEnvelope,
     ): void {
@@ -419,7 +418,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         );
 
         // reconnect parent relations
-        $missingParentRelations = $visibleInDimensionSpacePoints->points;
+        $missingParentRelations = $coverageSucceedingSiblings->toDimensionSpacePointSet()->points;
 
         if (!empty($missingParentRelations)) {
             // add yet missing parent relations
@@ -431,6 +430,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     $dimensionSpacePoint
                 );
 
+                $succeedingSiblingNodeAggregateId = $coverageSucceedingSiblings->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
                 $succeedingSibling = $succeedingSiblingNodeAggregateId
                     ? $this->projectionContentGraph->findNodeInAggregate(
                         $contentStreamId,
@@ -767,27 +767,16 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     }
 
     /**
-     * @param HierarchyRelation $sourceHierarchyRelation
-     * @param ContentStreamId $contentStreamId
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeRelationAnchorPoint|null $newParent
-     * @param NodeRelationAnchorPoint|null $newChild
-     * @return HierarchyRelation
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function copyHierarchyRelationToDimensionSpacePoint(
         HierarchyRelation $sourceHierarchyRelation,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        ?NodeRelationAnchorPoint $newParent = null,
-        ?NodeRelationAnchorPoint $newChild = null
+        NodeRelationAnchorPoint $newParent,
+        NodeRelationAnchorPoint $newChild,
+        ?NodeRelationAnchorPoint $newSucceedingSibling = null,
     ): HierarchyRelation {
-        if ($newParent === null) {
-            $newParent = $sourceHierarchyRelation->parentNodeAnchor;
-        }
-        if ($newChild === null) {
-            $newChild = $sourceHierarchyRelation->childNodeAnchor;
-        }
         $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamId, $newParent, $dimensionSpacePoint);
         $inheritedSubtreeTags = NodeTags::create($sourceHierarchyRelation->subtreeTags->withoutInherited()->all(), $parentSubtreeTags->withoutInherited()->all());
         $copy = new HierarchyRelation(
@@ -800,7 +789,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $this->getRelationPosition(
                 $newParent,
                 $newChild,
-                null, // todo: find proper sibling
+                $newSucceedingSibling,
                 $contentStreamId,
                 $dimensionSpacePoint
             ),

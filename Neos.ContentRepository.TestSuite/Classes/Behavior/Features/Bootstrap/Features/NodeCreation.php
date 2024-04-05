@@ -198,7 +198,7 @@ trait NodeCreation
                 \str_starts_with($rawParentNodeAggregateId, '$')
                     ? $this->rememberedNodeAggregateIds[\mb_substr($rawParentNodeAggregateId, 1)]
                     : NodeAggregateId::fromString($rawParentNodeAggregateId),
-                isset($row['succeedingSiblingNodeAggregateId'])
+                !empty($row['succeedingSiblingNodeAggregateId'])
                     ? NodeAggregateId::fromString($row['succeedingSiblingNodeAggregateId'])
                     : null,
                 isset($row['nodeName'])

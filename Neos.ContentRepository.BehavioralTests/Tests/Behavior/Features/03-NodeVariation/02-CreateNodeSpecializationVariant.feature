@@ -5,9 +5,8 @@ Feature: Create node specialization
 
   Background:
     Given using the following content dimensions:
-      | Identifier | Values      | Generalizations |
-      | market     | DE, CH      | CH->DE          |
-      | language   | en, de, gsw | gsw->de->en     |
+      | Identifier | Values                 | Generalizations        |
+      | example    | source, spec, leafSpec | leafSpec->spec->source |
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:Document':
@@ -31,7 +30,7 @@ Feature: Create node specialization
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
+    And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -39,400 +38,468 @@ Feature: Create node specialization
     And the graph projection is fully up to date
 
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId        | nodeName       | parentNodeAggregateId  | nodeTypeName                                | tetheredDescendantNodeAggregateIds                                                         |
-    # We have to add another node since root node aggregates do not support variation
-    # Node /document
-      | sir-david-nodenborough | document       | lady-eleonode-rootford | Neos.ContentRepository.Testing:Document     | {"tethered-node": "nodewyn-tetherton", "tethered-node/tethered-leaf": "nodimer-tetherton"} |
-    # We also want to add a child node to make sure it is still reachable after creating a specialization of the parent
-    # Node /document/child-document
-      | nody-mc-nodeface       | child-document | sir-david-nodenborough | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
+      | nodeAggregateId        | nodeName            | parentNodeAggregateId  | succeedingSiblingNodeAggregateId | nodeTypeName                                | tetheredDescendantNodeAggregateIds                                                         |
+    # We have to add another node since root node aggregates do not support variation, and while we're at it let's add two levels of tethered children to check recursion
+      | nody-mc-nodeface       | document            | lady-eleonode-rootford |                                  | Neos.ContentRepository.Testing:Document     | {"tethered-node": "nodewyn-tetherton", "tethered-node/tethered-leaf": "nodimer-tetherton"} |
+    # Now let's add some siblings to check orderings. Also, everything gets better with siblings.
+      | elder-mc-nodeface      | elder-document      | lady-eleonode-rootford | nody-mc-nodeface                 | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
+      | eldest-mc-nodeface     | eldest-document     | lady-eleonode-rootford | elder-mc-nodeface                | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
+      | younger-mc-nodeface    | younger-document    | lady-eleonode-rootford |                                  | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
+      | youngest-mc-nodeface   | youngest-document   | lady-eleonode-rootford |                                  | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
+      | invariable-mc-nodeface | invariable-document | nody-mc-nodeface       |                                  | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
 
   Scenario: check the tree state before the specialization
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
-    And the subtree for node aggregate "sir-david-nodenborough" with node types "" and 2 levels deep should be:
+    When I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 3 levels deep should be:
       | Level | nodeAggregateId        |
-      | 0     | sir-david-nodenborough |
-      | 1     | nodewyn-tetherton      |
-      | 2     | nodimer-tetherton      |
+      | 0     | lady-eleonode-rootford |
+      | 1     | eldest-mc-nodeface     |
+      | 1     | elder-mc-nodeface      |
       | 1     | nody-mc-nodeface       |
-
-  Scenario: Create specialization of node to dimension space point without further specializations
-    When the command CreateNodeVariant is executed with payload:
-      | Key             | Value                             |
-      | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin    | {"market":"DE", "language":"en"}  |
-      | targetOrigin    | {"market":"CH", "language":"gsw"} |
-    Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
-    # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 6 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                    | Expected                            |
-      | contentStreamId        | "cs-identifier"                     |
-      | nodeAggregateId        | "sir-david-nodenborough"            |
-      | sourceOrigin           | {"market":"DE", "language":"en"}    |
-      | specializationOrigin   | {"market":"CH", "language":"gsw"}   |
-      | specializationCoverage | [{"market":"CH", "language":"gsw"}] |
-
-    # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 7 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                    | Expected                            |
-      | contentStreamId        | "cs-identifier"                     |
-      | nodeAggregateId        | "nodewyn-tetherton"                 |
-      | sourceOrigin           | {"market":"DE", "language":"en"}    |
-      | specializationOrigin   | {"market":"CH", "language":"gsw"}   |
-      | specializationCoverage | [{"market":"CH", "language":"gsw"}] |
-
-    # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 8 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                    | Expected                            |
-      | contentStreamId        | "cs-identifier"                     |
-      | nodeAggregateId        | "nodimer-tetherton"                 |
-      | sourceOrigin           | {"market":"DE", "language":"en"}    |
-      | specializationOrigin   | {"market":"CH", "language":"gsw"}   |
-      | specializationCoverage | [{"market":"CH", "language":"gsw"}] |
-
-    When the graph projection is fully up to date
-
-    When I am in the active content stream of workspace "live"
-    Then I expect the node aggregate "lady-eleonode-rootford" to exist
-    And I expect this node aggregate to occupy dimension space points [{}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
-
-    And I expect the node aggregate "sir-david-nodenborough" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"},{"market":"CH", "language":"gsw"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
-
-    And I expect the node aggregate "nodewyn-tetherton" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"},{"market":"CH", "language":"gsw"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
-
-    And I expect the node aggregate "nodimer-tetherton" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"},{"market":"CH", "language":"gsw"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
-
-    And I expect the node aggregate "nody-mc-nodeface" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
-
-    And I expect the graph projection to consist of exactly 8 nodes
-    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
-    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"CH", "language":"gsw"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"} to exist in the content graph
-
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
-
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
-
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
-
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
-
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
-
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
-    And I expect this node to have the following child nodes:
-      | Name           | NodeDiscriminator                                                 |
-      | tethered-node  | cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"} |
-      | child-document | cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}   |
-    And the subtree for node aggregate "sir-david-nodenborough" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId        |
-      | 0     | sir-david-nodenborough |
-      | 1     | nodewyn-tetherton      |
-      | 2     | nodimer-tetherton      |
-      | 1     | nody-mc-nodeface       |
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"gsw"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
-    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"gsw"}
+      | 2     | nodewyn-tetherton      |
+      | 3     | nodimer-tetherton      |
+      | 2     | invariable-mc-nodeface |
+      | 1     | younger-mc-nodeface    |
+      | 1     | youngest-mc-nodeface   |
 
   Scenario: Create specialization of node to dimension space point with further specializations
     When the command CreateNodeVariant is executed with payload:
-      | Key             | Value                            |
-      | nodeAggregateId | "sir-david-nodenborough"         |
-      | sourceOrigin    | {"market":"DE", "language":"en"} |
-      | targetOrigin    | {"market":"DE", "language":"de"} |
-    Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
-    And event at index 6 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                    | Expected                                                                                                                                |
-      | contentStreamId        | "cs-identifier"                                                                                                                         |
-      | nodeAggregateId        | "sir-david-nodenborough"                                                                                                                |
-      | sourceOrigin           | {"market":"DE", "language":"en"}                                                                                                        |
-      | specializationOrigin   | {"market":"DE", "language":"de"}                                                                                                        |
-      | specializationCoverage | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
-    And event at index 7 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                    | Expected                                                                                                                                |
-      | contentStreamId        | "cs-identifier"                                                                                                                         |
-      | nodeAggregateId        | "nodewyn-tetherton"                                                                                                                     |
-      | sourceOrigin           | {"market":"DE", "language":"en"}                                                                                                        |
-      | specializationOrigin   | {"market":"DE", "language":"de"}                                                                                                        |
-      | specializationCoverage | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
-    And event at index 8 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                    | Expected                                                                                                                                |
-      | contentStreamId        | "cs-identifier"                                                                                                                         |
-      | nodeAggregateId        | "nodimer-tetherton"                                                                                                                     |
-      | sourceOrigin           | {"market":"DE", "language":"en"}                                                                                                        |
-      | specializationOrigin   | {"market":"DE", "language":"de"}                                                                                                        |
-      | specializationCoverage | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | Key             | Value                |
+      | nodeAggregateId | "nody-mc-nodeface"   |
+      | sourceOrigin    | {"example":"source"} |
+      | targetOrigin    | {"example":"spec"}   |
+    Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 10 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                                                                                                                                    |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                             |
+      | nodeAggregateId        | "nody-mc-nodeface"                                                                                                                                                          |
+      | sourceOrigin           | {"example":"source"}                                                                                                                                                        |
+      | specializationOrigin   | {"example":"spec"}                                                                                                                                                          |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"younger-mc-nodeface"},{"dimensionSpacePoint":{"example":"leafSpec"},"nodeAggregateId":"younger-mc-nodeface"}] |
+    And event at index 11 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                                                                                                                                          |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                                   |
+      | nodeAggregateId        | "nodewyn-tetherton"                                                                                                                                                               |
+      | sourceOrigin           | {"example":"source"}                                                                                                                                                              |
+      | specializationOrigin   | {"example":"spec"}                                                                                                                                                                |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"invariable-mc-nodeface"},{"dimensionSpacePoint":{"example":"leafSpec"},"nodeAggregateId":"invariable-mc-nodeface"}] |
+    And event at index 12 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                                                                                                  |
+      | contentStreamId        | "cs-identifier"                                                                                                                           |
+      | nodeAggregateId        | "nodimer-tetherton"                                                                                                                       |
+      | sourceOrigin           | {"example":"source"}                                                                                                                      |
+      | specializationOrigin   | {"example":"spec"}                                                                                                                        |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"leafSpec"},"nodeAggregateId":null}] |
 
     When the graph projection is fully up to date
-    Then I expect the graph projection to consist of exactly 8 nodes
+    Then I expect the graph projection to consist of exactly 12 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
-    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"spec"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"example":"spec"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimer-tetherton;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimer-tetherton;{"example":"spec"} to exist in the content graph
+    And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;elder-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;younger-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
     When I am in the active content stream of workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    And I expect the node aggregate "sir-david-nodenborough" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+    And I expect the node aggregate "eldest-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    And I expect the node aggregate "nodewyn-tetherton" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
-
-    And I expect the node aggregate "nodimer-tetherton" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+    And I expect the node aggregate "elder-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
     And I expect the node aggregate "nody-mc-nodeface" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"},{"example":"spec"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect the node aggregate "nodewyn-tetherton" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"},{"example":"spec"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect the node aggregate "nodimer-tetherton" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"},{"example":"spec"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect the node aggregate "invariable-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect the node aggregate "younger-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect the node aggregate "youngest-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"example":"spec"}
+    Then I expect the subgraph projection to consist of exactly 9 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"de"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 3 levels deep should be:
+      | Level | nodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | eldest-mc-nodeface     |
+      | 1     | elder-mc-nodeface      |
+      | 1     | nody-mc-nodeface       |
+      | 2     | nodewyn-tetherton      |
+      | 3     | nodimer-tetherton      |
+      | 2     | invariable-mc-nodeface |
+      | 1     | younger-mc-nodeface    |
+      | 1     | youngest-mc-nodeface   |
+    And I expect this node to have the following child nodes:
+      | Name              | NodeDiscriminator                                       |
+      | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"source"}   |
+      | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"source"}    |
+      | document          | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
+      | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
+    And I expect this node to have no preceding siblings
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}    |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"spec"}
+    And I expect this node to have the following child nodes:
+      | Name                | NodeDiscriminator                                         |
+      | tethered-node       | cs-identifier;nodewyn-tetherton;{"example":"spec"}        |
+      | invariable-document | cs-identifier;invariable-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                     |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"example":"spec"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                  |
+      | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"spec"} |
+    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"example":"spec"}
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                     |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}     |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"} |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}      |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}   |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"}  |
+    And I expect this node to have no succeeding siblings
+
+    When I am in the active content stream of workspace "live" and dimension space point {"example":"leafSpec"}
+    Then I expect the subgraph projection to consist of exactly 9 nodes
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have the following child nodes:
+      | Name              | NodeDiscriminator                                       |
+      | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"source"}   |
+      | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"source"}    |
+      | document          | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
+      | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
+    And I expect this node to have no preceding siblings
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}    |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"spec"}
+    And I expect this node to have the following child nodes:
+      | Name                | NodeDiscriminator                                         |
+      | tethered-node       | cs-identifier;nodewyn-tetherton;{"example":"spec"}        |
+      | invariable-document | cs-identifier;invariable-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                     |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"example":"spec"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                  |
+      | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"spec"} |
+    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"example":"spec"}
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                     |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}     |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"} |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}      |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}   |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"}  |
+    And I expect this node to have no succeeding siblings
 
   Scenario: Create specialization of node to dimension space point with specializations that are partially occupied
-    When the event NodeSpecializationVariantWasCreated was published with payload:
-      | Key                    | Value                                                                |
-      | contentStreamId        | "cs-identifier"                                                      |
-      | nodeAggregateId        | "sir-david-nodenborough"                                             |
-      | sourceOrigin           | {"market":"DE", "language":"en"}                                     |
-      | specializationOrigin   | {"market":"CH", "language":"de"}                                     |
-      | specializationCoverage | [{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-    And the event NodeSpecializationVariantWasCreated was published with payload:
-      | Key                    | Value                                                                |
-      | contentStreamId        | "cs-identifier"                                                      |
-      | nodeAggregateId        | "nodewyn-tetherton"                                                  |
-      | sourceOrigin           | {"market":"DE", "language":"en"}                                     |
-      | specializationOrigin   | {"market":"CH", "language":"de"}                                     |
-      | specializationCoverage | [{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-    And the event NodeSpecializationVariantWasCreated was published with payload:
-      | Key                    | Value                                                                |
-      | contentStreamId        | "cs-identifier"                                                      |
-      | nodeAggregateId        | "nodimer-tetherton"                                                  |
-      | sourceOrigin           | {"market":"DE", "language":"en"}                                     |
-      | specializationOrigin   | {"market":"CH", "language":"de"}                                     |
-      | specializationCoverage | [{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+    Given the command CreateNodeVariant is executed with payload:
+      | Key             | Value                  |
+      | nodeAggregateId | "nody-mc-nodeface"     |
+      | sourceOrigin    | {"example":"source"}   |
+      | targetOrigin    | {"example":"leafSpec"} |
     And the graph projection is fully up to date
-
     When the command CreateNodeVariant is executed with payload:
-      | Key             | Value                            |
-      | nodeAggregateId | "sir-david-nodenborough"         |
-      | sourceOrigin    | {"market":"DE", "language":"en"} |
-      | targetOrigin    | {"market":"CH", "language":"en"} |
-    Then I expect exactly 12 events to be published on stream "ContentStream:cs-identifier"
-    # The first event is NodeAggregateWithNodeWasCreated
-    # The second event is the above
-    And event at index 9 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                    | Expected                           |
-      | contentStreamId        | "cs-identifier"                    |
-      | nodeAggregateId        | "sir-david-nodenborough"           |
-      | sourceOrigin           | {"market":"DE", "language":"en"}   |
-      | specializationOrigin   | {"market":"CH", "language":"en"}   |
-      | specializationCoverage | [{"market":"CH", "language":"en"}] |
-    # The first event is NodeAggregateWithNodeWasCreated
-    # The second event is the above
-    And event at index 10 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                    | Expected                           |
-      | contentStreamId        | "cs-identifier"                    |
-      | nodeAggregateId        | "nodewyn-tetherton"                |
-      | sourceOrigin           | {"market":"DE", "language":"en"}   |
-      | specializationOrigin   | {"market":"CH", "language":"en"}   |
-      | specializationCoverage | [{"market":"CH", "language":"en"}] |
-    # The first event is NodeAggregateWithNodeWasCreated
-    # The second event is the above
-    And event at index 11 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                    | Expected                           |
-      | contentStreamId        | "cs-identifier"                    |
-      | nodeAggregateId        | "nodimer-tetherton"                |
-      | sourceOrigin           | {"market":"DE", "language":"en"}   |
-      | specializationOrigin   | {"market":"CH", "language":"en"}   |
-      | specializationCoverage | [{"market":"CH", "language":"en"}] |
+      | Key             | Value                |
+      | nodeAggregateId | "nody-mc-nodeface"   |
+      | sourceOrigin    | {"example":"source"} |
+      | targetOrigin    | {"example":"spec"}   |
+    Then I expect exactly 16 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 13 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                                             |
+      | contentStreamId        | "cs-identifier"                                                                      |
+      | nodeAggregateId        | "nody-mc-nodeface"                                                                   |
+      | sourceOrigin           | {"example":"source"}                                                                 |
+      | specializationOrigin   | {"example":"spec"}                                                                   |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"younger-mc-nodeface"}] |
+    And event at index 14 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                                                |
+      | contentStreamId        | "cs-identifier"                                                                         |
+      | nodeAggregateId        | "nodewyn-tetherton"                                                                     |
+      | sourceOrigin           | {"example":"source"}                                                                    |
+      | specializationOrigin   | {"example":"spec"}                                                                      |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"invariable-mc-nodeface"}] |
+    And event at index 15 is of type "NodeSpecializationVariantWasCreated" with payload:
+      | Key                    | Expected                                                            |
+      | contentStreamId        | "cs-identifier"                                                     |
+      | nodeAggregateId        | "nodimer-tetherton"                                                 |
+      | sourceOrigin           | {"example":"source"}                                                |
+      | specializationOrigin   | {"example":"spec"}                                                  |
+      | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
 
     When the graph projection is fully up to date
-    Then I expect the graph projection to consist of exactly 11 nodes
+    Then I expect the graph projection to consist of exactly 15 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
-    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"de"} to exist in the content graph
-    And I expect a node identified by cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"de"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"CH", "language":"de"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nodimer-tetherton;{"market":"CH", "language":"en"} to exist in the content graph
-    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"leafSpec"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"spec"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"example":"leafSpec"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodewyn-tetherton;{"example":"spec"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimer-tetherton;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimer-tetherton;{"example":"leafSpec"} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodimer-tetherton;{"example":"spec"} to exist in the content graph
+    And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;elder-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;younger-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
+    And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
     When I am in the active content stream of workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    And I expect the node aggregate "sir-david-nodenborough" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+    And I expect the node aggregate "eldest-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    And I expect the node aggregate "nodewyn-tetherton" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
-
-    And I expect the node aggregate "nodimer-tetherton" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+    And I expect the node aggregate "elder-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
     And I expect the node aggregate "nody-mc-nodeface" to exist
-    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"}]
-    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect the node aggregate "nodewyn-tetherton" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect the node aggregate "nodimer-tetherton" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"DE", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect the node aggregate "invariable-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"en"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"en"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"en"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect the node aggregate "younger-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"de"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"de"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"de"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect the node aggregate "youngest-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
+    And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"example":"spec"}
+    Then I expect the subgraph projection to consist of exactly 9 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"CH", "language":"de"}
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"de"}
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"de"}
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
+    And I expect this node to have the following child nodes:
+      | Name              | NodeDiscriminator                                       |
+      | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"source"}   |
+      | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"source"}    |
+      | document          | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
+      | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
+    And I expect this node to have no preceding siblings
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}    |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}       |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"spec"}
+    And I expect this node to have the following child nodes:
+      | Name                | NodeDiscriminator                                         |
+      | tethered-node       | cs-identifier;nodewyn-tetherton;{"example":"spec"}        |
+      | invariable-document | cs-identifier;invariable-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                     |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"example":"spec"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                  |
+      | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"spec"} |
+    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"example":"spec"}
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                     |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}     |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"} |
+      | cs-identifier;nody-mc-nodeface;{"example":"spec"}      |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}   |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"}  |
+    And I expect this node to have no succeeding siblings
+
+    When I am in the active content stream of workspace "live" and dimension space point {"example":"leafSpec"}
+    Then I expect the subgraph projection to consist of exactly 9 nodes
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have the following child nodes:
+      | Name              | NodeDiscriminator                                       |
+      | eldest-document   | cs-identifier;eldest-mc-nodeface;{"example":"source"}   |
+      | elder-document    | cs-identifier;elder-mc-nodeface;{"example":"source"}    |
+      | document          | cs-identifier;nody-mc-nodeface;{"example":"leafSpec"}   |
+      | younger-document  | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | youngest-document | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "eldest-mc-nodeface" and node path "eldest-document" to lead to node cs-identifier;eldest-mc-nodeface;{"example":"source"}
+    And I expect this node to have no preceding siblings
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}    |
+      | cs-identifier;nody-mc-nodeface;{"example":"leafSpec"}   |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;nody-mc-nodeface;{"example":"leafSpec"}   |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"leafSpec"}
+    And I expect this node to have the following child nodes:
+      | Name                | NodeDiscriminator                                         |
+      | tethered-node       | cs-identifier;nodewyn-tetherton;{"example":"leafSpec"}    |
+      | invariable-document | cs-identifier;invariable-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                     |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"example":"leafSpec"}
+    And I expect this node to have the following child nodes:
+      | Name          | NodeDiscriminator                                      |
+      | tethered-leaf | cs-identifier;nodimer-tetherton;{"example":"leafSpec"} |
+    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"example":"leafSpec"}
+    And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to node cs-identifier;invariable-mc-nodeface;{"example":"source"}
+    And I expect node aggregate identifier "younger-mc-nodeface" and node path "younger-document" to lead to node cs-identifier;younger-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                     |
+      | cs-identifier;nody-mc-nodeface;{"example":"leafSpec"} |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
+    And I expect this node to have the following succeeding siblings:
+      | NodeDiscriminator                                       |
+      | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
+    And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to node cs-identifier;youngest-mc-nodeface;{"example":"source"}
+    And I expect this node to have the following preceding siblings:
+      | NodeDiscriminator                                      |
+      | cs-identifier;younger-mc-nodeface;{"example":"source"} |
+      | cs-identifier;nody-mc-nodeface;{"example":"leafSpec"}  |
+      | cs-identifier;elder-mc-nodeface;{"example":"source"}   |
+      | cs-identifier;eldest-mc-nodeface;{"example":"source"}  |
+    And I expect this node to have no succeeding siblings
 
     # @todo test based on NodeSpecializationVariantWasCreated ({"market":"CH", "language":"DE"})
     # and VirtualNodeVariantWasRemoved ({"market":"CH", "language":"gsw"})
     # to test that explicitly removed virtual variants are not implicitly created again
-
-  Scenario: Create specialization of node to dimension space point that is already covered
-    Given the command CreateNodeVariant is executed with payload:
-      | Key             | Value                            |
-      | nodeAggregateId | "sir-david-nodenborough"         |
-      | sourceOrigin    | {"market":"DE", "language":"en"} |
-      | targetOrigin    | {"market":"DE", "language":"de"} |
-    And the graph projection is fully up to date
-    When the command CreateNodeVariant is executed with payload:
-      | Key             | Value                             |
-      | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin    | {"market":"DE", "language":"en"}  |
-      | targetOrigin    | {"market":"DE", "language":"gsw"} |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"de"}
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"gsw"}

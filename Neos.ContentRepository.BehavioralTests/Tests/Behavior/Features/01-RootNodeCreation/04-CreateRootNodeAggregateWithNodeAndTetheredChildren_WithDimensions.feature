@@ -60,49 +60,49 @@ Feature: Create a root node aggregate with tethered children
       | coveredDimensionSpacePoints | [{"language": "de"}, {"language": "en"}, {"language": "gsw"}, {"language": "en_US"}] |
       | nodeAggregateClassification | "root"                                                                               |
     And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                                                |
-      | contentStreamId             | "cs-identifier"                                         |
-      | nodeAggregateId             | "nody-mc-nodeface"                                      |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:SubNode"                |
-      | originDimensionSpacePoint   | {"language": "de"}                                      |
-      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]                |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                                |
-      | nodeName                    | "child-node"                                            |
-      | initialPropertyValues       | {"text": {"value": "my sub default", "type": "string"}} |
-      | nodeAggregateClassification | "tethered"                                              |
+      | Key                           | Expected                                                                                                                               |
+      | contentStreamId               | "cs-identifier"                                                                                                                        |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                     |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:SubNode"                                                                                               |
+      | originDimensionSpacePoint     | {"language": "de"}                                                                                                                     |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language": "de"},"nodeAggregateId":null},{"dimensionSpacePoint":{"language": "gsw"},"nodeAggregateId":null}] |
+      | parentNodeAggregateId         | "lady-eleonode-rootford"                                                                                                               |
+      | nodeName                      | "child-node"                                                                                                                           |
+      | initialPropertyValues         | {"text": {"value": "my sub default", "type": "string"}}                                                                                |
+      | nodeAggregateClassification   | "tethered"                                                                                                                             |
     And event at index 3 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                                                    |
-      | contentStreamId             | "cs-identifier"                                             |
-      | nodeAggregateId             | "nodimus-prime"                                             |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:SubSubNode"                 |
-      | originDimensionSpacePoint   | {"language": "de"}                                          |
-      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]                    |
-      | parentNodeAggregateId       | "nody-mc-nodeface"                                          |
-      | nodeName                    | "grandchild-node"                                           |
-      | initialPropertyValues       | {"text": {"value": "my sub sub default", "type": "string"}} |
-      | nodeAggregateClassification | "tethered"                                                  |
+      | Key                           | Expected                                                                                                                               |
+      | contentStreamId               | "cs-identifier"                                                                                                                        |
+      | nodeAggregateId               | "nodimus-prime"                                                                                                                        |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:SubSubNode"                                                                                            |
+      | originDimensionSpacePoint     | {"language": "de"}                                                                                                                     |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language": "de"},"nodeAggregateId":null},{"dimensionSpacePoint":{"language": "gsw"},"nodeAggregateId":null}] |
+      | parentNodeAggregateId         | "nody-mc-nodeface"                                                                                                                     |
+      | nodeName                      | "grandchild-node"                                                                                                                      |
+      | initialPropertyValues         | {"text": {"value": "my sub sub default", "type": "string"}}                                                                            |
+      | nodeAggregateClassification   | "tethered"                                                                                                                             |
     And event at index 4 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                                                |
-      | contentStreamId             | "cs-identifier"                                         |
-      | nodeAggregateId             | "nody-mc-nodeface"                                      |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:SubNode"                |
-      | originDimensionSpacePoint   | {"language": "en"}                                      |
-      | coveredDimensionSpacePoints | [{"language": "en"},{"language": "en_US"}]              |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                                |
-      | nodeName                    | "child-node"                                            |
-      | initialPropertyValues       | {"text": {"value": "my sub default", "type": "string"}} |
-      | nodeAggregateClassification | "tethered"                                              |
+      | Key                           | Expected                                                                                                                                 |
+      | contentStreamId               | "cs-identifier"                                                                                                                          |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                       |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:SubNode"                                                                                                 |
+      | originDimensionSpacePoint     | {"language": "en"}                                                                                                                       |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language": "en"},"nodeAggregateId":null},{"dimensionSpacePoint":{"language": "en_US"},"nodeAggregateId":null}] |
+      | parentNodeAggregateId         | "lady-eleonode-rootford"                                                                                                                 |
+      | nodeName                      | "child-node"                                                                                                                             |
+      | initialPropertyValues         | {"text": {"value": "my sub default", "type": "string"}}                                                                                  |
+      | nodeAggregateClassification   | "tethered"                                                                                                                               |
     And event at index 5 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                                                    |
-      | contentStreamId             | "cs-identifier"                                             |
-      | nodeAggregateId             | "nodimus-prime"                                             |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:SubSubNode"                 |
-      | originDimensionSpacePoint   | {"language": "en"}                                          |
-      | coveredDimensionSpacePoints | [{"language": "en"},{"language": "en_US"}]                  |
-      | parentNodeAggregateId       | "nody-mc-nodeface"                                          |
-      | nodeName                    | "grandchild-node"                                           |
-      | initialPropertyValues       | {"text": {"value": "my sub sub default", "type": "string"}} |
-      | nodeAggregateClassification | "tethered"                                                  |
+      | Key                           | Expected                                                                                                                                 |
+      | contentStreamId               | "cs-identifier"                                                                                                                          |
+      | nodeAggregateId               | "nodimus-prime"                                                                                                                          |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:SubSubNode"                                                                                              |
+      | originDimensionSpacePoint     | {"language": "en"}                                                                                                                       |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language": "en"},"nodeAggregateId":null},{"dimensionSpacePoint":{"language": "en_US"},"nodeAggregateId":null}] |
+      | parentNodeAggregateId         | "nody-mc-nodeface"                                                                                                                       |
+      | nodeName                      | "grandchild-node"                                                                                                                        |
+      | initialPropertyValues         | {"text": {"value": "my sub sub default", "type": "string"}}                                                                              |
+      | nodeAggregateClassification   | "tethered"                                                                                                                               |
 
     And I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
