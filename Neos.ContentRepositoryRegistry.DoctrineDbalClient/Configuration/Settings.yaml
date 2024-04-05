@@ -8,4 +8,4 @@ Neos:
           'Neos.ContentRepository:ContentGraph':
             factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
         contentGraphAdapter:
-          factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphAdapterFactory
+          factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphAdapterProviderFactory

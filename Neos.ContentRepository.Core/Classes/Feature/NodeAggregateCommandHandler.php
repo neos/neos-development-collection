@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature;
 
+use http\Exception\RuntimeException;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -52,6 +53,8 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\SubtreeTagging;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -82,7 +85,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         private readonly DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly PropertyConverter $propertyConverter,
-        protected readonly ContentGraphAdapterInterface $contentGraphAdapter
+        protected readonly ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
     ) {
     }
 
@@ -146,9 +149,28 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         return $this->propertyConverter;
     }
 
-    protected function getContentGraphAdapter(): ContentGraphAdapterInterface
+    /**
+     * WIP Should not have this signature ;)
+     * @param WorkspaceName|null $workspaceName
+     * @param ContentStreamId|null $contentStreamId
+     * @return ContentGraphAdapterInterface
+     *
+     */
+    protected function getContentGraphAdapter(?WorkspaceName $workspaceName, ?ContentStreamId $contentStreamId = null): ContentGraphAdapterInterface
     {
-        return $this->contentGraphAdapter;
+        if ($contentStreamId && $workspaceName) {
+            return $this->contentGraphAdapterProvider->get($workspaceName, $contentStreamId);
+        }
+
+        if ($workspaceName) {
+            return $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($workspaceName);
+        }
+
+        if ($contentStreamId) {
+            return $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($contentStreamId);
+        }
+
+        throw new RuntimeException('To access the ContentGraphAdpater either a WorkspaceName or ContentStreamId is necessary, neither was provided.', 1712331448);
     }
 
     /**

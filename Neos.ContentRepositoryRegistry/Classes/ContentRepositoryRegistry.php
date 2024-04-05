@@ -9,8 +9,9 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Factory\ProjectionsAndCatchUpHooksFactory;
-use Neos\ContentRepository\Core\Feature\ContentGraphAdapterFactoryInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderFactoryInterface;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -160,7 +161,7 @@ final class ContentRepositoryRegistry
                 $this->buildProjectionCatchUpTrigger($contentRepositoryId, $contentRepositorySettings),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
                 $clock,
-                $this->buildContentGraphAdapter($contentRepositoryId, $contentRepositorySettings),
+                $this->buildContentGraphAdapterProvider($contentRepositoryId, $contentRepositorySettings),
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryId, $exception);
@@ -286,12 +287,12 @@ final class ContentRepositoryRegistry
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */
-    private function buildContentGraphAdapter(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings): ContentGraphAdapterInterface
+    private function buildContentGraphAdapterProvider(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings): ContentGraphAdapterProviderInterface
     {
         isset($contentRepositorySettings['contentGraphAdapter']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have contentGraphAdapter.factoryObjectName configured.', $contentRepositoryIdentifier->value);
         $contentGraphAdapterFactory = $this->objectManager->get($contentRepositorySettings['contentGraphAdapter']['factoryObjectName']);
-        if (!$contentGraphAdapterFactory instanceof ContentGraphAdapterFactoryInterface) {
-            throw InvalidConfigurationException::fromMessage('contentGraphAdapter.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ContentGraphAdapterFactoryInterface::class, get_debug_type($contentGraphAdapterFactory));
+        if (!$contentGraphAdapterFactory instanceof ContentGraphAdapterProviderFactoryInterface) {
+            throw InvalidConfigurationException::fromMessage('contentGraphAdapter.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ContentGraphAdapterProviderFactoryInterface::class, get_debug_type($contentGraphAdapterFactory));
         }
 
         return $contentGraphAdapterFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['contentGraphAdapter']['options'] ?? []);

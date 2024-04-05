@@ -23,9 +23,13 @@ use Neos\EventStore\Model\EventStream\MaybeVersion;
  */
 class ContentGraphAdapter implements ContentGraphAdapterInterface
 {
+    private NodeFactory $nodeFactory;
+
     public function __construct(
         private readonly Connection $dbalConnection,
-        private readonly string $tableNamePrefix
+        private readonly string $tableNamePrefix,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly WorkspaceName $workspaceName
     )
     {
     }

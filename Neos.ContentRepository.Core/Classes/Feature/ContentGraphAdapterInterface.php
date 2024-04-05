@@ -21,7 +21,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -52,8 +51,6 @@ interface ContentGraphAdapterInterface
      * @return iterable<NodeAggregate>
      */
     public function findParentNodeAggregates(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         NodeAggregateId $childNodeAggregateId
     ): iterable;
 
@@ -61,14 +58,10 @@ interface ContentGraphAdapterInterface
      * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function findNodeAggregateById(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate;
 
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         NodeAggregateId $childNodeAggregateId,
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): ?NodeAggregate;
@@ -192,4 +185,8 @@ interface ContentGraphAdapterInterface
     public function findWorkspaceByCurrentContentStreamId(
         ContentStreamId $contentStreamId
     ): ?Workspace;
+
+    public function getWorkspaceName(): WorkspaceName;
+
+    public function getContentStreamId(): ContentStreamId;
 }
