@@ -150,6 +150,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
         ContentStreamId $contentStreamId,
         NodeName $nodeName,
         NodeAggregateId $parentNodeAggregateId,
+        OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet;
 

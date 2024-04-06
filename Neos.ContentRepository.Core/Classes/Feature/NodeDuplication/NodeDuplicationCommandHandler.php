@@ -142,6 +142,9 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
                 $contentStreamId,
                 $command->targetNodeName,
                 $command->targetParentNodeAggregateId,
+                $parentNodeAggregate->classification->isRoot()
+                    ? OriginDimensionSpacePoint::createWithoutDimensions()
+                    : $command->targetDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
                 $contentRepository
             );

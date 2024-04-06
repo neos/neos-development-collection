@@ -548,6 +548,7 @@ trait ConstraintChecks
         ContentStreamId $contentStreamId,
         ?NodeName $nodeName,
         NodeAggregateId $parentNodeAggregateId,
+        OriginDimensionSpacePoint $parentOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePoints,
         ContentRepository $contentRepository
     ): void {
@@ -559,6 +560,7 @@ trait ConstraintChecks
                 $contentStreamId,
                 $nodeName,
                 $parentNodeAggregateId,
+                $parentOriginDimensionSpacePoint,
                 $dimensionSpacePoints
             );
         if (count($dimensionSpacePointsOccupiedByChildNodeName) > 0) {

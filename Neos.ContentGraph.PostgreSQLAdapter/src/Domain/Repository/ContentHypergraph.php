@@ -273,6 +273,7 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamId $contentStreamId,
         NodeName $nodeName,
         NodeAggregateId $parentNodeAggregateId,
+        OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet {
         $query = HypergraphChildQuery::create(
@@ -282,6 +283,7 @@ final class ContentHypergraph implements ContentGraphInterface
             ['ch.dimensionspacepoint, ch.dimensionspacepointhash']
         );
         $query = $query->withChildNodeName($nodeName)
+            ->withOriginDimensionSpacePoint($parentNodeOriginDimensionSpacePoint)
             ->withDimensionSpacePoints($dimensionSpacePointsToCheck);
 
         $occupiedDimensionSpacePoints = [];

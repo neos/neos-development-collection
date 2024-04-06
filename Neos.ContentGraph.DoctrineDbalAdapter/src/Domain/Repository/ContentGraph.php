@@ -302,6 +302,7 @@ final class ContentGraph implements ContentGraphInterface
         ContentStreamId $contentStreamId,
         NodeName $nodeName,
         NodeAggregateId $parentNodeAggregateId,
+        OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet {
         $queryBuilder = $this->createQueryBuilder()
@@ -311,12 +312,14 @@ final class ContentGraph implements ContentGraphInterface
             ->innerJoin('h', $this->tableNamePrefix . '_dimensionspacepoints', 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'ph.childnodeanchor = n.relationanchorpoint')
             ->where('n.nodeaggregateid = :parentNodeAggregateId')
+            ->andWhere('n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash')
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')
             ->andWhere('h.name = :nodeName')
             ->setParameters([
                 'parentNodeAggregateId' => $parentNodeAggregateId->value,
+                'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->hash,
                 'contentStreamId' => $contentStreamId->value,
                 'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
                 'nodeName' => $nodeName->value

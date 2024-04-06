@@ -180,6 +180,9 @@ trait NodeCreation
                 $contentStreamId,
                 $command->nodeName,
                 $command->parentNodeAggregateId,
+                $parentNodeAggregate->classification->isRoot()
+                    ? DimensionSpace\OriginDimensionSpacePoint::createWithoutDimensions()
+                    : $command->originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
                 $contentRepository
             );

@@ -42,13 +42,16 @@ trait NodeRenaming
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be renamed');
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         foreach ($contentRepository->getContentGraph()->findParentNodeAggregates($contentStreamId, $command->nodeAggregateId) as $parentNodeAggregate) {
-            $this->requireNodeNameToBeUnoccupied(
-                $contentStreamId,
-                $command->newNodeName,
-                $parentNodeAggregate->nodeAggregateId,
-                $parentNodeAggregate->coveredDimensionSpacePoints,
-                $contentRepository
-            );
+            foreach ($parentNodeAggregate->occupiedDimensionSpacePoints as $occupiedParentDimensionSpacePoint) {
+                $this->requireNodeNameToBeUnoccupied(
+                    $contentStreamId,
+                    $command->newNodeName,
+                    $parentNodeAggregate->nodeAggregateId,
+                    $occupiedParentDimensionSpacePoint,
+                    $parentNodeAggregate->coveredDimensionSpacePoints,
+                    $contentRepository
+                );
+            }
         }
 
         $events = Events::with(
