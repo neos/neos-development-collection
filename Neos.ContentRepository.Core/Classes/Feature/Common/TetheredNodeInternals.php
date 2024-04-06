@@ -92,7 +92,9 @@ trait TetheredNodeInternals
                             $tetheredNodeAggregateId,
                             $creationOriginDimensionSpacePoint,
                             $rootGeneralizationOrigin,
-                            $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization)
+                            InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                                $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization),
+                            )
                         );
                     } else {
                         $events[] = new NodeAggregateWithNodeWasCreated(
@@ -100,7 +102,9 @@ trait TetheredNodeInternals
                             $tetheredNodeAggregateId,
                             $expectedTetheredNodeType->name,
                             $rootGeneralizationOrigin,
-                            $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization),
+                            InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                                $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization)
+                            ),
                             $parentNodeAggregate->nodeAggregateId,
                             $tetheredNodeName,
                             SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter()),
@@ -117,7 +121,9 @@ trait TetheredNodeInternals
                         $tetheredNodeAggregateId ?: NodeAggregateId::create(),
                         $expectedTetheredNodeType->name,
                         $originDimensionSpacePoint,
-                        $parentNodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
+                        InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                            $parentNodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
+                        ),
                         $parentNodeAggregate->nodeAggregateId,
                         $tetheredNodeName,
                         SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter()),

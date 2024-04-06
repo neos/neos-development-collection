@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  * basically making all content available not just in the source(original) DSP,
  * but also in the target-DimensionSpacePoint.
  *
- * NOTE: the Source Dimension Space Point must be a parent of the target Dimension Space Point.
+ * NOTE: the Source Dimension Space Point must be a generalization of the target Dimension Space Point.
  *
  * This is needed if "de" exists, and you want to create a "de_CH" specialization.
  *
@@ -39,27 +39,28 @@ final readonly class AddDimensionShineThrough implements
     RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in.
-     *      This content stream is specifically created for this operation and thus not prone to conflicts,
-     *      thus we don't need the workspace name
+     * @param WorkspaceName $workspaceName The name of the workspace to perform the operation in.
      * @param DimensionSpacePoint $source source dimension space point
      * @param DimensionSpacePoint $target target dimension space point
      */
     private function __construct(
-        public ContentStreamId $contentStreamId,
+        public WorkspaceName $workspaceName,
         public DimensionSpacePoint $source,
         public DimensionSpacePoint $target
     ) {
     }
 
     /**
-     * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in
+     * @param WorkspaceName $workspaceName The name of the workspace to perform the operation in
      * @param DimensionSpacePoint $source source dimension space point
      * @param DimensionSpacePoint $target target dimension space point
      */
-    public static function create(ContentStreamId $contentStreamId, DimensionSpacePoint $source, DimensionSpacePoint $target): self
-    {
-        return new self($contentStreamId, $source, $target);
+    public static function create(
+        WorkspaceName $workspaceName,
+        DimensionSpacePoint $source,
+        DimensionSpacePoint $target
+    ): self {
+        return new self($workspaceName, $source, $target);
     }
 
     /**
@@ -68,16 +69,16 @@ final readonly class AddDimensionShineThrough implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamId::fromString($array['contentStreamId']),
+            WorkspaceName::fromString($array['workspaceName']),
             DimensionSpacePoint::fromArray($array['source']),
             DimensionSpacePoint::fromArray($array['target'])
         );
     }
 
-    public function createCopyForWorkspace(WorkspaceName $targetWorkspaceName, ContentStreamId $targetContentStreamId): self
+    public function createCopyForWorkspace(WorkspaceName $targetWorkspaceName): self
     {
         return new self(
-            $targetContentStreamId,
+            $targetWorkspaceName,
             $this->source,
             $this->target
         );

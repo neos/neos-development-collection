@@ -203,7 +203,7 @@ Feature: Remove NodeAggregate
       | Key                                  | Expected                                                                   |
       | contentStreamId                      | "cs-identifier"                                                            |
       | nodeAggregateId                      | "nodingers-cat"                                                            |
-      | affectedOccupiedDimensionSpacePoints | [{"language":"en"},{"language":"de"}]                                      |
+      | affectedOccupiedDimensionSpacePoints | [{"language":"de"},{"language":"en"}]                                      |
       | affectedCoveredDimensionSpacePoints  | [{"language":"de"},{"language":"en"},{"language":"gsw"},{"language":"fr"}] |
       | removalAttachmentPoint               | null                                                                       |
     When the graph projection is fully up to date

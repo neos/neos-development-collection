@@ -26,7 +26,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 interface GlobalTransformationInterface
 {
     public function execute(
-        WorkspaceName $workspaceNameForReading,
-        ContentStreamId $contentStreamForWriting
+        WorkspaceName $workspaceNameForWriting,
     ): CommandResult;
 }
