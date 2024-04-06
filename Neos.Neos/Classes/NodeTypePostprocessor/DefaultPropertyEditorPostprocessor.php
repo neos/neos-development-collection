@@ -57,7 +57,9 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
 
             if (!$editor) {
                 $maxAllowedItems = $referenceConfiguration['constraints']['maxItems'] ?? null;
-                $editor = $maxAllowedItems === 1 ? 'Neos.Neos/Inspector/Editors/ReferenceEditor' : 'Neos.Neos/Inspector/Editors/ReferencesEditor';
+                $editor = $maxAllowedItems === 1
+                    ? ($this->dataTypesDefaultConfiguration['reference']['editor'] ?? 'Neos.Neos/Inspector/Editors/ReferenceEditor')
+                    : ($this->dataTypesDefaultConfiguration['references']['editor'] ?? 'Neos.Neos/Inspector/Editors/ReferencesEditor');
             }
 
             $mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor] ?? [];

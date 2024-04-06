@@ -230,6 +230,12 @@ Neos:
             editor: Neos.Neos/Inspector/Editors/DateTimeEditor
             editorOptions:
               format: d-m-Y
+          # special types uses for NodeType references to wire the "editor"
+          # singular "reference" will be used if constraints.maxItems is set to 1
+          reference:
+            editor: Neos.Neos/Inspector/Editors/ReferenceEditor
+          references:
+            editor: Neos.Neos/Inspector/Editors/ReferencesEditor
         editors:
           Neos.Neos/Inspector/Editors/CodeEditor:
             editorOptions:
