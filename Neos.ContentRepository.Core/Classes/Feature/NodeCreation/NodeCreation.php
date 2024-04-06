@@ -180,7 +180,6 @@ trait NodeCreation
                 $contentStreamId,
                 $command->nodeName,
                 $command->parentNodeAggregateId,
-                $command->originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
                 $contentRepository
             );

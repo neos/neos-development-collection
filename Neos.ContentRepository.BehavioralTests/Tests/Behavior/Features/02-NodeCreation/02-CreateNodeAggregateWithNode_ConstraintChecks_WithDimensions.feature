@@ -63,3 +63,22 @@ Feature: Create node aggregate with node
       | parentNodeAggregateId     | "sir-david-nodenborough"              |
       | originDimensionSpacePoint | {"language":"de"}                     |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
+
+  Scenario: Try to create a node aggregate with a root parent and a sibling already claiming the name
+    # root nodes are special in that they have the empty DSP as origin, wich may affect constraint checks
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                 |
+      | nodeAggregateId           | "sir-david-nodenborough"              |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"              |
+      | originDimensionSpacePoint | {"language":"de"}                     |
+      | nodeName                  | "document"                            |
+    And the graph projection is fully up to date
+    And the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                       | Value                                 |
+      | nodeAggregateId           | "nody-mc-nodeface"                    |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"              |
+      | originDimensionSpacePoint | {"language":"de"}                     |
+      | nodeName                  | "document"                            |
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyOccupied"
