@@ -121,7 +121,8 @@ class PropertyOperation extends AbstractOperation
                 FindReferencesFilter::create(referenceName: $propertyName)
             )->getNodes();
 
-            if (($this->getNodeType($element)->getReferences()[$propertyName]['constraints']['maxItems'] ?? -1) === 1) {
+            $maxItems = $this->getNodeType($element)->getReferences()[$propertyName]['constraints']['maxItems'] ?? null;
+            if ($maxItems === 1) {
                 // legacy layer references with only one item like the previous `type: reference`
                 // (the node type transforms that to constraints.maxItems = 1)
                 // users still expect the property operation to return a single node instead of an array.
