@@ -141,8 +141,7 @@ class ImageService
             $imagineImage->usePalette(new RGB());
         }
 
-        $stripFilter = new \Imagine\Filter\Basic\Strip();
-        $stripFilter->apply($imagineImage);
+        $imagineImage->strip();
 
         if ($this->imagineService instanceof Imagine && $originalResource->getFileExtension() === 'gif' && $this->isAnimatedGif(file_get_contents($resourceUri)) === true) {
             $imagineImage->layers()->coalesce();
