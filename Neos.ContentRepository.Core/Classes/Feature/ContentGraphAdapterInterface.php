@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
@@ -43,7 +44,6 @@ interface ContentGraphAdapterInterface
      */
 
     public function rootNodeAggregateWithTypeExists(
-        ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): bool;
 
@@ -70,8 +70,6 @@ interface ContentGraphAdapterInterface
      * @return iterable<NodeAggregate>
      */
     public function findChildNodeAggregates(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         NodeAggregateId $parentNodeAggregateId
     ): iterable;
 
@@ -79,15 +77,12 @@ interface ContentGraphAdapterInterface
      * @return iterable<NodeAggregate>
      */
     public function findTetheredChildNodeAggregates(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         NodeAggregateId $parentNodeAggregateId
     ): iterable;
 
     /**
      */
     public function getDimensionSpacePointsOccupiedByChildNodeName(
-        ContentStreamId $contentStreamId,
         NodeName $nodeName,
         NodeAggregateId $parentNodeAggregateId,
         OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
@@ -101,8 +96,6 @@ interface ContentGraphAdapterInterface
      * @return iterable<NodeAggregate>
      */
     public function findChildNodeAggregatesByName(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         NodeAggregateId $parentNodeAggregateId,
         NodeName $name
     ): iterable;
@@ -115,7 +108,6 @@ interface ContentGraphAdapterInterface
      * Does the subgraph with the provided identity contain any nodes
      */
     public function subgraphContainsNodes(
-        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint
     ): bool;
 
@@ -123,37 +115,32 @@ interface ContentGraphAdapterInterface
      * Finds a specified node within a "subgraph"
      */
     public function findNodeInSubgraph(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
     ): ?Node;
 
     public function findParentNodeInSubgraph(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeAggregateId $childNodeAggregateId
     ): ?Node;
 
+    public function findChildNodesInSubgraph(
+        DimensionSpacePoint $coveredDimensionSpacePoint,
+        NodeAggregateId $parentNodeAggregateId
+    ): Nodes;
+
     public function findChildNodeByNameInSubgraph(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeAggregateId $parentNodeAggregateId,
         NodeName $nodeNamex
     ): ?Node;
 
     public function findPreceedingSiblingNodesInSubgraph(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeAggregateId $startingSiblingNodeAggregateId
     ): Nodes;
 
     public function findSuceedingSiblingNodesInSubgraph(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeAggregateId $startingSiblingNodeAggregateId
     ): Nodes;
@@ -162,29 +149,22 @@ interface ContentGraphAdapterInterface
      * CONTENT STREAMS
      */
 
-    public function hasContentStream(
-        ContentStreamId $contentStreamId
-    ): bool;
+    public function hasContentStream(): bool;
 
-    public function findStateForContentStream(
-        ContentStreamId $contentStreamId
-    ): ?ContentStreamState;
+    public function findStateForContentStream(): ?ContentStreamState;
 
-    public function findVersionForContentStream(
-        ContentStreamId $contentStreamId
-    ): MaybeVersion;
+    public function findVersionForContentStream(): MaybeVersion;
 
+    public function getExpectedVersionOfContentStream(): ExpectedVersion;
     /*
      * WORKSPACES
      */
 
-    public function findWorkspaceByName(
-        WorkspaceName $workspaceName
-    ): ?Workspace;
-
     public function findWorkspaceByCurrentContentStreamId(
         ContentStreamId $contentStreamId
     ): ?Workspace;
+
+    public function withWorkspaceName(WorkspaceName $workspaceName): ContentGraphAdapterInterface;
 
     public function getWorkspaceName(): WorkspaceName;
 

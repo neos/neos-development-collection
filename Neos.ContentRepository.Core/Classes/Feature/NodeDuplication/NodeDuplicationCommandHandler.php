@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeDuplication;
 
+use RuntimeException;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -27,6 +28,8 @@ use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\Common\NodeCreationInternals;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
@@ -36,6 +39,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -49,7 +53,20 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        private readonly ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
     ) {
+    }
+
+    /**
+     * WIP Should not have this signature ;)
+     *
+     * @param WorkspaceName $workspaceName
+     * @return ContentGraphAdapterInterface
+     *
+     */
+    protected function getContentGraphAdapter(WorkspaceName $workspaceName): ContentGraphAdapterInterface
+    {
+        return $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($workspaceName);
     }
 
     protected function getNodeTypeManager(): NodeTypeManager
@@ -82,8 +99,8 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         CopyNodesRecursively $command
     ): EventsToPublish {
         // Basic constraints (Content Stream / Dimension Space Point / Node Type of to-be-inserted root node)
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireDimensionSpacePointToExist(
             $command->targetDimensionSpacePoint->toDimensionSpacePoint()
         );
@@ -94,7 +111,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         // NOTE: we only check this for the *root* node of the to-be-inserted structure; and not for its
         // children (as we want to create the structure as-is; assuming it was already valid beforehand).
         $this->requireConstraintsImposedByAncestorsAreMet(
-            $contentStreamId,
+            $contentGraphAdapter,
             $nodeType,
             $command->targetNodeName,
             [$command->targetParentNodeAggregateId]
@@ -102,18 +119,18 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 
         // Constraint: The new nodeAggregateIds are not allowed to exist yet.
         $this->requireNewNodeAggregateIdsToNotExist(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateIdMapping
         );
 
         // Constraint: the parent node must exist in the command's DimensionSpacePoint as well
         $parentNodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->targetParentNodeAggregateId
         );
         if ($command->targetSucceedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $command->targetSucceedingSiblingNodeAggregateId
             );
         }
@@ -134,7 +151,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         // Constraint: The node name must be free in all these dimension space points
         if ($command->targetNodeName) {
             $this->requireNodeNameToBeUnoccupied(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $command->targetNodeName,
                 $command->targetParentNodeAggregateId,
                 $command->targetDimensionSpacePoint,
@@ -145,7 +162,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         // Now, we can start creating the recursive structure.
         $events = [];
         $this->createEventsForNodeToInsert(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->targetDimensionSpacePoint,
             $coveredDimensionSpacePoints,
             $command->targetParentNodeAggregateId,
@@ -153,13 +170,12 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             $command->targetNodeName,
             $command->nodeTreeToInsert,
             $command->nodeAggregateIdMapping,
-            $contentRepository,
             $events
         );
 
         return new EventsToPublish(
             ContentStreamEventStreamName::fromContentStreamId(
-                $contentStreamId
+                $contentGraphAdapter->getContentStreamId()
             )->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
@@ -170,12 +186,12 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
     }
 
     private function requireNewNodeAggregateIdsToNotExist(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         Dto\NodeAggregateIdMapping $nodeAggregateIdMapping
     ): void {
         foreach ($nodeAggregateIdMapping->getAllNewNodeAggregateIds() as $nodeAggregateId) {
             $this->requireProjectedNodeAggregateToNotExist(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $nodeAggregateId
             );
         }
@@ -185,7 +201,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
      * @param array<NodeAggregateWithNodeWasCreated> $events
      */
     private function createEventsForNodeToInsert(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateId $targetParentNodeAggregateId,
@@ -193,11 +209,10 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         ?NodeName $targetNodeName,
         NodeSubtreeSnapshot $nodeToInsert,
         Dto\NodeAggregateIdMapping $nodeAggregateIdMapping,
-        ContentRepository $contentRepository,
         array &$events,
     ): void {
         $events[] = new NodeAggregateWithNodeWasCreated(
-            $contentStreamId,
+            $contentGraphAdapter->getContentStreamId(),
             $nodeAggregateIdMapping->getNewNodeAggregateId(
                 $nodeToInsert->nodeAggregateId
             ) ?: NodeAggregateId::create(),
@@ -205,8 +220,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             $originDimensionSpacePoint,
             $targetSucceedingSiblingNodeAggregateId
                 ? $this->resolveInterdimensionalSiblingsForCreation(
-                    $contentRepository,
-                    $contentStreamId,
+                    $contentGraphAdapter,
                     $targetSucceedingSiblingNodeAggregateId,
                     $originDimensionSpacePoint,
                     $coveredDimensionSpacePoints
@@ -220,7 +234,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 
         foreach ($nodeToInsert->childNodes as $childNodeToInsert) {
             $this->createEventsForNodeToInsert(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
                 // the just-inserted node becomes the new parent node ID
@@ -232,7 +246,6 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
                 $childNodeToInsert->nodeName,
                 $childNodeToInsert,
                 $nodeAggregateIdMapping,
-                $contentRepository,
                 $events
             );
         }

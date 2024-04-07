@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\RootNodeCreation;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
@@ -69,18 +68,18 @@ trait RootNodeHandling
     private function handleCreateRootNodeAggregateWithNode(
         CreateRootNodeAggregateWithNode $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireProjectedNodeAggregateToNotExist(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         $nodeType = $this->requireNodeType($command->nodeTypeName);
         $this->requireNodeTypeToNotBeAbstract($nodeType);
         $this->requireNodeTypeToBeOfTypeRoot($nodeType);
         $this->requireRootNodeTypeToBeUnoccupied(
-            $nodeType->name,
-            $contentStreamId
+            $contentGraphAdapter,
+            $nodeType->name
         );
 
         $descendantNodeAggregateIds = $command->tetheredDescendantNodeAggregateIds->completeForNodeOfType(
@@ -94,14 +93,14 @@ trait RootNodeHandling
         $events = [
             $this->createRootWithNode(
                 $command,
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $this->getAllowedDimensionSubspace()
             )
         ];
 
         foreach ($this->getInterDimensionalVariationGraph()->getRootGeneralizations() as $rootGeneralization) {
             array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $nodeType,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootGeneralization),
                 $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization, true),
@@ -111,7 +110,7 @@ trait RootNodeHandling
             )));
         }
 
-        $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
+        $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId());
         return new EventsToPublish(
             $contentStreamEventStream->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
@@ -143,10 +142,10 @@ trait RootNodeHandling
     private function handleUpdateRootNodeAggregateDimensions(
         UpdateRootNodeAggregateDimensions $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         if (!$nodeAggregate->classification->isRoot()) {
@@ -155,14 +154,14 @@ trait RootNodeHandling
 
         $events = Events::with(
             new RootNodeAggregateDimensionsWereUpdated(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $command->nodeAggregateId,
                 $this->getAllowedDimensionSubspace()
             )
         );
 
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId(
-            $contentStreamId
+            $contentGraphAdapter->getContentStreamId()
         );
         return new EventsToPublish(
             $contentStreamEventStream->getEventStreamName(),

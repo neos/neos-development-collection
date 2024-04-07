@@ -14,13 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeTypeChange;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
@@ -31,14 +31,12 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /** @codingStandardsIgnoreStart */
 /** @codingStandardsIgnoreEnd  */
@@ -51,12 +49,12 @@ trait NodeTypeChange
     abstract protected function getNodeTypeManager(): NodeTypeManager;
 
     abstract protected function requireProjectedNodeAggregate(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentRepositoryAdapter,
         NodeAggregateId $nodeAggregateId
     ): NodeAggregate;
 
     abstract protected function requireConstraintsImposedByAncestorsAreMet(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeType $nodeType,
         ?NodeName $nodeName,
         array $parentNodeAggregateIds
@@ -87,6 +85,7 @@ trait NodeTypeChange
     ): bool;
 
     abstract protected function createEventsForMissingTetheredNode(
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregate $parentNodeAggregate,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeName $tetheredNodeName,
@@ -99,6 +98,7 @@ trait NodeTypeChange
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
      * @throws NodeAggregatesTypeIsAmbiguous
+     * @throws \Exception
      */
     private function handleChangeNodeAggregateType(
         ChangeNodeAggregateType $command
@@ -107,11 +107,11 @@ trait NodeTypeChange
          * Constraint checks
          **************/
         // existence of content stream, node type and node aggregate
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
 
@@ -120,17 +120,14 @@ trait NodeTypeChange
         $this->requireTetheredDescendantNodeTypesToExist($newNodeType);
         $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($newNodeType);
 
-        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($nodeAggregate->contentStreamId);
         // the new node type must be allowed at this position in the tree
-        $parentNodeAggregates = $this->getContentGraphAdapter()->findParentNodeAggregates(
-            $nodeAggregate->contentStreamId,
-            $workspace?->workspaceName,
+        $parentNodeAggregates = $contentGraphAdapter->findParentNodeAggregates(
             $nodeAggregate->nodeAggregateId
         );
         foreach ($parentNodeAggregates as $parentNodeAggregate) {
             assert($parentNodeAggregate instanceof NodeAggregate);
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $newNodeType,
                 $nodeAggregate->nodeName,
                 [$parentNodeAggregate->nodeAggregateId]
@@ -140,7 +137,7 @@ trait NodeTypeChange
         /** @codingStandardsIgnoreStart */
         match ($command->strategy) {
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_HAPPY_PATH
-                => $this->requireConstraintsImposedByHappyPathStrategyAreMet($nodeAggregate, $newNodeType),
+                => $this->requireConstraintsImposedByHappyPathStrategyAreMet($contentGraphAdapter, $nodeAggregate, $newNodeType),
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE => null
         };
         /** @codingStandardsIgnoreStop */
@@ -161,7 +158,7 @@ trait NodeTypeChange
          **************/
         $events = [
             new NodeAggregateTypeWasChanged(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->newNodeTypeName
             ),
@@ -170,10 +167,12 @@ trait NodeTypeChange
         // remove disallowed nodes
         if ($command->strategy === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
             array_push($events, ...iterator_to_array($this->deleteDisallowedNodesWhenChangingNodeType(
+                $contentGraphAdapter,
                 $nodeAggregate,
                 $newNodeType
             )));
             array_push($events, ...iterator_to_array($this->deleteObsoleteTetheredNodesWhenChangingNodeType(
+                $contentGraphAdapter,
                 $nodeAggregate,
                 $newNodeType
             )));
@@ -183,14 +182,10 @@ trait NodeTypeChange
         $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($newNodeType);
         foreach ($nodeAggregate->getNodes() as $node) {
             assert($node instanceof Node);
-            $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($node->subgraphIdentity->contentStreamId);
-
             foreach ($expectedTetheredNodes as $serializedTetheredNodeName => $expectedTetheredNodeType) {
                 $tetheredNodeName = NodeName::fromString($serializedTetheredNodeName);
 
-                $tetheredNode = $this->getContentGraphAdapter()->findChildNodeByNameInSubgraph(
-                    $node->subgraphIdentity->contentStreamId,
-                    $workspace?->workspaceName,
+                $tetheredNode = $contentGraphAdapter->findChildNodeByNameInSubgraph(
                     $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                     $node->nodeAggregateId,
                     $tetheredNodeName
@@ -201,6 +196,7 @@ trait NodeTypeChange
                         ->getNodeAggregateId(NodePath::fromString($tetheredNodeName->value))
                         ?: NodeAggregateId::create();
                     array_push($events, ...iterator_to_array($this->createEventsForMissingTetheredNode(
+                        $contentGraphAdapter,
                         $nodeAggregate,
                         $node->originDimensionSpacePoint,
                         $tetheredNodeName,
@@ -212,7 +208,7 @@ trait NodeTypeChange
         }
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 Events::fromArray($events),
@@ -228,17 +224,13 @@ trait NodeTypeChange
      * @throws NodeConstraintException|NodeTypeNotFoundException
      */
     private function requireConstraintsImposedByHappyPathStrategyAreMet(
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType
     ): void {
-        // TODO: Use workspaceName from $nodeAggregate
-        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($nodeAggregate->contentStreamId);
-
         // if we have children, we need to check whether they are still allowed
         // after we changed the node type of the $nodeAggregate to $newNodeType.
-        $childNodeAggregates = $this->getContentGraphAdapter()->findChildNodeAggregates(
-            $nodeAggregate->contentStreamId,
-            $workspace?->workspaceName,
+        $childNodeAggregates = $contentGraphAdapter->findChildNodeAggregates(
             $nodeAggregate->nodeAggregateId
         );
         foreach ($childNodeAggregates as $childNodeAggregate) {
@@ -253,14 +245,9 @@ trait NodeTypeChange
 
             // we do not need to test for grandparents here, as we did not modify the grandparents.
             // Thus, if it was allowed before, it is allowed now.
-
-            // TODO: use workspaceName from $childNodeAggregate instead
-            $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($childNodeAggregate->contentStreamId);
             // additionally, we need to look one level down to the grandchildren as well
             // - as it could happen that these are affected by our constraint checks as well.
-            $grandchildNodeAggregates = $this->getContentGraphAdapter()->findChildNodeAggregates(
-                $childNodeAggregate->contentStreamId,
-                $workspace?->workspaceName,
+            $grandchildNodeAggregates = $contentGraphAdapter->findChildNodeAggregates(
                 $childNodeAggregate->nodeAggregateId
             );
             foreach ($grandchildNodeAggregates as $grandchildNodeAggregate) {
@@ -282,19 +269,14 @@ trait NodeTypeChange
      * needs to be modified as well (as they are structurally the same)
      */
     private function deleteDisallowedNodesWhenChangingNodeType(
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType
     ): Events {
         $events = [];
-
-        // TODO: use workspaceName from $childNodeAggregate instead
-        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($nodeAggregate->contentStreamId);
-
         // if we have children, we need to check whether they are still allowed
         // after we changed the node type of the $nodeAggregate to $newNodeType.
-        $childNodeAggregates = $this->getContentGraphAdapter()->findChildNodeAggregates(
-            $nodeAggregate->contentStreamId,
-            $workspace?->workspaceName,
+        $childNodeAggregates = $contentGraphAdapter->findChildNodeAggregates(
             $nodeAggregate->nodeAggregateId
         );
         foreach ($childNodeAggregates as $childNodeAggregate) {
@@ -312,6 +294,7 @@ trait NodeTypeChange
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints.
                 // We now need to find out which edges we need to remove,
                 $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
+                    $contentGraphAdapter,
                     $nodeAggregate,
                     $childNodeAggregate
                 );
@@ -324,17 +307,9 @@ trait NodeTypeChange
 
             // we do not need to test for grandparents here, as we did not modify the grandparents.
             // Thus, if it was allowed before, it is allowed now.
-
-            // TODO: use workspaceName from $childNodeAggregate instead
-            $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($childNodeAggregate->contentStreamId);
-
             // additionally, we need to look one level down to the grandchildren as well
             // - as it could happen that these are affected by our constraint checks as well.
-            $grandchildNodeAggregates = $this->getContentGraphAdapter()->findChildNodeAggregates(
-                $childNodeAggregate->contentStreamId,
-                $workspace?->workspaceName,
-                $childNodeAggregate->nodeAggregateId
-            );
+            $grandchildNodeAggregates = $contentGraphAdapter->findChildNodeAggregates($childNodeAggregate->nodeAggregateId);
             foreach ($grandchildNodeAggregates as $grandchildNodeAggregate) {
                 /* @var $grandchildNodeAggregate NodeAggregate */
                 // we do not need to test for the parent of grandchild (=child),
@@ -351,6 +326,7 @@ trait NodeTypeChange
                     // this aggregate (or parts thereof) are DISALLOWED according to constraints.
                     // We now need to find out which edges we need to remove,
                     $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
+                        $contentGraphAdapter,
                         $childNodeAggregate,
                         $grandchildNodeAggregate
                     );
@@ -367,6 +343,7 @@ trait NodeTypeChange
     }
 
     private function deleteObsoleteTetheredNodesWhenChangingNodeType(
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType
     ): Events {
@@ -374,12 +351,7 @@ trait NodeTypeChange
 
         $events = [];
         // find disallowed tethered nodes
-        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($nodeAggregate->contentStreamId);
-        $tetheredNodeAggregates = $this->getContentGraphAdapter()->findTetheredChildNodeAggregates(
-            $nodeAggregate->contentStreamId,
-            $workspace?->workspaceName,
-            $nodeAggregate->nodeAggregateId
-        );
+        $tetheredNodeAggregates = $contentGraphAdapter->findTetheredChildNodeAggregates($nodeAggregate->nodeAggregateId);
 
         foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
             /* @var $tetheredNodeAggregate NodeAggregate */
@@ -387,6 +359,7 @@ trait NodeTypeChange
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints.
                 // We now need to find out which edges we need to remove,
                 $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(
+                    $contentGraphAdapter,
                     $nodeAggregate,
                     $tetheredNodeAggregate
                 );
@@ -425,16 +398,13 @@ trait NodeTypeChange
      *   we originated from)
      */
     private function findDimensionSpacePointsConnectingParentAndChildAggregate(
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregate $parentNodeAggregate,
         NodeAggregate $childNodeAggregate
     ): DimensionSpacePointSet {
         $points = [];
         foreach ($childNodeAggregate->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
-            // TODO: Use child node workspaceName here instead
-            $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($childNodeAggregate->contentStreamId);
-            $parentNode = $this->getContentGraphAdapter()->findParentNodeInSubgraph(
-                $childNodeAggregate->contentStreamId,
-                $workspace?->workspaceName,
+            $parentNode = $contentGraphAdapter->findParentNodeInSubgraph(
                 $coveredDimensionSpacePoint,
                 $childNodeAggregate->nodeAggregateId
             );

@@ -10,7 +10,6 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Factory\ProjectionsAndCatchUpHooksFactory;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderFactoryInterface;
-use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;

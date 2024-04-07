@@ -23,12 +23,9 @@ use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal implementation details of command handlers
@@ -37,10 +34,10 @@ trait NodeVariationInternals
 {
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
-    abstract protected function getContentGraphAdapter(): ContentGraphAdapterInterface;
+    abstract protected function getContentGraphAdapter(WorkspaceName $workspaceName): ContentGraphAdapterInterface;
 
     protected function createEventsForVariations(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate
@@ -52,19 +49,19 @@ trait NodeVariationInternals
             )
         ) {
             DimensionSpace\VariantType::TYPE_SPECIALIZATION => $this->handleCreateNodeSpecializationVariant(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $sourceOrigin,
                 $targetOrigin,
                 $nodeAggregate
             ),
             DimensionSpace\VariantType::TYPE_GENERALIZATION => $this->handleCreateNodeGeneralizationVariant(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $sourceOrigin,
                 $targetOrigin,
                 $nodeAggregate
             ),
             default => $this->handleCreateNodePeerVariant(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $sourceOrigin,
                 $targetOrigin,
                 $nodeAggregate
@@ -73,14 +70,14 @@ trait NodeVariationInternals
     }
 
     protected function handleCreateNodeSpecializationVariant(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate
     ): Events {
         $specializationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
-            $contentStreamId,
+            $contentGraphAdapter,
             $sourceOrigin,
             $targetOrigin,
             $nodeAggregate,
@@ -96,22 +93,20 @@ trait NodeVariationInternals
      * @return array<int,EventInterface>
      */
     protected function collectNodeSpecializationVariantsThatWillHaveBeenCreated(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $specializationVisibility,
         array $events
     ): array {
-        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($contentStreamId);
         $events[] = new NodeSpecializationVariantWasCreated(
-            $contentStreamId,
+            $contentGraphAdapter->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
             $this->resolveInterdimensionalSiblings(
-                $contentRepository,
-                $contentStreamId,
+                $contentGraphAdapter,
                 $nodeAggregate->nodeAggregateId,
                 $sourceOrigin,
                 $specializationVisibility
@@ -119,14 +114,12 @@ trait NodeVariationInternals
         );
 
         foreach (
-            $this->getContentGraphAdapter()->findTetheredChildNodeAggregates(
-                $contentStreamId,
-                $workspace?->workspaceName,
+            $contentGraphAdapter->findTetheredChildNodeAggregates(
                 $nodeAggregate->nodeAggregateId
             ) as $tetheredChildNodeAggregate
         ) {
             $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $sourceOrigin,
                 $targetOrigin,
                 $tetheredChildNodeAggregate,
@@ -139,14 +132,14 @@ trait NodeVariationInternals
     }
 
     protected function handleCreateNodeGeneralizationVariant(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate
     ): Events {
         $generalizationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
-            $contentStreamId,
+            $contentGraphAdapter,
             $sourceOrigin,
             $targetOrigin,
             $nodeAggregate,
@@ -162,22 +155,20 @@ trait NodeVariationInternals
      * @return array<int,EventInterface>
      */
     protected function collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $generalizationVisibility,
         array $events
     ): array {
-        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($contentStreamId);
         $events[] = new NodeGeneralizationVariantWasCreated(
-            $contentStreamId,
+            $contentGraphAdapter->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
             $this->resolveInterdimensionalSiblings(
-                $contentRepository,
-                $contentStreamId,
+                $contentGraphAdapter,
                 $nodeAggregate->nodeAggregateId,
                 $sourceOrigin,
                 $generalizationVisibility
@@ -185,14 +176,12 @@ trait NodeVariationInternals
         );
 
         foreach (
-            $this->getContentGraphAdapter()->findTetheredChildNodeAggregates(
-                $contentStreamId,
-                $workspace?->workspaceName,
+            $contentGraphAdapter->findTetheredChildNodeAggregates(
                 $nodeAggregate->nodeAggregateId
             ) as $tetheredChildNodeAggregate
         ) {
             $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $sourceOrigin,
                 $targetOrigin,
                 $tetheredChildNodeAggregate,
@@ -205,14 +194,14 @@ trait NodeVariationInternals
     }
 
     protected function handleCreateNodePeerVariant(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate
     ): Events {
         $peerVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
-            $contentStreamId,
+            $contentGraphAdapter,
             $sourceOrigin,
             $targetOrigin,
             $nodeAggregate,
@@ -228,22 +217,20 @@ trait NodeVariationInternals
      * @return array<int,EventInterface>
      */
     protected function collectNodePeerVariantsThatWillHaveBeenCreated(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $peerVisibility,
         array $events
     ): array {
-        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($contentStreamId);
         $events[] = new NodePeerVariantWasCreated(
-            $contentStreamId,
+            $contentGraphAdapter->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
             $targetOrigin,
             $this->resolveInterdimensionalSiblings(
-                $contentRepository,
-                $contentStreamId,
+                $contentGraphAdapter,
                 $nodeAggregate->nodeAggregateId,
                 $sourceOrigin,
                 $peerVisibility
@@ -251,14 +238,12 @@ trait NodeVariationInternals
         );
 
         foreach (
-            $this->getContentGraphAdapter()->findTetheredChildNodeAggregates(
-                $contentStreamId,
-                $workspace?->workspaceName,
+            $contentGraphAdapter->findTetheredChildNodeAggregates(
                 $nodeAggregate->nodeAggregateId
             ) as $tetheredChildNodeAggregate
         ) {
             $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $sourceOrigin,
                 $targetOrigin,
                 $tetheredChildNodeAggregate,
@@ -283,33 +268,18 @@ trait NodeVariationInternals
      * except this operates on the to-be-varied node itself instead of an explicitly set succeeding sibling
      */
     private function resolveInterdimensionalSiblings(
-        ContentRepository $contentRepository,
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregateId $varyingNodeAggregateId,
         OriginDimensionSpacePoint $sourceOrigin,
         DimensionSpacePointSet $variantCoverage,
     ): InterdimensionalSiblings {
-        $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
-            $sourceOrigin->toDimensionSpacePoint(),
-            VisibilityConstraints::withoutRestrictions()
-        );
-        $originSiblings = $originSubgraph->findSucceedingSiblingNodes(
-            $varyingNodeAggregateId,
-            FindSucceedingSiblingNodesFilter::create()
-        );
+        $originSiblings = $contentGraphAdapter->findSuceedingSiblingNodesInSubgraph($sourceOrigin->toDimensionSpacePoint(), $varyingNodeAggregateId);
 
         $interdimensionalSiblings = [];
         foreach ($variantCoverage as $variantDimensionSpacePoint) {
-            $variantSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $contentStreamId,
-                $variantDimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            );
-
             // check the siblings succeeding in the origin dimension space point
             foreach ($originSiblings as $originSibling) {
-                $variantSibling = $variantSubgraph->findNodeById($originSibling->nodeAggregateId);
+                $variantSibling = $contentGraphAdapter->findNodeInSubgraph($variantDimensionSpacePoint, $originSibling->nodeAggregateId);
                 if (!$variantSibling) {
                     continue;
                 }

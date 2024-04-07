@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
@@ -28,7 +29,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -38,17 +38,17 @@ trait NodeModification
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
     abstract protected function requireProjectedNodeAggregate(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregateId $nodeAggregateId
     ): NodeAggregate;
 
     private function handleSetNodeProperties(
         SetNodeProperties $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
@@ -73,11 +73,11 @@ trait NodeModification
     private function handleSetSerializedNodeProperties(
         SetSerializedNodeProperties $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         $nodeType = $this->requireNodeType($nodeAggregate->nodeTypeName);
@@ -92,7 +92,7 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
-                    $contentStreamId,
+                    $contentGraphAdapter->getContentStreamId(),
                     $command->nodeAggregateId,
                     $affectedOrigin,
                     $nodeAggregate->getCoverageByOccupant($affectedOrigin),
@@ -111,7 +111,7 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
-                    $contentStreamId,
+                    $contentGraphAdapter->getContentStreamId(),
                     $command->nodeAggregateId,
                     $affectedOrigin,
                     $nodeAggregate->getCoverageByOccupant($affectedOrigin),
@@ -124,7 +124,7 @@ trait NodeModification
         $events = $this->mergeSplitEvents($events);
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

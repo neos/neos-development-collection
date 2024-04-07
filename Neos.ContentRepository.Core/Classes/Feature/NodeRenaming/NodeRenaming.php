@@ -32,18 +32,18 @@ trait NodeRenaming
 
     private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): EventsToPublish
     {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be renamed');
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
-        foreach ($this->getContentGraphAdapter()->findParentNodeAggregates($contentStreamId, $command->workspaceName, $command->nodeAggregateId) as $parentNodeAggregate) {
+        foreach ($contentGraphAdapter->findParentNodeAggregates($command->nodeAggregateId) as $parentNodeAggregate) {
             foreach ($parentNodeAggregate->occupiedDimensionSpacePoints as $occupiedParentDimensionSpacePoint) {
                 $this->requireNodeNameToBeUnoccupied(
-                    $contentStreamId,
+                    $contentGraphAdapter,
                     $command->newNodeName,
                     $parentNodeAggregate->nodeAggregateId,
                     $occupiedParentDimensionSpacePoint,
@@ -54,14 +54,14 @@ trait NodeRenaming
 
         $events = Events::with(
             new NodeAggregateNameWasChanged(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->newNodeName,
             ),
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events

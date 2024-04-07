@@ -46,7 +46,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 {
 
     public function __construct(
-        protected readonly ContentGraphAdapterInterface $contentGraphAdapter
+        protected readonly ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
     ) {
     }
 
@@ -138,8 +138,9 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId);
         $this->requireContentStreamToNotExistYet($command->newContentStreamId);
 
-        $sourceContentStreamVersion = $this->contentGraphAdapter
-            ->findVersionForContentStream($command->sourceContentStreamId);
+        // TOOD: THis is not great
+        $sourceContentStreamVersion = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($command->sourceContentStreamId)
+            ->findVersionForContentStream();
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->newContentStreamId)
             ->getEventStreamName();

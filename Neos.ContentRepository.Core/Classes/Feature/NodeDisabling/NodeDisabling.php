@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Core\Feature\NodeDisabling;
  * source code.
  */
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\EventStore\Events;
@@ -47,11 +46,11 @@ trait NodeDisabling
     private function handleDisableNodeAggregate(
         DisableNodeAggregate $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -72,7 +71,7 @@ trait NodeDisabling
 
         $events = Events::with(
             new SubtreeWasTagged(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
                 SubtreeTag::disabled(),
@@ -80,7 +79,7 @@ trait NodeDisabling
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
@@ -100,11 +99,11 @@ trait NodeDisabling
     public function handleEnableNodeAggregate(
         EnableNodeAggregate $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -125,7 +124,7 @@ trait NodeDisabling
 
         $events = Events::with(
             new SubtreeWasUntagged(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
                 SubtreeTag::disabled(),
@@ -133,7 +132,7 @@ trait NodeDisabling
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand($command, $events),
             $expectedVersion
         );

@@ -127,6 +127,7 @@ final class ContentRepositoryFactory
             $this->getOrBuild(),
             $this->buildEventPersister(),
             $this->projectionsAndCatchUpHooks->projections,
+            $this->contentGraphAdapterProvider
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }
@@ -159,7 +160,8 @@ final class ContentRepositoryFactory
                 new NodeDuplicationCommandHandler(
                     $this->projectionFactoryDependencies->nodeTypeManager,
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
-                    $this->projectionFactoryDependencies->interDimensionalVariationGraph
+                    $this->projectionFactoryDependencies->interDimensionalVariationGraph,
+                    $this->contentGraphAdapterProvider
                 )
             );
         }

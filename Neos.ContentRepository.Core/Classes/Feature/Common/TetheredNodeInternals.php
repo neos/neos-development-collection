@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\Common;
 
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
@@ -39,7 +40,7 @@ trait TetheredNodeInternals
     abstract protected function getPropertyConverter(): PropertyConverter;
 
     abstract protected function createEventsForVariations(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate
@@ -54,18 +55,14 @@ trait TetheredNodeInternals
      * @throws \Exception
      */
     protected function createEventsForMissingTetheredNode(
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregate $parentNodeAggregate,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeName $tetheredNodeName,
         ?NodeAggregateId $tetheredNodeAggregateId,
         NodeType $expectedTetheredNodeType
     ): Events {
-        // TODO: We should probably just directly use the workspace AND contentStreamId from the $parentNodeAggregate
-        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($parentNodeAggregate->contentStreamId);
-
-        $childNodeAggregates = $this->getContentGraphAdapter()->findChildNodeAggregatesByName(
-            $parentNodeAggregate->contentStreamId,
-            $workspace?->workspaceName,
+        $childNodeAggregates = $contentGraphAdapter->findChildNodeAggregatesByName(
             $parentNodeAggregate->nodeAggregateId,
             $tetheredNodeName
         );
@@ -99,7 +96,7 @@ trait TetheredNodeInternals
                         );
                     } else {
                         $events[] = new NodeAggregateWithNodeWasCreated(
-                            $parentNodeAggregate->contentStreamId,
+                            $contentGraphAdapter->getContentStreamId(),
                             $tetheredNodeAggregateId,
                             $expectedTetheredNodeType->name,
                             $rootGeneralizationOrigin,
@@ -118,7 +115,7 @@ trait TetheredNodeInternals
             } else {
                 return Events::with(
                     new NodeAggregateWithNodeWasCreated(
-                        $parentNodeAggregate->contentStreamId,
+                        $contentGraphAdapter->getContentStreamId(),
                         $tetheredNodeAggregateId ?: NodeAggregateId::create(),
                         $expectedTetheredNodeType->name,
                         $originDimensionSpacePoint,
@@ -150,7 +147,7 @@ trait TetheredNodeInternals
             }
             /** @var Node $childNodeSource Node aggregates are never empty */
             return $this->createEventsForVariations(
-                $parentNodeAggregate->contentStreamId,
+                $contentGraphAdapter,
                 $childNodeSource->originDimensionSpacePoint,
                 $originDimensionSpacePoint,
                 $parentNodeAggregate

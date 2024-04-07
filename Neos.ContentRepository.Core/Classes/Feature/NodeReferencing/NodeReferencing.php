@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
@@ -27,7 +28,6 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeRefere
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -37,7 +37,7 @@ trait NodeReferencing
     use ConstraintChecks;
 
     abstract protected function requireProjectedNodeAggregate(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregateId $nodeAggregateId
     ): NodeAggregate;
 
@@ -45,10 +45,10 @@ trait NodeReferencing
     private function handleSetNodeReferences(
         SetNodeReferences $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->sourceNodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
@@ -93,13 +93,13 @@ trait NodeReferencing
     private function handleSetSerializedNodeReferences(
         SetSerializedNodeReferences $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireDimensionSpacePointToExist(
             $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
         );
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->sourceNodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
@@ -112,7 +112,7 @@ trait NodeReferencing
         foreach ($command->references as $reference) {
             assert($reference instanceof SerializedNodeReference);
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $reference->targetNodeAggregateId
             );
             $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
@@ -139,7 +139,7 @@ trait NodeReferencing
 
         $events = Events::with(
             new NodeReferencesWereSet(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $command->sourceNodeAggregateId,
                 $affectedOrigins,
                 $command->referenceName,
@@ -148,7 +148,7 @@ trait NodeReferencing
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

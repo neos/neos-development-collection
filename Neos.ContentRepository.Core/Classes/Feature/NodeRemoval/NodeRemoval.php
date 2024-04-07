@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeRemoval;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\EventStore\Events;
@@ -48,10 +47,10 @@ trait NodeRemoval
     private function handleRemoveNodeAggregate(
         RemoveNodeAggregate $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
@@ -62,14 +61,14 @@ trait NodeRemoval
         );
         if ($command->removalAttachmentPoint instanceof NodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $command->removalAttachmentPoint
             );
         }
 
         $events = Events::with(
             new NodeAggregateWasRemoved(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->nodeVariantSelectionStrategy->resolveAffectedOriginDimensionSpacePoints(
                     $nodeAggregate->getOccupationByCovered($command->coveredDimensionSpacePoint),
@@ -86,7 +85,7 @@ trait NodeRemoval
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

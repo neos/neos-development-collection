@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeVariation;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
@@ -49,10 +48,10 @@ trait NodeVariation
     private function handleCreateNodeVariant(
         CreateNodeVariant $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         // we do this check first, because it gives a more meaningful error message on what you need to do.
@@ -64,7 +63,7 @@ trait NodeVariation
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->sourceOrigin);
         $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->targetOrigin);
         $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId,
             $command->sourceOrigin
         );
@@ -74,14 +73,14 @@ trait NodeVariation
         );
 
         $events = $this->createEventsForVariations(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->sourceOrigin,
             $command->targetOrigin,
             $nodeAggregate
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events

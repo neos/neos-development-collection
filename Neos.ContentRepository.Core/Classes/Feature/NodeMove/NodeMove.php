@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeMove;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
@@ -22,6 +21,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
@@ -32,22 +32,14 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -59,7 +51,7 @@ trait NodeMove
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
 
     abstract protected function requireProjectedNodeAggregate(
-        ContentStreamId $contentStreamId,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregateId $nodeAggregateId
     ): NodeAggregate;
 
@@ -74,11 +66,11 @@ trait NodeMove
     private function handleMoveNodeAggregate(
         MoveNodeAggregate $command
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireDimensionSpacePointToExist($command->dimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
@@ -93,21 +85,21 @@ trait NodeMove
 
         if ($command->newParentNodeAggregateId) {
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $this->requireNodeType($nodeAggregate->nodeTypeName),
                 $nodeAggregate->nodeName,
                 [$command->newParentNodeAggregateId]
             );
 
             $this->requireNodeNameToBeUncovered(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $nodeAggregate->nodeName,
                 $command->newParentNodeAggregateId,
                 $affectedDimensionSpacePoints
             );
 
             $newParentNodeAggregate = $this->requireProjectedNodeAggregate(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $command->newParentNodeAggregateId
             );
 
@@ -117,7 +109,7 @@ trait NodeMove
             );
 
             $this->requireNodeAggregateToNotBeDescendant(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $newParentNodeAggregate,
                 $nodeAggregate
             );
@@ -125,13 +117,13 @@ trait NodeMove
 
         if ($command->newPrecedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $command->newPrecedingSiblingNodeAggregateId
             );
         }
         if ($command->newSucceedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $contentStreamId,
+                $contentGraphAdapter,
                 $command->newSucceedingSiblingNodeAggregateId
             );
         }
@@ -142,7 +134,7 @@ trait NodeMove
             $originNodeMoveMappings[] = new OriginNodeMoveMapping(
                 $movedNodeOrigin,
                 $this->resolveCoverageNodeMoveMappings(
-                    $contentStreamId,
+                    $contentGraphAdapter,
                     $nodeAggregate,
                     $command->newParentNodeAggregateId,
                     $command->newPrecedingSiblingNodeAggregateId,
@@ -155,14 +147,14 @@ trait NodeMove
 
         $events = Events::with(
             new NodeAggregateWasMoved(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $command->nodeAggregateId,
                 OriginNodeMoveMappings::create(...$originNodeMoveMappings)
             )
         );
 
         $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamId(
-            $contentStreamId
+            $contentGraphAdapter->getContentStreamId()
         );
 
         return new EventsToPublish(
@@ -183,22 +175,23 @@ trait NodeMove
      * @todo move to content graph for more efficient calculation, if possible
      */
     private function resolveNewParentAssignments(
-        /** The content stream the move operation is performed in */
-        ContentStreamId $contentStreamId,
+        /** Adapter with workspace<>contentStream mapping the move operation is performed in */
+        ContentGraphAdapterInterface $contentGraphAdapter,
         /** The parent node aggregate's id*/
         NodeAggregateId $parentId,
         DimensionSpace\DimensionSpacePoint $coveredDimensionSpacePoint
     ): CoverageNodeMoveMapping {
-        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($contentStreamId);
-        $parentNode = $this->getContentGraphAdapter()->findNodeInSubgraph(
-            $contentStreamId,
-            $workspace?->workspaceName,
+        $parentNode = $contentGraphAdapter->findNodeInSubgraph(
             $coveredDimensionSpacePoint,
             $parentId
         );
         if ($parentNode === null) {
             throw new \InvalidArgumentException(
-                sprintf('Parent ' . $parentId->value . ' not found in ontentstream "%s" and dimension space point "%s" ', $contentStreamId->value, json_encode($coveredDimensionSpacePoint)),
+                sprintf(
+                    'Parent ' . $parentId->value . ' not found in ontentstream "%s" and dimension space point "%s" ',
+                    $contentGraphAdapter->getContentStreamId()->value,
+                    json_encode($coveredDimensionSpacePoint, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                ),
                 1667596931
             );
         }
@@ -229,14 +222,13 @@ trait NodeMove
     }
 
     private function findSiblingWithin(
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
+        ContentGraphAdapterInterface $contentGraphAdapter,
         DimensionSpace\DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeAggregateId $siblingId,
         ?NodeAggregateId $parentId
     ): ?Node
     {
-        $siblingCandidate = $this->getContentGraphAdapter()->findNodeInSubgraph($contentStreamId, $workspaceName, $coveredDimensionSpacePoint, $siblingId);
+        $siblingCandidate = $contentGraphAdapter->findNodeInSubgraph($coveredDimensionSpacePoint, $siblingId);
         if (!$siblingCandidate) {
             return null;
         }
@@ -245,10 +237,10 @@ trait NodeMove
             return $siblingCandidate;
         }
 
-        $parent = $this->getContentGraphAdapter()->findParentNodeInSubgraph($contentStreamId, $workspaceName, $coveredDimensionSpacePoint, $siblingId);
+        $parent = $contentGraphAdapter->findParentNodeInSubgraph($coveredDimensionSpacePoint, $siblingId);
         if (is_null($parent)) {
             throw new \InvalidArgumentException(
-                'Parent ' . $parentId->value . ' not found in subgraph ' . json_encode($contentSubgraph),
+                'Parent ' . $parentId->value . ' not found in subgraph ' . json_encode($coveredDimensionSpacePoint, JSON_PARTIAL_OUTPUT_ON_ERROR),
                 1645366837
             );
         }
@@ -260,24 +252,23 @@ trait NodeMove
     }
 
     private function resolveSucceedingSiblingFromOriginSiblings(
+        ContentGraphAdapterInterface $contentGraphAdapter,
         NodeAggregateId $nodeAggregateId,
         ?NodeAggregateId $parentId,
         ?NodeAggregateId $precedingSiblingId,
         ?NodeAggregateId $succeedingSiblingId,
-        ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName,
         DimensionSpace\DimensionSpacePoint $currentDimensionSpacePoint,
         DimensionSpace\DimensionSpacePoint $originDimensionSpacePoint
     ): ?Node {
         $succeedingSibling = null;
         $precedingSiblingCandidates = iterator_to_array(
             $precedingSiblingId
-                ? $this->getContentGraphAdapter()->findPreceedingSiblingNodesInSubgraph($contentStreamId, $workspaceName, $originDimensionSpacePoint, $precedingSiblingId)
+                ? $contentGraphAdapter->findPreceedingSiblingNodesInSubgraph($originDimensionSpacePoint, $precedingSiblingId)
                 : Nodes::createEmpty()
         );
         $succeedingSiblingCandidates = iterator_to_array(
             $succeedingSiblingId
-                ? $this->getContentGraphAdapter()->findSuceedingSiblingNodesInSubgraph($contentStreamId, $workspaceName, $originDimensionSpacePoint, $succeedingSiblingId)
+                ? $contentGraphAdapter->findSuceedingSiblingNodesInSubgraph($originDimensionSpacePoint, $succeedingSiblingId)
                 : Nodes::createEmpty()
         );
         /* @var $precedingSiblingCandidates Node[] */
@@ -290,8 +281,7 @@ trait NodeMove
                     \array_splice($succeedingSiblingCandidates, $i, 1);
                 }
                 $succeedingSibling = $this->findSiblingWithin(
-                    $contentStreamId,
-                    $workspaceName,
+                    $contentGraphAdapter,
                     $currentDimensionSpacePoint,
                     $succeedingSiblingCandidates[$i]->nodeAggregateId,
                     $parentId
@@ -306,15 +296,14 @@ trait NodeMove
                     \array_splice($precedingSiblingCandidates, $i, 1);
                 }
                 $precedingSibling = $this->findSiblingWithin(
-                    $contentStreamId,
-                    $workspaceName,
+                    $contentGraphAdapter,
                     $currentDimensionSpacePoint,
                     $precedingSiblingCandidates[$i]->nodeAggregateId,
                     $parentId
                 );
                 if ($precedingSibling) {
                     // TODO: I don't think implementing the same filtering as for the contentGraph is sensible here, so we are fetching all siblings while only interested in the next, maybe could become a more specialised method.
-                    $alternateSucceedingSiblings = $this->getContentGraphAdapter()->findSuceedingSiblingNodesInSubgraph($contentStreamId, $workspaceName, $currentDimensionSpacePoint, $precedingSiblingId);
+                    $alternateSucceedingSiblings = $contentGraphAdapter->findSuceedingSiblingNodesInSubgraph($currentDimensionSpacePoint, $precedingSiblingId);
                     if (count($alternateSucceedingSiblings) > 0) {
                         $succeedingSibling = $alternateSucceedingSiblings->first();
                         break;
@@ -327,8 +316,8 @@ trait NodeMove
     }
 
     private function resolveCoverageNodeMoveMappings(
-        /** The content stream the move operation is performed in */
-        ContentStreamId $contentStreamId,
+        /** Adapter with workspace<>contentStream mapping the move operation is performed in */
+        ContentGraphAdapterInterface $contentGraphAdapter,
         /** The node aggregate to be moved */
         NodeAggregate $nodeAggregate,
         /** The parent node aggregate id, has precedence over siblings when in doubt */
@@ -344,23 +333,20 @@ trait NodeMove
     ): CoverageNodeMoveMappings {
         /** @var CoverageNodeMoveMapping[] $coverageNodeMoveMappings */
         $coverageNodeMoveMappings = [];
-        $workspace = $this->getContentGraphAdapter()->findWorkspaceByCurrentContentStreamId($contentStreamId);
 
         foreach (
             $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
                 ->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint
         ) {
             $succeedingSibling = $succeedingSiblingId
-                ? $this->findSiblingWithin($contentStreamId, $workspace?->workspaceName, $originDimensionSpacePoint->toDimensionSpacePoint(), $succeedingSiblingId, $parentId)
+                ? $this->findSiblingWithin($contentGraphAdapter, $originDimensionSpacePoint->toDimensionSpacePoint(), $succeedingSiblingId, $parentId)
                 : null;
             if (!$succeedingSibling) {
                 $precedingSibling = $precedingSiblingId
-                    ? $this->findSiblingWithin($contentStreamId, $workspace?->workspaceName, $originDimensionSpacePoint->toDimensionSpacePoint(), $precedingSiblingId, $parentId)
+                    ? $this->findSiblingWithin($contentGraphAdapter, $originDimensionSpacePoint->toDimensionSpacePoint(), $precedingSiblingId, $parentId)
                     : null;
                 if ($precedingSiblingId && $precedingSibling) {
-                    $alternateSucceedingSiblings = $this->getContentGraphAdapter()->findSuceedingSiblingNodesInSubgraph(
-                        $contentStreamId,
-                        $workspace?->workspaceName,
+                    $alternateSucceedingSiblings = $contentGraphAdapter->findSuceedingSiblingNodesInSubgraph(
                         $dimensionSpacePoint,
                         $precedingSiblingId
                     );
@@ -369,12 +355,11 @@ trait NodeMove
                     }
                 } else {
                     $succeedingSibling = $this->resolveSucceedingSiblingFromOriginSiblings(
+                        $contentGraphAdapter,
                         $nodeAggregate->nodeAggregateId,
                         $parentId,
                         $precedingSiblingId,
                         $succeedingSiblingId,
-                        $contentStreamId,
-                        $workspace?->workspaceName,
                         $dimensionSpacePoint,
                         $originDimensionSpacePoint->toDimensionSpacePoint()
                     );
@@ -383,10 +368,14 @@ trait NodeMove
 
             if ($succeedingSibling) {
                 // for the event payload, we additionally need the parent of the succeeding sibling
-                $parentOfSucceedingSibling = $this->getContentGraphAdapter()->findParentNodeInSubgraph($contentStreamId, $workspace?->workspaceName, $dimensionSpacePoint, $succeedingSibling->nodeAggregateId);
+                $parentOfSucceedingSibling = $contentGraphAdapter->findParentNodeInSubgraph($dimensionSpacePoint, $succeedingSibling->nodeAggregateId);
                 if ($parentOfSucceedingSibling === null) {
                     throw new \InvalidArgumentException(
-                        sprintf('Parent of succeeding sibling ' . $succeedingSibling->nodeAggregateId->value . ' not found in contentstream "%s" and dimension space point "%s" ', $contentStreamId->value, json_encode($dimensionSpacePoint)),
+                        sprintf(
+                            'Parent of succeeding sibling ' . $succeedingSibling->nodeAggregateId->value . ' not found in contentstream "%s" and dimension space point "%s" ',
+                            $contentGraphAdapter->getContentStreamId()->value,
+                            json_encode($dimensionSpacePoint, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                        ),
                         1667817639
                     );
                 }
@@ -407,16 +396,20 @@ trait NodeMove
                 if ($parentId === null) {
                     // if parent ID is not given, use the parent of the original node, because we want to move
                     // to the end of the sibling list.
-                    $parentId = $this->getContentGraphAdapter()->findParentNodeInSubgraph($contentStreamId, $workspace?->workspaceName, $dimensionSpacePoint, $nodeAggregate->nodeAggregateId)?->nodeAggregateId;
+                    $parentId = $contentGraphAdapter->findParentNodeInSubgraph($dimensionSpacePoint, $nodeAggregate->nodeAggregateId)?->nodeAggregateId;
                     if ($parentId === null) {
                         throw new \InvalidArgumentException(
-                            sprintf('Parent ' . $parentId . ' not found in contentstream "%s" and dimension space point "%s" ', $contentStreamId->value, json_encode($dimensionSpacePoint)),
+                            sprintf(
+                                'Parent ' . $parentId . ' not found in contentstream "%s" and dimension space point "%s" ',
+                                $succeedingSibling->nodeAggregateId->value,
+                                json_encode($dimensionSpacePoint, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                            ),
                             1667597013
                         );
                     }
                 }
                 $coverageNodeMoveMappings[] = $this->resolveNewParentAssignments(
-                    $contentStreamId,
+                    $contentGraphAdapter,
                     $parentId,
                     $dimensionSpacePoint
                 );

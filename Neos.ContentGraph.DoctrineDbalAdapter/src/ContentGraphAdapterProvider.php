@@ -18,8 +18,19 @@ class ContentGraphAdapterProvider implements ContentGraphAdapterProviderInterfac
     ) {
     }
 
-    public function get(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphAdapterInterface
+    public function resolveWorkspaceNameAndGet(ContentStreamId $contentStreamId): ContentGraphAdapterInterface
     {
-        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $contentStreamId, $workspaceName);
+        // TODO: Implement resolveWorkspaceNameAndGet() method.
     }
+
+    public function resolveContentStreamIdAndGet(WorkspaceName $workspaceName): ContentGraphAdapterInterface
+    {
+        // TODO: Implement resolveContentStreamIdAndGet() method.
+    }
+
+    public function overrideContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId, \Closure $fn): void
+    {
+        // TODO: Implement overrideContentStreamId() method.
+    }
+
 }

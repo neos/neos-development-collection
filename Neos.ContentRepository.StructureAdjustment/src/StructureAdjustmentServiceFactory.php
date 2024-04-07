@@ -19,7 +19,8 @@ class StructureAdjustmentServiceFactory implements ContentRepositoryServiceFacto
             $serviceFactoryDependencies->eventPersister,
             $serviceFactoryDependencies->nodeTypeManager,
             $serviceFactoryDependencies->interDimensionalVariationGraph,
-            $serviceFactoryDependencies->propertyConverter
+            $serviceFactoryDependencies->propertyConverter,
+            $serviceFactoryDependencies->contentGraphAdapterProvider
         );
     }
 }

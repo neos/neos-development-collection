@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderInterface;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\Projections;
@@ -47,6 +48,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         // we don't need CommandBus, because this is included in ContentRepository->handle()
         public EventPersister $eventPersister,
         public Projections $projections,
+        public ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
     ) {
     }
 
@@ -58,6 +60,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         ContentRepository $contentRepository,
         EventPersister $eventPersister,
         Projections $projections,
+        ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
     ): self {
         return new self(
             $projectionFactoryDependencies->contentRepositoryId,
@@ -71,6 +74,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
             $contentRepository,
             $eventPersister,
             $projections,
+            $contentGraphAdapterProvider
         );
     }
 }

@@ -24,7 +24,6 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\Common\ContentStreamIdOverride;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
@@ -88,7 +87,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         private EventPersister $eventPersister,
         private EventStoreInterface $eventStore,
         private EventNormalizer $eventNormalizer,
-        private ContentGraphAdapterInterface $contentGraphAdapter
+        private ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
     ) {
     }
 
@@ -125,28 +124,32 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         CreateWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $existingWorkspace = $this->contentGraphAdapter->findWorkspaceByName($command->workspaceName);
-        if ($existingWorkspace !== null) {
-            throw new WorkspaceAlreadyExists(sprintf(
-                'The workspace %s already exists',
-                $command->workspaceName->value
-            ), 1505830958921);
+        try {
+            $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
+        } catch (WorkspaceDoesNotExist $e) {
+            // Desired outcome
         }
 
-        $baseWorkspace = $this->contentGraphAdapter->findWorkspaceByName($command->baseWorkspaceName);
-        if ($baseWorkspace === null) {
-            throw new BaseWorkspaceDoesNotExist(sprintf(
-                'The workspace %s (base workspace of %s) does not exist',
-                $command->baseWorkspaceName->value,
-                $command->workspaceName->value
-            ), 1513890708);
-        }
+        isset($contentGraphAdapter)
+        && throw new WorkspaceAlreadyExists(sprintf(
+            'The workspace %s already exists',
+            $command->workspaceName->value
+        ), 1505830958921);
+
+        $baseWorkspaceContentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->baseWorkspaceName);
+//        if ($baseWorkspace === null) {
+//            throw new BaseWorkspaceDoesNotExist(sprintf(
+//                'The workspace %s (base workspace of %s) does not exist',
+//                $command->baseWorkspaceName->value,
+//                $command->workspaceName->value
+//            ), 1513890708);
+//        }
 
         // When the workspace is created, we first have to fork the content stream
         $contentRepository->handle(
             ForkContentStream::create(
                 $command->newContentStreamId,
-                $baseWorkspace->currentContentStreamId,
+                $baseWorkspaceContentGraphAdapter->getContentStreamId(),
             )
         )->block();
 
@@ -200,13 +203,17 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         CreateRootWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $existingWorkspace = $this->contentGraphAdapter->findWorkspaceByName($command->workspaceName);
-        if ($existingWorkspace !== null) {
-            throw new WorkspaceAlreadyExists(sprintf(
-                'The workspace %s already exists',
-                $command->workspaceName->value
-            ), 1505848624450);
+        try {
+            $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
+        } catch (WorkspaceDoesNotExist $e) {
+            // Desired outcome
         }
+
+        isset($contentGraphAdapter)
+        && throw new WorkspaceAlreadyExists(sprintf(
+            'The workspace %s already exists',
+            $command->workspaceName->value
+        ), 1505848624450);
 
         $newContentStreamId = $command->newContentStreamId;
         $contentRepository->handle(
@@ -385,25 +392,22 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
         $rebaseStatistics = new WorkspaceRebaseStatistics();
-        ContentStreamIdOverride::applyContentStreamIdToClosure(
-            $command->rebasedContentStreamId,
-            function () use ($originalCommands, $contentRepository, $rebaseStatistics): void {
-                foreach ($originalCommands as $i => $originalCommand) {
-                    // We no longer need to adjust commands as the workspace stays the same
-                    try {
-                        $contentRepository->handle($originalCommand)->block();
-                        // if we came this far, we know the command was applied successfully.
-                        $rebaseStatistics->commandRebaseSuccess();
-                    } catch (\Exception $e) {
-                        $rebaseStatistics->commandRebaseError(sprintf(
-                            "Error with command %s in sequence-number %d",
-                            get_class($originalCommand),
-                            $i
-                        ), $e);
-                    }
+        $this->contentGraphAdapterProvider->overrideContentStreamId($command->workspaceName, $command->rebasedContentStreamId, function () use ($originalCommands, $contentRepository, $rebaseStatistics): void {
+            foreach ($originalCommands as $i => $originalCommand) {
+                // We no longer need to adjust commands as the workspace stays the same
+                try {
+                    $contentRepository->handle($originalCommand)->block();
+                    // if we came this far, we know the command was applied successfully.
+                    $rebaseStatistics->commandRebaseSuccess();
+                } catch (\Exception $e) {
+                    $rebaseStatistics->commandRebaseError(sprintf(
+                        "Error with command %s in sequence-number %d",
+                        get_class($originalCommand),
+                        $i
+                    ), $e);
                 }
             }
-        );
+        });
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         if ($command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FORCE || $rebaseStatistics->hasErrors() === false) {
@@ -487,9 +491,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         PublishIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
         $workspace = $this->requireWorkspace($command->workspaceName);
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        $oldWorkspaceContentStreamIdState = $this->contentGraphAdapter->findStateForContentStream($oldWorkspaceContentStreamId);
+        $oldWorkspaceContentStreamIdState = $contentGraphAdapter->findStateForContentStream();
         if ($oldWorkspaceContentStreamIdState === null) {
             throw new \DomainException('Cannot publish nodes on a workspace with a stateless content stream', 1710410114);
         }
@@ -497,7 +502,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 1) close old content stream
         $contentRepository->handle(
-            CloseContentStream::create($oldWorkspaceContentStreamId)
+            CloseContentStream::create($contentGraphAdapter->getContentStreamId())
         );
 
         // 2) separate commands in two parts - the ones MATCHING the nodes from the command, and the REST
@@ -518,7 +523,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         try {
             // 4) using the new content stream, apply the matching commands
-            ContentStreamIdOverride::applyContentStreamIdToClosure(
+            $this->contentGraphAdapterProvider->overrideContentStreamId(
+                $command->workspaceName,
                 $command->contentStreamIdForMatchingPart,
                 function () use ($matchingCommands, $contentRepository, $baseWorkspace): void {
                     foreach ($matchingCommands as $matchingCommand) {
@@ -533,8 +539,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                             $baseWorkspace->workspaceName,
                         ))->block();
                     }
-                }
-            );
+                });
 
             // 5) take EVENTS(MATCHING) and apply them to base WS.
             $this->publishContentStream(
@@ -551,7 +556,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             )->block();
 
             // 7) apply REMAINING commands to the workspace's new content stream
-            ContentStreamIdOverride::applyContentStreamIdToClosure(
+            $this->contentGraphAdapterProvider->overrideContentStreamId(
+                $command->workspaceName,
                 $command->contentStreamIdForRemainingPart,
                 function () use ($contentRepository, $remainingCommands) {
                     foreach ($remainingCommands as $remainingCommand) {
@@ -654,7 +660,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 4) using the new content stream, apply the commands to keep
         try {
-            ContentStreamIdOverride::applyContentStreamIdToClosure(
+            $this->contentGraphAdapterProvider->overrideContentStreamId(
+                $command->workspaceName,
                 $command->newContentStreamId,
                 function () use ($commandsToKeep, $contentRepository, $baseWorkspace): void {
                     foreach ($commandsToKeep as $matchingCommand) {
