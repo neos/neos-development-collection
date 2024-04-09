@@ -20,6 +20,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -55,6 +56,8 @@ class PropertyOperation extends AbstractOperation
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
+
+    use NodeTypeWithFallbackProvider;
 
     /**
      * {@inheritdoc}
@@ -110,26 +113,23 @@ class PropertyOperation extends AbstractOperation
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
-        $propertyType = $element->nodeType->hasProperty($propertyName)
-            ? $element->nodeType->getPropertyType($propertyName)
-            : null;
-
-        if ($propertyType === 'reference') {
+        if ($this->getNodeType($element)->hasReference($propertyName)) {
+            // legacy access layer for references
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            return (
-                $subgraph->findReferences(
-                    $element->nodeAggregateId,
-                    FindReferencesFilter::create(referenceName: $propertyName)
-                )[0] ?? null
-            )?->node;
-        }
-
-        if ($propertyType === 'references') {
-            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            return $subgraph->findReferences(
+            $references = $subgraph->findReferences(
                 $element->nodeAggregateId,
                 FindReferencesFilter::create(referenceName: $propertyName)
             )->getNodes();
+
+            $maxItems = $this->getNodeType($element)->getReferences()[$propertyName]['constraints']['maxItems'] ?? null;
+            if ($maxItems === 1) {
+                // legacy layer references with only one item like the previous `type: reference`
+                // (the node type transforms that to constraints.maxItems = 1)
+                // users still expect the property operation to return a single node instead of an array.
+                return $references->first();
+            }
+
+            return $references;
         }
 
         return $element->getProperty($propertyName);

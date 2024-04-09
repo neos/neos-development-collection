@@ -397,7 +397,7 @@ class NodeTypeManagerTest extends TestCase
     /**
      * @test
      */
-    public function anInheritedNodeTypePropertyCannotBeSetToEmptyArray(): void
+    public function anInheritedNodeTypePropertyCanBeOverruledWithEmptyArray(): void
     {
         $nodeTypesFixture = [
             'Neos.ContentRepository.Testing:Base' => [
