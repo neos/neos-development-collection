@@ -17,25 +17,77 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Testcase for the DefaultPropertyEditorPostprocessor
  */
 class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
 {
-    private function processConfiguration(array $configuration, array $dataTypesDefaultConfiguration, array $editorDefaultConfiguration): array
+    public function referenceExamples(): iterable
     {
-        $postprocessor = new DefaultPropertyEditorPostprocessor();
-        $this->inject($postprocessor, 'dataTypesDefaultConfiguration', $dataTypesDefaultConfiguration);
-        $this->inject($postprocessor, 'editorDefaultConfiguration', $editorDefaultConfiguration);
-        $mockNodeType = new NodeType(
-            NodeTypeName::fromString('Some.NodeType:Name'),
-            [],
-            [],
-            new DefaultNodeLabelGeneratorFactory()
-        );
-        $postprocessor->process($mockNodeType, $configuration, []);
-        return $configuration;
+        yield 'multiple references' => [
+            'nodeTypeDefinition' => <<<'YAML'
+            references:
+              someReferences:
+                ui:
+                  inspector:
+                    group: 'foo'
+            YAML,
+            'expected' => <<<'YAML'
+            references:
+              someReferences:
+                ui:
+                  inspector:
+                    group: 'foo'
+                    editor: ReferencesEditor
+            YAML
+        ];
+
+        yield 'singular reference' => [
+            'nodeTypeDefinition' => <<<'YAML'
+            references:
+              someReference:
+                constraints:
+                  maxItems: 1
+                ui:
+                  inspector:
+                    group: 'foo'
+            YAML,
+            'expected' => <<<'YAML'
+            references:
+              someReference:
+                constraints:
+                  maxItems: 1
+                ui:
+                  inspector:
+                    editor: SingularReferenceEditor
+                    group: 'foo'
+            YAML
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider referenceExamples
+     */
+    public function processExamples(string $nodeTypeDefinition, string $expectedResult)
+    {
+        $configuration = array_merge(['references' => [], 'properties' => []], Yaml::parse($nodeTypeDefinition));
+
+        $dataTypesDefaultConfiguration = [
+            'reference' => [
+                'editor' => 'SingularReferenceEditor',
+            ],
+            'references' => [
+                'editor' => 'ReferencesEditor',
+            ],
+        ];
+
+        $editorDefaultConfiguration = [];
+
+        $actualResult = $this->processConfiguration($configuration, $dataTypesDefaultConfiguration, $editorDefaultConfiguration);
+        self::assertEquals(array_merge(['references' => [], 'properties' => []], Yaml::parse($expectedResult)), $actualResult);
     }
 
     /**
@@ -44,6 +96,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
     public function processConvertsPropertyConfiguration(): void
     {
         $configuration = [
+            'references' => [],
             'properties' => [
                 'propertyWithoutType' => [
                     'ui' => [
@@ -154,6 +207,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         ];
 
         $expectedResult = [
+            'references' => [],
             'properties' => [
                 'propertyWithoutType' => [
                     'ui' => [
@@ -268,6 +322,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         $this->expectException(\Neos\Neos\Exception::class);
 
         $configuration = [
+            'references' => [],
             'properties' => [
                 'someProperty' => [
                     'type' => 'string',
@@ -279,5 +334,20 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
             'string' => [],
         ];
         $this->processConfiguration($configuration, $dataTypesDefaultConfiguration, []);
+    }
+
+    private function processConfiguration(array $configuration, array $dataTypesDefaultConfiguration, array $editorDefaultConfiguration): array
+    {
+        $postprocessor = new DefaultPropertyEditorPostprocessor();
+        $this->inject($postprocessor, 'dataTypesDefaultConfiguration', $dataTypesDefaultConfiguration);
+        $this->inject($postprocessor, 'editorDefaultConfiguration', $editorDefaultConfiguration);
+        $mockNodeType = new NodeType(
+            NodeTypeName::fromString('Some.NodeType:Name'),
+            [],
+            [],
+            new DefaultNodeLabelGeneratorFactory()
+        );
+        $postprocessor->process($mockNodeType, $configuration, []);
+        return $configuration;
     }
 }

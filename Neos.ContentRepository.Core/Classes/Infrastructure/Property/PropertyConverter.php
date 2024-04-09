@@ -100,7 +100,7 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
-            $declaredType = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]['type'];
+            $declaredType = $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]['type'] ?? 'string';
 
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
                 PropertyType::fromNodeTypeDeclaration(

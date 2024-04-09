@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\NodeType;
 
 use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
@@ -30,7 +31,7 @@ use Neos\Utility\PositionalArraySorter;
  *
  * @api Note: The constructor is not part of the public API
  */
-class NodeType
+final class NodeType
 {
     /**
      * Name of this node type. Example: "ContentRepository:Folder"
@@ -77,7 +78,7 @@ class NodeType
 
     /**
      * @param NodeTypeName $name Name of the node type
-     * @param array<string,mixed> $declaredSuperTypes Parent types of this node type
+     * @param array<string,NodeType|null> $declaredSuperTypes Parent types instances of this node type, if null it should be unset
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
      *
@@ -90,15 +91,6 @@ class NodeType
         private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
     ) {
         $this->name = $name;
-
-        foreach ($declaredSuperTypes as $type) {
-            if ($type !== null && !$type instanceof NodeType) {
-                throw new \InvalidArgumentException(
-                    '$declaredSuperTypes must be an array of NodeType objects',
-                    1291300950
-                );
-            }
-        }
         $this->declaredSuperTypes = $declaredSuperTypes;
 
         if (isset($configuration['abstract']) && $configuration['abstract'] === true) {
@@ -154,6 +146,40 @@ class NodeType
             $sorter = new PositionalArraySorter($this->fullConfiguration['childNodes']);
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
+
+        $referencesConfiguration = $this->fullConfiguration['references'] ?? [];
+        foreach ($this->fullConfiguration['properties'] ?? [] as $propertyName => $propertyConfiguration) {
+            // assert that references and properties never declare a thing with the same name
+            if (isset($this->fullConfiguration['references'][$propertyName])) {
+                throw new NodeConfigurationException(sprintf('NodeType %s cannot declare "%s" as property and reference.', $this->name->value, $propertyName), 1708022344);
+            }
+            // migrate old property like references to references
+            $propertyType = $propertyConfiguration['type'] ?? null;
+            if ($propertyType !== 'reference' && $propertyType !== 'references') {
+                continue;
+            }
+            if (isset($propertyConfiguration['constraints']) || isset($propertyConfiguration['properties'])) {
+                // we don't allow the new syntax `constraints.maxItems` on legacy property-like reference-declarations
+                throw new NodeConfigurationException(sprintf(
+                    'Legacy property-like reference-declaration for "%s" does not allow new configuration `constraints` or `properties` in NodeType %s.'
+                    . ' Please use the reference declaration syntax instead.',
+                    $propertyName,
+                    $this->name->value
+                ), 1708022344);
+            }
+            if ($propertyType === 'reference') {
+                unset($propertyConfiguration['type']);
+                $propertyConfiguration['constraints']['maxItems'] = 1;
+                $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                unset($this->fullConfiguration['properties'][$propertyName]);
+            }
+            if ($propertyType === 'references') {
+                unset($propertyConfiguration['type']);
+                $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                unset($this->fullConfiguration['properties'][$propertyName]);
+            }
+        }
+        $this->fullConfiguration['references'] = $referencesConfiguration;
 
         return $this->fullConfiguration;
     }
@@ -402,6 +428,31 @@ class NodeType
     /**
      * Check if the property is configured in the schema.
      */
+    public function hasReference(string $referenceName): bool
+    {
+        $this->initialize();
+
+        return isset($this->fullConfiguration['references'][$referenceName]);
+    }
+
+    /**
+     * Return the array with the defined references. The key is the reference name,
+     * the value the reference configuration. There are no guarantees on how the
+     * reference configuration looks like.
+     *
+     * @return array<string,mixed>
+     * @api
+     */
+    public function getReferences(): array
+    {
+        $this->initialize();
+
+        return ($this->fullConfiguration['references'] ?? []);
+    }
+
+    /**
+     * Check if the property is configured in the schema.
+     */
     public function hasProperty(string $propertyName): bool
     {
         $this->initialize();
@@ -421,7 +472,7 @@ class NodeType
         if (!$this->hasProperty($propertyName)) {
             throw new \InvalidArgumentException(
                 sprintf('NodeType schema has no property "%s" configured for the NodeType "%s". Cannot read its type.', $propertyName, $this->name->value),
-                1695062252040
+                1708025421
             );
         }
 

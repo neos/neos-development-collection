@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
@@ -46,6 +47,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateTypeIsAlreadyOccupied;
@@ -196,20 +198,21 @@ trait ConstraintChecks
     protected function requireNodeTypeToDeclareProperty(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
     {
         $nodeType = $this->requireNodeType($nodeTypeName);
-        if (!isset($nodeType->getProperties()[$propertyName->value])) {
+        if (!$nodeType->hasProperty($propertyName->value)) {
+            throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
+                $propertyName,
+                $nodeTypeName
+            );
         }
     }
 
-    protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $propertyName): void
+    protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $referenceName): void
     {
         $nodeType = $this->requireNodeType($nodeTypeName);
-        if (isset($nodeType->getProperties()[$propertyName->value])) {
-            $propertyType = $nodeType->getPropertyType($propertyName->value);
-            if ($propertyType === 'reference' || $propertyType === 'references') {
-                return;
-            }
+        if ($nodeType->hasReference($referenceName->value)) {
+            return;
         }
-        throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($propertyName, $nodeTypeName);
+        throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
     }
 
     protected function requireNodeTypeToAllowNodesOfTypeInReference(
@@ -218,18 +221,31 @@ trait ConstraintChecks
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
         $nodeType = $this->requireNodeType($nodeTypeName);
-        $propertyDeclaration = $nodeType->getProperties()[$referenceName->value] ?? null;
-        if (is_null($propertyDeclaration)) {
-            throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
-        }
-
-        $constraints = $propertyDeclaration['constraints']['nodeTypes'] ?? [];
+        $constraints = $nodeType->getReferences()[$referenceName->value]['constraints']['nodeTypes'] ?? [];
 
         if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($this->requireNodeType($nodeTypeNameInQuestion))) {
-            throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
+            throw ReferenceCannotBeSet::becauseTheNodeTypeConstraintsAreNotMatched(
                 $referenceName,
                 $nodeTypeName,
                 $nodeTypeNameInQuestion
+            );
+        }
+    }
+
+    protected function requireNodeTypeToAllowNumberOfReferencesInReference(SerializedNodeReferences $nodeReferences, ReferenceName $referenceName, NodeTypeName $nodeTypeName): void
+    {
+        $nodeType = $this->requireNodeType($nodeTypeName);
+
+        $maxItems = $nodeType->getReferences()[$referenceName->value]['constraints']['maxItems'] ?? null;
+        if ($maxItems === null) {
+            return;
+        }
+
+        if ($maxItems < count($nodeReferences)) {
+            throw ReferenceCannotBeSet::becauseTheItemsCountConstraintsAreNotMatched(
+                $referenceName,
+                $nodeTypeName,
+                count($nodeReferences)
             );
         }
     }
@@ -644,11 +660,11 @@ trait ConstraintChecks
         $nodeType = $this->requireNodeType($nodeTypeName);
 
         foreach ($referenceProperties->values as $propertyName => $propertyValue) {
-            $referencePropertyConfig = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]
+            $referencePropertyConfig = $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]
                 ?? null;
 
             if (is_null($referencePropertyConfig)) {
-                throw ReferenceCannotBeSet::becauseTheItDoesNotDeclareAProperty(
+                throw ReferenceCannotBeSet::becauseTheReferenceDoesNotDeclareTheProperty(
                     $referenceName,
                     $nodeTypeName,
                     PropertyName::fromString($propertyName)
