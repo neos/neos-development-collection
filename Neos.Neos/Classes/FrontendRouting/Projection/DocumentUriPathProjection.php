@@ -449,7 +449,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 ->withoutSiblings();
 
             $this->insertNode($targetNode->toArray());
-            $this->connectNodeWithSiblings($targetNode, $targetNode->getParentNodeAggregateId(), $interdimensionalSibling->nodeAggregateId, false);
+            $this->connectNodeWithSiblings($targetNode, $targetNode->getParentNodeAggregateId(), $interdimensionalSibling->nodeAggregateId);
         }
     }
 
@@ -658,7 +658,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     ): void {
         $this->disconnectNodeFromSiblings($node);
 
-        $this->connectNodeWithSiblings($node, $newParentNodeAggregateId, $newSucceedingNodeAggregateId, true);
+        $this->connectNodeWithSiblings($node, $newParentNodeAggregateId, $newSucceedingNodeAggregateId);
 
         if ($newParentNodeAggregateId->equals($node->getParentNodeAggregateId())) {
             return;
@@ -909,14 +909,10 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
     }
 
-    /**
-     * @param bool $includingSelf whether the node itself is to be considered its own sibling. true for moving, false for variation
-     */
     private function connectNodeWithSiblings(
         DocumentNodeInfo $node,
         NodeAggregateId $parentNodeAggregateId,
         ?NodeAggregateId $newSucceedingNodeAggregateId,
-        bool $includingSelf,
     ): void {
         if ($newSucceedingNodeAggregateId !== null) {
             $newPrecedingNode = $this->tryGetNode(fn () => $this->getState()->getPrecedingNode(
@@ -932,20 +928,15 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 ['precedingNodeAggregateId' => $node->getNodeAggregateId()->value]
             );
         } else {
-            $newPrecedingNode = $this->tryGetNode(fn () => $includingSelf
-                ? $this->getState()->getLastChildNode(
-                    $parentNodeAggregateId,
-                    $node->getDimensionSpacePointHash(),
-                )
-                : $this->getState()->getLastChildNodeNotBeing(
-                    $parentNodeAggregateId,
-                    $node->getDimensionSpacePointHash(),
-                    $node->getNodeAggregateId()
-                ));
+            $newPrecedingNode = $this->tryGetNode(fn () => $this->getState()->getLastChildNodeNotBeing(
+                $parentNodeAggregateId,
+                $node->getDimensionSpacePointHash(),
+                $node->getNodeAggregateId()
+            ));
         }
         if (
             $newPrecedingNode !== null
-            && ($includingSelf || !$newPrecedingNode->getNodeAggregateId()->equals($node->getNodeAggregateId()))
+            && !$newPrecedingNode->getNodeAggregateId()->equals($node->getNodeAggregateId())
         ) {
             $this->updateNode(
                 $newPrecedingNode,
@@ -958,7 +949,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             'succeedingNodeAggregateId' => $newSucceedingNodeAggregateId?->value,
         ];
         if (
-            $includingSelf || !$newPrecedingNode?->getNodeAggregateId()->equals($node->getNodeAggregateId())
+            !$newPrecedingNode?->getNodeAggregateId()->equals($node->getNodeAggregateId())
         ) {
             $updatedNodeData['precedingNodeAggregateId'] = $newPrecedingNode?->getNodeAggregateId()->value;
         }
