@@ -62,10 +62,11 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\CommandsThatFailedDuringRebase;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\CommandThatFailedDuringRebase;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
-use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Feature\WorkspaceRebase\WorkspaceRebaseStatistics;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
@@ -351,7 +352,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     /**
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
-     * @throws \Exception
+     * @throws WorkspaceRebaseFailed
      */
     private function handleRebaseWorkspace(
         RebaseWorkspace $command,
@@ -359,15 +360,19 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
+        $oldWorkspaceContentStreamIdState = $contentRepository->getContentStreamFinder()
+            ->findStateForContentStream($oldWorkspaceContentStreamId);
+        if ($oldWorkspaceContentStreamIdState === null) {
+            throw new \DomainException('Cannot rebase a workspace with a stateless content stream', 1711718314);
+        }
 
         // 0) close old content stream
         $contentRepository->handle(
-            CloseContentStream::create(
-                $workspace->currentContentStreamId,
-            )
+            CloseContentStream::create($oldWorkspaceContentStreamId)
         )->block();
 
-        // - fork a new content stream
+        // 1) fork a new content stream
         $rebasedContentStreamId = $command->rebasedContentStreamId;
         $contentRepository->handle(
             ForkContentStream::create(
@@ -381,31 +386,31 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $workspace->currentContentStreamId
         );
 
-        // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
+        // 2) extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
-        $rebaseStatistics = new WorkspaceRebaseStatistics();
+        $commandsThatFailed = new CommandsThatFailedDuringRebase();
         ContentStreamIdOverride::applyContentStreamIdToClosure(
             $command->rebasedContentStreamId,
-            function () use ($originalCommands, $contentRepository, $rebaseStatistics): void {
-                foreach ($originalCommands as $i => $originalCommand) {
+            function () use ($originalCommands, $contentRepository, &$commandsThatFailed): void {
+                foreach ($originalCommands as $sequenceNumber => $originalCommand) {
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
                         $contentRepository->handle($originalCommand)->block();
-                        // if we came this far, we know the command was applied successfully.
-                        $rebaseStatistics->commandRebaseSuccess();
                     } catch (\Exception $e) {
-                        $rebaseStatistics->commandRebaseError(sprintf(
-                            "Error with command %s in sequence-number %d",
-                            get_class($originalCommand),
-                            $i
-                        ), $e);
+                        $commandsThatFailed = $commandsThatFailed->add(
+                            new CommandThatFailedDuringRebase(
+                                $sequenceNumber,
+                                $originalCommand,
+                                $e
+                            )
+                        );
                     }
                 }
             }
         );
 
-        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        if ($command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FORCE || $rebaseStatistics->hasErrors() === false) {
+        // 3) if we got so far without an exception (or if we don't care), we can switch the workspace's active content stream.
+        if ($command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FORCE || $commandsThatFailed->isEmpty()) {
             $events = Events::with(
                 new WorkspaceWasRebased(
                     $command->workspaceName,
@@ -420,22 +425,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 ExpectedVersion::ANY()
             );
         } else {
-            // an error occurred during the rebase; so we need to record this using a "WorkspaceRebaseFailed" event.
-
-            $event = Events::with(
-                new WorkspaceRebaseFailed(
-                    $command->workspaceName,
-                    $rebasedContentStreamId,
-                    $workspace->currentContentStreamId,
-                    $rebaseStatistics->getErrors()
+            // 3.E) In case of an exception, reopen the old content stream...
+            $contentRepository->handle(
+                ReopenContentStream::create(
+                    $oldWorkspaceContentStreamId,
+                    $oldWorkspaceContentStreamIdState,
                 )
-            );
+            )->block();
 
-            return new EventsToPublish(
-                $workspaceStreamName,
-                $event,
-                ExpectedVersion::ANY()
-            );
+            // ... remove the newly created one...
+            $contentRepository->handle(RemoveContentStream::create(
+                $rebasedContentStreamId
+            ))->block();
+
+            // ...and throw an exception that contains all the information about what exactly failed
+            throw new WorkspaceRebaseFailed($commandsThatFailed, 'Rebase failed', 1711713880);
         }
     }
 

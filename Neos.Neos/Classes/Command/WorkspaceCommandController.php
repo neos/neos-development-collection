@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspac
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
@@ -118,20 +119,17 @@ class WorkspaceCommandController extends CommandController
      */
     public function rebaseCommand(string $workspace, string $contentRepositoryIdentifier = 'default', bool $force = false): void
     {
-        // @todo: bypass access control
-        $workspace = $this->workspaceProvider->provideForWorkspaceName(
-            ContentRepositoryId::fromString($contentRepositoryIdentifier),
-            WorkspaceName::fromString($workspace)
-        );
-
         try {
+            // @todo: bypass access control
+            $workspace = $this->workspaceProvider->provideForWorkspaceName(
+                ContentRepositoryId::fromString($contentRepositoryIdentifier),
+                WorkspaceName::fromString($workspace)
+            );
             $workspace->rebase($force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL);
         } catch (WorkspaceDoesNotExist $exception) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspace->name->value]);
+            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
             $this->quit(1);
-        }
-
-        if ($workspace->getCurrentStatus() === WorkspaceStatus::OUTDATED_CONFLICT) {
+        } catch (WorkspaceRebaseFailed $exception) {
             $this->outputLine('Rebasing of workspace %s is not possible due to conflicts. You can try the --force option.', [$workspace]);
             $this->quit(1);
         }
@@ -318,14 +316,16 @@ class WorkspaceCommandController extends CommandController
     /**
      * Rebase all outdated content streams
      */
-    public function rebaseOutdatedCommand(string $contentRepositoryIdentifier = 'default'): void
+    public function rebaseOutdatedCommand(string $contentRepositoryIdentifier = 'default', bool $force = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $workspaceMaintenanceService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new WorkspaceMaintenanceServiceFactory()
         );
-        $outdatedWorkspaces = $workspaceMaintenanceService->rebaseOutdatedWorkspaces();
+        $outdatedWorkspaces = $workspaceMaintenanceService->rebaseOutdatedWorkspaces(
+            $force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL
+        );
 
         if (!count($outdatedWorkspaces)) {
             $this->outputLine('There are no outdated workspaces.');
