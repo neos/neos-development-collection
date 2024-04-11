@@ -30,14 +30,12 @@ Feature: Recreate a node variant
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
 
     And I am in the active content stream of workspace "live" and dimension space point {"language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | originDimensionSpacePoint | nodeName            | parentNodeAggregateId  | nodeTypeName                                                   | tetheredDescendantNodeAggregateIds                                                       |
       | sir-david-nodenborough | {"language":"en"}         | document            | lady-eleonode-rootford | Neos.ContentRepository.Testing:Document                        | {"tethered-document": "nodimus-prime", "tethered-document/tethered": "nodimus-mediocre"} |
@@ -48,7 +46,6 @@ Feature: Recreate a node variant
       | workspaceName      | "user-ws"    |
       | baseWorkspaceName  | "live"       |
       | newContentStreamId | "user-cs-id" |
-    And the graph projection is fully up to date
 
   Scenario: Create specialization variant of node, publish, delete it and recreate it
     When the command CreateNodeVariant is executed with payload:
@@ -57,19 +54,16 @@ Feature: Recreate a node variant
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"en"}        |
       | targetOrigin    | {"language":"de"}        |
-    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value              |
       | workspaceName   | "user-ws"          |
       | nodeAggregateId | "nody-mc-nodeface" |
       | sourceOrigin    | {"language":"en"}  |
       | targetOrigin    | {"language":"de"}  |
-    And the graph projection is fully up to date
     And the command PublishWorkspace is executed with payload:
       | Key                | Value            |
       | workspaceName      | "user-ws"        |
       | newContentStreamId | "new-user-cs-id" |
-    And the graph projection is fully up to date
 
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                    |
@@ -77,7 +71,6 @@ Feature: Recreate a node variant
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language":"de"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
-    And the graph projection is fully up to date
 
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |
@@ -85,14 +78,12 @@ Feature: Recreate a node variant
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"en"}        |
       | targetOrigin    | {"language":"de"}        |
-    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value              |
       | workspaceName   | "user-ws"          |
       | nodeAggregateId | "nody-mc-nodeface" |
       | sourceOrigin    | {"language":"en"}  |
       | targetOrigin    | {"language":"de"}  |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-ws" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node new-user-cs-id;sir-david-nodenborough;{"language": "de"}

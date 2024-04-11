@@ -29,7 +29,6 @@ Feature: Workspace publication - complex chained functionality
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -46,7 +45,6 @@ Feature: Workspace publication - complex chained functionality
       | workspaceName      | "user-ws"    |
       | baseWorkspaceName  | "live"       |
       | newContentStreamId | "user-cs-id" |
-    And the graph projection is fully up to date
 
   Scenario: Vary to generalization, then publish only the child node so that an exception is thrown. Ensure that the workspace recovers from this
     When the command CreateNodeVariant is executed with payload:
@@ -55,14 +53,12 @@ Feature: Workspace publication - complex chained functionality
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language": "de"}       |
       | targetOrigin    | {"language": "en"}       |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value              |
       | workspaceName   | "user-ws"          |
       | nodeAggregateId | "nody-mc-nodeface" |
       | sourceOrigin    | {"language": "de"} |
       | targetOrigin    | {"language": "en"} |
-    And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
       | Key                | Value                                                                                                                                                                                                                                                                                                                                                   |
@@ -75,6 +71,5 @@ Feature: Workspace publication - complex chained functionality
       | Key                | Value                                                                                                                                                                                                                                                                                                                                                   |
       | workspaceName      | "user-ws"                                                                                                                                                                                                                                                                                                                                             |
       | newContentStreamId | "user-cs-id-yet-again-rebased"                                                                                                                                                                                                                                                                                                                                |
-    And the graph projection is fully up to date
     When I am in the active content stream of workspace "user-ws" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-id-yet-again-rebased;nody-mc-nodeface;{"language": "de"}

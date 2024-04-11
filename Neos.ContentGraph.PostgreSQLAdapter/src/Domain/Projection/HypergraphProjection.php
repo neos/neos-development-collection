@@ -52,6 +52,9 @@ use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use React\Promise\PromiseInterface;
+
+use function React\Promise\resolve;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
@@ -153,7 +156,7 @@ final class HypergraphProjection implements ProjectionInterface
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
-    public function reset(): void
+    public function reset(): PromiseInterface
     {
         $this->truncateDatabaseTables();
 
@@ -164,6 +167,7 @@ final class HypergraphProjection implements ProjectionInterface
         //foreach ($contentGraph->getSubgraphs() as $subgraph) {
         //    $subgraph->inMemoryCache->enable();
         //}
+        return resolve(null);
     }
 
     private function truncateDatabaseTables(): void
@@ -175,40 +179,7 @@ final class HypergraphProjection implements ProjectionInterface
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_restrictionhyperrelation');
     }
 
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            // ContentStreamForking
-            ContentStreamWasForked::class,
-            // NodeCreation
-            RootNodeAggregateWithNodeWasCreated::class,
-            NodeAggregateWithNodeWasCreated::class,
-            // SubtreeTagging
-            SubtreeWasTagged::class,
-            SubtreeWasUntagged::class,
-            // NodeModification
-            NodePropertiesWereSet::class,
-            // NodeReferencing
-            NodeReferencesWereSet::class,
-            // NodeRemoval
-            NodeAggregateWasRemoved::class,
-            // NodeRenaming
-            NodeAggregateNameWasChanged::class,
-            // NodeTypeChange
-            NodeAggregateTypeWasChanged::class,
-            // NodeVariation
-            NodeSpecializationVariantWasCreated::class,
-            NodeGeneralizationVariantWasCreated::class,
-            NodePeerVariantWasCreated::class,
-            // TODO: not yet supported:
-            //ContentStreamWasRemoved::class,
-            //DimensionSpacePointWasMoved::class,
-            //DimensionShineThroughWasAdded::class,
-            //NodeAggregateWasMoved::class,
-        ]);
-    }
-
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
     {
         match ($event::class) {
             // ContentStreamForking
@@ -233,8 +204,9 @@ final class HypergraphProjection implements ProjectionInterface
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
+        return resolve(null);
     }
 
     public function getCheckpointStorage(): DbalCheckpointStorage
@@ -259,14 +231,6 @@ final class HypergraphProjection implements ProjectionInterface
     protected function getProjectionHypergraph(): ProjectionHypergraph
     {
         return $this->projectionHypergraph;
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    protected function transactional(\Closure $operations): void
-    {
-        $this->getDatabaseConnection()->transactional($operations);
     }
 
     protected function getDatabaseConnection(): Connection

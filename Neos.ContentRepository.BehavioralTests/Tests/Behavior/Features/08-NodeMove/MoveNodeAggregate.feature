@@ -43,7 +43,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in the active content stream of workspace "live"
-    And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -78,7 +77,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | parentNodeAggregateId       | "sir-david-nodenborough"                                                                                                                |
       | nodeName                    | "esquire"                                                                                                                               |
       | nodeAggregateClassification | "regular"                                                                                                                               |
-    And the graph projection is fully up to date
 
   Scenario: Try to move a node in a non-existing workspace:
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
@@ -160,7 +158,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | parentNodeAggregateId       | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                    | "document"                                                                                                                                         |
       | nodeAggregateClassification | "regular"                                                                                                                                          |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
@@ -180,7 +177,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | coveredDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | parentNodeAggregateId       | "sir-david-nodenborough"                                                                                                                           |
       | nodeAggregateClassification | "regular"                                                                                                                                          |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                              |
@@ -188,7 +184,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId              | "nody-mc-nodeface"                 |
       | newParentNodeAggregateId     | "lady-eleonode-rootford"           |
       | relationDistributionStrategy | "scatter"                          |
-    And the graph projection is fully up to date
     When I am in the active content stream of workspace "live" and dimension space point {"market": "DE", "language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE","language":"de"}
 
@@ -204,7 +199,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                                                                                                           |
       | nodeName                    | "other-document"                                                                                                                                   |
       | nodeAggregateClassification | "regular"                                                                                                                                          |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
@@ -225,7 +219,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                                                                                                           |
       | nodeName                    | "content"                                                                                                                                          |
       | nodeAggregateClassification | "regular"                                                                                                                                          |
-    And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
       | dimensionSpacePoint          | {"market": "DE", "language": "de"} |

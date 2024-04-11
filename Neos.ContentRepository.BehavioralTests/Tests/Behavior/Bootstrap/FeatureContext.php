@@ -60,7 +60,6 @@ class FeatureContext implements BehatContext
         self::bootstrapFlow();
 
         $this->dbalClient = $this->getObject(DbalClientInterface::class);
-        $this->setupCRTestSuiteTrait();
         $this->setUpInterleavingLogger();
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
     }

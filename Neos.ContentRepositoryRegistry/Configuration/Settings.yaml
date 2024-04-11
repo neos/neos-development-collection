@@ -32,7 +32,7 @@ Neos:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ConfigurationBasedContentDimensionSourceFactory
 
         projectionCatchUpTrigger:
-          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTriggerFactory
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\DefaultProjectionCatchUpTriggerFactory
 
         userIdProvider:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\UserIdProvider\StaticUserIdProviderFactory

@@ -38,8 +38,6 @@ class FeatureContext implements Context
     {
         self::bootstrapFlow();
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
-
-        $this->setupCRTestSuiteTrait();
     }
 
     /**

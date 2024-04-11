@@ -29,7 +29,6 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
 
   Scenario:
     When the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -55,7 +54,6 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | parentNodeAggregateId       | "shernode-homes"                                                |
       | nodeAggregateClassification | "regular"                                                       |
       | initialPropertyValues       | {"uriPathSegment": {"type": "string", "value": "non-existing"}} |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath              | nodeaggregateidpath                                            | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""                   | "lady-eleonode-rootford"                                       | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |

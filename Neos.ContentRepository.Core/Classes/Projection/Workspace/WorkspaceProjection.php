@@ -45,6 +45,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use React\Promise\PromiseInterface;
+
+use function React\Promise\resolve;
 
 /**
  * @internal
@@ -133,32 +136,15 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
-    public function reset(): void
+    public function reset(): PromiseInterface
     {
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableName);
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        return resolve(null);
     }
 
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            WorkspaceWasCreated::class,
-            WorkspaceWasRenamed::class,
-            RootWorkspaceWasCreated::class,
-            WorkspaceWasDiscarded::class,
-            WorkspaceWasPartiallyDiscarded::class,
-            WorkspaceWasPartiallyPublished::class,
-            WorkspaceWasPublished::class,
-            WorkspaceWasRebased::class,
-            WorkspaceRebaseFailed::class,
-            WorkspaceWasRemoved::class,
-            WorkspaceOwnerWasChanged::class,
-            WorkspaceBaseWorkspaceWasChanged::class,
-        ]);
-    }
-
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
     {
         match ($event::class) {
             WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
@@ -173,8 +159,9 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
             WorkspaceOwnerWasChanged::class => $this->whenWorkspaceOwnerWasChanged($event),
             WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
+        return resolve(null);
     }
 
     public function getCheckpointStorage(): DbalCheckpointStorage

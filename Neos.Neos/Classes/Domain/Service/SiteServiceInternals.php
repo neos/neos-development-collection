@@ -130,7 +130,7 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             PropertyValuesToWrite::fromArray([
                 'title' => $site->getName()
             ])
-        ))->block();
+        ));
 
         // Handle remaining root dimension space points by creating peer variants
         foreach ($rootDimensionSpacePoints as $rootDimensionSpacePoint) {
@@ -139,7 +139,7 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
                 $siteNodeAggregateId,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootDimensionSpacePoint),
-            ))->block();
+            ));
         }
     }
 }

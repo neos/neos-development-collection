@@ -37,7 +37,6 @@ Feature: Create a root node aggregate with tethered children
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And I am user identified by "initiating-user-identifier"
 
@@ -47,7 +46,6 @@ Feature: Create a root node aggregate with tethered children
       | nodeAggregateId                    | "lady-eleonode-rootford"                                                          |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:RootWithTetheredChildNodes"                       |
       | tetheredDescendantNodeAggregateIds | {"child-node": "nody-mc-nodeface", "child-node/grandchild-node": "nodimus-prime"} |
-    And the graph projection is fully up to date
 
     Then I expect exactly 4 events to be published on stream "ContentStream:cs-identifier"
     And event at index 1 is of type "RootNodeAggregateWithNodeWasCreated" with payload:

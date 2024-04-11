@@ -15,7 +15,6 @@ Feature: Copy nodes (without dimensions)
       | workspaceTitle                 | "Live"                                 |
       | workspaceDescription           | "The live workspace"                   |
       | newContentStreamId     | "cs-identifier"                        |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                  |
@@ -51,7 +50,6 @@ Feature: Copy nodes (without dimensions)
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "esquire"                                 |
       | nodeAggregateClassification   | "regular"                                 |
-    And the graph projection is fully up to date
 
   Scenario: Copy
     When I am in the active content stream of workspace "live" and dimension space point {}
@@ -64,6 +62,4 @@ Feature: Copy nodes (without dimensions)
       | targetNodeName                                 | "target-nn"                                                       |
       | targetSucceedingSiblingnodeAggregateId | null                                                              |
       | nodeAggregateIdMapping                 | {"sir-nodeward-nodington-iii": "sir-nodeward-nodington-iii-copy"} |
-
-    And the graph projection is fully up to date
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii-copy" to lead to node cs-identifier;sir-nodeward-nodington-iii-copy;{}

@@ -23,13 +23,11 @@ Feature: Disable a node aggregate
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName            |
       | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | preceding-document  |
@@ -41,7 +39,6 @@ Feature: Disable a node aggregate
       | sourceNodeAggregateId | "preceding-nodenborough"               |
       | referenceName                 | "references"                           |
       | references                    | [{"target": "sir-david-nodenborough"}] |
-    And the graph projection is fully up to date
 
   Scenario: Restore a hidden node by removing and recreating it
     Given the command DisableNodeAggregate is executed with payload:
@@ -54,7 +51,6 @@ Feature: Disable a node aggregate
       | nodeAggregateId              | "nody-mc-nodeface" |
       | affectedOccupiedDimensionSpacePoints | [{}]               |
       | affectedCoveredDimensionSpacePoints  | [{}]               |
-    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
@@ -63,8 +59,6 @@ Feature: Disable a node aggregate
       | originDimensionSpacePoint     | {}                                        |
       | parentNodeAggregateId | "sir-david-nodenborough"                  |
       | nodeName                      | "child-document"                          |
-
-    When the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph

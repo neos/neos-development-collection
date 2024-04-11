@@ -78,7 +78,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
                     WorkspaceDescription::fromString(''),
                     $contentStreamForWriting,
                 )
-            )->block();
+            );
             /** array $migrationDescription */
             $this->executeSubMigrationAndBlock(
                 $migrationDescription,

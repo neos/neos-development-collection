@@ -21,13 +21,11 @@ Feature: Variation of hidden nodes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And VisibilityConstraints are set to "frontend"
 
   Scenario: Specialize a node where the specialization target is enabled
@@ -40,20 +38,17 @@ Feature: Variation of hidden nodes
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
     And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"gsw"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
       | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"gsw"} |
-    And the graph projection is fully up to date
     And I am in dimension space point {"language":"de"}
     And I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
@@ -70,14 +65,12 @@ Feature: Variation of hidden nodes
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
       | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"gsw"} |
-    And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
@@ -90,7 +83,6 @@ Feature: Variation of hidden nodes
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"gsw"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
@@ -105,14 +97,12 @@ Feature: Variation of hidden nodes
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
       | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"mul"} |
-    And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
@@ -132,20 +122,17 @@ Feature: Variation of hidden nodes
       | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"ltz"} |
       | targetOrigin            | {"language":"mul"} |
-    And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"mul"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
       | nodeAggregateId | "the-great-nodini"    |
       | sourceOrigin            | {"language":"ltz"} |
       | targetOrigin            | {"language":"de"}  |
-    And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"ltz"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
@@ -158,7 +145,6 @@ Feature: Variation of hidden nodes
       | nodeAggregateId      | "the-great-nodini"      |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
@@ -173,14 +159,12 @@ Feature: Variation of hidden nodes
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
       | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"en"}  |
-    And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
@@ -198,20 +182,17 @@ Feature: Variation of hidden nodes
       | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"mul"} |
-    And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"mul"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
       | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"en"}  |
-    And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
@@ -224,7 +205,6 @@ Feature: Variation of hidden nodes
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"en"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"en"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"en"}

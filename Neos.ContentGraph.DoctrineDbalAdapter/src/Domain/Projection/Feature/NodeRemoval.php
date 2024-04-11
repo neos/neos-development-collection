@@ -31,17 +31,15 @@ trait NodeRemoval
     {
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
-        $this->transactional(function () use ($event) {
-            $ingoingRelations = $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->affectedCoveredDimensionSpacePoints
-            );
+        $ingoingRelations = $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
+            $event->contentStreamId,
+            $event->nodeAggregateId,
+            $event->affectedCoveredDimensionSpacePoints
+        );
 
-            foreach ($ingoingRelations as $ingoingRelation) {
-                $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($ingoingRelation);
-            }
-        });
+        foreach ($ingoingRelations as $ingoingRelation) {
+            $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($ingoingRelation);
+        }
     }
 
     /**
@@ -85,6 +83,4 @@ trait NodeRemoval
     }
 
     abstract protected function getDatabaseConnection(): Connection;
-
-    abstract protected function transactional(\Closure $operations): void;
 }

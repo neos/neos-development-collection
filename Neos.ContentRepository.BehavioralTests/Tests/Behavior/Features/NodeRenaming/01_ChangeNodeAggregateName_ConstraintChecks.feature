@@ -23,14 +23,12 @@ Feature: Change node name
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
 
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeName | nodeTypeName                            | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds |
       | sir-david-nodenborough | null     | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | {}                    | {"tethered": "nodewyn-tetherton"}  |

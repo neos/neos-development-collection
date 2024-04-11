@@ -19,7 +19,6 @@ Feature: Run integrity violation detection regarding reference relations
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | newContentStreamId | "cs-identifier"                        |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
@@ -34,7 +33,6 @@ Feature: Run integrity violation detection regarding reference relations
       | coveredDimensionSpacePoints   | [{"language":"de"}]                       |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeAggregateClassification   | "regular"                                 |
-    And the graph projection is fully up to date
 
   Scenario: Reference a non-existing node aggregate
     When the event NodeReferencesWereSet was published with payload:
@@ -44,7 +42,6 @@ Feature: Run integrity violation detection regarding reference relations
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                        |
       | referenceName                            | "referenceProperty"                                                        |
       | references                               | [{"targetNodeAggregateId":"anthony-destinode", "properties":null}] |
-    And the graph projection is fully up to date
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597919585
@@ -66,7 +63,6 @@ Feature: Run integrity violation detection regarding reference relations
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                        |
       | referenceName                            | "referenceProperty"                                                        |
       | references                               | [{"targetNodeAggregateId":"anthony-destinode", "properties":null}] |
-    And the graph projection is fully up to date
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597919585

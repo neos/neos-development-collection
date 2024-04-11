@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -50,8 +49,8 @@ class RenameNodeAggregateTransformationFactory implements TransformationFactoryI
                 NodeAggregate $nodeAggregate,
                 WorkspaceName $workspaceNameForWriting,
                 ContentStreamId $contentStreamForWriting
-            ): CommandResult {
-                return $this->contentRepository->handle(ChangeNodeAggregateName::create(
+            ): void {
+                $this->contentRepository->handle(ChangeNodeAggregateName::create(
                     $workspaceNameForWriting,
                     $nodeAggregate->nodeAggregateId,
                     NodeName::fromString($this->newNodeName),

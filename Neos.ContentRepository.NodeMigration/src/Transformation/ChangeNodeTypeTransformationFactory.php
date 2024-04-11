@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
@@ -65,8 +64,8 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                 NodeAggregate $nodeAggregate,
                 WorkspaceName $workspaceNameForWriting,
                 ContentStreamId $contentStreamForWriting
-            ): CommandResult {
-                return $this->contentRepository->handle(ChangeNodeAggregateType::create(
+            ): void {
+                $this->contentRepository->handle(ChangeNodeAggregateType::create(
                     $workspaceNameForWriting,
                     $nodeAggregate->nodeAggregateId,
                     NodeTypeName::fromString($this->newType),

@@ -23,7 +23,6 @@ Feature: ForkContentStream Without Dimensions
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
@@ -53,7 +52,6 @@ Feature: ForkContentStream Without Dimensions
       | Key                   | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in content stream "user-cs-identifier" and dimension space point {}
 
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
@@ -71,7 +69,6 @@ Feature: ForkContentStream Without Dimensions
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
       | propertiesToUnset            | {}                                                      |
-    And the graph projection is fully up to date
 
       # live
     When I am in content stream "cs-identifier" and dimension space point {}
@@ -101,7 +98,6 @@ Feature: ForkContentStream Without Dimensions
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
       | propertiesToUnset            | {}                                                      |
-    And the graph projection is fully up to date
 
     # live
     When I am in content stream "cs-identifier" and dimension space point {}

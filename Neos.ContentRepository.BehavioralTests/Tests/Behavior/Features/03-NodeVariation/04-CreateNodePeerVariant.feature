@@ -29,13 +29,11 @@ Feature: Create node peer variant
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | originDimensionSpacePoint | nodeName            | parentNodeAggregateId  | succeedingSiblingNodeAggregateId | nodeTypeName                                                   | tetheredDescendantNodeAggregateIds                                                            |
     # We have to add another node since root nodes have no origin dimension space points and thus cannot be varied.
@@ -55,13 +53,11 @@ Feature: Create node peer variant
       | nodeAggregateId | "nody-mc-nodeface"   |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
       | nodeAggregateId | "elder-mc-nodeface"  |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
-    And the graph projection is fully up to date
     # Complete the sibling set with a node in the target DSP between the middle and last node
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                                            |
@@ -70,7 +66,6 @@ Feature: Create node peer variant
       | parentNodeAggregateId     | "lady-eleonode-rootford"                                         |
       | originDimensionSpacePoint | {"example":"peer"}                                               |
       | nodeName                  | "younger-document"                                               |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                  |
       | nodeAggregateId | "youngest-mc-nodeface" |
@@ -114,8 +109,6 @@ Feature: Create node peer variant
       | sourceOrigin           | {"example":"source"}                                                                                                                      |
       | peerOrigin             | {"example":"peer"}                                                                                                                        |
       | peerSucceedingSiblings | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":null}] |
-
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
@@ -342,7 +335,6 @@ Feature: Create node peer variant
       | nodeAggregateId | "nody-mc-nodeface"     |
       | sourceOrigin    | {"example":"source"}   |
       | targetOrigin    | {"example":"peerSpec"} |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
@@ -392,8 +384,6 @@ Feature: Create node peer variant
       | sourceOrigin           | {"example":"source"}                                                |
       | peerOrigin             | {"example":"peer"}                                                  |
       | peerSucceedingSiblings | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":null}] |
-
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"peer"} to exist in the content graph
@@ -509,7 +499,6 @@ Feature: Create node peer variant
       | nodeAggregateId | "nody-mc-nodeface"   |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                  |
@@ -559,8 +548,6 @@ Feature: Create node peer variant
       | sourceOrigin           | {"example":"source"}                                                    |
       | peerOrigin             | {"example":"peerSpec"}                                                  |
       | peerSucceedingSiblings | [{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":null}] |
-
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"peer"} to exist in the content graph
@@ -684,7 +671,6 @@ Feature: Create node peer variant
       | nodeAggregateId | "elder-mc-nodeface"  |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                     |
       | nodeAggregateId | "elder-child-mc-nodeface" |
@@ -706,8 +692,6 @@ Feature: Create node peer variant
       | sourceOrigin           | {"example":"source"}                                                                                                                      |
       | peerOrigin             | {"example":"peer"}                                                                                                                        |
       | peerSucceedingSiblings | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":null}] |
-
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 11 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"peer"} to exist in the content graph

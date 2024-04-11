@@ -34,19 +34,16 @@ Feature: Rebasing auto-created nodes works
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
     And I am in the active content stream of workspace "live" and dimension space point {}
-    And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And the graph projection is fully up to date
 
   Scenario: complex scenario (to reproduce the bug) -- see the feature description
     # USER workspace: create a new node with auto-created child nodes
@@ -58,7 +55,6 @@ Feature: Rebasing auto-created nodes works
       | nodeName                      | "mcnodeface"                             |
       | originDimensionSpacePoint     | {}                                       |
       | parentNodeAggregateId | "lady-eleonode-rootford"                 |
-    And the graph projection is fully up to date
     And I am in content stream "user-cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     When I get the node at path "mcnodeface/foo"
@@ -72,11 +68,9 @@ Feature: Rebasing auto-created nodes works
       | originDimensionSpacePoint | {}                                             |
       | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
       | propertiesToUnset         | {}                                             |
-    And the graph projection is fully up to date
 
     When the command RebaseWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
-    And the graph projection is fully up to date
     # This should properly work; no error.
 

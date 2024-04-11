@@ -49,7 +49,7 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\Subtre
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
+use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\DefaultCatchUpTrigger;
 use Neos\EventStore\EventStoreInterface;
 use PHPUnit\Framework\Assert;
 
@@ -84,13 +84,6 @@ trait CRTestSuiteTrait
     use WorkspaceCreation;
     use WorkspaceDiscarding;
     use WorkspacePublishing;
-
-    protected function setupCRTestSuiteTrait(): void
-    {
-        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
-            CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
-        }
-    }
 
     /**
      * @BeforeScenario
@@ -137,18 +130,6 @@ trait CRTestSuiteTrait
         }
 
         return $eventPayload;
-    }
-
-    /**
-     * @When /^the graph projection is fully up to date$/
-     */
-    public function theGraphProjectionIsFullyUpToDate(): void
-    {
-        if ($this->lastCommandOrEventResult === null) {
-            throw new \RuntimeException('lastCommandOrEventResult not filled; so I cannot block!');
-        }
-        $this->lastCommandOrEventResult->block();
-        $this->lastCommandOrEventResult = null;
     }
 
     /**
@@ -299,7 +280,6 @@ trait CRTestSuiteTrait
         /** @var ContentStreamPruner $contentStreamPruner */
         $contentStreamPruner = $this->getContentRepositoryService(new ContentStreamPrunerFactory());
         $contentStreamPruner->prune();
-        $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
     }
 
     /**

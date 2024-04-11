@@ -61,7 +61,7 @@ trait NodeModification
             $this->deserializeProperties($commandArguments['propertyValues']),
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

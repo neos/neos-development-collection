@@ -30,13 +30,11 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | parentNodeAggregateId  | nodeTypeName                            |
       | nody-mc-nodeface | lady-eleonode-rootford | Neos.ContentRepository.Testing:Document |

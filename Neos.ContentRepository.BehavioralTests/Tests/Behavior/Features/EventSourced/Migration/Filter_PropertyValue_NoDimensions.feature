@@ -24,12 +24,10 @@ Feature: Filter - Property Value
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in the active content stream of workspace "live"
-    And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     # Node /name1 (has text value set)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -39,7 +37,6 @@ Feature: Filter - Property Value
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "Original name1"}                |
-    And the graph projection is fully up to date
 
     # Node /name2 (has text value2)
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -50,7 +47,6 @@ Feature: Filter - Property Value
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "value2"}                        |
-    And the graph projection is fully up to date
 
       # no node name (has text value not set, and null will be ignored as unset)
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -60,7 +56,6 @@ Feature: Filter - Property Value
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": null}                            |
-    And the graph projection is fully up to date
 
     # no node name (has text value not set)
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -70,7 +65,6 @@ Feature: Filter - Property Value
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {}                                        |
-    And the graph projection is fully up to date
 
 
   Scenario: PropertyValue

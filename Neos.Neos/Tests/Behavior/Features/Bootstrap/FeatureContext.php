@@ -49,7 +49,6 @@ class FeatureContext implements BehatContext
         $this->environment = $this->getObject(Environment::class);
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
 
-        $this->setupCRTestSuiteTrait();
     }
 
     /*

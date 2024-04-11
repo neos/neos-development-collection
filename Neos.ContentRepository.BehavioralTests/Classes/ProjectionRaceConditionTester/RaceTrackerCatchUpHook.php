@@ -18,14 +18,13 @@ use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\Tra
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTrigger;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * We had some race conditions in projections, where {@see \Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage} was not working properly.
  * We saw some non-deterministic, random errors when running the tests - unluckily only on Linux, not on OSX:
- * On OSX, forking a new subprocess in {@see SubprocessProjectionCatchUpTrigger} is *WAY* slower than in Linux;
+ * On OSX, forking a new subprocess is *WAY* slower than in Linux;
  * and thus the race conditions which appears if two projector instances of the same class run concurrently
  * won't happen (or are way less likely).
  *

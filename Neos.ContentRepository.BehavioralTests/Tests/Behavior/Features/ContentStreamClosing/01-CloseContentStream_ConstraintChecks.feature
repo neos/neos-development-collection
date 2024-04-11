@@ -13,7 +13,6 @@ Feature: Constraint check test cases for closing content streams
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
 
   Scenario: Try to close a non-existing content stream:
     And the command CloseContentStream is executed with payload and exceptions are caught:

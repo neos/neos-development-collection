@@ -29,7 +29,6 @@ Feature: Discard individual nodes (basics)
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -65,7 +64,6 @@ Feature: Discard individual nodes (basics)
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                |
       | initialPropertyValues       | {"image": {"type": "string", "value": "Initial image"}} |
       | nodeAggregateClassification | "regular"                                               |
-    And the graph projection is fully up to date
 
     # Create user workspace
     And the command CreateWorkspace is executed with payload:
@@ -73,7 +71,6 @@ Feature: Discard individual nodes (basics)
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And the graph projection is fully up to date
     # modify nodes in user WS
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                    |
@@ -93,7 +90,6 @@ Feature: Discard individual nodes (basics)
       | nodeAggregateId           | "sir-nodeward-nodington-iii" |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"image": "Modified image"}  |
-    And the graph projection is fully up to date
 
   ################
   # DISCARDING
@@ -105,8 +101,6 @@ Feature: Discard individual nodes (basics)
       | workspaceName      | "user-test"                                                                                                             |
       | nodesToDiscard     | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
       | newContentStreamId | "user-cs-identifier-new"                                                                                                |
-
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-new;sir-david-nodenborough;{}
@@ -128,7 +122,6 @@ Feature: Discard individual nodes (basics)
       | workspaceName      | "user-test"              |
       | nodesToDiscard     | []                       |
       | newContentStreamId | "user-cs-identifier-new" |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-new;sir-david-nodenborough;{}
@@ -150,7 +143,6 @@ Feature: Discard individual nodes (basics)
       | workspaceName      | "user-test"                                                                                                                                                                                                                                                                                                                                             |
       | nodesToDiscard     | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}, {"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}, {"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
       | newContentStreamId | "user-cs-identifier-new"                                                                                                                                                                                                                                                                                                                                |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-new;sir-david-nodenborough;{}
@@ -172,7 +164,6 @@ Feature: Discard individual nodes (basics)
       | Key            | Value                                                                                                                   |
       | workspaceName  | "user-test"                                                                                                             |
       | nodesToDiscard | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
-    And the graph projection is fully up to date
 
     # live WS does not change because of a discard
     When I am in the active content stream of workspace "live" and dimension space point {}

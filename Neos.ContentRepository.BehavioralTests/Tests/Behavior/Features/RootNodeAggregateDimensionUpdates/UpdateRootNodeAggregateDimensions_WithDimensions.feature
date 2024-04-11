@@ -19,7 +19,6 @@ Feature: Update Root Node aggregate dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -38,8 +37,6 @@ Feature: Update Root Node aggregate dimensions
       | nodeAggregateClassification | "root"                                 |
     And event metadata at index 1 is:
       | Key | Expected |
-
-    When the graph projection is fully up to date
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
     And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
@@ -74,7 +71,6 @@ Feature: Update Root Node aggregate dimensions
 
 
   Scenario: Adding a dimension and updating the root node works
-    When the graph projection is fully up to date
     Given I change the content dimensions in content repository "default" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, en |                 |
@@ -97,8 +93,6 @@ Feature: Update Root Node aggregate dimensions
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"}] |
     And event metadata at index 1 is:
       | Key | Expected |
-
-    When the graph projection is fully up to date
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
     And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
@@ -138,14 +132,12 @@ Feature: Update Root Node aggregate dimensions
 
 
   Scenario: Adding a dimension updating the root node, removing dimension, updating the root node, works (dimension gone again)
-    When the graph projection is fully up to date
     Given I change the content dimensions in content repository "default" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, en |                 |
     And the command UpdateRootNodeAggregateDimensions is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
-    And the graph projection is fully up to date
 
     # now, the root node exists in "en"
     When I am in dimension space point {"language":"en"}
@@ -159,7 +151,6 @@ Feature: Update Root Node aggregate dimensions
     And the command UpdateRootNodeAggregateDimensions is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
-    And the graph projection is fully up to date
 
     # now, the root node should not exist anymore in "en"
     When I am in dimension space point {"language":"en"}

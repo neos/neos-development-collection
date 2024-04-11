@@ -241,7 +241,7 @@ final class Workspace
             $this->name
         )->withErrorHandlingStrategy($rebaseErrorHandlingStrategy);
 
-        $this->contentRepository->handle($rebaseCommand)->block();
+        $this->contentRepository->handle($rebaseCommand);
 
         $this->updateCurrentState();
     }
@@ -253,7 +253,7 @@ final class Workspace
                 $this->name,
                 $baseWorkspaceName
             )
-        )->block();
+        );
 
         $this->updateCurrentState();
     }
@@ -291,7 +291,7 @@ final class Workspace
             PublishWorkspace::create(
                 $this->name,
             )
-        )->block();
+        );
 
         $this->updateCurrentState();
     }
@@ -307,14 +307,14 @@ final class Workspace
             RebaseWorkspace::create(
                 $this->name
             )
-        )->block();
+        );
 
         $this->contentRepository->handle(
             PublishIndividualNodesFromWorkspace::create(
                 $this->name,
                 $nodeIdsToPublish
             )
-        )->block();
+        );
 
         $this->updateCurrentState();
     }
@@ -325,7 +325,7 @@ final class Workspace
             DiscardWorkspace::create(
                 $this->name,
             )
-        )->block();
+        );
 
         $this->updateCurrentState();
     }
@@ -341,14 +341,14 @@ final class Workspace
             RebaseWorkspace::create(
                 $this->name
             )
-        )->block();
+        );
 
         $this->contentRepository->handle(
             DiscardIndividualNodesFromWorkspace::create(
                 $this->name,
                 $nodeIdsToDiscard
             )
-        )->block();
+        );
 
         $this->updateCurrentState();
     }

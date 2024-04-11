@@ -21,13 +21,11 @@ Feature: Creation of nodes underneath disabled nodes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
@@ -35,7 +33,6 @@ Feature: Creation of nodes underneath disabled nodes
       | Key                          | Value              |
       | nodeAggregateId      | "the-great-nodini" |
       | nodeVariantSelectionStrategy | "allVariants"      |
-    And the graph projection is fully up to date
 
   Scenario: When a new node is created underneath a hidden node, this one should be hidden as well
     When the following CreateNodeAggregateWithNode commands are executed:
@@ -49,6 +46,5 @@ Feature: Creation of nodes underneath disabled nodes
       | Key                          | Value              |
       | nodeAggregateId      | "the-great-nodini" |
       | nodeVariantSelectionStrategy | "allVariants"      |
-    And the graph projection is fully up to date
     Then I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{}
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{}

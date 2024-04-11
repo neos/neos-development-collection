@@ -38,48 +38,46 @@ trait NodeMove
      */
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
-        $this->transactional(function () use ($event) {
-            foreach ($event->nodeMoveMappings as $moveNodeMapping) {
-                // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
-                $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeByIds(
-                    $event->contentStreamId,
-                    $event->nodeAggregateId,
-                    $moveNodeMapping->movedNodeOrigin
-                );
+        foreach ($event->nodeMoveMappings as $moveNodeMapping) {
+            // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
+            $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeByIds(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
+                $moveNodeMapping->movedNodeOrigin
+            );
 
-                if (is_null($nodeToBeMoved)) {
-                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
-                }
-
-                foreach ($moveNodeMapping->newLocations as $newLocation) {
-                    assert($newLocation instanceof CoverageNodeMoveMapping);
-
-                    $affectedDimensionSpacePoints = new DimensionSpacePointSet([
-                        $newLocation->coveredDimensionSpacePoint
-                    ]);
-
-                    // do the move (depending on how the move target is specified)
-                    $newParentNodeAggregateId = match ($newLocation->destination::class) {
-                        SucceedingSiblingNodeMoveDestination::class => $this->moveNodeBeforeSucceedingSibling(
-                            $event->contentStreamId,
-                            $nodeToBeMoved,
-                            $newLocation->coveredDimensionSpacePoint,
-                            $newLocation->destination
-                        ),
-                        ParentNodeMoveDestination::class => $newLocation->destination->nodeAggregateId,
-                    };
-                    if ($newLocation->destination instanceof ParentNodeMoveDestination) {
-                        $this->moveNodeIntoParent(
-                            $event->contentStreamId,
-                            $nodeToBeMoved,
-                            $newLocation->coveredDimensionSpacePoint,
-                            $newLocation->destination
-                        );
-                    }
-                    $this->moveSubtreeTags($event->contentStreamId, $event->nodeAggregateId, $newParentNodeAggregateId, $newLocation->coveredDimensionSpacePoint);
-                }
+            if (is_null($nodeToBeMoved)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
-        });
+
+            foreach ($moveNodeMapping->newLocations as $newLocation) {
+                assert($newLocation instanceof CoverageNodeMoveMapping);
+
+                $affectedDimensionSpacePoints = new DimensionSpacePointSet([
+                    $newLocation->coveredDimensionSpacePoint
+                ]);
+
+                // do the move (depending on how the move target is specified)
+                $newParentNodeAggregateId = match ($newLocation->destination::class) {
+                    SucceedingSiblingNodeMoveDestination::class => $this->moveNodeBeforeSucceedingSibling(
+                        $event->contentStreamId,
+                        $nodeToBeMoved,
+                        $newLocation->coveredDimensionSpacePoint,
+                        $newLocation->destination
+                    ),
+                    ParentNodeMoveDestination::class => $newLocation->destination->nodeAggregateId,
+                };
+                if ($newLocation->destination instanceof ParentNodeMoveDestination) {
+                    $this->moveNodeIntoParent(
+                        $event->contentStreamId,
+                        $nodeToBeMoved,
+                        $newLocation->coveredDimensionSpacePoint,
+                        $newLocation->destination
+                    );
+                }
+                $this->moveSubtreeTags($event->contentStreamId, $event->nodeAggregateId, $newParentNodeAggregateId, $newLocation->coveredDimensionSpacePoint);
+            }
+        }
     }
 
     /**
@@ -241,6 +239,4 @@ trait NodeMove
 
 
     abstract protected function getDatabaseConnection(): Connection;
-
-    abstract protected function transactional(\Closure $operations): void;
 }

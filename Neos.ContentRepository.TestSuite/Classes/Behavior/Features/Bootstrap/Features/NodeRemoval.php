@@ -61,7 +61,7 @@ trait NodeRemoval
             $command = $command->withRemovalAttachmentPoint(NodeAggregateId::fromString($commandArguments['removalAttachmentPoint']));
         }
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

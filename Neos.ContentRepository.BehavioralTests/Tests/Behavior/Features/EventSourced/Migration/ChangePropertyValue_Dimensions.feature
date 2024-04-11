@@ -28,13 +28,11 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                                      |
       | nodeAggregateId             | "lady-eleonode-rootford"                                                   |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
-    And the graph projection is fully up to date
     # Node /document (in "de")
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -43,7 +41,6 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | originDimensionSpacePoint | {"language": "de"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "Original text"}                 |
-    And the graph projection is fully up to date
 
     # Node /document (in "en")
     When the command CreateNodeVariant is executed with payload:
@@ -51,7 +48,6 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"en"}        |
-    And the graph projection is fully up to date
 
 
   Scenario: change materialized "de" node, should shine through in "ch", but not in "en"
@@ -124,7 +120,6 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"ch"}        |
-    And the graph projection is fully up to date
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """yaml
@@ -170,7 +165,6 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"ch"}        |
-    And the graph projection is fully up to date
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """yaml

@@ -38,7 +38,6 @@ Feature: Publishing hide/show scenario of nodes
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
@@ -74,7 +73,6 @@ Feature: Publishing hide/show scenario of nodes
       | parentNodeAggregateId | "lady-eleonode-rootford"                               |
       | initialPropertyValues         | {"image": {"type": "image", "value": "Initial image"}} |
       | nodeAggregateClassification   | "regular"                                              |
-    And the graph projection is fully up to date
 
   Scenario: (DisableNode) It is possible to publish hiding of a node.
     Given the command CreateWorkspace is executed with payload:
@@ -82,7 +80,6 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "user-test"
 
     # SETUP: hide two nodes in USER workspace
@@ -96,7 +93,6 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateId      | "sir-nodeward-nodington-iii"           |
       | coveredDimensionSpacePoint   | {}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-    And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
@@ -104,7 +100,6 @@ Feature: Publishing hide/show scenario of nodes
       | nodesToPublish           | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
       | contentStreamIdForRemainingPart | "remaining-cs-id"                                                                                 |
       | contentStreamIdForMatchingPart  | "matching-cs-id"                                                                                  |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
@@ -128,15 +123,11 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateId      | "sir-nodeward-nodington-iii"           |
       | coveredDimensionSpacePoint   | {}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
-    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
-    And the graph projection is fully up to date
     Given the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And the graph projection is fully up to date
 
     # SETUP: enable two nodes in USER workspace
     Given the command EnableNodeAggregate is executed with payload:
@@ -151,14 +142,12 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
-    And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                                     | Value                                                                                                                               |
       | workspaceName                           | "user-test"                                                                                                                         |
       | nodesToPublish                          | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
@@ -179,7 +168,7 @@ Feature: Publishing hide/show scenario of nodes
    ##   | workspaceName              | "user-test"          |
    #   | baseWorkspaceName          | "live"               |
    #   | newContentStreamId | "user-cs-identifier" |
-   # And the graph projection is fully up to date
+   #
 
     # SETUP: change two node names in USER workspace
     #Given the command "ChangeNodeAggregateName" is executed with payload:
@@ -192,13 +181,12 @@ Feature: Publishing hide/show scenario of nodes
     #  | contentStreamId | "user-cs-identifier"         |
     #  | nodeAggregateId | "sir-nodeward-nodington-iii" |
      # | newNodeName             | "imagemod"                   |
-   # And the graph projection is fully up to date
+   #
 
    # When the command PublishIndividualNodesFromWorkspace is executed with payload:
    #   | Key           | Value                                                                                                                               |
    #   | workspaceName | "user-test"                                                                                                                         |
     #  | nodesToPublish | [{"nodeAggregateId": "sir-david-nodenborough", "contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}}] |
-    #And the graph projection is fully up to date
 
    # When I am in the active content stream of workspace "live" and dimension space point {}
    ## Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
@@ -219,7 +207,6 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
     When the command RemoveNodeAggregate is executed with payload:
@@ -235,14 +222,12 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
-    And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user-test"                                                                                                                         |
       | nodesToPublish           | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
@@ -261,7 +246,6 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
     When the command RemoveNodeAggregate is executed with payload:
@@ -276,13 +260,11 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
-    And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user-test"                                                                                                                         |
       | nodesToPublish           | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
@@ -301,7 +283,6 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And the graph projection is fully up to date
 
     # SETUP: set two node references in USER workspace
     When the command SetNodeReferences is executed with payload:
@@ -318,14 +299,12 @@ Feature: Publishing hide/show scenario of nodes
       | sourceOriginDimensionSpacePoint | {}                                        |
       | referenceName                   | "referenceProperty"                       |
       | references                      | [{"target":"sir-nodeward-nodington-iii"}] |
-    And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                                     | Value                                                                                                                               |
       | workspaceName                           | "user-test"                                                                                                                         |
       | nodesToPublish                          | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
@@ -361,7 +340,6 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And the graph projection is fully up to date
 
     # SETUP: set two new nodes in USER workspace
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
@@ -380,14 +358,12 @@ Feature: Publishing hide/show scenario of nodes
       | originDimensionSpacePoint     | {}                                       |
       | parentNodeAggregateId | "lady-eleonode-rootford"                 |
       | nodeName                      | "foo2"                                   |
-    And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                                     | Value                                                                                                                 |
       | workspaceName                           | "user-test"                                                                                                           |
       | nodesToPublish                          | [{"nodeAggregateId": "new1-agg", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                                         |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "new1-agg" to lead to node cs-identifier;new1-agg;{}

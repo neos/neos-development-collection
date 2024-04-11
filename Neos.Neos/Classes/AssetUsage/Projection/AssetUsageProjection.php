@@ -35,6 +35,9 @@ use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
+use React\Promise\PromiseInterface;
+
+use function React\Promise\resolve;
 
 /**
  * @implements ProjectionInterface<AssetUsageFinder>
@@ -62,11 +65,12 @@ final class AssetUsageProjection implements ProjectionInterface
         );
     }
 
-    public function reset(): void
+    public function reset(): PromiseInterface
     {
         $this->repository->reset();
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        return resolve(null);
     }
 
     public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
@@ -253,24 +257,7 @@ final class AssetUsageProjection implements ProjectionInterface
         return ProjectionStatus::ok();
     }
 
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            NodeAggregateWithNodeWasCreated::class,
-            NodePropertiesWereSet::class,
-            NodeAggregateWasRemoved::class,
-            NodePeerVariantWasCreated::class,
-            ContentStreamWasForked::class,
-            WorkspaceWasDiscarded::class,
-            WorkspaceWasPartiallyDiscarded::class,
-            WorkspaceWasPartiallyPublished::class,
-            WorkspaceWasPublished::class,
-            WorkspaceWasRebased::class,
-            ContentStreamWasRemoved::class,
-        ]);
-    }
-
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
     {
         match ($event::class) {
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
@@ -284,8 +271,9 @@ final class AssetUsageProjection implements ProjectionInterface
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
+        return resolve(null);
     }
 
     public function getCheckpointStorage(): DbalCheckpointStorage

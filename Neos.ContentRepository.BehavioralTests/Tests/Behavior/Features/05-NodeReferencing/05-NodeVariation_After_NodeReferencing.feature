@@ -29,13 +29,11 @@ Feature: Node References with Dimensions
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
       | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
@@ -47,14 +45,12 @@ Feature: Node References with Dimensions
       | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
       | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"ch"}   |
-    And the graph projection is fully up to date
 
     # after specialization, the reference must still exist on the specialized node
     When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
@@ -86,7 +82,6 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "source-nodandaise"}] |
-    And the graph projection is fully up to date
 
     # reference to self (modified 2 lines above)
     When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
@@ -115,7 +110,6 @@ Feature: Node References with Dimensions
       | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"ch"}   |
-    And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
@@ -123,7 +117,6 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
 
 
     # on the specialization, the reference exists.
@@ -153,21 +146,18 @@ Feature: Node References with Dimensions
       | nodeAggregateId | "anthony-destinode" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"en"}   |
-    And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
       | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"en"}   |
-    And the graph projection is fully up to date
 
     # after creating a peer, the reference must still exist on the peer node
     When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
@@ -209,7 +199,6 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint | {"language": "en"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "source-nodandaise"}] |
-    And the graph projection is fully up to date
 
     # reference to self (modified 2 lines above)
     When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
@@ -250,7 +239,6 @@ Feature: Node References with Dimensions
       | originDimensionSpacePoint     | {"language": "ch"}                                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                            |
-    And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
@@ -258,7 +246,6 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
 
     # here we generalize
     When the command CreateNodeVariant is executed with payload:
@@ -266,7 +253,6 @@ Feature: Node References with Dimensions
       | nodeAggregateId | "ch-only"         |
       | sourceOrigin            | {"language":"ch"} |
       | targetOrigin            | {"language":"de"} |
-    And the graph projection is fully up to date
 
     # after generalizing, the reference must still exist on the generalized node
     When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}

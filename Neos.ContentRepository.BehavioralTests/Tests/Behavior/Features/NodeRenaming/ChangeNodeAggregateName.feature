@@ -17,7 +17,6 @@ Feature: Change node name
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
 
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -36,8 +35,6 @@ Feature: Change node name
       | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
       | nodeName                    | "dog"                                    |
       | nodeAggregateClassification | "regular"                                |
-
-    And the graph projection is fully up to date
     When the command "ChangeNodeAggregateName" is executed with payload:
       | Key             | Value              |
       | workspaceName   | "live"             |
@@ -62,7 +59,6 @@ Feature: Change node name
       | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
       | nodeName                    | "dog"                                    |
       | nodeAggregateClassification | "regular"                                |
-    And the graph projection is fully up to date
     # we read the node initially, to ensure it is filled in the cache (to check whether cache clearing actually works)
     When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
@@ -75,7 +71,6 @@ Feature: Change node name
       | workspaceName   | "live"             |
       | nodeAggregateId | "nody-mc-nodeface" |
       | newNodeName     | "cat"              |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     Then I expect this node to have the following child nodes:

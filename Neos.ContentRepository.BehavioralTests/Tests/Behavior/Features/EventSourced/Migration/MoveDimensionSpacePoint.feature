@@ -36,12 +36,10 @@ Feature: Move dimension space point
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in the active content stream of workspace "live"
-    And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -49,7 +47,6 @@ Feature: Move dimension space point
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {"language": "de"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
-    And the graph projection is fully up to date
 
 
   Scenario: Success Case - simple
@@ -93,7 +90,6 @@ Feature: Move dimension space point
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "de"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the graph projection is fully up to date
 
     # ensure the node is disabled
     When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}

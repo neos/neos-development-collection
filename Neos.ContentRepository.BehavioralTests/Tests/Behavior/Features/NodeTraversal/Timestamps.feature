@@ -74,13 +74,11 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | baseWorkspaceName  | "review"    |
       | newContentStreamId | "cs-user"   |
       | workspaceOwner     | "some-user" |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "user-test" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeName | nodeTypeName                            | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds       |
       | home            | home     | Neos.ContentRepository.Testing:Homepage | lady-eleonode-rootford | {}                    | {"terms": "terms", "contact": "contact"} |
@@ -92,7 +90,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | nodeAggregateId | "a"               |
       | sourceOrigin    | {"language":"de"} |
       | targetOrigin    | {"language":"ch"} |
-    And the graph projection is fully up to date
 
   Scenario: NodePropertiesWereSet events update last modified timestamps
     When the current date and time is "2023-03-16T13:00:00+01:00"
@@ -102,7 +99,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | originDimensionSpacePoint | {"language": "ch"}  |
       | nodeAggregateId           | "a"                 |
       | propertyValues            | {"text": "Changed"} |
-    And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
@@ -120,7 +116,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | workspaceName             | "user-test"         |
       | nodeAggregateId | "a"         |
       | newNodeName     | "a-renamed" |
-    And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified        | originalLastModified |
@@ -140,7 +135,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | sourceNodeAggregateId           | "a"                |
       | referenceName                   | "ref"              |
       | references                      | [{"target": "b"}]  |
-    And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
@@ -165,7 +159,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | nodeAggregateId | "a"                                          |
       | newNodeTypeName | "Neos.ContentRepository.Testing:SpecialPage" |
       | strategy        | "happypath"                                  |
-    And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified        | originalLastModified |
@@ -183,7 +176,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | nodeAggregateId | "home"            |
       | sourceOrigin    | {"language":"de"} |
       | targetOrigin    | {"language":"en"} |
-    And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     Then I expect the node "home" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
@@ -201,7 +193,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | nodeAggregateId | "home"             |
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"mul"} |
-    And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     Then I expect the node "home" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
@@ -222,7 +213,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | relationDistributionStrategy | "gatherSpecializations" |
       | nodeAggregateId              | "a"                     |
       | newParentNodeAggregateId     | "b"                     |
-    And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
@@ -238,7 +228,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     And the command UpdateRootNodeAggregateDimensions is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
-    And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
@@ -257,7 +246,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | coveredDimensionSpacePoint   | {"language": "ch"}   |
       | nodeAggregateId              | "a"                  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     And VisibilityConstraints are set to "withoutRestrictions"
     Then I expect the node "a" to have the following timestamps:
@@ -276,7 +264,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | coveredDimensionSpacePoint   | {"language": "ch"}   |
       | nodeAggregateId              | "a"                  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
@@ -296,12 +283,10 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | nodeAggregateId | "a"                 |
       | propertyValues  | {"text": "Changed"} |
     And I execute the findNodeById query for node aggregate id "non-existing" I expect no node to be returned
-    And the graph projection is fully up to date
     And the current date and time is "2023-03-16T14:00:00+01:00"
     And the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
-    And the graph projection is fully up to date
 
     And I am in content stream "cs-user"
     Then I expect the node "a" to have the following timestamps:
@@ -323,7 +308,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     And the command PublishWorkspace is executed with payload:
       | Key           | Value    |
       | workspaceName | "review" |
-    And the graph projection is fully up to date
     And I am in content stream "cs-live"
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified        | originalLastModified |

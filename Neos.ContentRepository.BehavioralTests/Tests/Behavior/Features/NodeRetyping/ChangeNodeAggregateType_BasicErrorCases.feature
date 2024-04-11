@@ -49,13 +49,11 @@ Feature: Change node aggregate type - basic error cases
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                   | Value                                           |
@@ -64,8 +62,6 @@ Feature: Change node aggregate type - basic error cases
       | parentNodeAggregateId | "lady-eleonode-rootford"                        |
       | nodeName              | "parent"                                        |
       | initialPropertyValues | {}                                              |
-
-    And the graph projection is fully up to date
 
   Scenario: Try to change the node aggregate type on a non-existing content stream
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
@@ -100,7 +96,6 @@ Feature: Change node aggregate type - basic error cases
       | parentNodeAggregateId | "sir-david-nodenborough"                   |
       | nodeName              | "parent"                                   |
       | initialPropertyValues | {}                                         |
-    And the graph projection is fully up to date
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key             | Value                                      |
       | nodeAggregateId | "nody-mc-nodeface"                         |
@@ -117,7 +112,6 @@ Feature: Change node aggregate type - basic error cases
       | nodeName                           | "parent2"                                       |
       | initialPropertyValues              | {}                                              |
       | tetheredDescendantNodeAggregateIds | {"autocreated": "autocreated-child"}            |
-    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                      |
@@ -126,7 +120,6 @@ Feature: Change node aggregate type - basic error cases
       | originDimensionSpacePoint | {"language":"de"}                          |
       | parentNodeAggregateId     | "autocreated-child"                        |
       | initialPropertyValues     | {}                                         |
-    And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key             | Value                                      |
@@ -145,7 +138,6 @@ Feature: Change node aggregate type - basic error cases
       | nodeName                           | "parent2"                                       |
       | initialPropertyValues              | {}                                              |
       | tetheredDescendantNodeAggregateIds | {"autocreated": "nody-mc-nodeface"}             |
-    And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key             | Value                                           |

@@ -20,7 +20,6 @@ Feature: Run projection integrity violation detection regarding root connection
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
 
   Scenario: Create a cycle
     When the event RootNodeAggregateWithNodeWasCreated was published with payload:
@@ -50,13 +49,11 @@ Feature: Run projection integrity violation detection regarding root connection
       | parentNodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeName                    | "child-document"                          |
       | nodeAggregateClassification | "regular"                                 |
-    And the graph projection is fully up to date
     And the event NodeAggregateWasMoved was published with payload:
       | Key                               | Value                                                                                                                                                                                                                                                                                                                                                            |
       | contentStreamId                   | "cs-identifier"                                                                                                                                                                                                                                                                                                                                                  |
       | nodeAggregateId                   | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                                         |
       | nodeMoveMappings                  | [{"movedNodeOrigin":{"language":"de"},"newLocations":[{"coveredDimensionSpacePoint": {"language":"de"},"newParent":{"nodeAggregateId":"nody-mc-nodeface","originDimensionSpacePoint":{"language":"de"}}}, {"coveredDimensionSpacePoint": {"language":"gsw"},"newParent":{"nodeAggregateId":"nody-mc-nodeface","originDimensionSpacePoint":{"language":"de"}}}]}] |
-    And the graph projection is fully up to date
     And I run integrity violation detection
     # one error per subgraph
     Then I expect the integrity violation detection result to contain exactly 2 errors

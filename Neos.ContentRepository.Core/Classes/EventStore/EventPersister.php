@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\EventStore;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
-use Neos\ContentRepository\Core\CommandHandler\PendingProjections;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
@@ -33,42 +31,29 @@ final class EventPersister
 
     /**
      * @param EventsToPublish $eventsToPublish
-     * @return CommandResult
      * @throws ConcurrencyException in case the expectedVersion does not match
      */
-    public function publishEvents(EventsToPublish $eventsToPublish): CommandResult
+    public function publishEvents(EventsToPublish $eventsToPublish): void
     {
         if ($eventsToPublish->events->isEmpty()) {
-            return CommandResult::empty();
+            return;
         }
         // the following logic could also be done in an AppEventStore::commit method (being called
         // directly from the individual Command Handlers).
         $normalizedEvents = Events::fromArray(
             $eventsToPublish->events->map(fn(EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event))
         );
-        $commitResult = $this->eventStore->commit(
+        $this->eventStore->commit(
             $eventsToPublish->streamName,
             $normalizedEvents,
             $eventsToPublish->expectedVersion
         );
-        // for performance reasons, we do not want to update ALL projections all the time; but instead only
-        // the projections which are interested in the events from above.
-        // Further details can be found in the docs of PendingProjections.
-        $pendingProjections = PendingProjections::fromProjectionsAndEventsAndSequenceNumber(
-            $this->projections,
-            $eventsToPublish->events,
-            $commitResult->highestCommittedSequenceNumber
-        );
-
-        foreach ($pendingProjections->projections as $projection) {
+        foreach ($this->projections as $projection) {
             if ($projection instanceof WithMarkStaleInterface) {
                 $projection->markStale();
             }
         }
-        $this->projectionCatchUpTrigger->triggerCatchUp($pendingProjections->projections);
-
-        // The CommandResult can be used to block until projections are up to date.
-        return new CommandResult($pendingProjections, $commitResult);
+        $this->projectionCatchUpTrigger->triggerCatchUp();
     }
 
     private function normalizeEvent(EventInterface|DecoratedEvent $event): Event

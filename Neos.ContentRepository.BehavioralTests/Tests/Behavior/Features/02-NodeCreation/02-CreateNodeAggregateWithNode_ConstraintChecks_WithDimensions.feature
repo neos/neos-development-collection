@@ -39,14 +39,12 @@ Feature: Create node aggregate with node
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And I am in dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
   Scenario: Try to create a node aggregate in an origin dimension space point the parent node does not cover:
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -55,7 +53,6 @@ Feature: Create node aggregate with node
       | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId     | "lady-eleonode-rootford"              |
       | originDimensionSpacePoint | {"language":"gsw"}                    |
-    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                       | Value                                 |
       | nodeAggregateId           | "nody-mc-nodeface"                    |

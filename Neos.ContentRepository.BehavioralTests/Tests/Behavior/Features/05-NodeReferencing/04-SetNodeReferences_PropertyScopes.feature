@@ -43,13 +43,11 @@ Feature: Set node properties with different scopes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the following CreateNodeAggregateWithNode commands are executed:
@@ -61,13 +59,11 @@ Feature: Set node properties with different scopes
       | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"mul"}  |
       | targetOrigin            | {"language":"de"}   |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
       | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"mul"}  |
       | targetOrigin            | {"language":"gsw"}  |
-    And the graph projection is fully up to date
 
   Scenario: Set node properties
     And the command SetNodeReferences is executed with payload:
@@ -118,7 +114,6 @@ Feature: Set node properties with different scopes
       | referenceName                   | "specializationsScopedReferences" |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "mul"}

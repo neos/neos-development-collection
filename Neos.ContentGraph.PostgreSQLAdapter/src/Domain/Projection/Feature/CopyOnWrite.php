@@ -136,10 +136,5 @@ trait CopyOnWrite
 
     abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
 
-    /**
-     * @throws \Throwable
-     */
-    abstract protected function transactional(\Closure $operations): void;
-
     abstract protected function getDatabaseConnection(): Connection;
 }

@@ -29,13 +29,11 @@ Feature: Node References with Dimensions
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
       | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
@@ -47,7 +45,6 @@ Feature: Node References with Dimensions
       | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}

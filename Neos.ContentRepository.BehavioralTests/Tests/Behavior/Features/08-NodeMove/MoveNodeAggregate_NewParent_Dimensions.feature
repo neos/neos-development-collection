@@ -24,7 +24,6 @@ Feature: Move a node with content dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -100,7 +99,6 @@ Feature: Move a node with content dimensions
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                                           |
       | nodeName                    | "document2"                                                                        |
       | nodeAggregateClassification | "regular"                                                                          |
-    And the graph projection is fully up to date
 
   Scenario: Move a complete node aggregate to a new parent before the first of its new siblings
     When the command MoveNodeAggregate is executed with payload:
@@ -109,7 +107,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "anthony-destinode"      |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
@@ -128,7 +125,6 @@ Feature: Move a node with content dimensions
       | nodeAggregateId                      | "anthony-destinode"   |
       | affectedOccupiedDimensionSpacePoints | []                    |
       | affectedCoveredDimensionSpacePoints  | [{"language": "gsw"}] |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -137,7 +133,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "anthony-destinode"      |
       | relationDistributionStrategy        | "gatherAll"              |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
@@ -165,7 +160,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
@@ -185,7 +179,6 @@ Feature: Move a node with content dimensions
       | nodeAggregateId                      | "berta-destinode"     |
       | affectedOccupiedDimensionSpacePoints | []                    |
       | affectedCoveredDimensionSpacePoints  | [{"language": "gsw"}] |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -193,7 +186,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
@@ -223,7 +215,6 @@ Feature: Move a node with content dimensions
       | nodeAggregateId                      | "carl-destinode"      |
       | affectedOccupiedDimensionSpacePoints | []                    |
       | affectedCoveredDimensionSpacePoints  | [{"language": "gsw"}] |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                | Value                    |
@@ -231,7 +222,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                | {"language": "mul"}      |
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "berta-destinode"        |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
@@ -260,7 +250,6 @@ Feature: Move a node with content dimensions
       | nodeAggregateId                      | "carl-destinode"      |
       | affectedOccupiedDimensionSpacePoints | []                    |
       | affectedCoveredDimensionSpacePoints  | [{"language": "gsw"}] |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -268,7 +257,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
@@ -297,7 +285,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
       | relationDistributionStrategy        | "scatter"                |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
@@ -323,7 +310,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
       | relationDistributionStrategy        | "gatherSpecializations"  |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
@@ -359,7 +345,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "lady-abigail-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                        |
       | relationDistributionStrategy        | "scatter"                   |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -369,7 +354,6 @@ Feature: Move a node with content dimensions
       | newPrecedingSiblingNodeAggregateId  | "anthony-destinode"      |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
       | relationDistributionStrategy        | "gatherAll"              |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
@@ -401,7 +385,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "lady-abigail-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                        |
       | relationDistributionStrategy        | "scatter"                   |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value               |
@@ -410,7 +393,6 @@ Feature: Move a node with content dimensions
       | newPrecedingSiblingNodeAggregateId  | "anthony-destinode" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"   |
       | relationDistributionStrategy        | "gatherAll"         |
-    And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}

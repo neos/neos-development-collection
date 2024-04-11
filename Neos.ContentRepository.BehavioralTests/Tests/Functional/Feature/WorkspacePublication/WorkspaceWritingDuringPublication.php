@@ -43,7 +43,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
+use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\DefaultCatchUpTrigger;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use PHPUnit\Framework\Assert;
@@ -67,7 +67,6 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
     public function setUp(): void
     {
         parent::setUp();
-        CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
         GherkinTableNodeBasedContentDimensionSourceFactory::$contentDimensionsToUse = new class implements ContentDimensionSourceInterface
         {
             public function getDimension(ContentDimensionId $dimensionId): ?ContentDimension
@@ -113,12 +112,12 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             new WorkspaceTitle('Live'),
             new WorkspaceDescription('The live workspace'),
             ContentStreamId::fromString('live-cs-id')
-        ))->block();
+        ));
         $contentRepository->handle(CreateRootNodeAggregateWithNode::create(
             WorkspaceName::forLive(),
             NodeAggregateId::fromString('lady-eleonode-rootford'),
             NodeTypeName::fromString(NodeTypeName::ROOT_NODE_TYPE_NAME)
-        ))->block();
+        ));
         $contentRepository->handle(CreateNodeAggregateWithNode::create(
             WorkspaceName::forLive(),
             NodeAggregateId::fromString('nody-mc-nodeface'),
@@ -128,14 +127,14 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
             initialPropertyValues: PropertyValuesToWrite::fromArray([
                 'title' => 'title'
             ])
-        ))->block();
+        ));
         $contentRepository->handle(CreateWorkspace::create(
             WorkspaceName::fromString('user-test'),
             WorkspaceName::forLive(),
             new WorkspaceTitle('User'),
             new WorkspaceDescription('The user workspace'),
             ContentStreamId::fromString('user-cs-id')
-        ))->block();
+        ));
         for ($i = 0; $i <= 1000; $i++) {
             $contentRepository->handle(CreateNodeAggregateWithNode::create(
                 WorkspaceName::forLive(),
@@ -146,7 +145,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
                 initialPropertyValues: PropertyValuesToWrite::fromArray([
                     'title' => 'title'
                 ])
-            ))->block();
+            ));
             // give the database lock some time to recover
             usleep(5000);
         }
@@ -168,7 +167,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
         try {
             $this->contentRepository->handle(RebaseWorkspace::create(
                 $workspaceName,
-            )->withRebasedContentStreamId(ContentStreamId::fromString('user-test-rebased')))->block();
+            )->withRebasedContentStreamId(ContentStreamId::fromString('user-test-rebased')));
         } catch (\RuntimeException $runtimeException) {
             $exception = $runtimeException;
         }
@@ -196,7 +195,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
                 PropertyValuesToWrite::fromArray([
                     'title' => 'title47b'
                 ])
-            ))->block();
+            ));
         } catch (\Exception $thrownException) {
             $exceptionIsThrownAsExpected
                 = $thrownException instanceof ContentStreamIsClosed || $thrownException instanceof ConcurrencyException;

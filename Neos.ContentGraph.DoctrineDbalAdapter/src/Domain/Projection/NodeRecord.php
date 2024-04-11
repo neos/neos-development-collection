@@ -139,38 +139,26 @@ final class NodeRecord
         ?NodeName $nodeName,
         Timestamps $timestamps,
     ): self {
-        $relationAnchorPoint = $databaseConnection->transactional(function ($databaseConnection) use (
-            $tableNamePrefix,
-            $nodeAggregateId,
-            $originDimensionSpacePoint,
-            $originDimensionSpacePointHash,
-            $properties,
-            $nodeTypeName,
-            $classification,
-            $timestamps
-        ) {
-            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
-            $dimensionSpacePoints->insertDimensionSpacePointByHashAndCoordinates($originDimensionSpacePointHash, $originDimensionSpacePoint);
+        $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
+        $dimensionSpacePoints->insertDimensionSpacePointByHashAndCoordinates($originDimensionSpacePointHash, $originDimensionSpacePoint);
 
-            $databaseConnection->insert($tableNamePrefix . '_node', [
-                'nodeaggregateid' => $nodeAggregateId->value,
-                'origindimensionspacepointhash' => $originDimensionSpacePointHash,
-                'properties' => json_encode($properties),
-                'nodetypename' => $nodeTypeName->value,
-                'classification' => $classification->value,
-                'created' => $timestamps->created,
-                'originalcreated' => $timestamps->originalCreated,
-                'lastmodified' => $timestamps->lastModified,
-                'originallastmodified' => $timestamps->originalLastModified,
-            ], [
-                'created' => Types::DATETIME_IMMUTABLE,
-                'originalcreated' => Types::DATETIME_IMMUTABLE,
-                'lastmodified' => Types::DATETIME_IMMUTABLE,
-                'originallastmodified' => Types::DATETIME_IMMUTABLE,
-            ]);
-
-            return NodeRelationAnchorPoint::fromInteger((int)$databaseConnection->lastInsertId());
-        });
+        $databaseConnection->insert($tableNamePrefix . '_node', [
+            'nodeaggregateid' => $nodeAggregateId->value,
+            'origindimensionspacepointhash' => $originDimensionSpacePointHash,
+            'properties' => json_encode($properties),
+            'nodetypename' => $nodeTypeName->value,
+            'classification' => $classification->value,
+            'created' => $timestamps->created,
+            'originalcreated' => $timestamps->originalCreated,
+            'lastmodified' => $timestamps->lastModified,
+            'originallastmodified' => $timestamps->originalLastModified,
+        ], [
+            'created' => Types::DATETIME_IMMUTABLE,
+            'originalcreated' => Types::DATETIME_IMMUTABLE,
+            'lastmodified' => Types::DATETIME_IMMUTABLE,
+            'originallastmodified' => Types::DATETIME_IMMUTABLE,
+        ]);
+        $relationAnchorPoint = NodeRelationAnchorPoint::fromInteger((int)$databaseConnection->lastInsertId());
 
         return new self(
             $relationAnchorPoint,

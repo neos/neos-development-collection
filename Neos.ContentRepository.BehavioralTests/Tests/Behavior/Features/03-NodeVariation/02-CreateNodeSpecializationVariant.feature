@@ -29,13 +29,11 @@ Feature: Create node specialization
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeName            | parentNodeAggregateId  | succeedingSiblingNodeAggregateId | nodeTypeName                                | tetheredDescendantNodeAggregateIds                                                         |
@@ -90,8 +88,6 @@ Feature: Create node specialization
       | sourceOrigin           | {"example":"source"}                                                                                                                      |
       | specializationOrigin   | {"example":"spec"}                                                                                                                        |
       | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"leafSpec"},"nodeAggregateId":null}] |
-
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 12 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
@@ -288,7 +284,6 @@ Feature: Create node specialization
       | nodeAggregateId | "nody-mc-nodeface"     |
       | sourceOrigin    | {"example":"source"}   |
       | targetOrigin    | {"example":"leafSpec"} |
-    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
       | nodeAggregateId | "nody-mc-nodeface"   |
@@ -316,8 +311,6 @@ Feature: Create node specialization
       | sourceOrigin           | {"example":"source"}                                                |
       | specializationOrigin   | {"example":"spec"}                                                  |
       | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
-
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 15 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph

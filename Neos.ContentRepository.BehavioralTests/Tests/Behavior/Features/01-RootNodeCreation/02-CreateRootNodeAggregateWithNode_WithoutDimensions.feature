@@ -24,7 +24,6 @@ Feature: Create a root node aggregate
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
 
   Scenario: Create the initial root node aggregate using valid payload without dimensions
@@ -41,8 +40,6 @@ Feature: Create a root node aggregate
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [[]]                          |
       | nodeAggregateClassification | "root"                        |
-
-    When the graph projection is fully up to date
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
     And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
@@ -75,7 +72,6 @@ Feature: Create a root node aggregate
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
     When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -90,8 +86,6 @@ Feature: Create a root node aggregate
       | nodeTypeName                | "Neos.ContentRepository:AnotherRoot" |
       | coveredDimensionSpacePoints | [[]]                          |
       | nodeAggregateClassification | "root"                        |
-
-    When the graph projection is fully up to date
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to have no parent node aggregates
     And I expect this node aggregate to have no child node aggregates

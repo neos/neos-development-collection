@@ -22,13 +22,11 @@ Feature: Constraint checks on node aggregate disabling
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
       | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
@@ -64,7 +62,6 @@ Feature: Constraint checks on node aggregate disabling
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {"language": "de"}            |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-    And the graph projection is fully up to date
 
       # Note: The behavior has been changed with https://github.com/neos/neos-development-collection/pull/4284 and the test was adjusted accordingly
     When the command DisableNodeAggregate is executed with payload:

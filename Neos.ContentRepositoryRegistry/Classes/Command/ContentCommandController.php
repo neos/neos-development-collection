@@ -27,7 +27,6 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Cli\CommandController;
 
 final class ContentCommandController extends CommandController
@@ -75,7 +74,7 @@ final class ContentCommandController extends CommandController
                     $workspaceInstance->workspaceName,
                     $rootNodeAggregate->nodeAggregateId
                 )
-            )->block();
+            );
         }
         $this->outputLine('<success>Done!</success>');
     }
@@ -118,7 +117,7 @@ final class ContentCommandController extends CommandController
                 $sourceDimensionSpacePoint,
                 $targetDimensionSpacePoint
             )
-        )->block();
+        );
         $this->outputLine('<success>Done!</success>');
     }
 
@@ -164,15 +163,13 @@ final class ContentCommandController extends CommandController
 
 
         foreach ($rootNodeAggregates as $rootNodeAggregate) {
-            CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
-                $this->createVariantRecursivelyInternal(
-                    0,
-                    $rootNodeAggregate->nodeAggregateId,
-                    $sourceSubgraph,
-                    $targetSpacePoint,
-                    $workspaceInstance->workspaceName,
-                    $contentRepositoryInstance,
-                )
+            $this->createVariantRecursivelyInternal(
+                0,
+                $rootNodeAggregate->nodeAggregateId,
+                $sourceSubgraph,
+                $targetSpacePoint,
+                $workspaceInstance->workspaceName,
+                $contentRepositoryInstance,
             );
         }
 
@@ -202,7 +199,7 @@ final class ContentCommandController extends CommandController
                         $childNode->nodeAggregateId,
                         $childNode->originDimensionSpacePoint,
                         $target
-                    ))->block();
+                    ));
                 } catch (DimensionSpacePointIsAlreadyOccupied $e) {
                     if ($childNodeType?->isOfType('Neos.Neos:Document')) {
                         $this->output("%s  (already exists)\n", [

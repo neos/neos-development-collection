@@ -22,7 +22,6 @@ Feature: Publishing moved nodes without dimensions
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                  |
@@ -58,14 +57,12 @@ Feature: Publishing moved nodes without dimensions
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "esquire"                                 |
       | nodeAggregateClassification   | "regular"                                 |
-    And the graph projection is fully up to date
 
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user"               |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And the graph projection is fully up to date
 
   Scenario: Publish the move of a node to the end of its siblings
     When the command MoveNodeAggregate is executed with payload:
@@ -79,7 +76,6 @@ Feature: Publishing moved nodes without dimensions
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user"                                                                                                                              |
       | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
-    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -119,7 +115,6 @@ Feature: Publishing moved nodes without dimensions
       | Key                      | Value                                                                                                                                   |
       | workspaceName            | "user"                                                                                                                                  |
       | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
-    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -158,7 +153,6 @@ Feature: Publishing moved nodes without dimensions
       | parentNodeAggregateId | "sir-nodeward-nodington-iii"              |
       | nodeName                      | "other-document"                          |
       | nodeAggregateClassification   | "regular"                                 |
-    And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload:
       | Key                              | Value                        |
       | workspaceName              | "user"               |
@@ -169,7 +163,6 @@ Feature: Publishing moved nodes without dimensions
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user"                                                                                                                              |
       | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
-    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -214,8 +207,6 @@ Feature: Publishing moved nodes without dimensions
       | Key                      | Value                                                                                                                         |
       | workspaceName            | "user"                                                                                                                        |
       | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}] |
-
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph

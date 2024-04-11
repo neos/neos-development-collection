@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
@@ -28,6 +27,7 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
+use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
@@ -41,9 +41,13 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryS
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
+use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Psr\Clock\ClockInterface;
+
+use function React\Async\await;
+use function React\Async\parallel;
 
 /**
  * Main Entry Point to the system. Encapsulates the full event-sourced Content Repository.
@@ -84,16 +88,12 @@ final class ContentRepository
 
     /**
      * The only API to send commands (mutation intentions) to the system.
-     *
-     * The system is ASYNCHRONOUS by default, so that means the projection is not directly up to date. If you
-     * need to be synchronous, call {@see CommandResult::block()} on the returned CommandResult - then the system
-     * waits until the projections are up to date.
-     *
-     * @param CommandInterface $command
-     * @return CommandResult
+     * @return object NOTE: This is just a b/c layer to avoid `handle()->block()` from failing but this will change to void with the final release!
      */
-    public function handle(CommandInterface $command): CommandResult
+    public function handle(CommandInterface $command): object
     {
+        #print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));exit;
+        #\Neos\Flow\var_dump('HANDLE ' . $command::class);
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
         $eventsToPublish = $this->commandBus->handle($command, $this);
@@ -127,7 +127,15 @@ final class ContentRepository
             $eventsToPublish->expectedVersion,
         );
 
-        return $this->eventPersister->publishEvents($eventsToPublish);
+        $this->eventPersister->publishEvents($eventsToPublish);
+        return new class {
+            /**
+             * @deprecated backwards compatibility layer
+             */
+            public function block(): void
+            {
+            }
+        };
     }
 
 
@@ -153,6 +161,63 @@ final class ContentRepository
         throw new \InvalidArgumentException(sprintf('A projection state of type "%s" is not registered in this content repository instance.', $projectionStateClassName), 1662033650);
     }
 
+    public function catchUpProjections(): void
+    {
+        #print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
+        $lowestAppliedSequenceNumber = null;
+
+        /** @var array<array{projection: ProjectionInterface<ProjectionStateInterface>, catchUpHook: CatchUpHookInterface|null}> $projectionsAndCatchUpHooks */
+        $projectionsAndCatchUpHooks = [];
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projectionClassName => $projection) {
+            $projectionSequenceNumber = $projection->getCheckpointStorage()->acquireLock();
+            #\Neos\Flow\var_dump('ACQUIRE LOCK FOR ' . $projectionClassName . ': ' . $projectionSequenceNumber->value);
+            if ($lowestAppliedSequenceNumber === null || $projectionSequenceNumber->value < $lowestAppliedSequenceNumber->value) {
+                $lowestAppliedSequenceNumber = $projectionSequenceNumber;
+            }
+            $catchUpHookFactory = $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection);
+            $projectionsAndCatchUpHooks[$projectionClassName] = [
+                'projection' => $projection,
+                'catchUpHook' => $catchUpHookFactory?->build($this),
+            ];
+            $projectionsAndCatchUpHooks[$projectionClassName]['catchUpHook']?->onBeforeCatchUp();
+        }
+        #\Neos\Flow\var_dump('CATCHUP from ' . $lowestAppliedSequenceNumber->value);
+        assert($lowestAppliedSequenceNumber instanceof SequenceNumber);
+        $eventStream = $this->eventStore->load(VirtualStreamName::all())->withMinimumSequenceNumber($lowestAppliedSequenceNumber->next());
+        $eventEnvelope = null;
+        foreach ($eventStream as $eventEnvelope) {
+            #\Neos\Flow\var_dump('EVENT ' . $eventEnvelope->event->type->value);
+            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+            $futures = [];
+            /** @var array{projection: ProjectionInterface<ProjectionStateInterface>, catchUpHook: CatchUpHookInterface|null} $projectionAndCatchUpHook */
+            foreach ($projectionsAndCatchUpHooks as $projectionClassName => $projectionAndCatchUpHook) {
+                #$projectionAndCatchUpHook['catchUpHook']?->onBeforeEvent($event, $eventEnvelope);
+                #\Neos\Flow\var_dump('APPLY ' . $eventEnvelope->event->type->value . ' (' . $eventEnvelope->sequenceNumber->value . ') TO ' . $projectionClassName);
+                #$futures[] = function () => $projectionAndCatchUpHook['projection']->apply($event, $eventEnvelope);
+                #$projectionAndCatchUpHook['catchUpHook']?->onAfterEvent($event, $eventEnvelope);
+                $futures[] = function () use ($projectionAndCatchUpHook, $event, $eventEnvelope) {
+                    $projectionAndCatchUpHook['catchUpHook']?->onBeforeEvent($event, $eventEnvelope);
+                    #\Neos\Flow\var_dump('APPLY ' . $eventEnvelope->event->type->value . ' (' . $eventEnvelope->sequenceNumber->value . ') TO ' . $projectionClassName);
+                    $promise = $projectionAndCatchUpHook['projection']->apply($event, $eventEnvelope);
+                    $projectionAndCatchUpHook['catchUpHook']?->onAfterEvent($event, $eventEnvelope);
+                    return $promise;
+                };
+                #$projectionAndCatchUpHook['projection']->getCheckpointStorage()->updateAndReleaseLock($eventEnvelope->sequenceNumber);
+                #\Neos\Flow\var_dump('UPDATE CHECKPOINT for ' . $projectionClassName . ' to ' . $eventEnvelope->sequenceNumber->value);
+            }
+            await(parallel($futures));
+        }
+        assert($eventEnvelope instanceof EventEnvelope);
+        /** @var array{projection: ProjectionInterface<ProjectionStateInterface>, catchUpHook: CatchUpHookInterface|null} $projectionAndCatchUpHook */
+        foreach ($projectionsAndCatchUpHooks as $projectionClassName => $projectionAndCatchUpHook) {
+            $projectionAndCatchUpHook['catchUpHook']?->onBeforeBatchCompleted();
+            $projectionAndCatchUpHook['projection']->getCheckpointStorage()->updateAndReleaseLock($eventEnvelope->sequenceNumber);
+            #\Neos\Flow\var_dump('UPDATE SQN FOR ' . $projectionClassName . ': ' . $eventEnvelope->sequenceNumber->value);
+            #\Neos\Flow\var_dump('UPDATE CHECKPOINT for ' . $projectionClassName . ' to ' . $eventEnvelope->sequenceNumber->value);
+            $projectionAndCatchUpHook['catchUpHook']?->onAfterCatchUp();
+        }
+    }
+
     /**
      * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName
      */
@@ -175,9 +240,6 @@ final class ContentRepository
             if ($options->progressCallback !== null) {
                 ($options->progressCallback)($event, $eventEnvelope);
             }
-            if (!$projection->canHandle($event)) {
-                return;
-            }
             $catchUpHook?->onBeforeEvent($event, $eventEnvelope);
             $projection->apply($event, $eventEnvelope);
             $catchUpHook?->onAfterEvent($event, $eventEnvelope);
@@ -192,6 +254,7 @@ final class ContentRepository
         $catchUp->run($eventStream);
         $catchUpHook?->onAfterCatchUp();
     }
+
 
     public function setUp(): void
     {
@@ -216,7 +279,7 @@ final class ContentRepository
     public function resetProjectionStates(): void
     {
         foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-            $projection->reset();
+            await($projection->reset());
         }
     }
 
@@ -226,7 +289,7 @@ final class ContentRepository
     public function resetProjectionState(string $projectionClassName): void
     {
         $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
-        $projection->reset();
+        await($projection->reset());
     }
 
     public function getNodeTypeManager(): NodeTypeManager

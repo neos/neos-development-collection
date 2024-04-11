@@ -50,6 +50,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use React\Promise\PromiseInterface;
+
+use function React\Promise\resolve;
 
 /**
  * See {@see ContentStreamFinder} for explanation.
@@ -141,39 +144,19 @@ class ContentStreamProjection implements ProjectionInterface
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
-    public function reset(): void
+    public function reset(): PromiseInterface
     {
         $this->getDatabaseConnection()->executeStatement('TRUNCATE table ' . $this->tableName);
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        return resolve(null);
     }
 
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-                ContentStreamWasCreated::class,
-                RootWorkspaceWasCreated::class,
-                WorkspaceWasCreated::class,
-                ContentStreamWasForked::class,
-                WorkspaceWasDiscarded::class,
-                WorkspaceWasPartiallyDiscarded::class,
-                WorkspaceWasPartiallyPublished::class,
-                WorkspaceWasPublished::class,
-                WorkspaceWasRebased::class,
-                WorkspaceRebaseFailed::class,
-                ContentStreamWasClosed::class,
-                ContentStreamWasReopened::class,
-                ContentStreamWasRemoved::class,
-                DimensionShineThroughWasAdded::class,
-            ])
-            || $event instanceof EmbedsContentStreamAndNodeAggregateId;
-    }
-
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
     {
         if ($event instanceof EmbedsContentStreamAndNodeAggregateId) {
             $this->updateContentStreamVersion($event, $eventEnvelope);
-            return;
+            return resolve(null);
         }
         match ($event::class) {
             ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event, $eventEnvelope),
@@ -190,8 +173,9 @@ class ContentStreamProjection implements ProjectionInterface
             ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event, $eventEnvelope),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
+        return resolve(null);
     }
 
     public function getCheckpointStorage(): CheckpointStorageInterface

@@ -41,7 +41,7 @@ trait ContentStreamClosing
 
         $command = CloseContentStream::create($contentStreamId);
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

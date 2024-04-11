@@ -28,7 +28,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | newContentStreamId | "cs-identifier"                        |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                  |
@@ -74,7 +73,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | parentNodeAggregateId | "sir-nodeward-nodington-iii"              |
       | nodeName                      | "esquire-child"                           |
       | nodeAggregateClassification   | "regular"                                 |
-    And the graph projection is fully up to date
 
   Scenario: Move a node disabled by one of its ancestors to a new parent that is enabled
     Given the event SubtreeWasTagged was published with payload:
@@ -83,7 +81,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                          | "disabled"                             |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
@@ -91,7 +88,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-    And the graph projection is fully up to date
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
@@ -107,7 +103,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | nodeAggregateId      | "nody-mc-nodeface" |
       | affectedDimensionSpacePoints | [{}]               |
       | tag                  | "disabled"                |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
@@ -115,7 +110,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
@@ -128,7 +122,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                  | "disabled"                    |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
@@ -136,7 +129,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
@@ -156,7 +148,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
       | tag                  | "disabled"                 |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
@@ -164,7 +155,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
@@ -190,7 +180,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
@@ -210,7 +199,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
@@ -236,7 +224,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
@@ -263,7 +250,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                 |
       | newParentNodeAggregateId            | "nodimus-prime"    |
       | newSucceedingSiblingNodeAggregateId | null               |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
@@ -289,7 +275,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                       |
       | newParentNodeAggregateId            | "nodimus-prime"          |
       | newSucceedingSiblingNodeAggregateId | null                     |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
@@ -315,7 +300,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                       |
       | newParentNodeAggregateId            | "nodimus-prime"          |
       | newSucceedingSiblingNodeAggregateId | null                     |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 
@@ -336,7 +320,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                       |
       | newParentNodeAggregateId            | "nodimus-prime"          |
       | newSucceedingSiblingNodeAggregateId | null                     |
-    And the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
 

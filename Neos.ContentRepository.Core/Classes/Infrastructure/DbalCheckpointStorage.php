@@ -26,9 +26,6 @@ use Neos\EventStore\Model\Event\SequenceNumber;
  */
 final class DbalCheckpointStorage implements CheckpointStorageInterface
 {
-    private MySqlPlatform|PostgreSqlPlatform $platform;
-    private SequenceNumber|null $lockedSequenceNumber = null;
-
     public function __construct(
         private readonly Connection $connection,
         private readonly string $tableName,
@@ -41,7 +38,6 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
         if (strlen($this->subscriberId) > 255) {
             throw new \InvalidArgumentException('The subscriberId must not exceed 255 characters', 1705673456);
         }
-        $this->platform = $platform;
     }
 
     public function setUp(): void
@@ -84,52 +80,12 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
 
     public function acquireLock(): SequenceNumber
     {
-        if ($this->connection->isTransactionActive()) {
-            throw new \RuntimeException(sprintf('Failed to acquire checkpoint lock for subscriber "%s" because a transaction is active already', $this->subscriberId), 1652268416);
-        }
-        $this->connection->beginTransaction();
-        try {
-            $highestAppliedSequenceNumber = $this->connection->fetchOne('SELECT appliedsequencenumber FROM ' . $this->connection->quoteIdentifier($this->tableName) . ' WHERE subscriberid = :subscriberId ' . $this->platform->getForUpdateSQL() . ' NOWAIT', [
-                'subscriberId' => $this->subscriberId
-            ]);
-        } catch (DBALException $exception) {
-            $this->connection->rollBack();
-            if ($exception instanceof LockWaitTimeoutException || ($exception instanceof DBALDriverException && ($exception->getErrorCode() === 3572 || $exception->getErrorCode() === 7))) {
-                throw new \RuntimeException(sprintf('Failed to acquire checkpoint lock for subscriber "%s" because it is acquired already', $this->subscriberId), 1652279016);
-            }
-            throw new \RuntimeException($exception->getMessage(), 1544207778, $exception);
-        }
-        if (!is_numeric($highestAppliedSequenceNumber)) {
-            $this->connection->rollBack();
-            throw new \RuntimeException(sprintf('Failed to fetch highest applied sequence number for subscriber "%s". Please run %s::setUp()', $this->subscriberId, $this::class), 1652279139);
-        }
-        $this->lockedSequenceNumber = SequenceNumber::fromInteger((int)$highestAppliedSequenceNumber);
-        return $this->lockedSequenceNumber;
+        return $this->getHighestAppliedSequenceNumber();
     }
 
     public function updateAndReleaseLock(SequenceNumber $sequenceNumber): void
     {
-        if ($this->lockedSequenceNumber === null) {
-            throw new \RuntimeException(sprintf('Failed to update and commit checkpoint for subscriber "%s" because the lock has not been acquired successfully before', $this->subscriberId), 1660556344);
-        }
-        if (!$this->connection->isTransactionActive()) {
-            throw new \RuntimeException(sprintf('Failed to update and commit checkpoint for subscriber "%s" because no transaction is active', $this->subscriberId), 1652279314);
-        }
-        if ($this->connection->isRollbackOnly()) {
-            // TODO as described in https://github.com/neos/neos-development-collection/issues/4970 we are in a bad state and cannot commit after a nested transaction was rolled back.
-            throw new \RuntimeException(sprintf('Failed to update and commit checkpoint for subscriber "%s" because the transaction has been marked for rollback only. See https://github.com/neos/neos-development-collection/issues/4970', $this->subscriberId), 1711964313);
-        }
-        try {
-            if (!$this->lockedSequenceNumber->equals($sequenceNumber)) {
-                $this->connection->update($this->tableName, ['appliedsequencenumber' => $sequenceNumber->value], ['subscriberid' => $this->subscriberId]);
-            }
-            $this->connection->commit();
-        } catch (DBALException $exception) {
-            $this->connection->rollBack();
-            throw new \RuntimeException(sprintf('Failed to update and commit highest applied sequence number for subscriber "%s". Please run %s::setUp()', $this->subscriberId, $this::class), 1652279375, $exception);
-        } finally {
-            $this->lockedSequenceNumber = null;
-        }
+        $this->connection->update($this->tableName, ['appliedsequencenumber' => $sequenceNumber->value], ['subscriberid' => $this->subscriberId]);
     }
 
     public function getHighestAppliedSequenceNumber(): SequenceNumber

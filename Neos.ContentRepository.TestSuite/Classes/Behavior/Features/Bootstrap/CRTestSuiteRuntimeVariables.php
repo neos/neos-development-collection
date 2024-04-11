@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -46,8 +45,6 @@ trait CRTestSuiteRuntimeVariables
     protected ?VisibilityConstraints $currentVisibilityConstraints = null;
 
     protected ?NodeAggregateId $currentRootNodeAggregateId = null;
-
-    protected ?CommandResult $lastCommandOrEventResult = null;
 
     protected ?\Exception $lastCommandException = null;
 

@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\Projection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\EventStore\Model\EventEnvelope;
+use React\Promise\PromiseInterface;
 
 /**
  * Common interface for a Content Repository projection. This API is NOT exposed to the outside world, but is
@@ -30,9 +31,10 @@ interface ProjectionInterface
      */
     public function status(): ProjectionStatus;
 
-    public function canHandle(EventInterface $event): bool;
-
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void;
+    /**
+     * @return PromiseInterface<null>
+     */
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface;
 
     public function getCheckpointStorage(): CheckpointStorageInterface;
 
@@ -46,5 +48,8 @@ interface ProjectionInterface
      */
     public function getState(): ProjectionStateInterface;
 
-    public function reset(): void;
+    /**
+     * @return PromiseInterface<null>
+     */
+    public function reset(): PromiseInterface;
 }

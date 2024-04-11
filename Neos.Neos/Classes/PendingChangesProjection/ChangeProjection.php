@@ -46,6 +46,9 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use React\Promise\PromiseInterface;
+
+use function React\Promise\resolve;
 
 /**
  * TODO: this class needs testing and probably a major refactoring!
@@ -153,33 +156,16 @@ class ChangeProjection implements ProjectionInterface
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
-    public function reset(): void
+    public function reset(): PromiseInterface
     {
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix);
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        return resolve(null);
     }
 
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            RootWorkspaceWasCreated::class,
-            NodeAggregateWasMoved::class,
-            NodePropertiesWereSet::class,
-            NodeReferencesWereSet::class,
-            NodeAggregateWithNodeWasCreated::class,
-            SubtreeWasTagged::class,
-            SubtreeWasUntagged::class,
-            NodeAggregateWasRemoved::class,
-            DimensionSpacePointWasMoved::class,
-            NodeGeneralizationVariantWasCreated::class,
-            NodeSpecializationVariantWasCreated::class,
-            NodePeerVariantWasCreated::class
-        ]);
-    }
-
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
     {
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
@@ -194,8 +180,9 @@ class ChangeProjection implements ProjectionInterface
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
+        return resolve(null);
     }
 
     public function getCheckpointStorage(): DbalCheckpointStorage
@@ -297,79 +284,75 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        $this->transactional(function () use ($event) {
-            if ($this->isLiveContentStream($event->contentStreamId)) {
-                return;
-            }
+        if ($this->isLiveContentStream($event->contentStreamId)) {
+            return;
+        }
 
+        $this->getDatabaseConnection()->executeUpdate(
+            'DELETE FROM ' . $this->tableNamePrefix . '
+                WHERE
+                    contentStreamId = :contentStreamId
+                    AND nodeAggregateId = :nodeAggregateId
+                    AND originDimensionSpacePointHash IN (:affectedDimensionSpacePointHashes)
+                ',
+            [
+                'contentStreamId' => $event->contentStreamId->value,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
+                'affectedDimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints
+                    ->getPointHashes()
+            ],
+            [
+                'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+            ]
+        );
+
+        foreach ($event->affectedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
             $this->getDatabaseConnection()->executeUpdate(
-                'DELETE FROM ' . $this->tableNamePrefix . '
-                    WHERE
-                        contentStreamId = :contentStreamId
-                        AND nodeAggregateId = :nodeAggregateId
-                        AND originDimensionSpacePointHash IN (:affectedDimensionSpacePointHashes)
-                    ',
+                'INSERT INTO ' . $this->tableNamePrefix . '
+                        (contentStreamId, nodeAggregateId, originDimensionSpacePoint,
+                         originDimensionSpacePointHash, created, deleted, changed, moved, removalAttachmentPoint)
+                    VALUES (
+                        :contentStreamId,
+                        :nodeAggregateId,
+                        :originDimensionSpacePoint,
+                        :originDimensionSpacePointHash,
+                        0,
+                        1,
+                        0,
+                        0,
+                        :removalAttachmentPoint
+                    )
+                ',
                 [
                     'contentStreamId' => $event->contentStreamId->value,
                     'nodeAggregateId' => $event->nodeAggregateId->value,
-                    'affectedDimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints
-                        ->getPointHashes()
-                ],
-                [
-                    'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+                    'originDimensionSpacePoint' => json_encode($occupiedDimensionSpacePoint),
+                    'originDimensionSpacePointHash' => $occupiedDimensionSpacePoint->hash,
+                    'removalAttachmentPoint' => $event->removalAttachmentPoint?->value,
                 ]
             );
-
-            foreach ($event->affectedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
-                $this->getDatabaseConnection()->executeUpdate(
-                    'INSERT INTO ' . $this->tableNamePrefix . '
-                            (contentStreamId, nodeAggregateId, originDimensionSpacePoint,
-                             originDimensionSpacePointHash, created, deleted, changed, moved, removalAttachmentPoint)
-                        VALUES (
-                            :contentStreamId,
-                            :nodeAggregateId,
-                            :originDimensionSpacePoint,
-                            :originDimensionSpacePointHash,
-                            0,
-                            1,
-                            0,
-                            0,
-                            :removalAttachmentPoint
-                        )
-                    ',
-                    [
-                        'contentStreamId' => $event->contentStreamId->value,
-                        'nodeAggregateId' => $event->nodeAggregateId->value,
-                        'originDimensionSpacePoint' => json_encode($occupiedDimensionSpacePoint),
-                        'originDimensionSpacePointHash' => $occupiedDimensionSpacePoint->hash,
-                        'removalAttachmentPoint' => $event->removalAttachmentPoint?->value,
-                    ]
-                );
-            }
-        });
+        }
     }
 
     private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
-        $this->transactional(function () use ($event) {
-            $this->getDatabaseConnection()->executeStatement(
-                '
-                UPDATE ' . $this->tableNamePrefix . ' c
-                    SET
-                        c.originDimensionSpacePoint = :newDimensionSpacePoint,
-                        c.originDimensionSpacePointHash = :newDimensionSpacePointHash
-                    WHERE
-                      c.originDimensionSpacePointHash = :originalDimensionSpacePointHash
-                      AND c.contentStreamId = :contentStreamId
-                      ',
-                [
-                    'originalDimensionSpacePointHash' => $event->source->hash,
-                    'newDimensionSpacePointHash' => $event->target->hash,
-                    'newDimensionSpacePoint' => $event->target->toJson(),
-                    'contentStreamId' => $event->contentStreamId->value
-                ]
-            );
-        });
+        $this->getDatabaseConnection()->executeStatement(
+            '
+            UPDATE ' . $this->tableNamePrefix . ' c
+                SET
+                    c.originDimensionSpacePoint = :newDimensionSpacePoint,
+                    c.originDimensionSpacePointHash = :newDimensionSpacePointHash
+                WHERE
+                  c.originDimensionSpacePointHash = :originalDimensionSpacePointHash
+                  AND c.contentStreamId = :contentStreamId
+                  ',
+            [
+                'originalDimensionSpacePointHash' => $event->source->hash,
+                'newDimensionSpacePointHash' => $event->target->hash,
+                'newDimensionSpacePoint' => $event->target->toJson(),
+                'contentStreamId' => $event->contentStreamId->value
+            ]
+        );
     }
 
 
@@ -452,27 +435,20 @@ class ChangeProjection implements ProjectionInterface
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         callable $modifyFn
     ): void {
-        $this->transactional(function () use (
-            $contentStreamId,
-            $nodeAggregateId,
-            $originDimensionSpacePoint,
-            $modifyFn
-        ) {
-            if ($this->isLiveContentStream($contentStreamId)) {
-                return;
-            }
+        if ($this->isLiveContentStream($contentStreamId)) {
+            return;
+        }
 
-            $change = $this->getChange($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint);
+        $change = $this->getChange($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint);
 
-            if ($change === null) {
-                $change = new Change($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, false, false, false, false);
-                $modifyFn($change);
-                $change->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-            } else {
-                $modifyFn($change);
-                $change->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-            }
-        });
+        if ($change === null) {
+            $change = new Change($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, false, false, false, false);
+            $modifyFn($change);
+            $change->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+        } else {
+            $modifyFn($change);
+            $change->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+        }
     }
 
     private function getChange(
@@ -494,11 +470,6 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
 
         // We always allow root nodes
         return $changeRow ? Change::fromDatabaseRow($changeRow) : null;
-    }
-
-    private function transactional(\Closure $operations): void
-    {
-        $this->getDatabaseConnection()->transactional($operations);
     }
 
     /**
