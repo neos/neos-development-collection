@@ -1215,14 +1215,9 @@ The input is assumed to be an array or Collection of objects. Groups this input 
 **Return** (array)
 
 Neos.Array.sortByPropertyPath(set, positionPropertyPath)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The input is assumed to be an array. Sorts this input by the $positionPropertyPath property of each element.
-
-* ``set`` (array)
-* ``positionPropertyPath`` (string)
-
-**Return** (array)
+Sorts the input array by the $positionProperty of each element.
 
 
 
@@ -2477,3 +2472,8 @@ Get the variable type
 * ``variable`` (mixed)
 
 **Return** (string)
+
+
+
+
+
