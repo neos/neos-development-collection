@@ -519,29 +519,9 @@
         <source>Discard all</source>
         <target state="final">ReJeter tous</target>
       </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
-        <source>Discard all changes</source>
-        <target state="final">Ignorer toutes les modifications</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to discard all changes in this workspace?</source>
-        <target state="final">Êtes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
-        <source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-        <target state="translated">Êtes-vous sûr de vouloir ignorer {numberOfChanges} modification(s) dans cet espace de travail ?</target>
-      </trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
         <source>Publish all</source>
         <target state="final">Publier tous</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
-        <source>Publish all changes</source>
-        <target state="final">Publier toutes les modifications</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to publish all changes?</source>
-        <target state="final">Êtes-vous sûr de vouloir publier toutes les modifications ?</target>
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
         <source>Pending changes</source>
