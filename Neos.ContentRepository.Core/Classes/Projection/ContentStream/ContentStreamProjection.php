@@ -50,9 +50,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use React\Promise\PromiseInterface;
-
-use function React\Promise\resolve;
 
 /**
  * See {@see ContentStreamFinder} for explanation.
@@ -144,19 +141,18 @@ class ContentStreamProjection implements ProjectionInterface
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
-    public function reset(): PromiseInterface
+    public function reset(): void
     {
         $this->getDatabaseConnection()->executeStatement('TRUNCATE table ' . $this->tableName);
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-        return resolve(null);
     }
 
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         if ($event instanceof EmbedsContentStreamAndNodeAggregateId) {
             $this->updateContentStreamVersion($event, $eventEnvelope);
-            return resolve(null);
+            return;
         }
         match ($event::class) {
             ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event, $eventEnvelope),
@@ -175,7 +171,6 @@ class ContentStreamProjection implements ProjectionInterface
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
             default => null,
         };
-        return resolve(null);
     }
 
     public function getCheckpointStorage(): CheckpointStorageInterface

@@ -21,9 +21,7 @@
         "symfony/serializer": "^6.3",
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",
-        "ramsey/uuid": "^3.0 || ^4.0",
-        "react/promise": "^3.1",
-        "react/async": "^v4.2"
+        "ramsey/uuid": "^3.0 || ^4.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

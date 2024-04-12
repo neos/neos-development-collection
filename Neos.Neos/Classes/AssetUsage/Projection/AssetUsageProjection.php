@@ -35,7 +35,6 @@ use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
-use React\Promise\PromiseInterface;
 
 use function React\Promise\resolve;
 
@@ -65,12 +64,11 @@ final class AssetUsageProjection implements ProjectionInterface
         );
     }
 
-    public function reset(): PromiseInterface
+    public function reset(): void
     {
         $this->repository->reset();
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-        return resolve(null);
     }
 
     public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
@@ -257,7 +255,7 @@ final class AssetUsageProjection implements ProjectionInterface
         return ProjectionStatus::ok();
     }
 
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
@@ -273,7 +271,6 @@ final class AssetUsageProjection implements ProjectionInterface
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
             default => null,
         };
-        return resolve(null);
     }
 
     public function getCheckpointStorage(): DbalCheckpointStorage

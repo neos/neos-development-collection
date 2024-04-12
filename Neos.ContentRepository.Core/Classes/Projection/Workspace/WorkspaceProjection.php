@@ -136,15 +136,14 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
-    public function reset(): PromiseInterface
+    public function reset(): void
     {
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableName);
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-        return resolve(null);
     }
 
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
             WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
@@ -161,7 +160,6 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
             default => null,
         };
-        return resolve(null);
     }
 
     public function getCheckpointStorage(): DbalCheckpointStorage

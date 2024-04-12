@@ -52,9 +52,6 @@ use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use React\Promise\PromiseInterface;
-
-use function React\Promise\resolve;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
@@ -156,7 +153,7 @@ final class HypergraphProjection implements ProjectionInterface
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
-    public function reset(): PromiseInterface
+    public function reset(): void
     {
         $this->truncateDatabaseTables();
 
@@ -167,7 +164,6 @@ final class HypergraphProjection implements ProjectionInterface
         //foreach ($contentGraph->getSubgraphs() as $subgraph) {
         //    $subgraph->inMemoryCache->enable();
         //}
-        return resolve(null);
     }
 
     private function truncateDatabaseTables(): void
@@ -179,7 +175,7 @@ final class HypergraphProjection implements ProjectionInterface
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_restrictionhyperrelation');
     }
 
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
             // ContentStreamForking
@@ -206,7 +202,6 @@ final class HypergraphProjection implements ProjectionInterface
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             default => null,
         };
-        return resolve(null);
     }
 
     public function getCheckpointStorage(): DbalCheckpointStorage

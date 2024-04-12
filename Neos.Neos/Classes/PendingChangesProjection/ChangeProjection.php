@@ -46,9 +46,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use React\Promise\PromiseInterface;
-
-use function React\Promise\resolve;
 
 /**
  * TODO: this class needs testing and probably a major refactoring!
@@ -156,16 +153,15 @@ class ChangeProjection implements ProjectionInterface
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
-    public function reset(): PromiseInterface
+    public function reset(): void
     {
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix);
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-        return resolve(null);
     }
 
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
@@ -182,7 +178,6 @@ class ChangeProjection implements ProjectionInterface
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             default => null,
         };
-        return resolve(null);
     }
 
     public function getCheckpointStorage(): DbalCheckpointStorage

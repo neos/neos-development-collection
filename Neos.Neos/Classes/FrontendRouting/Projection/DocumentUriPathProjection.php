@@ -43,9 +43,6 @@ use Neos\EventStore\Model\EventEnvelope;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use React\Promise\PromiseInterface;
-
-use function React\Promise\resolve;
 
 /**
  * @implements ProjectionInterface<DocumentUriPathFinder>
@@ -123,13 +120,12 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     }
 
 
-    public function reset(): PromiseInterface
+    public function reset(): void
     {
         $this->truncateDatabaseTables();
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
         $this->stateAccessor = null;
-        return resolve(null);
     }
 
     private function truncateDatabaseTables(): void
@@ -142,7 +138,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
     }
 
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
@@ -162,7 +158,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
             default => null,
         };
-        return resolve(null);
     }
 
     public function getCheckpointStorage(): DbalCheckpointStorage

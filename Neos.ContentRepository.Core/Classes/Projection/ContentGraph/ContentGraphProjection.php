@@ -10,7 +10,6 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\EventStore\Model\EventEnvelope;
-use React\Promise\PromiseInterface;
 
 /**
  * @implements ProjectionInterface<ContentGraphInterface>
@@ -36,9 +35,9 @@ final class ContentGraphProjection implements ProjectionInterface, WithMarkStale
         return $this->projectionImplementation->status();
     }
 
-    public function reset(): PromiseInterface
+    public function reset(): void
     {
-        return $this->projectionImplementation->reset();
+        $this->projectionImplementation->reset();
     }
 
     public function getState(): ContentGraphInterface
@@ -46,9 +45,9 @@ final class ContentGraphProjection implements ProjectionInterface, WithMarkStale
         return $this->projectionImplementation->getState();
     }
 
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        return $this->projectionImplementation->apply($event, $eventEnvelope);
+        $this->projectionImplementation->apply($event, $eventEnvelope);
     }
 
     public function getCheckpointStorage(): CheckpointStorageInterface

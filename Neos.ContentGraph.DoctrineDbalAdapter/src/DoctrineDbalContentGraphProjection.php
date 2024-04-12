@@ -62,7 +62,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use React\Promise\PromiseInterface;
 
 use function React\Promise\resolve;
 
@@ -161,7 +160,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         return ProjectionStatus::ok();
     }
 
-    public function reset(): PromiseInterface
+    public function reset(): void
     {
         $this->truncateDatabaseTables();
 
@@ -172,7 +171,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         foreach ($contentGraph->getSubgraphs() as $subgraph) {
             $subgraph->inMemoryCache->enable();
         }
-        return resolve(null);
     }
 
     private function truncateDatabaseTables(): void
@@ -184,7 +182,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_dimensionspacepoints');
     }
 
-    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): PromiseInterface
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
@@ -207,7 +205,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             default => null,
         };
-        return resolve(null);
     }
 
     public function getCheckpointStorage(): DbalCheckpointStorage
