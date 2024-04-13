@@ -44,10 +44,12 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId            | originDimensionSpacePoint | nodeTypeName                                                 | parentNodeAggregateId  | nodeName        | tetheredDescendantNodeAggregateIds |
-      | sir-david-nodenborough     | {"example": "source"}     | Neos.ContentRepository.Testing:DocumentWithTetheredChildNode | lady-eleonode-rootford | document        | {"tethered": "nodewyn-tetherton"}  |
-      | sir-nodeward-nodington-iii | {"example": "source"}     | Neos.ContentRepository.Testing:Document                      | lady-eleonode-rootford | esquire         | {}                                 |
-      | anthony-destinode          | {"example": "spec"}       | Neos.ContentRepository.Testing:Document                      | lady-eleonode-rootford | target-document | {}                                 |
+      | nodeAggregateId            | originDimensionSpacePoint | nodeTypeName                                                 | parentNodeAggregateId      | nodeName              | tetheredDescendantNodeAggregateIds |
+      | sir-david-nodenborough     | {"example": "source"}     | Neos.ContentRepository.Testing:DocumentWithTetheredChildNode | lady-eleonode-rootford     | document              | {"tethered": "nodewyn-tetherton"}  |
+      | nodimus-mediocre           | {"example": "source"}     | Neos.ContentRepository.Testing:Document                      | nodewyn-tetherton          | grandchild-document   | {}                                 |
+      | sir-nodeward-nodington-iii | {"example": "source"}     | Neos.ContentRepository.Testing:Document                      | lady-eleonode-rootford     | esquire               | {}                                 |
+      | anthony-destinode          | {"example": "spec"}       | Neos.ContentRepository.Testing:Document                      | lady-eleonode-rootford     | target-document       | {}                                 |
+      | lady-abigail-nodenborough  | {"example": "spec"}       | Neos.ContentRepository.Testing:Document                      | sir-nodeward-nodington-iii | child-target-document | {}                                 |
 
   Scenario: Try to move a node in a non-existing workspace:
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
@@ -158,7 +160,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | relationDistributionStrategy | "gatherAll"                  |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet"
 
-  Scenario: Try to move a node to a parent that already has a child node of the same name
+  Scenario: Using the scatter strategy, try to move a node to a parent that already has a child node of the same name
     Given the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId      | nodeName |
       | nody-mc-nodeface | {"example": "source"}     | Neos.ContentRepository.Testing:Document | sir-nodeward-nodington-iii | document |
@@ -169,6 +171,46 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId              | "nody-mc-nodeface"       |
       | newParentNodeAggregateId     | "lady-eleonode-rootford" |
       | relationDistributionStrategy | "scatter"                |
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
+
+  Scenario: Using the gatherSpecializations strategy, try to move a node to a parent that already has a child node of the same name in a specialization
+    Given the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId      | nodeName        |
+      | nody-mc-nodeface | {"example": "source"}     | Neos.ContentRepository.Testing:Document | sir-nodeward-nodington-iii | target-document |
+
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                    |
+      | dimensionSpacePoint          | {"example": "source"}    |
+      | nodeAggregateId              | "nody-mc-nodeface"       |
+      | newParentNodeAggregateId     | "lady-eleonode-rootford" |
+      | relationDistributionStrategy | "gatherSpecializations"  |
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
+
+  Scenario: Using the gatherAll strategy, try to move a node to a parent that already has a child node of the same name in a generalization
+    Given the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId      | nodeName        |
+      | rival-destinode  | {"example": "general"}    | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford     | target-document |
+      | nody-mc-nodeface | {"example": "source"}     | Neos.ContentRepository.Testing:Document | sir-nodeward-nodington-iii | target-document |
+    # Remove the node with the conflicting name in all variants except the generalization
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                 |
+      | coveredDimensionSpacePoint   | {"example": "source"} |
+      | nodeAggregateId              | "rival-destinode"     |
+      | nodeVariantSelectionStrategy | "allSpecializations"  |
+    And the graph projection is fully up to date
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | coveredDimensionSpacePoint   | {"example": "peer"}  |
+      | nodeAggregateId              | "rival-destinode"    |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
+
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                        |
+      | dimensionSpacePoint          | {"example": "source"}        |
+      | nodeAggregateId              | "nody-mc-nodeface"           |
+      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+      | relationDistributionStrategy | "gatherAll"                  |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
   Scenario: Try to move a node to a parent whose node type does not allow child nodes of the node's type
@@ -184,7 +226,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | relationDistributionStrategy | "scatter"             |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
-  Scenario: Try to move a node to a parent whose parent's node type does not allow grand child nodes of the node's type
+  Scenario: Using the scatter strategy, try to move a node to a parent whose parent's node type does not allow grand child nodes of the node's type
     Given the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                           | parentNodeAggregateId  | nodeName |
       | nody-mc-nodeface | {"example": "source"}     | Neos.ContentRepository.Testing:Content | lady-eleonode-rootford | content  |
@@ -197,6 +239,11 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | relationDistributionStrategy | "scatter"             |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
+  # Hint: One might come to the conclusion that we also have to check the other strategies.
+  # The cases would be that the new parent is partially moved to a new grandparent which then imposes different constraints.
+  # Yet these grandparent constraints are only imposed on the children of their tethered children, but the latter by definition cannot be moved.
+  # Thus the preconditions for these test cases cannot be established because the needed commands would fail.
+
   Scenario: Try to move existing node to a non-existing preceding sibling
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                                | Value                    |
@@ -205,6 +252,25 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | newPrecedingSiblingNodeAggregateId | "i-do-not-exist"         |
       | relationDistributionStrategy       | "scatter"                |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
+
+  Scenario: Try to move existing node after a node which is not a sibling
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                                | Value                       |
+      | dimensionSpacePoint                | {"example": "source"}       |
+      | nodeAggregateId                    | "sir-david-nodenborough"    |
+      | newPrecedingSiblingNodeAggregateId | "lady-abigail-nodenborough" |
+      | relationDistributionStrategy       | "scatter"                   |
+    Then the last command should have thrown an exception of type "NodeAggregateIsNoSibling"
+
+  Scenario: Try to move existing node after a node which is not a child of the new parent
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                                | Value                        |
+      | dimensionSpacePoint                | {"example": "source"}        |
+      | nodeAggregateId                    | "sir-david-nodenborough"     |
+      | newParentNodeAggregateId           | "anthony-destinode"          |
+      | newPrecedingSiblingNodeAggregateId | "sir-nodeward-nodington-iii" |
+      | relationDistributionStrategy       | "scatter"                    |
+    Then the last command should have thrown an exception of type "NodeAggregateIsNoSibling"
 
   Scenario: Try to move existing node to a non-existing succeeding sibling
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
@@ -215,11 +281,39 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | relationDistributionStrategy        | "scatter"                |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
+  Scenario: Try to move existing node before a node which is not a sibling
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                                 | Value                       |
+      | dimensionSpacePoint                 | {"example": "source"}       |
+      | nodeAggregateId                     | "sir-david-nodenborough"    |
+      | newSucceedingSiblingNodeAggregateId | "lady-abigail-nodenborough" |
+      | relationDistributionStrategy        | "scatter"                   |
+    Then the last command should have thrown an exception of type "NodeAggregateIsNoSibling"
+
+  Scenario: Try to move existing node before a node which is not a child of the new parent
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                                 | Value                        |
+      | dimensionSpacePoint                 | {"example": "source"}        |
+      | nodeAggregateId                     | "sir-david-nodenborough"     |
+      | newParentNodeAggregateId            | "anthony-destinode"          |
+      | newSucceedingSiblingNodeAggregateId | "sir-nodeward-nodington-iii" |
+      | relationDistributionStrategy        | "scatter"                    |
+    Then the last command should have thrown an exception of type "NodeAggregateIsNoSibling"
+
   Scenario: Try to move a node to one of its children
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
       | dimensionSpacePoint          | {"example": "source"}    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | newParentNodeAggregateId     | "nodewyn-tetherton"      |
+      | relationDistributionStrategy | "scatter"                |
+    Then the last command should have thrown an exception of type "NodeAggregateIsDescendant"
+
+  Scenario: Try to move a node to one of its grandchildren
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                    |
+      | dimensionSpacePoint          | {"example": "source"}    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | newParentNodeAggregateId     | "nodimus-mediocre"       |
       | relationDistributionStrategy | "scatter"                |
     Then the last command should have thrown an exception of type "NodeAggregateIsDescendant"

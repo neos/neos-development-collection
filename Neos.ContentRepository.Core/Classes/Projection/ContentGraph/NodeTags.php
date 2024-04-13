@@ -33,8 +33,8 @@ use Traversable;
 final readonly class NodeTags implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     private function __construct(
-        private SubtreeTags $tags,
-        private SubtreeTags $inheritedTags,
+        public SubtreeTags $tags,
+        public SubtreeTags $inheritedTags,
     ) {
     }
 

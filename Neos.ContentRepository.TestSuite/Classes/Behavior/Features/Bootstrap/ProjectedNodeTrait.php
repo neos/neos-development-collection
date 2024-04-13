@@ -651,6 +651,28 @@ trait ProjectedNodeTrait
     }
 
     /**
+     * @Then /^I expect this node to tag with "(.*)"$/
+     * @param string $tagList the comma-separated list of tag names
+     */
+    public function iExpectThisNodeToTagWith(string $tagList): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($tagList) {
+            $currentNode->tags->tags->toStringArray() === explode(',', $tagList);
+        });
+    }
+
+    /**
+     * @Then /^I expect this node to be tagged with "(.*)"$/
+     * @param string $tagList the comma-separated list of tag names
+     */
+    public function iExpectThisNodeToBeTaggedWith(string $tagList): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($tagList) {
+            $currentNode->tags->inheritedTags->toStringArray() === explode(',', $tagList);
+        });
+    }
+
+    /**
      * @Then /^I expect this node to have no succeeding siblings$/
      */
     public function iExpectThisNodeToHaveNoSucceedingSiblings(): void
