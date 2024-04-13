@@ -15,7 +15,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Factory for the ContentGraphAdapter implementation for doctrine DBAL
- * 
+ *
  * @internal
  */
 class ContentGraphAdapterFactory implements ContentGraphAdapterFactoryInterface
