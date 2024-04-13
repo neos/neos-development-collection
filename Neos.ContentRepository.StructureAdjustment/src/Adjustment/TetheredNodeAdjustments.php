@@ -58,7 +58,7 @@ class TetheredNodeAdjustments
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             // TODO: We should use $nodeAggregate->workspaceName as soon as it's available
-            $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($nodeAggregate->contentStreamId);
+            $contentGraphAdapter = $this->contentGraphAdapterProvider->fromContentStreamId($nodeAggregate->contentStreamId);
             // find missing tethered nodes
             $foundMissingOrDisallowedTetheredNodes = false;
             $originDimensionSpacePoints = $nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)
@@ -270,6 +270,6 @@ class TetheredNodeAdjustments
 
     protected function getContentGraphAdapter(WorkspaceName $workspaceName): ContentGraphAdapterInterface
     {
-        return $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($workspaceName);
+        return $this->contentGraphAdapterProvider->fromWorkspaceName($workspaceName);
     }
 }

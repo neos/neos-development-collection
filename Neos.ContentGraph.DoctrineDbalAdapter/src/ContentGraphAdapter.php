@@ -44,6 +44,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
@@ -62,13 +63,14 @@ use Neos\EventStore\Model\EventStream\MaybeVersion;
 /**
  * DBAL implementation of low level read query operations for the content graph
  *
- * @įnternal
+ * @internal
  */
 class ContentGraphAdapter implements ContentGraphAdapterInterface
 {
     public function __construct(
         private readonly Connection $dbalConnection,
         private readonly string $tableNamePrefix,
+        private ContentRepositoryId $contentRepositoryId,
         private readonly NodeFactory $nodeFactory,
         private readonly NodeTypeManager $nodeTypeManager,
         public ?WorkspaceName $workspaceName,

@@ -126,7 +126,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository,
     ): EventsToPublish {
         try {
-            $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
+            $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($command->workspaceName);
             $contentStreamId = $contentGraphAdapter->getContentStreamId();
         } catch (ContentStreamDoesNotExistYet $e) {
             // Desired outcome
@@ -138,7 +138,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $command->workspaceName->value
         ), 1505830958921);
 
-        $baseWorkspaceContentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->baseWorkspaceName);
+        $baseWorkspaceContentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($command->baseWorkspaceName);
 //        if ($baseWorkspace === null) {
 //            throw new BaseWorkspaceDoesNotExist(sprintf(
 //                'The workspace %s (base workspace of %s) does not exist',
@@ -206,7 +206,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository,
     ): EventsToPublish {
         try {
-            $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
+            $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($command->workspaceName);
             $contentStreamId = $contentGraphAdapter->getContentStreamId();
         } catch (ContentStreamDoesNotExistYet $e) {
             // Desired outcome
@@ -498,7 +498,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         PublishIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($command->workspaceName);
         $workspace = $this->requireWorkspace($command->workspaceName);
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
         $oldWorkspaceContentStreamIdState = $contentGraphAdapter->findStateForContentStream();
@@ -637,7 +637,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         DiscardIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($command->workspaceName);
         $workspace = $contentGraphAdapter->getWorkspace();
         $oldWorkspaceContentStreamId = $contentGraphAdapter->getContentStreamId();
         $oldWorkspaceContentStreamIdState = $contentGraphAdapter->findStateForContentStream();
@@ -912,7 +912,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function requireWorkspace(WorkspaceName $workspaceName): Workspace
     {
-        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($workspaceName);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($workspaceName);
         return $contentGraphAdapter->getWorkspace();
     }
 
@@ -927,7 +927,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         try {
-            $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($workspace->baseWorkspaceName);
+            $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($workspace->baseWorkspaceName);
             $baseWorkspace = $contentGraphAdapter->getWorkspace();
         } catch (WorkspaceDoesNotExist $_) {
             throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->workspaceName);
@@ -951,7 +951,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             if ($workspace->workspaceName->equals($nextBaseWorkspace->baseWorkspaceName)) {
                 throw new CircularRelationBetweenWorkspacesException(sprintf('The workspace "%s" is already on the path of the target workspace "%s".', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value));
             }
-            $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($nextBaseWorkspace->baseWorkspaceName);
+            $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($nextBaseWorkspace->baseWorkspaceName);
             $nextBaseWorkspace = $contentGraphAdapter->getWorkspace();
         }
     }

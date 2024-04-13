@@ -136,7 +136,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId);
 
         // TOOD: THis is not great
-        $sourceContentStreamVersion = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($command->sourceContentStreamId)
+        $sourceContentStreamVersion = $this->contentGraphAdapterProvider->fromContentStreamId($command->sourceContentStreamId)
             ->findVersionForContentStream();
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->newContentStreamId)
@@ -184,7 +184,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     protected function requireContentStreamToExist(
         ContentStreamId $contentStreamId
     ): void {
-        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($contentStreamId);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromContentStreamId($contentStreamId);
         if (!$contentGraphAdapter->contentStreamExists()) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId->value . '" does not exist yet.',
@@ -196,7 +196,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     protected function requireContentStreamToNotBeClosed(
         ContentStreamId $contentStreamId
     ): void {
-        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($contentStreamId);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromContentStreamId($contentStreamId);
         if ($contentGraphAdapter->findStateForContentStream() === ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
@@ -208,7 +208,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     protected function requireContentStreamToBeClosed(
         ContentStreamId $contentStreamId
     ): void {
-        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($contentStreamId);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromContentStreamId($contentStreamId);
         if ($contentGraphAdapter->findStateForContentStream() !== ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsNotClosed(
                 'Content stream "' . $contentStreamId->value . '" is not closed.',
@@ -220,7 +220,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     protected function getExpectedVersionOfContentStream(
         ContentStreamId $contentStreamId
     ): ExpectedVersion {
-        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($contentStreamId);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromContentStreamId($contentStreamId);
         return ExpectedVersion::fromVersion(
             $contentGraphAdapter->findVersionForContentStream()
                 ->unwrap()

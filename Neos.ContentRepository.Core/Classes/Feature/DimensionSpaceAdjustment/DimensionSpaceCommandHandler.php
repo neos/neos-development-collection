@@ -64,7 +64,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
     private function handleMoveDimensionSpacePoint(
         MoveDimensionSpacePoint $command
     ): EventsToPublish {
-        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($command->workspaceName);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())
             ->getEventStreamName();
 
@@ -90,7 +90,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
     private function handleAddDimensionShineThrough(
         AddDimensionShineThrough $command
     ): EventsToPublish {
-        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($command->workspaceName);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())
             ->getEventStreamName();
 

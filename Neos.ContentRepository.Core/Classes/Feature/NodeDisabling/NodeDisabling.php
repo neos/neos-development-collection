@@ -47,7 +47,7 @@ trait NodeDisabling
         DisableNodeAggregate $command
     ): EventsToPublish {
         $this->requireContentStream($command->workspaceName);
-        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(

@@ -87,6 +87,28 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): ?NodeAggregate;
 
     /**
+     * @param ContentStreamId $contentStreamId
+     * @param NodeAggregateId $childNodeAggregateId
+     * @return iterable<NodeAggregate>
+     */
+    public function findParentNodeAggregates(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId
+    ): iterable;
+
+    /**
+     * @param ContentStreamId $contentStreamId
+     * @param NodeAggregateId $parentNodeAggregateId
+     * @param NodeName $name
+     * @return iterable<NodeAggregate>
+     */
+    public function findChildNodeAggregatesByName(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $parentNodeAggregateId,
+        NodeName $name
+    ): iterable;
+
+    /**
      * Returns all node types in use, from the graph projection
      *
      * @return iterable<NodeTypeName>

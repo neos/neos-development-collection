@@ -66,7 +66,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
      */
     protected function getContentGraphAdapter(WorkspaceName $workspaceName): ContentGraphAdapterInterface
     {
-        return $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($workspaceName);
+        return $this->contentGraphAdapterProvider->fromWorkspaceName($workspaceName);
     }
 
     protected function getNodeTypeManager(): NodeTypeManager

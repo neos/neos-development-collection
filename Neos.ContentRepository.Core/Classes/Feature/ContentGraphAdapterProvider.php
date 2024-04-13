@@ -12,7 +12,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  * This is available on the write side of the ContentRepository.
  *
  * @see ContentGraphAdapterInterface
- * @internal
+ * @api only for read access during write operations and in services
  */
 class ContentGraphAdapterProvider
 {
@@ -29,13 +29,13 @@ class ContentGraphAdapterProvider
     /**
      * TODO: We should not need this,
      * TODO: after introducing the NodeIdentity we can change usages to
-     * TODO: ContentGraphAdapterProvider::resolveContentStreamIdAndGet() and remove this
+     * TODO: ContentGraphAdapterProvider::fromWorkspaceName() and remove this
      *
      * @throws ContentStreamDoesNotExistYet if there is no content stream with the provided id
      * @deprecated
      *
      */
-    public function resolveWorkspaceNameAndGet(ContentStreamId $contentStreamId): ContentGraphAdapterInterface
+    public function fromContentStreamId(ContentStreamId $contentStreamId): ContentGraphAdapterInterface
     {
         return $this->contentGraphAdapterFactory->createFromContentStreamId($contentStreamId);
     }
@@ -44,7 +44,7 @@ class ContentGraphAdapterProvider
      * @throws WorkspaceDoesNotExist if there is no workspace with the provided name
      * @throws ContentStreamDoesNotExistYet if the provided workspace does not resolve to an existing content stream
      */
-    public function resolveContentStreamIdAndGet(WorkspaceName $workspaceName): ContentGraphAdapterInterface
+    public function fromWorkspaceName(WorkspaceName $workspaceName): ContentGraphAdapterInterface
     {
         if (isset($this->adapterInstances[$workspaceName->value])) {
             return $this->adapterInstances[$workspaceName->value];
