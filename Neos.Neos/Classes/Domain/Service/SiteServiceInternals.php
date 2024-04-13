@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProvider;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
@@ -39,7 +40,8 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
     public function __construct(
         private ContentRepository $contentRepository,
         private InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private NodeTypeManager $nodeTypeManager
+        private NodeTypeManager $nodeTypeManager,
+        private ContentGraphAdapterProvider $contentGraphAdapterProvider
     ) {
     }
 
@@ -54,15 +56,18 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
                 1651921482
             );
         }
-        $contentGraph = $this->contentRepository->getContentGraph();
 
         foreach ($this->contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
-            $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
-                $workspace->currentContentStreamId,
+            $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($workspace->workspaceName);
+            $sitesNodeAggregate = $contentGraphAdapter->findRootNodeAggregateByType(
                 NodeTypeNameFactory::forSites()
             );
-            $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
-                $workspace->currentContentStreamId,
+
+            if (!$sitesNodeAggregate) {
+                continue;
+            }
+
+            $siteNodeAggregates = $contentGraphAdapter->findChildNodeAggregatesByName(
                 $sitesNodeAggregate->nodeAggregateId,
                 $siteNodeName->toNodeName()
             );
@@ -99,8 +104,8 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             throw SiteNodeTypeIsInvalid::becauseItIsNotOfTypeSite(NodeTypeName::fromString($nodeTypeName));
         }
 
-        $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $liveWorkspace->currentContentStreamId,
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->fromWorkspaceName($liveWorkspace->workspaceName);
+        $siteNodeAggregate = $contentGraphAdapter->findChildNodeAggregatesByName(
             $sitesNodeIdentifier,
             $site->getNodeName()->toNodeName(),
         );

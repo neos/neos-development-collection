@@ -70,7 +70,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
     public function __construct(
         private readonly Connection $dbalConnection,
         private readonly string $tableNamePrefix,
-        private ContentRepositoryId $contentRepositoryId,
+        public readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeFactory $nodeFactory,
         private readonly NodeTypeManager $nodeTypeManager,
         public ?WorkspaceName $workspaceName,
@@ -83,8 +83,14 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
 
     public function rootNodeAggregateWithTypeExists(NodeTypeName $nodeTypeName): bool
     {
+        $rootNodeAggregate = $this->findRootNodeAggregateByType($nodeTypeName);
+        return (bool)$rootNodeAggregate;
+    }
+
+    public function findRootNodeAggregateByType(NodeTypeName $nodeTypeName): ?NodeAggregate
+    {
         $queryBuilder = $this->dbalConnection->createQueryBuilder()
-            ->select('COUNT(n.relationanchorpoint)')
+            ->select('n.*, h.name, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->getTablenameForNode(), 'n')
             ->innerJoin('n', $this->getTablenameForHierachyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->getTablenameForDimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
@@ -99,12 +105,11 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
             ->andWhere('n.nodetypename = :nodeTypeName')
             ->setParameter('nodeTypeName', $nodeTypeName->value);
 
-        $result = $queryBuilder->execute();
-        if (!$result instanceof Result) {
-            return false;
-        }
-
-        return $result->fetchOne() > 0;
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            $this->fetchRows($queryBuilder),
+            $this->getContentStreamId(),
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 
     public function findParentNodeAggregates(NodeAggregateId $childNodeAggregateId): iterable
@@ -763,13 +768,20 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
         $row = $result->fetchAssociative();
 
         // We can assume that we get a row otherwise getWorkspaceName would have thrown already
+
         return new Workspace(
+            /** @phpstan-ignore-next-line */
             WorkspaceName::fromString($row['workspacename']),
             !empty($row['baseworkspacename']) ? WorkspaceName::fromString($row['baseworkspacename']) : null,
+            /** @phpstan-ignore-next-line */
             WorkspaceTitle::fromString($row['workspacetitle']),
+            /** @phpstan-ignore-next-line */
             WorkspaceDescription::fromString($row['workspacedescription']),
+            /** @phpstan-ignore-next-line */
             ContentStreamId::fromString($row['currentcontentstreamid']),
+            /** @phpstan-ignore-next-line */
             WorkspaceStatus::from($row['status']),
+            /** @phpstan-ignore-next-line */
             $row['workspaceowner']
         );
     }

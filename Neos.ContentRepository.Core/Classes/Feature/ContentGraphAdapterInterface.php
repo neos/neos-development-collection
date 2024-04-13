@@ -28,14 +28,13 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
  * This is a read API provided for constraint checks within the write side.
  * It must be bound to a contentStreamId and workspaceName on creation.
  *
- * @internal only for consumption in command handlers
+ * @api only for consumption in command handlers and content graph services
  */
 interface ContentGraphAdapterInterface
 {
@@ -55,6 +54,10 @@ interface ContentGraphAdapterInterface
     public function rootNodeAggregateWithTypeExists(
         NodeTypeName $nodeTypeName
     ): bool;
+
+    public function findRootNodeAggregateByType(
+        NodeTypeName $nodeTypeName
+    ): ?NodeAggregate;
 
     /**
      * @return iterable<NodeAggregate>
