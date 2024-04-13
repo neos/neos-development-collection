@@ -45,6 +45,7 @@ trait NodeModification
     private function handleSetNodeProperties(
         SetNodeProperties $command
     ): EventsToPublish {
+        $this->requireContentStream($command->workspaceName);
         $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(

@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\Common\NodeCreationInternals;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
-use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProvider;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
@@ -53,7 +53,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private readonly ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
+        private readonly ContentGraphAdapterProvider $contentGraphAdapterProvider
     ) {
     }
 

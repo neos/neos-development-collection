@@ -46,7 +46,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 {
 
     public function __construct(
-        protected readonly ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
+        protected readonly ContentGraphAdapterProvider $contentGraphAdapterProvider
     ) {
     }
 
@@ -73,7 +73,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     private function handleCreateContentStream(
         CreateContentStream $command
     ): EventsToPublish {
-        $this->requireContentStreamToNotExistYet($command->contentStreamId);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
             ->getEventStreamName();
 
@@ -136,7 +135,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->sourceContentStreamId);
         $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId);
-        $this->requireContentStreamToNotExistYet($command->newContentStreamId);
 
         // TOOD: THis is not great
         $sourceContentStreamVersion = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($command->sourceContentStreamId)
@@ -182,27 +180,13 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 
     /**
      * @param ContentStreamId $contentStreamId
-     * @throws ContentStreamAlreadyExists
-     */
-    protected function requireContentStreamToNotExistYet(
-        ContentStreamId $contentStreamId
-    ): void {
-        if ($this->contentGraphAdapter->hasContentStream($contentStreamId)) {
-            throw new ContentStreamAlreadyExists(
-                'Content stream "' . $contentStreamId->value . '" already exists.',
-                1521386345
-            );
-        }
-    }
-
-    /**
-     * @param ContentStreamId $contentStreamId
      * @throws ContentStreamDoesNotExistYet
      */
     protected function requireContentStreamToExist(
         ContentStreamId $contentStreamId
     ): void {
-        if (!$this->contentGraphAdapter->hasContentStream($contentStreamId)) {
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($contentStreamId);
+        if (!$contentGraphAdapter->contentStreamExists()) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692
@@ -213,7 +197,8 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     protected function requireContentStreamToNotBeClosed(
         ContentStreamId $contentStreamId
     ): void {
-        if ($this->contentGraphAdapter->findStateForContentStream($contentStreamId) === ContentStreamState::STATE_CLOSED) {
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($contentStreamId);
+        if ($contentGraphAdapter->findStateForContentStream() === ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
                 1710260081
@@ -224,7 +209,8 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     protected function requireContentStreamToBeClosed(
         ContentStreamId $contentStreamId
     ): void {
-        if ($this->contentGraphAdapter->findStateForContentStream($contentStreamId) !== ContentStreamState::STATE_CLOSED) {
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($contentStreamId);
+        if ($contentGraphAdapter->findStateForContentStream() !== ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsNotClosed(
                 'Content stream "' . $contentStreamId->value . '" is not closed.',
                 1710405911
@@ -235,9 +221,9 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     protected function getExpectedVersionOfContentStream(
         ContentStreamId $contentStreamId
     ): ExpectedVersion {
+        $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveWorkspaceNameAndGet($contentStreamId);
         return ExpectedVersion::fromVersion(
-            $this->contentGraphAdapter
-                ->findVersionForContentStream($contentStreamId)
+            $contentGraphAdapter->findVersionForContentStream()
                 ->unwrap()
         );
     }

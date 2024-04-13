@@ -77,10 +77,11 @@ trait ConstraintChecks
         $contentGraphAdapter = $this->getContentGraphAdapter($workspaceName);
         if (!$contentGraphAdapter->hasContentStream()) {
             throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentGraphAdapter->getContentStreamId()->value . '" does not exist yet.',
+                'Content stream for "' . $workspaceName->value . '" does not exist yet.',
                 1521386692
             );
         }
+
         if ($contentGraphAdapter->findStateForContentStream() === ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentGraphAdapter->getContentStreamId()->value . '" is closed.',

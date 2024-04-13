@@ -66,6 +66,7 @@ trait NodeMove
     private function handleMoveNodeAggregate(
         MoveNodeAggregate $command
     ): EventsToPublish {
+        $this->requireContentStream($command->workspaceName);
         $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireDimensionSpacePointToExist($command->dimensionSpacePoint);
@@ -268,7 +269,7 @@ trait NodeMove
         );
         $succeedingSiblingCandidates = iterator_to_array(
             $succeedingSiblingId
-                ? $contentGraphAdapter->findSuceedingSiblingNodesInSubgraph($originDimensionSpacePoint, $succeedingSiblingId)
+                ? $contentGraphAdapter->findSucceedingSiblingNodesInSubgraph($originDimensionSpacePoint, $succeedingSiblingId)
                 : Nodes::createEmpty()
         );
         /* @var $precedingSiblingCandidates Node[] */
@@ -303,7 +304,7 @@ trait NodeMove
                 );
                 if ($precedingSibling) {
                     // TODO: I don't think implementing the same filtering as for the contentGraph is sensible here, so we are fetching all siblings while only interested in the next, maybe could become a more specialised method.
-                    $alternateSucceedingSiblings = $contentGraphAdapter->findSuceedingSiblingNodesInSubgraph($currentDimensionSpacePoint, $precedingSiblingId);
+                    $alternateSucceedingSiblings = $contentGraphAdapter->findSucceedingSiblingNodesInSubgraph($currentDimensionSpacePoint, $precedingSiblingId);
                     if (count($alternateSucceedingSiblings) > 0) {
                         $succeedingSibling = $alternateSucceedingSiblings->first();
                         break;
@@ -339,14 +340,14 @@ trait NodeMove
                 ->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint
         ) {
             $succeedingSibling = $succeedingSiblingId
-                ? $this->findSiblingWithin($contentGraphAdapter, $originDimensionSpacePoint->toDimensionSpacePoint(), $succeedingSiblingId, $parentId)
+                ? $this->findSiblingWithin($contentGraphAdapter, $dimensionSpacePoint, $succeedingSiblingId, $parentId)
                 : null;
             if (!$succeedingSibling) {
                 $precedingSibling = $precedingSiblingId
-                    ? $this->findSiblingWithin($contentGraphAdapter, $originDimensionSpacePoint->toDimensionSpacePoint(), $precedingSiblingId, $parentId)
+                    ? $this->findSiblingWithin($contentGraphAdapter, $dimensionSpacePoint, $precedingSiblingId, $parentId)
                     : null;
                 if ($precedingSiblingId && $precedingSibling) {
-                    $alternateSucceedingSiblings = $contentGraphAdapter->findSuceedingSiblingNodesInSubgraph(
+                    $alternateSucceedingSiblings = $contentGraphAdapter->findSucceedingSiblingNodesInSubgraph(
                         $dimensionSpacePoint,
                         $precedingSiblingId
                     );

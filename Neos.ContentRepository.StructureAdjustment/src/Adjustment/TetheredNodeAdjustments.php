@@ -10,7 +10,7 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
-use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProvider;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
@@ -36,7 +36,7 @@ class TetheredNodeAdjustments
     use TetheredNodeInternals;
 
     public function __construct(
-        private readonly ContentGraphAdapterProviderInterface $contentGraphAdapterProvider,
+        private readonly ContentGraphAdapterProvider $contentGraphAdapterProvider,
         private readonly ProjectedNodeIterator $projectedNodeIterator,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,

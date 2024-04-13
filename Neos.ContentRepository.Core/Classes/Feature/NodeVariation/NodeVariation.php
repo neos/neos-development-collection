@@ -48,6 +48,7 @@ trait NodeVariation
     private function handleCreateNodeVariant(
         CreateNodeVariant $command
     ): EventsToPublish {
+        $this->requireContentStream($command->workspaceName);
         $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $nodeAggregate = $this->requireProjectedNodeAggregate(

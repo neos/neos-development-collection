@@ -42,6 +42,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -68,6 +69,7 @@ trait RootNodeHandling
     private function handleCreateRootNodeAggregateWithNode(
         CreateRootNodeAggregateWithNode $command
     ): EventsToPublish {
+        $this->requireContentStream($command->workspaceName);
         $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireProjectedNodeAggregateToNotExist(

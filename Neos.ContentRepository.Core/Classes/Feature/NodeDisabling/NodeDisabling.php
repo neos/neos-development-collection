@@ -46,6 +46,7 @@ trait NodeDisabling
     private function handleDisableNodeAggregate(
         DisableNodeAggregate $command
     ): EventsToPublish {
+        $this->requireContentStream($command->workspaceName);
         $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);

@@ -83,7 +83,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         private readonly DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly PropertyConverter $propertyConverter,
-        protected readonly ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
+        protected readonly ContentGraphAdapterProvider $contentGraphAdapterProvider
     ) {
     }
 

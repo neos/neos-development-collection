@@ -45,6 +45,7 @@ trait NodeReferencing
     private function handleSetNodeReferences(
         SetNodeReferences $command
     ): EventsToPublish {
+        $this->requireContentStream($command->workspaceName);
         $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(

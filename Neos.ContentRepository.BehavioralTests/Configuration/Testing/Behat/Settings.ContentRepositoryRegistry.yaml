@@ -10,3 +10,5 @@ Neos:
           factoryObjectName: 'Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory'
         contentDimensionSource:
           factoryObjectName: 'Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory'
+        contentGraphAdapterFactory:
+          factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphAdapterFactoryBuilder

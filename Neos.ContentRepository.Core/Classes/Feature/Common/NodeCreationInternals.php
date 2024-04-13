@@ -43,7 +43,7 @@ trait NodeCreationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
     ): InterdimensionalSiblings {
-        $originAlternativeSucceedingSiblings = $contentGraphAdapter->findSuceedingSiblingNodesInSubgraph(
+        $originAlternativeSucceedingSiblings = $contentGraphAdapter->findSucceedingSiblingNodesInSubgraph(
             $sourceOrigin->toDimensionSpacePoint(),
             $requestedSucceedingSiblingNodeAggregateId
         );

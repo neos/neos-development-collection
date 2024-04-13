@@ -42,7 +42,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -129,6 +128,7 @@ trait NodeCreation
     private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
         CreateNodeAggregateWithNodeAndSerializedProperties $command
     ): EventsToPublish {
+        $this->requireContentStream($command->workspaceName);
         $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraphAdapter);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
@@ -210,7 +210,7 @@ trait NodeCreation
 
         array_push($events, ...iterator_to_array($this->handleTetheredChildNodes(
             $command,
-            $contentGraphAdapter->getContentStreamId(),
+            $contentGraphAdapter,
             $nodeType,
             $coveredDimensionSpacePoints,
             $command->nodeAggregateId,

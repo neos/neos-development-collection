@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProvider;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -35,7 +35,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         NodeTypeManager $nodeTypeManager,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
         PropertyConverter $propertyConverter,
-        ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
+        ContentGraphAdapterProvider $contentGraphAdapterProvider
     ) {
         $projectedNodeIterator = new ProjectedNodeIterator(
             $contentRepository->getWorkspaceFinder(),

@@ -273,7 +273,7 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         DimensionSpacePointSet $variantCoverage,
     ): InterdimensionalSiblings {
-        $originSiblings = $contentGraphAdapter->findSuceedingSiblingNodesInSubgraph($sourceOrigin->toDimensionSpacePoint(), $varyingNodeAggregateId);
+        $originSiblings = $contentGraphAdapter->findSucceedingSiblingNodesInSubgraph($sourceOrigin->toDimensionSpacePoint(), $varyingNodeAggregateId);
 
         $interdimensionalSiblings = [];
         foreach ($variantCoverage as $variantDimensionSpacePoint) {

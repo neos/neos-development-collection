@@ -26,15 +26,13 @@ use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
-use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProvider;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Exception\DimensionSpacePointAlreadyExists;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -45,7 +43,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
     public function __construct(
         private ContentDimensionZookeeper $contentDimensionZookeeper,
         private InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private ContentGraphAdapterProviderInterface $contentGraphAdapterProvider
+        private ContentGraphAdapterProvider $contentGraphAdapterProvider
     ) {
     }
 
@@ -153,20 +151,6 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             ) !== VariantType::TYPE_SPECIALIZATION
         ) {
             throw DimensionSpacePointIsNoSpecialization::butWasSupposedToBe($target, $source);
-        }
-    }
-
-    /**
-     * @throws ContentStreamDoesNotExistYet
-     */
-    protected function requireContentStream(
-        ContentGraphAdapterInterface $contentGraphAdapter
-    ): void {
-        if (!$contentGraphAdapter->hasContentStream()) {
-            throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentGraphAdapter->getContentStreamId()->value . '" does not exist yet.',
-                1521386692
-            );
         }
     }
 }

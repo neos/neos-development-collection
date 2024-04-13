@@ -40,6 +40,15 @@ use Neos\EventStore\Model\EventStream\MaybeVersion;
 interface ContentGraphAdapterInterface
 {
     /*
+     * EXPOSING INTERNAL STATE
+     */
+
+    public function getWorkspaceName(): WorkspaceName;
+
+    public function getContentStreamId(): ContentStreamId;
+
+
+    /*
      * NODE AGGREGATES
      */
 
@@ -132,7 +141,7 @@ interface ContentGraphAdapterInterface
     public function findChildNodeByNameInSubgraph(
         DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeAggregateId $parentNodeAggregateId,
-        NodeName $nodeNamex
+        NodeName $nodeName
     ): ?Node;
 
     public function findPreceedingSiblingNodesInSubgraph(
@@ -140,7 +149,7 @@ interface ContentGraphAdapterInterface
         NodeAggregateId $startingSiblingNodeAggregateId
     ): Nodes;
 
-    public function findSuceedingSiblingNodesInSubgraph(
+    public function findSucceedingSiblingNodesInSubgraph(
         DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeAggregateId $startingSiblingNodeAggregateId
     ): Nodes;
@@ -155,18 +164,11 @@ interface ContentGraphAdapterInterface
 
     public function findVersionForContentStream(): MaybeVersion;
 
-    public function getExpectedVersionOfContentStream(): ExpectedVersion;
+    public function contentStreamExists(): bool;
+
     /*
      * WORKSPACES
      */
 
-    public function findWorkspaceByCurrentContentStreamId(
-        ContentStreamId $contentStreamId
-    ): ?Workspace;
-
-    public function withWorkspaceName(WorkspaceName $workspaceName): ContentGraphAdapterInterface;
-
-    public function getWorkspaceName(): WorkspaceName;
-
-    public function getContentStreamId(): ContentStreamId;
+    public function getWorkspace(): Workspace;
 }

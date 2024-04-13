@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging;
  * source code.
  */
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
@@ -38,9 +37,9 @@ trait SubtreeTagging
 
     private function handleTagSubtree(TagSubtree $command): EventsToPublish
     {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
-        $nodeAggregate = $this->requireProjectedNodeAggregate($contentStreamId, $command->nodeAggregateId);
+        $nodeAggregate = $this->requireProjectedNodeAggregate($contentGraphAdapter, $command->nodeAggregateId);
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
@@ -60,7 +59,7 @@ trait SubtreeTagging
 
         $events = Events::with(
             new SubtreeWasTagged(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
                 $command->tag,
@@ -68,7 +67,7 @@ trait SubtreeTagging
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
@@ -80,10 +79,10 @@ trait SubtreeTagging
 
     public function handleUntagSubtree(UntagSubtree $command): EventsToPublish
     {
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
+        $contentGraphAdapter = $this->getContentGraphAdapter($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraphAdapter,
             $command->nodeAggregateId
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -105,7 +104,7 @@ trait SubtreeTagging
 
         $events = Events::with(
             new SubtreeWasUntagged(
-                $contentStreamId,
+                $contentGraphAdapter->getContentStreamId(),
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
                 $command->tag,
@@ -113,7 +112,7 @@ trait SubtreeTagging
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentGraphAdapter->getContentStreamId())->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand($command, $events),
             ExpectedVersion::ANY()
         );

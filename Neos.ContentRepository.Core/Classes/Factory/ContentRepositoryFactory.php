@@ -21,7 +21,8 @@ use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
-use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterFactoryBuilderInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProvider;
 use Neos\ContentRepository\Core\Feature\ContentStreamCommandHandler;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\DimensionSpaceCommandHandler;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
@@ -47,6 +48,8 @@ final class ContentRepositoryFactory
     private ProjectionFactoryDependencies $projectionFactoryDependencies;
     private ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks;
 
+    private ContentGraphAdapterProvider $contentGraphAdapterProvider;
+
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
         EventStoreInterface $eventStore,
@@ -57,7 +60,7 @@ final class ContentRepositoryFactory
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
-        private readonly ContentGraphAdapterProviderInterface $contentGraphAdapterProvider,
+        ContentGraphAdapterFactoryBuilderInterface $contentGraphAdapterFactoryBuilder,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
@@ -75,6 +78,8 @@ final class ContentRepositoryFactory
             new PropertyConverter($propertySerializer)
         );
         $this->projectionsAndCatchUpHooks = $projectionsAndCatchUpHooksFactory->build($this->projectionFactoryDependencies);
+
+        $this->contentGraphAdapterProvider = new ContentGraphAdapterProvider($contentGraphAdapterFactoryBuilder->build($this->projectionFactoryDependencies));
     }
 
     // The following properties store "singleton" references of objects for this content repository
@@ -122,6 +127,7 @@ final class ContentRepositoryFactory
     public function buildService(
         ContentRepositoryServiceFactoryInterface $serviceFactory
     ): ContentRepositoryServiceInterface {
+
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
             $this->getOrBuild(),

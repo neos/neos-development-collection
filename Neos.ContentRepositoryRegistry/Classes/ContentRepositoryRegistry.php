@@ -9,8 +9,9 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Factory\ProjectionsAndCatchUpHooksFactory;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterFactoryBuilderInterface;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderFactoryInterface;
-use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProviderInterface;
+use Neos\ContentRepository\Core\Feature\ContentGraphAdapterProvider;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -286,14 +287,14 @@ final class ContentRepositoryRegistry
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */
-    private function buildContentGraphAdapterProvider(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings): ContentGraphAdapterProviderInterface
+    private function buildContentGraphAdapterProvider(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings): ContentGraphAdapterFactoryBuilderInterface
     {
-        isset($contentRepositorySettings['contentGraphAdapter']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have contentGraphAdapter.factoryObjectName configured.', $contentRepositoryIdentifier->value);
-        $contentGraphAdapterFactory = $this->objectManager->get($contentRepositorySettings['contentGraphAdapter']['factoryObjectName']);
-        if (!$contentGraphAdapterFactory instanceof ContentGraphAdapterProviderFactoryInterface) {
-            throw InvalidConfigurationException::fromMessage('contentGraphAdapter.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ContentGraphAdapterProviderFactoryInterface::class, get_debug_type($contentGraphAdapterFactory));
+        isset($contentRepositorySettings['contentGraphAdapterFactory']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have contentGraphAdapterFactory.factoryObjectName configured.', $contentRepositoryIdentifier->value);
+        $contentGraphAdapterFactoryBuilder = $this->objectManager->get($contentRepositorySettings['contentGraphAdapterFactory']['factoryObjectName']);
+        if (!$contentGraphAdapterFactoryBuilder instanceof ContentGraphAdapterFactoryBuilderInterface) {
+            throw InvalidConfigurationException::fromMessage('contentGraphAdapterFactory.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ContentGraphAdapterFactoryBuilderInterface::class, get_debug_type($contentGraphAdapterFactoryBuilder));
         }
-
-        return $contentGraphAdapterFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['contentGraphAdapter']['options'] ?? []);
+        // TODO: Do we want to add options here? Would then have to be a setter I guess....
+        return $contentGraphAdapterFactoryBuilder;
     }
 }
