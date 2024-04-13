@@ -17,6 +17,7 @@ namespace Neos\Neos\Domain\Workspace;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace as ContentRepositoryWorkspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -66,7 +67,7 @@ final class WorkspaceProvider
     ): ContentRepositoryWorkspace {
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (!$workspace instanceof ContentRepositoryWorkspace) {
-            throw new \DomainException('Workspace "' . $workspaceName->value . '" is missing', 1710967842);
+            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
 
         // @todo: access control goes here

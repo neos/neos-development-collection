@@ -14,13 +14,14 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       properties:
         text:
           type: string
+      references:
         refs:
-          type: references
           properties:
             foo:
               type: string
         ref:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             foo:
               type: string
