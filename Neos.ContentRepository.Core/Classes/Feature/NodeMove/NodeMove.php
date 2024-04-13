@@ -401,7 +401,7 @@ trait NodeMove
                         throw new \InvalidArgumentException(
                             sprintf(
                                 'Parent ' . $parentId . ' not found in contentstream "%s" and dimension space point "%s" ',
-                                $succeedingSibling->nodeAggregateId->value,
+                                $contentGraphAdapter->getContentStreamId()->value,
                                 json_encode($dimensionSpacePoint, JSON_PARTIAL_OUTPUT_ON_ERROR)
                             ),
                             1667597013

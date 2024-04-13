@@ -15,6 +15,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
@@ -59,7 +60,9 @@ use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\EventStream\MaybeVersion;
 
 /**
+ * DBAL implementation of low level read query operations for the content graph
  *
+ * @įnternal
  */
 class ContentGraphAdapter implements ContentGraphAdapterInterface
 {
@@ -67,6 +70,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
         private readonly Connection $dbalConnection,
         private readonly string $tableNamePrefix,
         private readonly NodeFactory $nodeFactory,
+        private readonly NodeTypeManager $nodeTypeManager,
         public ?WorkspaceName $workspaceName,
         public ?ContentStreamId $contentStreamId,
     ) {
@@ -93,7 +97,12 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
             ->andWhere('n.nodetypename = :nodeTypeName')
             ->setParameter('nodeTypeName', $nodeTypeName->value);
 
-        return $queryBuilder->execute()->fetchOne() > 0;
+        $result = $queryBuilder->execute();
+        if (!$result instanceof Result) {
+            return false;
+        }
+
+        return $result->fetchOne() > 0;
     }
 
     public function findParentNodeAggregates(NodeAggregateId $childNodeAggregateId): iterable
@@ -750,8 +759,8 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
         $query = $this->dbalConnection->prepare('SELECT * FROM cr_default_p_workspace WHERE workspacename LIKE :workspaceName');
         $result = $query->executeQuery(['workspaceName' => $this->getWorkspaceName()->value]);
         $row = $result->fetchAssociative();
-        // We can assume that we get a row otherwise getWorkspaceName would have thrown already
 
+        // We can assume that we get a row otherwise getWorkspaceName would have thrown already
         return new Workspace(
             WorkspaceName::fromString($row['workspacename']),
             !empty($row['baseworkspacename']) ? WorkspaceName::fromString($row['baseworkspacename']) : null,

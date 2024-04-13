@@ -8,6 +8,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterFactoryInterface;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterInterface;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -17,6 +18,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 class ContentGraphAdapterFactory implements ContentGraphAdapterFactoryInterface
 {
     private NodeFactory $nodeFactory;
+
+    private NodeTypeManager $nodeTypeManager;
 
     private string $tableNamePrefix;
 
@@ -30,6 +33,7 @@ class ContentGraphAdapterFactory implements ContentGraphAdapterFactoryInterface
         $this->tableNamePrefix = $tableNamePrefix;
 
         $dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbalConnection, $tableNamePrefix);
+        $this->nodeTypeManager = $projectionFactoryDependencies->nodeTypeManager;
         $this->nodeFactory = new NodeFactory(
             $projectionFactoryDependencies->contentRepositoryId,
             $projectionFactoryDependencies->nodeTypeManager,
@@ -40,16 +44,16 @@ class ContentGraphAdapterFactory implements ContentGraphAdapterFactoryInterface
 
     public function create(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphAdapterInterface
     {
-        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->nodeFactory, $workspaceName, $contentStreamId);
+        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->nodeFactory, $this->nodeTypeManager, $workspaceName, $contentStreamId);
     }
 
     public function createFromContentStreamId(ContentStreamId $contentStreamId): ContentGraphAdapterInterface
     {
-        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->nodeFactory, null, $contentStreamId);
+        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->nodeFactory, $this->nodeTypeManager, null, $contentStreamId);
     }
 
     public function createFromWorkspaceName(WorkspaceName $workspaceName): ContentGraphAdapterInterface
     {
-        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->nodeFactory, $workspaceName, null);
+        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->nodeFactory, $this->nodeTypeManager, $workspaceName, null);
     }
 }

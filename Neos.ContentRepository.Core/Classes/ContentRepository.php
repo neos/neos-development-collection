@@ -259,12 +259,4 @@ final class ContentRepository
     {
         return $this->contentDimensionSource;
     }
-
-    /**
-     * @internal
-     */
-    public function getContentGraphAdapter(): ContentGraphAdapterInterface
-    {
-        return $this->getContentGraph();
-    }
 }
