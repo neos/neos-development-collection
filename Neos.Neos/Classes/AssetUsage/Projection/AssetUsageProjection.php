@@ -36,8 +36,6 @@ use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
-use function React\Promise\resolve;
-
 /**
  * @implements ProjectionInterface<AssetUsageFinder>
  * @internal

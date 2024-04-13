@@ -63,8 +63,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
-use function React\Promise\resolve;
-
 /**
  * @implements ProjectionInterface<ContentGraph>
  * @internal but the graph projection is api
