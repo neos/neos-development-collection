@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
@@ -22,8 +23,7 @@ class ContentGraphAdapterProvider
 
     public function __construct(
         public readonly ContentGraphAdapterFactoryInterface $contentGraphAdapterFactory
-    )
-    {
+    ) {
     }
 
     /**
@@ -37,7 +37,7 @@ class ContentGraphAdapterProvider
      */
     public function resolveWorkspaceNameAndGet(ContentStreamId $contentStreamId): ContentGraphAdapterInterface
     {
-        return $this->contentGraphAdapterFactory->adapterFromContentStreamId($contentStreamId);
+        return $this->contentGraphAdapterFactory->createFromContentStreamId($contentStreamId);
     }
 
     /**
@@ -50,7 +50,7 @@ class ContentGraphAdapterProvider
             return $this->adapterInstances[$workspaceName->value];
         }
 
-        return $this->contentGraphAdapterFactory->adapterFromWorkspaceName($workspaceName);
+        return $this->contentGraphAdapterFactory->createFromWorkspaceName($workspaceName);
     }
 
     /**
@@ -61,7 +61,7 @@ class ContentGraphAdapterProvider
      */
     public function overrideContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId, \Closure $fn): void
     {
-        $adapter = $this->contentGraphAdapterFactory->bindAdapter($workspaceName, $contentStreamId);
+        $adapter = $this->contentGraphAdapterFactory->create($workspaceName, $contentStreamId);
         $replacedAdapter = $this->adapterInstances[$workspaceName->value] ?? null;
         $this->adapterInstances[$workspaceName->value] = $adapter;
 

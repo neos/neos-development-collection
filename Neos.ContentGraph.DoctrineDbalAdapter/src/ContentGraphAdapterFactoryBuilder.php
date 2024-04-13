@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;

@@ -44,7 +44,6 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
  */
 final class ContentStreamCommandHandler implements CommandHandlerInterface
 {
-
     public function __construct(
         protected readonly ContentGraphAdapterProvider $contentGraphAdapterProvider
     ) {

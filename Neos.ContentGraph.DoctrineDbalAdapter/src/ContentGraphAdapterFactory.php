@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
@@ -22,8 +23,7 @@ class ContentGraphAdapterFactory implements ContentGraphAdapterFactoryInterface
     public function __construct(
         private readonly Connection $dbalConnection,
         ProjectionFactoryDependencies $projectionFactoryDependencies
-    )
-    {
+    ) {
         $tableNamePrefix = DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
             $projectionFactoryDependencies->contentRepositoryId
         );
@@ -38,19 +38,18 @@ class ContentGraphAdapterFactory implements ContentGraphAdapterFactoryInterface
         );
     }
 
-    public function bindAdapter(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphAdapterInterface
+    public function create(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphAdapterInterface
     {
         return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->nodeFactory, $workspaceName, $contentStreamId);
     }
 
-    public function adapterFromContentStreamId(ContentStreamId $contentStreamId): ContentGraphAdapterInterface
+    public function createFromContentStreamId(ContentStreamId $contentStreamId): ContentGraphAdapterInterface
     {
         return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->nodeFactory, null, $contentStreamId);
     }
 
-    public function adapterFromWorkspaceName(WorkspaceName $workspaceName): ContentGraphAdapterInterface
+    public function createFromWorkspaceName(WorkspaceName $workspaceName): ContentGraphAdapterInterface
     {
         return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->nodeFactory, $workspaceName, null);
     }
-
 }

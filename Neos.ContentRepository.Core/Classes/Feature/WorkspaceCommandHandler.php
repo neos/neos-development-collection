@@ -546,7 +546,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                             $baseWorkspace->workspaceName,
                         ))->block();
                     }
-                });
+                }
+            );
 
             // 5) take EVENTS(MATCHING) and apply them to base WS.
             $this->publishContentStream(
@@ -928,7 +929,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         try {
             $contentGraphAdapter = $this->contentGraphAdapterProvider->resolveContentStreamIdAndGet($workspace->baseWorkspaceName);
             $baseWorkspace = $contentGraphAdapter->getWorkspace();
-        } catch(WorkspaceDoesNotExist $_) {
+        } catch (WorkspaceDoesNotExist $_) {
             throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->workspaceName);
         }
 

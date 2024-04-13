@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
@@ -68,8 +69,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
         private readonly NodeFactory $nodeFactory,
         public ?WorkspaceName $workspaceName,
         public ?ContentStreamId $contentStreamId,
-    )
-    {
+    ) {
         if ($this->workspaceName === null && $this->contentStreamId === null) {
             throw new \InvalidArgumentException('Neither ContentStreamId nor WorkspaceName given in creation of ContentGraphAdapter, one is required.', 1712746528);
         }
@@ -241,7 +241,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
             }
 
             return $result > 0;
-        } catch (DbalDriverException|DbalException $e) {
+        } catch (DbalDriverException | DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to count all nodes: %s', $e->getMessage()), 1678364741, $e);
         }
     }
@@ -439,7 +439,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
         }
         try {
             return $result->fetchAllAssociative();
-        } catch (DriverException|DBALException $e) {
+        } catch (DriverException | DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
         }
     }
@@ -660,7 +660,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
     {
         try {
             $nodeRow = $this->executeQuery($queryBuilder)->fetchAssociative();
-        } catch (DbalDriverException|DbalException $e) {
+        } catch (DbalDriverException | DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch node: %s', $e->getMessage()), 1678286030, $e);
         }
         if ($nodeRow === false) {
@@ -679,7 +679,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
     {
         try {
             $nodeRows = $this->executeQuery($queryBuilder)->fetchAllAssociative();
-        } catch (DbalDriverException|DbalException $e) {
+        } catch (DbalDriverException | DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch nodes: %s', $e->getMessage()), 1678292896, $e);
         }
 

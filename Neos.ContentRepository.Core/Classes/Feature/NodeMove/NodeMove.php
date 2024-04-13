@@ -227,8 +227,7 @@ trait NodeMove
         DimensionSpace\DimensionSpacePoint $coveredDimensionSpacePoint,
         NodeAggregateId $siblingId,
         ?NodeAggregateId $parentId
-    ): ?Node
-    {
+    ): ?Node {
         $siblingCandidate = $contentGraphAdapter->findNodeInSubgraph($coveredDimensionSpacePoint, $siblingId);
         if (!$siblingCandidate) {
             return null;

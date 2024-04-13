@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -15,9 +16,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 interface ContentGraphAdapterFactoryInterface
 {
-    public function bindAdapter(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphAdapterInterface;
+    public function create(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphAdapterInterface;
 
-    public function adapterFromContentStreamId(ContentStreamId $contentStreamId): ContentGraphAdapterInterface;
+    public function createFromContentStreamId(ContentStreamId $contentStreamId): ContentGraphAdapterInterface;
 
-    public function adapterFromWorkspaceName(WorkspaceName $workspaceName): ContentGraphAdapterInterface;
+    public function createFromWorkspaceName(WorkspaceName $workspaceName): ContentGraphAdapterInterface;
 }

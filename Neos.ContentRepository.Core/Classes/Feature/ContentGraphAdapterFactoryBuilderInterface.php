@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphAdapterFactory;
