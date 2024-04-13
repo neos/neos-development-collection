@@ -46,9 +46,6 @@ use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Psr\Clock\ClockInterface;
 
-use function React\Async\await;
-use function React\Async\parallel;
-
 /**
  * Main Entry Point to the system. Encapsulates the full event-sourced Content Repository.
  *
