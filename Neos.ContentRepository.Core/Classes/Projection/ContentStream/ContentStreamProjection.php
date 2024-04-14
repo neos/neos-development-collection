@@ -37,17 +37,15 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageInterface;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
+use Neos\ContentRepository\DbalTools\DbalSchemaFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -64,42 +62,24 @@ class ContentStreamProjection implements ProjectionInterface
      * so that always the same instance is returned
      */
     private ?ContentStreamFinder $contentStreamFinder = null;
-    private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableName
     ) {
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbalClient->getConnection(),
-            $this->tableName . '_checkpoint',
-            self::class
-        );
     }
 
     public function setUp(): void
     {
         $statements = $this->determineRequiredSqlStatements();
-        // MIGRATIONS
-        if ($this->getDatabaseConnection()->getSchemaManager()->tablesExist([$this->tableName])) {
-            // added 2023-04-01
-            $statements[] = sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName);
-        }
         foreach ($statements as $statement) {
             $this->getDatabaseConnection()->executeStatement($statement);
         }
-        $this->checkpointStorage->setUp();
+        CheckpointHelper::resetCheckpoint($this->getDatabaseConnection(), $this->tableName);
     }
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
             $this->getDatabaseConnection()->connect();
         } catch (\Throwable $e) {
@@ -112,6 +92,11 @@ class ContentStreamProjection implements ProjectionInterface
         }
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        try {
+            $this->getCheckpoint();
+        } catch (\Exception $exception) {
+            return ProjectionStatus::error($exception->getMessage());
         }
         return ProjectionStatus::ok();
     }
@@ -135,7 +120,8 @@ class ContentStreamProjection implements ProjectionInterface
                 // Should become a DB ENUM (unclear how to configure with DBAL) or int (latter needs adaption to code)
                 (new Column('state', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
                 (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
-            ]))
+            ])),
+            CheckpointHelper::checkpointTableSchema($this->tableName)
         ]);
 
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
@@ -144,12 +130,12 @@ class ContentStreamProjection implements ProjectionInterface
     public function reset(): void
     {
         $this->getDatabaseConnection()->executeStatement('TRUNCATE table ' . $this->tableName);
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        CheckpointHelper::resetCheckpoint($this->getDatabaseConnection(), $this->tableName);
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        $this->getDatabaseConnection()->beginTransaction();
         if ($event instanceof EmbedsContentStreamAndNodeAggregateId) {
             $this->updateContentStreamVersion($event, $eventEnvelope);
             return;
@@ -171,11 +157,13 @@ class ContentStreamProjection implements ProjectionInterface
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
             default => null,
         };
+        CheckpointHelper::updateCheckpoint($this->getDatabaseConnection(), $this->tableName, $eventEnvelope->sequenceNumber);
+        $this->getDatabaseConnection()->commit();
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->checkpointStorage;
+        return CheckpointHelper::getCheckpoint($this->getDatabaseConnection(), $this->tableName);
     }
 
     public function getState(): ProjectionStateInterface

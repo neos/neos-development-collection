@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
@@ -44,12 +45,11 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
@@ -83,8 +83,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
      */
     private ?ContentGraph $contentGraph = null;
 
-    private DbalCheckpointStorage $checkpointStorage;
-
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeFactory $nodeFactory,
@@ -94,11 +92,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         private readonly string $tableNamePrefix,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository
     ) {
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbalClient->getConnection(),
-            $this->tableNamePrefix . '_checkpoint',
-            self::class
-        );
     }
 
     protected function getProjectionContentGraph(): ProjectionContentGraph
@@ -116,7 +109,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->getDatabaseConnection()->executeStatement($statement);
         }
-        $this->checkpointStorage->setUp();
+        CheckpointHelper::resetCheckpoint($this->getDatabaseConnection(), $this->getTableNamePrefix());
     }
 
     /**
@@ -135,13 +128,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
+        // TODO check checkpoint status
         try {
             $this->getDatabaseConnection()->connect();
         } catch (\Throwable $e) {
@@ -160,28 +147,21 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public function reset(): void
     {
-        $this->truncateDatabaseTables();
-
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-
+        $connection = $this->dbalClient->getConnection();
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_node');
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_hierarchyrelation');
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_referencerelation');
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_dimensionspacepoints');
+        CheckpointHelper::resetCheckpoint($this->getDatabaseConnection(), $this->getTableNamePrefix());
         $contentGraph = $this->getState();
         foreach ($contentGraph->getSubgraphs() as $subgraph) {
             $subgraph->inMemoryCache->enable();
         }
     }
 
-    private function truncateDatabaseTables(): void
-    {
-        $connection = $this->dbalClient->getConnection();
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_node');
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_hierarchyrelation');
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_referencerelation');
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_dimensionspacepoints');
-    }
-
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        $this->getDatabaseConnection()->beginTransaction();
         match ($event::class) {
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
             RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
@@ -203,11 +183,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             default => null,
         };
+        CheckpointHelper::updateCheckpoint($this->getDatabaseConnection(), $this->getTableNamePrefix(), $eventEnvelope->sequenceNumber);
+        $this->getDatabaseConnection()->commit();
     }
 
-    public function getCheckpointStorage(): DbalCheckpointStorage
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->checkpointStorage;
+        return CheckpointHelper::getCheckpoint($this->getDatabaseConnection(), $this->getTableNamePrefix());
     }
 
     public function getState(): ContentGraph

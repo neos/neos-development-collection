@@ -29,15 +29,14 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Neos\Domain\Model\SiteNodeName;
@@ -53,7 +52,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         'shortcutTarget' => Types::JSON,
     ];
 
-    private DbalCheckpointStorage $checkpointStorage;
     private ?DocumentUriPathFinder $stateAccessor = null;
 
     /**
@@ -66,11 +64,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
     ) {
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbal,
-            $this->tableNamePrefix . '_checkpoint',
-            self::class
-        );
     }
 
     public function setUp(): void
@@ -78,18 +71,11 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        $this->checkpointStorage->setUp();
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix);
     }
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
             $this->dbal->connect();
         } catch (\Throwable $e) {
@@ -102,6 +88,11 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        try {
+            $this->getCheckpoint();
+        } catch (\Exception $exception) {
+            return ProjectionStatus::error($exception->getMessage());
         }
         return ProjectionStatus::ok();
     }
@@ -123,8 +114,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     public function reset(): void
     {
         $this->truncateDatabaseTables();
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix);
         $this->stateAccessor = null;
     }
 
@@ -140,6 +130,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        $this->dbal->beginTransaction();
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
@@ -158,11 +149,13 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
             default => null,
         };
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNamePrefix, $eventEnvelope->sequenceNumber);
+        $this->dbal->commit();
     }
 
-    public function getCheckpointStorage(): DbalCheckpointStorage
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->checkpointStorage;
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix);
     }
 
     public function getState(): DocumentUriPathFinder

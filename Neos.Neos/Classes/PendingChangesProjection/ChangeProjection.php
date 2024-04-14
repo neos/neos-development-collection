@@ -35,15 +35,14 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
+use Neos\ContentRepository\DbalTools\DbalSchemaFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -66,17 +65,11 @@ class ChangeProjection implements ProjectionInterface
      * @var array<string>|null
      */
     private ?array $liveContentStreamIdsRuntimeCache = null;
-    private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableNamePrefix,
     ) {
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbalClient->getConnection(),
-            $this->tableNamePrefix . '_checkpoint',
-            self::class
-        );
     }
 
 
@@ -85,18 +78,11 @@ class ChangeProjection implements ProjectionInterface
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->getDatabaseConnection()->executeStatement($statement);
         }
-        $this->checkpointStorage->setUp();
+        CheckpointHelper::resetCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix);
     }
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
             $this->getDatabaseConnection()->connect();
         } catch (\Throwable $e) {
@@ -109,6 +95,11 @@ class ChangeProjection implements ProjectionInterface
         }
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        try {
+            $this->getCheckpoint();
+        } catch (\Exception $exception) {
+            return ProjectionStatus::error($exception->getMessage());
         }
         return ProjectionStatus::ok();
     }
@@ -149,7 +140,9 @@ class ChangeProjection implements ProjectionInterface
         ]);
         $liveContentStreamsTable->setPrimaryKey(['contentstreamid']);
 
-        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $liveContentStreamsTable]);
+        $checkpointTable = CheckpointHelper::checkpointTableSchema($this->tableNamePrefix);
+
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $liveContentStreamsTable, $checkpointTable]);
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
@@ -157,12 +150,12 @@ class ChangeProjection implements ProjectionInterface
     {
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix);
         $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        CheckpointHelper::resetCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix);
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        $this->getDatabaseConnection()->beginTransaction();
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
             NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
@@ -178,11 +171,13 @@ class ChangeProjection implements ProjectionInterface
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             default => null,
         };
+        CheckpointHelper::updateCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix, $eventEnvelope->sequenceNumber);
+        $this->getDatabaseConnection()->commit();
     }
 
-    public function getCheckpointStorage(): DbalCheckpointStorage
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->checkpointStorage;
+        return CheckpointHelper::getCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix);
     }
 
     public function getState(): ChangeFinder

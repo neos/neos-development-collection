@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Infrastructure;
+namespace Neos\ContentRepository\DbalTools;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
@@ -115,7 +115,7 @@ final class DbalSchemaFactory
             ->setCustomSchemaOption('collation', 'ascii_general_ci');
     }
 
-    /**
+        /**
      * @param AbstractSchemaManager $schemaManager
      * @param Table[] $tables
      * @return Schema

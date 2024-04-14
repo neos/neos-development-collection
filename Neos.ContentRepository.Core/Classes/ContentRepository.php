@@ -26,7 +26,6 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -45,6 +44,8 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Psr\Clock\ClockInterface;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\Store\SemaphoreStore;
 
 /**
  * Main Entry Point to the system. Encapsulates the full event-sourced Content Repository.
@@ -160,13 +161,17 @@ final class ContentRepository
 
     public function catchUpProjections(): void
     {
+        $store = new SemaphoreStore();
+        $factory = new LockFactory($store);
+        $lock = $factory->createLock('catchup');
+        $lock->acquire(true);
         #print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
         $lowestAppliedSequenceNumber = null;
 
-        /** @var array<array{projection: ProjectionInterface<ProjectionStateInterface>, catchUpHook: CatchUpHookInterface|null}> $projectionsAndCatchUpHooks */
+        /** @var array<array{projection: ProjectionInterface<ProjectionStateInterface>, sequenceNumber: SequenceNumber, catchUpHook: CatchUpHookInterface|null}> $projectionsAndCatchUpHooks */
         $projectionsAndCatchUpHooks = [];
         foreach ($this->projectionsAndCatchUpHooks->projections as $projectionClassName => $projection) {
-            $projectionSequenceNumber = $projection->getCheckpointStorage()->acquireLock();
+            $projectionSequenceNumber = $projection->getCheckpoint();
             #\Neos\Flow\var_dump('ACQUIRE LOCK FOR ' . $projectionClassName . ': ' . $projectionSequenceNumber->value);
             if ($lowestAppliedSequenceNumber === null || $projectionSequenceNumber->value < $lowestAppliedSequenceNumber->value) {
                 $lowestAppliedSequenceNumber = $projectionSequenceNumber;
@@ -174,6 +179,7 @@ final class ContentRepository
             $catchUpHookFactory = $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection);
             $projectionsAndCatchUpHooks[$projectionClassName] = [
                 'projection' => $projection,
+                'sequenceNumber' => $projectionSequenceNumber,
                 'catchUpHook' => $catchUpHookFactory?->build($this),
             ];
             $projectionsAndCatchUpHooks[$projectionClassName]['catchUpHook']?->onBeforeCatchUp();
@@ -185,8 +191,11 @@ final class ContentRepository
         foreach ($eventStream as $eventEnvelope) {
             #\Neos\Flow\var_dump('EVENT ' . $eventEnvelope->event->type->value);
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
-            /** @var array{projection: ProjectionInterface<ProjectionStateInterface>, catchUpHook: CatchUpHookInterface|null} $projectionAndCatchUpHook */
+            /** @var array{projection: ProjectionInterface<ProjectionStateInterface>, sequenceNumber: SequenceNumber, catchUpHook: CatchUpHookInterface|null} $projectionAndCatchUpHook */
             foreach ($projectionsAndCatchUpHooks as $projectionClassName => $projectionAndCatchUpHook) {
+                if ($projectionAndCatchUpHook['sequenceNumber']->value >= $eventEnvelope->sequenceNumber->value) {
+                    continue;
+                }
                 #$projectionAndCatchUpHook['catchUpHook']?->onBeforeEvent($event, $eventEnvelope);
                 #\Neos\Flow\var_dump('APPLY ' . $eventEnvelope->event->type->value . ' (' . $eventEnvelope->sequenceNumber->value . ') TO ' . $projectionClassName);
                 #$futures[] = function () => $projectionAndCatchUpHook['projection']->apply($event, $eventEnvelope);
@@ -200,14 +209,15 @@ final class ContentRepository
             }
         }
         assert($eventEnvelope instanceof EventEnvelope);
-        /** @var array{projection: ProjectionInterface<ProjectionStateInterface>, catchUpHook: CatchUpHookInterface|null} $projectionAndCatchUpHook */
+        /** @var array{projection: ProjectionInterface<ProjectionStateInterface>, sequenceNumber: SequenceNumber, catchUpHook: CatchUpHookInterface|null} $projectionAndCatchUpHook */
         foreach ($projectionsAndCatchUpHooks as $projectionClassName => $projectionAndCatchUpHook) {
             $projectionAndCatchUpHook['catchUpHook']?->onBeforeBatchCompleted();
-            $projectionAndCatchUpHook['projection']->getCheckpointStorage()->updateAndReleaseLock($eventEnvelope->sequenceNumber);
+            #$projectionAndCatchUpHook['projection']->getCheckpointStorage()->updateAndReleaseLock($eventEnvelope->sequenceNumber);
             #\Neos\Flow\var_dump('UPDATE SQN FOR ' . $projectionClassName . ': ' . $eventEnvelope->sequenceNumber->value);
             #\Neos\Flow\var_dump('UPDATE CHECKPOINT for ' . $projectionClassName . ' to ' . $eventEnvelope->sequenceNumber->value);
             $projectionAndCatchUpHook['catchUpHook']?->onAfterCatchUp();
         }
+        $lock->release();
     }
 
     /**
@@ -220,30 +230,22 @@ final class ContentRepository
         $catchUpHookFactory = $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection);
         $catchUpHook = $catchUpHookFactory?->build($this);
 
-        // TODO allow custom stream name per projection
         $streamName = VirtualStreamName::all();
         $eventStream = $this->eventStore->load($streamName);
         if ($options->maximumSequenceNumber !== null) {
             $eventStream = $eventStream->withMaximumSequenceNumber($options->maximumSequenceNumber);
         }
-
-        $eventApplier = function (EventEnvelope $eventEnvelope) use ($projection, $catchUpHook, $options) {
+        foreach ($eventStream as $eventEnvelope) {
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
             if ($options->progressCallback !== null) {
                 ($options->progressCallback)($event, $eventEnvelope);
             }
             $catchUpHook?->onBeforeEvent($event, $eventEnvelope);
             $projection->apply($event, $eventEnvelope);
+            // TODO this should happen in the inner transaction
+            $catchUpHook?->onBeforeBatchCompleted();
             $catchUpHook?->onAfterEvent($event, $eventEnvelope);
-        };
-
-        $catchUp = CatchUp::create($eventApplier, $projection->getCheckpointStorage());
-
-        if ($catchUpHook !== null) {
-            $catchUpHook->onBeforeCatchUp();
-            $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
         }
-        $catchUp->run($eventStream);
         $catchUpHook?->onAfterCatchUp();
     }
 

@@ -11,17 +11,17 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/eventstore": "^1",
-        "neos/eventstore-doctrineadapter": "^1 || ^2",
         "php": "^8.2",
+        "neos/eventstore": "^1",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
-        "doctrine/dbal": "^2.13",
         "symfony/serializer": "^6.3",
         "psr/clock": "^1",
-        "behat/transliterator": "~1.0",
-        "ramsey/uuid": "^3.0 || ^4.0"
+        "behat/transliterator": "^1",
+        "ramsey/uuid": "^3 || ^4",
+        "symfony/lock": "^6",
+        "neos/contentrepository-dbaltools": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

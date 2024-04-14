@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\Core\Projection;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -21,7 +22,7 @@ use Neos\EventStore\Model\EventEnvelope;
 interface ProjectionInterface
 {
     /**
-     * Set up the projection state (create databases, call {@see CheckpointStorageInterface::setUp()}).
+     * Set up the projection state (create databases).
      */
     public function setUp(): void;
 
@@ -32,7 +33,7 @@ interface ProjectionInterface
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void;
 
-    public function getCheckpointStorage(): CheckpointStorageInterface;
+    public function getCheckpoint(): SequenceNumber;
 
     /**
      * NOTE: The ProjectionStateInterface returned must be ALWAYS THE SAME INSTANCE.

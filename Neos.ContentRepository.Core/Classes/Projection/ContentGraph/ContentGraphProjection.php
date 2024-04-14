@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
+use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -50,9 +50,9 @@ final class ContentGraphProjection implements ProjectionInterface, WithMarkStale
         $this->projectionImplementation->apply($event, $eventEnvelope);
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->projectionImplementation->getCheckpointStorage();
+        return $this->projectionImplementation->getCheckpoint();
     }
 
     public function markStale(): void

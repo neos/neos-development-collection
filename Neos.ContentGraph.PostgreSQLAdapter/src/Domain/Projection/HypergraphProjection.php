@@ -43,10 +43,9 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -76,7 +75,6 @@ final class HypergraphProjection implements ProjectionInterface
      * so that always the same instance is returned
      */
     private ?ContentHypergraph $contentHypergraph = null;
-    private DbalCheckpointStorage $checkpointStorage;
     private ProjectionHypergraph $projectionHypergraph;
 
     public function __construct(
@@ -87,11 +85,6 @@ final class HypergraphProjection implements ProjectionInterface
         private readonly string $tableNamePrefix,
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($this->databaseClient, $this->tableNamePrefix);
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->databaseClient->getConnection(),
-            $this->tableNamePrefix . '_checkpoint',
-            self::class
-        );
     }
 
 
@@ -109,18 +102,10 @@ final class HypergraphProjection implements ProjectionInterface
             create index if not exists restriction_affected
                 on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateids);
         ');
-        $this->checkpointStorage->setUp();
     }
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
             $this->getDatabaseConnection()->connect();
         } catch (\Throwable $e) {
@@ -133,6 +118,11 @@ final class HypergraphProjection implements ProjectionInterface
         }
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        try {
+            $this->getCheckpoint();
+        } catch (\Exception $exception) {
+            return ProjectionStatus::error($exception->getMessage());
         }
         return ProjectionStatus::ok();
     }
@@ -157,8 +147,7 @@ final class HypergraphProjection implements ProjectionInterface
     {
         $this->truncateDatabaseTables();
 
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        CheckpointHelper::resetCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix);
 
         //$contentGraph = $this->getState();
         //foreach ($contentGraph->getSubgraphs() as $subgraph) {
@@ -177,6 +166,7 @@ final class HypergraphProjection implements ProjectionInterface
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        $this->getDatabaseConnection()->beginTransaction();
         match ($event::class) {
             // ContentStreamForking
             ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
@@ -202,11 +192,13 @@ final class HypergraphProjection implements ProjectionInterface
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             default => null,
         };
+        CheckpointHelper::updateCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix, $eventEnvelope->sequenceNumber);
+        $this->getDatabaseConnection()->commit();
     }
 
-    public function getCheckpointStorage(): DbalCheckpointStorage
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->checkpointStorage;
+        return CheckpointHelper::getCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix);
     }
 
     public function getState(): ContentHypergraph
