@@ -200,9 +200,11 @@ trait NodeMove
                     $contentStreamId,
                     $command->dimensionSpacePoint,
                     $affectedDimensionSpacePoints,
+                    $command->nodeAggregateId,
                     $command->newSucceedingSiblingNodeAggregateId,
                     $command->newPrecedingSiblingNodeAggregateId,
-                    $command->newParentNodeAggregateId !== null,
+                    $command->newParentNodeAggregateId !== null
+                        || $command->newSucceedingSiblingNodeAggregateId === null && $command->newPrecedingSiblingNodeAggregateId === null,
                     $contentRepository
                 )
             )
@@ -241,12 +243,14 @@ trait NodeMove
     /**
      * @param bool $completeSet Whether unresolvable siblings should be added as null or not at all
      *                          True when a new parent is set, which will result of the node being added at the end
+     *                          True when no preceding sibling is given and the succeeding sibling is explicitly set to null, which will result of the node being added at the end
      *                          False when no new parent is set, which will result in the node not being moved
      */
     private function resolveInterdimensionalSiblingsForMove(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $selectedDimensionSpacePoint,
         DimensionSpacePointSet $affectedDimensionSpacePoints,
+        NodeAggregateId $nodeAggregateId,
         ?NodeAggregateId $succeedingSiblingId,
         ?NodeAggregateId $precedingSiblingId,
         bool $completeSet,
@@ -290,6 +294,10 @@ trait NodeMove
 
                 // check the other siblings succeeding in the selected dimension space point
                 foreach ($alternativeSucceedingSiblingIds ?: [] as $alternativeSucceedingSiblingId) {
+                    // the node itself is no valid succeeding sibling
+                    if ($alternativeSucceedingSiblingId->equals($nodeAggregateId)) {
+                        continue;
+                    }
                     $alternativeVariantSucceedingSibling = $variantSubgraph->findNodeById($alternativeSucceedingSiblingId);
                     if (!$alternativeVariantSucceedingSibling) {
                         continue;
@@ -312,6 +320,10 @@ trait NodeMove
                 } elseif ($alternativePrecedingSiblingIds) {
                     // check the other siblings preceding in the selected dimension space point
                     foreach ($alternativePrecedingSiblingIds as $alternativePrecedingSiblingId) {
+                        // the node itself is no valid preceding sibling
+                        if ($alternativePrecedingSiblingId->equals($nodeAggregateId)) {
+                            continue;
+                        }
                         $alternativeVariantSucceedingSibling = $variantSubgraph->findNodeById($alternativePrecedingSiblingId);
                         if ($alternativeVariantSucceedingSibling) {
                             // d) one of the further preceding siblings exists in this dimension space point
@@ -322,13 +334,21 @@ trait NodeMove
                 }
 
                 if ($variantPrecedingSiblingId) {
-                    $succeedingSibling = $variantSubgraph->findSucceedingSiblingNodes(
+                    // we fetch two siblings because the first might be the to-be-moved node itself
+                    $variantSucceedingSiblingIds = $variantSubgraph->findSucceedingSiblingNodes(
                         $variantPrecedingSiblingId,
-                        FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0))
-                    )->first();
+                        FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(2, 0))
+                    )->getIds();
+                    $relevantVariantSucceedingSiblingId = null;
+                    foreach ($variantSucceedingSiblingIds as $variantSucceedingSiblingId) {
+                        if (!$variantSucceedingSiblingId->equals($nodeAggregateId)) {
+                            $relevantVariantSucceedingSiblingId = $variantSucceedingSiblingId;
+                            break;
+                        }
+                    }
                     $interdimensionalSiblings[] = new InterdimensionalSibling(
                         $dimensionSpacePoint,
-                        $succeedingSibling?->nodeAggregateId,
+                        $relevantVariantSucceedingSiblingId,
                     );
                     continue;
                 }
