@@ -167,8 +167,6 @@ interface ContentGraphAdapterInterface
 
     public function findVersionForContentStream(): MaybeVersion;
 
-    public function contentStreamExists(): bool;
-
     /*
      * WORKSPACES
      */

@@ -185,7 +185,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId
     ): void {
         $contentGraphAdapter = $this->contentGraphAdapterProvider->fromContentStreamId($contentStreamId);
-        if (!$contentGraphAdapter->contentStreamExists()) {
+        if (!$contentGraphAdapter->hasContentStream()) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692

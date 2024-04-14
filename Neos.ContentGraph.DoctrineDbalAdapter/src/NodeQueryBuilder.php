@@ -74,8 +74,7 @@ class NodeQueryBuilder
 
     public function buildFindRootNodeAggregatesQuery(ContentStreamId $contentStreamId, FindRootNodeAggregatesFilter $filter): QueryBuilder
     {
-        $queryBuilder = $this->buildBasicNodeAggregateQuery();
-        $queryBuilder
+        $queryBuilder = $this->buildBasicNodeAggregateQuery()
             ->andWhere('h.parentnodeanchor = :rootEdgeParentAnchorId')
             ->setParameters([
                 'contentStreamId' => $contentStreamId->value,
@@ -83,9 +82,7 @@ class NodeQueryBuilder
             ]);
 
         if ($filter->nodeTypeName !== null) {
-            $queryBuilder
-                ->andWhere('n.nodetypename = :nodeTypeName')
-                ->setParameter('nodeTypeName', $filter->nodeTypeName->value);
+            $queryBuilder->andWhere('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $filter->nodeTypeName->value);
         }
 
         return $queryBuilder;

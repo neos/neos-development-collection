@@ -75,7 +75,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
     {
         try {
             return (bool)$this->findRootNodeAggregateByType($nodeTypeName);
-        } catch(\Exception $_) {
+        } catch (\Exception $_) {
         }
 
         return false;
@@ -225,12 +225,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
 
     public function subgraphContainsNodes(DimensionSpacePoint $dimensionSpacePoint): bool
     {
-        $queryBuilder = $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from($this->nodeQueryBuilder->getTablenameForNode(), 'n')
-            ->innerJoin('n', $this->nodeQueryBuilder->getTablenameForHierachyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->getContentStreamId()->value)
-            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->getContentStreamId(), $dimensionSpacePoint, 'n', 'COUNT(*)');
         try {
             $result = $this->executeQuery($queryBuilder)->fetchOne();
             if (!is_int($result)) {
@@ -253,8 +248,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
 
     public function findChildNodesInSubgraph(DimensionSpacePoint $coveredDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId): Nodes
     {
-        $filter = FindChildNodesFilter::create();
-        $queryBuilder = $this->buildChildNodesQuery($parentNodeAggregateId, $coveredDimensionSpacePoint, $filter);
+        $queryBuilder = $this->buildChildNodesQuery($parentNodeAggregateId, $coveredDimensionSpacePoint, FindChildNodesFilter::create());
         $queryBuilder->addOrderBy('h.position');
 
         return $this->fetchNodes($queryBuilder, $coveredDimensionSpacePoint);
@@ -292,12 +286,18 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
     public function hasContentStream(): bool
     {
         try {
-            $this->getContentStreamId();
+            /* @var $state string|false */
+            $state = $this->dbalConnection->executeQuery(
+                'SELECT state FROM cr_default_p_contentstream WHERE contentStreamId = :contentStreamId',
+                [
+                    'contentStreamId' => $this->getContentStreamId()->value,
+                ]
+            )->fetchOne();
+
+            return $state !== false;
         } catch (ContentStreamDoesNotExistYet $_) {
             return false;
         }
-
-        return true;
     }
 
     public function findStateForContentStream(): ?ContentStreamState
@@ -525,22 +525,6 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
         $this->contentStreamId = ContentStreamId::fromString($contentStreamIdString);
 
         return $this->contentStreamId;
-    }
-
-    public function contentStreamExists(): bool
-    {
-        /* @var $state string|false */
-        $state = $this->dbalConnection->executeQuery(
-            '
-            SELECT state FROM cr_default_p_contentstream
-                WHERE contentStreamId = :contentStreamId
-            ',
-            [
-                'contentStreamId' => $this->getContentStreamId()->value,
-            ]
-        )->fetchOne();
-
-        return $state === false ? false : true;
     }
 
     public function getWorkspace(): Workspace

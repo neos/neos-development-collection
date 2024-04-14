@@ -635,9 +635,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     private function applyPagination(QueryBuilder $queryBuilder, Pagination $pagination): void
     {
-        $queryBuilder
-            ->setMaxResults($pagination->limit)
-            ->setFirstResult($pagination->offset);
+        $queryBuilder->setMaxResults($pagination->limit)->setFirstResult($pagination->offset);
     }
 
     /**
