@@ -162,15 +162,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
     {
-        $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.subtreetags')
-            ->from($this->nodeQueryBuilder->getTablenameForNode(), 'n')
-            ->innerJoin('n', $this->nodeQueryBuilder->getTablenameForHierachyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
-            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
-            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->andWhere('n.classification = :nodeAggregateClassification')
-                ->setParameter('nodeAggregateClassification', NodeAggregateClassification::CLASSIFICATION_ROOT->value);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamId, $this->dimensionSpacePoint)
+            ->andWhere('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
+            ->andWhere('n.classification = :nodeAggregateClassification')->setParameter('nodeAggregateClassification', NodeAggregateClassification::CLASSIFICATION_ROOT->value);
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
@@ -273,7 +267,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $queryBuilderRecursive->andWhere('p.level < :maximumLevels')->setParameter('maximumLevels', $filter->maximumLevels);
         }
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilderRecursive, $filter->nodeTypes, 'c');
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderRecursive, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'c');
         }
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
@@ -366,7 +360,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint);
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilderCte, $filter->nodeTypes, 'pn');
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
         }
         $nodeRows = $this->fetchCteResults(
             $queryBuilderInitial,
@@ -404,21 +398,18 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function countNodes(): int
     {
-        $queryBuilder = $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from($this->nodeQueryBuilder->getTablenameForNode(), 'n')
-            ->innerJoin('n', $this->nodeQueryBuilder->getTablenameForHierachyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
-            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash);
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamId, $this->dimensionSpacePoint, 'n', 'COUNT(*)');
         try {
             $result = $this->executeQuery($queryBuilder)->fetchOne();
-            if (!is_int($result)) {
-                throw new \RuntimeException(sprintf('Expected result to be of type integer but got: %s', get_debug_type($result)), 1678366902);
-            }
-            return $result;
         } catch (DbalDriverException | DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to count all nodes: %s', $e->getMessage()), 1678364741, $e);
         }
+
+        if (!is_int($result)) {
+            throw new \RuntimeException(sprintf('Expected result to be of type integer but got: %s', get_debug_type($result)), 1678366902);
+        }
+
+        return $result;
     }
 
     public function jsonSerialize(): ContentSubgraphIdentity
@@ -456,17 +447,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
     }
 
-    private function addNodeTypeCriteria(QueryBuilder $queryBuilder, NodeTypeCriteria $nodeTypeCriteria, string $nodeTableAlias = 'n'): void
-    {
-        $constraintsWithSubNodeTypes = ExpandedNodeTypeCriteria::create($nodeTypeCriteria, $this->nodeTypeManager);
-        $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, $constraintsWithSubNodeTypes, $nodeTableAlias);
-    }
-
     private function buildChildNodesQuery(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter|CountChildNodesFilter $filter): QueryBuilder
     {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($parentNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint);
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilder, $filter->nodeTypes);
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }
         if ($filter->searchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
@@ -497,7 +482,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addSubtreeTagConstraints($queryBuilder, 'dh');
         $this->addSubtreeTagConstraints($queryBuilder, 'sh');
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilder, $filter->nodeTypes, "{$destinationTablePrefix}n");
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "{$destinationTablePrefix}n");
         }
         if ($filter->nodeSearchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "{$destinationTablePrefix}n");
@@ -510,9 +495,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
         if ($filter->referencePropertyValue !== null) {
             $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->referencePropertyValue, 'r');
-        }
-        if ($filter->nodePropertyValue !== null) {
-            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->nodePropertyValue, "{$destinationTablePrefix}n");
         }
         if ($filter->referenceName !== null) {
             $queryBuilder->andWhere('r.name = :referenceName')->setParameter('referenceName', $filter->referenceName->value);
@@ -538,7 +520,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         $this->addSubtreeTagConstraints($queryBuilder);
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilder, $filter->nodeTypes);
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }
         if ($filter->searchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
@@ -583,7 +565,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint);
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilderCte, $filter->nodeTypes, 'pn');
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
         }
         return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }
@@ -619,7 +601,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint, 'tree', 'n');
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilderCte, $filter->nodeTypes);
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }
         if ($filter->searchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilderCte, $filter->searchTerm);

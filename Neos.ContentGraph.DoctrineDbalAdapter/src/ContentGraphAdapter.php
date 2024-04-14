@@ -19,12 +19,13 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -32,8 +33,8 @@ use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -72,29 +73,34 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
 
     public function rootNodeAggregateWithTypeExists(NodeTypeName $nodeTypeName): bool
     {
-        $rootNodeAggregate = $this->findRootNodeAggregateByType($nodeTypeName);
-        return (bool)$rootNodeAggregate;
+        try {
+            return (bool)$this->findRootNodeAggregateByType($nodeTypeName);
+        } catch(\Exception $_) {
+        }
+
+        return false;
     }
 
     public function findRootNodeAggregateByType(NodeTypeName $nodeTypeName): ?NodeAggregate
     {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
-            ->where('h.contentstreamid = :contentStreamId')
-            ->andWhere('h.parentnodeanchor = :rootEdgeParentAnchorId')
-            ->setParameters([
-                'contentStreamId' => $this->getContentStreamId()->value,
-                'rootEdgeParentAnchorId' => NodeRelationAnchorPoint::forRootEdge()->value,
-            ]);
+        $rootNodeAggregateQueryBuilder = $this->nodeQueryBuilder->buildFindRootNodeAggregatesQuery($this->getContentStreamId(), FindRootNodeAggregatesFilter::create(nodeTypeName: $nodeTypeName));
+        $rootNodeAggregates = NodeAggregates::fromArray(iterator_to_array($this->mapQueryBuilderToNodeAggregates($rootNodeAggregateQueryBuilder)));
+        if ($rootNodeAggregates->count() < 1) {
+            throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
+        }
+        if ($rootNodeAggregates->count() > 1) {
+            $ids = [];
+            foreach ($rootNodeAggregates as $rootNodeAggregate) {
+                $ids[] = $rootNodeAggregate->nodeAggregateId->value;
+            }
+            throw new \RuntimeException(sprintf(
+                'More than one root node aggregate of type "%s" found (IDs: %s).',
+                $nodeTypeName->value,
+                implode(', ', $ids)
+            ));
+        }
 
-        $queryBuilder
-            ->andWhere('n.nodetypename = :nodeTypeName')
-            ->setParameter('nodeTypeName', $nodeTypeName->value);
-
-        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
-            $this->fetchRows($queryBuilder),
-            $this->getContentStreamId(),
-            VisibilityConstraints::withoutRestrictions()
-        );
+        return $rootNodeAggregates->first();
     }
 
     public function findParentNodeAggregates(NodeAggregateId $childNodeAggregateId): iterable
@@ -349,7 +355,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
     {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($parentNodeAggregateId, $this->getContentStreamId(), $dimensionSpacePoint);
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilder, $filter->nodeTypes);
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }
         if ($filter->searchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
@@ -431,7 +437,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeSiblingsQuery($preceding, $siblingNodeAggregateId, $this->getContentStreamId(), $dimensionSpacePoint);
 
         if ($filter->nodeTypes !== null) {
-            $this->addNodeTypeCriteria($queryBuilder, $filter->nodeTypes);
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }
         if ($filter->searchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
@@ -444,12 +450,6 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
         }
 
         return $queryBuilder;
-    }
-
-    private function addNodeTypeCriteria(QueryBuilder $queryBuilder, NodeTypeCriteria $nodeTypeCriteria, string $nodeTableAlias = 'n'): void
-    {
-        $constraintsWithSubNodeTypes = ExpandedNodeTypeCriteria::create($nodeTypeCriteria, $this->nodeTypeManager);
-        $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, $constraintsWithSubNodeTypes, $nodeTableAlias);
     }
 
     private function applyPagination(QueryBuilder $queryBuilder, Pagination $pagination): void
@@ -487,11 +487,6 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
         }
 
         return $this->nodeFactory->mapNodeRowsToNodes($nodeRows, $this->getContentStreamId(), $dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
-    }
-
-    private function createUniqueParameterName(): string
-    {
-        return 'param_' . UuidFactory::create();
     }
 
     public function getWorkspaceName(): WorkspaceName

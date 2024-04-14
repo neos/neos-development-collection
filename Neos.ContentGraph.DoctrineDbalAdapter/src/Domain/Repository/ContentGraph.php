@@ -20,7 +20,6 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphAdapter;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
@@ -79,7 +78,7 @@ final class ContentGraph implements ContentGraphInterface
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $this->tableNamePrefix);
     }
 
-    final public function getSubgraph(
+    public function getSubgraph(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
@@ -115,6 +114,9 @@ final class ContentGraph implements ContentGraphInterface
             FindRootNodeAggregatesFilter::create(nodeTypeName: $nodeTypeName)
         );
 
+        if ($rootNodeAggregates->count() < 1) {
+            throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
+        }
         if ($rootNodeAggregates->count() > 1) {
             $ids = [];
             foreach ($rootNodeAggregates as $rootNodeAggregate) {
@@ -127,33 +129,15 @@ final class ContentGraph implements ContentGraphInterface
             ));
         }
 
-        $rootNodeAggregate = $rootNodeAggregates->first();
-
-        if ($rootNodeAggregate === null) {
-            throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
-        }
-
-        return $rootNodeAggregate;
+        return $rootNodeAggregates->first();
     }
 
     public function findRootNodeAggregates(
         ContentStreamId $contentStreamId,
         FindRootNodeAggregatesFilter $filter,
     ): NodeAggregates {
-        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery();
-        $queryBuilder
-            ->andWhere('h.parentnodeanchor = :rootEdgeParentAnchorId')
-            ->setParameters([
-                'contentStreamId' => $contentStreamId->value,
-                'rootEdgeParentAnchorId' => NodeRelationAnchorPoint::forRootEdge()->value,
-            ]);
-
-        if ($filter->nodeTypeName !== null) {
-            $queryBuilder
-                ->andWhere('n.nodetypename = :nodeTypeName')
-                ->setParameter('nodeTypeName', $filter->nodeTypeName->value);
-        }
-        return NodeAggregates::fromArray(iterator_to_array($this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId)));
+        $rootNodeAggregateQueryBuilder = $this->nodeQueryBuilder->buildFindRootNodeAggregatesQuery($contentStreamId, $filter);
+        return NodeAggregates::fromArray(iterator_to_array($this->mapQueryBuilderToNodeAggregates($rootNodeAggregateQueryBuilder, $contentStreamId)));
     }
 
     public function findNodeAggregatesByType(

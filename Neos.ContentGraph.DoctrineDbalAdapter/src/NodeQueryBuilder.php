@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
@@ -7,7 +8,9 @@ use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\AndCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\NegateCriteria;
@@ -35,8 +38,7 @@ class NodeQueryBuilder
     public function __construct(
         private readonly Connection $connection,
         private readonly string $tableNamePrefix
-    )
-    {
+    ) {
     }
 
     public function buildBasicNodeAggregateQuery(): QueryBuilder
@@ -70,15 +72,39 @@ class NodeQueryBuilder
             ]);
     }
 
-    public function buildBasicNodeByIdQuery(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
+    public function buildFindRootNodeAggregatesQuery(ContentStreamId $contentStreamId, FindRootNodeAggregatesFilter $filter): QueryBuilder
+    {
+        $queryBuilder = $this->buildBasicNodeAggregateQuery();
+        $queryBuilder
+            ->andWhere('h.parentnodeanchor = :rootEdgeParentAnchorId')
+            ->setParameters([
+                'contentStreamId' => $contentStreamId->value,
+                'rootEdgeParentAnchorId' => NodeRelationAnchorPoint::forRootEdge()->value,
+            ]);
+
+        if ($filter->nodeTypeName !== null) {
+            $queryBuilder
+                ->andWhere('n.nodetypename = :nodeTypeName')
+                ->setParameter('nodeTypeName', $filter->nodeTypeName->value);
+        }
+
+        return $queryBuilder;
+    }
+
+    public function buildBasicNodeQuery(ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint, string $nodeTableAlias = 'n', string $select = 'n.*, h.name, h.subtreetags'): QueryBuilder
     {
         return $this->createQueryBuilder()
-            ->select('n.*, h.name, h.subtreetags')
-            ->from($this->getTablenameForNode(), 'n')
-            ->innerJoin('n', $this->getTablenameForHierachyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('n.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value)
-            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
+            ->select($select)
+            ->from($this->getTablenameForNode(), $nodeTableAlias)
+            ->innerJoin($nodeTableAlias, $this->getTablenameForHierachyRelation(), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint')
+            ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
+    }
+
+    public function buildBasicNodeByIdQuery(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
+    {
+        return $this->buildBasicNodeQuery($contentStreamId, $dimensionSpacePoint)
+            ->andWhere('n.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value);
     }
 
     public function buildBasicChildNodesQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
@@ -110,28 +136,17 @@ class NodeQueryBuilder
 
     public function buildBasicNodeSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
     {
-        $parentNodeAnchorSubQuery = $this->createQueryBuilder()
-            ->select('sh.parentnodeanchor')
+        $sharedSubQuery = $this->createQueryBuilder()
             ->from($this->getTablenameForHierachyRelation(), 'sh')
             ->innerJoin('sh', $this->getTablenameForNode(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->where('sn.nodeaggregateid = :siblingNodeAggregateId')
             ->andWhere('sh.contentstreamid = :contentStreamId')
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash');
 
-        $siblingPositionSubQuery = $this->createQueryBuilder()
-            ->select('sh.position')
-            ->from($this->getTablenameForHierachyRelation(), 'sh')
-            ->innerJoin('sh', $this->getTablenameForNode(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
-            ->where('sn.nodeaggregateid = :siblingNodeAggregateId')
-            ->andWhere('sh.contentstreamid = :contentStreamId')
-            ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash');
+        $parentNodeAnchorSubQuery = (clone $sharedSubQuery)->select('sh.parentnodeanchor');
+        $siblingPositionSubQuery = (clone $sharedSubQuery)->select('sh.position');
 
-        return $this->createQueryBuilder()
-            ->select('n.*, h.name, h.subtreetags')
-            ->from($this->getTablenameForNode(), 'n')
-            ->innerJoin('n', $this->getTablenameForHierachyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
-            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash)
+        return $this->buildBasicNodeQuery($contentStreamId, $dimensionSpacePoint)
             ->andWhere('h.parentnodeanchor = (' . $parentNodeAnchorSubQuery->getSQL() . ')')
             ->andWhere('n.nodeaggregateid != :siblingNodeAggregateId')->setParameter('siblingNodeAggregateId', $siblingNodeAggregateId->value)
             ->andWhere('h.position ' . ($preceding ? '<' : '>') . ' (' . $siblingPositionSubQuery->getSQL() . ')')
@@ -290,7 +305,7 @@ class NodeQueryBuilder
         }
         try {
             return $result->fetchAllAssociative();
-        } catch (DriverException|DBALException $e) {
+        } catch (DriverException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
         }
     }
