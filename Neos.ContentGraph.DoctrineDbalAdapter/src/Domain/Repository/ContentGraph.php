@@ -114,9 +114,6 @@ final class ContentGraph implements ContentGraphInterface
             FindRootNodeAggregatesFilter::create(nodeTypeName: $nodeTypeName)
         );
 
-        if ($rootNodeAggregates->count() < 1) {
-            throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
-        }
         if ($rootNodeAggregates->count() > 1) {
             $ids = [];
             foreach ($rootNodeAggregates as $rootNodeAggregate) {
@@ -127,6 +124,10 @@ final class ContentGraph implements ContentGraphInterface
                 $nodeTypeName->value,
                 implode(', ', $ids)
             ));
+        }
+
+        if (!$rootNodeAggregates->first()) {
+            throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
         }
 
         return $rootNodeAggregates->first();
