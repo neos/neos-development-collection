@@ -9,8 +9,8 @@ Feature: Move node to a new parent / within the current parent before a sibling 
 
   Background:
     Given using the following content dimensions:
-      | Identifier | Values                | Generalizations       |
-      | example    | general, source, spec | spec->source->general |
+      | Identifier | Values                      | Generalizations                      |
+      | example    | general, source, spec, peer | spec->source->general, peer->general |
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:Document': []
@@ -46,10 +46,12 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId            | originDimensionSpacePoint | nodeTypeName                                                 | parentNodeAggregateId      | nodeName              | tetheredDescendantNodeAggregateIds |
       | sir-david-nodenborough     | {"example": "source"}     | Neos.ContentRepository.Testing:DocumentWithTetheredChildNode | lady-eleonode-rootford     | document              | {"tethered": "nodewyn-tetherton"}  |
-      | nodimus-mediocre           | {"example": "source"}     | Neos.ContentRepository.Testing:Document                      | nodewyn-tetherton          | grandchild-document   | {}                                 |
       | sir-nodeward-nodington-iii | {"example": "source"}     | Neos.ContentRepository.Testing:Document                      | lady-eleonode-rootford     | esquire               | {}                                 |
       | anthony-destinode          | {"example": "spec"}       | Neos.ContentRepository.Testing:Document                      | lady-eleonode-rootford     | target-document       | {}                                 |
       | lady-abigail-nodenborough  | {"example": "spec"}       | Neos.ContentRepository.Testing:Document                      | sir-nodeward-nodington-iii | child-target-document | {}                                 |
+      | nodimus-prime              | {"example": "source"}     | Neos.ContentRepository.Testing:Document                      | sir-david-nodenborough     | child-document        | {}                                 |
+      | nodimus-mediocre           | {"example": "source"}     | Neos.ContentRepository.Testing:Document                      | nodimus-prime              | grandchild-document   | {}                                 |
+      | general-nodesworth         | {"example": "general"}    | Neos.ContentRepository.Testing:Document                      | lady-eleonode-rootford     | general-document      | {}                                 |
 
   Scenario: Try to move a node in a non-existing workspace:
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
@@ -189,8 +191,8 @@ Feature: Move node to a new parent / within the current parent before a sibling 
   Scenario: Using the gatherAll strategy, try to move a node to a parent that already has a child node of the same name in a generalization
     Given the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId      | nodeName        |
-      | rival-destinode  | {"example": "general"}    | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford     | target-document |
-      | nody-mc-nodeface | {"example": "source"}     | Neos.ContentRepository.Testing:Document | sir-nodeward-nodington-iii | target-document |
+      | rival-destinode  | {"example": "general"}    | Neos.ContentRepository.Testing:Document | general-nodesworth | target-document |
+      | nody-mc-nodeface | {"example": "source"}     | Neos.ContentRepository.Testing:Document | nodimus-prime              | target-document |
     # Remove the node with the conflicting name in all variants except the generalization
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                 |
@@ -209,7 +211,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | Key                          | Value                        |
       | dimensionSpacePoint          | {"example": "source"}        |
       | nodeAggregateId              | "nody-mc-nodeface"           |
-      | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
+      | newParentNodeAggregateId     | "general-nodesworth" |
       | relationDistributionStrategy | "gatherAll"                  |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
@@ -265,12 +267,12 @@ Feature: Move node to a new parent / within the current parent before a sibling 
   Scenario: Try to move existing node after a node which is not a child of the new parent
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                                | Value                        |
-      | dimensionSpacePoint                | {"example": "source"}        |
+      | dimensionSpacePoint                | {"example": "spec"}        |
       | nodeAggregateId                    | "sir-david-nodenborough"     |
       | newParentNodeAggregateId           | "anthony-destinode"          |
       | newPrecedingSiblingNodeAggregateId | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy       | "scatter"                    |
-    Then the last command should have thrown an exception of type "NodeAggregateIsNoSibling"
+    Then the last command should have thrown an exception of type "NodeAggregateIsNoChild"
 
   Scenario: Try to move existing node to a non-existing succeeding sibling
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
@@ -293,12 +295,12 @@ Feature: Move node to a new parent / within the current parent before a sibling 
   Scenario: Try to move existing node before a node which is not a child of the new parent
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                                 | Value                        |
-      | dimensionSpacePoint                 | {"example": "source"}        |
+      | dimensionSpacePoint                 | {"example": "spec"}        |
       | nodeAggregateId                     | "sir-david-nodenborough"     |
       | newParentNodeAggregateId            | "anthony-destinode"          |
       | newSucceedingSiblingNodeAggregateId | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy        | "scatter"                    |
-    Then the last command should have thrown an exception of type "NodeAggregateIsNoSibling"
+    Then the last command should have thrown an exception of type "NodeAggregateIsNoChild"
 
   Scenario: Try to move a node to one of its children
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:

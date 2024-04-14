@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+
 /**
  * An immutable, type-safe collection of Node objects
  *
@@ -193,5 +196,13 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
         return new self(array_slice($this->nodes, $referenceNodeIndex + 1));
+    }
+
+    public function getIds(): NodeAggregateIds
+    {
+        return NodeAggregateIds::create(...array_map(
+            fn (Node $node): NodeAggregateId => $node->nodeAggregateId,
+            $this->nodes
+        ));
     }
 }

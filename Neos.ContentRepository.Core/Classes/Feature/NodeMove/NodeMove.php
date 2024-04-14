@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeMove;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -43,6 +44,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -62,13 +65,30 @@ trait NodeMove
         ContentRepository $contentRepository
     ): NodeAggregate;
 
+    abstract protected function requireNodeAggregateToBeSibling(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $referenceNodeAggregateId,
+        NodeAggregateId $siblingNodeAggregateId,
+        DimensionSpacePoint $dimensionSpacePoint,
+        ContentRepository $contentRepository,
+    ): void;
+
+    abstract protected function requireNodeAggregateToBeChild(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId,
+        NodeAggregateId $parentNodAggregateId,
+        DimensionSpacePoint $dimensionSpacePoint,
+        ContentRepository $contentRepository,
+    ): void;
+
     /**
-     * @return EventsToPublish
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateIsDescendant
+     * @throws NodeAggregateIsNoSibling
+     * @throws NodeAggregateIsNoChild
      */
     private function handleMoveNodeAggregate(
         MoveNodeAggregate $command,
@@ -101,17 +121,19 @@ trait NodeMove
                 $contentRepository
             );
 
+            $newParentNodeAggregate = $this->requireProjectedNodeAggregate(
+                $contentStreamId,
+                $command->newParentNodeAggregateId,
+                $contentRepository
+            );
+
             $this->requireNodeNameToBeUncovered(
                 $contentStreamId,
                 $nodeAggregate->nodeName,
                 $command->newParentNodeAggregateId,
-                $affectedDimensionSpacePoints,
-                $contentRepository
-            );
-
-            $newParentNodeAggregate = $this->requireProjectedNodeAggregate(
-                $contentStreamId,
-                $command->newParentNodeAggregateId,
+                // We need to check all covered DSPs of the parent node aggregate to prevent siblings
+                // with different node aggregate IDs but the same name
+                $newParentNodeAggregate->coveredDimensionSpacePoints,
                 $contentRepository
             );
 
@@ -134,6 +156,23 @@ trait NodeMove
                 $command->newPrecedingSiblingNodeAggregateId,
                 $contentRepository
             );
+            if ($command->newParentNodeAggregateId) {
+                $this->requireNodeAggregateToBeChild(
+                    $contentStreamId,
+                    $command->newPrecedingSiblingNodeAggregateId,
+                    $command->newParentNodeAggregateId,
+                    $command->dimensionSpacePoint,
+                    $contentRepository
+                );
+            } else {
+                $this->requireNodeAggregateToBeSibling(
+                    $contentStreamId,
+                    $command->nodeAggregateId,
+                    $command->newPrecedingSiblingNodeAggregateId,
+                    $command->dimensionSpacePoint,
+                    $contentRepository
+                );
+            }
         }
         if ($command->newSucceedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
@@ -141,6 +180,23 @@ trait NodeMove
                 $command->newSucceedingSiblingNodeAggregateId,
                 $contentRepository
             );
+            if ($command->newParentNodeAggregateId) {
+                $this->requireNodeAggregateToBeChild(
+                    $contentStreamId,
+                    $command->newSucceedingSiblingNodeAggregateId,
+                    $command->newParentNodeAggregateId,
+                    $command->dimensionSpacePoint,
+                    $contentRepository
+                );
+            } else {
+                $this->requireNodeAggregateToBeSibling(
+                    $contentStreamId,
+                    $command->nodeAggregateId,
+                    $command->newSucceedingSiblingNodeAggregateId,
+                    $command->dimensionSpacePoint,
+                    $contentRepository
+                );
+            }
         }
 
         /** @var OriginNodeMoveMapping[] $originNodeMoveMappings */
