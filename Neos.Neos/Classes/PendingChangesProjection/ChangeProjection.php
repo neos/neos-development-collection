@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
@@ -183,7 +184,7 @@ class ChangeProjection implements ProjectionInterface
     {
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
-            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
+            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event, $eventEnvelope),
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
             NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
@@ -230,18 +231,22 @@ class ChangeProjection implements ProjectionInterface
         }
     }
 
-    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
+    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event, EventEnvelope $eventEnvelope): void
     {
-        // WORKAROUND: we simply use the first MoveNodeMapping here to find the dimension space point
-        // @todo properly handle this
-        /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping[] $mapping */
-        $mapping = iterator_to_array($event->nodeMoveMappings);
+        // Changes reflect the editorial intention, not the effect as they are later published via commands
+        $metadata = $eventEnvelope->event->metadata?->value ?? [];
+        if (isset($metadata['commandPayload'])) {
+            $command = MoveNodeAggregate::fromArray($metadata['commandPayload']);
+            // WORKAROUND: we simply use the command's DSP here as the origin dimension space point.
+            // But this DSP is not necessarily occupied.
+            // @todo properly handle this by storing the necessary information in the projection
 
-        $this->markAsMoved(
-            $event->getContentStreamId(),
-            $event->getNodeAggregateId(),
-            $mapping[0]->movedNodeOrigin
-        );
+            $this->markAsMoved(
+                $event->getContentStreamId(),
+                $event->getNodeAggregateId(),
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($command->dimensionSpacePoint)
+            );
+        }
     }
 
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
