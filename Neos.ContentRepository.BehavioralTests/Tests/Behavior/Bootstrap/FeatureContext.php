@@ -16,6 +16,7 @@ require_once(__DIR__ . '/../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests
 
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Doctrine\DBAL\Connection;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Behat\FlowBootstrapTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
@@ -28,7 +29,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
@@ -59,7 +59,7 @@ class FeatureContext implements BehatContext
     {
         self::bootstrapFlow();
 
-        $this->dbalClient = $this->getObject(DbalClientInterface::class);
+        $this->dbal = $this->getObject(Connection::class);
         $this->setUpInterleavingLogger();
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
     }

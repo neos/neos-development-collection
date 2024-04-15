@@ -198,6 +198,9 @@
             "Neos\\ContentRepositoryRegistry\\": [
                 "Neos.ContentRepositoryRegistry/Classes"
             ],
+            "Neos\\ContentRepository\\DbalTools\\": [
+                "Neos.ContentRepository.DbalTools/Classes"
+            ],
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
             ],

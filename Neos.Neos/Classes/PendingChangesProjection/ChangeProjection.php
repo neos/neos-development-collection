@@ -35,7 +35,6 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -67,7 +66,7 @@ class ChangeProjection implements ProjectionInterface
     private ?array $liveContentStreamIdsRuntimeCache = null;
 
     public function __construct(
-        private readonly DbalClientInterface $dbalClient,
+        private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
     ) {
     }
@@ -76,15 +75,15 @@ class ChangeProjection implements ProjectionInterface
     public function setUp(): void
     {
         foreach ($this->determineRequiredSqlStatements() as $statement) {
-            $this->getDatabaseConnection()->executeStatement($statement);
+            $this->dbal->executeStatement($statement);
         }
-        CheckpointHelper::resetCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix);
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix);
     }
 
     public function status(): ProjectionStatus
     {
         try {
-            $this->getDatabaseConnection()->connect();
+            $this->dbal->connect();
         } catch (\Throwable $e) {
             return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
         }
@@ -109,8 +108,7 @@ class ChangeProjection implements ProjectionInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $connection = $this->dbalClient->getConnection();
-        $schemaManager = $connection->getSchemaManager();
+        $schemaManager = $this->dbal->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
@@ -143,19 +141,19 @@ class ChangeProjection implements ProjectionInterface
         $checkpointTable = CheckpointHelper::checkpointTableSchema($this->tableNamePrefix);
 
         $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $liveContentStreamsTable, $checkpointTable]);
-        return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
+        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 
     public function reset(): void
     {
-        $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix);
-        $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
-        CheckpointHelper::resetCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix);
+        $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix);
+        $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix);
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        $this->getDatabaseConnection()->beginTransaction();
+        $this->dbal->beginTransaction();
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
             NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
@@ -171,20 +169,20 @@ class ChangeProjection implements ProjectionInterface
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             default => null,
         };
-        CheckpointHelper::updateCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix, $eventEnvelope->sequenceNumber);
-        $this->getDatabaseConnection()->commit();
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNamePrefix, $eventEnvelope->sequenceNumber);
+        $this->dbal->commit();
     }
 
     public function getCheckpoint(): SequenceNumber
     {
-        return CheckpointHelper::getCheckpoint($this->getDatabaseConnection(), $this->tableNamePrefix);
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix);
     }
 
     public function getState(): ChangeFinder
     {
         if (!$this->changeFinder) {
             $this->changeFinder = new ChangeFinder(
-                $this->dbalClient,
+                $this->dbal,
                 $this->tableNamePrefix
             );
         }
@@ -194,7 +192,7 @@ class ChangeProjection implements ProjectionInterface
     private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
         try {
-            $this->getDatabaseConnection()->insert($this->tableNamePrefix . '_livecontentstreams', [
+            $this->dbal->insert($this->tableNamePrefix . '_livecontentstreams', [
                 'contentStreamId' => $event->newContentStreamId->value,
                 'workspaceName' => $event->workspaceName->value,
             ]);
@@ -278,7 +276,7 @@ class ChangeProjection implements ProjectionInterface
             return;
         }
 
-        $this->getDatabaseConnection()->executeUpdate(
+        $this->dbal->executeUpdate(
             'DELETE FROM ' . $this->tableNamePrefix . '
                 WHERE
                     contentStreamId = :contentStreamId
@@ -297,7 +295,7 @@ class ChangeProjection implements ProjectionInterface
         );
 
         foreach ($event->affectedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
-            $this->getDatabaseConnection()->executeUpdate(
+            $this->dbal->executeUpdate(
                 'INSERT INTO ' . $this->tableNamePrefix . '
                         (contentStreamId, nodeAggregateId, originDimensionSpacePoint,
                          originDimensionSpacePointHash, created, deleted, changed, moved, removalAttachmentPoint)
@@ -326,7 +324,7 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
-        $this->getDatabaseConnection()->executeStatement(
+        $this->dbal->executeStatement(
             '
             UPDATE ' . $this->tableNamePrefix . ' c
                 SET
@@ -434,10 +432,10 @@ class ChangeProjection implements ProjectionInterface
         if ($change === null) {
             $change = new Change($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, false, false, false, false);
             $modifyFn($change);
-            $change->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $change->addToDatabase($this->dbal, $this->tableNamePrefix);
         } else {
             $modifyFn($change);
-            $change->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $change->updateToDatabase($this->dbal, $this->tableNamePrefix);
         }
     }
 
@@ -446,7 +444,7 @@ class ChangeProjection implements ProjectionInterface
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
     ): ?Change {
-        $changeRow = $this->getDatabaseConnection()->executeQuery(
+        $changeRow = $this->dbal->executeQuery(
             'SELECT n.* FROM ' . $this->tableNamePrefix . ' n
 WHERE n.contentStreamId = :contentStreamId
 AND n.nodeAggregateId = :nodeAggregateId
@@ -462,18 +460,10 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
         return $changeRow ? Change::fromDatabaseRow($changeRow) : null;
     }
 
-    /**
-     * @return Connection
-     */
-    private function getDatabaseConnection(): Connection
-    {
-        return $this->dbalClient->getConnection();
-    }
-
     private function isLiveContentStream(ContentStreamId $contentStreamId): bool
     {
         if ($this->liveContentStreamIdsRuntimeCache === null) {
-            $this->liveContentStreamIdsRuntimeCache = $this->getDatabaseConnection()->fetchFirstColumn('SELECT contentstreamid FROM ' . $this->tableNamePrefix . '_livecontentstreams');
+            $this->liveContentStreamIdsRuntimeCache = $this->dbal->fetchFirstColumn('SELECT contentstreamid FROM ' . $this->tableNamePrefix . '_livecontentstreams');
         }
         return in_array($contentStreamId->value, $this->liveContentStreamIdsRuntimeCache, true);
     }

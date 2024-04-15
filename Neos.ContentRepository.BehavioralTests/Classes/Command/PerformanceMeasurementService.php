@@ -51,7 +51,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly EventPersister $eventPersister,
         private readonly ContentRepository $contentRepository,
-        private readonly Connection $connection,
+        private readonly Connection $dbal,
         private readonly ContentRepositoryId $contentRepositoryId
     ) {
         $this->contentStreamId = contentStreamId::fromString('cs-identifier');
@@ -71,7 +71,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
     public function removeEverything(): void
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
-        $this->connection->executeStatement('TRUNCATE ' . $this->connection->quoteIdentifier($eventTableName));
+        $this->dbal->executeStatement('TRUNCATE ' . $this->dbal->quoteIdentifier($eventTableName));
         $this->contentRepository->resetProjectionStates();
     }
 

@@ -14,7 +14,7 @@ Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFact
     1:
       value: Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory
     2:
-      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
+      object: 'Doctrine\DBAL\Connection'
 
 Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
   scope: singleton
@@ -23,4 +23,4 @@ Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
     1:
       value: Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory
     2:
-      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
+      object: 'Doctrine\DBAL\Connection'

@@ -24,7 +24,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPo
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -70,7 +69,7 @@ final class ContentGraph implements ContentGraphInterface
     private array $subgraphs = [];
 
     public function __construct(
-        private readonly DbalClientInterface $client,
+        private readonly Connection $dbal,
         private readonly NodeFactory $nodeFactory,
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
@@ -91,7 +90,7 @@ final class ContentGraph implements ContentGraphInterface
                     $contentStreamId,
                     $dimensionSpacePoint,
                     $visibilityConstraints,
-                    $this->client,
+                    $this->dbal,
                     $this->nodeFactory,
                     $this->nodeTypeManager,
                     $this->tableNamePrefix
@@ -395,7 +394,7 @@ final class ContentGraph implements ContentGraphInterface
 
     private function createQueryBuilder(): QueryBuilder
     {
-        return $this->client->getConnection()->createQueryBuilder();
+        return $this->dbal->createQueryBuilder();
     }
 
     /**

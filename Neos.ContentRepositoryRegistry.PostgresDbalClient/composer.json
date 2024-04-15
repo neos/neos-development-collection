@@ -13,10 +13,5 @@
     },
     "provide": {
         "neos/contentrepositoryregistry-storageclient": "self.version"
-    },
-    "autoload": {
-        "psr-4": {
-            "Neos\\ContentRepositoryRegistry\\PostgresDbalClient\\": "Classes"
-        }
     }
 }

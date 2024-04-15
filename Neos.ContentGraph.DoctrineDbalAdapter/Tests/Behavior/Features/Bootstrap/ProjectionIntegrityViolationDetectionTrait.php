@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
@@ -26,7 +27,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
-use Neos\ContentRepositoryRegistry\DoctrineDbalClient\DoctrineDbalClient;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use PHPUnit\Framework\Assert;
@@ -40,7 +40,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 {
     use CRTestSuiteRuntimeVariables;
 
-    private DoctrineDbalClient $dbalClient;
+    private Connection $dbal;
 
     protected Result $lastIntegrityViolationDetectionResult;
 
@@ -61,7 +61,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     public function setupDbalGraphAdapterIntegrityViolationTrait()
     {
-        $this->dbalClient = $this->getObject(DoctrineDbalClient::class);
+        $this->dbal = $this->getObject(Connection::class);
     }
 
     /**
@@ -79,7 +79,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         if (!$subtreeTags->contain($subtreeTagToRemove)) {
             throw new \RuntimeException(sprintf('Failed to remove subtree tag "%s" because that tag is not set', $subtreeTagToRemove->value), 1708618267);
         }
-        $this->dbalClient->getConnection()->update(
+        $this->dbal->update(
             $this->getTableNamePrefix() . '_hierarchyrelation',
             [
                 'subtreetags' => json_encode($subtreeTags->without($subtreeTagToRemove), JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
@@ -96,7 +96,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
-        $this->dbalClient->getConnection()->insert(
+        $this->dbal->insert(
             $this->getTableNamePrefix() . '_hierarchyrelation',
             $record
         );
@@ -113,7 +113,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         unset($record['position']);
 
-        $this->dbalClient->getConnection()->update(
+        $this->dbal->update(
             $this->getTableNamePrefix() . '_hierarchyrelation',
             [
                 'dimensionspacepointhash' => $dataset['newDimensionSpacePointHash']
@@ -133,7 +133,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         unset($record['position']);
 
-        $this->dbalClient->getConnection()->update(
+        $this->dbal->update(
             $this->getTableNamePrefix() . '_hierarchyrelation',
             [
                 'name' => $dataset['newName']
@@ -157,7 +157,7 @@ trait ProjectionIntegrityViolationDetectionTrait
             'childnodeanchor' => $this->findRelationAnchorPointByDataset($dataset)
         ];
 
-        $this->dbalClient->getConnection()->update(
+        $this->dbal->update(
             $this->getTableNamePrefix() . '_hierarchyrelation',
             [
                 'position' => $dataset['newPosition']
@@ -175,7 +175,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
-        $this->dbalClient->getConnection()->update(
+        $this->dbal->update(
             $this->getTableNamePrefix() . '_referencerelation',
             [
                 'nodeanchorpoint' => 7777777
@@ -193,7 +193,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
-        $this->dbalClient->getConnection()->update(
+        $this->dbal->update(
             $this->getTableNamePrefix() . '_referencerelation',
             [
                 'position' => $dataset['newPosition']
@@ -263,7 +263,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
     ): array {
-        $nodeRecord = $this->dbalClient->getConnection()->executeQuery(
+        $nodeRecord = $this->dbal->executeQuery(
             'SELECT h.*
                 FROM ' . $this->getTableNamePrefix() . '_node n
                 INNER JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation h
@@ -299,7 +299,7 @@ trait ProjectionIntegrityViolationDetectionTrait
      */
     public function iRunIntegrityViolationDetection(): void
     {
-        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService(new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbalClient));
+        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService(new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbal));
         $this->lastIntegrityViolationDetectionResult = $projectionIntegrityViolationDetectionRunner->run();
     }
 

@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Connection as DatabaseConnection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphParentQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphQuery;
-use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -45,24 +45,18 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class ContentHypergraph implements ContentGraphInterface
 {
-    private PostgresDbalClientInterface $databaseClient;
-
-    private NodeFactory $nodeFactory;
-
     /**
      * @var array|ContentSubhypergraph[]
      */
     private array $subhypergraphs;
 
     public function __construct(
-        PostgresDbalClientInterface $databaseClient,
-        NodeFactory $nodeFactory,
+        private readonly Connection $dbal,
+        private readonly NodeFactory $nodeFactory,
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix
     ) {
-        $this->databaseClient = $databaseClient;
-        $this->nodeFactory = $nodeFactory;
     }
 
     public function getSubgraph(
@@ -77,7 +71,7 @@ final class ContentHypergraph implements ContentGraphInterface
                 $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints,
-                $this->databaseClient,
+                $this->dbal,
                 $this->nodeFactory,
                 $this->nodeTypeManager,
                 $this->tableNamePrefix
@@ -141,7 +135,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = HypergraphQuery::create($contentStreamId, $this->tableNamePrefix, true);
         $query = $query->withNodeAggregateId($nodeAggregateId);
 
-        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
@@ -177,7 +171,7 @@ final class ContentHypergraph implements ContentGraphInterface
             'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->hash
         ];
 
-        $nodeRows = $this->getDatabaseConnection()->executeQuery(
+        $nodeRows = $this->dbal->executeQuery(
             $query,
             $parameters
         )->fetchAllAssociative();
@@ -198,7 +192,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $query = HypergraphParentQuery::create($contentStreamId, $this->tableNamePrefix);
         $query = $query->withChildNodeAggregateId($childNodeAggregateId);
 
-        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
@@ -219,7 +213,7 @@ final class ContentHypergraph implements ContentGraphInterface
             $this->tableNamePrefix
         );
 
-        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
@@ -242,7 +236,7 @@ final class ContentHypergraph implements ContentGraphInterface
         );
         $query = $query->withChildNodeName($name);
 
-        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
@@ -264,7 +258,7 @@ final class ContentHypergraph implements ContentGraphInterface
         );
         $query = $query->withOnlyTethered();
 
-        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
     }
@@ -287,7 +281,7 @@ final class ContentHypergraph implements ContentGraphInterface
             ->withDimensionSpacePoints($dimensionSpacePointsToCheck);
 
         $occupiedDimensionSpacePoints = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $row) {
+        foreach ($query->execute($this->dbal)->fetchAllAssociative() as $row) {
             $occupiedDimensionSpacePoints[$row['dimensionspacepointhash']]
                 = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
         }
@@ -303,7 +297,7 @@ final class ContentHypergraph implements ContentGraphInterface
     {
         $query = 'SELECT COUNT(*) FROM ' . $this->tableNamePrefix . '_node';
 
-        return $this->getDatabaseConnection()->executeQuery($query)->fetchOne();
+        return $this->dbal->executeQuery($query)->fetchOne();
     }
 
     /**
@@ -312,10 +306,5 @@ final class ContentHypergraph implements ContentGraphInterface
     public function findUsedNodeTypeNames(): iterable
     {
         return [];
-    }
-
-    private function getDatabaseConnection(): DatabaseConnection
-    {
-        return $this->databaseClient->getConnection();
     }
 }

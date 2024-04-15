@@ -1,0 +1,9 @@
+## uncomment the following lines in order to change the default implementation of the content graph projection
+#Neos:
+#  ContentRepositoryRegistry:
+#    presets:
+#      'default':
+#        projections:
+#          # NOTE: the following name should be stable, because there must only be a single content graph projection per content repository
+#          'Neos.ContentRepository:ContentGraph':
+#            factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory
