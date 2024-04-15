@@ -97,7 +97,6 @@ Feature: Sibling positions are properly resolved
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
       | Name           | NodeDiscriminator                                                |
-      | document       | cs-identifier;sir-david-nodenborough;{"example": "general"}      |
       | esquire        | cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}  |
       | nodington-i    | cs-identifier;lady-nodette-nodington-i;{"example": "general"}    |
       | nodington-ii   | cs-identifier;lady-nodette-nodington-ii;{"example": "general"}   |
