@@ -201,6 +201,7 @@ trait NodeMove
                     $command->dimensionSpacePoint,
                     $affectedDimensionSpacePoints,
                     $command->nodeAggregateId,
+                    $command->newParentNodeAggregateId,
                     $command->newSucceedingSiblingNodeAggregateId,
                     $command->newPrecedingSiblingNodeAggregateId,
                     $command->newParentNodeAggregateId !== null
@@ -241,6 +242,8 @@ trait NodeMove
     }
 
     /**
+     * @param ?NodeAggregateId $parentNodeAggregateId the parent node aggregate ID to validate variant siblings against.
+     *      If no new parent is given, the siblings are validated against the parent of the to-be-moved node in the respective dimension space point.
      * @param bool $completeSet Whether unresolvable siblings should be added as null or not at all
      *                          True when a new parent is set, which will result of the node being added at the end
      *                          True when no preceding sibling is given and the succeeding sibling is explicitly set to null, which will result of the node being added at the end
@@ -251,6 +254,7 @@ trait NodeMove
         DimensionSpacePoint $selectedDimensionSpacePoint,
         DimensionSpacePointSet $affectedDimensionSpacePoints,
         NodeAggregateId $nodeAggregateId,
+        ?NodeAggregateId $parentNodeAggregateId,
         ?NodeAggregateId $succeedingSiblingId,
         ?NodeAggregateId $precedingSiblingId,
         bool $completeSet,
@@ -283,7 +287,9 @@ trait NodeMove
             );
             if ($succeedingSiblingId) {
                 $variantSucceedingSibling = $variantSubgraph->findNodeById($succeedingSiblingId);
-                if ($variantSucceedingSibling) {
+                $variantParentId = $parentNodeAggregateId ?: $variantSubgraph->findParentNode($nodeAggregateId)?->nodeAggregateId;
+                $siblingParent = $variantSubgraph->findParentNode($succeedingSiblingId);
+                if ($variantSucceedingSibling && $siblingParent && $variantParentId?->equals($siblingParent->nodeAggregateId)) {
                     // a) happy path, the explicitly requested succeeding sibling also exists in this dimension space point
                     $interdimensionalSiblings[] = new InterdimensionalSibling(
                         $dimensionSpacePoint,
@@ -302,6 +308,10 @@ trait NodeMove
                     if (!$alternativeVariantSucceedingSibling) {
                         continue;
                     }
+                    $siblingParent = $variantSubgraph->findParentNode($alternativeSucceedingSiblingId);
+                    if (!$siblingParent || !$variantParentId?->equals($siblingParent->nodeAggregateId)) {
+                        continue;
+                    }
                     // b) one of the further succeeding sibling exists in this dimension space point
                     $interdimensionalSiblings[] = new InterdimensionalSibling(
                         $dimensionSpacePoint,
@@ -314,7 +324,9 @@ trait NodeMove
             if ($precedingSiblingId) {
                 $variantPrecedingSiblingId = null;
                 $variantPrecedingSibling = $variantSubgraph->findNodeById($precedingSiblingId);
-                if ($variantPrecedingSibling) {
+                $variantParentId = $parentNodeAggregateId ?: $variantSubgraph->findParentNode($nodeAggregateId)?->nodeAggregateId;
+                $siblingParent = $variantSubgraph->findParentNode($precedingSiblingId);
+                if ($variantPrecedingSibling && $siblingParent && $variantParentId->equals($siblingParent->nodeAggregateId)) {
                     // c) happy path, the explicitly requested preceding sibling also exists in this dimension space point
                     $variantPrecedingSiblingId = $precedingSiblingId;
                 } elseif ($alternativePrecedingSiblingIds) {
@@ -322,6 +334,10 @@ trait NodeMove
                     foreach ($alternativePrecedingSiblingIds as $alternativePrecedingSiblingId) {
                         // the node itself is no valid preceding sibling
                         if ($alternativePrecedingSiblingId->equals($nodeAggregateId)) {
+                            continue;
+                        }
+                        $siblingParent = $variantSubgraph->findParentNode($alternativePrecedingSiblingId);
+                        if (!$siblingParent || !$variantParentId->equals($siblingParent->nodeAggregateId)) {
                             continue;
                         }
                         $alternativeVariantSucceedingSibling = $variantSubgraph->findNodeById($alternativePrecedingSiblingId);
