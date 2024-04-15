@@ -62,7 +62,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -95,7 +95,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -123,7 +123,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -156,7 +156,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -186,7 +186,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -197,7 +197,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
@@ -208,7 +208,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
@@ -219,7 +219,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -247,7 +247,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -258,7 +258,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -269,7 +269,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
@@ -280,7 +280,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -311,7 +311,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -321,30 +321,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -373,7 +373,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -383,30 +383,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -445,7 +445,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -455,30 +455,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag1"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag1"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -515,7 +515,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -525,30 +525,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag1"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -585,7 +585,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -595,30 +595,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag1"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -655,7 +655,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -665,30 +665,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag1"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -725,7 +725,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -735,30 +735,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag2"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag2"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -795,7 +795,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -805,30 +805,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag2"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -865,7 +865,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -875,30 +875,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag2"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag2"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -935,7 +935,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -945,30 +945,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag2"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -1228,7 +1228,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -1239,7 +1239,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag1"
 
@@ -1250,7 +1250,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -1379,7 +1379,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag2"
 
@@ -1427,7 +1427,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -1437,30 +1437,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag2"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with "tag1"
     And I expect this node to be tagged with "tag2"
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -1571,30 +1571,30 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -1633,23 +1633,23 @@ Feature: Move a node aggregate into and out of a tagged parent
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
-    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
+    Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
@@ -1695,7 +1695,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -1706,7 +1706,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;nodimus-prime,{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
@@ -1728,7 +1728,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -1846,7 +1846,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
@@ -1857,7 +1857,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag1"
 
@@ -2078,7 +2078,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-devid-nodenborough;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with ""
 
@@ -2629,7 +2629,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
+    And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to tag with ""
     And I expect this node to be tagged with "tag2"
 
