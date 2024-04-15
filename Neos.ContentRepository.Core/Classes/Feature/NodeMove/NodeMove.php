@@ -326,7 +326,7 @@ trait NodeMove
                 $variantPrecedingSibling = $variantSubgraph->findNodeById($precedingSiblingId);
                 $variantParentId = $parentNodeAggregateId ?: $variantSubgraph->findParentNode($nodeAggregateId)?->nodeAggregateId;
                 $siblingParent = $variantSubgraph->findParentNode($precedingSiblingId);
-                if ($variantPrecedingSibling && $siblingParent && $variantParentId->equals($siblingParent->nodeAggregateId)) {
+                if ($variantPrecedingSibling && $siblingParent && $variantParentId?->equals($siblingParent->nodeAggregateId)) {
                     // c) happy path, the explicitly requested preceding sibling also exists in this dimension space point
                     $variantPrecedingSiblingId = $precedingSiblingId;
                 } elseif ($alternativePrecedingSiblingIds) {
@@ -337,7 +337,7 @@ trait NodeMove
                             continue;
                         }
                         $siblingParent = $variantSubgraph->findParentNode($alternativePrecedingSiblingId);
-                        if (!$siblingParent || !$variantParentId->equals($siblingParent->nodeAggregateId)) {
+                        if (!$siblingParent || !$variantParentId?->equals($siblingParent->nodeAggregateId)) {
                             continue;
                         }
                         $alternativeVariantSucceedingSibling = $variantSubgraph->findNodeById($alternativePrecedingSiblingId);
