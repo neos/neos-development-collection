@@ -304,10 +304,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
     {
         /* @var $state string|false */
         $state = $this->dbalConnection->executeQuery(
-            '
-            SELECT state FROM cr_default_p_contentstream
-                WHERE contentStreamId = :contentStreamId
-            ',
+            'SELECT state FROM cr_default_p_contentstream WHERE contentStreamId = :contentStreamId',
             [
                 'contentStreamId' => $this->getContentStreamId()->value,
             ]
@@ -320,10 +317,7 @@ class ContentGraphAdapter implements ContentGraphAdapterInterface
     {
         /* @var $version int|false */
         $version = $this->dbalConnection->executeQuery(
-            '
-            SELECT version FROM cr_default_p_contentstream
-                WHERE contentStreamId = :contentStreamId
-            ',
+            'SELECT version FROM cr_default_p_contentstream WHERE contentStreamId = :contentStreamId',
             [
                 'contentStreamId' => $this->getContentStreamId()->value,
             ]

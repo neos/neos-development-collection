@@ -224,8 +224,6 @@ trait GenericCommandExecutionAndEventPublication
                 $actual = DimensionSpacePointSet::fromArray($actualValue);
                 Assert::assertTrue($expected->equals($actual), 'Actual Dimension Space Point set "' . json_encode($actualValue) . '" does not match expected Dimension Space Point set "' . $assertionTableRow['Expected'] . '"');
             } else {
-//                die();
-//                exit;
                 Assert::assertJsonStringEqualsJsonString($assertionTableRow['Expected'], json_encode($actualValue));
             }
         }
