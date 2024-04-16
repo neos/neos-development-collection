@@ -8,17 +8,16 @@
     "require": {
         "neos/flow-development-collection": "9.0.x-dev",
         "doctrine/dbal": "^2.8",
-        "doctrine/migrations": "*",
-        "neos/eventstore": "^1",
-        "neos/eventstore-doctrineadapter": "^1 || ^2",
         "php": "^8.2",
+        "neos/eventstore": "^1",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
         "symfony/serializer": "^6.3",
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",
-        "ramsey/uuid": "^3.0 || ^4.0",
+        "ramsey/uuid": "^3 || ^4",
+        "symfony/lock": "^6",
         "league/flysystem": "^3",
         "webmozart/assert": "^1.11",
         "neos/flow": "*",
@@ -128,6 +127,7 @@
             "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
+            "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
             "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml"
         ],
         "test:behavioral:sync": [
@@ -140,6 +140,7 @@
             "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
             "@test:behat-cli -vvv --stop-on-failure -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
+            "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
             "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml"
         ],
         "test:behavioral:stop-on-failure:sync": [
@@ -168,6 +169,9 @@
             "Neos\\ContentRepository\\Core\\": [
                 "Neos.ContentRepository.Core/Classes"
             ],
+            "Neos\\ContentRepository\\DbalTools\\": [
+                "Neos.ContentRepository.DbalTools/Classes"
+            ],
             "Neos\\ContentRepository\\Export\\": [
                 "Neos.ContentRepository.Export/src/"
             ],
@@ -186,20 +190,11 @@
             "Neos\\ContentRepository\\TestSuite\\": [
                 "Neos.ContentRepository.TestSuite/Classes"
             ],
-            "Neos\\ContentRepositoryRegistry\\DoctrineDbalClient\\": [
-                "Neos.ContentRepositoryRegistry.DoctrineDbalClient/Classes"
-            ],
-            "Neos\\ContentRepositoryRegistry\\PostgresDbalClient\\": [
-                "Neos.ContentRepositoryRegistry.PostgresDbalClient/Classes"
-            ],
             "Neos\\ContentRepositoryRegistry\\TestSuite\\": [
                 "Neos.ContentRepositoryRegistry.TestSuite/Classes"
             ],
             "Neos\\ContentRepositoryRegistry\\": [
                 "Neos.ContentRepositoryRegistry/Classes"
-            ],
-            "Neos\\ContentRepository\\DbalTools\\": [
-                "Neos.ContentRepository.DbalTools/Classes"
             ],
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
@@ -273,6 +268,9 @@
             ],
             "Neos\\ContentRepository\\Core\\Tests\\": [
                 "Neos.ContentRepository.Core/Tests"
+            ],
+            "Neos\\ContentRepository\\DbalTools\\Tests\\": [
+                "Neos.ContentRepository.DbalTools/Tests"
             ],
             "Neos\\ContentRepository\\LegacyNodeMigration\\Tests\\": [
                 "Neos.ContentRepository.LegacyNodeMigration/Tests"
