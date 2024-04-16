@@ -2,8 +2,9 @@
 
 namespace Neos\ContentRepository\Core\Feature;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphAdapterFactory;
-use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
  * This allows you to combine constructor injection with dependencies from
@@ -15,5 +16,9 @@ use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
  */
 interface ContentGraphAdapterFactoryBuilderInterface
 {
-    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies): ContentGraphAdapterFactory;
+    public function build(
+        ContentRepositoryId $contentRepositoryId,
+        NodeTypeManager $nodeTypeManager,
+        PropertyConverter $propertyConverter
+    ): ContentGraphAdapterFactoryInterface;
 }

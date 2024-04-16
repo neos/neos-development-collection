@@ -67,6 +67,7 @@ final class ContentRepositoryFactory
             $contentDimensionSource,
             $contentDimensionZookeeper
         );
+        $propertyConverter = new PropertyConverter($propertySerializer);
         $this->projectionFactoryDependencies = new ProjectionFactoryDependencies(
             $contentRepositoryId,
             $eventStore,
@@ -79,7 +80,11 @@ final class ContentRepositoryFactory
         );
         $this->projectionsAndCatchUpHooks = $projectionsAndCatchUpHooksFactory->build($this->projectionFactoryDependencies);
 
-        $this->contentGraphAdapterProvider = new ContentGraphAdapterProvider($contentGraphAdapterFactoryBuilder->build($this->projectionFactoryDependencies));
+        $this->contentGraphAdapterProvider = new ContentGraphAdapterProvider($contentGraphAdapterFactoryBuilder->build(
+            $this->contentRepositoryId,
+            $nodeTypeManager,
+            $propertyConverter
+        ));
     }
 
     // The following properties store "singleton" references of objects for this content repository
