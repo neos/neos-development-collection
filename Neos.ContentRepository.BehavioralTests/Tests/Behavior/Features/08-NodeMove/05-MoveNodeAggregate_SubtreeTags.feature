@@ -63,46 +63,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move an untagged node to a new parent that tags itself partially
     Given the command TagSubtree is executed with payload:
@@ -124,46 +124,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   # move untagged to tagged
 
@@ -187,46 +187,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move an untagged node to a new parent that is partially tagged by its ancestors
     Given the command TagSubtree is executed with payload:
@@ -248,46 +248,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   # move tagging to untagged
 
@@ -312,46 +312,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself partially to a new, untagged parent
 
@@ -374,46 +374,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   # move tagging to tagging
 
@@ -446,46 +446,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself to a new parent that tags the same, partially
 
@@ -516,46 +516,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself partially to a new parent that tags the same
 
@@ -586,46 +586,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself partially to a new parent that tags the same, partially
 
@@ -656,46 +656,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself to a new parent that tags differently
 
@@ -726,46 +726,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1,tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1,tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself to a new parent that tags differently, partially
 
@@ -796,46 +796,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1,tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself partially to a new parent that tags differently
 
@@ -866,46 +866,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1,tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself partially to a new parent that tags differently, partially
 
@@ -936,46 +936,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1,tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   # move tagging to tagged
 
@@ -1008,46 +1008,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself to a new parent that is tagged the same, partially
 
@@ -1078,46 +1078,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself partially to a new parent that is tagged the same
 
@@ -1148,46 +1148,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself partially to a new parent that is tagged the same, partially
 
@@ -1218,46 +1218,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself to a new parent that is tagged differently
 
@@ -1288,46 +1288,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1,tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1,tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself to a new parent that is tagged differently, partially
 
@@ -1358,46 +1358,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1,tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself partially to a new parent that tags differently
 
@@ -1428,46 +1428,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1,tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a node that tags itself partially to a new parent that is tagged differently, partially
 
@@ -1498,46 +1498,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1,tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1,tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   # move tagged to untagged
 
@@ -1562,46 +1562,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a partially tagged node to a new, untagged parent
 
@@ -1624,46 +1624,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   # move tagged to tagging
 
@@ -1696,46 +1696,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a tagged node to a new parent that tags the same, partially
 
@@ -1766,46 +1766,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with "tag1"
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a partially tagged node to a new parent that tags the same
 
@@ -1836,46 +1836,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a partially tagged node to a new parent that tags the same, partially
 
@@ -1906,46 +1906,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a tagged node to a new parent that tags differently
 
@@ -1976,46 +1976,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a tagged node to a new parent that tags differently, partially
 
@@ -2046,46 +2046,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a partially tagged node to a new parent that tags differently
 
@@ -2116,46 +2116,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a partially tagged node to a new parent that tags differently, partially
 
@@ -2186,46 +2186,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   # move tagged to tagged
 
@@ -2258,46 +2258,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a tagged node to a new parent that is tagged the same, partially
 
@@ -2328,46 +2328,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a partially tagged node to a new parent that is tagged the same
 
@@ -2398,46 +2398,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a partially tagged node to a new parent that is tagged the same, partially
 
@@ -2468,46 +2468,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag1"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag1"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a tagged node to a new parent that is tagged differently
 
@@ -2538,46 +2538,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a tagged node to a new parent that is tagged differently, partially
 
@@ -2608,46 +2608,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a partially tagged node to a new parent that is tagged differently
 
@@ -2678,46 +2678,46 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Move a partially tagged node to a new parent that is tagged differently, partially
 
@@ -2748,43 +2748,43 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with "tag2"
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "tag2"
 
     When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
-    And I expect this node to tag with ""
-    And I expect this node to be tagged with ""
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
