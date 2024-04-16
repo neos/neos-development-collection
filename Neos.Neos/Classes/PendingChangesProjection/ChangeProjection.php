@@ -21,12 +21,12 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
@@ -233,18 +233,19 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event, EventEnvelope $eventEnvelope): void
     {
-        // Changes reflect the editorial intention, not the effect as they are later published via commands
-        $metadata = $eventEnvelope->event->metadata?->value ?? [];
-        if (isset($metadata['commandPayload'])) {
-            $command = MoveNodeAggregate::fromArray($metadata['commandPayload']);
-            // WORKAROUND: we simply use the command's DSP here as the origin dimension space point.
+        $affectedDimensionSpacePoints = iterator_to_array($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet());
+        $arbitraryDimensionSpacePoint = reset($affectedDimensionSpacePoints);
+        if ($arbitraryDimensionSpacePoint instanceof DimensionSpacePoint) {
+            // always the case due to constraint enforcement (at least one DSP is selected and must have a succeeding sibling or null)
+
+            // WORKAROUND: we simply use the event's first DSP here as the origin dimension space point.
             // But this DSP is not necessarily occupied.
             // @todo properly handle this by storing the necessary information in the projection
 
             $this->markAsMoved(
                 $event->getContentStreamId(),
                 $event->getNodeAggregateId(),
-                OriginDimensionSpacePoint::fromDimensionSpacePoint($command->dimensionSpacePoint)
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryDimensionSpacePoint)
             );
         }
     }
