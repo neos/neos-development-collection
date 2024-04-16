@@ -92,7 +92,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         try {
             $this->getCheckpoint();
         } catch (\Exception $exception) {
-            return ProjectionStatus::error($exception->getMessage());
+            return ProjectionStatus::error('Error while retrieving checkpoint: ' . $exception->getMessage());
         }
         return ProjectionStatus::ok();
     }
