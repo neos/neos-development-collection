@@ -10,6 +10,7 @@
         "doctrine/dbal": "^2.8",
         "php": "^8.2",
         "neos/eventstore": "^1",
+        "neos/eventstore-doctrineadapter": "^1 || ^2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
