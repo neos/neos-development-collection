@@ -98,9 +98,13 @@ trait NodeMove
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->dimensionSpacePoint);
 
+        $relationDistributionStrategy = $command->relationDistributionStrategy
+            ?: $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName)?->getRelationDistributionStrategy()
+            ?: RelationDistributionStrategy::STRATEGY_GATHER_ALL;
+
         $affectedDimensionSpacePoints = $this->resolveAffectedDimensionSpacePointSet(
             $nodeAggregate,
-            $command->relationDistributionStrategy,
+            $relationDistributionStrategy,
             $command->dimensionSpacePoint
         );
 

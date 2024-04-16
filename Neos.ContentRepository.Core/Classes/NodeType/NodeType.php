@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
@@ -287,11 +288,17 @@ final class NodeType
      * - Recursive copying only happens *inside* this aggregate, and stops at nested aggregates.
      *
      * @return boolean true if the node type is an aggregate
+     * @deprecated this is no longer a supported concept. use {@see getRelationDistributionStrategy} instead for default move behavior
      * @api
      */
     public function isAggregate(): bool
     {
         return $this->getConfiguration('aggregate') === true;
+    }
+
+    public function getRelationDistributionStrategy(): RelationDistributionStrategy
+    {
+        return RelationDistributionStrategy::fromString($this->getConfiguration('relationDistributionStrategy'));
     }
 
     /**
