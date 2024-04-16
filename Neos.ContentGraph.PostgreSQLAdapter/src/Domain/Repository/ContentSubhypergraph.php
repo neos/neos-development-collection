@@ -529,11 +529,6 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         return $currentNode;
     }
 
-    private function getDatabaseConnection(): DatabaseConnection
-    {
-        return $this->dbal;
-    }
-
     public function jsonSerialize(): ContentSubgraphIdentity
     {
         return $this->getIdentity();
