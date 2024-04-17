@@ -125,7 +125,7 @@ final class ContentRepository
             $eventsToPublish->expectedVersion,
         );
 
-        $this->eventPersister->publishEvents($eventsToPublish);
+        $this->eventPersister->publishEvents($this, $eventsToPublish);
         return new class {
             /**
              * @deprecated backwards compatibility layer

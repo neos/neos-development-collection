@@ -97,7 +97,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
             $remediation = $adjustment->remediation;
             $eventsToPublish = $remediation();
             assert($eventsToPublish instanceof EventsToPublish);
-            $this->eventPersister->publishEvents($eventsToPublish);
+            $this->eventPersister->publishEvents($this->contentRepository, $eventsToPublish);
         }
     }
 }

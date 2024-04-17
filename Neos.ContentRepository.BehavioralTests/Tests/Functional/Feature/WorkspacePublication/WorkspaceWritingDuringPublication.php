@@ -43,7 +43,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\DefaultCatchUpTrigger;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use PHPUnit\Framework\Assert;

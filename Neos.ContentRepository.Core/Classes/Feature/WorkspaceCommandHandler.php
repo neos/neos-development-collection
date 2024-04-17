@@ -247,6 +247,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         $this->publishContentStream(
+            $contentRepository,
             $workspace->currentContentStreamId,
             $baseWorkspace->currentContentStreamId
         );
@@ -281,6 +282,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Exception
      */
     private function publishContentStream(
+        ContentRepository $contentRepository,
         ContentStreamId $contentStreamId,
         ContentStreamId $baseContentStreamId,
     ): void {
@@ -332,6 +334,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
         try {
             $this->eventPersister->publishEvents(
+                $contentRepository,
                 new EventsToPublish(
                     $baseWorkspaceContentStreamName->getEventStreamName(),
                     Events::fromArray($events),
@@ -540,6 +543,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
             // 5) take EVENTS(MATCHING) and apply them to base WS.
             $this->publishContentStream(
+                $contentRepository,
                 $command->contentStreamIdForMatchingPart,
                 $baseWorkspace->currentContentStreamId
             );

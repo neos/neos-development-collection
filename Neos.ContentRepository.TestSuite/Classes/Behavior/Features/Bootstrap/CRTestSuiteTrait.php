@@ -49,7 +49,6 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\Subtre
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\DefaultCatchUpTrigger;
 use Neos\EventStore\EventStoreInterface;
 use PHPUnit\Framework\Assert;
 

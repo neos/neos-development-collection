@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\EventStore;
 
-use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\EventStore\EventStoreInterface;
@@ -23,7 +23,6 @@ final class EventPersister
 {
     public function __construct(
         private readonly EventStoreInterface $eventStore,
-        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
         private readonly EventNormalizer $eventNormalizer,
         private readonly Projections $projections,
     ) {
@@ -33,7 +32,7 @@ final class EventPersister
      * @param EventsToPublish $eventsToPublish
      * @throws ConcurrencyException in case the expectedVersion does not match
      */
-    public function publishEvents(EventsToPublish $eventsToPublish): void
+    public function publishEvents(ContentRepository $contentRepository, EventsToPublish $eventsToPublish): void
     {
         if ($eventsToPublish->events->isEmpty()) {
             return;
@@ -53,7 +52,7 @@ final class EventPersister
                 $projection->markStale();
             }
         }
-        $this->projectionCatchUpTrigger->triggerCatchUp();
+        $contentRepository->catchUpProjections();
     }
 
     private function normalizeEvent(EventInterface|DecoratedEvent $event): Event
