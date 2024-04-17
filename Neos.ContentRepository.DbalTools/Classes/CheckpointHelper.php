@@ -33,7 +33,7 @@ final class CheckpointHelper
     public static function checkpointTableSchema(string $tableNamePrefix): Table
     {
         return (new Table($tableNamePrefix . self::CHECKPOINT_TABLE_NAME_SUFFIX, [
-            (new Column('id', Type::getType(Types::INTEGER)))->setCustomSchemaOption('check', 'CHECK (id = 0)'),
+            (new Column('id', Type::getType(Types::INTEGER)))->setPlatformOption('check', 'CHECK (id = 0)'),
             (new Column('appliedsequencenumber', Type::getType(Types::INTEGER))),
         ]))
             ->setPrimaryKey(['id']);
