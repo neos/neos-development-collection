@@ -131,7 +131,7 @@ final class ContentRepository
             $eventsToPublish->expectedVersion,
         );
 
-        return $this->eventPersister->publishEvents($eventsToPublish);
+        return $this->eventPersister->publishEvents($this, $eventsToPublish);
     }
 
 
