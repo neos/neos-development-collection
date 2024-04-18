@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\BehavioralTests\Command;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Cli\CommandController;
-use Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushing;
+use Neos\Neos\Fusion\Cache\ContentRepositoryHookForCacheFlushing;
 
 final class PerformanceMeasurementCommandController extends CommandController
 {
@@ -46,7 +46,7 @@ final class PerformanceMeasurementCommandController extends CommandController
     {
         $this->performanceMeasurementService->removeEverything();
         $this->outputLine("All removed. Starting to fill.");
-        GraphProjectorCatchUpHookForCacheFlushing::disabled(
+        ContentRepositoryHookForCacheFlushing::disabled(
             fn() => $this->performanceMeasurementService->createNodesForPerformanceTest($nodesPerLevel, $levels)
         );
     }

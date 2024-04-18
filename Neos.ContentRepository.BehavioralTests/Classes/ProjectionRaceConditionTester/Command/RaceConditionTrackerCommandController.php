@@ -23,7 +23,7 @@ use Neos\Utility\Files;
 use Symfony\Component\Console\Helper\Table;
 
 /**
- * For full docs and context, see {@see RaceTrackerCatchUpHook}
+ * For full docs and context, see {@see RaceTrackerContentRepositoryHook}
  *
  * @internal
  */

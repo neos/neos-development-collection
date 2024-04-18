@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\Neos\FrontendRouting\CatchUpHook;
+namespace Neos\Neos\FrontendRouting\ContentRepositoryHook;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -10,7 +10,7 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
-use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryHookInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
@@ -18,7 +18,7 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 
-final class RouterCacheHook implements CatchUpHookInterface
+final class RouterCacheHook implements ContentRepositoryHookInterface
 {
     /**
      * Runtime cache to collect tags until they can get flushed.
@@ -37,31 +37,26 @@ final class RouterCacheHook implements CatchUpHookInterface
         // Nothing to do here
     }
 
-    public function onBeforeEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
+    public function onBeforeEvent(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        match ($eventInstance::class) {
-            NodeAggregateWasRemoved::class => $this->onBeforeNodeAggregateWasRemoved($eventInstance),
-            NodePropertiesWereSet::class => $this->onBeforeNodePropertiesWereSet($eventInstance),
-            NodeAggregateWasMoved::class => $this->onBeforeNodeAggregateWasMoved($eventInstance),
-            SubtreeWasTagged::class => $this->onBeforeSubtreeWasTagged($eventInstance),
+        match ($event::class) {
+            NodeAggregateWasRemoved::class => $this->onBeforeNodeAggregateWasRemoved($event),
+            NodePropertiesWereSet::class => $this->onBeforeNodePropertiesWereSet($event),
+            NodeAggregateWasMoved::class => $this->onBeforeNodeAggregateWasMoved($event),
+            SubtreeWasTagged::class => $this->onBeforeSubtreeWasTagged($event),
             default => null
         };
     }
 
-    public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
+    public function onAfterEvent(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        match ($eventInstance::class) {
+        match ($event::class) {
             NodeAggregateWasRemoved::class => $this->flushAllCollectedTags(),
             NodePropertiesWereSet::class => $this->flushAllCollectedTags(),
             NodeAggregateWasMoved::class => $this->flushAllCollectedTags(),
             SubtreeWasTagged::class => $this->flushAllCollectedTags(),
             default => null
         };
-    }
-
-    public function onBeforeBatchCompleted(): void
-    {
-        // Nothing to do here
     }
 
     public function onAfterCatchUp(): void
@@ -168,7 +163,6 @@ final class RouterCacheHook implements CatchUpHookInterface
         if ($this->tagsToFlush === []) {
             return;
         }
-
         $this->routerCachingService->flushCachesByTags($this->tagsToFlush);
         $this->tagsToFlush = [];
     }

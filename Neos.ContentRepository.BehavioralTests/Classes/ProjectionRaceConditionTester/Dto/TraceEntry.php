@@ -16,14 +16,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto;
 
-use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHook;
+use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerContentRepositoryHook;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableCellStyle;
 
 /**
  * Value object for a single trace entry, as stored in Redis.
  *
- * For full docs and context, see {@see RaceTrackerCatchUpHook}
+ * For full docs and context, see {@see RaceTrackerContentRepositoryHook}
  *
  * @internal
  */

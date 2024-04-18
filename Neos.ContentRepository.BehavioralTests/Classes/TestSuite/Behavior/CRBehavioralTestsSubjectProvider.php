@@ -163,7 +163,7 @@ trait CRBehavioralTestsSubjectProvider
          *
          * This was an actual bug which bit us and made our tests unstable :D :D
          *
-         * How did we find this? By the virtue of our Race Tracker (Docs: see {@see RaceTrackerCatchUpHook}), which
+         * How did we find this? By the virtue of our Race Tracker (Docs: see {@see RaceTrackerContentRepositoryHook}), which
          * checks for events being applied multiple times to a projection.
          * ... and additionally by using {@see logToRaceConditionTracker()} to find the interleavings between the
          * Catch Up process and the testcase reset.
