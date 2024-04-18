@@ -2,7 +2,6 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
-use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterFactoryBuilderInterface;
 use Neos\ContentRepository\Core\Feature\ContentGraphAdapterFactoryInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
@@ -24,5 +23,4 @@ class ContentGraphAdapterFactoryBuilder implements ContentGraphAdapterFactoryBui
     {
         return new ContentGraphAdapterFactory($this->dbalClient->getConnection(), $contentRepositoryId, $nodeTypeManager, $propertyConverter);
     }
-
 }
