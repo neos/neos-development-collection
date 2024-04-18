@@ -15,6 +15,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -135,10 +136,11 @@ class NodeHelperTest extends AbstractFusionObjectTest
                 ]
             ],
             new NodeTypeManager(
-                fn () => [],
-                new DefaultNodeLabelGeneratorFactory()
+                new ClosureNodeTypeProvider(
+                    fn () => [],
+                    new DefaultNodeLabelGeneratorFactory()
+                )
             ),
-            new DefaultNodeLabelGeneratorFactory()
         );
 
         $textNodeProperties = new PropertyCollection(

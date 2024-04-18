@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
  * source code.
  */
 
+use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -43,8 +44,10 @@ class NodeTypeManagerTest extends TestCase
     protected function prepareNodeTypeManager(array $nodeTypesFixtureData)
     {
         $this->nodeTypeManager = new NodeTypeManager(
-            fn() => $nodeTypesFixtureData,
-            new DefaultNodeLabelGeneratorFactory()
+            new ClosureNodeTypeProvider(
+                fn() => $nodeTypesFixtureData,
+                new DefaultNodeLabelGeneratorFactory()
+            )
         );
     }
 
@@ -447,24 +450,12 @@ class NodeTypeManagerTest extends TestCase
     public function rootNodeTypeIsAlwaysPresent()
     {
         $nodeTypeManager = new NodeTypeManager(
-            fn() => [],
-            new DefaultNodeLabelGeneratorFactory()
+            new ClosureNodeTypeProvider(
+                fn() => [],
+                new DefaultNodeLabelGeneratorFactory()
+            )
         );
         self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
         self::assertInstanceOf(NodeType::class, $nodeTypeManager->getNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
-    }
-
-    /**
-     * @test
-     */
-    public function rootNodeTypeIsPresentAfterOverride()
-    {
-        $nodeTypeManager = new NodeTypeManager(
-            fn() => [],
-            new DefaultNodeLabelGeneratorFactory()
-        );
-        $nodeTypeManager->overrideNodeTypes(['Some:NewNodeType' => []]);
-        self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::fromString('Some:NewNodeType')));
-        self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
     }
 }

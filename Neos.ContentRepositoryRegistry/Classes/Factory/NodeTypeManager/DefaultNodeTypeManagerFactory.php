@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\NodeTypeManager;
 
+use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Configuration\NodeTypeEnrichmentService;
@@ -20,11 +21,13 @@ readonly class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryIn
     public function build(ContentRepositoryId $contentRepositoryId, array $options): NodeTypeManager
     {
         return new NodeTypeManager(
-            function () {
-                $configuration = $this->configurationManager->getConfiguration('NodeTypes');
-                return $this->nodeTypeEnrichmentService->enrichNodeTypeLabelsConfiguration($configuration);
-            },
-            $this->nodeLabelGeneratorFactory
+            new ClosureNodeTypeProvider(
+                function () {
+                    $configuration = $this->configurationManager->getConfiguration('NodeTypes');
+                    return $this->nodeTypeEnrichmentService->enrichNodeTypeLabelsConfiguration($configuration);
+                },
+                $this->nodeLabelGeneratorFactory
+            )
         );
     }
 }

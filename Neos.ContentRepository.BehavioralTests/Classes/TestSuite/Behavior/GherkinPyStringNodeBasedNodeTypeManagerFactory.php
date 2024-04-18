@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\TestSuite\Behavior;
 
 use Behat\Gherkin\Node\PyStringNode;
+use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -45,18 +46,20 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
     public static function initializeWithPyStringNode(PyStringNode $nodeTypesToUse): void
     {
         self::$nodeTypesToUse = new NodeTypeManager(
-            fn (): array => Yaml::parse($nodeTypesToUse->getRaw()) ?? [],
-            new class implements NodeLabelGeneratorFactoryInterface {
-                public function create(NodeType $nodeType): NodeLabelGeneratorInterface
-                {
-                    return new class implements NodeLabelGeneratorInterface {
-                        public function getLabel(Node $node): string
-                        {
-                            return $node->nodeTypeName->value;
-                        }
-                    };
+            new ClosureNodeTypeProvider(
+                fn (): array => Yaml::parse($nodeTypesToUse->getRaw()) ?? [],
+                new class implements NodeLabelGeneratorFactoryInterface {
+                    public function create(NodeType $nodeType): NodeLabelGeneratorInterface
+                    {
+                        return new class implements NodeLabelGeneratorInterface {
+                            public function getLabel(Node $node): string
+                            {
+                                return $node->nodeTypeName->value;
+                            }
+                        };
+                    }
                 }
-            }
+            )
         );
     }
 
