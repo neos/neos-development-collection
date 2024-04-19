@@ -56,7 +56,7 @@ class FusionViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function fusionVieReturnsStreamInterface()
+    public function fusionViewReturnsStreamInterface()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->assign('test', 'Hallo Welt');

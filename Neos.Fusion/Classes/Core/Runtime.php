@@ -954,9 +954,9 @@ class Runtime
     /**
      * Implements the legacy controller context simulation {@see self::getControllerContext()}
      *
-     * Initially it was possible to mutate the current response of the active MVC controller though $response.
+     * Initially it was possible to mutate the current response of the active MVC controller through $response.
      * While HIGHLY internal behaviour and ONLY to be used by Neos.Fusion.Form or Neos.Neos:Plugin
-     * this legacy layer is in place still allows this functionality.
+     * this legacy layer is in place to still allow this functionality.
      *
      * @param \Closure(): (ResponseInterface|StreamInterface) $renderer
      */
@@ -968,6 +968,7 @@ class Runtime
         $this->legacyActionResponseForCurrentRendering = new ActionResponse();
 
         // actual rendering
+        $httpResponseOrStream = null;
         try {
             $httpResponseOrStream = $renderer();
         } finally {

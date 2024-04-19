@@ -105,10 +105,10 @@ final class LegacyFusionControllerContext
      *
      * Gives access to the legacy mutable action response simulation {@see Runtime::withSimulatedLegacyControllerContext()}
      *
-     * Initially it was possible to mutate the current response of the active MVC controller though this getter.
+     * Initially it was possible to mutate the current response of the active MVC controller through this getter.
      *
      * While *HIGHLY* internal behaviour and *ONLY* to be used by Neos.Fusion.Form or Neos.Neos:Plugin
-     * this legacy layer is in place still allows this functionality.
+     * this legacy layer is in place to still allow this functionality.
      *
      * @deprecated with Neos 9.0 can be removed with 10
      * @internal THIS SHOULD NEVER BE CALLED ON USER-LAND

@@ -35,7 +35,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     /**
      * TODO THIS IS HACKY AS WE CREATE AN OWN VIEW
      *
-     * We do that as the FusionView (rightfully) does return mixed anymore.
+     * We do that as the FusionView (rightfully) doesn't return mixed anymore.
      *
      * We could instead also rewrite all tests to use the Runtime instead.
      *
