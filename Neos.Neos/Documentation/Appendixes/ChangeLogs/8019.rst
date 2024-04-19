@@ -1,0 +1,17 @@
+`8.0.19 (2024-04-19) <https://github.com/neos/neos-development-collection/releases/tag/8.0.19>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Update plupload library to latest 2.3.9 <https://github.com/neos/neos-development-collection/pull/5004>`_
+----------------------------------------------------------------------------------------------------------------
+
+Backport of https://github.com/neos/neos-development-collection/pull/5003 for 7.3
+
+Fixes https://github.com/advisories/GHSA-rp2c-jrgp-cvr8: https://nvd.nist.gov/vuln/detail/CVE-2021-23562
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.0.18...8.0.19>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
