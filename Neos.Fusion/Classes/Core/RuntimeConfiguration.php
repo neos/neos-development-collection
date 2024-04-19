@@ -73,6 +73,7 @@ final class RuntimeConfiguration
         $pathUntilNow = '';
         $fusionPathLength = strlen($fusionPath);
         $offset = $fusionPathLength;
+        $currentPrototypeDefinitions = [];
         while (($offset = strrpos($fusionPath, '/', -($fusionPathLength - $offset + 1))) != false) {
             $pathPrefix = substr($fusionPath, 0, $offset);
             if (isset($this->pathCache[$pathPrefix])) {
