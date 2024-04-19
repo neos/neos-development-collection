@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal implementation details of command handlers
@@ -40,6 +41,7 @@ trait TetheredNodeInternals
     abstract protected function getPropertyConverter(): PropertyConverter;
 
     abstract protected function createEventsForVariations(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
@@ -88,6 +90,7 @@ trait TetheredNodeInternals
                     $rootGeneralizationOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($rootGeneralization);
                     if ($creationOriginDimensionSpacePoint) {
                         $events[] = new NodePeerVariantWasCreated(
+                            WorkspaceName::fromString('todo'), // TODO read from $parentNodeAggregate
                             $parentNodeAggregate->contentStreamId,
                             $tetheredNodeAggregateId,
                             $creationOriginDimensionSpacePoint,
@@ -98,6 +101,7 @@ trait TetheredNodeInternals
                         );
                     } else {
                         $events[] = new NodeAggregateWithNodeWasCreated(
+                            WorkspaceName::fromString('todo'), // TODO read from $parentNodeAggregate
                             $parentNodeAggregate->contentStreamId,
                             $tetheredNodeAggregateId,
                             $expectedTetheredNodeType->name,
@@ -117,6 +121,7 @@ trait TetheredNodeInternals
             } else {
                 return Events::with(
                     new NodeAggregateWithNodeWasCreated(
+                        WorkspaceName::fromString('todo'), // TODO read from $parentNodeAggregate
                         $parentNodeAggregate->contentStreamId,
                         $tetheredNodeAggregateId ?: NodeAggregateId::create(),
                         $expectedTetheredNodeType->name,
@@ -149,6 +154,7 @@ trait TetheredNodeInternals
             }
             /** @var Node $childNodeSource Node aggregates are never empty */
             return $this->createEventsForVariations(
+                WorkspaceName::fromString('todo'), // TODO read from $parentNodeAggregate
                 $parentNodeAggregate->contentStreamId,
                 $childNodeSource->originDimensionSpacePoint,
                 $originDimensionSpacePoint,

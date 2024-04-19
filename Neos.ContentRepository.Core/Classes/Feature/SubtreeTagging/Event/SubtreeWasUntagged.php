@@ -17,10 +17,11 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Event;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableInterface;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * A {@see SubtreeTag} was removed from a node aggregate and effectively from its descendants
@@ -30,7 +31,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final readonly class SubtreeWasUntagged implements
     EventInterface,
-    PublishableToOtherContentStreamsInterface,
+    PublishableInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     /**
@@ -40,11 +41,17 @@ final readonly class SubtreeWasUntagged implements
      * @param SubtreeTag $tag The tag that was removed
      */
     public function __construct(
+        public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public DimensionSpacePointSet $affectedDimensionSpacePoints,
         public SubtreeTag $tag,
     ) {
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public function getContentStreamId(): ContentStreamId
@@ -57,9 +64,10 @@ final readonly class SubtreeWasUntagged implements
         return $this->nodeAggregateId;
     }
 
-    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
+    public function createCopyForContentStream(WorkspaceName $targetWorkspaceName, ContentStreamId $targetContentStreamId): self
     {
         return new self(
+            $targetWorkspaceName,
             $targetContentStreamId,
             $this->nodeAggregateId,
             $this->affectedDimensionSpacePoints,
@@ -70,6 +78,7 @@ final readonly class SubtreeWasUntagged implements
     public static function fromArray(array $values): EventInterface
     {
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),

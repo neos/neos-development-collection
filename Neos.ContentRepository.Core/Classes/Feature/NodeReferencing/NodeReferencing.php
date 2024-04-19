@@ -152,6 +152,7 @@ trait NodeReferencing
 
         $events = Events::with(
             new NodeReferencesWereSet(
+                $command->workspaceName,
                 $contentStreamId,
                 $command->sourceNodeAggregateId,
                 $affectedOrigins,

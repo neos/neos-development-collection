@@ -19,13 +19,14 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * A node aggregate with its initial node was created
@@ -34,10 +35,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final readonly class NodeAggregateWithNodeWasCreated implements
     EventInterface,
-    PublishableToOtherContentStreamsInterface,
+    PublishableInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
+        public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public NodeTypeName $nodeTypeName,
@@ -48,6 +50,11 @@ final readonly class NodeAggregateWithNodeWasCreated implements
         public SerializedPropertyValues $initialPropertyValues,
         public NodeAggregateClassification $nodeAggregateClassification,
     ) {
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public function getContentStreamId(): ContentStreamId
@@ -65,9 +72,10 @@ final readonly class NodeAggregateWithNodeWasCreated implements
         return $this->originDimensionSpacePoint;
     }
 
-    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
+    public function createCopyForContentStream(WorkspaceName $targetWorkspaceName, ContentStreamId $targetContentStreamId): self
     {
         return new self(
+            $targetWorkspaceName,
             $targetContentStreamId,
             $this->nodeAggregateId,
             $this->nodeTypeName,
@@ -83,6 +91,7 @@ final readonly class NodeAggregateWithNodeWasCreated implements
     public static function fromArray(array $values): self
     {
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             NodeTypeName::fromString($values['nodeTypeName']),

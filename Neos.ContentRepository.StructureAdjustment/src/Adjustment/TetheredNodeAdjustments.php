@@ -27,6 +27,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class TetheredNodeAdjustments
@@ -165,6 +166,7 @@ class TetheredNodeAdjustments
                                 . ' - actual: '
                                 . implode(', ', array_keys($actualTetheredChildNodes)),
                             fn () => $this->reorderNodes(
+                                WorkspaceName::fromString('todo'), // TODO read from $nodeAggregate
                                 $nodeAggregate->contentStreamId,
                                 $nodeAggregate->nodeAggregateId,
                                 $originDimensionSpacePoint,
@@ -223,6 +225,7 @@ class TetheredNodeAdjustments
      * @param array<int,string> $expectedNodeOrdering
      */
     private function reorderNodes(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         NodeAggregateId $parentNodeAggregateId,
         DimensionSpace\OriginDimensionSpacePoint $originDimensionSpacePoint,
@@ -241,6 +244,7 @@ class TetheredNodeAdjustments
             $succeedingNode = $actualTetheredChildNodes[$succeedingSiblingNodeName];
 
             $events[] = new NodeAggregateWasMoved(
+                $workspaceName,
                 $contentStreamId,
                 $nodeToMove->nodeAggregateId,
                 OriginNodeMoveMappings::fromArray([

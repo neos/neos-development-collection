@@ -43,6 +43,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -104,6 +105,7 @@ trait RootNodeHandling
 
         foreach ($this->getInterDimensionalVariationGraph()->getRootGeneralizations() as $rootGeneralization) {
             array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
+                $command->workspaceName,
                 $contentStreamId,
                 $nodeType,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootGeneralization),
@@ -132,6 +134,7 @@ trait RootNodeHandling
         DimensionSpacePointSet $coveredDimensionSpacePoints
     ): RootNodeAggregateWithNodeWasCreated {
         return new RootNodeAggregateWithNodeWasCreated(
+            $command->workspaceName,
             $contentStreamId,
             $command->nodeAggregateId,
             $command->nodeTypeName,
@@ -161,6 +164,7 @@ trait RootNodeHandling
 
         $events = Events::with(
             new RootNodeAggregateDimensionsWereUpdated(
+                $command->workspaceName,
                 $contentStreamId,
                 $command->nodeAggregateId,
                 $this->getAllowedDimensionSubspace()
@@ -185,6 +189,7 @@ trait RootNodeHandling
      * @throws NodeTypeNotFoundException
      */
     private function handleTetheredRootChildNodes(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         NodeType $nodeType,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
@@ -206,6 +211,7 @@ trait RootNodeHandling
             $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
 
             $events[] = $this->createTetheredWithNodeForRoot(
+                $workspaceName,
                 $contentStreamId,
                 $childNodeAggregateId,
                 $childNodeType->name,
@@ -217,6 +223,7 @@ trait RootNodeHandling
             );
 
             array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
+                $workspaceName,
                 $contentStreamId,
                 $childNodeType,
                 $originDimensionSpacePoint,
@@ -232,6 +239,7 @@ trait RootNodeHandling
     }
 
     private function createTetheredWithNodeForRoot(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
         NodeTypeName $nodeTypeName,
@@ -242,6 +250,7 @@ trait RootNodeHandling
         SerializedPropertyValues $initialPropertyValues,
     ): NodeAggregateWithNodeWasCreated {
         return new NodeAggregateWithNodeWasCreated(
+            $workspaceName,
             $contentStreamId,
             $nodeAggregateId,
             $nodeTypeName,

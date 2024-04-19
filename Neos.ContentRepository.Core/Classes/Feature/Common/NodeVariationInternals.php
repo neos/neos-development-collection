@@ -24,11 +24,11 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal implementation details of command handlers
@@ -38,6 +38,7 @@ trait NodeVariationInternals
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     protected function createEventsForVariations(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
@@ -51,6 +52,7 @@ trait NodeVariationInternals
             )
         ) {
             DimensionSpace\VariantType::TYPE_SPECIALIZATION => $this->handleCreateNodeSpecializationVariant(
+                $workspaceName,
                 $contentStreamId,
                 $sourceOrigin,
                 $targetOrigin,
@@ -58,6 +60,7 @@ trait NodeVariationInternals
                 $contentRepository
             ),
             DimensionSpace\VariantType::TYPE_GENERALIZATION => $this->handleCreateNodeGeneralizationVariant(
+                $workspaceName,
                 $contentStreamId,
                 $sourceOrigin,
                 $targetOrigin,
@@ -65,6 +68,7 @@ trait NodeVariationInternals
                 $contentRepository
             ),
             default => $this->handleCreateNodePeerVariant(
+                $workspaceName,
                 $contentStreamId,
                 $sourceOrigin,
                 $targetOrigin,
@@ -75,6 +79,7 @@ trait NodeVariationInternals
     }
 
     protected function handleCreateNodeSpecializationVariant(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
@@ -83,6 +88,7 @@ trait NodeVariationInternals
     ): Events {
         $specializationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
+            $workspaceName,
             $contentStreamId,
             $sourceOrigin,
             $targetOrigin,
@@ -100,6 +106,7 @@ trait NodeVariationInternals
      * @return array<int,EventInterface>
      */
     protected function collectNodeSpecializationVariantsThatWillHaveBeenCreated(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
@@ -109,6 +116,7 @@ trait NodeVariationInternals
         ContentRepository $contentRepository
     ): array {
         $events[] = new NodeSpecializationVariantWasCreated(
+            $workspaceName,
             $contentStreamId,
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
@@ -129,6 +137,7 @@ trait NodeVariationInternals
             ) as $tetheredChildNodeAggregate
         ) {
             $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
+                $workspaceName,
                 $contentStreamId,
                 $sourceOrigin,
                 $targetOrigin,
@@ -143,6 +152,7 @@ trait NodeVariationInternals
     }
 
     protected function handleCreateNodeGeneralizationVariant(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
@@ -151,6 +161,7 @@ trait NodeVariationInternals
     ): Events {
         $generalizationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
+            $workspaceName,
             $contentStreamId,
             $sourceOrigin,
             $targetOrigin,
@@ -168,6 +179,7 @@ trait NodeVariationInternals
      * @return array<int,EventInterface>
      */
     protected function collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
@@ -177,6 +189,7 @@ trait NodeVariationInternals
         ContentRepository $contentRepository
     ): array {
         $events[] = new NodeGeneralizationVariantWasCreated(
+            $workspaceName,
             $contentStreamId,
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
@@ -197,6 +210,7 @@ trait NodeVariationInternals
             ) as $tetheredChildNodeAggregate
         ) {
             $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
+                $workspaceName,
                 $contentStreamId,
                 $sourceOrigin,
                 $targetOrigin,
@@ -211,6 +225,7 @@ trait NodeVariationInternals
     }
 
     protected function handleCreateNodePeerVariant(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
@@ -219,6 +234,7 @@ trait NodeVariationInternals
     ): Events {
         $peerVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
         $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
+            $workspaceName,
             $contentStreamId,
             $sourceOrigin,
             $targetOrigin,
@@ -236,6 +252,7 @@ trait NodeVariationInternals
      * @return array<int,EventInterface>
      */
     protected function collectNodePeerVariantsThatWillHaveBeenCreated(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
@@ -245,6 +262,7 @@ trait NodeVariationInternals
         ContentRepository $contentRepository
     ): array {
         $events[] = new NodePeerVariantWasCreated(
+            $workspaceName,
             $contentStreamId,
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
@@ -265,6 +283,7 @@ trait NodeVariationInternals
             ) as $tetheredChildNodeAggregate
         ) {
             $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
+                $workspaceName,
                 $contentStreamId,
                 $sourceOrigin,
                 $targetOrigin,

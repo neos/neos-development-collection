@@ -98,6 +98,7 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
+                    $command->workspaceName,
                     $contentStreamId,
                     $command->nodeAggregateId,
                     $affectedOrigin,
@@ -117,6 +118,7 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
+                    $command->workspaceName,
                     $contentStreamId,
                     $command->nodeAggregateId,
                     $affectedOrigin,

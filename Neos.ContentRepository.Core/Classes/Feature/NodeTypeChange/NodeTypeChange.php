@@ -39,6 +39,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /** @codingStandardsIgnoreStart */
 /** @codingStandardsIgnoreEnd  */
@@ -165,6 +166,7 @@ trait NodeTypeChange
          **************/
         $events = [
             new NodeAggregateTypeWasChanged(
+                $command->workspaceName,
                 $contentStreamId,
                 $command->nodeAggregateId,
                 $command->newNodeTypeName
@@ -447,6 +449,7 @@ trait NodeTypeChange
         DimensionSpacePointSet $coveredDimensionSpacePointsToBeRemoved,
     ): NodeAggregateWasRemoved {
         return new NodeAggregateWasRemoved(
+            WorkspaceName::fromString('todo'), // TODO read from $nodeAggregate
             $nodeAggregate->contentStreamId,
             $nodeAggregate->nodeAggregateId,
             // TODO: we also use the covered dimension space points as OCCUPIED dimension space points

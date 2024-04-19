@@ -36,6 +36,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -151,6 +152,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         // Now, we can start creating the recursive structure.
         $events = [];
         $this->createEventsForNodeToInsert(
+            $command->workspaceName,
             $contentStreamId,
             $command->targetDimensionSpacePoint,
             $coveredDimensionSpacePoints,
@@ -193,6 +195,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
      * @param array<NodeAggregateWithNodeWasCreated> $events
      */
     private function createEventsForNodeToInsert(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
@@ -205,6 +208,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         array &$events,
     ): void {
         $events[] = new NodeAggregateWithNodeWasCreated(
+            $workspaceName,
             $contentStreamId,
             $nodeAggregateIdMapping->getNewNodeAggregateId(
                 $nodeToInsert->nodeAggregateId
@@ -228,6 +232,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 
         foreach ($nodeToInsert->childNodes as $childNodeToInsert) {
             $this->createEventsForNodeToInsert(
+                $workspaceName,
                 $contentStreamId,
                 $originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,

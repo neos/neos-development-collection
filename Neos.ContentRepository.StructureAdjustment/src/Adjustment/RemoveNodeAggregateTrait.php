@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait RemoveNodeAggregateTrait
@@ -17,6 +18,7 @@ trait RemoveNodeAggregateTrait
     {
         $events = Events::with(
             new NodeAggregateWasRemoved(
+                WorkspaceName::fromString('todo'), // TODO read from $tetheredNodeAggregate
                 $tetheredNodeAggregate->contentStreamId,
                 $tetheredNodeAggregate->nodeAggregateId,
                 $tetheredNodeAggregate->occupiedDimensionSpacePoints,

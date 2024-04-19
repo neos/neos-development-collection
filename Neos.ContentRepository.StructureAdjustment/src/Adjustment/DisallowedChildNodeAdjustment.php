@@ -17,6 +17,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class DisallowedChildNodeAdjustment
@@ -132,6 +133,7 @@ class DisallowedChildNodeAdjustment
         $referenceOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint);
         $events = Events::with(
             new NodeAggregateWasRemoved(
+                WorkspaceName::fromString('todo'), // TODO read from $nodeAggregate
                 $nodeAggregate->contentStreamId,
                 $nodeAggregate->nodeAggregateId,
                 $nodeAggregate->occupiesDimensionSpacePoint($referenceOrigin)

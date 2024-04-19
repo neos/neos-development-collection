@@ -77,6 +77,7 @@ trait NodeVariation
         );
 
         $events = $this->createEventsForVariations(
+            $command->workspaceName,
             $contentStreamId,
             $command->sourceOrigin,
             $command->targetOrigin,

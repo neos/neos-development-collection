@@ -238,6 +238,7 @@ trait NodeCreation
         ContentRepository $contentRepository,
     ): NodeAggregateWithNodeWasCreated {
         return new NodeAggregateWithNodeWasCreated(
+            $command->workspaceName,
             $contentStreamId,
             $command->nodeAggregateId,
             $command->nodeTypeName,
@@ -283,6 +284,7 @@ trait NodeCreation
             $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
 
             $events[] = new NodeAggregateWithNodeWasCreated(
+                $command->workspaceName,
                 $contentStreamId,
                 $childNodeAggregateId,
                 $childNodeType->name,

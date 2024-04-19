@@ -38,13 +38,13 @@ final class NodeAggregateEventPublisher
         foreach ($events as $event) {
             if ($event instanceof DecoratedEvent) {
                 $undecoratedEvent = $event->innerEvent;
-                if (!$undecoratedEvent instanceof PublishableToOtherContentStreamsInterface) {
+                if (!$undecoratedEvent instanceof PublishableInterface) {
                     throw new \RuntimeException(sprintf(
                         'TODO: Event %s has to implement PublishableToOtherContentStreamsInterface',
                         get_class($event)
                     ));
                 }
-            } elseif (!$event instanceof PublishableToOtherContentStreamsInterface) {
+            } elseif (!$event instanceof PublishableInterface) {
                 throw new \RuntimeException(sprintf(
                     'TODO: Event %s has to implement PublishableToOtherContentStreamsInterface',
                     get_class($event)

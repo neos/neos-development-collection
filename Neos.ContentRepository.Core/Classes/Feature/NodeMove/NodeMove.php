@@ -163,6 +163,7 @@ trait NodeMove
 
         $events = Events::with(
             new NodeAggregateWasMoved(
+                $command->workspaceName,
                 $contentStreamId,
                 $command->nodeAggregateId,
                 OriginNodeMoveMappings::create(...$originNodeMoveMappings)

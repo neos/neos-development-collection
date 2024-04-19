@@ -72,6 +72,7 @@ trait NodeRemoval
 
         $events = Events::with(
             new NodeAggregateWasRemoved(
+                $command->workspaceName,
                 $contentStreamId,
                 $command->nodeAggregateId,
                 $command->nodeVariantSelectionStrategy->resolveAffectedOriginDimensionSpacePoints(
