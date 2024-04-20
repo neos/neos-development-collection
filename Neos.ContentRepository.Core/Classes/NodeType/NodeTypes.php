@@ -30,9 +30,9 @@ final class NodeTypes implements IteratorAggregate
      */
     private array $nodeTypesByName;
 
-    private function __construct(NodeType ...$items)
+    private function __construct(NodeType ...$nodeTypes)
     {
-        $this->nodeTypesByName = $items;
+        $this->nodeTypesByName = $nodeTypes;
     }
 
     /**
@@ -88,7 +88,7 @@ final class NodeTypes implements IteratorAggregate
      */
     public function filter(Closure $callback): self
     {
-        return self::fromArray(array_filter($this->nodeTypesByName, $callback(...)));
+        return self::fromArray(array_filter($this->nodeTypesByName, $callback));
     }
 
     /**
@@ -97,7 +97,7 @@ final class NodeTypes implements IteratorAggregate
      */
     public function map(Closure $callback): array
     {
-        return array_map($callback(...), $this->nodeTypesByName);
+        return array_map($callback, $this->nodeTypesByName);
     }
 
     public function getIterator(): Traversable

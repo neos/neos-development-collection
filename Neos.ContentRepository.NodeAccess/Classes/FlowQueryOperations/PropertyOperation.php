@@ -113,7 +113,8 @@ class PropertyOperation extends AbstractOperation
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
-        if ($this->getNodeType($element)->hasReference($propertyName)) {
+        $referenceDefinition = $this->getNodeType($element)->referenceDefinitions->get($propertyName);
+        if ($referenceDefinition !== null) {
             // legacy access layer for references
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             $references = $subgraph->findReferences(
@@ -121,8 +122,7 @@ class PropertyOperation extends AbstractOperation
                 FindReferencesFilter::create(referenceName: $propertyName)
             )->getNodes();
 
-            $maxItems = $this->getNodeType($element)->getReferences()[$propertyName]['constraints']['maxItems'] ?? null;
-            if ($maxItems === 1) {
+            if ($referenceDefinition->maxItems === 1) {
                 // legacy layer references with only one item like the previous `type: reference`
                 // (the node type transforms that to constraints.maxItems = 1)
                 // users still expect the property operation to return a single node instead of an array.

@@ -27,7 +27,6 @@ final class ClosureNodeTypeProvider implements NodeTypeProviderInterface
 
     public function __construct(
         private readonly \Closure $nodeTypeConfigLoader,
-        private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
     ) {
         $this->cachedNodeTypes = NodeTypes::fromArray([]);
     }

@@ -914,7 +914,7 @@ class WorkspacesController extends AbstractModuleController
         $renderer = new HtmlArrayRenderer();
         foreach ($changedNode->properties as $propertyName => $changedPropertyValue) {
             if (
-                $originalNode === null && empty($changedPropertyValue)
+                ($originalNode === null && empty($changedPropertyValue))
                 || (
                     isset($changeNodePropertiesDefaults[$propertyName])
                     && $changedPropertyValue === $changeNodePropertiesDefaults[$propertyName]

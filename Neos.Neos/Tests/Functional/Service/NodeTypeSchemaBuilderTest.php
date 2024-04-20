@@ -12,7 +12,6 @@ namespace Neos\Neos\Tests\Functional\Service;
  */
 
 use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
-use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -39,12 +38,10 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     {
         parent::setUp();
         $configurationManager = $this->objectManager->get(ConfigurationManager::class);
-        $nodeLabelGeneratorFactory = $this->objectManager->get(NodeLabelGeneratorFactoryInterface::class);
         $this->nodeTypeSchemaBuilder = NodeTypeSchemaBuilder::create(
             new NodeTypeManager(
                 new ClosureNodeTypeProvider(
                     fn() => $configurationManager->getConfiguration('NodeTypes'),
-                    $nodeLabelGeneratorFactory
                 )
             )
         );

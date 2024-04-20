@@ -108,7 +108,7 @@ final readonly class Node
      */
     public function getLabel(): string
     {
-        return $this->nodeType?->getNodeLabelGenerator()->getLabel($this) ?: $this->nodeTypeName->value;
+        return $this->nodeType?->renderNodeLabel($this) ?: $this->nodeTypeName->value;
     }
 
     public function equals(Node $other): bool

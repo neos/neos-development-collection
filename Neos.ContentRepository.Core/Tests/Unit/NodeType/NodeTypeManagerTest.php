@@ -12,13 +12,11 @@ namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
  */
 
 use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
-use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -46,7 +44,6 @@ class NodeTypeManagerTest extends TestCase
         $this->nodeTypeManager = new NodeTypeManager(
             new ClosureNodeTypeProvider(
                 fn() => $nodeTypesFixtureData,
-                new DefaultNodeLabelGeneratorFactory()
             )
         );
     }
@@ -452,7 +449,6 @@ class NodeTypeManagerTest extends TestCase
         $nodeTypeManager = new NodeTypeManager(
             new ClosureNodeTypeProvider(
                 fn() => [],
-                new DefaultNodeLabelGeneratorFactory()
             )
         );
         self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));

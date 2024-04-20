@@ -5,6 +5,7 @@ namespace Neos\ContentRepository\Core\NodeType;
 /**
  * Performs node type constraint checks against a given set of constraints
  * @internal
+ * TODO replace with {@see NodeTypeConstraints}
  */
 final readonly class ConstraintCheck
 {

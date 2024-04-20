@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Factory\NodeTypeManager;
 
-use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepositoryRegistry\NodeLabel\ExpressionBasedNodeLabelGenerator;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
+// TODO move logic to Neos NodeType provider
 class ObjectManagerBasedNodeLabelGeneratorFactory implements NodeLabelGeneratorFactoryInterface
 {
     public function __construct(

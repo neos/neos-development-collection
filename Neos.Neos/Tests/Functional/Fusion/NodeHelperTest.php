@@ -16,7 +16,6 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
-use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -138,7 +137,6 @@ class NodeHelperTest extends AbstractFusionObjectTest
             new NodeTypeManager(
                 new ClosureNodeTypeProvider(
                     fn () => [],
-                    new DefaultNodeLabelGeneratorFactory()
                 )
             ),
         );

@@ -71,14 +71,14 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     public static function defaultFromNodeType(NodeType $nodeType, PropertyConverter $propertyConverter): self
     {
         $values = [];
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
+        foreach ($nodeType->propertyDefinitions as $propertyDefinition) {
             $propertyType = PropertyType::fromNodeTypeDeclaration(
-                $nodeType->getPropertyType($propertyName),
-                PropertyName::fromString($propertyName),
+                $nodeType->getPropertyType($propertyDefinition->name->value),
+                PropertyName::fromString($propertyDefinition->name->value),
                 $nodeType->name
             );
             $deserializedDefaultValue = $propertyConverter->deserializePropertyValue(
-                SerializedPropertyValue::create($defaultValue, $propertyType->getSerializationType())
+                SerializedPropertyValue::create($propertyDefinition->defaultValue, $propertyType->getSerializationType())
             );
             // The $defaultValue and $properlySerializedDefaultValue will likely equal, but in some cases diverge.
             // For example relative date time default values like "now" will herby be serialized to the current date.
@@ -86,14 +86,10 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
             // (by for example adding default values for undeclared properties)
             // Additionally due the double conversion, we guarantee that a valid property converted exists at this time.
             $properlySerializedDefaultValue = $propertyConverter->serializePropertyValue(
-                PropertyType::fromNodeTypeDeclaration(
-                    $nodeType->getPropertyType($propertyName),
-                    PropertyName::fromString($propertyName),
-                    $nodeType->name
-                ),
+                $propertyType,
                 $deserializedDefaultValue
             );
-            $values[$propertyName] = $properlySerializedDefaultValue;
+            $values[$propertyDefinition->name->value] = $properlySerializedDefaultValue;
         }
 
         return new self($values);
