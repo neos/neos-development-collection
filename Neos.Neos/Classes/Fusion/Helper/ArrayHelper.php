@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\Collection;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * Some Functional Programming Array helpers for Eel contexts
@@ -92,6 +93,14 @@ class ArrayHelper implements ProtectedContextAwareInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Sorts the input array by the $positionProperty of each element.
+     */
+    public function sortByPropertyPath(array $set, $positionPropertyPath = 'position'): array
+    {
+        return (new PositionalArraySorter($set, $positionPropertyPath))->toArray();
     }
 
     /**

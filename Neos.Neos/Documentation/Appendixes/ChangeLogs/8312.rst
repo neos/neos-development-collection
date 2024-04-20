@@ -1,0 +1,109 @@
+`8.3.12 (2024-04-19) <https://github.com/neos/neos-development-collection/releases/tag/8.3.12>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix the check for RedirectStorageInterface <https://github.com/neos/neos-development-collection/pull/5001>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Existance of interfaces needs to be checked with interface_exists
+
+* Fixes: `#5000 <https://github.com/neos/neos-development-collection/issues/5000>`_
+
+* Packages: ``Media``
+
+`BUGFIX: Remove br from role tooltip and improve readability <https://github.com/neos/neos-development-collection/pull/4986>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+A ``<br>`` was displayed as text in the title of roles in the user management module.
+With this change it is replaced by a proper line break and the parent roles are now displayed as list with their name and identifier.
+
+Before:
+
+!`CleanShot 2024-04-11 at 13 37 07@2x <https://github.com/neos/neos-development-collection/assets/596967/d1fc5f07-f5bd-454c-ab7d-196222537ad3>`_
+
+After:
+
+!`CleanShot 2024-04-11 at 13 40 50@2x <https://github.com/neos/neos-development-collection/assets/596967/1cc40c6b-6222-495f-a22c-60f1592ed24b>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Sort properties in raw content mode <https://github.com/neos/neos-development-collection/pull/4957>`_
+--------------------------------------------------------------------------------------------------------------
+
+Previously there was no obvious sorting for properties in the ``Raw content`` mode and the resulting order of properties appeared "random", which is an issue if the properties don't appear in the order the editor should edit them.
+
+With this change the sorting option which is also used for the inspector is used to sort the items and therefore giving an option to the integrator on their arrangement.
+
+That the inspector order is used for the raw content is not the cleanest solution, but introducing another sorting option also doesn't seem the right choice at this point.
+
+* Packages: ``Neos``
+
+`BUGFIX: Make text formatting visible in raw content mode <https://github.com/neos/neos-development-collection/pull/4985>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This change removes the css reset which made it impossible to
+see any text formatting in raw content mode.
+
+Also the font is now set to use the Neos font instead of just arial
+which matches the backend default font.
+
+Before:
+
+!`CleanShot 2024-04-11 at 09 26 51@2x <https://github.com/neos/neos-development-collection/assets/596967/3484adf2-0361-4b4f-8849-ca2f138acec4>`_
+
+After:
+
+!`CleanShot 2024-04-11 at 09 23 08@2x <https://github.com/neos/neos-development-collection/assets/596967/ae9285f9-fc58-4847-9122-3aedeef8ddff>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Strip image to prevent wrong orientation information in exif data <https://github.com/neos/neos-development-collection/pull/4945>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+After autorotating the thumbnail image we need to remove the according exif data for the thumbnail, to prevent the thumbnail is shown rotated again.
+
+See also: https://github.com/php-imagine/Imagine/issues/467
+
+* Fixes: `#3148 <https://github.com/neos/neos-development-collection/issues/3148>`_ 
+
+!`image <https://github.com/neos/neos-development-collection/assets/13046100/c039f852-623c-4d8a-9848-416f0ab27498>`_
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Fix argument order of implode() <https://github.com/neos/neos-development-collection/pull/4962>`_
+----------------------------------------------------------------------------------------------------------
+
+Passing the separator after the array is not supported since PHP 8.0 anymore
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`TASK: Update plupload library to latest 2.3.9 <https://github.com/neos/neos-development-collection/pull/5004>`_
+----------------------------------------------------------------------------------------------------------------
+
+Backport of https://github.com/neos/neos-development-collection/pull/5003 for 7.3
+
+Fixes https://github.com/advisories/GHSA-rp2c-jrgp-cvr8: https://nvd.nist.gov/vuln/detail/CVE-2021-23562
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`TASK: Update plupload library to latest 2.3.9 <https://github.com/neos/neos-development-collection/pull/5003>`_
+----------------------------------------------------------------------------------------------------------------
+
+Fixes CVE-2021-23562: https://nvd.nist.gov/vuln/detail/CVE-2021-23562 
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`DOCS: Fix indentation of ImageEditor options <https://github.com/neos/neos-development-collection/pull/4920>`_
+---------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.11...8.3.12>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

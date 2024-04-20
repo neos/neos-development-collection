@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2024-03-10
+This reference was automatically generated from code on 2024-04-19
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -1161,6 +1161,11 @@ Groups this input by the $groupingKey property of each element.
 * ``groupingKey`` (string)
 
 **Return** (array<mixed>)
+
+Neos.Array.sortByPropertyPath(set, positionPropertyPath)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sorts the input array by the $positionProperty of each element.
 
 
 
