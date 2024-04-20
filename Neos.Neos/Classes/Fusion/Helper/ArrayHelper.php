@@ -97,8 +97,10 @@ class ArrayHelper implements ProtectedContextAwareInterface
 
     /**
      * Sorts the input array by the $positionProperty of each element.
+     * @param array<mixed> $set
+     * @return array<mixed>
      */
-    public function sortByPropertyPath(array $set, $positionPropertyPath = 'position'): array
+    public function sortByPropertyPath(array $set, string $positionPropertyPath = 'position'): array
     {
         return (new PositionalArraySorter($set, $positionPropertyPath))->toArray();
     }
