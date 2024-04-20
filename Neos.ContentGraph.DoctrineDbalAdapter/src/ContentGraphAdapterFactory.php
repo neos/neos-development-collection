@@ -27,7 +27,7 @@ class ContentGraphAdapterFactory implements ContentGraphAdapterFactoryInterface
     public function __construct(
         private readonly Connection $dbalConnection,
         private readonly ContentRepositoryId $contentRepositoryId,
-        private readonly NodeTypeManager $nodeTypeManager,
+        NodeTypeManager $nodeTypeManager,
         PropertyConverter $propertyConverter
     ) {
         $this->tableNamePrefix = DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
@@ -45,16 +45,16 @@ class ContentGraphAdapterFactory implements ContentGraphAdapterFactoryInterface
 
     public function create(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphAdapterInterface
     {
-        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, $this->nodeTypeManager, $workspaceName, $contentStreamId);
+        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, $workspaceName, $contentStreamId);
     }
 
     public function createFromContentStreamId(ContentStreamId $contentStreamId): ContentGraphAdapterInterface
     {
-        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, $this->nodeTypeManager, null, $contentStreamId);
+        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, null, $contentStreamId);
     }
 
     public function createFromWorkspaceName(WorkspaceName $workspaceName): ContentGraphAdapterInterface
     {
-        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, $this->nodeTypeManager, $workspaceName, null);
+        return new ContentGraphAdapter($this->dbalConnection, $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, $workspaceName, null);
     }
 }

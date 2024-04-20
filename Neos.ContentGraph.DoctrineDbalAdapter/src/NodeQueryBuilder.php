@@ -35,19 +35,22 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 class NodeQueryBuilder
 {
+    public readonly ContentGraphTableNames $contentGraphTableNames;
+
     public function __construct(
         private readonly Connection $connection,
         private readonly string $tableNamePrefix
     ) {
+        $this->contentGraphTableNames = ContentGraphTableNames::withPrefix($tableNamePrefix);
     }
 
     public function buildBasicNodeAggregateQuery(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder()
             ->select('n.*, h.contentstreamid, h.name, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
-            ->from($this->getTablenameForNode(), 'n')
-            ->innerJoin('n', $this->getTablenameForHierachyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->innerJoin('h', $this->getTablenameForDimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
+            ->from($this->contentGraphTableNames->node(), 'n')
+            ->innerJoin('n', $this->contentGraphTableNames->hierachyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoin('h', $this->contentGraphTableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->where('h.contentstreamid = :contentStreamId');
 
         return $queryBuilder;
@@ -57,11 +60,11 @@ class NodeQueryBuilder
     {
         return $this->createQueryBuilder()
             ->select('cn.*, ch.name, ch.contentstreamid, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
-            ->from($this->getTablenameForNode(), 'pn')
-            ->innerJoin('pn', $this->getTablenameForHierachyRelation(), 'ph', 'ph.childnodeanchor = pn.relationanchorpoint')
-            ->innerJoin('pn', $this->getTablenameForHierachyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
-            ->innerJoin('ch', $this->getTablenameForDimensionSpacePoints(), 'cdsp', 'cdsp.hash = ch.dimensionspacepointhash')
-            ->innerJoin('ch', $this->getTablenameForNode(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
+            ->from($this->contentGraphTableNames->node(), 'pn')
+            ->innerJoin('pn', $this->contentGraphTableNames->hierachyRelation(), 'ph', 'ph.childnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('pn', $this->contentGraphTableNames->hierachyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('ch', $this->contentGraphTableNames->dimensionSpacePoints(), 'cdsp', 'cdsp.hash = ch.dimensionspacepointhash')
+            ->innerJoin('ch', $this->contentGraphTableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ch.contentstreamid = :contentStreamId')
@@ -92,8 +95,8 @@ class NodeQueryBuilder
     {
         return $this->createQueryBuilder()
             ->select($select)
-            ->from($this->getTablenameForNode(), $nodeTableAlias)
-            ->innerJoin($nodeTableAlias, $this->getTablenameForHierachyRelation(), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint')
+            ->from($this->contentGraphTableNames->node(), $nodeTableAlias)
+            ->innerJoin($nodeTableAlias, $this->contentGraphTableNames->hierachyRelation(), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
     }
@@ -108,9 +111,9 @@ class NodeQueryBuilder
     {
         return $this->createQueryBuilder()
             ->select('n.*, h.name, h.subtreetags')
-            ->from($this->getTablenameForNode(), 'pn')
-            ->innerJoin('pn', $this->getTablenameForHierachyRelation(), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
-            ->innerJoin('pn', $this->getTablenameForNode(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
+            ->from($this->contentGraphTableNames->node(), 'pn')
+            ->innerJoin('pn', $this->contentGraphTableNames->hierachyRelation(), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('pn', $this->contentGraphTableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
@@ -120,10 +123,10 @@ class NodeQueryBuilder
     {
         return $this->createQueryBuilder()
             ->select('pn.*, ch.name, ch.subtreetags')
-            ->from($this->getTablenameForNode(), 'pn')
-            ->innerJoin('pn', $this->getTablenameForHierachyRelation(), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
-            ->innerJoin('pn', $this->getTablenameForNode(), 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
-            ->innerJoin('pn', $this->getTablenameForHierachyRelation(), 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
+            ->from($this->contentGraphTableNames->node(), 'pn')
+            ->innerJoin('pn', $this->contentGraphTableNames->hierachyRelation(), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('pn', $this->contentGraphTableNames->node(), 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
+            ->innerJoin('pn', $this->contentGraphTableNames->hierachyRelation(), 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
             ->where('cn.nodeaggregateid = :childNodeAggregateId')->setParameter('childNodeAggregateId', $childNodeAggregateId->value)
             ->andWhere('ph.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
             ->andWhere('ch.contentstreamid = :contentStreamId')
@@ -134,8 +137,8 @@ class NodeQueryBuilder
     public function buildBasicNodeSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
     {
         $sharedSubQuery = $this->createQueryBuilder()
-            ->from($this->getTablenameForHierachyRelation(), 'sh')
-            ->innerJoin('sh', $this->getTablenameForNode(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
+            ->from($this->contentGraphTableNames->hierachyRelation(), 'sh')
+            ->innerJoin('sh', $this->contentGraphTableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->where('sn.nodeaggregateid = :siblingNodeAggregateId')
             ->andWhere('sh.contentstreamid = :contentStreamId')
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash');
@@ -285,7 +288,7 @@ class NodeQueryBuilder
     {
         $rows = $this->fetchRows($this->createQueryBuilder()
             ->select('DISTINCT nodetypename')
-            ->from($this->getTablenameForNode()));
+            ->from($this->contentGraphTableNames->node()));
 
         return $rows;
     }

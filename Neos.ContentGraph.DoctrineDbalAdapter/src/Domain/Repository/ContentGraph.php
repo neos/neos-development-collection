@@ -159,7 +159,7 @@ final class ContentGraph implements ContentGraphInterface
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
-        $contentGraphAdapter = new ContentGraphAdapter($this->client->getConnection(), $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, $this->nodeTypeManager, null, $contentStreamId);
+        $contentGraphAdapter = new ContentGraphAdapter($this->client->getConnection(), $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, null, $contentStreamId);
         return $contentGraphAdapter->findNodeAggregateById($nodeAggregateId);
     }
 
@@ -170,7 +170,7 @@ final class ContentGraph implements ContentGraphInterface
         ContentStreamId $contentStreamId,
         NodeAggregateId $childNodeAggregateId
     ): iterable {
-        $contentGraphAdapter = new ContentGraphAdapter($this->client->getConnection(), $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, $this->nodeTypeManager, null, $contentStreamId);
+        $contentGraphAdapter = new ContentGraphAdapter($this->client->getConnection(), $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, null, $contentStreamId);
         return $contentGraphAdapter->findParentNodeAggregates($childNodeAggregateId);
     }
 
@@ -181,7 +181,7 @@ final class ContentGraph implements ContentGraphInterface
         ContentStreamId $contentStreamId,
         NodeAggregateId $parentNodeAggregateId
     ): iterable {
-        $contentGraphAdapter = new ContentGraphAdapter($this->client->getConnection(), $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, $this->nodeTypeManager, null, $contentStreamId);
+        $contentGraphAdapter = new ContentGraphAdapter($this->client->getConnection(), $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, null, $contentStreamId);
         return $contentGraphAdapter->findChildNodeAggregates($parentNodeAggregateId);
     }
 
@@ -193,7 +193,7 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $parentNodeAggregateId,
         NodeName $name
     ): iterable {
-        $contentGraphAdapter = new ContentGraphAdapter($this->client->getConnection(), $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, $this->nodeTypeManager, null, $contentStreamId);
+        $contentGraphAdapter = new ContentGraphAdapter($this->client->getConnection(), $this->tableNamePrefix, $this->contentRepositoryId, $this->nodeFactory, null, $contentStreamId);
         return $contentGraphAdapter->findChildNodeAggregatesByName($parentNodeAggregateId, $name);
     }
 
@@ -201,7 +201,7 @@ final class ContentGraph implements ContentGraphInterface
     {
         $queryBuilder = $this->createQueryBuilder()
             ->select('COUNT(*)')
-            ->from($this->tableNamePrefix . '_node');
+            ->from($this->nodeQueryBuilder->contentGraphTableNames->node());
         $result = $queryBuilder->execute();
         if (!$result instanceof Result) {
             throw new \RuntimeException(sprintf('Failed to count nodes. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);
