@@ -21,6 +21,8 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
 
 /**
  * Neos' provider for its own workspace instances
@@ -36,8 +38,23 @@ final class WorkspaceProvider
     private array $instances;
 
     public function __construct(
-        private readonly ContentRepositoryRegistry $contentRepositoryRegistry
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        private readonly SecurityContext $securityContext,
     ) {
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist
+     */
+    public function provideForCurrentAccount(
+        ContentRepositoryId $contentRepositoryId
+    ): Workspace {
+        $currentAccount = $this->securityContext->getAccount();
+
+        return $this->provideForWorkspaceName(
+            $contentRepositoryId,
+            WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
+        );
     }
 
     public function provideForWorkspaceName(
