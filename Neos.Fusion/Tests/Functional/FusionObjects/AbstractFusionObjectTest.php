@@ -16,10 +16,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
-use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
-use Neos\Fusion\Exception\RuntimeException;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**
  * Testcase for the Fusion View
@@ -32,22 +29,8 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
      */
     protected $request;
 
-    /**
-     * TODO THIS IS HACKY AS WE CREATE AN OWN VIEW
-     *
-     * We do that as the FusionView (rightfully) doesn't return mixed anymore.
-     *
-     * We could instead also rewrite all tests to use the Runtime instead.
-     *
-     * But that would be a lot of effort for nothing.
-     *
-     * Instead we want to refactor our tests to behat at some point.
-     *
-     * Thus the hack.
-     */
-    protected function buildView()
+    protected function buildView(): TestingViewForFusionRuntime
     {
-        /** @var ServerRequestFactoryInterface $httpRequestFactory */
         $this->request = ActionRequest::fromHttpRequest(new ServerRequest('GET', 'http://localhost/'));
 
         $runtime = $this->objectManager->get(RuntimeFactory::class)->createFromSourceCode(
@@ -55,45 +38,9 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
             FusionGlobals::fromArray(['request' => $this->request])
         );
 
-        $runtime->pushContext('fixtureDirectory', __DIR__ . '/Fixtures/');
-
-        // todo rewrite everything as behat test :D
-        return new class($runtime) {
-            private string $fusionPath;
-            public function __construct(
-                private readonly Runtime $runtime
-            ) {
-            }
-            public function setFusionPath(string $fusionPath)
-            {
-                $this->fusionPath = $fusionPath;
-            }
-            public function assign($key, $value)
-            {
-                $this->runtime->pushContext($key, $value);
-            }
-            public function setOption($key, $value)
-            {
-                match ($key) {
-                    'enableContentCache' => $this->runtime->setEnableContentCache($value),
-                    'debugMode' => $this->runtime->setDebugMode($value)
-                };
-            }
-            public function assignMultiple(array $values)
-            {
-                foreach ($values as $key => $value) {
-                    $this->runtime->pushContext($key, $value);
-                }
-            }
-            public function render()
-            {
-                try {
-                    return $this->runtime->render($this->fusionPath);
-                } catch (RuntimeException $e) {
-                    throw $e->getWrappedException();
-                }
-            }
-        };
+        $view = new TestingViewForFusionRuntime($runtime);
+        $view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
+        return $view;
     }
 
     /**
