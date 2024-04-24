@@ -14,17 +14,17 @@ declare(strict_types=1);
 
 namespace Neos\Neos\View;
 
-use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Security\Context;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
-use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
@@ -33,6 +33,7 @@ use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\Exception;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * A Fusion view for Neos
@@ -55,13 +56,19 @@ class FusionView extends AbstractView
     protected RenderingModeService $renderingModeService;
 
     /**
-     * Renders the view
+     * Via {@see assign} request using the "request" key,
+     * will be available also as Fusion global in the runtime.
+     */
+    protected ?ActionRequest $assignedActionRequest = null;
+
+    /**
+     * Render the view to a full response in case a Neos.Fusion:Http.Message was used.
+     * If the fusion path contains a simple string a stream will be rendered.
      *
-     * @return string|ResponseInterface The rendered view
      * @throws \Exception if no node is given
      * @api
      */
-    public function render(): string|ResponseInterface
+    public function render(): ResponseInterface|StreamInterface
     {
         $currentNode = $this->getCurrentNode();
 
@@ -76,20 +83,11 @@ class FusionView extends AbstractView
 
         $this->setFallbackRuleFromDimension($currentNode->subgraphIdentity->dimensionSpacePoint);
 
-        $fusionRuntime->pushContextArray([
+        return $fusionRuntime->renderEntryPathWithContext($this->fusionPath, [
             'node' => $currentNode,
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSiteNode
         ]);
-        try {
-            $output = $fusionRuntime->render($this->fusionPath);
-            $output = $this->parsePotentialRawHttpResponse($output);
-        } catch (RuntimeException $exception) {
-            throw $exception->getPrevious() ?: $exception;
-        }
-        $fusionRuntime->popContext();
-
-        return $output;
     }
 
     /**
@@ -130,35 +128,6 @@ class FusionView extends AbstractView
      * @var Context
      */
     protected $securityContext;
-
-    /**
-     * @param string $output
-     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface
-     *                                  otherwise the original output.
-     */
-    protected function parsePotentialRawHttpResponse($output)
-    {
-        if ($this->isRawHttpResponse($output)) {
-            return Message::parseResponse($output);
-        }
-
-        return $output;
-    }
-
-    /**
-     * Checks if the mixed input looks like a raw HTTTP response.
-     *
-     * @param mixed $value
-     * @return bool
-     */
-    protected function isRawHttpResponse($value): bool
-    {
-        if (is_string($value) && strpos($value, 'HTTP/') === 0) {
-            return true;
-        }
-
-        return false;
-    }
 
     /**
      * Is it possible to render $node with $his->fusionPath?
@@ -238,15 +207,14 @@ class FusionView extends AbstractView
 
             $renderingMode = $this->renderingModeService->findByName($this->getOption('renderingModeName'));
 
-            $fusionGlobals = FusionGlobals::fromArray([
-                'request' => $this->controllerContext->getRequest(),
+            $fusionGlobals = FusionGlobals::fromArray(array_filter([
+                'request' => $this->assignedActionRequest,
                 'renderingMode' => $renderingMode
-            ]);
+            ]));
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $fusionConfiguration,
                 $fusionGlobals
             );
-            $this->fusionRuntime->setControllerContext($this->controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
@@ -263,7 +231,30 @@ class FusionView extends AbstractView
      */
     public function assign($key, $value): AbstractView
     {
+        if ($key === 'request') {
+            // the request cannot be used as "normal" fusion variable and must be treated as FusionGlobal
+            // to for example not cache it accidentally
+            // additionally we need it for special request based handling in the view
+            $this->assignedActionRequest = $value;
+            return $this;
+        }
         $this->fusionRuntime = null;
         return parent::assign($key, $value);
+    }
+
+    /**
+     * Legacy layer to set the request for this view if not set already.
+     *
+     * Please use {@see assign} with "request" instead
+     *
+     *     $view->assign('request"', $this->request)
+     *
+     * @deprecated with Neos 9
+     */
+    public function setControllerContext(ControllerContext $controllerContext)
+    {
+        if (!$this->assignedActionRequest) {
+            $this->assignedActionRequest = $controllerContext->getRequest();
+        }
     }
 }

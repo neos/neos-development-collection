@@ -79,7 +79,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
      */
     public function evaluate()
     {
-        $actionRequest =  $this->runtime->getControllerContext()->getRequest();
+        $actionRequest = $this->runtime->fusionGlobals->get('request');
         if (!$actionRequest instanceof ActionRequest) {
             $actionRequest = null;
         }
@@ -140,7 +140,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
         if ($sectionName !== null) {
             return $fluidTemplate->renderSection($sectionName);
         } else {
-            return $fluidTemplate->render();
+            return $fluidTemplate->render()->getContents();
         }
     }
 
