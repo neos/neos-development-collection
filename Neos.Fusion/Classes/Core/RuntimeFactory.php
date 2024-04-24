@@ -15,14 +15,12 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**
  * @Flow\Scope("singleton")
- * @api
+ * @internal The Fusion Runtime is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
  */
 class RuntimeFactory
 {
@@ -44,20 +42,18 @@ class RuntimeFactory
      */
     public function create(array $fusionConfiguration, ControllerContext $controllerContext = null): Runtime
     {
-        if ($controllerContext === null) {
-            $controllerContext = self::createControllerContextFromEnvironment();
-        }
         $defaultContextVariables = EelUtility::getDefaultContextVariables(
             $this->defaultContextConfiguration ?? []
         );
-        $runtime = new Runtime(
+        return new Runtime(
             FusionConfiguration::fromArray($fusionConfiguration),
             FusionGlobals::fromArray(
-                ['request' => $controllerContext->getRequest(), ...$defaultContextVariables]
+                [
+                    ...$defaultContextVariables,
+                    'request' => $controllerContext?->getRequest() ?? ActionRequest::fromHttpRequest(ServerRequest::fromGlobals()),
+                ]
             )
         );
-        $runtime->setControllerContext($controllerContext);
-        return $runtime;
     }
 
     public function createFromConfiguration(
@@ -79,23 +75,6 @@ class RuntimeFactory
         return $this->createFromConfiguration(
             $this->fusionParser->parseFromSource($sourceCode),
             $fusionGlobals
-        );
-    }
-
-    private static function createControllerContextFromEnvironment(): ControllerContext
-    {
-        $httpRequest = ServerRequest::fromGlobals();
-
-        $request = ActionRequest::fromHttpRequest($httpRequest);
-
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
-
-        return new ControllerContext(
-            $request,
-            new ActionResponse(),
-            new Arguments([]),
-            $uriBuilder
         );
     }
 }

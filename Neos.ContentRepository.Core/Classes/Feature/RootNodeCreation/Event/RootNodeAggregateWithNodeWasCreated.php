@@ -28,18 +28,18 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api events are the persistence-API of the content repository
  */
-final class RootNodeAggregateWithNodeWasCreated implements
+final readonly class RootNodeAggregateWithNodeWasCreated implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeTypeName $nodeTypeName,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public NodeTypeName $nodeTypeName,
         /** Root nodes by definition cover *all* dimension space points; so we need to include the full list here. */
-        public readonly DimensionSpacePointSet $coveredDimensionSpacePoints,
-        public readonly NodeAggregateClassification $nodeAggregateClassification,
+        public DimensionSpacePointSet $coveredDimensionSpacePoints,
+        public NodeAggregateClassification $nodeAggregateClassification,
     ) {
     }
 

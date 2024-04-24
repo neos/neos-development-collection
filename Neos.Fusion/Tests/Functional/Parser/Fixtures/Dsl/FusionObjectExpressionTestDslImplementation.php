@@ -15,7 +15,7 @@ use Neos\Fusion\Core\DslInterface;
 
 class FusionObjectExpressionTestDslImplementation implements DslInterface
 {
-    public function transpile($code)
+    public function transpile(string $code): string
     {
         $config = json_decode($code, true);
 

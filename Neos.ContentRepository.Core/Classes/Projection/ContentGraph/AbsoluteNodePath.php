@@ -39,11 +39,11 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @api
  */
-final class AbsoluteNodePath implements \JsonSerializable
+final readonly class AbsoluteNodePath implements \JsonSerializable
 {
     private function __construct(
-        public readonly NodeTypeName $rootNodeTypeName,
-        public readonly NodePath $path
+        public NodeTypeName $rootNodeTypeName,
+        public NodePath $path
     ) {
     }
 

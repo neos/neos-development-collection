@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspaceModification\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Event triggered to indicate that a workspace got removed.
  *
  * @api events are the persistence-API of the content repository
  */
-final class WorkspaceWasRemoved implements EventInterface
+final readonly class WorkspaceWasRemoved implements EventInterface
 {
     public function __construct(
-        public readonly WorkspaceName $workspaceName,
+        public WorkspaceName $workspaceName,
     ) {
     }
 

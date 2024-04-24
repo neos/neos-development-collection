@@ -3,8 +3,8 @@
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 /**
  * This describes a node's read model identity parts which are rooted in the {@see ContentSubgraphInterface}, namely:
@@ -33,16 +33,16 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
  *
  * @api
  */
-final class ContentSubgraphIdentity implements \JsonSerializable
+final readonly class ContentSubgraphIdentity implements \JsonSerializable
 {
     private function __construct(
-        public readonly ContentRepositoryId $contentRepositoryId,
-        public readonly ContentStreamId $contentStreamId,
+        public ContentRepositoryId $contentRepositoryId,
+        public ContentStreamId $contentStreamId,
         /**
          * DimensionSpacePoint a node has been accessed in.
          */
-        public readonly DimensionSpacePoint $dimensionSpacePoint,
-        public readonly VisibilityConstraints $visibilityConstraints,
+        public DimensionSpacePoint $dimensionSpacePoint,
+        public VisibilityConstraints $visibilityConstraints,
     ) {
     }
 

@@ -4,17 +4,17 @@ namespace Neos\ContentRepository\Export\Asset\ValueObject;
 
 use Neos\Media\Domain\Model\ImageVariant;
 
-final class SerializedImageVariant implements \JsonSerializable
+final readonly class SerializedImageVariant implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $identifier,
-        public readonly string $originalAssetIdentifier,
-        public readonly string $name,
-        public readonly int $width,
-        public readonly int $height,
-        public readonly ?string $presetIdentifier,
-        public readonly ?string $presetVariantName,
-        public readonly SerializedImageAdjustments $imageAdjustments,
+        public string $identifier,
+        public string $originalAssetIdentifier,
+        public string $name,
+        public int $width,
+        public int $height,
+        public ?string $presetIdentifier,
+        public ?string $presetVariantName,
+        public SerializedImageAdjustments $imageAdjustments,
     ) {}
 
     public static function fromImageVariant(ImageVariant $imageVariant): self

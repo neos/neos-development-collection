@@ -27,13 +27,13 @@ use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueSpecial
  *
  * @internal
  */
-final class ContentDimensionValueSpecializationDepth implements \JsonSerializable
+final readonly class ContentDimensionValueSpecializationDepth implements \JsonSerializable
 {
     /**
      * @throws ContentDimensionValueSpecializationDepthIsInvalid
      */
     public function __construct(
-        public readonly int $value
+        public int $value
     ) {
         if ($value < 0) {
             throw ContentDimensionValueSpecializationDepthIsInvalid::becauseItMustBeNonNegative($value);

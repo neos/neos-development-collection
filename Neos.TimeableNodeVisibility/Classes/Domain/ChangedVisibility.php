@@ -7,11 +7,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 /**
  * @internal
  */
-final class ChangedVisibility
+final readonly class ChangedVisibility
 {
     private function __construct(
-        public readonly Node $node,
-        public readonly ChangedVisibilityType $type
+        public Node $node,
+        public ChangedVisibilityType $type
     ) {
     }
 

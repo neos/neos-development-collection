@@ -15,14 +15,14 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeType
  *
  * @api for the factory methods; NOT for the inner state.
  */
-final class FindSubtreeFilter
+final readonly class FindSubtreeFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly ?NodeTypeCriteria $nodeTypes,
-        public readonly ?int $maximumLevels,
+        public ?NodeTypeCriteria $nodeTypes,
+        public ?int $maximumLevels,
     ) {
     }
 

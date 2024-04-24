@@ -48,11 +48,11 @@ use Neos\Utility\Arrays;
  *
  * @api
  */
-final class NodeTypeCriteria
+final readonly class NodeTypeCriteria
 {
     private function __construct(
-        public readonly NodeTypeNames $explicitlyAllowedNodeTypeNames,
-        public readonly NodeTypeNames $explicitlyDisallowedNodeTypeNames
+        public NodeTypeNames $explicitlyAllowedNodeTypeNames,
+        public NodeTypeNames $explicitlyDisallowedNodeTypeNames
     ) {
     }
 

@@ -24,12 +24,12 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The node creation feature set for the hypergraph projector
@@ -89,7 +89,7 @@ trait NodeCreation
 
         $this->transactional(function () use ($node, $event) {
             $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-            foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
+            foreach ($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet() as $dimensionSpacePoint) {
                 $hierarchyRelation = $this->getProjectionHypergraph()->findChildHierarchyHyperrelationRecord(
                     $event->contentStreamId,
                     $dimensionSpacePoint,
@@ -97,15 +97,14 @@ trait NodeCreation
                 );
                 if ($hierarchyRelation) {
                     $succeedingSiblingNodeAnchor = null;
-                    if ($event->succeedingNodeAggregateId) {
+                    $succeedingSiblingNodeAggregateId = $event->succeedingSiblingsForCoverage->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
+                    if ($succeedingSiblingNodeAggregateId) {
                         $succeedingSiblingNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
                             $event->contentStreamId,
                             $dimensionSpacePoint,
-                            $event->succeedingNodeAggregateId
+                            $succeedingSiblingNodeAggregateId
                         );
-                        if ($succeedingSiblingNode) {
-                            $succeedingSiblingNodeAnchor = $succeedingSiblingNode->relationAnchorPoint;
-                        }
+                        $succeedingSiblingNodeAnchor = $succeedingSiblingNode?->relationAnchorPoint;
                     }
                     $hierarchyRelation->addChildNodeAnchor(
                         $node->relationAnchorPoint,

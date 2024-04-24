@@ -10,19 +10,21 @@ Feature: Node References without Dimensions
     'Neos.ContentRepository.Testing:ReferencedNode': []
 
     'Neos.ContentRepository.Testing:NodeWithReferences':
+      # legacy notation
       properties:
         referenceProperty:
           type: reference
         referencesProperty:
           type: references
+      references:
         restrictedReferenceProperty:
-          type: reference
           constraints:
             nodeTypes:
               '*': false
               'Neos.ContentRepository.Testing:ReferencedNode': true
         referencePropertyWithProperty:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             text:
               type: string
@@ -31,7 +33,6 @@ Feature: Node References without Dimensions
             postalAddress:
               type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
         referencesPropertyWithProperty:
-          type: references
           properties:
             text:
               type: string
@@ -50,7 +51,7 @@ Feature: Node References without Dimensions
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |

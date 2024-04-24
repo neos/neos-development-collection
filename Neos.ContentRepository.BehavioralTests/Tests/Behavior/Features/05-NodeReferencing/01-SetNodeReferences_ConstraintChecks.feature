@@ -12,6 +12,7 @@ Feature: Constraint checks on SetNodeReferences
     'Neos.ContentRepository.Testing:ReferencedNode': []
 
     'Neos.ContentRepository.Testing:NodeWithReferences':
+      # legacy notation
       properties:
         referenceProperty:
           type: reference
@@ -19,13 +20,16 @@ Feature: Constraint checks on SetNodeReferences
           type: references
         nonReferenceProperty:
           type: string
-        constrainedReferenceProperty:
-          type: reference
+      references:
+        constrainedReferenceCount:
           constraints:
+            maxItems: 1
+        constrainedReferenceProperty:
+          constraints:
+            maxItems: 1
             nodeTypes:
               'Neos.ContentRepository.Testing:ReferencedNode': false
         referencePropertyWithProperties:
-          type: reference
           properties:
             text:
               type: string
@@ -42,7 +46,7 @@ Feature: Constraint checks on SetNodeReferences
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -54,15 +58,26 @@ Feature: Constraint checks on SetNodeReferences
       | anthony-destinode       | Neos.ContentRepository.Testing:ReferencedNode     | lady-eleonode-rootford        |
       | berta-destinode         | Neos.ContentRepository.Testing:ReferencedNode     | lady-eleonode-rootford        |
 
+  Scenario: Try to reference nodes in a workspace whose content stream is closed
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                           | Value                            |
+      | sourceNodeAggregateId         | "source-nodandaise"              |
+      | referenceName                 | "referenceProperty"              |
+      | references                    | [{"target":"anthony-destinode"}] |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
+
   # checks for contentStreamId
   Scenario: Try to reference nodes in a non-existent content stream
     When the command SetNodeReferences is executed with payload and exceptions are caught:
       | Key                           | Value                           |
-      | contentStreamId       | "i-do-not-exist"                |
+      | workspaceName       | "i-do-not-exist"                |
       | sourceNodeAggregateId | "source-nodandaise"             |
       | referenceName                 | "referenceProperty"             |
       | references                    | [{"target":"anthony-destinode"}] |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet" with code 1521386692
+    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet" with code 1710407870
 
   # checks for sourceNodeAggregateId
   Scenario: Try to reference nodes in a non-existent node aggregate
@@ -116,6 +131,22 @@ Feature: Constraint checks on SetNodeReferences
       | referenceName                 | "referenceProperty"                   |
       | references                    | [{"target":"lady-eleonode-rootford"}] |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
+
+  Scenario: Try to set references exceeding the maxItems count
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                             | Value                                                           |
+      | sourceNodeAggregateId           | "source-nodandaise"                                             |
+      | referenceName                   | "constrainedReferenceCount"                                     |
+      | references                      | [{"target":"anthony-destinode"}, {"target":"berta-destinode"}]  |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1700150156
+
+  Scenario: Try to set references exceeding the maxItems count for legacy property reference declaration
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                             | Value                                                           |
+      | sourceNodeAggregateId           | "source-nodandaise"                                             |
+      | referenceName                   | "referenceProperty"                                             |
+      | references                      | [{"target":"anthony-destinode"}, {"target":"berta-destinode"}]  |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1700150156
 
   Scenario: Try to reference a node aggregate of a type not matching the constraints
     When the command SetNodeReferences is executed with payload and exceptions are caught:
@@ -176,3 +207,11 @@ Feature: Constraint checks on SetNodeReferences
       | referenceName                 | "referencePropertyWithProperties"                                                              |
       | references                    | [{"target":"anthony-destinode", "properties":{"postalAddress": "28 31st of February Street"}}] |
     Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1658406762
+
+  Scenario: Node reference cannot hold multiple targets to the same node
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                             | Value                            |
+      | sourceNodeAggregateId           | "source-nodandaise"              |
+      | referenceName                   | "referencesProperty"                      |
+      | references                      | [{"target":"anthony-destinode"}, {"target":"anthony-destinode"}] |
+    Then the last command should have thrown an exception of type "InvalidArgumentException" with code 1700150910

@@ -11,14 +11,14 @@ use Neos\Flow\Annotations as Flow;
  * @api
  */
 #[Flow\Proxy(false)]
-final class AssetUsageFilter
+final readonly class AssetUsageFilter
 {
     private function __construct(
-        public readonly ?string $assetId,
-        public readonly ?ContentStreamId $contentStreamId,
-        public readonly bool $groupByAsset,
-        public readonly bool $groupByNode,
-        public readonly bool $includeVariantsOfAsset,
+        public ?string $assetId,
+        public ?ContentStreamId $contentStreamId,
+        public bool $groupByAsset,
+        public bool $groupByNode,
+        public bool $includeVariantsOfAsset,
     ) {
     }
 

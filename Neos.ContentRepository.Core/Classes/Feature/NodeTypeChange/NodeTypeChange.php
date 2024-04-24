@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -38,10 +39,8 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /** @codingStandardsIgnoreStart */
-use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 /** @codingStandardsIgnoreEnd  */
 
 /**
@@ -112,10 +111,11 @@ trait NodeTypeChange
          * Constraint checks
          **************/
         // existence of content stream, node type and node aggregate
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -133,7 +133,7 @@ trait NodeTypeChange
         foreach ($parentNodeAggregates as $parentNodeAggregate) {
             assert($parentNodeAggregate instanceof NodeAggregate);
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $command->contentStreamId,
+                $contentStreamId,
                 $newNodeType,
                 $nodeAggregate->nodeName,
                 [$parentNodeAggregate->nodeAggregateId],
@@ -165,7 +165,7 @@ trait NodeTypeChange
          **************/
         $events = [
             new NodeAggregateTypeWasChanged(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->nodeAggregateId,
                 $command->newNodeTypeName
             ),
@@ -218,14 +218,12 @@ trait NodeTypeChange
         }
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId(
-                $command->contentStreamId
-            )->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 Events::fromArray($events),
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 

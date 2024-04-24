@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
  */
-final class SiteConfiguration
+final readonly class SiteConfiguration
 {
     /**
      * @param ContentRepositoryId $contentRepositoryId
@@ -20,11 +20,11 @@ final class SiteConfiguration
      * @param DimensionSpacePoint $defaultDimensionSpacePoint
      */
     private function __construct(
-        public readonly ContentRepositoryId $contentRepositoryId,
-        public readonly string $contentDimensionResolverFactoryClassName,
-        public readonly array $contentDimensionResolverOptions,
-        public readonly DimensionSpacePoint $defaultDimensionSpacePoint,
-        public readonly string $uriPathSuffix,
+        public ContentRepositoryId $contentRepositoryId,
+        public string $contentDimensionResolverFactoryClassName,
+        public array $contentDimensionResolverOptions,
+        public DimensionSpacePoint $defaultDimensionSpacePoint,
+        public string $uriPathSuffix,
     ) {
     }
 

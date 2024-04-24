@@ -15,10 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * A node id (Content Stream, NodeAggregateId, DimensionSpacePoint); used when
@@ -29,12 +26,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api used as part of commands
  */
-final class NodeIdToPublishOrDiscard implements \JsonSerializable
+final readonly class NodeIdToPublishOrDiscard implements \JsonSerializable
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly DimensionSpacePoint $dimensionSpacePoint,
+        public NodeAggregateId $nodeAggregateId,
+        public DimensionSpacePoint $dimensionSpacePoint,
     ) {
     }
 
@@ -44,7 +40,6 @@ final class NodeIdToPublishOrDiscard implements \JsonSerializable
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamId::fromString($array['contentStreamId']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
         );
@@ -55,10 +50,6 @@ final class NodeIdToPublishOrDiscard implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'dimensionSpacePoint' => $this->dimensionSpacePoint,
-        ];
+        return get_object_vars($this);
     }
 }

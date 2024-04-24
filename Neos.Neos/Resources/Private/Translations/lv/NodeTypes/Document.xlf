@@ -3,20 +3,21 @@
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="lv">
     <body>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
-				<source>Document</source>
-			<target state="final">Dokuments</target></trans-unit>
+        <source>Document</source>
+        <target state="final">Dokuments</target>
+      </trans-unit>
       <trans-unit id="properties.title" xml:space="preserve" approved="yes">
-				<source>Title</source>
-			<target state="final">Virsraksts</target></trans-unit>
+        <source>Title</source>
+        <target state="final">Virsraksts</target>
+      </trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve" approved="yes">
-				<source>URL path segment</source>
-			<target state="final">URL segments</target></trans-unit>
+        <source>URL path segment</source>
+        <target state="final">URL segments</target>
+      </trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve" approved="yes">
-				<source>Hide in menus</source>
-			<target state="final">Paslēpt izvēlnē</target></trans-unit>
-      <trans-unit id="creationDialog.title" xml:space="preserve" approved="yes">
-				<source>Title</source>
-			<target state="final">Virsraksts</target></trans-unit>
+        <source>Hide in menus</source>
+        <target state="final">Paslēpt izvēlnē</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -11,11 +11,11 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
  *
  * @api DTO of {@see NodeAggregateWasMoved} event
  */
-final class CoverageNodeMoveMapping implements \JsonSerializable
+final readonly class CoverageNodeMoveMapping implements \JsonSerializable
 {
     private function __construct(
-        public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
-        public readonly SucceedingSiblingNodeMoveDestination|ParentNodeMoveDestination $destination,
+        public DimensionSpacePoint $coveredDimensionSpacePoint,
+        public SucceedingSiblingNodeMoveDestination|ParentNodeMoveDestination $destination,
     ) {
     }
 

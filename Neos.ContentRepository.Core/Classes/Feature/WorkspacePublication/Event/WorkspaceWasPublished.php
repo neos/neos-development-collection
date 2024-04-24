@@ -21,25 +21,25 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 /**
  * @api events are the persistence-API of the content repository
  */
-final class WorkspaceWasPublished implements EventInterface
+final readonly class WorkspaceWasPublished implements EventInterface
 {
     public function __construct(
         /**
          * From which workspace have changes been published?
          */
-        public readonly WorkspaceName $sourceWorkspaceName,
+        public WorkspaceName $sourceWorkspaceName,
         /**
          * The target workspace where the changes have been published to.
          */
-        public readonly WorkspaceName $targetWorkspaceName,
+        public WorkspaceName $targetWorkspaceName,
         /**
          * The new, empty content stream ID of $sourceWorkspaceName, (after the publish was successful)
          */
-        public readonly ContentStreamId $newSourceContentStreamId,
+        public ContentStreamId $newSourceContentStreamId,
         /**
          * The old content stream ID of $sourceWorkspaceName (which is not active anymore now)
          */
-        public readonly ContentStreamId $previousSourceContentStreamId
+        public ContentStreamId $previousSourceContentStreamId
     ) {
     }
 

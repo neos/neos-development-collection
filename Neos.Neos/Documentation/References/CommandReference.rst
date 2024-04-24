@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-02-26
+The following reference was automatically generated from code on 2024-04-24
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -613,7 +613,7 @@ Options
 ^^^^^^^
 
 ``--version``
-  The version to migrate to
+  The version to migrate to. Can be either a version number ("20231211133500"), a full migration class name ("Neos\Flow\Persistence\Doctrine\Migrations\Version20231211133500"), "previous", "next" or "latest" (default)
 ``--output``
   A file to write SQL to, instead of executing it
 ``--dry-run``
@@ -2902,6 +2902,35 @@ Options
 
 
 
+.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:rebase`:
+
+``neos.neos:workspace:rebase``
+******************************
+
+**Rebase workspace on base workspace**
+
+This command rebases the given workspace on its base workspace, it may fail if the rebase is not possible.
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "user-john
+
+
+
+Options
+^^^^^^^
+
+``--content-repository-identifier``
+  
+``--force``
+  Rebase all events that do not conflict
+
+
+
+
+
 .. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:rebaseoutdated`:
 
 ``neos.neos:workspace:rebaseoutdated``
@@ -2918,6 +2947,8 @@ Options
 
 ``--content-repository-identifier``
   contentRepositoryIdentifier
+``--force``
+  force
 
 
 

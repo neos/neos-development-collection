@@ -24,7 +24,7 @@ Feature: Disable a node aggregate
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -50,14 +50,15 @@ Feature: Disable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 8 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 7 is of type "NodeAggregateWasDisabled" with payload:
+    And event at index 7 is of type "SubtreeWasTagged" with payload:
       | Key                          | Expected                 |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [[]]                     |
+      | tag                          | "disabled"               |
 
     When the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{} to exist in the content graph
@@ -68,7 +69,7 @@ Feature: Disable a node aggregate
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points [{}]
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:

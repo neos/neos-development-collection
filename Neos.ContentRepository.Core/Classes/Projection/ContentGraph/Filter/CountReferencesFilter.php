@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
@@ -27,18 +27,18 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
  *
  * @api for the factory methods; NOT for the inner state.
  */
-final class CountReferencesFilter
+final readonly class CountReferencesFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly ?NodeTypeCriteria $nodeTypes,
-        public readonly ?SearchTerm $nodeSearchTerm,
-        public readonly ?PropertyValueCriteriaInterface $nodePropertyValue,
-        public readonly ?SearchTerm $referenceSearchTerm,
-        public readonly ?PropertyValueCriteriaInterface $referencePropertyValue,
-        public readonly ?ReferenceName $referenceName,
+        public ?NodeTypeCriteria $nodeTypes,
+        public ?SearchTerm $nodeSearchTerm,
+        public ?PropertyValueCriteriaInterface $nodePropertyValue,
+        public ?SearchTerm $referenceSearchTerm,
+        public ?PropertyValueCriteriaInterface $referencePropertyValue,
+        public ?ReferenceName $referenceName,
     ) {
     }
 

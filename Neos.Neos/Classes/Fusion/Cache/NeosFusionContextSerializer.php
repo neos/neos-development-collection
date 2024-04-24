@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\Cache;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -16,18 +16,16 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
- * Serializer for Fusion's [at]cache.context values
+ * Serializer for Fusion's \@cache.context values
  *
  * Implements special handing for serializing {@see Node} objects in fusions cache context:
  *
- * ```
- * [at]cache {
- *   mode = 'uncached'
- *   context {
- *     1 = 'node'
- *   }
- * }
- * ```
+ *     \@cache {
+ *       mode = 'uncached'
+ *       context {
+ *         1 = 'node'
+ *       }
+ *     }
  *
  * The property mapper cannot be relied upon to serialize nodes, as this is willingly not implemented.
  *

@@ -17,16 +17,15 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeClock;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeUserIdProvider;
@@ -39,6 +38,8 @@ trait CRTestSuiteRuntimeVariables
     protected ?ContentRepository $currentContentRepository = null;
 
     protected ?ContentStreamId $currentContentStreamId = null;
+
+    protected ?WorkspaceName $currentWorkspaceName = null;
 
     protected ?DimensionSpacePoint $currentDimensionSpacePoint = null;
 
@@ -97,6 +98,14 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
+     * @Given /^I am in workspace "([^"]*)"$/
+     */
+    public function iAmInWorkspace(string $workspaceName): void
+    {
+        $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
+    }
+
+    /**
      * @Given /^I am in the active content stream of workspace "([^"]*)"$/
      * @throws \Exception
      */
@@ -106,6 +115,7 @@ trait CRTestSuiteRuntimeVariables
         if ($workspace === null) {
             throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
         }
+        $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
         $this->currentContentStreamId = $workspace->currentContentStreamId;
     }
 

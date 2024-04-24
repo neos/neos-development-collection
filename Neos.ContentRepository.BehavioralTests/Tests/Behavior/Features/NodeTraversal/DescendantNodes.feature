@@ -65,7 +65,7 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -88,7 +88,6 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
     And the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeProperties is executed with payload:
       | Key             | Value                   |
-      | contentStreamId | "cs-identifier"         |
       | nodeAggregateId | "a2a2b"                 |
       | propertyValues  | {"integerProperty": 20} |
     And the command DisableNodeAggregate is executed with payload:

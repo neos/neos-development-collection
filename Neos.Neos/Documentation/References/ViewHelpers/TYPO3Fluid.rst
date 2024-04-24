@@ -3,7 +3,7 @@
 TYPO3 Fluid ViewHelper Reference
 ################################
 
-This reference was automatically generated from code on 2024-02-26
+This reference was automatically generated from code on 2024-04-24
 
 
 .. _`TYPO3 Fluid ViewHelper Reference: f:alias`:
@@ -430,7 +430,7 @@ Arguments
 
 * ``values`` (array, *optional*): The array or object implementing \ArrayAccess (for example \SplObjectStorage) to iterated over
 
-* ``as`` (strong): The name of the iteration variable
+* ``as`` (string): The name of the iteration variable
 
 
 
@@ -533,6 +533,37 @@ Arguments
 *********
 
 * ``if`` (boolean, *optional*): Condition expression conforming to Fluid boolean rules
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:first`:
+
+f:first
+-------
+
+The FirstViewHelper returns the first item of an array.
+
+Example
+========
+
+::
+
+   <f:first value="{0: 'first', 1: 'second'}" />
+
+.. code-block:: text
+
+   first
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\FirstViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (array, *optional*)
 
 
 
@@ -1371,24 +1402,51 @@ f:if
 
 This ViewHelper implements an if/else condition.
 
-Conditions:
+Fluid Boolean Rules / Conditions:
+=================================
 
-As a condition is a boolean value, you can just use a boolean argument.
-Alternatively, you can write a boolean expression there.
+A condition is evaluated as a boolean value, so you can use any
+boolean argument, like a variable.
+Alternatively, you can use a full boolean expression.
+The entered expression is evaluated as a PHP expression. You can
+combine multiple expressions via :php:`&&` (logical AND) and
+:php:`||` (logical OR).
+
+An expression can also be prepended with the :php:`!` ("not") character,
+which will negate that expression.
+
+Have a look into the Fluid section of the "TYPO3 Explained" Documentation
+for more details about complex conditions.
+
 Boolean expressions have the following form:
 
-XX Comparator YY
+`is true` variant: `{variable}`::
 
-Comparator is one of: ==, !=, <, <=, >, >= and %
-The % operator converts the result of the % operation to boolean.
+      <f:if condition="{foo}">
+          Will be shown if foo is truthy.
+      </f:if>
 
-XX and YY can be one of:
+or `is false` variant: `!{variable}`::
 
-- number
-- Object Accessor
+      <f:if condition="!{foo}">
+          Will be shown if foo is falsy.
+      </f:if>
+
+or comparisons with expressions::
+
+      XX Comparator YY
+
+Comparator is one of: :php:`==, !=, <, <=, >, >=` and :php:`%`
+The :php:`%` operator (modulo) converts the result of the operation to
+boolean.
+
+`XX` and `YY` can be one of:
+
+- Number
+- String
+- Object Accessor (`object.property`)
 - Array
 - a ViewHelper
-- string
 
 ::
 
@@ -1401,8 +1459,9 @@ XX and YY can be one of:
       <f:if condition="{rank} == {k:bar()}">
           Checks if rank is equal to the result of the ViewHelper "k:bar"
       </f:if>
-      <f:if condition="{foo.bar} == 'stringToCompare'">
-          Will result in true if {foo.bar}'s represented value equals 'stringToCompare'.
+      <f:if condition="{object.property} == 'stringToCompare'">
+          Will result in true if {object.property}'s represented value
+          equals 'stringToCompare'.
       </f:if>
 
 Examples
@@ -1438,9 +1497,9 @@ If / then / else
 Output::
 
     Everything inside the "then" tag is displayed if the condition evaluates to TRUE.
-    Otherwise, everything inside the "else"-tag is displayed.
+    Otherwise, everything inside the "else" tag is displayed.
 
-inline notation
+Inline notation
 ---------------
 
 ::
@@ -1450,7 +1509,30 @@ inline notation
 Output::
 
     The value of the "then" attribute is displayed if the condition evaluates to TRUE.
-    Otherwise, everything the value of the "else"-attribute is displayed.
+    Otherwise, everything the value of the "else" attribute is displayed.
+
+Combining multiple conditions
+-----------------------------
+
+::
+
+    <f:if condition="{user.rank} > 100 && {user.type} == 'contributor'">
+        <f:then>
+            This is being shown in case both conditions match.
+        </f:then>
+        <f:else if="{user.rank} > 200 && ({user.type} == 'contributor' || {user.type} == 'developer')">
+            This is being displayed in case the first block of the condition evaluates to TRUE and any condition in
+            the second condition block evaluates to TRUE.
+        </f:else>
+        <f:else>
+            This is being displayed when none of the above conditions evaluated to TRUE.
+        </f:else>
+    </f:if>
+
+Output::
+
+    Depending on which expression evaluated to TRUE, that value is displayed.
+    If no expression matched, the contents inside the final "else" tag are displayed.
 
 :Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\IfViewHelper
 
@@ -1503,6 +1585,101 @@ Arguments
 *********
 
 * ``code`` (string, *optional*): Fluid code to be rendered as if it were part of the template rendering it. Can be passed as inline argument or tag content
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:join`:
+
+f:join
+------
+
+The JoinViewHelper combines elements from an array into a single string.
+You can specify both a general separator and a special one for the last
+element, which serves as the delimiter between the elements.
+
+
+Examples
+========
+
+Simple join
+-----------
+::
+
+   <f:join value="{0: '1', 1: '2', 2: '3'}" />
+
+.. code-block:: text
+
+   123
+
+
+Join with separator
+-------------------
+
+::
+
+   <f:join value="{0: '1', 1: '2', 2: '3'}" separator=", " />
+
+.. code-block:: text
+
+   1, 2, 3
+
+
+Join with separator, and special one for the last
+-------------------------------------------------
+
+::
+
+   <f:join value="{0: '1', 1: '2', 2: '3'}" separator=", " separatorLast=" and " />
+
+.. code-block:: text
+
+   1, 2 and 3
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\JoinViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (array, *optional*): An array
+
+* ``separator`` (string, *optional*): The separator
+
+* ``separatorLast`` (string, *optional*): The separator for the last pair.
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:last`:
+
+f:last
+------
+
+The LastViewHelper returns the last item of an array.
+
+Example
+========
+
+::
+
+   <f:last value="{0: 'first', 1: 'second'}" />
+
+.. code-block:: text
+
+   second
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\LastViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (array, *optional*)
 
 
 
@@ -1701,6 +1878,69 @@ Arguments
 
 
 
+.. _`TYPO3 Fluid ViewHelper Reference: f:replace`:
+
+f:replace
+---------
+
+The ReplaceViewHelper replaces one or multiple strings with other
+strings. This ViewHelper mimicks PHP's :php:`str_replace()` function.
+However, it's also possible to provide replace pairs as associative array
+via the "replace" argument.
+
+
+Examples
+========
+
+Replace a single string
+-----------------------
+::
+
+   <f:replace value="Hello World" search="World" replace="Fluid" />
+
+.. code-block:: text
+
+   Hello Fluid
+
+
+Replace multiple strings
+------------------------
+::
+
+   <f:replace value="Hello World" search="{0: 'World', 1: 'Hello'}" replace="{0: 'Fluid', 1: 'Hi'}" />
+
+.. code-block:: text
+
+   Hi Fluid
+
+
+Replace multiple strings using associative array
+------------------------------------------------
+::
+
+   <f:replace value="Hello World" replace="{'World': 'Fluid', 'Hello': 'Hi'}" />
+
+.. code-block:: text
+
+   Hi Fluid
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\ReplaceViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (string, *optional*)
+
+* ``search`` (mixed, *optional*)
+
+* ``replace`` (mixed)
+
+
+
+
 .. _`TYPO3 Fluid ViewHelper Reference: f:section`:
 
 f:section
@@ -1803,6 +2043,73 @@ Output::
 
 :Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\SpacelessViewHelper
 
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:split`:
+
+f:split
+-------
+
+The SplitViewHelper splits a string by the specified separator, which
+results in an array. The number of values in the resulting array can
+be limited with the limit parameter, which results in an array where
+the last item contains the remaining unsplit string.
+
+This ViewHelper mimicks PHP's :php:`explode()` function.
+
+
+Examples
+========
+
+Split with a separator
+-----------------------
+::
+
+   <f:split value="1,5,8" separator="," />
+
+.. code-block:: text
+
+   {0: '1', 1: '5', 2: '8'}
+
+
+Split using tag content as value
+--------------------------------
+
+::
+
+   <f:split separator="-">1-5-8</f:split>
+
+.. code-block:: text
+
+   {0: '1', 1: '5', 2: '8'}
+
+
+Split with a limit
+-------------------
+
+::
+
+   <f:split value="1,5,8" separator="," limit="2" />
+
+.. code-block:: text
+
+   {0: '1', 1: '5,8'}
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\SplitViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (string, *optional*): The string to explode
+
+* ``separator`` (string): Separator string to explode with
+
+* ``limit`` (int, *optional*): If limit is positive, a maximum of $limit items will be returned. If limit is negative, all items except for the last $limit items will be returned. 0 will be treated as 1.
 
 
 

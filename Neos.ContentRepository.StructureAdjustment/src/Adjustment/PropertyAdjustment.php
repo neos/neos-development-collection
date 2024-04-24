@@ -7,7 +7,6 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
@@ -15,6 +14,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class PropertyAdjustment
@@ -30,11 +30,11 @@ class PropertyAdjustment
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType) {
             // In case we cannot find the expected tethered nodes, this fix cannot do anything.
             return;
         }
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 
         $expectedPropertiesFromNodeType = array_filter($nodeType->getProperties(), fn ($value) => $value !== null);
 
@@ -78,13 +78,6 @@ class PropertyAdjustment
 
                 // detect missing default values
                 foreach ($nodeType->getDefaultValuesForProperties() as $propertyKey => $defaultValue) {
-                    if ($defaultValue instanceof \DateTimeInterface) {
-                        $defaultValue = json_encode($defaultValue);
-                    }
-                    if ($defaultValue === null) {
-                        // we don't need to set null as default value if it doesn't exist
-                        continue;
-                    }
                     if (!array_key_exists($propertyKey, $propertyKeysInNode)) {
                         yield StructureAdjustment::createForNode(
                             $node,

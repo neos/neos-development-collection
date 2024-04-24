@@ -46,9 +46,9 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
-      | contentStreamId | "cs-identifier"   |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
     And the graph projection is fully up to date

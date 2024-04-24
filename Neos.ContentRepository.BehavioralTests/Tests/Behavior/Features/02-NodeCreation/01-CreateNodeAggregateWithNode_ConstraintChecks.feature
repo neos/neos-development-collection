@@ -38,18 +38,17 @@ Feature: Create node aggregate with node
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
-    And I am in dimension space point {}
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
-  Scenario: Try to create a node aggregate in a content stream that currently does not exist:
+  Scenario: Try to create a node aggregate in a workspace that currently does not exist:
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                 |
-      | contentStreamId       | "non-existent-cs-identifier"          |
+      | workspaceName         | "non-existent"                        |
       | nodeAggregateId       | "sir-david-nodenborough"              |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
@@ -57,7 +56,20 @@ Feature: Create node aggregate with node
 
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
-  Scenario: Try to create a node aggregate in a content stream where it is already present:
+  Scenario: Try to create a node aggregate in a workspace whose content stream is closed:
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    And the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                 |
+      | nodeAggregateId       | "sir-david-nodenborough"              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"              |
+      | nodeName              | "document"                            |
+
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
+
+  Scenario: Try to create a node aggregate in a workspace where it is already present:
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                 |
       | nodeAggregateId       | "lady-eleonode-rootford"              |
@@ -146,7 +158,6 @@ Feature: Create node aggregate with node
   Scenario: Try to create a node aggregate with a property the node type does not declare
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                 |
-      | contentStreamId       | "cs-identifier"                       |
       | nodeAggregateId       | "nody-mc-nodeface"                    |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |

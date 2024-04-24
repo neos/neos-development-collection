@@ -166,11 +166,6 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Module/User/UserSettingsController.php
 
 		-
-			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentStream\\\\ContentStreamFinder\\:\\:findAllIds\" is called\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Domain/Service/SiteServiceInternals.php
-
-		-
 			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\DimensionSpace\\\\WeightedDimensionSpacePoint\\:\\:getIdentityHash\" is called\\.$#"
 			count: 3
 			path: Neos.Neos/Classes/Presentation/Dimensions/VisualInterDimensionalVariationGraph.php
