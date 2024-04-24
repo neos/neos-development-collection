@@ -1,7 +1,12 @@
 prototype(Neos.Neos:RawContent.NodeProperties) < prototype(Neos.Fusion:Component) {
+  @private {
+    items = ${node.nodeType.properties}
+    items.@process.sort = ${Neos.Array.sortByPropertyPath(value, 'ui.inspector.position')}
+  }
+
   renderer = afx`
     <dl class="neos-raw-content-properties" @if={!String.isBlank(this.content)}>
-      <Neos.Fusion:Loop items={node.nodeType.properties} itemKey="propertyName" itemName="propertyConfiguration">
+      <Neos.Fusion:Loop items={private.items} itemKey="propertyName" itemName="propertyConfiguration">
         <Neos.Neos:RawContent.NodeProperty propertyName={propertyName} propertyConfiguration={propertyConfiguration}/>
       </Neos.Fusion:Loop>
     </dl>
