@@ -20,4 +20,7 @@ namespace Neos\ContentRepository\Core\NodeType;
 interface NodeTypeProviderInterface
 {
     public function getNodeTypes(): NodeTypes;
+    public function getNodeType(NodeTypeName $nodeTypeName): ?NodeType;
+
+    public function getSubNodeTypeNames(NodeTypeName $nodeTypeName): NodeTypeNames;
 }

@@ -72,6 +72,9 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     {
         $values = [];
         foreach ($nodeType->propertyDefinitions as $propertyDefinition) {
+            if ($propertyDefinition->defaultValue === null) {
+                continue;
+            }
             $propertyType = PropertyType::fromNodeTypeDeclaration(
                 $nodeType->getPropertyType($propertyDefinition->name->value),
                 PropertyName::fromString($propertyDefinition->name->value),

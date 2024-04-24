@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\BehavioralTests\TestSuite\Behavior;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
-use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;

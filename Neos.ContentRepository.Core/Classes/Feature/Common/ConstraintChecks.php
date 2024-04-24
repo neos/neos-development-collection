@@ -117,13 +117,6 @@ trait ConstraintChecks
         );
     }
 
-    protected function requireNodeTypeToNotBeAbstract(NodeType $nodeType): void
-    {
-        if ($nodeType->isAbstract()) {
-            throw NodeTypeIsAbstract::butWasNotSupposedToBe($nodeType->name);
-        }
-    }
-
     /**
      * @param NodeType $nodeType
      * @throws NodeTypeIsNotOfTypeRoot

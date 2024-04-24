@@ -250,8 +250,8 @@ final class NodeType
     }
 
     // TODO remove (check usages first)
-    public function hasReference() {
-
+    public function hasReference()
+    {
     }
 
     /**
