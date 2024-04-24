@@ -47,6 +47,8 @@ trait FusionTrait
 
     private ?\Throwable $lastRenderingException = null;
 
+    private $contentCacheEnabled = false;
+
     /**
      * @template T of object
      * @param class-string<T> $className
@@ -63,6 +65,7 @@ trait FusionTrait
         $this->fusionGlobalContext = [];
         $this->fusionContext = [];
         $this->fusionCode = null;
+        $this->contentCacheEnabled = false;
         $this->renderingResult = null;
     }
 
@@ -115,6 +118,14 @@ trait FusionTrait
     }
 
     /**
+     * @When I have Fusion content cache enabled
+     */
+    public function iHaveFusionContentCacheEnabled(): void
+    {
+        $this->contentCacheEnabled = true;
+    }
+
+    /**
      * @When I execute the following Fusion code:
      * @When I execute the following Fusion code on path :path:
      */
@@ -131,6 +142,7 @@ trait FusionTrait
         $fusionGlobals = FusionGlobals::fromArray($this->fusionGlobalContext);
 
         $fusionRuntime = (new RuntimeFactory())->createFromConfiguration($fusionAst, $fusionGlobals);
+        $fusionRuntime->setEnableContentCache($this->contentCacheEnabled);
         $fusionRuntime->overrideExceptionHandler($this->getObject(ThrowingHandler::class));
         $fusionRuntime->pushContextArray($this->fusionContext);
         try {
