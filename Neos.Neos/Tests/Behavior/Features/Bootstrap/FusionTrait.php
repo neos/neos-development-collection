@@ -28,6 +28,7 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
+use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
  * @internal only for behat tests within the Neos.Neos package
@@ -202,6 +203,14 @@ trait FusionTrait
         if ($this->lastRenderingException !== null) {
             throw new \RuntimeException(sprintf('The last rendering led to an error: %s', $this->lastRenderingException->getMessage()), 1698319254, $this->lastRenderingException);
         }
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function clearFusionCaches()
+    {
+        $this->getObject(ContentCache::class)->flush();
     }
 
 }

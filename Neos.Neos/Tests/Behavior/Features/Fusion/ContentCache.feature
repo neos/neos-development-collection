@@ -20,47 +20,47 @@ Feature: Tests for Fusion ContentCache
 
 """
 
-  Scenario:
+  Scenario: Render a cached prototype and check if rerendering doesn't happen on second try
     When I execute the following Fusion code:
     """fusion
         test = Neos.Neos:Test.ContentCache {
-            foo = 'test1'
+            foo = 'some-cached-string'
         }
     """
     Then I expect the following Fusion rendering result:
     """
-    test1
+    some-cached-string
     """
     When I execute the following Fusion code:
     """fusion
         test = Neos.Neos:Test.ContentCache {
-            foo = 'test2'
+            foo = 'some-other-string'
         }
     """
     Then I expect the following Fusion rendering result:
     """
-    test1
+    some-cached-string
     """
 
 
-  Scenario:
+  Scenario: Check if cached got flushed before running a new scenario and no leftover of last test is there
     When I execute the following Fusion code:
     """fusion
         test = Neos.Neos:Test.ContentCache {
-            foo = 'test2'
+            foo = 'some-new-string'
         }
     """
     Then I expect the following Fusion rendering result:
     """
-    test2
+    some-new-string
     """
     When I execute the following Fusion code:
     """fusion
         test = Neos.Neos:Test.ContentCache {
-            foo = 'test1'
+            foo = 'totally-different-string'
         }
     """
     Then I expect the following Fusion rendering result:
     """
-    test2
+    some-new-string
     """
