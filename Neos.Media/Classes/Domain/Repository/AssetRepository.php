@@ -79,9 +79,9 @@ class AssetRepository extends Repository
         $query = $this->createQuery();
 
         $constraints = [
-            $query->like('title', '%' . $searchTerm . '%'),
-            $query->like('resource.filename', '%' . $searchTerm . '%'),
-            $query->like('caption', '%' . $searchTerm . '%')
+            $query->like('title', '%' . $searchTerm . '%', false),
+            $query->like('resource.filename', '%' . $searchTerm . '%', false),
+            $query->like('caption', '%' . $searchTerm . '%', false)
         ];
         foreach ($tags as $tag) {
             $constraints[] = $query->contains('tags', $tag);
@@ -283,6 +283,10 @@ class AssetRepository extends Repository
         $variantsConstraints = [];
         $variantClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetVariantInterface::class);
         foreach ($variantClassNames as $variantClassName) {
+            if (!$this->reflectionService->isClassAnnotatedWith($variantClassName, Flow\Entity::class)) {
+                // ignore non-entity classes to prevent "class schema found" error
+                continue;
+            }
             $variantsConstraints[] = 'e NOT INSTANCE OF ' . $variantClassName;
         }
 
