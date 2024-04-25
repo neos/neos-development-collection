@@ -16,6 +16,7 @@ namespace Neos\Neos\PendingChangesProjection;
 
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
 
@@ -23,17 +24,14 @@ use Neos\Flow\Annotations as Flow;
  * Finder for changes
  *
  * !!! Still a bit unstable - might change in the future.
- *
- * @Flow\Proxy(false)
  */
-final class ChangeFinder implements ProjectionStateInterface
+#[Flow\Proxy(false)]
+final readonly class ChangeFinder implements ProjectionStateInterface
 {
-    /**
-     * @param DbalClientInterface $client
-     */
     public function __construct(
-        private readonly DbalClientInterface $client,
-        private readonly string $tableName
+        private DbalClientInterface $client,
+        private string $tableName,
+        public string $ancestryTableName,
     ) {
     }
 
@@ -52,7 +50,7 @@ final class ChangeFinder implements ProjectionStateInterface
             [
                 ':contentStreamId' => $contentStreamId->value
             ]
-        )->fetchAll();
+        )->fetchAllAssociative();
         $changes = [];
         foreach ($changeRows as $changeRow) {
             $changes[] = Change::fromDatabaseRow($changeRow);
@@ -70,6 +68,80 @@ final class ChangeFinder implements ProjectionStateInterface
             ',
             [
                 ':contentStreamId' => $contentStreamId->value
+            ]
+        )->rowCount();
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId
+     * @return array|Change[]
+     */
+    public function findBySiteAndContentStreamId(
+        NodeAggregateId $siteId,
+        ContentStreamId $contentStreamId
+    ): array {
+        $connection = $this->client->getConnection();
+        $changeRows = $connection->executeQuery(
+            '
+                SELECT * FROM ' . $this->tableName . ' c
+                JOIN ' . $this->ancestryTableName . ' a
+                  ON c.contentStreamId = a.contentStreamId
+                  AND c.nodeaggregateid = a.nodeaggregateid
+                  AND c.origindimensionspacepointhash = a.dimensionspacepointhash
+                WHERE c.contentStreamId = :contentStreamId
+                    AND a.sitenodeaggregateid = :siteNodeAggregateId
+            ',
+            [
+                ':contentStreamId' => $contentStreamId->value
+            ]
+        )->fetchAllAssociative();
+        $changes = [];
+        foreach ($changeRows as $changeRow) {
+            $changes[] = Change::fromDatabaseRow($changeRow);
+        }
+        return $changes;
+    }
+
+    public function countBySiteAndContentStreamId(
+        NodeAggregateId $siteId,
+        ContentStreamId $contentStreamId
+    ): int {
+        $connection = $this->client->getConnection();
+        return (int)$connection->executeQuery(
+            '
+                SELECT * FROM ' . $this->tableName . ' c
+                JOIN ' . $this->ancestryTableName . ' a
+                  ON c.contentStreamId = a.contentStreamId
+                  AND c.nodeaggregateid = a.nodeaggregateid
+                  AND c.origindimensionspacepointhash = a.dimensionspacepointhash
+                WHERE c.contentStreamId = :contentStreamId
+                    AND a.sitenodeaggregateid = :siteNodeAggregateId
+            ',
+            [
+                'contentStreamId' => $contentStreamId->value,
+                'siteNodeAggregateId' => $siteId->value,
+            ]
+        )->rowCount();
+    }
+
+    public function countByDocumentAndContentStreamId(
+        NodeAggregateId $documentId,
+        ContentStreamId $contentStreamId
+    ): int {
+        $connection = $this->client->getConnection();
+        return (int)$connection->executeQuery(
+            '
+                SELECT * FROM ' . $this->tableName . ' c
+                JOIN ' . $this->ancestryTableName . ' a
+                  ON c.contentStreamId = a.contentStreamId
+                  AND c.nodeaggregateid = a.nodeaggregateid
+                  AND c.origindimensionspacepointhash = a.dimensionspacepointhash
+                WHERE c.contentStreamId = :contentStreamId
+                    AND c.documentnodeaggregateid = :documentNodeAggregateId
+            ',
+            [
+                'contentStreamId' => $contentStreamId->value,
+                'documentNodeAggregateId' => $documentId->value,
             ]
         )->rowCount();
     }

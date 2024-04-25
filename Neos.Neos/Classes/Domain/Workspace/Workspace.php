@@ -83,9 +83,8 @@ final class Workspace
     public function countAllChanges(): int
     {
         $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
-        $changes = $changeFinder->findByContentStreamId($this->currentContentStreamId);
 
-        return count($changes);
+        return $changeFinder->countByContentStreamId($this->currentContentStreamId);
     }
 
     /** @internal experimental api, until actually used by the Neos.Ui */
@@ -97,12 +96,9 @@ final class Workspace
             $ancestorNodeTypeName
         );
 
-        $changes = $this->resolveNodeIdsToPublishOrDiscard(
-            $siteId,
-            $ancestorNodeTypeName
-        );
+        $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
 
-        return count($changes);
+        return $changeFinder->countBySiteAndContentStreamId($siteId, $this->currentContentStreamId);
     }
 
     /** @internal experimental api, until actually used by the Neos.Ui */
@@ -114,12 +110,9 @@ final class Workspace
             $ancestorNodeTypeName
         );
 
-        $changes = $this->resolveNodeIdsToPublishOrDiscard(
-            $documentId,
-            $ancestorNodeTypeName
-        );
+        $changeFinder = $this->contentRepository->projectionState(ChangeFinder::class);
 
-        return count($changes);
+        return $changeFinder->countByDocumentAndContentStreamId($documentId, $this->currentContentStreamId);
     }
 
     /** @internal should not be necessary in user land code */

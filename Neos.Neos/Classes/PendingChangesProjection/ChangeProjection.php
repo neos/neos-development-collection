@@ -39,6 +39,7 @@ use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
@@ -46,6 +47,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
  * TODO: this class needs testing and probably a major refactoring!
@@ -68,7 +70,10 @@ class ChangeProjection implements ProjectionInterface
     private ?array $liveContentStreamIdsRuntimeCache = null;
     private DbalCheckpointStorage $checkpointStorage;
 
+    public readonly string $ancestryTableName;
+
     public function __construct(
+        private readonly NodeTypeManager $nodeTypeManager,
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableNamePrefix,
     ) {
@@ -77,6 +82,7 @@ class ChangeProjection implements ProjectionInterface
             $this->tableNamePrefix . '_checkpoint',
             self::class
         );
+        $this->ancestryTableName = $tableNamePrefix . '_ancestry';
     }
 
 
@@ -143,20 +149,37 @@ class ChangeProjection implements ProjectionInterface
             'originDimensionSpacePointHash'
         ]);
 
+        $ancestryTable = new Table($this->ancestryTableName, [
+            DbalSchemaFactory::columnForContentStreamId('contentStreamId')->setNotNull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('nodeAggregateId')->setNotNull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('parentNodeAggregateId')->setNotNull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('documentNodeAggregateId')->setNotNull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('siteNodeAggregateId')->setNotNull(true),
+            DbalSchemaFactory::columnForDimensionSpacePoint('dimensionSpacePoint')->setNotNull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionSpacePointHash')->setNotNull(true),
+        ]);
+
+        $ancestryTable->setPrimaryKey([
+            'contentStreamId',
+            'nodeAggregateId',
+            'dimensionSpacePointHash'
+        ]);
+
         $liveContentStreamsTable = new Table($this->tableNamePrefix . '_livecontentstreams', [
             DbalSchemaFactory::ColumnForContentStreamId('contentstreamid')->setNotNull(true),
             (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setDefault('')->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION)
         ]);
         $liveContentStreamsTable->setPrimaryKey(['contentstreamid']);
 
-        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $liveContentStreamsTable]);
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $ancestryTable, $liveContentStreamsTable]);
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
     public function reset(): void
     {
-        $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix);
-        $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
+        $this->getDatabaseConnection()->executeStatement('TRUNCATE ' . $this->tableNamePrefix);
+        $this->getDatabaseConnection()->executeStatement('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
+        $this->getDatabaseConnection()->executeStatement('TRUNCATE ' . $this->ancestryTableName);
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
@@ -208,7 +231,8 @@ class ChangeProjection implements ProjectionInterface
         if (!$this->changeFinder) {
             $this->changeFinder = new ChangeFinder(
                 $this->dbalClient,
-                $this->tableNamePrefix
+                $this->tableNamePrefix,
+                $this->ancestryTableName,
             );
         }
         return $this->changeFinder;
@@ -271,6 +295,50 @@ class ChangeProjection implements ProjectionInterface
             $event->nodeAggregateId,
             $event->originDimensionSpacePoint
         );
+
+        $nodeType = $this->nodeTypeManager->getNodeType($event->nodeTypeName);
+        if (!$nodeType) {
+            // nothing that belongs in the ancestry
+            return;
+        }
+
+        foreach ($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet() as $affectedDimensionSpacePoint) {
+            if ($nodeType->isOfType(NodeTypeNameFactory::NAME_SITE)) {
+                $documentNodeAggregateId = $event->nodeAggregateId;
+                $siteNodeAggregateId = $event->nodeAggregateId;
+            } else {
+                $parent = $this->getDatabaseConnection()->executeQuery(
+                    'SELECT * FROM ' . $this->ancestryTableName . '
+                WHERE contentStreamId = :contentStreamId
+                AND nodeAggregateId = :parentNodeAggregateId
+                AND dimensionSpacePointHash = :dimensionSpacePointHash',
+                    [
+                        'contentStreamId' => $event->contentStreamId->value,
+                        'parentNodeAggregateId' => $event->parentNodeAggregateId->value,
+                        'dimensionSpacePointHash' => $affectedDimensionSpacePoint->hash,
+                    ]
+                );
+                $siteNodeAggregateId = $parent['siteNodeAggregateId'];
+
+                if ($nodeType->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
+                    $documentNodeAggregateId = $event->nodeAggregateId->value;
+                } else {
+                    $documentNodeAggregateId = $parent['documentNodeAggregateId'];
+                }
+            }
+
+
+            $this->getDatabaseConnection()->insert(
+                $this->ancestryTableName,
+                [
+                    'contentStreamId' => $event->contentStreamId->value,
+                    'nodeAggregateId' => $event->nodeAggregateId->value,
+                    'parentNodeAggregateId' => $event->parentNodeAggregateId->value,
+                    'documentNodeAggregateId' => $documentNodeAggregateId,
+                    'siteNodeAggregateId' => $siteNodeAggregateId,
+                ]
+            );
+        }
     }
 
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void

@@ -36,6 +36,7 @@ class FeatureContext implements BehatContext
     use RoutingTrait;
     use MigrationsTrait;
     use FusionTrait;
+    use PendingChangesTrait;
 
     use AssetTrait;
 

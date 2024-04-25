@@ -33,6 +33,7 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
         array $options,
     ): ChangeProjection {
         return new ChangeProjection(
+            $projectionFactoryDependencies->nodeTypeManager,
             $this->dbalClient,
             sprintf(
                 'cr_%s_p_neos_change',
