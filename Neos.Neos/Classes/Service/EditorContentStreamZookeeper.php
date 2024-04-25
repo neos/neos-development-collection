@@ -14,76 +14,38 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Authentication;
-use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Neos\Domain\Model\User;
-use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
+use Neos\Neos\Domain\Workspace\WorkspaceProvider;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Party\Domain\Service\PartyService;
 
 /**
- * The service for keeping track of editors' content streams
+ * The service for keeping track of editors' workspaces
  *
- * On authentication, workspaces may have to be created and content streams may have to be forked from live
- * or rebased from older ones
- *
- * @Flow\Scope("singleton")
+ * On authentication, workspaces may have to be created based on live
  */
+#[Flow\Scope('singleton')]
 final class EditorContentStreamZookeeper
 {
-    /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
-
-    /**
-     * @Flow\Inject
-     * @var PartyService
-     */
-    protected $partyService;
-
-    /**
-     * @Flow\Inject
-     * @var PolicyService
-     */
-    protected $policyService;
-
-    /**
-     * @Flow\Inject
-     * @var Bootstrap
-     */
-    protected $bootstrap;
-
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
+    public function __construct(
+        private readonly PartyService $partyService,
+        private readonly Bootstrap $bootstrap,
+        private readonly WorkspaceProvider $workspaceProvider
+    ) {
+    }
 
     /**
      * This method is called whenever a login happens (AuthenticationProviderManager::class, 'authenticatedToken'),
      * using Signal/Slot
      *
-     * @param Authentication\TokenInterface $token
-     * @throws \Exception
-     * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist
-     * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists
-     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist
-     * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
+     * @param TokenInterface $token
      */
     public function relayEditorAuthentication(Authentication\TokenInterface $token): void
     {
@@ -97,7 +59,6 @@ final class EditorContentStreamZookeeper
         } catch (SiteDetectionFailedException) {
             return;
         }
-        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
         $isEditor = false;
         foreach ($token->getAccount()->getRoles() as $role) {
@@ -114,28 +75,7 @@ final class EditorContentStreamZookeeper
         if (!$user instanceof User) {
             return;
         }
-        $workspaceName = WorkspaceNameBuilder::fromAccountIdentifier(
-            $token->getAccount()->getAccountIdentifier()
-        );
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
-        if ($workspace !== null) {
-            return;
-        }
 
-        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
-        if (!$baseWorkspace) {
-            return;
-        }
-        $editorsNewContentStreamId = ContentStreamId::create();
-        $contentRepository->handle(
-            CreateWorkspace::create(
-                $workspaceName,
-                $baseWorkspace->workspaceName,
-                new WorkspaceTitle((string) $user->getName()),
-                new WorkspaceDescription(''),
-                $editorsNewContentStreamId,
-                UserId::fromString($this->persistenceManager->getIdentifierByObject($user))
-            )
-        )->block();
+        $this->workspaceProvider->providePrimaryPersonalWorkspaceForUser($siteDetectionResult->contentRepositoryId, $user);
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\Media\Browser\Controller;
-
 /*
  * This file is part of the Neos.Media.Browser package.
  *
@@ -12,10 +10,13 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Media\Browser\Controller;
+
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -23,8 +24,8 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Workspace\WorkspaceProvider;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Neos\Service\UserService;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
 use Neos\Neos\Domain\Model\Site;
@@ -41,12 +42,6 @@ class UsageController extends ActionController
      * @var AssetService
      */
     protected $assetService;
-
-    /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $userService;
 
     /**
      * @Flow\Inject
@@ -67,17 +62,22 @@ class UsageController extends ActionController
     protected $domainUserService;
 
     /**
+     * @Flow\Inject
+     * @var WorkspaceProvider
+     */
+    protected $workspaceProvider;
+
+    /**
      * Get Related Nodes for an asset
      *
      * @param AssetInterface $asset
      * @return void
      */
-    public function relatedNodesAction(AssetInterface $asset)
+    public function relatedNodesAction(AssetInterface $asset): void
     {
         $currentContentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $personalWorkspace = $this->workspaceProvider->providePrimaryPersonalWorkspaceForCurrentUser($currentContentRepositoryId);
         $currentContentRepository = $this->contentRepositoryRegistry->get($currentContentRepositoryId);
-        $userWorkspaceName = WorkspaceName::fromString($this->userService->getPersonalWorkspaceName());
-        $userWorkspace = $currentContentRepository->getWorkspaceFinder()->findOneByName($userWorkspaceName);
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
         $relatedNodes = [];
@@ -169,7 +169,7 @@ class UsageController extends ActionController
             'inaccessibleRelations' => $inaccessibleRelations,
             'relatedNodes' => $relatedNodes,
             'contentDimensions' => $currentContentRepository->getContentDimensionSource()->getContentDimensionsOrderedByPriority(),
-            'userWorkspace' => $userWorkspace
+            'userWorkspaceName' => $personalWorkspace->name->value
         ]);
     }
 }
