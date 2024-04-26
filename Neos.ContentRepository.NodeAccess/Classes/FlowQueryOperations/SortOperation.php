@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Eel\FlowQuery\FlowQuery;
