@@ -136,6 +136,7 @@ class ContentStreamProjection implements ProjectionInterface
         $this->dbal->beginTransaction();
         if ($event instanceof EmbedsContentStreamAndNodeAggregateId) {
             $this->updateContentStreamVersion($event, $eventEnvelope);
+            CheckpointHelper::updateCheckpoint($this->dbal, $this->tableName, $eventEnvelope->sequenceNumber);
             $this->dbal->commit();
             return;
         }
