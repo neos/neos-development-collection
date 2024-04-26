@@ -7,6 +7,7 @@
     'Neos.Neos:Hidable': true
   abstract: true
   aggregate: true
+  relationDistributionStrategy: 'gatherAll'
   constraints:
     nodeTypes:
       '*': false

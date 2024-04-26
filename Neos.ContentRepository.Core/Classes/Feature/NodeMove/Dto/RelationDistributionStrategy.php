@@ -14,19 +14,19 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeMove\Dto;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
+
 /**
  * The relation distribution strategy for node aggregates as defined in the NodeType declaration
+ * or explicitly passed to commands.
  * Used for building relations to other node aggregates
  *
- * - `scatter` means that different nodes within the aggregate may be related to different other aggregates
- *      (e.g. parent).
- *      Still, specializations pointing to the same node using the fallback mechanism will be kept gathered.
+ * - `scatter` means that different nodes within the aggregate may be related to different other aggregates (e.g. parent).
  * - `gatherAll` means that all nodes within the aggregate must be related to the same other aggregate (e.g. parent)
  * - `gatherSpecializations` means that when a node is related to another node aggregate (e.g. parent),
- *      all specializations of that node will be related to that same aggregate while generalizations
- *      may be related to others
+ *      all specializations of that node will be related to that same aggregate while generalizations may be related to others
  *
- * @api DTO of {@see MoveNodeAggregate} command
+ * @api DTO of {@see MoveNodeAggregate} command and {@see NodeType::getRelationDistributionStrategy()}
  */
 enum RelationDistributionStrategy: string implements \JsonSerializable
 {

@@ -3,6 +3,7 @@
     'Neos.Neos:Node': true
     'Neos.Neos:Hidable': true
   abstract: true
+  relationDistributionStrategy: 'scatter'
   constraints:
     nodeTypes:
       '*': false

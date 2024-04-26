@@ -241,6 +241,28 @@ trait ProjectedNodeTrait
         });
     }
 
+    /**
+     * @Then /^I expect this node to be exactly explicitly tagged "(.*)"$/
+     * @param string $tagList the comma-separated list of tag names
+     */
+    public function iExpectThisNodeToBeExactlyExplicitlyTagged(string $tagList): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($tagList) {
+            $currentNode->tags->withoutInherited()->toStringArray() === explode(',', $tagList);
+        });
+    }
+
+    /**
+     * @Then /^I expect this node to exactly inherit the tags "(.*)"$/
+     * @param string $tagList the comma-separated list of tag names
+     */
+    public function iExpectThisNodeToExactlyInheritTheTags(string $tagList): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($tagList) {
+            $currentNode->tags->onlyInherited()->toStringArray() === explode(',', $tagList);
+        });
+    }
+
     protected function initializeCurrentNodeFromContentGraph(callable $query): void
     {
         $this->currentNode = $query($this->currentContentRepository->getContentGraph());
