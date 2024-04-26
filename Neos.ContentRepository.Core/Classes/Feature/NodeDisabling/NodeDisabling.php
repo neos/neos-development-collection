@@ -60,6 +60,9 @@ trait NodeDisabling
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
         );
+
+        $this->requireNodeAggregateToBeUntethered($nodeAggregate);
+
         if ($nodeAggregate->getDimensionSpacePointsTaggedWith(SubtreeTag::disabled())->contains($command->coveredDimensionSpacePoint)) {
             // already disabled, so we can return a no-operation.
             return EventsToPublish::empty();
