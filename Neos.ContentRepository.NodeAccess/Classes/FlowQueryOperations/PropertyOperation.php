@@ -21,7 +21,6 @@ use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
-use Neos\Utility\ObjectAccess;
 
 /**
  * Used to access properties of a ContentRepository Node. If the property mame is
@@ -105,10 +104,6 @@ class PropertyOperation extends AbstractOperation
         if ($propertyName === '_identifier') {
             // TODO: deprecated (Neos <9 case)
             return $element->aggregateId->value;
-        }
-
-        if ($propertyName[0] === '_') {
-            return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get($element->contentRepositoryId);
