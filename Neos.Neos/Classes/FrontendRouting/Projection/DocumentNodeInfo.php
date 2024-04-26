@@ -71,6 +71,15 @@ final class DocumentNodeInfo
         return new self($source);
     }
 
+    public function withoutSiblings(): self
+    {
+        $source = $this->source;
+        $source['precedingnodeaggregateid'] = null;
+        $source['succeedingnodeaggregateid'] = null;
+
+        return new self($source);
+    }
+
     public function getNodeAggregateId(): NodeAggregateId
     {
         return NodeAggregateId::fromString($this->source['nodeaggregateid']);
