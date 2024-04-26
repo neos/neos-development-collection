@@ -13,14 +13,14 @@
 		<div class="neos-control-group{f:validation.ifHasErrors(for: 'password', then: ' neos-error')}">
 			<label class="neos-control-label" for="password[0]">{neos:backend.translate(id: 'password')}</label>
 			<div class="neos-controls">
-				<f:form.password name="password[0]" id="password[0]" class="neos-span12"/>
+				<f:form.password additionalAttributes="{autocomplete: 'new-password'}" name="password[0]" id="password[0]" class="neos-span12"/>
 			</div>
 		</div>
 
 		<div class="neos-control-group{f:validation.ifHasErrors(for: 'password', then: ' neos-error')}">
 			<label class="neos-control-label" for="password[1]">{neos:backend.translate(source: 'Modules', id: 'users.repeatPassword')}</label>
 			<div class="neos-controls">
-				<f:form.password name="password[1]" id="password[1]" class="neos-span12"/>
+				<f:form.password additionalAttributes="{autocomplete: 'new-password'}" name="password[1]" id="password[1]" class="neos-span12"/>
 				<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'password'}"/>
 			</div>
 		</div>
