@@ -118,11 +118,6 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function getPropertyPath($element, $propertyPath)
     {
-        if ($propertyPath === '_identifier') {
-            // TODO: deprecated (Neos <9 case)
-            return $element->aggregateId->value;
-        }
-
         return $element->getProperty($propertyPath);
     }
 

@@ -93,11 +93,6 @@ class PropertyOperation extends AbstractOperation
         /* @var $element Node */
         $element = $context[0];
 
-        if ($propertyName === '_identifier') {
-            // TODO: deprecated (Neos <9 case)
-            return $element->aggregateId->value;
-        }
-
         $contentRepository = $this->contentRepositoryRegistry->get($element->contentRepositoryId);
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
 
