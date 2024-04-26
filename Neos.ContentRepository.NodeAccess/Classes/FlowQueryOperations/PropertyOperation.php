@@ -92,15 +92,7 @@ class PropertyOperation extends AbstractOperation
 
         /* @var $element Node */
         $element = $context[0];
-        if ($propertyName === '_path') {
-            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            $ancestors = $subgraph->findAncestorNodes(
-                $element->aggregateId,
-                FindAncestorNodesFilter::create()
-            )->reverse();
 
-            return AbsoluteNodePath::fromLeafNodeAndAncestors($element, $ancestors)->serializeToString();
-        }
         if ($propertyName === '_identifier') {
             // TODO: deprecated (Neos <9 case)
             return $element->aggregateId->value;
