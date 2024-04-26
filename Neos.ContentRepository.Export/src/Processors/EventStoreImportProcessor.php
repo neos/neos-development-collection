@@ -113,14 +113,14 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
                 return ProcessorResult::error(sprintf('Failed to read events. %s is not expected in imported event stream.', $event->type));
             }
             $domainEvent = DecoratedEvent::create($domainEvent, eventId: EventId::fromString($event->identifier), metadata: $event->metadata);
-            $domainEvents[] = $this->normalizeEvent($domainEvent);
+            $domainEvents[] = $this->eventNormalizer->normalize($domainEvent);
         }
 
         assert($this->contentStreamId !== null);
 
         $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamId($this->contentStreamId)->getEventStreamName();
         $events = Events::with(
-            $this->normalizeEvent(
+            $this->eventNormalizer->normalize(
                 new ContentStreamWasCreated(
                     $this->contentStreamId,
                 )
@@ -135,7 +135,7 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
         $workspaceName = WorkspaceName::forLive();
         $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($workspaceName)->getEventStreamName();
         $events = Events::with(
-            $this->normalizeEvent(
+            $this->eventNormalizer->normalize(
                 new RootWorkspaceWasCreated(
                     $workspaceName,
                     WorkspaceTitle::fromString('live workspace'),
@@ -158,29 +158,6 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
         return ProcessorResult::success(sprintf('Imported %d event%s into stream "%s"', count($domainEvents), count($domainEvents) === 1 ? '' : 's', $contentStreamStreamName->value));
     }
 
-    /**
-     * Copied from {@see EventPersister::normalizeEvent()}
-     *
-     * @param EventInterface|DecoratedEvent $event
-     * @return Event
-     */
-    private function normalizeEvent(EventInterface|DecoratedEvent $event): Event
-    {
-        $eventId = $event instanceof DecoratedEvent && $event->eventId !== null ? $event->eventId : EventId::create();
-        $eventMetadata = $event instanceof DecoratedEvent ? $event->eventMetadata : null;
-        $causationId = $event instanceof DecoratedEvent ? $event->causationId : null;
-        $correlationId = $event instanceof DecoratedEvent ? $event->correlationId : null;
-        $event = $event instanceof DecoratedEvent ? $event->innerEvent : $event;
-        return new Event(
-            $eventId,
-            $this->eventNormalizer->getEventType($event),
-            $this->eventNormalizer->getEventData($event),
-            $eventMetadata,
-            $causationId,
-            $correlationId,
-        );
-    }
-
     /** --------------------------- */
 
     /**
@@ -193,16 +170,5 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
             throw new \RuntimeException('Failed to extract "contentStreamId" from event', 1646404169);
         }
         return ContentStreamId::fromString($payload['contentStreamId']);
-    }
-
-    /**
-     * @phpstan-ignore-next-line currently this private method is unused ... but it does no harm keeping it
-     */
-    private function dispatch(Severity $severity, string $message, mixed ...$args): void
-    {
-        $renderedMessage = sprintf($message, ...$args);
-        foreach ($this->callbacks as $callback) {
-            $callback($severity, $renderedMessage);
-        }
     }
 }

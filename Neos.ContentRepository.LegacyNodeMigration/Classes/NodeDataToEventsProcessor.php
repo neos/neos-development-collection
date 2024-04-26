@@ -170,11 +170,12 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
     private function exportEvent(EventInterface $event): void
     {
+        $normalizedEvent = $this->eventNormalizer->normalize($event);
         $exportedEvent = new ExportedEvent(
-            Uuid::uuid4()->toString(),
-            $this->eventNormalizer->getEventType($event)->value,
-            json_decode($this->eventNormalizer->getEventData($event)->value, true),
-            []
+            $normalizedEvent->id->value,
+            $normalizedEvent->type->value,
+            json_decode($normalizedEvent->data->value, true),
+            [],
         );
         assert($this->eventFileResource !== null);
         fwrite($this->eventFileResource, $exportedEvent->toJson() . chr(10));
