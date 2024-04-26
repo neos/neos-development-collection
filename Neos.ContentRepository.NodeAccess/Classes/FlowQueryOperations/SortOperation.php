@@ -113,12 +113,9 @@ class SortOperation extends AbstractOperation
 
         // Determine the property value to sort by
         foreach ($nodes as $node) {
-            if ($sortProperty[0] === '_') {
-                $propertyValue = \Neos\Utility\ObjectAccess::getPropertyPath($node, substr($sortProperty, 1));
-            } else {
-                $propertyValue = $node->getProperty($sortProperty);
-            }
+            $propertyValue = $node->getProperty($sortProperty);
 
+            // todo how to sort by creation date in Neos 9?? Something like node.timestamps.originalCreated
             if ($propertyValue instanceof \DateTime) {
                 $propertyValue = $propertyValue->getTimestamp();
             }
