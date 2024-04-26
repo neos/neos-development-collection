@@ -47,9 +47,9 @@ Feature: Routing behavior of shortcut nodes
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                    |
-      | contentStreamId             | "cs-identifier"          |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
     And the graph projection is fully up to date
@@ -67,7 +67,6 @@ Feature: Routing behavior of shortcut nodes
     #      sir-david-nodenborough-ii
     #        sir-nodeward-nodington-iii
     #
-    And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId            | parentNodeAggregateId     | nodeTypeName                                       | initialPropertyValues                                                                                                       | nodeName |
       | shernode-homes             | lady-eleonode-rootford    | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"}                                                                                             | node1    |
@@ -117,7 +116,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut selected target relative URL
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
-      | contentStreamId           | "cs-identifier"                  |
       | nodeAggregateId           | "shortcut-external-url"          |
       | originDimensionSpacePoint | {}                               |
       | propertyValues            | {"target": "/some/relative/url"} |
@@ -128,7 +126,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut selected target URL keeps schema, port, query and fragment of absolute target URLs
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                                                                 |
-      | contentStreamId           | "cs-identifier"                                                                       |
       | nodeAggregateId           | "shortcut-external-url"                                                               |
       | originDimensionSpacePoint | {}                                                                                    |
       | propertyValues            | {"target": "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"} |
@@ -143,7 +140,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut first child node is updated when a new first child node aggregate is created
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                              | Value                                                |
-      | contentStreamId                  | "cs-identifier"                                      |
       | nodeAggregateId                  | "nody-mc-newface"                                    |
       | nodeTypeName                     | "Neos.Neos:Test.Routing.Page" |
       | originDimensionSpacePoint        | {}                                                   |
@@ -157,7 +153,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut first child node is updated when a node aggregate gets moved to be the new first child node
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                        |
-      | contentStreamId                     | "cs-identifier"              |
       | nodeAggregateId                     | "sir-nodeward-nodington-iii" |
       | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | "shortcut-first-child-node"  |
@@ -169,7 +164,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut first child node is updated when a node aggregate gets moved to be the new first child node on the same leve
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value               |
-      | contentStreamId                     | "cs-identifier"     |
       | nodeAggregateId                     | "second-child-node" |
       | dimensionSpacePoint                 | {}                  |
       | newParentNodeAggregateId            | null                |
@@ -181,7 +175,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut first child node is not updated when a node aggregate gets moved behind an existing first child node
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                        |
-      | contentStreamId                     | "cs-identifier"              |
       | nodeAggregateId                     | "sir-nodeward-nodington-iii" |
       | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | "shortcut-first-child-node"  |
@@ -193,7 +186,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut first child node is not updated when a node aggregate gets moved behind an existing first child node on the same leve
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                              | Value                                                |
-      | contentStreamId                  | "cs-identifier"                                      |
       | nodeAggregateId                  | "nody-mc-newface"                                    |
       | nodeTypeName                     | "Neos.Neos:Test.Routing.Page" |
       | originDimensionSpacePoint        | {}                                                   |
@@ -203,7 +195,6 @@ Feature: Routing behavior of shortcut nodes
     And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value             |
-      | contentStreamId                     | "cs-identifier"   |
       | nodeAggregateId                     | "nody-mc-newface" |
       | dimensionSpacePoint                 | {}                |
       | newParentNodeAggregateId            | null              |
@@ -215,7 +206,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Regular document node gets turned into a shortcut node
     When the command ChangeNodeAggregateType was published with payload:
       | Key             | Value                       |
-      | contentStreamId | "cs-identifier"             |
       | nodeAggregateId | "sir-david-nodenborough-ii" |
       | newNodeTypeName | "Neos.Neos:Shortcut"        |
       | strategy        | "happypath"                 |
@@ -226,7 +216,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut node gets turned into a regular document node
     When the command ChangeNodeAggregateType was published with payload:
       | Key             | Value                                                |
-      | contentStreamId | "cs-identifier"                                      |
       | nodeAggregateId | "shortcut-first-child-node"                          |
       | newNodeTypeName | "Neos.Neos:Test.Routing.Page" |
       | strategy        | "happypath"                                          |
@@ -237,7 +226,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Change shortcut targetMode from "firstChildNode" to "parentNode"
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | contentStreamId           | "cs-identifier"              |
       | nodeAggregateId           | "shortcut-first-child-node"  |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"targetMode": "parentNode"} |
@@ -248,7 +236,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Change shortcut targetMode from "firstChildNode" to "selectedTarget" (URL)
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                                            |
-      | contentStreamId           | "cs-identifier"                                                  |
       | nodeAggregateId           | "shortcut-first-child-node"                                      |
       | originDimensionSpacePoint | {}                                                               |
       | propertyValues            | {"targetMode": "selectedTarget", "target": "http://www.neos.io"} |
@@ -263,7 +250,6 @@ Feature: Routing behavior of shortcut nodes
       | new-child-node  | shortcut-parent-node  | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "new-child"} | new      |
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
-      | contentStreamId           | "cs-identifier"                  |
       | nodeAggregateId           | "shortcut-parent-node"           |
       | originDimensionSpacePoint | {}                               |
       | propertyValues            | {"targetMode": "firstChildNode"} |
@@ -274,7 +260,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Change shortcut targetMode from "parentNode" to "selectedTarget" (URL)
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                                          |
-      | contentStreamId           | "cs-identifier"                                                |
       | nodeAggregateId           | "shortcut-parent-node"                                         |
       | originDimensionSpacePoint | {}                                                             |
       | propertyValues            | {"targetMode": "selectedTarget", "target": "https://neos.io/"} |
@@ -285,7 +270,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut node with an invalid targetMode
     Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                       | Value                                                                  |
-      | contentStreamId           | "cs-identifier"                                                        |
       | nodeAggregateId           | "invalid-target-mode"                                                  |
       | nodeTypeName              | "Neos.Neos:Shortcut"                                                   |
       | originDimensionSpacePoint | {}                                                                     |
@@ -299,7 +283,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut node with targetMode "selectedTarget" but without target
     Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                       | Value                                                                        |
-      | contentStreamId           | "cs-identifier"                                                              |
       | nodeAggregateId           | "invalid-missing-target"                                                     |
       | nodeTypeName              | "Neos.Neos:Shortcut"                                                         |
       | originDimensionSpacePoint | {}                                                                           |
@@ -313,7 +296,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut node without child nodes and targetMode "firstChildNode"
     Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                       | Value                                                                              |
-      | contentStreamId           | "cs-identifier"                                                                    |
       | nodeAggregateId           | "invalid-shortcut-first-child-node"                                                |
       | nodeTypeName              | "Neos.Neos:Shortcut"                                                               |
       | originDimensionSpacePoint | {}                                                                                 |
@@ -327,7 +309,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut node with targetMode "selectedTarget" and a non-existing target node
     Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                       | Value                                                                                                                      |
-      | contentStreamId           | "cs-identifier"                                                                                                            |
       | nodeAggregateId           | "invalid-shortcut-selected-node"                                                                                           |
       | nodeTypeName              | "Neos.Neos:Shortcut"                                                                                                       |
       | originDimensionSpacePoint | {}                                                                                                                         |
@@ -341,7 +322,6 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Shortcut node with targetMode "selectedTarget" and a empty target node
     Given the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                       | Value                                                                                                     |
-      | contentStreamId           | "cs-identifier"                                                                                           |
       | nodeAggregateId           | "invalid-shortcut-selected-node"                                                                          |
       | nodeTypeName              | "Neos.Neos:Shortcut"                                                                                      |
       | originDimensionSpacePoint | {}                                                                                                        |

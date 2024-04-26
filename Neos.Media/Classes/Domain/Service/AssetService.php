@@ -339,7 +339,7 @@ class AssetService
             }
         }
 
-        if ($redirectHandlerEnabled) {
+        if ($redirectHandlerEnabled && interface_exists(RedirectStorageInterface::class)) {
             /** @var RedirectStorageInterface $redirectStorage */
             $redirectStorage = $this->objectManager->get(RedirectStorageInterface::class);
             foreach ($uriMapping as $originalUri => $newUri) {

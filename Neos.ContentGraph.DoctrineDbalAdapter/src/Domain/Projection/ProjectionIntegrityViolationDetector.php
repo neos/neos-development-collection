@@ -17,12 +17,12 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectorInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectorInterface;
 
 /**
  * The Doctrine database backend implementation for projection invariant checks
@@ -67,8 +67,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         $invalidlyHashedHierarchyRelationRecords = $this->client->getConnection()->executeQuery(
-            'SELECT * FROM ' . $this->tableNamePrefix . '_hierarchyrelation
-                WHERE dimensionspacepointhash != MD5(dimensionspacepoint)'
+            'SELECT * FROM ' . $this->tableNamePrefix . '_hierarchyrelation h LEFT JOIN ' . $this->tableNamePrefix . '_dimensionspacepoints dsp ON dsp.hash = h.dimensionspacepointhash
+                HAVING dsp.dimensionspacepoint IS NULL'
         )->fetchAllAssociative();
 
         foreach ($invalidlyHashedHierarchyRelationRecords as $record) {
@@ -118,6 +118,12 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     HAVING COUNT(position) > 1'
         );
 
+        if ($ambiguouslySortedHierarchyRelationRecords->columnCount() === 0) {
+            return $result;
+        }
+
+        $dimensionSpacePoints = $this->findProjectedDimensionSpacePoints();
+
         foreach ($ambiguouslySortedHierarchyRelationRecords as $hierarchyRelationRecord) {
             $ambiguouslySortedNodeRecords = $this->client->getConnection()->executeQuery(
                 'SELECT nodeaggregateid
@@ -133,7 +139,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     return $record['nodeaggregateid'];
                 }, $ambiguouslySortedNodeRecords))
                 . ' are ambiguously sorted in content stream ' . $hierarchyRelationRecord['contentstreamid']
-                . ' and dimension space point ' . $hierarchyRelationRecord['dimensionspacepoint'],
+                . ' and dimension space point ' . $dimensionSpacePoints[$hierarchyRelationRecord['dimensionspacepointhash']]?->toJson(),
                 self::ERROR_CODE_SIBLINGS_ARE_AMBIGUOUSLY_SORTED
             ));
         }
@@ -175,74 +181,33 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     /**
      * @inheritDoc
      */
-    public function restrictionsArePropagatedRecursively(): Result
-    {
-        $result = new Result();
-        $nodeRecordsWithMissingRestrictions = $this->client->getConnection()->executeQuery(
-            'SELECT c.nodeaggregateid, h.contentstreamid, h.dimensionspacepoint
-            FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
-            INNER JOIN ' . $this->tableNamePrefix . '_node p
-                ON p.relationanchorpoint = h.parentnodeanchor
-            INNER JOIN ' . $this->tableNamePrefix . '_restrictionrelation pr
-                ON pr.affectednodeaggregateid = p.nodeaggregateid
-                AND pr.contentstreamid = h.contentstreamid
-                AND pr.dimensionspacepointhash = h.dimensionspacepointhash
-            INNER JOIN ' . $this->tableNamePrefix . '_node c
-                ON c.relationanchorpoint = h.childnodeanchor
-            LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation cr
-                ON cr.affectednodeaggregateid = c.nodeaggregateid
-                AND cr.contentstreamid = h.contentstreamid
-                AND cr.dimensionspacepointhash = h.dimensionspacepointhash
-            WHERE cr.affectednodeaggregateid IS NULL'
-        )->fetchAllAssociative();
-
-        foreach ($nodeRecordsWithMissingRestrictions as $nodeRecord) {
-            $result->addError(new Error(
-                'Node aggregate ' . $nodeRecord['nodeaggregateid']
-                . ' misses a restriction relation in content stream ' . $nodeRecord['contentstreamid']
-                . ' and dimension space point ' . $nodeRecord['dimensionspacepoint'],
-                self::ERROR_CODE_NODE_HAS_MISSING_RESTRICTION
-            ));
-        }
-
-        return $result;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function restrictionIntegrityIsProvided(): Result
+    public function subtreeTagsAreInherited(): Result
     {
         $result = new Result();
 
-        $restrictionRelationRecordsWithoutOriginOrAffectedNode = $this->client->getConnection()->executeQuery(
-            '
-            SELECT r.* FROM ' . $this->tableNamePrefix . '_restrictionrelation r
-                LEFT JOIN (
-                    ' . $this->tableNamePrefix . '_node p
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
-                        ON p.relationanchorpoint = ph.childnodeanchor
-                ) ON p.nodeaggregateid = r.originnodeaggregateid
-                AND ph.contentstreamid = r.contentstreamid
-                AND ph.dimensionspacepointhash = r.dimensionspacepointhash
-                LEFT JOIN (
-                    ' . $this->tableNamePrefix . '_node c
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
-                        ON c.relationanchorpoint = ch.childnodeanchor
-                ) ON c.nodeaggregateid = r.affectednodeaggregateid
-                AND ch.contentstreamid = r.contentstreamid
-                AND ch.dimensionspacepointhash = r.dimensionspacepointhash
-            WHERE p.nodeaggregateid IS NULL
-            OR c.nodeaggregateid IS NULL'
+        // NOTE:
+        // This part determines if a parent hierarchy relation contains subtree tags that are not existing in the child relation.
+        // This could probably be solved with JSON_ARRAY_INTERSECT(JSON_KEYS(ph.subtreetags), JSON_KEYS(h.subtreetags) but unfortunately that's only available with MariaDB 11.2+ according to https://mariadb.com/kb/en/json_array_intersect/
+        $hierarchyRelationsWithMissingSubtreeTags = $this->client->getConnection()->executeQuery(
+            'SELECT
+              ph.name
+            FROM
+              ' . $this->tableNamePrefix . '_hierarchyrelation h
+              INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
+                ON ph.childnodeanchor = h.parentnodeanchor
+                AND ph.contentstreamid = h.contentstreamid
+                AND ph.dimensionspacepointhash = h.dimensionspacepointhash
+            WHERE
+              EXISTS (
+                SELECT t.tag FROM JSON_TABLE(JSON_KEYS(ph.subtreetags), \'$[*]\' COLUMNS(tag VARCHAR(30) PATH \'$\')) t WHERE NOT JSON_EXISTS(h.subtreetags, CONCAT(\'$.\', t.tag))
+              )'
         )->fetchAllAssociative();
 
-        foreach ($restrictionRelationRecordsWithoutOriginOrAffectedNode as $relationRecord) {
+        foreach ($hierarchyRelationsWithMissingSubtreeTags as $hierarchyRelation) {
             $result->addError(new Error(
-                'Restriction relation ' . $relationRecord['originnodeaggregateid']
-                . ' -> ' . $relationRecord['affectednodeaggregateid']
-                . ' does not connect two nodes in content stream ' . $relationRecord['contentstreamid']
-                . ' and dimension space point ' . $relationRecord['dimensionspacepointhash'],
-                self::ERROR_CODE_RESTRICTION_INTEGRITY_IS_COMPROMISED
+                'Hierarchy relation ' . \json_encode($hierarchyRelation, JSON_THROW_ON_ERROR)
+                . ' is missing inherited subtree tags from the parent relation.',
+                self::ERROR_CODE_NODE_HAS_MISSING_SUBTREE_TAG
             ));
         }
 
@@ -557,7 +522,7 @@ WHERE
         $result = new Result();
         foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             $excessivelyCoveringNodeRecords = $this->client->getConnection()->executeQuery(
-                'SELECT n.nodeaggregateid, c.dimensionspacepoint
+                'SELECT n.nodeaggregateid, c.dimensionspacepointhash
                     FROM ' . $this->tableNamePrefix . '_hierarchyrelation c
                     INNER JOIN ' . $this->tableNamePrefix . '_node n
                         ON c.childnodeanchor = n.relationanchorpoint
@@ -576,7 +541,7 @@ WHERE
                 $result->addError(new Error(
                     'Node aggregate ' . $excessivelyCoveringNodeRecord['nodeaggregateid']
                     . ' in content stream ' . $contentStreamId->value
-                    . ' covers dimension space point ' . $excessivelyCoveringNodeRecord['dimensionspacepoint']
+                    . ' covers dimension space point hash ' . $excessivelyCoveringNodeRecord['dimensionspacepointhash']
                     . ' but its parent does not.',
                     self::ERROR_CODE_CHILD_NODE_COVERAGE_IS_NO_SUBSET_OF_PARENT_NODE_COVERAGE
                 ));
@@ -594,7 +559,7 @@ WHERE
         $result = new Result();
         foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             $nodeRecordsWithMissingOriginCoverage = $this->client->getConnection()->executeQuery(
-                'SELECT nodeaggregateid, origindimensionspacepoint
+                'SELECT nodeaggregateid, origindimensionspacepointhash
                     FROM ' . $this->tableNamePrefix . '_node n
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                         ON h.childnodeanchor = n.relationanchorpoint
@@ -620,7 +585,7 @@ WHERE
                 $result->addError(new Error(
                     'Node aggregate ' . $nodeRecord['nodeaggregateid']
                     . ' in content stream ' . $contentStreamId->value
-                    . ' does not cover its origin dimension space point ' . $nodeRecord['origindimensionspacepoint']
+                    . ' does not cover its origin dimension space point hash ' . $nodeRecord['origindimensionspacepointhash']
                     . '.',
                     self::ERROR_CODE_NODE_DOES_NOT_COVER_ITS_ORIGIN
                 ));
@@ -656,7 +621,7 @@ WHERE
     protected function findProjectedDimensionSpacePoints(): DimensionSpacePointSet
     {
         $records = $this->client->getConnection()->executeQuery(
-            'SELECT DISTINCT dimensionspacepoint FROM ' . $this->tableNamePrefix . '_hierarchyrelation'
+            'SELECT dimensionspacepoint FROM ' . $this->tableNamePrefix . '_dimensionspacepoints'
         )->fetchAllAssociative();
 
         $records = array_map(function (array $record) {

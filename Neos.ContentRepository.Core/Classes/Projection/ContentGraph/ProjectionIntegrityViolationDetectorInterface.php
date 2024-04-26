@@ -30,12 +30,10 @@ interface ProjectionIntegrityViolationDetectorInterface
     public const ERROR_CODE_NODE_AGGREGATE_IS_AMBIGUOUSLY_CLASSIFIED = 1597825384;
     public const ERROR_CODE_NODE_IS_DISCONNECTED_FROM_THE_ROOT = 1597754245;
     public const ERROR_CODE_NODE_DOES_NOT_COVER_ITS_ORIGIN = 1597828607;
-    public const ERROR_CODE_NODE_HAS_MISSING_RESTRICTION = 1597837797;
-    public const ERROR_CODE_RESTRICTION_INTEGRITY_IS_COMPROMISED = 1597846598;
+    public const ERROR_CODE_NODE_HAS_MISSING_SUBTREE_TAG = 1597837797;
     public const ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED = 1597909228;
     public const ERROR_CODE_SIBLINGS_ARE_AMBIGUOUSLY_SORTED = 1597910918;
     public const ERROR_CODE_REFERENCE_INTEGRITY_IS_COMPROMISED = 1597919585;
-    public const ERROR_CODE_REFERENCES_ARE_AMBIGUOUSLY_SORTED = 1597922989;
     public const ERROR_CODE_TETHERED_NODE_IS_UNNAMED = 1597923103;
     public const ERROR_CODE_NODE_HAS_MULTIPLE_PARENTS = 1597925698;
 
@@ -89,38 +87,31 @@ interface ProjectionIntegrityViolationDetectorInterface
     public function tetheredNodesAreNamed(): Result;
 
     /**
-     * A is marked as hidden, so B and C should have incoming restriction edges.
-     * This test should fail if e.g. in the example below, the restriction edge from A to C is missing.
+     * A is tagged with a subtree tag, so B and C should inherit that subtree tag (or explicitly have it set)
+     * This test should fail if e.g. in the example below, C is missing the "foo" tag (<tag>* = explicitly set, <tag> = inherited):
      *
-     * ┌─────┐
-     * │  A  │━━┓
-     * └─────┘  ┃
-     *    │     ┃
-     *    │     ┃
-     * ┌─────┐  ┃
-     * │  B  │◀━┛
-     * └─────┘  ┃
-     *    │
-     *    │     ┃   <-- this Restriction Edge is missing.
-     * ┌─────┐
-     * │  C  │◀ ┛
-     * └─────┘
+     * ┌────────────────────────┐
+     * │           A            │
+     * │                        │
+     * │ SubtreeTags: foo*      │
+     * │                        │
+     * └───────────┬────────────┘
+     *             │
+     * ┌───────────┴────────────┐
+     * │           B            │
+     * │                        │
+     * │ SubtreeTags: foo, bar* │
+     * │                        │
+     * └───────────┬────────────┘
+     *             │
+     * ┌───────────┴────────────┐
+     * │           C            │
+     * │                        │
+     * │ SubtreeTags: bar       │ <-- is missing the inherited "foo" subtree tag
+     * │                        │
+     * └────────────────────────┘
      */
-    public function restrictionsArePropagatedRecursively(): Result;
-
-    /**
-     * Checks that the restriction edges are connected at source (e.g. to "A") and at destination (e.g. to "B")
-     *
-     * ┌─────┐
-     * │  A  │━━┓ <-- checks that A exists (for each restriction edge)
-     * └─────┘  ┃
-     *    │     ┃
-     *    │     ┃
-     * ┌─────┐  ┃
-     * │  B  │◀━┛ <-- checks that B exists (for each restriction edge)
-     * └─────┘
-     */
-    public function restrictionIntegrityIsProvided(): Result;
+    public function subtreeTagsAreInherited(): Result;
 
     /**
      * Checks that the reference edges are connected at source (e.g. to "A") and at destination (e.g. to "B")

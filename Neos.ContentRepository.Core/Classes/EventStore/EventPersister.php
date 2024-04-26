@@ -13,9 +13,7 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
-use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Events;
-use Neos\EventStore\Model\EventStore\CommitResult;
 
 /**
  * Internal service to persist {@see EventInterface} with the proper normalization, and triggering the
@@ -75,19 +73,18 @@ final class EventPersister
 
     private function normalizeEvent(EventInterface|DecoratedEvent $event): Event
     {
-        if ($event instanceof DecoratedEvent) {
-            $eventId = $event->eventId;
-            $eventMetadata = $event->eventMetadata;
-            $event = $event->innerEvent;
-        } else {
-            $eventId = EventId::create();
-            $eventMetadata = EventMetadata::none();
-        }
+        $eventId = $event instanceof DecoratedEvent && $event->eventId !== null ? $event->eventId : EventId::create();
+        $eventMetadata = $event instanceof DecoratedEvent ? $event->eventMetadata : null;
+        $causationId = $event instanceof DecoratedEvent ? $event->causationId : null;
+        $correlationId = $event instanceof DecoratedEvent ? $event->correlationId : null;
+        $event = $event instanceof DecoratedEvent ? $event->innerEvent : $event;
         return new Event(
             $eventId,
             $this->eventNormalizer->getEventType($event),
             $this->eventNormalizer->getEventData($event),
             $eventMetadata,
+            $causationId,
+            $correlationId,
         );
     }
 }

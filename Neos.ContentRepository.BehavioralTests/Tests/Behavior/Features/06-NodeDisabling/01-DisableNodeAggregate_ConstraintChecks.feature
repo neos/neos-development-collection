@@ -23,7 +23,7 @@ Feature: Constraint checks on node aggregate disabling
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -36,17 +36,27 @@ Feature: Constraint checks on node aggregate disabling
   Scenario: Try to disable a node aggregate in a non-existing content stream
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                                  |
-      | contentStreamId      | "i-do-not-exist"                       |
+      | workspaceName      | "i-do-not-exist"                       |
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | nodeVariantSelectionStrategy | "allVariants"                          |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+
+  Scenario: Try to disable a node aggregate in a workspace whose content stream is closed
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                                  |
+      | nodeAggregateId              | "sir-david-nodenborough"               |
+      | nodeVariantSelectionStrategy | "allVariants"                          |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
 
   Scenario: Try to disable a non-existing node aggregate
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                                  |
       | nodeAggregateId      | "i-do-not-exist"                       |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
+      | tag                          | "disabled"                    |
 
   Scenario: Try to disable an already disabled node aggregate
     Given the command DisableNodeAggregate is executed with payload:
@@ -63,11 +73,12 @@ Feature: Constraint checks on node aggregate disabling
       | coveredDimensionSpacePoint   | {"language": "de"}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
     Then I expect exactly 4 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 3 is of type "NodeAggregateWasDisabled" with payload:
+    And event at index 3 is of type "SubtreeWasTagged" with payload:
       | Key                          | Expected                               |
       | contentStreamId              | "cs-identifier"                        |
       | nodeAggregateId              | "sir-david-nodenborough"               |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
+      | tag                          | "disabled"                             |
 
 
   Scenario: Try to disable a node aggregate in a non-existing dimension space point

@@ -8,3 +8,8 @@
   abstract: true
   superTypes:
     'Neos.Neos:Document': true
+  properties:
+    uriPathSegment:
+      ui:
+        inspector:
+          hidden: true

@@ -141,6 +141,8 @@ class ImageService
             $imagineImage->usePalette(new RGB());
         }
 
+        $imagineImage->strip();
+
         if ($this->imagineService instanceof Imagine && $originalResource->getFileExtension() === 'gif' && $this->isAnimatedGif(file_get_contents($resourceUri)) === true) {
             $imagineImage->layers()->coalesce();
             $layers = $imagineImage->layers();
@@ -310,6 +312,6 @@ class ImageService
     protected function isAnimatedGif($image)
     {
         $count = preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $image, $matches);
-        return $count ? true : false;
+        return (bool)$count;
     }
 }

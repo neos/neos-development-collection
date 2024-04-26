@@ -15,13 +15,13 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeType
  *
  * @api for the factory methods; NOT for the inner state.
  */
-final class FindClosestNodeFilter
+final readonly class FindClosestNodeFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly NodeTypeCriteria $nodeTypes,
+        public NodeTypeCriteria $nodeTypes,
     ) {
     }
 

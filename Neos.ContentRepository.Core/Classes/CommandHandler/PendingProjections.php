@@ -74,15 +74,15 @@ use Neos\EventStore\Model\EventStore\CommitResult;
  *
  * @internal
  */
-final class PendingProjections
+final readonly class PendingProjections
 {
     /**
      * @param Projections<ProjectionInterface<ProjectionStateInterface>> $projections
      * @param array<string, int> $sequenceNumberPerProjection
      */
     public function __construct(
-        public readonly Projections $projections,
-        private readonly array $sequenceNumberPerProjection,
+        public Projections $projections,
+        private array $sequenceNumberPerProjection,
     ) {
     }
 

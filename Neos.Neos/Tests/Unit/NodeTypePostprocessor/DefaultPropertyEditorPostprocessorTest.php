@@ -17,25 +17,77 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Testcase for the DefaultPropertyEditorPostprocessor
  */
 class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
 {
-    private function processConfiguration(array $configuration, array $dataTypesDefaultConfiguration, array $editorDefaultConfiguration): array
+    public function referenceExamples(): iterable
     {
-        $postprocessor = new DefaultPropertyEditorPostprocessor();
-        $this->inject($postprocessor, 'dataTypesDefaultConfiguration', $dataTypesDefaultConfiguration);
-        $this->inject($postprocessor, 'editorDefaultConfiguration', $editorDefaultConfiguration);
-        $mockNodeType = new NodeType(
-            NodeTypeName::fromString('Some.NodeType:Name'),
-            [],
-            [],
-            new DefaultNodeLabelGeneratorFactory()
-        );
-        $postprocessor->process($mockNodeType, $configuration, []);
-        return $configuration;
+        yield 'multiple references' => [
+            'nodeTypeDefinition' => <<<'YAML'
+            references:
+              someReferences:
+                ui:
+                  inspector:
+                    group: 'foo'
+            YAML,
+            'expected' => <<<'YAML'
+            references:
+              someReferences:
+                ui:
+                  inspector:
+                    group: 'foo'
+                    editor: ReferencesEditor
+            YAML
+        ];
+
+        yield 'singular reference' => [
+            'nodeTypeDefinition' => <<<'YAML'
+            references:
+              someReference:
+                constraints:
+                  maxItems: 1
+                ui:
+                  inspector:
+                    group: 'foo'
+            YAML,
+            'expected' => <<<'YAML'
+            references:
+              someReference:
+                constraints:
+                  maxItems: 1
+                ui:
+                  inspector:
+                    editor: SingularReferenceEditor
+                    group: 'foo'
+            YAML
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider referenceExamples
+     */
+    public function processExamples(string $nodeTypeDefinition, string $expectedResult)
+    {
+        $configuration = array_merge(['references' => [], 'properties' => []], Yaml::parse($nodeTypeDefinition));
+
+        $dataTypesDefaultConfiguration = [
+            'reference' => [
+                'editor' => 'SingularReferenceEditor',
+            ],
+            'references' => [
+                'editor' => 'ReferencesEditor',
+            ],
+        ];
+
+        $editorDefaultConfiguration = [];
+
+        $actualResult = $this->processConfiguration($configuration, $dataTypesDefaultConfiguration, $editorDefaultConfiguration);
+        self::assertEquals(array_merge(['references' => [], 'properties' => []], Yaml::parse($expectedResult)), $actualResult);
     }
 
     /**
@@ -44,6 +96,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
     public function processConvertsPropertyConfiguration(): void
     {
         $configuration = [
+            'references' => [],
             'properties' => [
                 'propertyWithoutType' => [
                     'ui' => [
@@ -154,6 +207,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         ];
 
         $expectedResult = [
+            'references' => [],
             'properties' => [
                 'propertyWithoutType' => [
                     'ui' => [
@@ -268,6 +322,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         $this->expectException(\Neos\Neos\Exception::class);
 
         $configuration = [
+            'references' => [],
             'properties' => [
                 'someProperty' => [
                     'type' => 'string',
@@ -281,209 +336,18 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         $this->processConfiguration($configuration, $dataTypesDefaultConfiguration, []);
     }
 
-    /**
-     * @test
-     */
-    public function processConvertsCreationDialogConfiguration(): void
+    private function processConfiguration(array $configuration, array $dataTypesDefaultConfiguration, array $editorDefaultConfiguration): array
     {
-        $configuration = [
-            'ui' => [
-                'creationDialog' => [
-                    'elements' => [
-                        'elementWithoutType' => [
-                            'ui' => [
-                                'label' => 'Some Label'
-                            ]
-                        ],
-                        'elementWithUnknownType' => [
-                            'type' => 'TypeWithoutDataTypeConfig',
-                            'ui' => [
-                                'label' => 'Some Label',
-                                'editor' => 'EditorFromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithEditorFromDataTypeConfig' => [
-                            'type' => 'TypeWithDataTypeConfig',
-                            'ui' => [
-                                'value' => 'fromPropertyConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithEditorFromDataTypeConfigWithoutUiConfig' => [
-                            'type' => 'TypeWithDataTypeConfig'
-                        ],
-                        'elementWithOverriddenEditorConfig' => [
-                            'type' => 'TypeWithDataTypeConfig',
-                            'ui' => [
-                                'editor' => 'EditorFromPropertyConfig',
-                                'value' => 'fromPropertyConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithOverriddenEditorConfigAndEditorDefaultConfig' => [
-                            'type' => 'TypeWithDataTypeConfig',
-                            'ui' => [
-                                'editor' => 'EditorWithDefaultConfig',
-                                'value' => 'fromPropertyConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithEditorDefaultConfig' => [
-                            'type' => 'TypeWithDefaultEditorConfig',
-                            'ui' => [
-                                'value' => 'fromPropertyConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithOverriddenEditorConfigAndEditorDefaultConfig2' => [
-                            'type' => 'TypeWithDefaultEditorConfig',
-                            'ui' => [
-                                'editor' => 'EditorWithoutDefaultConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithOverriddenEditorConfigAndEditorDefaultConfig3' => [
-                            'type' => 'TypeWithDefaultEditorConfig2',
-                            'ui' => [
-                                'editor' => 'EditorWithDefaultConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        $dataTypesDefaultConfiguration = [
-            'TypeWithDataTypeConfig' => [
-                'editor' => 'EditorFromDataTypeConfig',
-                'value' => 'fromDataTypeConfig',
-                'dataTypeValue' => 'fromDataTypeConfig',
-            ],
-            'TypeWithDefaultEditorConfig' => [
-                'editor' => 'EditorWithDefaultConfig',
-                'value' => 'fromDataTypeConfig',
-                'dataTypeValue' => 'fromDataTypeConfig',
-            ],
-            'TypeWithDefaultEditorConfig2' => [
-                'editor' => 'EditorWithDefaultConfig',
-                'dataTypeValue' => 'fromDataTypeConfig',
-            ],
-        ];
-        $editorDefaultConfiguration = [
-            'EditorWithDefaultConfig' => [
-                'value' => 'fromEditorDefaultConfig',
-                'editorDefaultValue' => 'fromEditorDefaultConfig',
-            ],
-        ];
-
-        $expectedResult = [
-            'ui' => [
-                'creationDialog' => [
-                    'elements' => [
-                        'elementWithoutType' => [
-                            'ui' => [
-                                'label' => 'Some Label'
-                            ]
-                        ],
-                        'elementWithUnknownType' => [
-                            'type' => 'TypeWithoutDataTypeConfig',
-                            'ui' => [
-                                'label' => 'Some Label',
-                                'editor' => 'EditorFromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithEditorFromDataTypeConfig' => [
-                            'type' => 'TypeWithDataTypeConfig',
-                            'ui' => [
-                                'editor' => 'EditorFromDataTypeConfig',
-                                'value' => 'fromPropertyConfig',
-                                'dataTypeValue' => 'fromDataTypeConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithEditorFromDataTypeConfigWithoutUiConfig' => [
-                            'type' => 'TypeWithDataTypeConfig',
-                            'ui' => [
-                                'editor' => 'EditorFromDataTypeConfig',
-                                'value' => 'fromDataTypeConfig',
-                                'dataTypeValue' => 'fromDataTypeConfig',
-                            ]
-                        ],
-                        'elementWithOverriddenEditorConfig' => [
-                            'type' => 'TypeWithDataTypeConfig',
-                            'ui' => [
-                                'editor' => 'EditorFromPropertyConfig',
-                                'value' => 'fromPropertyConfig',
-                                'dataTypeValue' => 'fromDataTypeConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithOverriddenEditorConfigAndEditorDefaultConfig' => [
-                            'type' => 'TypeWithDataTypeConfig',
-                            'ui' => [
-                                'value' => 'fromPropertyConfig',
-                                'editorDefaultValue' => 'fromEditorDefaultConfig',
-                                'editor' => 'EditorWithDefaultConfig',
-                                'dataTypeValue' => 'fromDataTypeConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithEditorDefaultConfig' => [
-                            'type' => 'TypeWithDefaultEditorConfig',
-                            'ui' => [
-                                'value' => 'fromPropertyConfig',
-                                'editorDefaultValue' => 'fromEditorDefaultConfig',
-                                'editor' => 'EditorWithDefaultConfig',
-                                'dataTypeValue' => 'fromDataTypeConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithOverriddenEditorConfigAndEditorDefaultConfig2' => [
-                            'type' => 'TypeWithDefaultEditorConfig',
-                            'ui' => [
-                                'editor' => 'EditorWithoutDefaultConfig',
-                                'value' => 'fromDataTypeConfig',
-                                'dataTypeValue' => 'fromDataTypeConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                        'elementWithOverriddenEditorConfigAndEditorDefaultConfig3' => [
-                            'type' => 'TypeWithDefaultEditorConfig2',
-                            'ui' => [
-                                'value' => 'fromEditorDefaultConfig',
-                                'editorDefaultValue' => 'fromEditorDefaultConfig',
-                                'editor' => 'EditorWithDefaultConfig',
-                                'dataTypeValue' => 'fromDataTypeConfig',
-                                'elementValue' => 'fromPropertyConfig',
-                            ]
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        $actualResult = $this->processConfiguration($configuration, $dataTypesDefaultConfiguration, $editorDefaultConfiguration);
-        self::assertSame($expectedResult, $actualResult);
-    }
-
-    /**
-     * @test
-     */
-    public function processDoesNotThrowExceptionIfNoCreationDialogEditorCanBeResolved(): void
-    {
-        $configuration = [
-            'ui' => [
-                'creationDialog' => [
-                    'elements' => [
-                        'someElement' => [
-                            'type' => 'string',
-                            'ui' => ['label' => 'Foo']
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        $actualResult = $this->processConfiguration($configuration, [], []);
-        self::assertSame($configuration, $actualResult);
+        $postprocessor = new DefaultPropertyEditorPostprocessor();
+        $this->inject($postprocessor, 'dataTypesDefaultConfiguration', $dataTypesDefaultConfiguration);
+        $this->inject($postprocessor, 'editorDefaultConfiguration', $editorDefaultConfiguration);
+        $mockNodeType = new NodeType(
+            NodeTypeName::fromString('Some.NodeType:Name'),
+            [],
+            [],
+            new DefaultNodeLabelGeneratorFactory()
+        );
+        $postprocessor->process($mockNodeType, $configuration, []);
+        return $configuration;
     }
 }

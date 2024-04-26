@@ -40,6 +40,19 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ReferencesOperation implements OperationInterface
 {
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'references';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject

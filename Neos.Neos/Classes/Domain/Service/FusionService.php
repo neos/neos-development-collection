@@ -21,7 +21,7 @@ use Neos\Fusion\Core\Parser;
 use Neos\Neos\Domain\Model\Site;
 
 /**
- * @api
+ * @internal For interacting with Fusion from the outside a FusionView should be used.
  */
 #[Flow\Scope('singleton')]
 class FusionService

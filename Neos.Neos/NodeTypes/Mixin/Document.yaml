@@ -5,7 +5,6 @@
   superTypes:
     'Neos.Neos:Node': true
     'Neos.Neos:Hidable': true
-    'Neos.Neos:Timable': true
   abstract: true
   aggregate: true
   constraints:
@@ -14,16 +13,6 @@
       # explicitly disallow to create a homepage below a regular document
       'Neos.Neos:Site': false
       'Neos.Neos:Document': true
-  postprocessors:
-    'CreationDialogPostprocessor':
-      position: 'after NodeTypePresetPostprocessor'
-      postprocessor: 'Neos\Neos\NodeTypePostprocessor\CreationDialogPostprocessor'
-  options:
-    nodeCreationHandlers:
-      documentTitle:
-        nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\DocumentTitleNodeCreationHandler'
-      creationDialogProperties:
-        nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\CreationDialogPropertiesCreationHandler'
   ui:
     label: 'Document'
     group: 'general'
@@ -46,7 +35,6 @@
       ui:
         label: i18n
         reloadPageIfChanged: true
-        showInCreationDialog: true
         inspector:
           group: 'document'
       validation:

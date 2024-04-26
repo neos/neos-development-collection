@@ -27,16 +27,15 @@ Feature: Rename Node Aggregate
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                                      |
-      | contentStreamId     | "cs-identifier"                                                            |
       | nodeAggregateId     | "lady-eleonode-rootford"                                                   |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
     And the graph projection is fully up to date
     # Node /document (in "de")
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | nodeName                      | "foo"                                     |
@@ -48,7 +47,6 @@ Feature: Rename Node Aggregate
     # Node /document (in "en")
     When the command CreateNodeVariant is executed with payload:
       | Key                      | Value                    |
-      | contentStreamId  | "cs-identifier"          |
       | nodeAggregateId  | "sir-david-nodenborough" |
       | sourceOrigin             | {"language":"de"}        |
       | targetOrigin             | {"language":"en"}        |
@@ -74,10 +72,10 @@ Feature: Rename Node Aggregate
 
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     Then I expect the node "sir-david-nodenborough" to have the name "foo"
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
     Then I expect the node "sir-david-nodenborough" to have the name "foo"
 
     # the node was changed inside the new content stream, across all dimensions

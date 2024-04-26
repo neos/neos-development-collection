@@ -25,9 +25,9 @@ Feature: Dimension mismatch
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                    |
-      | contentStreamId     | "cs-identifier"                          |
       | nodeAggregateId     | "lady-eleonode-rootford"                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"            |
     And the graph projection is fully up to date
@@ -36,7 +36,6 @@ Feature: Dimension mismatch
     # Node /document
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language": "en"}                        |

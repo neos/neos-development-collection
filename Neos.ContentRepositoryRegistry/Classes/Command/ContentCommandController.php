@@ -15,7 +15,6 @@ namespace Neos\ContentRepositoryRegistry\Command;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
@@ -24,8 +23,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
@@ -73,7 +72,7 @@ final class ContentCommandController extends CommandController
             ]);
             $contentRepositoryInstance->handle(
                 UpdateRootNodeAggregateDimensions::create(
-                    $workspaceInstance->currentContentStreamId,
+                    $workspaceInstance->workspaceName,
                     $rootNodeAggregate->nodeAggregateId
                 )
             )->block();
@@ -115,7 +114,7 @@ final class ContentCommandController extends CommandController
 
         $contentRepositoryInstance->handle(
             MoveDimensionSpacePoint::create(
-                $workspaceInstance->currentContentStreamId,
+                $workspaceInstance->workspaceName,
                 $sourceDimensionSpacePoint,
                 $targetDimensionSpacePoint
             )
@@ -171,7 +170,7 @@ final class ContentCommandController extends CommandController
                     $rootNodeAggregate->nodeAggregateId,
                     $sourceSubgraph,
                     $targetSpacePoint,
-                    $workspaceInstance->currentContentStreamId,
+                    $workspaceInstance->workspaceName,
                     $contentRepositoryInstance,
                 )
             );
@@ -180,7 +179,7 @@ final class ContentCommandController extends CommandController
         $this->outputLine('<success>Done!</success>');
     }
 
-    private function createVariantRecursivelyInternal(int $level, NodeAggregateId $parentNodeAggregateId, ContentSubgraphInterface $sourceSubgraph, OriginDimensionSpacePoint $target, ContentStreamId $contentStreamId, ContentRepository $contentRepository): void
+    private function createVariantRecursivelyInternal(int $level, NodeAggregateId $parentNodeAggregateId, ContentSubgraphInterface $sourceSubgraph, OriginDimensionSpacePoint $target, WorkspaceName $workspaceName, ContentRepository $contentRepository): void
     {
         $childNodes = $sourceSubgraph->findChildNodes(
             $parentNodeAggregateId,
@@ -190,7 +189,7 @@ final class ContentCommandController extends CommandController
         foreach ($childNodes as $childNode) {
             if ($childNode->classification->isRegular()) {
                 $childNodeType = $contentRepository->getNodeTypeManager()->getNodeType($childNode->nodeTypeName);
-                if ($childNodeType->isOfType('Neos.Neos:Document')) {
+                if ($childNodeType?->isOfType('Neos.Neos:Document')) {
                     $this->output("%s- %s\n", [
                         str_repeat('  ', $level),
                         $childNode->getProperty('uriPathSegment') ?? $childNode->nodeAggregateId->value
@@ -199,13 +198,13 @@ final class ContentCommandController extends CommandController
                 try {
                     // Tethered nodes' variants are automatically created when the parent is translated.
                     $contentRepository->handle(CreateNodeVariant::create(
-                        $contentStreamId,
+                        $workspaceName,
                         $childNode->nodeAggregateId,
                         $childNode->originDimensionSpacePoint,
                         $target
                     ))->block();
                 } catch (DimensionSpacePointIsAlreadyOccupied $e) {
-                    if ($childNodeType->isOfType('Neos.Neos:Document')) {
+                    if ($childNodeType?->isOfType('Neos.Neos:Document')) {
                         $this->output("%s  (already exists)\n", [
                             str_repeat('  ', $level)
                         ]);
@@ -218,7 +217,7 @@ final class ContentCommandController extends CommandController
                 $childNode->nodeAggregateId,
                 $sourceSubgraph,
                 $target,
-                $contentStreamId,
+                $workspaceName,
                 $contentRepository
             );
         }

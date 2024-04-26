@@ -47,9 +47,6 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\View\FusionView;
 
-/**
- * Event Sourced Node Controller; as Replacement of NodeController
- */
 class NodeController extends ActionController
 {
     use NodeTypeWithFallbackProvider;
@@ -110,10 +107,9 @@ class NodeController extends ActionController
     protected int $shortcutRedirectHttpStatusCode;
 
     /**
-     * @param string $node Legacy name for backwards compatibility of route components
+     * @param string $node
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
@@ -158,7 +154,11 @@ class NodeController extends ActionController
             );
         }
 
-        if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT) && $nodeAddress->isInLiveWorkspace()) {
+        if (
+            $this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)
+            && !$renderingMode->isEdit
+            && $nodeAddress->workspaceName->isLive() // shortcuts are only resolvable for the live workspace
+        ) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
@@ -169,7 +169,7 @@ class NodeController extends ActionController
             'site' => $site,
         ]);
 
-        if (!$nodeAddress->isInLiveWorkspace()) {
+        if ($renderingMode->isEdit) {
             $this->overrideViewVariablesFromInternalArguments();
             $this->response->setHttpHeader('Cache-Control', 'no-cache');
             if (!$this->view->canRenderWithNodeAndPath()) {
@@ -184,7 +184,6 @@ class NodeController extends ActionController
      * @param string $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
@@ -208,18 +207,17 @@ class NodeController extends ActionController
             VisibilityConstraints::frontend()
         );
 
+        $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        if ($nodeInstance === null) {
+            throw new NodeNotFoundException(sprintf('The cached node address for this uri could not be resolved. Possibly you have to flush the "Flow_Mvc_Routing_Route" cache. %s', $nodeAddress), 1707300738);
+        }
+
         $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
-            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
+            throw new NodeNotFoundException(sprintf('The site node of %s could not be resolved.', $nodeAddress), 1707300861);
         }
 
         $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
-
-        $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
-
-        if ($nodeInstance === null) {
-            throw new NodeNotFoundException('The requested node does not exist', 1596191460);
-        }
 
         if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
@@ -268,12 +266,11 @@ class NodeController extends ActionController
     }
 
     /**
-     * Handles redirects to shortcut targets in live rendering.
+     * Handles redirects to shortcut targets of nodes in the live workspace.
      *
      * @param NodeAddress $nodeAddress
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
     protected function handleShortcutNode(NodeAddress $nodeAddress, ContentRepository $contentRepository): void
     {

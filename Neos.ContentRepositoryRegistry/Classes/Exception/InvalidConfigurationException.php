@@ -1,13 +1,10 @@
 <?php
 namespace Neos\ContentRepositoryRegistry\Exception;
 
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
-#[Flow\Proxy(false)]
 final class InvalidConfigurationException extends \RuntimeException
 {
-
     public static function missingPreset(ContentRepositoryId $contentRepositoryId, string $presetName): self
     {
         return new self(sprintf('The preset "%s" referred to in content repository "%s" does not exist', $presetName, $contentRepositoryId->value), 1650557150);

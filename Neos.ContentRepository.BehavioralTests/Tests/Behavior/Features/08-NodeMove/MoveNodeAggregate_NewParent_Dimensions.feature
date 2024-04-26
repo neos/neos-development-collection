@@ -25,9 +25,9 @@ Feature: Move a node with content dimensions
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
-      | contentStreamId | "cs-identifier"               |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -105,14 +105,13 @@ Feature: Move a node with content dimensions
   Scenario: Move a complete node aggregate to a new parent before the first of its new siblings
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
-      | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
       | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "anthony-destinode"      |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have no preceding siblings
@@ -133,7 +132,6 @@ Feature: Move a node with content dimensions
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
-      | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
       | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
@@ -141,7 +139,7 @@ Feature: Move a node with content dimensions
       | relationDistributionStrategy        | "gatherAll"              |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have no preceding siblings
@@ -151,7 +149,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;berta-destinode;{"language": "mul"}   |
       | cs-identifier;carl-destinode;{"language": "mul"}    |
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have no preceding siblings
@@ -163,14 +161,13 @@ Feature: Move a node with content dimensions
   Scenario: Move a complete node aggregate to a new parent before one of its new siblings
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
-      | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
       | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -192,14 +189,13 @@ Feature: Move a node with content dimensions
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
-      | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
       | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -210,7 +206,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;berta-destinode;{"language": "mul"} |
       | cs-identifier;carl-destinode;{"language": "mul"}  |
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -231,14 +227,13 @@ Feature: Move a node with content dimensions
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                | Value                    |
-      | contentStreamId                    | "cs-identifier"          |
       | nodeAggregateId                    | "nody-mc-nodeface"       |
       | dimensionSpacePoint                | {"language": "mul"}      |
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "berta-destinode"        |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -249,7 +244,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                |
       | cs-identifier;carl-destinode;{"language": "mul"} |
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -269,14 +264,13 @@ Feature: Move a node with content dimensions
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
-      | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
       | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -286,7 +280,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;anthony-destinode;{"language": "mul"} |
     And I expect this node to have no succeeding siblings
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -298,7 +292,6 @@ Feature: Move a node with content dimensions
   Scenario: Move a single node in a node aggregate to a new parent after the last of its new siblings
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
-      | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
       | dimensionSpacePoint                 | {"language": "de"}       |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
@@ -306,13 +299,13 @@ Feature: Move a node with content dimensions
       | relationDistributionStrategy        | "scatter"                |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"language": "mul"}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -325,7 +318,6 @@ Feature: Move a node with content dimensions
   Scenario: Move a node and its specializations in a node aggregate to a new parent after the last of its new siblings
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
-      | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
       | dimensionSpacePoint                 | {"language": "de"}       |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
@@ -333,13 +325,13 @@ Feature: Move a node with content dimensions
       | relationDistributionStrategy        | "gatherSpecializations"  |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"language": "mul"}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -349,7 +341,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;anthony-destinode;{"language": "mul"} |
     And I expect this node to have no succeeding siblings
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -362,7 +354,6 @@ Feature: Move a node with content dimensions
   Scenario: Move a complete node aggregate to a new parent between siblings with different parents in other variants
     Given the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                       |
-      | contentStreamId                     | "cs-identifier"             |
       | nodeAggregateId                     | "berta-destinode"           |
       | dimensionSpacePoint                 | {"language": "gsw"}         |
       | newParentNodeAggregateId            | "lady-abigail-nodenborough" |
@@ -372,7 +363,6 @@ Feature: Move a node with content dimensions
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
-      | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
       | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
@@ -381,7 +371,7 @@ Feature: Move a node with content dimensions
       | relationDistributionStrategy        | "gatherAll"              |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -393,7 +383,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;carl-destinode;{"language": "mul"}  |
 
     # An explicitly given parent node aggregate identifier should overrule given sibling identifiers
-    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -406,7 +396,6 @@ Feature: Move a node with content dimensions
   Scenario: Move a complete node aggregate between siblings with different parents in other variants (without explicit new parent)
     Given the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                       |
-      | contentStreamId                     | "cs-identifier"             |
       | nodeAggregateId                     | "berta-destinode"           |
       | dimensionSpacePoint                 | {"language": "gsw"}         |
       | newParentNodeAggregateId            | "lady-abigail-nodenborough" |
@@ -416,7 +405,6 @@ Feature: Move a node with content dimensions
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value               |
-      | contentStreamId                     | "cs-identifier"     |
       | nodeAggregateId                     | "nody-mc-nodeface"  |
       | dimensionSpacePoint                 | {"language": "mul"} |
       | newPrecedingSiblingNodeAggregateId  | "anthony-destinode" |
@@ -424,7 +412,7 @@ Feature: Move a node with content dimensions
       | relationDistributionStrategy        | "gatherAll"         |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "mul"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language": "mul"}
     And I expect this node to have the following preceding siblings:
@@ -435,7 +423,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;berta-destinode;{"language": "mul"} |
       | cs-identifier;carl-destinode;{"language": "mul"}  |
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "document2/child-document-n" to lead to node cs-identifier;nody-mc-nodeface;{"language": "mul"}
     And I expect this node to be a child of node cs-identifier;lady-abigail-nodenborough;{"language": "mul"}
     And I expect this node to have no preceding siblings

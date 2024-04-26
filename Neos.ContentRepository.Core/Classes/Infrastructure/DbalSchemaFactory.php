@@ -23,6 +23,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class DbalSchemaFactory
 {
+    // This class only contains static members and should not be constructed
+    private function __construct()
+    {
+    }
+
     /**
      * The NodeAggregateId is limited to 64 ascii characters and therefore we should do the same in the database.
      *
@@ -48,9 +53,8 @@ final class DbalSchemaFactory
      */
     public static function columnForContentStreamId(string $columnName): Column
     {
-        return (new Column($columnName, Type::getType(Types::STRING)))
-            ->setLength(36)
-            ->setCustomSchemaOption('charset', 'binary');
+        return (new Column($columnName, Type::getType(Types::BINARY)))
+            ->setLength(36);
     }
 
     /**
@@ -63,8 +67,7 @@ final class DbalSchemaFactory
      */
     public static function columnForNodeAnchorPoint(string $columnName): Column
     {
-        return (new Column($columnName, Type::getType(Types::BINARY)))
-            ->setLength(36)
+        return (new Column($columnName, Type::getType(Types::BIGINT)))
             ->setNotnull(true);
     }
 

@@ -15,13 +15,15 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 
 /**
  * The active record for reading and writing nodes from and to the database
@@ -49,39 +51,12 @@ final class NodeRecord
      * @param Connection $databaseConnection
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
-    {
-        $databaseConnection->insert($tableNamePrefix . '_node', [
-            'relationanchorpoint' => $this->relationAnchorPoint->value,
-            'nodeaggregateid' => $this->nodeAggregateId->value,
-            'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
-            'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
-            'properties' => json_encode($this->properties),
-            'nodetypename' => $this->nodeTypeName->value,
-            'classification' => $this->classification->value,
-            'created' => $this->timestamps->created,
-            'originalcreated' => $this->timestamps->originalCreated,
-            'lastmodified' => $this->timestamps->lastModified,
-            'originallastmodified' => $this->timestamps->originalLastModified,
-        ], [
-            'created' => Types::DATETIME_IMMUTABLE,
-            'originalcreated' => Types::DATETIME_IMMUTABLE,
-            'lastmodified' => Types::DATETIME_IMMUTABLE,
-            'originallastmodified' => Types::DATETIME_IMMUTABLE,
-        ]);
-    }
-
-    /**
-     * @param Connection $databaseConnection
-     * @throws \Doctrine\DBAL\DBALException
-     */
     public function updateToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->update(
             $tableNamePrefix . '_node',
             [
                 'nodeaggregateid' => $this->nodeAggregateId->value,
-                'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
                 'nodetypename' => $this->nodeTypeName->value,
@@ -112,13 +87,13 @@ final class NodeRecord
     }
 
     /**
-     * @param array<string,string> $databaseRow
+     * @param array<string,mixed> $databaseRow
      * @throws \Exception
      */
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
+            NodeRelationAnchorPoint::fromInteger($databaseRow['relationanchorpoint']),
             NodeAggregateId::fromString($databaseRow['nodeaggregateid']),
             json_decode($databaseRow['origindimensionspacepoint'], true),
             $databaseRow['origindimensionspacepointhash'],
@@ -132,6 +107,109 @@ final class NodeRecord
                 isset($databaseRow['lastmodified']) ? self::parseDateTimeString($databaseRow['lastmodified']) : null,
                 isset($databaseRow['originallastmodified']) ? self::parseDateTimeString($databaseRow['originallastmodified']) : null,
             ),
+        );
+    }
+
+    /**
+     * Insert a node record with the given data and return it.
+     *
+     * @param Connection $databaseConnection
+     * @param string $tableNamePrefix
+     * @param NodeAggregateId $nodeAggregateId
+     * @param array<string,string> $originDimensionSpacePoint
+     * @param string $originDimensionSpacePointHash
+     * @param SerializedPropertyValues $properties
+     * @param NodeTypeName $nodeTypeName
+     * @param NodeAggregateClassification $classification
+     * @param NodeName|null $nodeName
+     * @param Timestamps $timestamps
+     * @return self
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public static function createNewInDatabase(
+        Connection $databaseConnection,
+        string $tableNamePrefix,
+        NodeAggregateId $nodeAggregateId,
+        array $originDimensionSpacePoint,
+        string $originDimensionSpacePointHash,
+        SerializedPropertyValues $properties,
+        NodeTypeName $nodeTypeName,
+        NodeAggregateClassification $classification,
+        /** Transient node name to store a node name after fetching a node with hierarchy (not always available) */
+        ?NodeName $nodeName,
+        Timestamps $timestamps,
+    ): self {
+        $relationAnchorPoint = $databaseConnection->transactional(function ($databaseConnection) use (
+            $tableNamePrefix,
+            $nodeAggregateId,
+            $originDimensionSpacePoint,
+            $originDimensionSpacePointHash,
+            $properties,
+            $nodeTypeName,
+            $classification,
+            $timestamps
+        ) {
+            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
+            $dimensionSpacePoints->insertDimensionSpacePointByHashAndCoordinates($originDimensionSpacePointHash, $originDimensionSpacePoint);
+
+            $databaseConnection->insert($tableNamePrefix . '_node', [
+                'nodeaggregateid' => $nodeAggregateId->value,
+                'origindimensionspacepointhash' => $originDimensionSpacePointHash,
+                'properties' => json_encode($properties),
+                'nodetypename' => $nodeTypeName->value,
+                'classification' => $classification->value,
+                'created' => $timestamps->created,
+                'originalcreated' => $timestamps->originalCreated,
+                'lastmodified' => $timestamps->lastModified,
+                'originallastmodified' => $timestamps->originalLastModified,
+            ], [
+                'created' => Types::DATETIME_IMMUTABLE,
+                'originalcreated' => Types::DATETIME_IMMUTABLE,
+                'lastmodified' => Types::DATETIME_IMMUTABLE,
+                'originallastmodified' => Types::DATETIME_IMMUTABLE,
+            ]);
+
+            return NodeRelationAnchorPoint::fromInteger((int)$databaseConnection->lastInsertId());
+        });
+
+        return new self(
+            $relationAnchorPoint,
+            $nodeAggregateId,
+            $originDimensionSpacePoint,
+            $originDimensionSpacePointHash,
+            $properties,
+            $nodeTypeName,
+            $classification,
+            $nodeName,
+            $timestamps
+        );
+    }
+
+    /**
+     * Creates a copy of this NodeRecord with a new anchor point.
+     *
+     * @param Connection $databaseConnection
+     * @param string $tableNamePrefix
+     * @param NodeRecord $copyFrom
+     * @return self
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public static function createCopyFromNodeRecord(
+        Connection $databaseConnection,
+        string $tableNamePrefix,
+        NodeRecord $copyFrom
+    ): self {
+        return self::createNewInDatabase(
+            $databaseConnection,
+            $tableNamePrefix,
+            $copyFrom->nodeAggregateId,
+            $copyFrom->originDimensionSpacePoint,
+            $copyFrom->originDimensionSpacePointHash,
+            $copyFrom->properties,
+            $copyFrom->nodeTypeName,
+            $copyFrom->classification,
+            $copyFrom->nodeName,
+            $copyFrom->timestamps
         );
     }
 

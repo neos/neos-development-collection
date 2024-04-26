@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\SiteDetection;
 
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Neos\Domain\Model\SiteNodeName;
@@ -19,14 +19,14 @@ use Psr\Http\Message\ServerRequestInterface;
  * @Flow\Proxy(false)
  * @api
  */
-final class SiteDetectionResult
+final readonly class SiteDetectionResult
 {
     private const ROUTINGPARAMETER_SITENODENAME = 'siteNodeName';
     private const ROUTINGPARAMETER_CONTENTREPOSITORYID = 'contentRepositoryId';
 
     private function __construct(
-        public readonly SiteNodeName $siteNodeName,
-        public readonly ContentRepositoryId $contentRepositoryId,
+        public SiteNodeName $siteNodeName,
+        public ContentRepositoryId $contentRepositoryId,
     ) {
     }
 
@@ -41,7 +41,11 @@ final class SiteDetectionResult
      * Helper to retrieve the previously resolved Site and ContentRepository instance.
      *
      * @param ServerRequestInterface $request
-     * @return static
+     * @throws SiteDetectionFailedException This error will be thrown if a request is passed
+     *                                      where the site detection middleware did not store a site in.
+     *                                      This is likely the case if the request is a mock or
+     *                                      if no site entity exists because Neos was not setup.
+     *
      * @api
      */
     public static function fromRequest(ServerRequestInterface $request): self
@@ -52,19 +56,21 @@ final class SiteDetectionResult
         return self::fromRouteParameters($routeParameters);
     }
 
+    /**
+     * @throws SiteDetectionFailedException
+     */
     public static function fromRouteParameters(RouteParameters $routeParameters): self
     {
         $siteNodeName = $routeParameters->getValue(self::ROUTINGPARAMETER_SITENODENAME);
         $contentRepositoryId = $routeParameters->getValue(self::ROUTINGPARAMETER_CONTENTREPOSITORYID);
 
-        if ($siteNodeName === null || $contentRepositoryId === null) {
-            throw new \RuntimeException(
+        if (!is_string($siteNodeName) || !is_string($contentRepositoryId)) {
+            throw new SiteDetectionFailedException(
                 'Current site and content repository could not be extracted from the Request.'
-                    . ' The SiteDetectionMiddleware was not able to determine the site!'
+                    . ' The SiteDetectionMiddleware was not able to determine the site!',
+                1699459565
             );
         }
-        assert(is_string($siteNodeName));
-        assert(is_string($contentRepositoryId));
         return new self(
             SiteNodeName::fromString($siteNodeName),
             ContentRepositoryId::fromString($contentRepositoryId)
@@ -75,7 +81,7 @@ final class SiteDetectionResult
     {
         $parameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS)
             ?? RouteParameters::createEmpty();
-        $parameters = self::storeInRouteParameters($parameters);
+        $parameters = $this->storeInRouteParameters($parameters);
         return $request->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters);
     }
 

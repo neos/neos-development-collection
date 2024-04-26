@@ -30,13 +30,12 @@ Feature: Tests for site node child documents. These are special in that they hav
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
     # We explicitly create a site node with a tethered child document without uriPathSegment, so its uriPath is empty, exactly as the site node's
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues | nodeName |

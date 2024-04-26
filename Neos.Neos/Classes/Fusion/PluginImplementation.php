@@ -78,7 +78,7 @@ class PluginImplementation extends AbstractArrayFusionObject
     }
 
     /**
-     * @return ?string
+     * @return string|null
      */
     public function getArgumentNamespace()
     {
@@ -90,7 +90,10 @@ class PluginImplementation extends AbstractArrayFusionObject
      */
     protected function buildPluginRequest(): ActionRequest
     {
-        $parentRequest = $this->runtime->getControllerContext()->getRequest();
+        $parentRequest = $this->runtime->fusionGlobals->get('request');
+        if (!$parentRequest instanceof ActionRequest) {
+            throw new \RuntimeException('Fusion Plugins must be rendered with an ActionRequest set as fusion-global.', 1706624581);
+        }
         $pluginRequest = $parentRequest->createSubRequest();
         $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
         $this->passArgumentsToPluginRequest($pluginRequest);

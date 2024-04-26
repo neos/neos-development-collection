@@ -20,9 +20,9 @@ Feature: Remove NodeAggregate
       | workspaceDescription       | "The live workspace"                   |
       | newContentStreamId | "live-cs-identifier"                   |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
-      | contentStreamId  | "live-cs-identifier"                   |
       | nodeAggregateId  | "lady-eleonode-nodesworth"             |
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
     And the graph projection is fully up to date
@@ -30,10 +30,8 @@ Feature: Remove NodeAggregate
     # Node /document
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamId       | "live-cs-identifier"                      |
       | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language":"de"}                         |
       | parentNodeAggregateId | "lady-eleonode-nodesworth"                |
       | nodeName                      | "document"                                |
     And the graph projection is fully up to date
@@ -41,16 +39,13 @@ Feature: Remove NodeAggregate
     # Node /document/child-document
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamId       | "live-cs-identifier"                      |
       | nodeAggregateId       | "nodimus-prime"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language":"de"}                         |
       | parentNodeAggregateId | "nody-mc-nodeface"                        |
       | nodeName                      | "child-document"                          |
     And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key                      | Value                |
-      | contentStreamId  | "live-cs-identifier" |
       | nodeAggregateId  | "nody-mc-nodeface"   |
       | sourceOrigin             | {"language":"de"}    |
       | targetOrigin             | {"language":"gsw"}   |
@@ -62,7 +57,6 @@ Feature: Remove NodeAggregate
   Scenario: In LIVE workspace, removing a NodeAggregate removes all nodes completely
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | contentStreamId      | "live-cs-identifier" |
       | nodeAggregateId      | "nody-mc-nodeface"   |
       | nodeVariantSelectionStrategy | "allVariants"        |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
@@ -81,15 +75,17 @@ Feature: Remove NodeAggregate
 
   Scenario: In USER workspace, removing a NodeAggregate removes all nodes completely; leaving the live workspace untouched
 
-    When the command "ForkContentStream" is executed with payload:
-      | Key                           | Value                        |
-      | contentStreamId       | "user-cs-identifier"         |
-      | sourceContentStreamId | "live-cs-identifier"         |
+    # Create user workspace
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "user-test"
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | contentStreamId      | "user-cs-identifier" |
       | nodeAggregateId      | "nody-mc-nodeface"   |
       | nodeVariantSelectionStrategy | "allVariants"        |
       | coveredDimensionSpacePoint   | {"language":"de"}    |

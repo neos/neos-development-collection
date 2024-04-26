@@ -16,16 +16,16 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
+/** @internal */
 #[Flow\Proxy(false)]
-class Block extends AbstractNode
+final readonly class Block extends AbstractNode
 {
     public function __construct(
-        /** @psalm-readonly */
         public StatementList $statementList
     ) {
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitBlock($this, ...$args);
     }

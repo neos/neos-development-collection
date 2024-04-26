@@ -18,6 +18,7 @@ use Neos\Fusion\Exception;
 
 /**
  * 'Fluent' exception for the Fusion Parser.
+ * @internal
  */
 class ParserException extends Exception
 {
@@ -100,7 +101,7 @@ class ParserException extends Exception
     }
 
     /**
-     * @param callable(MessageLinePart $next, MessageLinePart $prev): string $messageMaker
+     * @param callable(MessageLinePart $next, MessageLinePart $prev): string $messageCreator
      */
     public function setMessageCreator(callable $messageCreator): self
     {

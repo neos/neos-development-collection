@@ -8,6 +8,7 @@ use Neos\Utility\Arrays;
 
 /**
  * @Flow\Proxy(false)
+ * @internal helper for the Fusion Runtime to calculate fusion path configurations
  */
 final class RuntimeConfiguration
 {
@@ -72,6 +73,7 @@ final class RuntimeConfiguration
         $pathUntilNow = '';
         $fusionPathLength = strlen($fusionPath);
         $offset = $fusionPathLength;
+        $currentPrototypeDefinitions = [];
         while (($offset = strrpos($fusionPath, '/', -($fusionPathLength - $offset + 1))) != false) {
             $pathPrefix = substr($fusionPath, 0, $offset);
             if (isset($this->pathCache[$pathPrefix])) {
@@ -90,9 +92,11 @@ final class RuntimeConfiguration
                 $currentPrototypeDefinitions = $configuration['__prototypes'];
             }
         }
+        assert(isset($configuration));
 
         // Build configuration for the remaining path parts
         $remainingPath = substr($fusionPath, $pathUntilNow === '' ? 0 : strlen($pathUntilNow) + 1);
+        /** @var non-empty-list<string> $pathParts */
         $pathParts = explode('/', $remainingPath);
         foreach ($pathParts as $pathPart) {
             if ($pathUntilNow === '') {

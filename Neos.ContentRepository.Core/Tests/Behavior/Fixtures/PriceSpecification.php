@@ -22,7 +22,8 @@ final readonly class PriceSpecification implements \Stringable
 {
     private function __construct(
         public float $price,
-        public string $priceCurrency
+        public string $priceCurrency,
+        public bool $valueAddedTaxIncluded
     ) {
     }
 
@@ -30,7 +31,8 @@ final readonly class PriceSpecification implements \Stringable
     {
         return new self(
             $array['price'],
-            $array['priceCurrency']
+            $array['priceCurrency'],
+            $array['valueAddedTaxIncluded'] ?? true, // default value
         );
     }
 
@@ -38,7 +40,8 @@ final readonly class PriceSpecification implements \Stringable
     {
         return new self(
             13.37,
-            'EUR'
+            'EUR',
+            true
         );
     }
 
@@ -46,7 +49,8 @@ final readonly class PriceSpecification implements \Stringable
     {
         return new self(
             84.72,
-            'EUR'
+            'EUR',
+            false
         );
     }
 

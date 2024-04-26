@@ -11,13 +11,12 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "nextAll" operation working on ContentRepository nodes. It iterates over all
@@ -38,7 +37,7 @@ class NextAllOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 100;
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject
@@ -69,7 +68,12 @@ class NextAllOperation extends AbstractOperation
         $output = [];
         $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            foreach ($this->getNextForNode($contextNode) as $nextNode) {
+            $nextNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                ->findSucceedingSiblingNodes(
+                    $contextNode->nodeAggregateId,
+                    FindSucceedingSiblingNodesFilter::create()
+                );
+            foreach ($nextNodes as $nextNode) {
                 if ($nextNode !== null && !isset($outputNodePaths[$nextNode->nodeAggregateId->value])) {
                     $outputNodePaths[$nextNode->nodeAggregateId->value] = true;
                     $output[] = $nextNode;
@@ -81,22 +85,5 @@ class NextAllOperation extends AbstractOperation
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);
         }
-    }
-
-    /**
-     * @param Node $contextNode The node for which the next node should be found
-     * @return Nodes The next nodes of $contextNode
-     */
-    protected function getNextForNode(Node $contextNode): Nodes
-    {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-
-        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
-        if ($parentNode === null) {
-            return Nodes::createEmpty();
-        }
-
-        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create())
-            ->nextAll($contextNode);
     }
 }

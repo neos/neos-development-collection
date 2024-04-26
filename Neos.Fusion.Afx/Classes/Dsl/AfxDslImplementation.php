@@ -32,7 +32,7 @@ class AfxDslImplementation implements DslInterface
      * @return string
      * @throws Fusion\Exception
      */
-    public function transpile($code)
+    public function transpile(string $code): string
     {
         try {
             return AfxService::convertAfxToFusion($code);

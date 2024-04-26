@@ -37,7 +37,7 @@ Feature: Set node properties with different scopes
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -64,7 +64,6 @@ Feature: Set node properties with different scopes
   Scenario: Set node properties
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                                                                                                                                                      |
-      | contentStreamId   | "cs-identifier"                                                                                                                                                            |
       | nodeAggregateId   | "nody-mc-nodeface"                                                                                                                                                         |
       | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                         |
       | propertyValues            | {"unscopedProperty":"My new string", "nodeScopedProperty":"My new string", "specializationsScopedProperty":"My new string", "nodeAggregateScopedProperty":"My new string"} |

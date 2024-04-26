@@ -14,13 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
-use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
@@ -35,6 +33,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Exception as NeosException;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
@@ -357,17 +356,10 @@ class LinkingService
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
             $node->subgraphIdentity->contentStreamId
         );
-        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateFinder::class);
-        $hiddenState = $nodeHiddenStateFinder->findHiddenState(
-            $node->subgraphIdentity->contentStreamId,
-            $node->subgraphIdentity->dimensionSpacePoint,
-            $node->nodeAggregateId
-        );
-
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
-        $action = $workspace && $workspace->isPublicWorkspace() && !$hiddenState->isHidden ? 'show' : 'preview';
+        $action = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::disabled()) ? 'show' : 'preview';
 
         return $uriBuilder
             ->reset()

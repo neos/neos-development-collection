@@ -26,7 +26,7 @@ Feature: Enable a node aggregate
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -74,14 +74,15 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "allSpecializations"     |
 
     Then I expect exactly 12 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 11 is of type "NodeAggregateWasEnabled" with payload:
+    And event at index 11 is of type "SubtreeWasUntagged" with payload:
       | Key                          | Expected                                                  |
       | contentStreamId              | "cs-identifier"                                           |
       | nodeAggregateId              | "sir-david-nodenborough"                                  |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"ltz"},{"language":"gsw"}] |
+      | tag                          | "disabled"                                                |
 
     When the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     Then I expect the graph projection to consist of exactly 7 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{"language":"mul"} to exist in the content graph
@@ -369,14 +370,15 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 12 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 11 is of type "NodeAggregateWasEnabled" with payload:
+    And event at index 11 is of type "SubtreeWasUntagged" with payload:
       | Key                          | Expected                                                                                       |
       | contentStreamId              | "cs-identifier"                                                                                |
       | nodeAggregateId              | "sir-david-nodenborough"                                                                       |
       | affectedDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"},{"language":"ltz"}] |
+      | tag                          | "disabled"                          |
 
     When the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     Then I expect the graph projection to consist of exactly 7 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{"language":"mul"} to exist in the content graph
@@ -704,7 +706,7 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"      |
 
     When the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
 
     Then I expect the node aggregate "the-great-nodini" to exist
     And I expect this node aggregate to disable dimension space points []

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -24,12 +25,21 @@ class DimensionAdjustment
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): iterable
     {
-        try {
-            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        } catch (NodeTypeNotFoundException) {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType) {
             return [];
         }
         if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
+            foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
+                if (
+                    !$nodeAggregate->coveredDimensionSpacePoints->equals($this->interDimensionalVariationGraph->getDimensionSpacePoints())
+                ) {
+                    throw new \Exception(
+                        'Cannot determine structure adjustments for root node type ' . $nodeTypeName->value
+                        . ', run UpdateRootNodeAggregateDimensions first'
+                    );
+                }
+            }
             return [];
         }
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {

@@ -15,15 +15,12 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
@@ -33,6 +30,7 @@ use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Party\Domain\Service\PartyService;
 
@@ -94,7 +92,11 @@ final class EditorContentStreamZookeeper
             // we might be in testing context
             return;
         }
-        $siteDetectionResult = SiteDetectionResult::fromRequest($requestHandler->getHttpRequest());
+        try {
+            $siteDetectionResult = SiteDetectionResult::fromRequest($requestHandler->getHttpRequest());
+        } catch (SiteDetectionFailedException) {
+            return;
+        }
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
         $isEditor = false;
@@ -117,16 +119,13 @@ final class EditorContentStreamZookeeper
         );
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if ($workspace !== null) {
-            CatchUpTriggerWithSynchronousOption::synchronously(fn() => $contentRepository->handle(
-                RebaseWorkspace::create(
-                    $workspace->workspaceName,
-                )
-            )->block());
             return;
         }
 
-        /** @var Workspace $baseWorkspace */
         $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+        if (!$baseWorkspace) {
+            return;
+        }
         $editorsNewContentStreamId = ContentStreamId::create();
         $contentRepository->handle(
             CreateWorkspace::create(

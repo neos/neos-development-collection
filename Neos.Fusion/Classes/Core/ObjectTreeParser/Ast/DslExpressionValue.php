@@ -16,18 +16,17 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
+/** @internal */
 #[Flow\Proxy(false)]
-class DslExpressionValue extends AbstractPathValue
+final readonly class DslExpressionValue extends AbstractPathValue
 {
     public function __construct(
-        /** @psalm-readonly */
         public string $identifier,
-        /** @psalm-readonly */
         public string $code
     ) {
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitDslExpressionValue($this, ...$args);
     }

@@ -7,7 +7,6 @@ namespace Neos\Neos\AssetUsage\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Exception\ORMException;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -20,9 +19,11 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -43,7 +44,7 @@ final class AssetUsageProjection implements ProjectionInterface
 {
     private ?AssetUsageFinder $stateAccessor = null;
     private AssetUsageRepository $repository;
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
     /** @var array<string, string|null> */
     private array $originalAssetIdMappingRuntimeCache = [];
 
@@ -54,7 +55,7 @@ final class AssetUsageProjection implements ProjectionInterface
         AssetUsageRepositoryFactory $assetUsageRepositoryFactory,
     ) {
         $this->repository = $assetUsageRepositoryFactory->build($contentRepositoryId);
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $dbal,
             $this->repository->getTableNamePrefix() . '_checkpoint',
             self::class
@@ -177,10 +178,6 @@ final class AssetUsageProjection implements ProjectionInterface
         /** @var array<string, array<AssetIdAndOriginalAssetId>> $assetIds */
         $assetIds = [];
         foreach ($propertyValues as $propertyName => $propertyValue) {
-            // skip removed properties ({@see SerializedPropertyValues})
-            if ($propertyValue === null) {
-                continue;
-            }
             $extractedAssetIds = $this->extractAssetIds(
                 $propertyValue->type,
                 $propertyValue->value,
@@ -232,8 +229,28 @@ final class AssetUsageProjection implements ProjectionInterface
 
     public function setUp(): void
     {
-        $this->repository->setup();
-        $this->checkpointStorage->setup();
+        $this->repository->setUp();
+        $this->checkpointStorage->setUp();
+    }
+
+    public function status(): ProjectionStatus
+    {
+        $checkpointStorageStatus = $this->checkpointStorage->status();
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
+            return ProjectionStatus::error($checkpointStorageStatus->details);
+        }
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
+            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
+        }
+        try {
+            $falseOrDetailsString = $this->repository->isSetupRequired();
+            if (is_string($falseOrDetailsString)) {
+                return ProjectionStatus::setupRequired($falseOrDetailsString);
+            }
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
+        }
+        return ProjectionStatus::ok();
     }
 
     public function canHandle(EventInterface $event): bool
@@ -271,7 +288,7 @@ final class AssetUsageProjection implements ProjectionInterface
         };
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
     }

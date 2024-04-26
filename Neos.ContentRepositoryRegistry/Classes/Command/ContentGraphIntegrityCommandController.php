@@ -11,14 +11,14 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
-use Neos\Error\Messages\Result;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
+use Neos\Error\Messages\Result;
 use Neos\Flow\Cli\CommandController;
 
 final class ContentGraphIntegrityCommandController extends CommandController
 {
-    const OUTPUT_MODE_CONSOLE = 'console';
-    const OUTPUT_MODE_LOG = 'log';
+    private const OUTPUT_MODE_CONSOLE = 'console';
+    private const OUTPUT_MODE_LOG = 'log';
 
     private ProjectionIntegrityViolationDetectionRunner $detectionRunner;
 

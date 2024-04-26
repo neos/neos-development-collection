@@ -8,6 +8,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\EventStore\EventStoreInterface;
 
@@ -29,15 +30,18 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
      * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist
      * @throws \Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist
      */
-    public function rebaseOutdatedWorkspaces(): array
+    public function rebaseOutdatedWorkspaces(?RebaseErrorHandlingStrategy $strategy = null): array
     {
         $outdatedWorkspaces = $this->contentRepository->getWorkspaceFinder()->findOutdated();
 
         foreach ($outdatedWorkspaces as $workspace) {
-            /* @var Workspace $workspace */
-            $this->contentRepository->handle(RebaseWorkspace::create(
+            $rebaseCommand = RebaseWorkspace::create(
                 $workspace->workspaceName,
-            ))->block();
+            );
+            if ($strategy) {
+                $rebaseCommand = $rebaseCommand->withErrorHandlingStrategy($strategy);
+            }
+            $this->contentRepository->handle($rebaseCommand)->block();
         }
 
         return $outdatedWorkspaces;

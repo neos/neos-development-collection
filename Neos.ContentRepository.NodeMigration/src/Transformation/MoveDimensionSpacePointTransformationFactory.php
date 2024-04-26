@@ -17,8 +17,8 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * move a dimension space point globally
@@ -47,12 +47,11 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
             }
 
             public function execute(
-                ContentStreamId $contentStreamForReading,
-                ContentStreamId $contentStreamForWriting
+                WorkspaceName $workspaceNameForWriting,
             ): CommandResult {
                 return $this->contentRepository->handle(
                     MoveDimensionSpacePoint::create(
-                        $contentStreamForWriting,
+                        $workspaceNameForWriting,
                         $this->from,
                         $this->to
                     )

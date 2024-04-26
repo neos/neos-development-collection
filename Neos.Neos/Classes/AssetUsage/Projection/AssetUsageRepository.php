@@ -9,24 +9,24 @@ use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\ForwardCompatibility\Result;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\Neos\AssetUsage\Dto\AssetUsage;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
+use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\Neos\AssetUsage\Dto\AssetUsages;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Types;
-use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 
 /**
  * @internal Not meant to be used in user land code. In order to look up asset usages the AssetUsageFinder can be used
@@ -39,39 +39,50 @@ final class AssetUsageRepository
     ) {
     }
 
-    public function setup(): void
+    public function setUp(): void
+    {
+        foreach (DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $this->databaseSchema()) as $statement) {
+            $this->dbal->executeStatement($statement);
+        }
+    }
+
+    /**
+     * @return false|non-empty-string false if everything is okay, otherwise the details string, why a setup is required
+     */
+    public function isSetupRequired(): false|string
+    {
+        $requiredSqlStatements = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $this->databaseSchema());
+        if ($requiredSqlStatements !== []) {
+            return sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements));
+        }
+        return false;
+    }
+
+    private function databaseSchema(): Schema
     {
         $schemaManager = $this->dbal->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-
-        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [self::databaseSchema($this->tableNamePrefix)]);
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-        foreach ($schemaDiff->toSaveSql($this->dbal->getDatabasePlatform()) as $statement) {
-            $this->dbal->executeStatement($statement);
-        }
-    }
-
-    private static function databaseSchema(string $tablePrefix): Table
-    {
-        $table = new Table($tablePrefix, [
+        $table = new Table($this->tableNamePrefix, [
             (new Column('assetid', Type::getType(Types::STRING)))->setLength(40)->setNotnull(true)->setDefault(''),
             (new Column('originalassetid', Type::getType(Types::STRING)))->setLength(40)->setNotnull(false)->setDefault(null),
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotNull(true),
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotNull(true),
             DbalSchemaFactory::columnForDimensionSpacePoint('origindimensionspacepoint')->setNotNull(false),
-            DbalSchemaFactory::columnForDimensionSpacePoint('origindimensionspacepointhash')->setNotNull(true),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotNull(true),
             (new Column('propertyname', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setDefault('')
         ]);
 
-        return $table
+        $table
             ->addUniqueIndex(['assetid', 'originalassetid', 'contentstreamid', 'nodeaggregateid', 'origindimensionspacepointhash', 'propertyname'], 'assetperproperty')
             ->addIndex(['assetid'])
             ->addIndex(['originalassetid'])
             ->addIndex(['contentstreamid'])
             ->addIndex(['nodeaggregateid'])
             ->addIndex(['origindimensionspacepointhash']);
+
+        return DbalSchemaFactory::createSchemaWithTables($schemaManager, [$table]);
     }
 
     public function findUsages(AssetUsageFilter $filter): AssetUsages

@@ -26,15 +26,14 @@ Feature: Tethered Nodes Reordering Structure changes
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
+    When I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
-      | contentStreamId     | "cs-identifier"               |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                                                                                                                      |
-      | contentStreamId                    | "cs-identifier"                                                                                                                            |
       | nodeAggregateId                    | "sir-david-nodenborough"                                                                                                                   |
       | nodeTypeName                               | "Neos.ContentRepository.Testing:Document"                                                                                                  |
       | originDimensionSpacePoint                  | {}                                                                                                                                         |
@@ -45,7 +44,6 @@ Feature: Tethered Nodes Reordering Structure changes
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
     And I get the node at path "document/tethered-node"
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:

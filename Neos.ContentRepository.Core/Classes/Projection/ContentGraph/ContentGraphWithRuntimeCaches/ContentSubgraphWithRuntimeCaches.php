@@ -22,11 +22,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -43,12 +43,12 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @internal the parent {@see ContentSubgraphInterface} is API
  */
-final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
+final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 {
-    public readonly InMemoryCache $inMemoryCache;
+    public InMemoryCache $inMemoryCache;
 
     public function __construct(
-        private readonly ContentSubgraphInterface $wrappedContentSubgraph,
+        private ContentSubgraphInterface $wrappedContentSubgraph,
     ) {
         $this->inMemoryCache = new InMemoryCache();
     }
@@ -247,7 +247,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return array_filter(get_object_vars($filter), static fn ($value) => $value !== null) === [];
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): ContentSubgraphIdentity
     {
         return $this->wrappedContentSubgraph->jsonSerialize();
     }

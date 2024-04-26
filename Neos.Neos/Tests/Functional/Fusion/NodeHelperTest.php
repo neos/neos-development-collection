@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -29,6 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Unit\NodeSubjectProvider;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
+use Neos\Fusion\Tests\Functional\FusionObjects\TestingViewForFusionRuntime;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -106,7 +108,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
         self::assertEquals('Some -', (string)$view->render());
     }
 
-    protected function buildView()
+    protected function buildView(): TestingViewForFusionRuntime
     {
         $view = parent::buildView();
 
@@ -119,7 +121,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
 
     protected function setUp(): void
     {
-        $this->markTestSkipped('Skipped until we find a better way to mock node read models (see https://github.com/neos/neos-development-collection/issues/4317)');
+        $this->markTestSkipped('Skipped. Either migrate to behat or find a better way to mock node read models. See https://github.com/neos/neos-development-collection/issues/4317');
         parent::setUp();
         $nodeSubjectProvider = new NodeSubjectProvider();
 
@@ -170,6 +172,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
             $textNodeType,
             $textNodeProperties,
             null,
+            NodeTags::createEmpty(),
             Timestamps::create($now, $now, null, null)
         );
     }

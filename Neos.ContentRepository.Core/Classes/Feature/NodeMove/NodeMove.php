@@ -15,38 +15,37 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeMove;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\DimensionSpace;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
-use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -64,7 +63,6 @@ trait NodeMove
     ): NodeAggregate;
 
     /**
-     * @param MoveNodeAggregate $command
      * @return EventsToPublish
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregatesTypeIsAmbiguous
@@ -76,10 +74,11 @@ trait NodeMove
         MoveNodeAggregate $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->dimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -95,7 +94,7 @@ trait NodeMove
 
         if ($command->newParentNodeAggregateId) {
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $command->contentStreamId,
+                $contentStreamId,
                 $this->requireNodeType($nodeAggregate->nodeTypeName),
                 $nodeAggregate->nodeName,
                 [$command->newParentNodeAggregateId],
@@ -103,7 +102,7 @@ trait NodeMove
             );
 
             $this->requireNodeNameToBeUncovered(
-                $command->contentStreamId,
+                $contentStreamId,
                 $nodeAggregate->nodeName,
                 $command->newParentNodeAggregateId,
                 $affectedDimensionSpacePoints,
@@ -111,7 +110,7 @@ trait NodeMove
             );
 
             $newParentNodeAggregate = $this->requireProjectedNodeAggregate(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->newParentNodeAggregateId,
                 $contentRepository
             );
@@ -122,7 +121,7 @@ trait NodeMove
             );
 
             $this->requireNodeAggregateToNotBeDescendant(
-                $command->contentStreamId,
+                $contentStreamId,
                 $newParentNodeAggregate,
                 $nodeAggregate,
                 $contentRepository
@@ -131,14 +130,14 @@ trait NodeMove
 
         if ($command->newPrecedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->newPrecedingSiblingNodeAggregateId,
                 $contentRepository
             );
         }
         if ($command->newSucceedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->newSucceedingSiblingNodeAggregateId,
                 $contentRepository
             );
@@ -150,7 +149,7 @@ trait NodeMove
             $originNodeMoveMappings[] = new OriginNodeMoveMapping(
                 $movedNodeOrigin,
                 $this->resolveCoverageNodeMoveMappings(
-                    $command->contentStreamId,
+                    $contentStreamId,
                     $nodeAggregate,
                     $command->newParentNodeAggregateId,
                     $command->newPrecedingSiblingNodeAggregateId,
@@ -164,14 +163,14 @@ trait NodeMove
 
         $events = Events::with(
             new NodeAggregateWasMoved(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->nodeAggregateId,
                 OriginNodeMoveMappings::create(...$originNodeMoveMappings)
             )
         );
 
         $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamId(
-            $command->contentStreamId
+            $contentStreamId
         );
 
         return new EventsToPublish(
@@ -180,7 +179,7 @@ trait NodeMove
                 $command,
                 $events
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 

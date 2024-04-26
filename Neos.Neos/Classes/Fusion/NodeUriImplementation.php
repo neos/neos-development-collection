@@ -14,13 +14,18 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Psr\Log\LoggerInterface;
 
 /**
  * Create a link to a node
@@ -32,6 +37,12 @@ class NodeUriImplementation extends AbstractFusionObject
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
+
+    /**
+     * @Flow\Inject
+     * @var LoggerInterface
+     */
+    protected $systemLogger;
 
     /**
      * A node object or a string node path or NULL to resolve the current document node
@@ -72,7 +83,7 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * Arguments to be removed from the URI. Only active if addQueryString = TRUE
+     * Arguments to be removed from the URI. Only active if addQueryString = true
      *
      * @return array<int,string>
      */
@@ -82,7 +93,7 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * If TRUE, the current query parameters will be kept in the URI
+     * If true, the current query parameters will be kept in the URI
      *
      * @return boolean
      */
@@ -92,7 +103,7 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * If TRUE, an absolute URI is rendered
+     * If true, an absolute URI is rendered
      *
      * @return boolean
      */
@@ -119,6 +130,14 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
+        $baseNode = null;
+        $baseNodeName = $this->getBaseNodeName() ?: 'documentNode';
+        $currentContext = $this->runtime->getCurrentContext();
+        if (isset($currentContext[$baseNodeName])) {
+            $baseNode = $currentContext[$baseNodeName];
+        } else {
+            throw new \RuntimeException(sprintf('Could not find a node instance in Fusion context with name "%s" and no node instance was given to the node argument. Set a node instance in the Fusion context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+        }
         $node = $this->getNode();
         if ($node instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
@@ -127,7 +146,7 @@ class NodeUriImplementation extends AbstractFusionObject
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);
         } else {
-            return '';
+            throw new \RuntimeException(sprintf('Passing node as %s is not supported yet.', get_debug_type($node)));
         }
         /* TODO implement us see https://github.com/neos/neos-development-collection/issues/4524 {@see \Neos\Neos\ViewHelpers\Uri\NodeViewHelper::resolveNodeAddressFromString} for an example implementation
         elseif ($node === '~') {
@@ -142,15 +161,31 @@ class NodeUriImplementation extends AbstractFusionObject
         );*/
 
         $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
+        $possibleRequest = $this->runtime->fusionGlobals->get('request');
+        if ($possibleRequest instanceof ActionRequest) {
+            $uriBuilder->setRequest($possibleRequest);
+        } else {
+            // unfortunately, the uri-builder always needs a request at hand and cannot build uris without
+            // even, if the default param merging would not be required
+            // this will improve with a reformed uri building:
+            // https://github.com/neos/flow-development-collection/pull/2744
+            $uriBuilder->setRequest(
+                ActionRequest::fromHttpRequest(ServerRequest::fromGlobals())
+            );
+        }
         $uriBuilder
-            ->setAddQueryString($this->getAddQueryString())
-            ->setArguments($this->getAdditionalParams())
-            ->setArgumentsToBeExcludedFromQueryString($this->getArgumentsToBeExcludedFromQueryString())
-            ->setCreateAbsoluteUri($this->isAbsolute())
             ->setFormat($this->getFormat())
-            ->setSection($this->getSection());
+            ->setCreateAbsoluteUri($this->isAbsolute())
+            ->setArguments($this->getAdditionalParams())
+            ->setSection($this->getSection())
+            ->setAddQueryString($this->getAddQueryString())
+            ->setArgumentsToBeExcludedFromQueryString($this->getArgumentsToBeExcludedFromQueryString());
 
-        return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
+        try {
+            return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
+        } catch (NoMatchingRouteException) {
+            $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri. Arguments: %s', $node->nodeAggregateId->value, json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
+        }
+        return '';
     }
 }

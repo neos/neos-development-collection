@@ -16,18 +16,17 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
+/** @internal */
 #[Flow\Proxy(false)]
-class FusionFile extends AbstractNode
+final readonly class FusionFile extends AbstractNode
 {
     public function __construct(
-        /** @psalm-readonly */
         public StatementList $statementList,
-        /** @psalm-readonly */
         public ?string $contextPathAndFileName
     ) {
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitFusionFile($this, ...$args);
     }

@@ -47,10 +47,11 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\NodeVariation;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\SubtreeTagging;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -61,6 +62,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     use RootNodeHandling;
     use NodeCreation;
     use NodeDisabling;
+    use SubtreeTagging;
     use NodeModification;
     use NodeMove;
     use NodeReferencing;
@@ -88,7 +90,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     protected PropertyConverter $propertyConverter;
 
     /**
-     * can be disabled in {@see NodeAggregateCommandHandler::withoutAnchestorNodeTypeConstraintChecks()}
+     * can be disabled in {@see NodeAggregateCommandHandler::withoutAncestorNodeTypeConstraintChecks()}
      */
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
@@ -134,6 +136,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
             DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
             EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
+            TagSubtree::class => $this->handleTagSubtree($command, $contentRepository),
+            UntagSubtree::class => $this->handleUntagSubtree($command, $contentRepository),
             ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $contentRepository),
         };
     }
@@ -180,73 +184,5 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         $callback();
 
         $this->ancestorNodeTypeConstraintChecksEnabled = $previousAncestorNodeTypeConstraintChecksEnabled;
-    }
-
-    /**
-     * @todo perhaps reuse when ChangeNodeAggregateType is reimplemented
-     */
-    protected function checkConstraintsImposedByAncestors(
-        ChangeNodeAggregateType $command,
-        ContentRepository $contentRepository
-    ): void {
-        $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
-        );
-        $newNodeType = $this->requireNodeType($command->newNodeTypeName);
-        foreach (
-            $contentRepository->getContentGraph()->findParentNodeAggregates(
-                $command->contentStreamId,
-                $command->nodeAggregateId
-            ) as $parentAggregate
-        ) {
-            /* @var $parentAggregate NodeAggregate */
-            $parentsNodeType = $this->nodeTypeManager->getNodeType($parentAggregate->nodeTypeName->value);
-            if (!$parentsNodeType->allowsChildNodeType($newNodeType)) {
-                throw new NodeConstraintException(
-                    'Node type ' . $command->newNodeTypeName->value
-                        . ' is not allowed below nodes of type ' . $parentAggregate->nodeTypeName->value
-                );
-            }
-            if (
-                $nodeAggregate->nodeName
-                && $parentsNodeType->hasTetheredNode($nodeAggregate->nodeName)
-                && $this->nodeTypeManager->getTypeOfTetheredNode($parentsNodeType, $nodeAggregate->nodeName)->name
-                    !== $command->newNodeTypeName->value
-            ) {
-                throw new NodeConstraintException(
-                    'Cannot change type of auto created child node' . $nodeAggregate->nodeName->value
-                        . ' to ' . $command->newNodeTypeName->value
-                );
-            }
-            foreach (
-                $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $command->contentStreamId,
-                    $parentAggregate->nodeAggregateId
-                ) as $grandParentAggregate
-            ) {
-                /* @var $grandParentAggregate NodeAggregate */
-                $grandParentsNodeType = $this->nodeTypeManager->getNodeType(
-                    $grandParentAggregate->nodeTypeName->value
-                );
-                if (
-                    $parentAggregate->nodeName
-                    && $grandParentsNodeType->hasTetheredNode($parentAggregate->nodeName)
-                    && !$this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
-                        $grandParentsNodeType,
-                        $parentAggregate->nodeName,
-                        $newNodeType
-                    )
-                ) {
-                    throw new NodeConstraintException(
-                        'Node type "' . $command->newNodeTypeName->value
-                            . '" is not allowed below auto created child nodes "' . $parentAggregate->nodeName->value
-                            . '" of nodes of type "' . $grandParentAggregate->nodeTypeName->value . '"',
-                        1520011791
-                    );
-                }
-            }
-        }
     }
 }
