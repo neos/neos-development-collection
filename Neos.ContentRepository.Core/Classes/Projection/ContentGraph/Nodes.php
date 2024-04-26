@@ -198,11 +198,19 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return new self(array_slice($this->nodes, $referenceNodeIndex + 1));
     }
 
-    public function getNodeAggregateIds(): NodeAggregateIds
+    /**
+     * @param \Closure(Node $node): mixed $callback
+     * @return array<mixed>
+     */
+    public function map(\Closure $callback): array
     {
-        return NodeAggregateIds::create(...array_map(
+        return array_map($callback, $this->nodes);
+    }
+
+    public function mapToNodeAggregateIds(): NodeAggregateIds
+    {
+        return NodeAggregateIds::create(...$this->map(
             fn (Node $node): NodeAggregateId => $node->nodeAggregateId,
-            $this->nodes
         ));
     }
 }

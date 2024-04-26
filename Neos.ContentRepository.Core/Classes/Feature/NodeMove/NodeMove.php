@@ -269,13 +269,13 @@ trait NodeMove
             ? $selectedSubgraph->findSucceedingSiblingNodes(
                 $succeedingSiblingId,
                 FindSucceedingSiblingNodesFilter::create()
-            )->getNodeAggregateIds()
+            )->mapToNodeAggregateIds()
             : null;
         $alternativePrecedingSiblingIds = $precedingSiblingId
             ? $selectedSubgraph->findPrecedingSiblingNodes(
                 $precedingSiblingId,
                 FindPrecedingSiblingNodesFilter::create()
-            )->getNodeAggregateIds()
+            )->mapToNodeAggregateIds()
             : null;
 
         $interdimensionalSiblings = [];
@@ -354,7 +354,7 @@ trait NodeMove
                     $variantSucceedingSiblingIds = $variantSubgraph->findSucceedingSiblingNodes(
                         $variantPrecedingSiblingId,
                         FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(2, 0))
-                    )->getNodeAggregateIds();
+                    )->mapToNodeAggregateIds();
                     $relevantVariantSucceedingSiblingId = null;
                     foreach ($variantSucceedingSiblingIds as $variantSucceedingSiblingId) {
                         if (!$variantSucceedingSiblingId->equals($nodeAggregateId)) {
