@@ -25,7 +25,6 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryHooksFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -35,14 +34,12 @@ use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryHooks;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Event\SequenceNumber;
-use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Psr\Clock\ClockInterface;
 use Symfony\Component\Lock\LockFactory;
@@ -66,8 +63,6 @@ final class ContentRepository
      */
     private array $projectionStateCache;
 
-    private ContentRepositoryHooks $hooks;
-
 
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
@@ -77,7 +72,6 @@ final class ContentRepository
         private readonly CommandBus $commandBus,
         private readonly EventStoreInterface $eventStore,
         private readonly Projections $projections,
-        ContentRepositoryHooksFactory $hooksFactory,
         private readonly EventNormalizer $eventNormalizer,
         private readonly EventPersister $eventPersister,
         private readonly NodeTypeManager $nodeTypeManager,
@@ -86,7 +80,6 @@ final class ContentRepository
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
-        $this->hooks = $hooksFactory->build($this);
     }
 
     /**

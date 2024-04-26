@@ -93,7 +93,6 @@ final class ContentRepositoryFactory
                 $this->buildCommandBus(),
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projections,
-                $this->hooksFactory,
                 $this->projectionFactoryDependencies->eventNormalizer,
                 $this->buildEventPersister(),
                 $this->projectionFactoryDependencies->nodeTypeManager,
@@ -167,6 +166,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projectionFactoryDependencies->eventNormalizer,
                 $this->projections,
+                $this->hooksFactory,
             );
         }
         return $this->eventPersister;
