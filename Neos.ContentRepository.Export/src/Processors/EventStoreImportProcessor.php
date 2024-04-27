@@ -171,4 +171,15 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
         }
         return ContentStreamId::fromString($payload['contentStreamId']);
     }
+
+    /**
+     * @phpstan-ignore-next-line currently this private method is unused ... but it does no harm keeping it
+     */
+    private function dispatch(Severity $severity, string $message, mixed ...$args): void
+    {
+        $renderedMessage = sprintf($message, ...$args);
+        foreach ($this->callbacks as $callback) {
+            $callback($severity, $renderedMessage);
+        }
+    }
 }
