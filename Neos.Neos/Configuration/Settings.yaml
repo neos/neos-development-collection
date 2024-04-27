@@ -201,6 +201,33 @@ Neos:
               features:
                 upload: true
                 mediaBrowser: true
+          Neos\Media\Domain\Model\Audio:
+            typeConverter: Neos\Neos\TypeConverter\EntityToIdentityConverter
+            editor: Neos.Neos/Inspector/Editors/AssetEditor
+            editorOptions:
+              features:
+                upload: true
+                mediaBrowser: true
+              constraints:
+                mediaTypes:
+                  - 'audio/*'
+          Neos\Media\Domain\Model\Document:
+            typeConverter: Neos\Neos\TypeConverter\EntityToIdentityConverter
+            editor: Neos.Neos/Inspector/Editors/AssetEditor
+            editorOptions:
+              features:
+                upload: true
+                mediaBrowser: true
+          Neos\Media\Domain\Model\Video:
+            typeConverter: Neos\Neos\TypeConverter\EntityToIdentityConverter
+            editor: Neos.Neos/Inspector/Editors/AssetEditor
+            editorOptions:
+              features:
+                upload: true
+                mediaBrowser: true
+              constraints:
+                mediaTypes:
+                  - 'video/*'
           array<Neos\Media\Domain\Model\Asset>:
             typeConverter: Neos\Flow\Property\TypeConverter\TypedArrayConverter
             editor: Neos.Neos/Inspector/Editors/AssetEditor
