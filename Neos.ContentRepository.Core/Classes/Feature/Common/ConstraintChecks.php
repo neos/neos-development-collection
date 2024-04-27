@@ -662,28 +662,21 @@ trait ConstraintChecks
         ContentStreamId $contentStreamId,
         ?NodeName $nodeName,
         NodeAggregateId $parentNodeAggregateId,
-        DimensionSpacePointSet $dimensionSpacePointsToBeCovered,
         ContentRepository $contentRepository
     ): void {
         if ($nodeName === null) {
             return;
         }
-        $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
+        $childNodeAggregate = $contentRepository->getContentGraph()->findChildNodeAggregateByName(
             $contentStreamId,
             $parentNodeAggregateId,
             $nodeName
         );
-        foreach ($childNodeAggregates as $childNodeAggregate) {
-            /* @var $childNodeAggregate NodeAggregate */
-            $alreadyCoveredDimensionSpacePoints = $childNodeAggregate->coveredDimensionSpacePoints
-                ->getIntersection($dimensionSpacePointsToBeCovered);
-            if (!$alreadyCoveredDimensionSpacePoints->isEmpty()) {
-                throw new NodeNameIsAlreadyCovered(
-                    'Node name "' . $nodeName->value . '" is already covered in dimension space points '
-                        . $alreadyCoveredDimensionSpacePoints->toJson() . ' by node aggregate "'
-                        . $childNodeAggregate->nodeAggregateId->value . '".'
-                );
-            }
+        if ($childNodeAggregate instanceof NodeAggregate) {
+            throw new NodeNameIsAlreadyCovered(
+                'Node name "' . $nodeName->value . '" is already covered by node aggregate "'
+                    . $childNodeAggregate->nodeAggregateId->value . '".'
+            );
         }
     }
 

@@ -61,14 +61,12 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
                 $workspace->currentContentStreamId,
                 NodeTypeNameFactory::forSites()
             );
-            $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
+            $siteNodeAggregate = $contentGraph->findChildNodeAggregateByName(
                 $workspace->currentContentStreamId,
                 $sitesNodeAggregate->nodeAggregateId,
                 $siteNodeName->toNodeName()
             );
-
-            foreach ($siteNodeAggregates as $siteNodeAggregate) {
-                assert($siteNodeAggregate instanceof NodeAggregate);
+            if ($siteNodeAggregate instanceof NodeAggregate) {
                 $this->contentRepository->handle(RemoveNodeAggregate::create(
                     $workspace->workspaceName,
                     $siteNodeAggregate->nodeAggregateId,
@@ -99,12 +97,12 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             throw SiteNodeTypeIsInvalid::becauseItIsNotOfTypeSite(NodeTypeName::fromString($nodeTypeName));
         }
 
-        $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregatesByName(
+        $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregateByName(
             $liveWorkspace->currentContentStreamId,
             $sitesNodeIdentifier,
             $site->getNodeName()->toNodeName(),
         );
-        foreach ($siteNodeAggregate as $_) {
+        if ($siteNodeAggregate instanceof NodeAggregate) {
             // Site node already exists
             return;
         }

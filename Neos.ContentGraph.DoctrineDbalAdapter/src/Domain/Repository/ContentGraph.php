@@ -278,18 +278,20 @@ final class ContentGraph implements ContentGraphInterface
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId);
     }
 
-    /**
-     * @return iterable<NodeAggregate>
-     */
-    public function findChildNodeAggregatesByName(
+    public function findChildNodeAggregateByName(
         ContentStreamId $contentStreamId,
         NodeAggregateId $parentNodeAggregateId,
         NodeName $name
-    ): iterable {
+    ): ?NodeAggregate {
         $queryBuilder = $this->buildChildNodeAggregateQuery($parentNodeAggregateId, $contentStreamId)
             ->andWhere('ch.name = :relationName')
             ->setParameter('relationName', $name->value);
-        return $this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId);
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            $this->fetchRows($queryBuilder),
+            $contentStreamId,
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 
     /**

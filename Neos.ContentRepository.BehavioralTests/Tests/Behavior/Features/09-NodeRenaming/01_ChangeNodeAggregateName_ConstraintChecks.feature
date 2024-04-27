@@ -77,14 +77,14 @@ Feature: Change node name
       | newNodeName     | "new-name"          |
     Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
 
-  Scenario: Try to rename a node aggregate using an already occupied name
+  Scenario: Try to rename a node aggregate using an already covered name
     When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:
       | Key             | Value              |
       | nodeAggregateId | "nody-mc-nodeface" |
       | newNodeName     | "tethered"         |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
-  Scenario: Try to rename a node aggregate using a partially occupied name
+  Scenario: Try to rename a node aggregate using a partially covered name
     # Could happen via creation or move with the same effect
     Given the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |

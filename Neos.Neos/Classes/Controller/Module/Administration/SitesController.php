@@ -205,16 +205,12 @@ class SitesController extends AbstractModuleController
             }
 
             foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
-                // technically, due to the name being the "identifier", there might be more than one :/
-                /** @var NodeAggregate[] $siteNodeAggregates */
-                /** @var Workspace $workspace */
-                $siteNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
+                $siteNodeAggregate = $contentRepository->getContentGraph()->findChildNodeAggregateByName(
                     $workspace->currentContentStreamId,
                     $sitesNode->nodeAggregateId,
                     $site->getNodeName()->toNodeName()
                 );
-
-                foreach ($siteNodeAggregates as $siteNodeAggregate) {
+                if ($siteNodeAggregate instanceof NodeAggregate) {
                     $contentRepository->handle(ChangeNodeAggregateName::create(
                         $workspace->workspaceName,
                         $siteNodeAggregate->nodeAggregateId,

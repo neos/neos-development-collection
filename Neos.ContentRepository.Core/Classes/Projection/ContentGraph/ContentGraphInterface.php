@@ -122,17 +122,15 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): iterable;
 
     /**
-     * A node aggregate may have multiple child node aggregates with the same name
-     * as long as they do not share dimension space coverage
+     * A node aggregate can have no or exactly one child node aggregate with a given name as enforced by constraint checks
      *
-     * @return iterable<NodeAggregate>
      * @internal only for consumption inside the Command Handler
      */
-    public function findChildNodeAggregatesByName(
+    public function findChildNodeAggregateByName(
         ContentStreamId $contentStreamId,
         NodeAggregateId $parentNodeAggregateId,
         NodeName $name
-    ): iterable;
+    ): ?NodeAggregate;
 
     /**
      * @return iterable<NodeAggregate>

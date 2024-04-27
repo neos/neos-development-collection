@@ -123,9 +123,6 @@ trait NodeMove
                 $contentStreamId,
                 $nodeAggregate->nodeName,
                 $command->newParentNodeAggregateId,
-                // We need to check all covered DSPs of the parent node aggregate to prevent siblings
-                // with different node aggregate IDs but the same name
-                $newParentNodeAggregate->coveredDimensionSpacePoints,
                 $contentRepository
             );
 

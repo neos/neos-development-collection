@@ -46,7 +46,6 @@ trait NodeRenaming
                 $contentStreamId,
                 $command->newNodeName,
                 $parentNodeAggregate->nodeAggregateId,
-                $parentNodeAggregate->coveredDimensionSpacePoints,
                 $contentRepository
             );
         }
