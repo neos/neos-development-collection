@@ -97,7 +97,6 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         $this->requireConstraintsImposedByAncestorsAreMet(
             $contentStreamId,
             $nodeType,
-            $command->targetNodeName,
             [$command->targetParentNodeAggregateId],
             $contentRepository
         );

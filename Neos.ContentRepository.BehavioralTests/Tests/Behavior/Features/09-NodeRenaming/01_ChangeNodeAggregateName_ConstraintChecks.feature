@@ -105,3 +105,21 @@ Feature: Change node name
       | nodeAggregateId | "nody-mc-nodeface" |
       | newNodeName     | "esquire"          |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
+
+  Scenario: Try to rename a node aggregate using a name of a not yet existent, tethered child
+    Given I change the node types in content repository "default" to:
+    """yaml
+    'Neos.ContentRepository.Testing:Content': []
+    'Neos.ContentRepository.Testing:Document':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:Content'
+        another-tethered:
+          type: 'Neos.ContentRepository.Testing:Content'
+    """
+    # We don't run structure adjustments here on purpose
+    When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:
+      | Key             | Value              |
+      | nodeAggregateId | "nody-mc-nodeface" |
+      | newNodeName     | "another-tethered" |
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"

@@ -220,6 +220,17 @@ trait ConstraintChecks
         throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
     }
 
+    protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void
+    {
+        $nodeType = $this->requireNodeType($nodeTypeName);
+        if ($nodeType->hasTetheredNode($nodeName)) {
+            throw new NodeNameIsAlreadyCovered(
+                'Node name "' . $nodeName->value . '" is reserved for a tethered child of parent node aggregate of type "'
+                . $nodeTypeName->value . '".'
+            );
+        }
+    }
+
     protected function requireNodeTypeToAllowNodesOfTypeInReference(
         NodeTypeName $nodeTypeName,
         ReferenceName $referenceName,
@@ -258,16 +269,12 @@ trait ConstraintChecks
     /**
      * NodeType and NodeName must belong together to the same node, which is the to-be-checked one.
      *
-     * @param ContentStreamId $contentStreamId
-     * @param NodeType $nodeType
-     * @param NodeName|null $nodeName
      * @param array|NodeAggregateId[] $parentNodeAggregateIds
      * @throws NodeConstraintException
      */
     protected function requireConstraintsImposedByAncestorsAreMet(
         ContentStreamId $contentStreamId,
         NodeType $nodeType,
-        ?NodeName $nodeName,
         array $parentNodeAggregateIds,
         ContentRepository $contentRepository
     ): void {
@@ -280,7 +287,7 @@ trait ConstraintChecks
             if (!$parentAggregate->classification->isTethered()) {
                 try {
                     $parentsNodeType = $this->requireNodeType($parentAggregate->nodeTypeName);
-                    $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeName, $nodeType);
+                    $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeType);
                 } catch (NodeTypeNotFound $e) {
                     // skip constraint check; Once the parent is changed to be of an available type,
                     // the constraint checks are executed again. See handleChangeNodeAggregateType
@@ -315,7 +322,6 @@ trait ConstraintChecks
      */
     protected function requireNodeTypeConstraintsImposedByParentToBeMet(
         NodeType $parentsNodeType,
-        ?NodeName $nodeName,
         NodeType $nodeType
     ): void {
         // !!! IF YOU ADJUST THIS METHOD, also adjust the method below.
@@ -326,35 +332,14 @@ trait ConstraintChecks
                 1707561400
             );
         }
-        if (
-            $nodeName
-            && $parentsNodeType->hasTetheredNode($nodeName)
-            && !$this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->equals($nodeType->name)
-        ) {
-            throw new NodeConstraintException(
-                'Node type "' . $nodeType->name->value . '" does not match configured "'
-                    . $this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->value
-                    . '" for auto created child nodes for parent type "' . $parentsNodeType->name->value
-                    . '" with name "' . $nodeName->value . '"',
-                1707561404
-            );
-        }
     }
 
     protected function areNodeTypeConstraintsImposedByParentValid(
         NodeType $parentsNodeType,
-        ?NodeName $nodeName,
         NodeType $nodeType
     ): bool {
         // !!! IF YOU ADJUST THIS METHOD, also adjust the method above.
         if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
-            return false;
-        }
-        if (
-            $nodeName
-            && $parentsNodeType->hasTetheredNode($nodeName)
-            && !$this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->equals($nodeType->name)
-        ) {
             return false;
         }
         return true;

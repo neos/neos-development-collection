@@ -50,6 +50,8 @@ trait NodeTypeChange
 {
     abstract protected function getNodeTypeManager(): NodeTypeManager;
 
+    abstract protected function requireNodeAggregateToBeUntethered(NodeAggregate $nodeAggregate): void;
+
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
@@ -59,20 +61,17 @@ trait NodeTypeChange
     abstract protected function requireConstraintsImposedByAncestorsAreMet(
         ContentStreamId $contentStreamId,
         NodeType $nodeType,
-        ?NodeName $nodeName,
         array $parentNodeAggregateIds,
         ContentRepository $contentRepository
     ): void;
 
     abstract protected function requireNodeTypeConstraintsImposedByParentToBeMet(
         NodeType $parentsNodeType,
-        ?NodeName $nodeName,
         NodeType $nodeType
     ): void;
 
     abstract protected function areNodeTypeConstraintsImposedByParentValid(
         NodeType $parentsNodeType,
-        ?NodeName $nodeName,
         NodeType $nodeType
     ): bool;
 
@@ -119,6 +118,7 @@ trait NodeTypeChange
             $command->nodeAggregateId,
             $contentRepository
         );
+        $this->requireNodeAggregateToBeUntethered($nodeAggregate);
 
         // node type detail checks
         $this->requireNodeTypeToNotBeOfTypeRoot($newNodeType);
@@ -135,7 +135,6 @@ trait NodeTypeChange
             $this->requireConstraintsImposedByAncestorsAreMet(
                 $contentStreamId,
                 $newNodeType,
-                $nodeAggregate->nodeName,
                 [$parentNodeAggregate->nodeAggregateId],
                 $contentRepository
             );
@@ -250,7 +249,6 @@ trait NodeTypeChange
             // so we use $newNodeType (the target node type of $node after the operation) here.
             $this->requireNodeTypeConstraintsImposedByParentToBeMet(
                 $newNodeType,
-                $childNodeAggregate->nodeName,
                 $this->requireNodeType($childNodeAggregate->nodeTypeName)
             );
 
@@ -301,7 +299,6 @@ trait NodeTypeChange
                 !$childNodeAggregate->classification->isTethered()
                 && !$this->areNodeTypeConstraintsImposedByParentValid(
                     $newNodeType,
-                    $childNodeAggregate->nodeName,
                     $this->requireNodeType($childNodeAggregate->nodeTypeName)
                 )
             ) {

@@ -181,6 +181,38 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | relationDistributionStrategy | "scatter"                |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
+  Scenario: Using the scatter (or really any) strategy, try to move a node to a parent that reserves the name for a tethered child
+    Given I change the node types in content repository "default" to:
+    """yaml
+    'Neos.ContentRepository.Testing:Document': []
+    'Neos.ContentRepository.Testing:Content':
+      constraints:
+        nodeTypes:
+          '*': true
+          'Neos.ContentRepository.Testing:Document': false
+    'Neos.ContentRepository.Testing:DocumentWithTetheredChildNode':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:Content'
+          constraints:
+            nodeTypes:
+              '*': true
+              'Neos.ContentRepository.Testing:Content': false
+        another-tethered:
+          type: 'Neos.ContentRepository.Testing:Content'
+    """
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId      | nodeName |
+      | nody-mc-nodeface | {"example": "source"}     | Neos.ContentRepository.Testing:Document | sir-nodeward-nodington-iii | another-tethered |
+
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                    |
+      | dimensionSpacePoint          | {"example": "source"}    |
+      | nodeAggregateId              | "nody-mc-nodeface"       |
+      | newParentNodeAggregateId     | "sir-david-nodenborough" |
+      | relationDistributionStrategy | "scatter"                |
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
+
   Scenario: Using the gatherSpecializations strategy, try to move a node to a parent that already has a child node of the same name in a specialization
     Given the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId      | nodeName        |

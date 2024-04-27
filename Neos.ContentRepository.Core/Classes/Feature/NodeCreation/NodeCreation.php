@@ -63,6 +63,8 @@ trait NodeCreation
 
     abstract protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void;
 
+    abstract protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void;
+
     abstract protected function getPropertyConverter(): PropertyConverter;
 
     abstract protected function getNodeTypeManager(): NodeTypeManager;
@@ -138,7 +140,6 @@ trait NodeCreation
             $this->requireConstraintsImposedByAncestorsAreMet(
                 $contentStreamId,
                 $nodeType,
-                $command->nodeName,
                 [$command->parentNodeAggregateId],
                 $contentRepository
             );
@@ -177,6 +178,7 @@ trait NodeCreation
                 $command->parentNodeAggregateId,
                 $contentRepository
             );
+            $this->requireNodeTypeNotToDeclareTetheredChildNodeName($parentNodeAggregate->nodeTypeName, $command->nodeName);
         }
 
         $descendantNodeAggregateIds = $command->tetheredDescendantNodeAggregateIds->completeForNodeOfType(

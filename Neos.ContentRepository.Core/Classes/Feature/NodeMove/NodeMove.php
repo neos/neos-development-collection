@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
@@ -40,6 +41,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -50,6 +52,8 @@ trait NodeMove
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
+
+    abstract protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void;
 
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamId $contentStreamId,
@@ -108,7 +112,6 @@ trait NodeMove
             $this->requireConstraintsImposedByAncestorsAreMet(
                 $contentStreamId,
                 $this->requireNodeType($nodeAggregate->nodeTypeName),
-                $nodeAggregate->nodeName,
                 [$command->newParentNodeAggregateId],
                 $contentRepository
             );
@@ -125,6 +128,9 @@ trait NodeMove
                 $command->newParentNodeAggregateId,
                 $contentRepository
             );
+            if ($nodeAggregate->nodeName) {
+                $this->requireNodeTypeNotToDeclareTetheredChildNodeName($newParentNodeAggregate->nodeTypeName, $nodeAggregate->nodeName);
+            }
 
             $this->requireNodeAggregateToCoverDimensionSpacePoints(
                 $newParentNodeAggregate,
