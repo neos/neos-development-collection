@@ -47,7 +47,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsTethered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsAbstract;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
@@ -622,37 +621,6 @@ trait ConstraintChecks
             $parentNodeAggregateId,
             $dimensionSpacePoint
         );
-    }
-
-    /**
-     * @throws NodeNameIsAlreadyOccupied
-     */
-    protected function requireNodeNameToBeUnoccupied(
-        ContentStreamId $contentStreamId,
-        ?NodeName $nodeName,
-        NodeAggregateId $parentNodeAggregateId,
-        OriginDimensionSpacePoint $parentOriginDimensionSpacePoint,
-        DimensionSpacePointSet $dimensionSpacePoints,
-        ContentRepository $contentRepository
-    ): void {
-        if ($nodeName === null) {
-            return;
-        }
-        $dimensionSpacePointsOccupiedByChildNodeName = $contentRepository->getContentGraph()
-            ->getDimensionSpacePointsOccupiedByChildNodeName(
-                $contentStreamId,
-                $nodeName,
-                $parentNodeAggregateId,
-                $parentOriginDimensionSpacePoint,
-                $dimensionSpacePoints
-            );
-        if (count($dimensionSpacePointsOccupiedByChildNodeName) > 0) {
-            throw new NodeNameIsAlreadyOccupied(
-                'Child node name "' . $nodeName->value . '" is already occupied for parent "'
-                    . $parentNodeAggregateId->value . '" in dimension space points '
-                    . $dimensionSpacePointsOccupiedByChildNodeName->toJson()
-            );
-        }
     }
 
     /**

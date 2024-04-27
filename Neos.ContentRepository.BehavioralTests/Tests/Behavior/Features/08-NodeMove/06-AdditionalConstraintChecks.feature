@@ -60,20 +60,20 @@ Feature: Additional constraint checks after move node capabilities are introduce
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "sir-nodeward-nodington-iii"              |
       | nodeName              | "document"                                |
-    Then the last command should have thrown an exception of type "NodeNameIsAlreadyOccupied"
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                     |
       | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "lady-abigail-nodenborough"               |
       | nodeName              | "document"                                |
-    Then the last command should have thrown an exception of type "NodeNameIsAlreadyOccupied"
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                     |
       | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "general-nodesworth"                      |
       | nodeName              | "document"                                |
-    Then the last command should have thrown an exception of type "NodeNameIsAlreadyOccupied"
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
 

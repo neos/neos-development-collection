@@ -171,14 +171,10 @@ trait NodeCreation
             $parentNodeAggregate->coveredDimensionSpacePoints
         );
         if ($command->nodeName) {
-            $this->requireNodeNameToBeUnoccupied(
+            $this->requireNodeNameToBeUncovered(
                 $contentStreamId,
                 $command->nodeName,
                 $command->parentNodeAggregateId,
-                $parentNodeAggregate->classification->isRoot()
-                    ? DimensionSpace\OriginDimensionSpacePoint::createWithoutDimensions()
-                    : $command->originDimensionSpacePoint,
-                $coveredDimensionSpacePoints,
                 $contentRepository
             );
         }

@@ -136,16 +136,12 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             $parentNodeAggregate->coveredDimensionSpacePoints
         );
 
-        // Constraint: The node name must be free in all these dimension space points
+        // Constraint: The node name must be free for a new child of the parent node aggregate
         if ($command->targetNodeName) {
-            $this->requireNodeNameToBeUnoccupied(
+            $this->requireNodeNameToBeUncovered(
                 $contentStreamId,
                 $command->targetNodeName,
                 $command->targetParentNodeAggregateId,
-                $parentNodeAggregate->classification->isRoot()
-                    ? OriginDimensionSpacePoint::createWithoutDimensions()
-                    : $command->targetDimensionSpacePoint,
-                $coveredDimensionSpacePoints,
                 $contentRepository
             );
         }
