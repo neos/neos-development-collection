@@ -201,6 +201,10 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
+     * Parent node aggregates can have a greater dimension space coverage than the given child.
+     * Thus, it is not enough to just resolve them from the nodes and edges connected to the given child node aggregate.
+     * Instead, we resolve all parent node aggregate ids instead and fetch the complete aggregates from there.
+     *
      * @return iterable<NodeAggregate>
      */
     public function findParentNodeAggregates(
@@ -208,12 +212,12 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $childNodeAggregateId
     ): iterable {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('pn.*, ph.name, ph.contentstreamid, ph.subtreetags, pdsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->distinct()
+            ->select('pn.nodeaggregateid AS parentNodeAggregateId')
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'ph.childnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('ch', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
-            ->innerJoin('ph', $this->tableNamePrefix . '_dimensionspacepoints', 'pdsp', 'pdsp.hash = ph.dimensionspacepointhash')
             ->where('cn.nodeaggregateid = :nodeAggregateId')
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ch.contentstreamid = :contentStreamId')
@@ -222,7 +226,10 @@ final class ContentGraph implements ContentGraphInterface
                 'contentStreamId' => $contentStreamId->value
             ]);
 
-        return $this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId);
+        return NodeAggregates::fromArray(array_filter(array_map(
+            fn (array $row): ?NodeAggregate => $this->findNodeAggregateById($contentStreamId, NodeAggregateId::fromString($row['parentNodeAggregateId'])),
+            $this->fetchRows($queryBuilder)
+        )));
     }
 
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(

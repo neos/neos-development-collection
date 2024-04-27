@@ -6,7 +6,9 @@ Feature: Change node name
   These are the base test cases for the NodeAggregateCommandHandler to block invalid commands.
 
   Background:
-    Given using no content dimensions
+    Given using the following content dimensions:
+      | Identifier | Values                      | Generalizations                      |
+      | example    | general, source, spec, peer | spec->source->general, peer->general |
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:Content': []
@@ -24,7 +26,7 @@ Feature: Change node name
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
 
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -32,9 +34,9 @@ Feature: Change node name
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId        | nodeName | nodeTypeName                            | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds |
-      | sir-david-nodenborough | null     | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | {}                    | {"tethered": "nodewyn-tetherton"}  |
-      | nody-mc-nodeface       | occupied | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | {}                    | {}                                 |
+      | nodeAggregateId        | nodeName | nodeTypeName                            | parentNodeAggregateId  | tetheredDescendantNodeAggregateIds |
+      | sir-david-nodenborough | null     | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | {"tethered": "nodewyn-tetherton"}  |
+      | nody-mc-nodeface       | occupied | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | {}                                 |
 
   Scenario: Try to rename a node aggregate in a non-existing workspace
     When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:
@@ -43,6 +45,16 @@ Feature: Change node name
       | nodeAggregateId | "sir-david-nodenborough" |
       | newNodeName     | "new-name"               |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+
+  Scenario: Try to rename a node aggregate in a workspace whose content stream is closed:
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:
+      | Key             | Value                    |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | newNodeName     | "new-name"               |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
 
   Scenario: Try to rename a non-existing node aggregate
     When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:
@@ -70,4 +82,26 @@ Feature: Change node name
       | Key             | Value              |
       | nodeAggregateId | "nody-mc-nodeface" |
       | newNodeName     | "tethered"         |
-    Then the last command should have thrown an exception of type "NodeNameIsAlreadyOccupied"
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
+
+  Scenario: Try to rename a node aggregate using a partially occupied name
+    # Could happen via creation or move with the same effect
+    Given the command CreateNodeVariant is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"example": "source"}    |
+      | targetOrigin    | {"example": "peer"}      |
+    And the graph projection is fully up to date
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                     |
+      | nodeAggregateId           | "sir-nodeward-nodington-iii"              |
+      | originDimensionSpacePoint | {"example": "peer"}                       |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
+      | parentNodeAggregateId     | "sir-david-nodenborough"                  |
+      | nodeName                  | "esquire"                                 |
+    And the graph projection is fully up to date
+    When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:
+      | Key             | Value              |
+      | nodeAggregateId | "nody-mc-nodeface" |
+      | newNodeName     | "esquire"          |
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
