@@ -169,7 +169,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.subtreetags')
+            ->select('n.*, h.subtreetags')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('n.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value)
@@ -182,7 +182,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.subtreetags')
+            ->select('n.*, h.subtreetags')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
@@ -197,7 +197,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('pn.*, ch.name, ch.subtreetags')
+            ->select('pn.*, ch.subtreetags')
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
@@ -239,14 +239,14 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('cn.*, h.name, h.subtreetags')
+            ->select('cn.*, h.subtreetags')
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = h.childnodeanchor')
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->andWhere('h.name = :edgeName')->setParameter('edgeName', $nodeName->value);
+            ->andWhere('cn.name = :nodeName')->setParameter('nodeName', $nodeName->value);
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
@@ -290,7 +290,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.name, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
+            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')
@@ -299,7 +299,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('c.*, h.name, h.subtreetags, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
+            ->select('c.*, h.subtreetags, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
             ->from('tree', 'p')
             ->innerJoin('p', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = p.relationanchorpoint')
             ->innerJoin('p', $this->tableNamePrefix . '_node', 'c', 'c.relationanchorpoint = h.childnodeanchor')
@@ -382,7 +382,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findClosestNode(NodeAggregateId $entryNodeAggregateId, FindClosestNodeFilter $filter): ?Node
     {
         $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('n.*, ph.name, ph.subtreetags, ph.parentnodeanchor')
+            ->select('n.*, ph.subtreetags, ph.parentnodeanchor')
             ->from($this->tableNamePrefix . '_node', 'n')
             // we need to join with the hierarchy relation, because we need the node name.
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
@@ -392,7 +392,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('pn.*, h.name, h.subtreetags, h.parentnodeanchor')
+            ->select('pn.*, h.subtreetags, h.parentnodeanchor')
             ->from('ancestry', 'cn')
             ->innerJoin('cn', $this->tableNamePrefix . '_node', 'pn', 'pn.relationanchorpoint = cn.parentnodeanchor')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = pn.relationanchorpoint')
@@ -602,7 +602,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function buildChildNodesQuery(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter|CountChildNodesFilter $filter): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.subtreetags')
+            ->select('n.*, h.subtreetags')
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'n', 'h.childnodeanchor = n.relationanchorpoint')
@@ -627,7 +627,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $sourceTablePrefix = $backReferences ? 'd' : 's';
         $destinationTablePrefix = $backReferences ? 's' : 'd';
         $queryBuilder = $this->createQueryBuilder()
-            ->select("{$destinationTablePrefix}n.*, {$destinationTablePrefix}h.name, {$destinationTablePrefix}h.subtreetags, r.name AS referencename, r.properties AS referenceproperties")
+            ->select("{$destinationTablePrefix}n.*, {$destinationTablePrefix}h.subtreetags, r.name AS referencename, r.properties AS referenceproperties")
             ->from($this->tableNamePrefix . '_hierarchyrelation', 'sh')
             ->innerJoin('sh', $this->tableNamePrefix . '_node', 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->innerJoin('sh', $this->tableNamePrefix . '_referencerelation', 'r', 'r.nodeanchorpoint = sn.relationanchorpoint')
@@ -695,7 +695,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash');
 
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.subtreetags')
+            ->select('n.*, h.subtreetags')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
@@ -727,9 +727,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter|FindClosestNodeFilter $filter): array
     {
         $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('n.*, ph.name, ph.subtreetags, ph.parentnodeanchor')
+            ->select('n.*, ph.subtreetags, ph.parentnodeanchor')
             ->from($this->tableNamePrefix . '_node', 'n')
-            // we need to join with the hierarchy relation, because we need the node name.
+            // we need to join with the hierarchy relation, because we need the subtree tags.
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->tableNamePrefix . '_node', 'c', 'c.relationanchorpoint = ch.childnodeanchor')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
@@ -742,7 +742,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addSubtreeTagConstraints($queryBuilderInitial, 'ch');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('pn.*, h.name, h.subtreetags, h.parentnodeanchor')
+            ->select('pn.*, h.subtreetags, h.parentnodeanchor')
             ->from('ancestry', 'cn')
             ->innerJoin('cn', $this->tableNamePrefix . '_node', 'pn', 'pn.relationanchorpoint = cn.parentnodeanchor')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = pn.relationanchorpoint')
@@ -769,7 +769,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.name, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
+            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->tableNamePrefix . '_node', 'n')
             // we need to join with the hierarchy relation, because we need the node name.
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
@@ -783,7 +783,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('cn.*, h.name, h.subtreetags, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position')
+            ->select('cn.*, h.subtreetags, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position')
             ->from('tree', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = h.childnodeanchor')

@@ -59,6 +59,7 @@ final class NodeRecord
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
                 'nodetypename' => $this->nodeTypeName->value,
+                'name' => $this->nodeName?->value,
                 'classification' => $this->classification->value,
                 'lastmodified' => $this->timestamps->lastModified,
                 'originallastmodified' => $this->timestamps->originalLastModified,
@@ -145,6 +146,7 @@ final class NodeRecord
             $originDimensionSpacePointHash,
             $properties,
             $nodeTypeName,
+            $nodeName,
             $classification,
             $timestamps
         ) {
@@ -156,6 +158,7 @@ final class NodeRecord
                 'origindimensionspacepointhash' => $originDimensionSpacePointHash,
                 'properties' => json_encode($properties),
                 'nodetypename' => $nodeTypeName->value,
+                'name' => $nodeName?->value,
                 'classification' => $classification->value,
                 'created' => $timestamps->created,
                 'originalcreated' => $timestamps->originalCreated,

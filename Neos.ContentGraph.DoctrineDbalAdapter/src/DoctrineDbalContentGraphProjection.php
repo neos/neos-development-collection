@@ -446,7 +446,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                         $node->relationAnchorPoint,
                         new DimensionSpacePointSet([$dimensionSpacePoint]),
                         $succeedingSibling?->relationAnchorPoint,
-                        $nodeName
                     );
                 }
             }
@@ -457,7 +456,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
      * @param NodeRelationAnchorPoint $parentNodeAnchorPoint
      * @param NodeRelationAnchorPoint $childNodeAnchorPoint
      * @param NodeRelationAnchorPoint|null $succeedingSiblingNodeAnchorPoint
-     * @param NodeName|null $relationName
      * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePointSet $dimensionSpacePointSet
      * @throws \Doctrine\DBAL\DBALException
@@ -468,7 +466,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         NodeRelationAnchorPoint $childNodeAnchorPoint,
         DimensionSpacePointSet $dimensionSpacePointSet,
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
-        NodeName $relationName = null
     ): void {
         foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
@@ -485,7 +482,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $hierarchyRelation = new HierarchyRelation(
                 $parentNodeAnchorPoint,
                 $childNodeAnchorPoint,
-                $relationName,
                 $contentStreamId,
                 $dimensionSpacePoint,
                 $dimensionSpacePoint->hash,
@@ -600,7 +596,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 INSERT INTO ' . $this->tableNamePrefix . '_hierarchyrelation (
                   parentnodeanchor,
                   childnodeanchor,
-                  `name`,
                   position,
                   dimensionspacepointhash,
                   subtreetags,
@@ -609,7 +604,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 SELECT
                   h.parentnodeanchor,
                   h.childnodeanchor,
-                  h.name,
                   h.position,
                   h.dimensionspacepointhash,
                   h.subtreetags,
@@ -782,7 +776,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $copy = new HierarchyRelation(
             $newParent,
             $newChild,
-            $sourceHierarchyRelation->name,
             $contentStreamId,
             $dimensionSpacePoint,
             $dimensionSpacePoint->hash,
@@ -1002,7 +995,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 INSERT INTO ' . $this->tableNamePrefix . '_hierarchyrelation (
                   parentnodeanchor,
                   childnodeanchor,
-                  `name`,
                   position,
                   subtreetags,
                   dimensionspacepointhash,
@@ -1011,7 +1003,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 SELECT
                   h.parentnodeanchor,
                   h.childnodeanchor,
-                  h.name,
                   h.position,
                   h.subtreetags,
                  :newDimensionSpacePointHash AS dimensionspacepointhash,

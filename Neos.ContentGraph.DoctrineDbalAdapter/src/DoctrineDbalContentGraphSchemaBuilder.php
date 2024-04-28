@@ -39,6 +39,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotnull(false),
             DbalSchemaFactory::columnForNodeTypeName('nodetypename'),
+            (new Column('name', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
             (new Column('properties', Type::getType(Types::TEXT)))->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
             (new Column('classification', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
             (new Column('created', Type::getType(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
@@ -56,7 +57,6 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createHierarchyRelationTable(): Table
     {
         $table = new Table($this->tableNamePrefix . '_hierarchyrelation', [
-            (new Column('name', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
             (new Column('position', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotnull(true),
