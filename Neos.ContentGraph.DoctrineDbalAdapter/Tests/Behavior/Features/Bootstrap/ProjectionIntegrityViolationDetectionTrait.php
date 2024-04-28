@@ -22,6 +22,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolati
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -123,22 +124,35 @@ trait ProjectionIntegrityViolationDetectionTrait
     }
 
     /**
-     * @When /^I change the following hierarchy relation's name:$/
+     * @When /^I change the following node's name:$/
      * @param TableNode $payloadTable
      * @throws DBALException
      */
-    public function iChangeTheFollowingHierarchyRelationsEdgeName(TableNode $payloadTable): void
+    public function iChangeTheFollowingNodesName(TableNode $payloadTable): void
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
-        $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
-        unset($record['position']);
+
+        $relationAnchorPoint = $this->dbalClient->getConnection()->executeQuery(
+            'SELECT n.relationanchorpoint FROM ' . $this->getTableNamePrefix() . '_node n
+                JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                WHERE h.contentstreamid = :contentStreamId
+                AND n.nodeaggregateId = :nodeAggregateId
+                AND n.origindimensionspacepointhash = :originDimensionSpacePointHash',
+            [
+                'contentStreamId' => $dataset['contentStreamId'],
+                'nodeAggregateId' => $dataset['nodeAggregateId'],
+                'originDimensionSpacePointHash' => OriginDimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'])->hash,
+            ]
+        )->fetchOne();
 
         $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_hierarchyrelation',
+            $this->getTableNamePrefix() . '_node',
             [
                 'name' => $dataset['newName']
             ],
-            $record
+            [
+                'relationanchorpoint' => $relationAnchorPoint
+            ]
         );
     }
 

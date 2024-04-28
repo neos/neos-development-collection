@@ -359,10 +359,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event, EventEnvelope $eventEnvelope): void
     {
         $this->transactional(function () use ($event, $eventEnvelope) {
-            foreach ($this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream(
-                $event->nodeAggregateId,
-                $event->contentStreamId,
-            ) as $anchorPoint) {
+            foreach (
+                $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream(
+                    $event->nodeAggregateId,
+                    $event->contentStreamId,
+                ) as $anchorPoint
+            ) {
                 $this->updateNodeRecordWithCopyOnWrite(
                     $event->contentStreamId,
                     $anchorPoint,
