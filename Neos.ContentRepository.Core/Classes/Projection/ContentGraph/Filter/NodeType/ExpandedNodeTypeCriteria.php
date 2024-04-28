@@ -24,12 +24,12 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
  *
  * @internal you want to use {@see NodeTypeCriteria} in public APIs.
  */
-final class ExpandedNodeTypeCriteria
+final readonly class ExpandedNodeTypeCriteria
 {
     private function __construct(
-        public readonly bool $isWildCardAllowed,
-        public readonly NodeTypeNames $explicitlyAllowedNodeTypeNames,
-        public readonly NodeTypeNames $explicitlyDisallowedNodeTypeNames
+        public bool $isWildCardAllowed,
+        public NodeTypeNames $explicitlyAllowedNodeTypeNames,
+        public NodeTypeNames $explicitlyDisallowedNodeTypeNames
     ) {
     }
 

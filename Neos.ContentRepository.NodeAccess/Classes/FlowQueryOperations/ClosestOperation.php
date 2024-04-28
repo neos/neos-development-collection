@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
  * "closest" operation working on ContentRepository nodes. For each node in the context,

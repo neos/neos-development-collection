@@ -20,24 +20,26 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @api events are the persistence-API of the content repository
+ * @deprecated this is no longer logged, instead an exception is thrown
+ * @see Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed
  */
-final class WorkspaceRebaseFailed implements EventInterface
+final readonly class WorkspaceRebaseFailed implements EventInterface
 {
     /**
      * @param array<int,array<string,mixed>> $errors
      */
     public function __construct(
-        public readonly WorkspaceName $workspaceName,
+        public WorkspaceName $workspaceName,
         /**
          * The content stream on which we could not apply the source content stream's commands -- i.e. the "failed"
          * state.
          */
-        public readonly ContentStreamId $candidateContentStreamId,
+        public ContentStreamId $candidateContentStreamId,
         /**
          * The content stream which we tried to rebase
          */
-        public readonly ContentStreamId $sourceContentStreamId,
-        public readonly array $errors
+        public ContentStreamId $sourceContentStreamId,
+        public array $errors
     ) {
     }
 

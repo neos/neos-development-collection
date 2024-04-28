@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\LegacyNodeMigration;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
@@ -49,11 +48,11 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
                 continue;
             }
             $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
-            if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+            if (!$nodeType) {
                 $this->dispatch(Severity::ERROR, 'The node type "%s" is not available. Node: "%s"', $nodeTypeName->value, $nodeDataRow['identifier']);
                 continue;
             }
-            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
             try {
                 $properties = json_decode($nodeDataRow['properties'], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $exception) {

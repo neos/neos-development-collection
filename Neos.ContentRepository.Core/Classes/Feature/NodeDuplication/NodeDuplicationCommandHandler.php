@@ -20,22 +20,22 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
+use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\Common\NodeCreationInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
-use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -43,6 +43,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 {
     use ConstraintChecks;
+    use NodeCreationInternals;
 
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
@@ -158,6 +159,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             $command->targetNodeName,
             $command->nodeTreeToInsert,
             $command->nodeAggregateIdMapping,
+            $contentRepository,
             $events
         );
 
@@ -199,7 +201,8 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         ?NodeName $targetNodeName,
         NodeSubtreeSnapshot $nodeToInsert,
         Dto\NodeAggregateIdMapping $nodeAggregateIdMapping,
-        array &$events
+        ContentRepository $contentRepository,
+        array &$events,
     ): void {
         $events[] = new NodeAggregateWithNodeWasCreated(
             $contentStreamId,
@@ -208,12 +211,19 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             ) ?: NodeAggregateId::create(),
             $nodeToInsert->nodeTypeName,
             $originDimensionSpacePoint,
-            $coveredDimensionSpacePoints,
+            $targetSucceedingSiblingNodeAggregateId
+                ? $this->resolveInterdimensionalSiblingsForCreation(
+                    $contentRepository,
+                    $contentStreamId,
+                    $targetSucceedingSiblingNodeAggregateId,
+                    $originDimensionSpacePoint,
+                    $coveredDimensionSpacePoints
+                )
+                : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings($coveredDimensionSpacePoints),
             $targetParentNodeAggregateId,
             $targetNodeName,
             $nodeToInsert->propertyValues,
             $nodeToInsert->nodeAggregateClassification,
-            $targetSucceedingSiblingNodeAggregateId
         );
 
         foreach ($nodeToInsert->childNodes as $childNodeToInsert) {
@@ -230,6 +240,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
                 $childNodeToInsert->nodeName,
                 $childNodeToInsert,
                 $nodeAggregateIdMapping,
+                $contentRepository,
                 $events
             );
         }

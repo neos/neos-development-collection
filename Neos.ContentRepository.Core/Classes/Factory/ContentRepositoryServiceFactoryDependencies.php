@@ -31,22 +31,22 @@ use Neos\EventStore\EventStoreInterface;
  *
  * @api because you get it as argument inside {@see ContentRepositoryServiceFactoryInterface}
  */
-final class ContentRepositoryServiceFactoryDependencies
+final readonly class ContentRepositoryServiceFactoryDependencies
 {
     private function __construct(
         // These properties are from ProjectionFactoryDependencies
-        public readonly ContentRepositoryId $contentRepositoryId,
-        public readonly EventStoreInterface $eventStore,
-        public readonly EventNormalizer $eventNormalizer,
-        public readonly NodeTypeManager $nodeTypeManager,
-        public readonly ContentDimensionSourceInterface $contentDimensionSource,
-        public readonly ContentDimensionZookeeper $contentDimensionZookeeper,
-        public readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        public readonly PropertyConverter $propertyConverter,
-        public readonly ContentRepository $contentRepository,
+        public ContentRepositoryId $contentRepositoryId,
+        public EventStoreInterface $eventStore,
+        public EventNormalizer $eventNormalizer,
+        public NodeTypeManager $nodeTypeManager,
+        public ContentDimensionSourceInterface $contentDimensionSource,
+        public ContentDimensionZookeeper $contentDimensionZookeeper,
+        public InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        public PropertyConverter $propertyConverter,
+        public ContentRepository $contentRepository,
         // we don't need CommandBus, because this is included in ContentRepository->handle()
-        public readonly EventPersister $eventPersister,
-        public readonly Projections $projections,
+        public EventPersister $eventPersister,
+        public Projections $projections,
     ) {
     }
 

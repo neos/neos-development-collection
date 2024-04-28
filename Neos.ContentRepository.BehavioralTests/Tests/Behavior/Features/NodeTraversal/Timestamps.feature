@@ -14,13 +14,14 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       properties:
         text:
           type: string
+      references:
         refs:
-          type: references
           properties:
             foo:
               type: string
         ref:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             foo:
               type: string
@@ -88,7 +89,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     And the current date and time is "2023-03-16T12:30:00+01:00"
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value             |
-      | contentStreamId | "cs-user"         |
       | nodeAggregateId | "a"               |
       | sourceOrigin    | {"language":"de"} |
       | targetOrigin    | {"language":"ch"} |

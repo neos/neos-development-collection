@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\Common;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -30,7 +29,6 @@ interface RebasableToOtherWorkspaceInterface
 {
     public function createCopyForWorkspace(
         WorkspaceName $targetWorkspaceName,
-        ContentStreamId $targetContentStreamId
     ): CommandInterface;
 
     /**

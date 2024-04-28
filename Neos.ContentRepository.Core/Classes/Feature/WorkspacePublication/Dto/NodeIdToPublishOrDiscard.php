@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * A node id (Content Stream, NodeAggregateId, DimensionSpacePoint); used when

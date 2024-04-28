@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
-use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
  * The exception to be thrown if a reference was attempted to be set but cannot be
@@ -36,7 +36,7 @@ final class ReferenceCannotBeSet extends \DomainException
         );
     }
 
-    public static function becauseTheConstraintsAreNotMatched(
+    public static function becauseTheNodeTypeConstraintsAreNotMatched(
         ReferenceName $referenceName,
         NodeTypeName $nodeTypeName,
         NodeTypeName $nameOfAttemptedType
@@ -48,7 +48,19 @@ final class ReferenceCannotBeSet extends \DomainException
         );
     }
 
-    public static function becauseTheItDoesNotDeclareAProperty(
+    public static function becauseTheItemsCountConstraintsAreNotMatched(
+        ReferenceName $referenceName,
+        NodeTypeName $nodeTypeName,
+        int $numberOfAttemptedReferencesToWrite
+    ): self {
+        return new self(
+            'Reference "' . $referenceName->value . '" cannot be set for node type "'
+            . $nodeTypeName->value . '" because the constraints do not allow to set ' . $numberOfAttemptedReferencesToWrite . ' references',
+            1700150156
+        );
+    }
+
+    public static function becauseTheReferenceDoesNotDeclareTheProperty(
         ReferenceName $referenceName,
         NodeTypeName $nodeTypeName,
         PropertyName $propertyName

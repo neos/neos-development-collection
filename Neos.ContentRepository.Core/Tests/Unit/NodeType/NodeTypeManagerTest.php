@@ -13,11 +13,11 @@ namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
 
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -172,10 +172,9 @@ class NodeTypeManagerTest extends TestCase
     /**
      * @test
      */
-    public function getNodeTypeThrowsExceptionForUnknownNodeType()
+    public function getNodeTypeReturnsNullForUnknownNodeType()
     {
-        $this->expectException(NodeTypeNotFoundException::class);
-        $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere');
+        self::assertNull($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere'));
     }
 
     /**
@@ -398,7 +397,7 @@ class NodeTypeManagerTest extends TestCase
     /**
      * @test
      */
-    public function anInheritedNodeTypePropertyCannotBeSetToEmptyArray(): void
+    public function anInheritedNodeTypePropertyCanBeOverruledWithEmptyArray(): void
     {
         $nodeTypesFixture = [
             'Neos.ContentRepository.Testing:Base' => [

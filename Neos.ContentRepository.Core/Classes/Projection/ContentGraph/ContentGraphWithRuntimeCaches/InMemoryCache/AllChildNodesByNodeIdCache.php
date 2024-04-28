@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**

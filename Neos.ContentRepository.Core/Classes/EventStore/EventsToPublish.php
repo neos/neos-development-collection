@@ -7,8 +7,8 @@ namespace Neos\ContentRepository\Core\EventStore;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\EventStore\EventStoreInterface;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\EventStore\Model\Event\StreamName;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * Result of {@see CommandHandlerInterface::handle()} that basically represents an {@see EventStoreInterface::commit()}
@@ -16,12 +16,12 @@ use Neos\EventStore\Model\Event\StreamName;
  *
  * @internal only used during event publishing (from within command handlers) - and their implementation is not API
  */
-final class EventsToPublish
+final readonly class EventsToPublish
 {
     public function __construct(
-        public readonly StreamName $streamName,
-        public readonly Events $events,
-        public readonly ExpectedVersion $expectedVersion,
+        public StreamName $streamName,
+        public Events $events,
+        public ExpectedVersion $expectedVersion,
     ) {
     }
 

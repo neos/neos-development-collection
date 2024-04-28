@@ -15,19 +15,19 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
-use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
-use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
-use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
@@ -158,9 +158,10 @@ trait GenericCommandExecutionAndEventPublication
         Assert::assertSame($shortExceptionName, $lastCommandExceptionShortName, sprintf('Actual exception: %s (%s): %s', get_class($this->lastCommandException), $this->lastCommandException->getCode(), $this->lastCommandException->getMessage()));
         if (!is_null($expectedCode)) {
             Assert::assertSame($expectedCode, $this->lastCommandException->getCode(), sprintf(
-                'Expected exception code %s, got exception code %s instead',
+                'Expected exception code %s, got exception code %s instead; Message: %s',
                 $expectedCode,
-                $this->lastCommandException->getCode()
+                $this->lastCommandException->getCode(),
+                $this->lastCommandException->getMessage()
             ));
         }
     }

@@ -127,7 +127,6 @@ final readonly class CreateRootNodeAggregateWithNode implements
 
     public function createCopyForWorkspace(
         WorkspaceName $targetWorkspaceName,
-        ContentStreamId $targetContentStreamId
     ): self {
         return new self(
             $targetWorkspaceName,

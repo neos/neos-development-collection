@@ -14,27 +14,27 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Event;
 
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
  * @api events are the persistence-API of the content repository
  */
-final class WorkspaceWasPartiallyDiscarded implements EventInterface
+final readonly class WorkspaceWasPartiallyDiscarded implements EventInterface
 {
     public function __construct(
-        public readonly WorkspaceName $workspaceName,
+        public WorkspaceName $workspaceName,
         /**
          * The new content stream; containing the data which we want to keep
          */
-        public readonly ContentStreamId $newContentStreamId,
+        public ContentStreamId $newContentStreamId,
         /**
          * The old content stream, which contains ALL the data (discarded and non-discarded)
          */
-        public readonly ContentStreamId $previousContentStreamId,
-        public readonly NodeIdsToPublishOrDiscard $discardedNodes,
+        public ContentStreamId $previousContentStreamId,
+        public NodeIdsToPublishOrDiscard $discardedNodes,
     ) {
     }
 

@@ -21,7 +21,7 @@ use Neos\Utility\Arrays;
  *
  * @api
  */
-final class ContentDimension
+final readonly class ContentDimension
 {
     /**
      * all Content Dimension Values indexed by "specialization", so
@@ -29,7 +29,7 @@ final class ContentDimension
      *
      * @var array<string,ContentDimensionValue>
      */
-    private readonly array $generalizations;
+    private array $generalizations;
 
     /**
      * all Content Dimension Values indexed by "generalization", so
@@ -40,18 +40,18 @@ final class ContentDimension
      * @var array<string,array<string,ContentDimensionValue>>
      * @internal
      */
-    private readonly array $specializations;
+    private array $specializations;
 
     /**
      * @param array<string,mixed> $configuration
      * @internal
      */
     public function __construct(
-        public readonly ContentDimensionId $id,
-        public readonly ContentDimensionValues $values,
+        public ContentDimensionId $id,
+        public ContentDimensionValues $values,
         ContentDimensionValueVariationEdges $variationEdges,
         /** General configuration like UI, detection etc. */
-        public readonly array $configuration = []
+        public array $configuration = []
     ) {
         $generalizations = [];
         $specializations = [];

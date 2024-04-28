@@ -20,14 +20,11 @@ use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepositoryRegistry\DoctrineDbalClient\DoctrineDbalClient;
 use Neos\Error\Messages\Error;
@@ -242,7 +239,6 @@ trait ProjectionIntegrityViolationDetectionTrait
 
         return [
             'contentstreamid' => $dataset['contentStreamId'],
-            'dimensionspacepoint' => $dimensionSpacePoint->toJson(),
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'parentnodeanchor' => $parentHierarchyRelation !== null ? $parentHierarchyRelation['childnodeanchor'] : 9999999,
             'childnodeanchor' => $childHierarchyRelation !== null ? $childHierarchyRelation['childnodeanchor'] : 8888888,

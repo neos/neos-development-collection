@@ -5,31 +5,29 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals;
+use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
-use Neos\ContentRepository\Core\DimensionSpace;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class TetheredNodeAdjustments
 {
@@ -51,11 +49,11 @@ class TetheredNodeAdjustments
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType) {
             // In case we cannot find the expected tethered nodes, this fix cannot do anything.
             return;
         }
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         $expectedTetheredNodes = $this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeType);
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {

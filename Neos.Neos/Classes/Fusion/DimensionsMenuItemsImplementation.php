@@ -9,8 +9,6 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Fusion implementation for a dimensions menu.

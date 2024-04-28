@@ -15,20 +15,20 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
@@ -198,7 +198,7 @@ trait NodeCreation
                 \str_starts_with($rawParentNodeAggregateId, '$')
                     ? $this->rememberedNodeAggregateIds[\mb_substr($rawParentNodeAggregateId, 1)]
                     : NodeAggregateId::fromString($rawParentNodeAggregateId),
-                isset($row['succeedingSiblingNodeAggregateId'])
+                !empty($row['succeedingSiblingNodeAggregateId'])
                     ? NodeAggregateId::fromString($row['succeedingSiblingNodeAggregateId'])
                     : null,
                 isset($row['nodeName'])

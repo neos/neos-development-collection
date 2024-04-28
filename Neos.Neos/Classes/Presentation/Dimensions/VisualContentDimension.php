@@ -22,26 +22,26 @@ use Neos\Flow\Annotations as Flow;
  * The visualization model for the interdimensional variation graph
  */
 #[Flow\Proxy(false)]
-final class VisualContentDimension
+final readonly class VisualContentDimension
 {
     /**
      * @var array<int,VisualIntraDimensionalNode>
      */
-    public readonly array $nodes;
+    public array $nodes;
 
     /**
      * @var array<int,VisualIntraDimensionalEdge>
      */
-    public readonly array $edges;
+    public array $edges;
 
     /**
      * @param array<int,VisualIntraDimensionalNode> $nodes
      * @param array<int,VisualIntraDimensionalEdge> $edges
      */
     public function __construct(
-        public readonly int $offset,
-        public readonly string $name,
-        public readonly string $label,
+        public int $offset,
+        public string $name,
+        public string $label,
         array $nodes,
         array $edges
     ) {

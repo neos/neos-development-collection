@@ -19,9 +19,9 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -35,19 +35,19 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api events are the persistence-API of the content repository
  */
-final class NodePropertiesWereSet implements
+final readonly class NodePropertiesWereSet implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
         /** the covered dimension space points for this modification - i.e. where this change is visible */
-        public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
-        public readonly SerializedPropertyValues $propertyValues,
-        public readonly PropertyNames $propertiesToUnset
+        public DimensionSpacePointSet $affectedDimensionSpacePoints,
+        public SerializedPropertyValues $propertyValues,
+        public PropertyNames $propertiesToUnset
     ) {
     }
 

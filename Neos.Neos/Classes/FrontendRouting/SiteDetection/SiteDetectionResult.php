@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\SiteDetection;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Neos\Domain\Model\SiteNodeName;
@@ -19,14 +19,14 @@ use Psr\Http\Message\ServerRequestInterface;
  * @Flow\Proxy(false)
  * @api
  */
-final class SiteDetectionResult
+final readonly class SiteDetectionResult
 {
     private const ROUTINGPARAMETER_SITENODENAME = 'siteNodeName';
     private const ROUTINGPARAMETER_CONTENTREPOSITORYID = 'contentRepositoryId';
 
     private function __construct(
-        public readonly SiteNodeName $siteNodeName,
-        public readonly ContentRepositoryId $contentRepositoryId,
+        public SiteNodeName $siteNodeName,
+        public ContentRepositoryId $contentRepositoryId,
     ) {
     }
 

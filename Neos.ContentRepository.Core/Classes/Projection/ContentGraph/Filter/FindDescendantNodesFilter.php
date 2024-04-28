@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\OrderingDirection;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\TimestampField;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
  * Immutable filter DTO for {@see ContentSubgraphInterface::findDescendantNodes()}
@@ -23,17 +20,17 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  *
  * @api for the factory methods; NOT for the inner state.
  */
-final class FindDescendantNodesFilter
+final readonly class FindDescendantNodesFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly ?NodeTypeCriteria $nodeTypes,
-        public readonly ?SearchTerm $searchTerm,
-        public readonly ?PropertyValueCriteriaInterface $propertyValue,
-        public readonly ?Ordering $ordering,
-        public readonly ?Pagination $pagination,
+        public ?NodeTypeCriteria $nodeTypes,
+        public ?SearchTerm $searchTerm,
+        public ?PropertyValueCriteriaInterface $propertyValue,
+        public ?Ordering $ordering,
+        public ?Pagination $pagination,
     ) {
     }
 

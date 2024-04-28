@@ -21,14 +21,13 @@ use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The read only content graph for use by the {@see GraphProjector}. This is the class for low-level operations
@@ -72,10 +71,11 @@ class ProjectionContentGraph
                 : $originDimensionSpacePoint->hash
         ];
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.*, ph.contentstreamid, ph.name, ph.subtreetags FROM ' . $this->tableNamePrefix . '_node p
+            'SELECT p.*, ph.contentstreamid, ph.name, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint FROM ' . $this->tableNamePrefix . '_node p
  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
  INNER JOIN ' . $this->tableNamePrefix . '_node c ON ch.childnodeanchor = c.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_dimensionspacepoints dsp ON p.origindimensionspacepointhash = dsp.hash
  WHERE c.nodeaggregateid = :childNodeAggregateId
  AND c.origindimensionspacepointhash = :originDimensionSpacePointHash
  AND ph.contentstreamid = :contentStreamId
@@ -102,8 +102,9 @@ class ProjectionContentGraph
         DimensionSpacePoint $coveredDimensionSpacePoint
     ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name, h.subtreetags FROM ' . $this->tableNamePrefix . '_node n
+            'SELECT n.*, h.name, h.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint FROM ' . $this->tableNamePrefix . '_node n
  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_dimensionspacepoints dsp ON n.origindimensionspacepointhash = dsp.hash
  WHERE n.nodeaggregateid = :nodeAggregateId
  AND h.contentstreamid = :contentStreamId
  AND h.dimensionspacepointhash = :dimensionSpacePointHash',
@@ -130,8 +131,9 @@ class ProjectionContentGraph
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name, h.subtreetags FROM ' . $this->tableNamePrefix . '_node n
+            'SELECT n.*, h.name, h.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint FROM ' . $this->tableNamePrefix . '_node n
  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_dimensionspacepoints dsp ON n.origindimensionspacepointhash = dsp.hash
  WHERE n.nodeaggregateid = :nodeAggregateId
  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
  AND h.contentstreamid = :contentStreamId',
@@ -217,7 +219,8 @@ class ProjectionContentGraph
     public function getNodeByAnchorPoint(NodeRelationAnchorPoint $nodeRelationAnchorPoint): ?NodeRecord
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.* FROM ' . $this->tableNamePrefix . '_node n
+            'SELECT n.*, dsp.dimensionspacepoint AS origindimensionspacepoint FROM ' . $this->tableNamePrefix . '_node n
+            INNER JOIN ' . $this->tableNamePrefix . '_dimensionspacepoints dsp ON n.origindimensionspacepointhash = dsp.hash
  WHERE n.relationanchorpoint = :relationAnchorPoint',
             [
                 'relationAnchorPoint' => $nodeRelationAnchorPoint->value,
@@ -649,12 +652,14 @@ class ProjectionContentGraph
      */
     protected function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelation
     {
+        $dimensionspacepointRaw = $this->client->getConnection()->fetchOne('SELECT dimensionspacepoint FROM ' . $this->tableNamePrefix . '_dimensionspacepoints WHERE hash = :hash', ['hash' => $rawData['dimensionspacepointhash']]);
+
         return new HierarchyRelation(
             NodeRelationAnchorPoint::fromInteger((int)$rawData['parentnodeanchor']),
             NodeRelationAnchorPoint::fromInteger((int)$rawData['childnodeanchor']),
             $rawData['name'] ? NodeName::fromString($rawData['name']) : null,
             ContentStreamId::fromString($rawData['contentstreamid']),
-            DimensionSpacePoint::fromJsonString($rawData['dimensionspacepoint']),
+            DimensionSpacePoint::fromJsonString($dimensionspacepointRaw),
             $rawData['dimensionspacepointhash'],
             (int)$rawData['position'],
             NodeFactory::extractNodeTagsFromJson($rawData['subtreetags']),

@@ -16,34 +16,33 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
-use Neos\ContentRepository\Core\Projection\ContentGraph\References;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
+use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
+use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
@@ -55,7 +54,8 @@ final class NodeFactory
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
-        private readonly PropertyConverter $propertyConverter
+        private readonly PropertyConverter $propertyConverter,
+        private readonly DimensionSpacePointsRepository $dimensionSpacePointRepository
     ) {
     }
 
@@ -80,7 +80,7 @@ final class NodeFactory
                 $visibilityConstraints
             ),
             NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
-            OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
+            $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
@@ -170,9 +170,7 @@ final class NodeFactory
 
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
-            $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString(
-                $nodeRow['origindimensionspacepoint']
-            );
+            $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
             if (!isset($nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash])) {
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
@@ -249,9 +247,7 @@ final class NodeFactory
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
             $rawNodeAggregateId = $nodeRow['nodeaggregateid'];
-            $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString(
-                $nodeRow['origindimensionspacepoint']
-            );
+            $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
             if (
                 !isset($nodesByOccupiedDimensionSpacePointsByNodeAggregate
                 [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash])

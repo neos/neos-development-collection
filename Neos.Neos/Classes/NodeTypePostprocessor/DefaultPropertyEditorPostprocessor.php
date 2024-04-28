@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\NodeTypePostprocessor;
 
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\NodeType\NodeTypePostprocessorInterface;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\Utility\Arrays;
+use Neos\ContentRepository\Core\NodeType\NodeTypePostprocessorInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Exception;
+use Neos\Utility\Arrays;
 
 /**
  * Add default editor configurations for properties based on type and editor
@@ -46,6 +46,31 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
     public function process(NodeType $nodeType, array &$configuration, array $options): void
     {
         $nodeTypeName = $nodeType->name->value;
+
+        foreach ($configuration['references'] as $referenceName => &$referenceConfiguration) {
+            if (!isset($referenceConfiguration['ui']['inspector'])) {
+                // we presume that these are properties wich are not shown
+                continue;
+            }
+
+            $editor = $referenceConfiguration['ui']['inspector']['editor'] ?? null;
+
+            if (!$editor) {
+                $maxAllowedItems = $referenceConfiguration['constraints']['maxItems'] ?? null;
+                $editor = $maxAllowedItems === 1
+                    ? ($this->dataTypesDefaultConfiguration['reference']['editor'] ?? 'Neos.Neos/Inspector/Editors/ReferenceEditor')
+                    : ($this->dataTypesDefaultConfiguration['references']['editor'] ?? 'Neos.Neos/Inspector/Editors/ReferencesEditor');
+            }
+
+            $mergedInspectorConfiguration = $this->editorDefaultConfiguration[$editor] ?? [];
+            $mergedInspectorConfiguration = Arrays::arrayMergeRecursiveOverrule(
+                $mergedInspectorConfiguration,
+                $referenceConfiguration['ui']['inspector']
+            );
+            $referenceConfiguration['ui']['inspector'] = $mergedInspectorConfiguration;
+            $referenceConfiguration['ui']['inspector']['editor'] = $editor;
+        }
+
         if (isset($configuration['properties']) && is_array($configuration['properties'])) {
             foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
                 if (!isset($propertyConfiguration['type'])) {
@@ -55,6 +80,7 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
                 $type = $propertyConfiguration['type'];
 
                 if (!isset($propertyConfiguration['ui']['inspector'])) {
+                    // we presume that these are properties wich are not shown
                     continue;
                 }
 

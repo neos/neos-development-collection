@@ -12,14 +12,14 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPo
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -57,12 +57,12 @@ trait NodeVariation
                 $eventEnvelope
             );
 
-            $uncoveredDimensionSpacePoints = $event->specializationCoverage->points;
+            $uncoveredDimensionSpacePoints = $event->specializationSiblings->toDimensionSpacePointSet()->points;
             foreach (
                 $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $sourceNode->nodeAggregateId,
-                    $event->specializationCoverage
+                    $event->specializationSiblings->toDimensionSpacePointSet()
                 ) as $hierarchyRelation
             ) {
                 $hierarchyRelation->assignNewChildNode(
@@ -93,6 +93,17 @@ trait NodeVariation
                         );
                     }
                     $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($event->contentStreamId, $parentNode->relationAnchorPoint, $uncoveredDimensionSpacePoint);
+
+                    $specializationSucceedingSiblingNodeAggregateId = $event->specializationSiblings
+                        ->getSucceedingSiblingIdForDimensionSpacePoint($uncoveredDimensionSpacePoint);
+                    $specializationSucceedingSiblingNode = $specializationSucceedingSiblingNodeAggregateId
+                        ? $this->getProjectionContentGraph()->findNodeInAggregate(
+                            $event->contentStreamId,
+                            $specializationSucceedingSiblingNodeAggregateId,
+                            $uncoveredDimensionSpacePoint
+                        )
+                        : null;
+
                     $hierarchyRelation = new HierarchyRelation(
                         $parentNode->relationAnchorPoint,
                         $specializedNode->relationAnchorPoint,
@@ -103,7 +114,7 @@ trait NodeVariation
                         $this->projectionContentGraph->determineHierarchyRelationPosition(
                             $parentNode->relationAnchorPoint,
                             $specializedNode->relationAnchorPoint,
-                            null,
+                            $specializationSucceedingSiblingNode?->relationAnchorPoint,
                             $event->contentStreamId,
                             $uncoveredDimensionSpacePoint
                         ),
@@ -117,7 +128,7 @@ trait NodeVariation
                 $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $sourceNode->nodeAggregateId,
-                    $event->specializationCoverage
+                    $event->specializationSiblings->toDimensionSpacePointSet()
                 ) as $hierarchyRelation
             ) {
                 $hierarchyRelation->assignNewParentNode(
@@ -167,12 +178,12 @@ trait NodeVariation
                 $eventEnvelope
             );
 
-            $unassignedIngoingDimensionSpacePoints = $event->generalizationCoverage;
+            $unassignedIngoingDimensionSpacePoints = $event->variantSucceedingSiblings->toDimensionSpacePointSet();
             foreach (
                 $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $event->nodeAggregateId,
-                    $event->generalizationCoverage
+                    $event->variantSucceedingSiblings->toDimensionSpacePointSet()
                 ) as $existingIngoingHierarchyRelation
             ) {
                 $existingIngoingHierarchyRelation->assignNewChildNode(
@@ -191,7 +202,7 @@ trait NodeVariation
                 $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $event->nodeAggregateId,
-                    $event->generalizationCoverage
+                    $event->variantSucceedingSiblings->toDimensionSpacePointSet()
                 ) as $existingOutgoingHierarchyRelation
             ) {
                 $existingOutgoingHierarchyRelation->assignNewParentNode(
@@ -229,12 +240,23 @@ trait NodeVariation
                         );
                     }
 
+                    $generalizationSucceedingSiblingNodeAggregateId = $event->variantSucceedingSiblings
+                        ->getSucceedingSiblingIdForDimensionSpacePoint($unassignedDimensionSpacePoint);
+                    $generalizationSucceedingSiblingNode = $generalizationSucceedingSiblingNodeAggregateId
+                        ? $this->getProjectionContentGraph()->findNodeInAggregate(
+                            $event->contentStreamId,
+                            $generalizationSucceedingSiblingNodeAggregateId,
+                            $unassignedDimensionSpacePoint
+                        )
+                        : null;
+
                     $this->copyHierarchyRelationToDimensionSpacePoint(
                         $ingoingSourceHierarchyRelation,
                         $event->contentStreamId,
                         $unassignedDimensionSpacePoint,
                         $generalizationParentNode->relationAnchorPoint,
-                        $generalizedNode->relationAnchorPoint
+                        $generalizedNode->relationAnchorPoint,
+                        $generalizationSucceedingSiblingNode?->relationAnchorPoint
                     );
                 }
             }
@@ -262,26 +284,18 @@ trait NodeVariation
             if (is_null($sourceNode)) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
-            $sourceParentNode = $this->getProjectionContentGraph()->findParentNode(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->sourceOrigin
-            );
-            if (is_null($sourceParentNode)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(get_class($event));
-            }
             $peerNode = $this->copyNodeToDimensionSpacePoint(
                 $sourceNode,
                 $event->peerOrigin,
                 $eventEnvelope
             );
 
-            $unassignedIngoingDimensionSpacePoints = $event->peerCoverage;
+            $unassignedIngoingDimensionSpacePoints = $event->peerSucceedingSiblings->toDimensionSpacePointSet();
             foreach (
                 $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $event->nodeAggregateId,
-                    $event->peerCoverage
+                    $event->peerSucceedingSiblings->toDimensionSpacePointSet()
                 ) as $existingIngoingHierarchyRelation
             ) {
                 $existingIngoingHierarchyRelation->assignNewChildNode(
@@ -300,7 +314,7 @@ trait NodeVariation
                 $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
                     $event->contentStreamId,
                     $event->nodeAggregateId,
-                    $event->peerCoverage
+                    $event->peerSucceedingSiblings->toDimensionSpacePointSet()
                 ) as $existingOutgoingHierarchyRelation
             ) {
                 $existingOutgoingHierarchyRelation->assignNewParentNode(
@@ -311,6 +325,14 @@ trait NodeVariation
                 );
             }
 
+            $sourceParentNode = $this->getProjectionContentGraph()->findParentNode(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
+                $event->sourceOrigin
+            );
+            if (is_null($sourceParentNode)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(get_class($event));
+            }
             foreach ($unassignedIngoingDimensionSpacePoints as $coveredDimensionSpacePoint) {
                 // The parent node aggregate might be varied as well,
                 // so we need to find a parent node for each covered dimension space point
@@ -322,13 +344,22 @@ trait NodeVariation
                 if (is_null($peerParentNode)) {
                     throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
                 }
+                $peerSucceedingSiblingNodeAggregateId = $event->peerSucceedingSiblings
+                    ->getSucceedingSiblingIdForDimensionSpacePoint($coveredDimensionSpacePoint);
+                $peerSucceedingSiblingNode = $peerSucceedingSiblingNodeAggregateId
+                    ? $this->getProjectionContentGraph()->findNodeInAggregate(
+                        $event->contentStreamId,
+                        $peerSucceedingSiblingNodeAggregateId,
+                        $coveredDimensionSpacePoint
+                    )
+                    : null;
 
                 $this->connectHierarchy(
                     $event->contentStreamId,
                     $peerParentNode->relationAnchorPoint,
                     $peerNode->relationAnchorPoint,
                     new DimensionSpacePointSet([$coveredDimensionSpacePoint]),
-                    null, // @todo fetch appropriate sibling
+                    $peerSucceedingSiblingNode?->relationAnchorPoint,
                     $sourceNode->nodeName
                 );
             }
@@ -351,8 +382,9 @@ trait NodeVariation
         HierarchyRelation $sourceHierarchyRelation,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        ?NodeRelationAnchorPoint $newParent = null,
-        ?NodeRelationAnchorPoint $newChild = null
+        NodeRelationAnchorPoint $newParent,
+        NodeRelationAnchorPoint $newChild,
+        ?NodeRelationAnchorPoint $newSucceedingSibling = null,
     ): HierarchyRelation;
 
     abstract protected function connectHierarchy(

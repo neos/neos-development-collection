@@ -20,10 +20,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 /**
  * The string-based visual node path, composed of node names and node aggregate IDs as fallback
  */
-final class VisualNodePath
+final readonly class VisualNodePath
 {
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
     }
 

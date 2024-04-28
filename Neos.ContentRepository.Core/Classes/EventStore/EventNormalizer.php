@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\EventStore;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
-use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
@@ -31,19 +31,19 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
-use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event;
+use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event\EventType;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
 
 /**
  * Central authority to convert Content Repository domain events to Event Store EventData and EventType, vice versa.
@@ -161,11 +161,13 @@ final class EventNormalizer
             $eventDataAsArray = json_decode($event->data->value, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
             throw new \InvalidArgumentException(
-                sprintf('Failed to decode data of event "%s": %s', $event->id->value, $exception->getMessage()),
+                sprintf('Failed to decode data of event with type "%s" and id "%s": %s', $event->type->value, $event->id->value, $exception->getMessage()),
                 1651839461
             );
         }
-        assert(is_array($eventDataAsArray));
+        if (!is_array($eventDataAsArray)) {
+            throw new \RuntimeException(sprintf('Expected array got %s', $eventDataAsArray));
+        }
         /** {@see EventInterface::fromArray()} */
         $eventInstance = $eventClassName::fromArray($eventDataAsArray);
         return match ($eventInstance::class) {

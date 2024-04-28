@@ -15,16 +15,16 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -232,6 +232,10 @@ trait ProjectedNodeAggregateTrait
                     $nodeAggregate->nodeAggregateId
                 ))
             ));
+
+            /** we can't ensure the ordering of children on node aggregate level */
+            sort($expectedDiscriminators);
+            sort($actualDiscriminators);
 
             Assert::assertSame(
                 $expectedDiscriminators,

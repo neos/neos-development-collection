@@ -40,7 +40,6 @@ Feature: Tethered Nodes integrity violations
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                                | Value                                               |
-      | contentStreamId                    | "cs-identifier"                                     |
       | nodeAggregateId                    | "lady-eleonode-rootford"                            |
       | nodeTypeName                       | "Neos.ContentRepository:Root"                       |
       | tetheredDescendantNodeAggregateIds | {"originally-tethered-node": "originode-tetherton"} |

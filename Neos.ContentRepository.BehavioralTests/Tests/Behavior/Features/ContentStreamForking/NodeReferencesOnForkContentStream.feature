@@ -80,7 +80,6 @@ Feature: On forking a content stream, node references should be copied as well.
     When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
     And the command SetNodeProperties is executed with payload:
       | Key                     | Value                                  |
-      | contentStreamId | "user-cs-identifier"                   |
       | nodeAggregateId | "source-nodandaise"                    |
       | propertyValues          | {"text": "Modified in live workspace"} |
     And the graph projection is fully up to date

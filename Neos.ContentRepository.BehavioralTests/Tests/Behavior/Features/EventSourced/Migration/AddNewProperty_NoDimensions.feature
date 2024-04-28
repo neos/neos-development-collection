@@ -26,14 +26,12 @@ Feature: Add New Property
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
-      | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "sir-david-nodenborough"                  |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {}                                        |
@@ -44,7 +42,6 @@ Feature: Add New Property
     # Node /doc2
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "other"                                   |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {}                                        |

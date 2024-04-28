@@ -24,15 +24,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 /**
  * @api events are the persistence-API of the content repository
  */
-final class NodeAggregateNameWasChanged implements
+final readonly class NodeAggregateNameWasChanged implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeName $newNodeName,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public NodeName $newNodeName,
     ) {
     }
 

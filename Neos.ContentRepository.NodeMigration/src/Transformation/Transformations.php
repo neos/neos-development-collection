@@ -7,7 +7,6 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -92,11 +91,10 @@ final class Transformations
     }
 
     public function executeGlobalAndBlock(
-        WorkspaceName $workspaceNameForReading,
-        ContentStreamId $contentStreamForWriting
+        WorkspaceName $workspaceNameForWriting,
     ): void {
         foreach ($this->globalTransformations as $globalTransformation) {
-            $globalTransformation->execute($workspaceNameForReading, $contentStreamForWriting)->block();
+            $globalTransformation->execute($workspaceNameForWriting)->block();
         }
     }
 
