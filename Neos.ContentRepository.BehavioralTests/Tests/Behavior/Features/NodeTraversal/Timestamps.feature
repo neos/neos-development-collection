@@ -131,6 +131,54 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | created             | originalCreated     | lastModified        | originalLastModified |
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
 
+  Scenario: NodeAggregateNameWasChanged events update last modified timestamps only in the user workspace
+    When the current date and time is "2023-03-16T13:00:00+01:00"
+    And the command PublishWorkspace is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "user-test" |
+    And the graph projection is fully up to date
+    And the command PublishWorkspace is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "review" |
+    And the graph projection is fully up to date
+    And the current date and time is "2023-03-16T14:00:00+01:00"
+    And the command "ChangeNodeAggregateName" is executed with payload:
+      | Key             | Value       |
+      | workspaceName   | "user-test" |
+      | nodeAggregateId | "a"         |
+      | newNodeName     | "a-renamed" |
+    And the graph projection is fully up to date
+
+    And I am in the active content stream of workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 13:00:00 | 2023-03-16 12:00:00 | 2023-03-16 14:00:00 | 2023-03-16 14:00:00  |
+
+    And I am in the active content stream of workspace "user-test" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 13:00:00 | 2023-03-16 12:30:00 | 2023-03-16 14:00:00 | 2023-03-16 14:00:00  |
+
+    When I am in the active content stream of workspace "review" and dimension space point {"language":"de"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 13:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+    When I am in the active content stream of workspace "review" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 13:00:00 | 2023-03-16 12:30:00 |              |                      |
+
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 13:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 13:00:00 | 2023-03-16 12:30:00 |              |                      |
+
   Scenario: NodeReferencesWereSet events update last modified timestamps
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeReferences is executed with payload:

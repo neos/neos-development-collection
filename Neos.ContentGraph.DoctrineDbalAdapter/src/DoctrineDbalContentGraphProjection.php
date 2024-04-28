@@ -359,28 +359,22 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event, EventEnvelope $eventEnvelope): void
     {
         $this->transactional(function () use ($event, $eventEnvelope) {
-            $this->getDatabaseConnection()->executeStatement('
-                UPDATE ' . $this->tableNamePrefix . '_hierarchyrelation h
-                INNER JOIN ' . $this->tableNamePrefix . '_node n on
-                    h.childnodeanchor = n.relationanchorpoint
-                SET
-                  h.name = :newName,
-                  n.lastmodified = :lastModified,
-                  n.originallastmodified = :originalLastModified
-
-                WHERE
-                    n.nodeaggregateid = :nodeAggregateId
-                    and h.contentstreamid = :contentStreamId
-            ', [
-                'newName' => $event->newNodeName->value,
-                'nodeAggregateId' => $event->nodeAggregateId->value,
-                'contentStreamId' => $event->contentStreamId->value,
-                'lastModified' => $eventEnvelope->recordedAt,
-                'originalLastModified' => self::initiatingDateTime($eventEnvelope),
-            ], [
-                'lastModified' => Types::DATETIME_IMMUTABLE,
-                'originalLastModified' => Types::DATETIME_IMMUTABLE,
-            ]);
+            foreach ($this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream(
+                $event->nodeAggregateId,
+                $event->contentStreamId,
+            ) as $anchorPoint) {
+                $this->updateNodeRecordWithCopyOnWrite(
+                    $event->contentStreamId,
+                    $anchorPoint,
+                    function (NodeRecord $node) use ($event, $eventEnvelope) {
+                        $node->nodeName = $event->newNodeName;
+                        $node->timestamps = $node->timestamps->with(
+                            lastModified: $eventEnvelope->recordedAt,
+                            originalLastModified: self::initiatingDateTime($eventEnvelope)
+                        );
+                    }
+                );
+            }
         });
     }
 
