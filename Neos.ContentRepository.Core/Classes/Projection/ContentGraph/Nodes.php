@@ -207,7 +207,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return array_map($callback, $this->nodes);
     }
 
-    public function mapToNodeAggregateIds(): NodeAggregateIds
+    public function toNodeAggregateIds(): NodeAggregateIds
     {
         return NodeAggregateIds::create(...$this->map(
             fn (Node $node): NodeAggregateId => $node->nodeAggregateId,
