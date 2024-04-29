@@ -96,7 +96,7 @@ trait NodeMove
 
         $newSucceedingSibling = null;
         if ($succeedingSiblingForCoverage->nodeAggregateId) {
-            // find the new succeeding sibling NodeRecord; We need this records because we'll use its RelationAnchorPoint later.
+            // find the new succeeding sibling NodeRecord; We need this record because we'll use its RelationAnchorPoint later.
             $newSucceedingSibling = $projectionContentGraph->findNodeInAggregate(
                 $contentStreamId,
                 $succeedingSiblingForCoverage->nodeAggregateId,
