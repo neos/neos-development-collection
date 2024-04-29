@@ -184,7 +184,7 @@ class ChangeProjection implements ProjectionInterface
     {
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
-            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event, $eventEnvelope),
+            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
             NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
