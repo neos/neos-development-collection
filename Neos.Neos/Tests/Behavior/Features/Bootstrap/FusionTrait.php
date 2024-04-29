@@ -28,6 +28,7 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
+use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
  * @internal only for behat tests within the Neos.Neos package
@@ -47,6 +48,8 @@ trait FusionTrait
 
     private ?\Throwable $lastRenderingException = null;
 
+    private $contentCacheEnabled = false;
+
     /**
      * @template T of object
      * @param class-string<T> $className
@@ -63,6 +66,7 @@ trait FusionTrait
         $this->fusionGlobalContext = [];
         $this->fusionContext = [];
         $this->fusionCode = null;
+        $this->contentCacheEnabled = false;
         $this->renderingResult = null;
     }
 
@@ -115,6 +119,14 @@ trait FusionTrait
     }
 
     /**
+     * @When I have Fusion content cache enabled
+     */
+    public function iHaveFusionContentCacheEnabled(): void
+    {
+        $this->contentCacheEnabled = true;
+    }
+
+    /**
      * @When I execute the following Fusion code:
      * @When I execute the following Fusion code on path :path:
      */
@@ -131,6 +143,7 @@ trait FusionTrait
         $fusionGlobals = FusionGlobals::fromArray($this->fusionGlobalContext);
 
         $fusionRuntime = (new RuntimeFactory())->createFromConfiguration($fusionAst, $fusionGlobals);
+        $fusionRuntime->setEnableContentCache($this->contentCacheEnabled);
         $fusionRuntime->overrideExceptionHandler($this->getObject(ThrowingHandler::class));
         $fusionRuntime->pushContextArray($this->fusionContext);
         try {
@@ -190,6 +203,14 @@ trait FusionTrait
         if ($this->lastRenderingException !== null) {
             throw new \RuntimeException(sprintf('The last rendering led to an error: %s', $this->lastRenderingException->getMessage()), 1698319254, $this->lastRenderingException);
         }
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function clearFusionCaches()
+    {
+        $this->getObject(ContentCache::class)->flush();
     }
 
 }
