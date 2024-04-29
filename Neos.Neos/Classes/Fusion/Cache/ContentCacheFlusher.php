@@ -175,6 +175,12 @@ class ContentCacheFlusher
             $nodeCacheIdentifier->value
         );
 
+        $dynamicNodeCacheIdentifier = CacheTag::forDynamicNodeAggregate($contentRepositoryId, $contentStreamId, $nodeAggregateId);
+        $tagsToFlush[$dynamicNodeCacheIdentifier->value] = sprintf(
+            'which were tagged with "%s" because that identifier has changed.',
+            $dynamicNodeCacheIdentifier->value
+        );
+
         $descendantOfNodeCacheIdentifier = CacheTag::forDescendantOfNode($contentRepositoryId, $contentStreamId, $nodeAggregateId);
         $tagsToFlush[$descendantOfNodeCacheIdentifier->value] = sprintf(
             'which were tagged with "%s" because node "%s" has changed.',
