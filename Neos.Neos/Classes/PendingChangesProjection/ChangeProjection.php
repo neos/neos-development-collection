@@ -231,7 +231,7 @@ class ChangeProjection implements ProjectionInterface
         }
     }
 
-    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event, EventEnvelope $eventEnvelope): void
+    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
         $affectedDimensionSpacePoints = iterator_to_array($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet());
         $arbitraryDimensionSpacePoint = reset($affectedDimensionSpacePoints);
