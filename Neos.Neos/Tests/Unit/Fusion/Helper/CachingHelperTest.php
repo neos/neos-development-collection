@@ -243,7 +243,6 @@ class CachingHelperTest extends UnitTestCase
             NodeTags::createEmpty(),
             Timestamps::create($now, $now, null, null),
             VisibilityConstraints::withoutRestrictions(),
-            null,
             ContentStreamId::fromString("cs-identifier"),
         );
     }

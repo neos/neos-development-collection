@@ -52,7 +52,6 @@ final class NodeFactory
 {
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
-        private readonly NodeTypeManager $nodeTypeManager,
         private readonly PropertyConverter $propertyConverter,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointRepository
     ) {
@@ -68,10 +67,6 @@ final class NodeFactory
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
-        $nodeType = $this->nodeTypeManager->hasNodeType($nodeRow['nodetypename'])
-            ? $this->nodeTypeManager->getNodeType($nodeRow['nodetypename'])
-            : null;
-
         return Node::create(
             $this->contentRepositoryId,
             $workspaceName,
@@ -90,7 +85,6 @@ final class NodeFactory
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
             $visibilityConstraints,
-            $nodeType,
             $contentStreamId
         );
     }
