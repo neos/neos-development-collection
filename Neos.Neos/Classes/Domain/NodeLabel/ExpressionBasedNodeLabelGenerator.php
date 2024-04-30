@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Domain\NodeLabel;
 
 /*
@@ -18,7 +19,6 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The expression based node label generator that is used as default if a label expression is configured.
- *
  */
 class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
 {

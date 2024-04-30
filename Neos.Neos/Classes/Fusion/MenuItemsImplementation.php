@@ -24,7 +24,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Exception as FusionException;
+use Neos\Neos\Domain\NodeLabel\NodeLabelRenderer;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
@@ -61,6 +63,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      * Runtime cache for the node type criteria to be applied
      */
     protected ?NodeTypeCriteria $nodeTypeCriteria = null;
+
+    #[Flow\Inject()]
+    protected NodeLabelRenderer $nodeLabelRenderer;
 
     /**
      * The last navigation level which should be rendered.
@@ -215,7 +220,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return new MenuItem(
             $node,
             $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
-            $node->getLabel(),
+            $this->nodeLabelRenderer->renderNodeLabel($node),
             0,
             [],
             $this->buildUri($node)
@@ -239,7 +244,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return new MenuItem(
             $node,
             $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
-            $node->getLabel(),
+            $this->nodeLabelRenderer->renderNodeLabel($node),
             $subtree->level + $startLevel,
             $children,
             $this->buildUri($node)

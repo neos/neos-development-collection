@@ -5,16 +5,36 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\NodeLabel;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Neos\Fusion\Helper\NodeHelper;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
-class NodeLabelRenderer
+/**
+ * @api For PHP, in Fusion one can use ${Neos.Node.renderLabel(node)} {@see NodeHelper::renderLabel()}
+ */
+final readonly class NodeLabelRenderer
 {
+    use NodeTypeWithFallbackProvider;
+
     public function __construct(
-        private readonly ObjectManagerInterface $objectManager
+        private ContentRepositoryRegistry $contentRepositoryRegistry,
+        private ObjectManagerInterface $objectManager
     ) {
     }
 
-    public function create(NodeType $nodeType): NodeLabelGeneratorInterface
+    public function renderNodeLabel(Node $node): string
+    {
+        $nodeType = $this->getNodeType($node);
+        $generator = $this->getNodeLabelGeneratorForNodeType($nodeType);
+        return $generator->getLabel($node);
+    }
+
+    /**
+     * @internal
+     */
+    public function getNodeLabelGeneratorForNodeType(NodeType $nodeType): NodeLabelGeneratorInterface
     {
         if ($nodeType->hasConfiguration('label.generatorClass')) {
             $nodeLabelGeneratorClassName = $nodeType->getConfiguration('label.generatorClass');

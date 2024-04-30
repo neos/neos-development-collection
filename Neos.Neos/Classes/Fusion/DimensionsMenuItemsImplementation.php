@@ -10,6 +10,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\NodeLabel\NodeLabelRenderer;
 
 /**
  * Fusion implementation for a dimensions menu.
@@ -28,6 +30,9 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
+    #[Flow\Inject()]
+    protected NodeLabelRenderer $nodeLabelRenderer;
+
     /**
      * @return array<mixed>
      */
@@ -215,7 +220,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         if ($this->getContentDimensionIdentifierToLimitTo()) {
             return $metadata[$this->getContentDimensionIdentifierToLimitTo()->value]['label'] ?: '';
         } elseif ($variant) {
-            return $variant->getLabel() ?: '';
+            return $this->nodeLabelRenderer->renderNodeLabel($variant) ?: '';
         } else {
             return array_reduce($metadata, function ($carry, $item) {
                 return $carry . (empty($carry) ? '' : '-') . $item['label'];
