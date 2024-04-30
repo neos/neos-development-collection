@@ -48,7 +48,7 @@ trait NodeMove
                 }
 
                 if ($event->newParentNodeAggregateId) {
-                    $this->moveNodeIntoParent(
+                    $this->moveNodeBeneathParent(
                         $event->contentStreamId,
                         $nodeToBeMoved,
                         $event->newParentNodeAggregateId,
@@ -132,10 +132,10 @@ trait NodeMove
      * which incoming HierarchyRelation should be moved and where exactly.
      *
      * The move target is given as $parentNodeAggregateId and $succeedingSiblingForCoverage.
-     * We always move to parent after the succeeding sibling if given (or to the end)
+     * We always move beneath the parent before the succeeding sibling if given (or to the end)
      * @throws DBALException
      */
-    private function moveNodeIntoParent(
+    private function moveNodeBeneathParent(
         ContentStreamId $contentStreamId,
         NodeRecord $nodeToBeMoved,
         NodeAggregateId $parentNodeAggregateId,
