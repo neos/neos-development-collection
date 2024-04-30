@@ -91,7 +91,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
 
 
   Scenario: ContentCache gets flushed when target node changes
-    #Given I have Fusion content cache enabled
+    Given I have Fusion content cache enabled
     And the Fusion context node is a2
 
     And I execute the following Fusion code:

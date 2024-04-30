@@ -112,7 +112,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
 
 
   Scenario: ContentCache gets flushed when a property of a node has changed
-    #Given I have Fusion content cache enabled
+    Given I have Fusion content cache enabled
     And the Fusion context node is a1
 
     And I execute the following Fusion code:
@@ -146,7 +146,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
     """
 
   Scenario: ContentCache gets not flushed when a property of another node has changed
-    #Given I have Fusion content cache enabled
+    Given I have Fusion content cache enabled
     And the Fusion context node is a1
 
     And I execute the following Fusion code:
@@ -180,7 +180,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
     """
 
   Scenario: ContentCache gets flushed when a property of a node has changed by NodeType name
-    #Given I have Fusion content cache enabled
+    Given I have Fusion content cache enabled
     And the Fusion context node is a2
     And I execute the following Fusion code:
     """fusion
@@ -213,7 +213,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
     """
 
   Scenario: ContentCache gets flushed when a property of a node has changed of a descendant node
-    #Given I have Fusion content cache enabled
+    Given I have Fusion content cache enabled
     And the Fusion context node is "a1"
     And I execute the following Fusion code:
     """fusion
