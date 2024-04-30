@@ -12,19 +12,20 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\NodeType;
+namespace Neos\Neos\Domain\NodeLabel;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
- * The node type name based node label generator
+ * Interface for rendering a node label string based on some strategy
  *
- * @internal
+ * @api
  */
-final class NodeTypeNameNodeLabelGenerator implements NodeLabelGeneratorInterface
+interface NodeLabelGeneratorInterface
 {
-    public function getLabel(Node $node): string
-    {
-        return \mb_substr($node->nodeTypeName->value, \mb_strrpos($node->nodeTypeName->value, '.') + 1);
-    }
+    /**
+     * Render a node label
+     * @api
+     */
+    public function getLabel(Node $node): string;
 }

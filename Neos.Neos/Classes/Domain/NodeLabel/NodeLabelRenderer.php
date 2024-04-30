@@ -2,15 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\Factory\NodeTypeManager;
+namespace Neos\Neos\Domain\NodeLabel;
 
-use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
-use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepositoryRegistry\NodeLabel\ExpressionBasedNodeLabelGenerator;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
-class ObjectManagerBasedNodeLabelGeneratorFactory implements NodeLabelGeneratorFactoryInterface
+class NodeLabelRenderer
 {
     public function __construct(
         private readonly ObjectManagerInterface $objectManager
@@ -19,7 +16,6 @@ class ObjectManagerBasedNodeLabelGeneratorFactory implements NodeLabelGeneratorF
 
     public function create(NodeType $nodeType): NodeLabelGeneratorInterface
     {
-
         if ($nodeType->hasConfiguration('label.generatorClass')) {
             $nodeLabelGeneratorClassName = $nodeType->getConfiguration('label.generatorClass');
             $nodeLabelGenerator = $this->objectManager->get($nodeLabelGeneratorClassName);

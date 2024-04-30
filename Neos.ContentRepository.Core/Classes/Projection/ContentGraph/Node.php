@@ -108,6 +108,7 @@ final readonly class Node
      */
     public function getLabel(): string
     {
+        // todo REMOVE ME!!!!!!!!!!!!
         return $this->nodeType?->getNodeLabelGenerator()->getLabel($this) ?: $this->nodeTypeName->value;
     }
 

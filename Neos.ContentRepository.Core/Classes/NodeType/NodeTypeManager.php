@@ -46,8 +46,7 @@ final class NodeTypeManager
      * @internal
      */
     public function __construct(
-        private readonly \Closure $nodeTypeConfigLoader,
-        private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
+        private readonly \Closure $nodeTypeConfigLoader
     ) {
     }
 
@@ -319,8 +318,7 @@ final class NodeTypeManager
         $nodeType = new NodeType(
             NodeTypeName::fromString($nodeTypeName),
             $superTypes,
-            $nodeTypeConfiguration,
-            $this->nodeLabelGeneratorFactory
+            $nodeTypeConfiguration
         );
 
         $this->cachedNodeTypes[$nodeTypeName] = $nodeType;

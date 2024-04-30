@@ -69,8 +69,6 @@ final class NodeType
      */
     protected array $declaredSuperTypes;
 
-    protected ?NodeLabelGeneratorInterface $nodeLabelGenerator = null;
-
     /**
      * Whether or not this node type has been initialized (e.g. if it has been postprocessed)
      */
@@ -87,8 +85,7 @@ final class NodeType
     public function __construct(
         NodeTypeName $name,
         array $declaredSuperTypes,
-        array $configuration,
-        private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
+        array $configuration
     ) {
         $this->name = $name;
         $this->declaredSuperTypes = $declaredSuperTypes;
@@ -394,20 +391,6 @@ final class NodeType
         $this->initialize();
 
         return ($this->fullConfiguration['options'] ?? []);
-    }
-
-    /**
-     * Return the node label generator class for the given node
-     */
-    public function getNodeLabelGenerator(): NodeLabelGeneratorInterface
-    {
-        $this->initialize();
-
-        if ($this->nodeLabelGenerator === null) {
-            $this->nodeLabelGenerator = $this->nodeLabelGeneratorFactory->create($this);
-        }
-
-        return $this->nodeLabelGenerator;
     }
 
     /**
