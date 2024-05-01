@@ -196,6 +196,28 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     }
 
     /**
+     * @throws NodeNotFoundException
+     * @internal
+     */
+    public function getLastChildNodeNotBeing(
+        NodeAggregateId $parentNodeAggregateId,
+        string $dimensionSpacePointHash,
+        NodeAggregateId $excludedNodeAggregateId
+    ): DocumentNodeInfo {
+        return $this->fetchSingle(
+            'dimensionSpacePointHash = :dimensionSpacePointHash
+                AND parentNodeAggregateId = :parentNodeAggregateId
+                AND nodeAggregateId != :excludedNodeAggregateId
+                AND succeedingNodeAggregateId IS NULL',
+            [
+                'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                'parentNodeAggregateId' => $parentNodeAggregateId->value,
+                'excludedNodeAggregateId' => $excludedNodeAggregateId->value
+            ]
+        );
+    }
+
+    /**
      * @api
      */
     public function getLiveContentStreamId(): ContentStreamId
