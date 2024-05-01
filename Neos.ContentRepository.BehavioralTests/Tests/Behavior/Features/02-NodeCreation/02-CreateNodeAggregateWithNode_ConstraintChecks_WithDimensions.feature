@@ -70,7 +70,6 @@ Feature: Create node aggregate with node
       | parentNodeAggregateId     | "lady-eleonode-rootford"              |
       | originDimensionSpacePoint | {"language":"de"}                     |
       | nodeName                  | "document"                            |
-    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                       | Value                                 |
       | nodeAggregateId           | "nody-mc-nodeface"                    |
