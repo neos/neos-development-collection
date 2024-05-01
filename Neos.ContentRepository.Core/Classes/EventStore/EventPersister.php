@@ -21,13 +21,13 @@ use Neos\EventStore\Model\Events;
  *
  * @internal
  */
-final class EventPersister
+final readonly class EventPersister
 {
     public function __construct(
-        private readonly EventStoreInterface $eventStore,
-        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
-        private readonly EventNormalizer $eventNormalizer,
-        private readonly Projections $projections,
+        private EventStoreInterface $eventStore,
+        private ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
+        private EventNormalizer $eventNormalizer,
+        private Projections $projections,
     ) {
     }
 
@@ -44,7 +44,7 @@ final class EventPersister
         // the following logic could also be done in an AppEventStore::commit method (being called
         // directly from the individual Command Handlers).
         $normalizedEvents = Events::fromArray(
-            $eventsToPublish->events->map(fn(EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event))
+            $eventsToPublish->events->map($this->eventNormalizer->normalize(...))
         );
         $commitResult = $this->eventStore->commit(
             $eventsToPublish->streamName,
@@ -69,22 +69,5 @@ final class EventPersister
 
         // The CommandResult can be used to block until projections are up to date.
         return new CommandResult($pendingProjections, $commitResult);
-    }
-
-    private function normalizeEvent(EventInterface|DecoratedEvent $event): Event
-    {
-        $eventId = $event instanceof DecoratedEvent && $event->eventId !== null ? $event->eventId : EventId::create();
-        $eventMetadata = $event instanceof DecoratedEvent ? $event->eventMetadata : null;
-        $causationId = $event instanceof DecoratedEvent ? $event->causationId : null;
-        $correlationId = $event instanceof DecoratedEvent ? $event->correlationId : null;
-        $event = $event instanceof DecoratedEvent ? $event->innerEvent : $event;
-        return new Event(
-            $eventId,
-            $this->eventNormalizer->getEventType($event),
-            $this->eventNormalizer->getEventData($event),
-            $eventMetadata,
-            $causationId,
-            $correlationId,
-        );
     }
 }
