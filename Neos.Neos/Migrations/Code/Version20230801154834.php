@@ -4,7 +4,7 @@ namespace Neos\Flow\Core\Migrations;
 
 
 /**
- * Replace defaultUriSuffix configuration with uriPathSuffix in default site configuration
+ * Replace defaultUriSuffix configuration with uriPathSuffix in default site preset configuration
  */
 class Version20230801154834 extends AbstractMigration
 {
@@ -16,6 +16,6 @@ class Version20230801154834 extends AbstractMigration
 
     public function up(): void
     {
-        $this->moveSettingsPaths(['Neos', 'Flow', 'mvc', 'routes', 'Neos.Neos', 'variables', 'defaultUriSuffix'], ['Neos', 'Neos', 'sites', '*', 'uriPathSuffix']);
+        $this->moveSettingsPaths(['Neos', 'Flow', 'mvc', 'routes', 'Neos.Neos', 'variables', 'defaultUriSuffix'], ['Neos', 'Neos', 'sitePresets', 'default', 'uriPathSuffix']);
     }
 }

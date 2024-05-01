@@ -298,14 +298,6 @@ final class ContentGraph implements ContentGraphInterface
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder, $contentStreamId);
     }
 
-    /**
-     * @param ContentStreamId $contentStreamId
-     * @param NodeName $nodeName
-     * @param NodeAggregateId $parentNodeAggregateId
-     * @param OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint
-     * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
-     * @return DimensionSpacePointSet
-     */
     public function getDimensionSpacePointsOccupiedByChildNodeName(
         ContentStreamId $contentStreamId,
         NodeName $nodeName,

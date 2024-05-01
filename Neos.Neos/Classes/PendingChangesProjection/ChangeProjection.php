@@ -21,6 +21,7 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
@@ -232,16 +233,21 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
-        // WORKAROUND: we simply use the first MoveNodeMapping here to find the dimension space point
-        // @todo properly handle this
-        /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping[] $mapping */
-        $mapping = iterator_to_array($event->nodeMoveMappings);
+        $affectedDimensionSpacePoints = iterator_to_array($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet());
+        $arbitraryDimensionSpacePoint = reset($affectedDimensionSpacePoints);
+        if ($arbitraryDimensionSpacePoint instanceof DimensionSpacePoint) {
+            // always the case due to constraint enforcement (at least one DSP is selected and must have a succeeding sibling or null)
 
-        $this->markAsMoved(
-            $event->getContentStreamId(),
-            $event->getNodeAggregateId(),
-            $mapping[0]->movedNodeOrigin
-        );
+            // WORKAROUND: we simply use the event's first DSP here as the origin dimension space point.
+            // But this DSP is not necessarily occupied.
+            // @todo properly handle this by storing the necessary information in the projection
+
+            $this->markAsMoved(
+                $event->getContentStreamId(),
+                $event->getNodeAggregateId(),
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryDimensionSpacePoint)
+            );
+        }
     }
 
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void

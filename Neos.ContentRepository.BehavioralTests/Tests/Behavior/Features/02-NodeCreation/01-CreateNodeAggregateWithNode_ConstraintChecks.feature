@@ -149,7 +149,6 @@ Feature: Create node aggregate with node
       | Key                       | Value                                 |
       | nodeAggregateId           | "nody-mc-nodeface"                    |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
-      | originDimensionSpacePoint | {}                                    |
       | parentNodeAggregateId     | "lady-eleonode-rootford"              |
       | nodeName                  | "document"                            |
 

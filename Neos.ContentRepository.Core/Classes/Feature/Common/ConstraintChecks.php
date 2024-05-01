@@ -27,7 +27,11 @@ use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -36,6 +40,8 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExis
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsTethered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
@@ -555,6 +561,67 @@ trait ConstraintChecks
                 $contentRepository
             );
         }
+    }
+
+    /**
+     * @throws NodeAggregateIsNoSibling
+     */
+    protected function requireNodeAggregateToBeSibling(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $referenceNodeAggregateId,
+        NodeAggregateId $siblingNodeAggregateId,
+        DimensionSpacePoint $dimensionSpacePoint,
+        ContentRepository $contentRepository,
+    ): void {
+        $succeedingSiblings = $contentRepository->getContentGraph()->getSubgraph(
+            $contentStreamId,
+            $dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        )->findSucceedingSiblingNodes($referenceNodeAggregateId, FindSucceedingSiblingNodesFilter::create());
+        if ($succeedingSiblings->toNodeAggregateIds()->contain($siblingNodeAggregateId)) {
+            return;
+        }
+
+        $precedingSiblings = $contentRepository->getContentGraph()->getSubgraph(
+            $contentStreamId,
+            $dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        )->findPrecedingSiblingNodes($referenceNodeAggregateId, FindPrecedingSiblingNodesFilter::create());
+        if ($precedingSiblings->toNodeAggregateIds()->contain($siblingNodeAggregateId)) {
+            return;
+        }
+
+        throw NodeAggregateIsNoSibling::butWasExpectedToBeInDimensionSpacePoint(
+            $siblingNodeAggregateId,
+            $referenceNodeAggregateId,
+            $dimensionSpacePoint
+        );
+    }
+
+    /**
+     * @throws NodeAggregateIsNoChild
+     */
+    protected function requireNodeAggregateToBeChild(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId,
+        NodeAggregateId $parentNodeAggregateId,
+        DimensionSpacePoint $dimensionSpacePoint,
+        ContentRepository $contentRepository,
+    ): void {
+        $childNodes = $contentRepository->getContentGraph()->getSubgraph(
+            $contentStreamId,
+            $dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        )->findChildNodes($parentNodeAggregateId, FindChildNodesFilter::create());
+        if ($childNodes->toNodeAggregateIds()->contain($childNodeAggregateId)) {
+            return;
+        }
+
+        throw NodeAggregateIsNoChild::butWasExpectedToBeInDimensionSpacePoint(
+            $childNodeAggregateId,
+            $parentNodeAggregateId,
+            $dimensionSpacePoint
+        );
     }
 
     /**
