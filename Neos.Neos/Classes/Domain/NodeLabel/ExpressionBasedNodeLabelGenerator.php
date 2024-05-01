@@ -28,7 +28,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
     protected EelEvaluatorInterface $eelEvaluator;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.ContentRepository", path="labelGenerator.eel.defaultContext")
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="labelGenerator.eel.defaultContext")
      * @var array<string, string>
      */
     protected $defaultContextConfiguration;
