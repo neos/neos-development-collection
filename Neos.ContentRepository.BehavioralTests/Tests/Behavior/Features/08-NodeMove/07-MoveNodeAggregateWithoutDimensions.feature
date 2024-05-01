@@ -25,9 +25,9 @@ Feature: Move a node without content dimensions
       | newContentStreamId   | "cs-identifier"      |
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId             | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
       | contentStreamId             | "cs-identifier"                           |
@@ -66,6 +66,7 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint                 | {}                       |
       | newParentNodeAggregateId            | null                     |
       | newSucceedingSiblingNodeAggregateId | null                     |
+
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -99,6 +100,7 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | null                         |
       | newSucceedingSiblingNodeAggregateId | "sir-david-nodenborough"     |
+
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -144,10 +146,12 @@ Feature: Move a node without content dimensions
 
     Then I expect exactly 7 events to be published on stream "ContentStream:cs-identifier"
     And event at index 6 is of type "NodeAggregateWasMoved" with payload:
-      | Key              | Expected                                                                                                                                                                   |
-      | contentStreamId  | "cs-identifier"                                                                                                                                                            |
-      | nodeAggregateId  | "sir-david-nodenborough"                                                                                                                                                   |
-      | nodeMoveMappings | [{"movedNodeOrigin":[],"newLocations":[{"coveredDimensionSpacePoint": [], "newParent": {"nodeAggregateId":"sir-nodeward-nodington-iii","originDimensionSpacePoint":[]}}]}] |
+      | Key                           | Expected                                             |
+      | contentStreamId               | "cs-identifier"                                      |
+      | nodeAggregateId               | "sir-david-nodenborough"                             |
+      | newParentNodeAggregateId      | "sir-nodeward-nodington-iii"                         |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint": [],"nodeAggregateId":null}] |
+
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -188,10 +192,12 @@ Feature: Move a node without content dimensions
       | newSucceedingSiblingNodeAggregateId | "sir-nodeward-nodington-iii" |
     Then I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
     And event at index 5 is of type "NodeAggregateWasMoved" with payload:
-      | Key              | Expected                                                                                                                                                                                                                                                                      |
-      | contentStreamId  | "cs-identifier"                                                                                                                                                                                                                                                               |
-      | nodeAggregateId  | "nody-mc-nodeface"                                                                                                                                                                                                                                                            |
-      | nodeMoveMappings | [{"movedNodeOrigin":[],"newLocations":[{"coveredDimensionSpacePoint": [],"newSucceedingSibling":{"nodeAggregateId":"sir-nodeward-nodington-iii","originDimensionSpacePoint":[], "parentNodeAggregateId": "lady-eleonode-rootford", "parentOriginDimensionSpacePoint": []}}]}] |
+      | Key                           | Expected                                                                     |
+      | contentStreamId               | "cs-identifier"                                                              |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                           |
+      | newParentNodeAggregateId      | "lady-eleonode-rootford"                                                     |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint": [],"nodeAggregateId":"sir-nodeward-nodington-iii"}] |
+
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph

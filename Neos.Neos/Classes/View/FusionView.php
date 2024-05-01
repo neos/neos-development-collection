@@ -229,7 +229,7 @@ class FusionView extends AbstractView
      * @param string $key
      * @param mixed $value
      */
-    public function assign($key, $value): AbstractView
+    public function assign(string $key, mixed $value): self
     {
         if ($key === 'request') {
             // the request cannot be used as "normal" fusion variable and must be treated as FusionGlobal

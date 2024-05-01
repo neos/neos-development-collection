@@ -10,8 +10,6 @@ use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
-use Neos\EventStore\Model\Event;
-use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Events;
 use Symfony\Component\Lock\LockFactory;
@@ -45,7 +43,7 @@ final readonly class EventPersister
         // the following logic could also be done in an AppEventStore::commit method (being called
         // directly from the individual Command Handlers).
         $normalizedEvents = Events::fromArray(
-            $eventsToPublish->events->map(fn(EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event))
+            $eventsToPublish->events->map($this->eventNormalizer->normalize(...))
         );
         $commitResult = $this->eventStore->commit(
             $eventsToPublish->streamName,
@@ -84,22 +82,5 @@ final readonly class EventPersister
         $hooks->dispatchAfterCatchup();
         $lock->release();
         //$contentRepository->catchUpProjections();
-    }
-
-    private function normalizeEvent(EventInterface|DecoratedEvent $event): Event
-    {
-        $eventId = $event instanceof DecoratedEvent && $event->eventId !== null ? $event->eventId : EventId::create();
-        $eventMetadata = $event instanceof DecoratedEvent ? $event->eventMetadata : null;
-        $causationId = $event instanceof DecoratedEvent ? $event->causationId : null;
-        $correlationId = $event instanceof DecoratedEvent ? $event->correlationId : null;
-        $event = $event instanceof DecoratedEvent ? $event->innerEvent : $event;
-        return new Event(
-            $eventId,
-            $this->eventNormalizer->getEventType($event),
-            $this->eventNormalizer->getEventData($event),
-            $eventMetadata,
-            $causationId,
-            $correlationId,
-        );
     }
 }

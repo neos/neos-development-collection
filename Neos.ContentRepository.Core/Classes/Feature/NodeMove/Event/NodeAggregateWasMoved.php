@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeMove\Event;
 
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * A node aggregate was moved in a content stream as defined in the node move mappings.
+ * A node aggregate was moved in a content stream
  *
  * We always move a node aggregate identified by a NodeAggregateId (in a given ContentStreamId); or
  * parts of the NodeAggregate.
@@ -22,49 +22,29 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * The inner structure of the event is rather complicated, that's why the following picture shows it:
  *
  * ```
- *┌───────────────────────────┐
- *│   NodeAggregateWasMoved   │
- *│-> contains NodeAggregateId│
- *└─────────┬─────────────────┘
+ *┌───────────────────────────────────┐
+ *│   NodeAggregateWasMoved           │
+ *│-> contains NodeAggregateId        │
+ *│-> contains parent NodeAggregateId │
+ *└─────────┬─────────────────────────┘
  *          │
- *          │   ┌────────────────────────────────────────────────┐
- *          │   │             OriginNodeMoveMapping              │
- *          │  *│     -> contains OriginDimensionSpacePoint      │
- *          └───▶                                                │
- *              │ (1 per OriginDimensionSpacePoint to be moved)  │
- *              └──────┬─────────────────────────────────────────┘
- *                     │
- *                     │   ┌───────────────────────────────────┐
- *                     │   │      CoverageNodeMoveMapping      │   ┌─────────────────────────────┐
- *                     │  *│   -> coveredDimensionSpacePoint   │   │     NoveMoveDestination     │
- *                     └───▶                                   │   │                             │
- *                         │ ?newSucceedingSibling, ?newParent ├───▶  nodeAggregateId            │
- *                         │     (exactly one must be set)     │   │  originDimensionSpacePoint  │
- *                         │                                   │   └─────────────────────────────┘
- *                         │ (1 per coveredDimensionSpacePoint │
- *                         │  to be moved - for each edge in   │
- *                         └───────────────────────────────────┘
+ *          │   ┌────────────────────────────────────────────────────┐
+ *          │   │             InterdimensionalSibling                │
+ *          │   │     -> contains DimensionSpacePoint                │
+ *          │  *│     -> contains succeeding sibling NodeAggregateId │
+ *          └───▶                                                    │
+ *              │ (1 per affected dimension space point)             │
+ *              └────────────────────────────────────────────────────┘
  * ```
  *
  * - We move some parts of a single NodeAggregate (`NodeAggregateWasMoved`).
- * - For each OriginDimensionSpacePoint (where a materialized Node exists which should be moved),
- *   an `OriginNodeMoveMapping` exists.
- * - For each Node which we want to move, we need to specify where the *incoming edges* of the node
- *   should be (if they should be moved). For each of these, a `CoverageNodeMoveMapping` exists.
- *
- * ## Specifying the Target of a Move inside `CoverageNodeMoveMapping`
- *
- * For a given `DimensionSpacePoint`, we specify the target node of the move as follows:
- *
- * - for *succeeding siblings* (see {@see SucceedingSiblingNodeMoveDestination}), we specify the
- *   newSucceedingSibling ID and its OriginDimensionSpacePoint; and additionally its parent ID
- *   and OriginDimensionSpacePoint. The parent is strictly redundant, but can ease projection
- *   implementer's lives.
- *
- *   HINT: The parent is ALWAYS specified, so it is also specified *if it did not change*.
- *
- * - If you want to move something at the END of a children list (or as the first child, when no child
- *   exists yet), you specify `newParent` via {@see ParentNodeMoveDestination}.
+ * - If given, a single parent NodeAggregateId is provided and to be used for all affected DimensionSpacePoints.
+ *   Else, no new parent will be set for any on the variants.
+ * - For each affected DimensionSpacePoint, an optional succeeding sibling is provided.
+ * -- If a single node is to be moved to the end, the succeeding sibling NodeAggregateId is null
+ * -- If a single node is to be moved to the start, the previous first sibling is to be set as succeeding sibling
+ * -- If a single node is not to be moved at all, e.g. if no siblings can be determined, it is considered unaffected
+ *    and it (its DSP respectively) is not part of the InterdimensionalSibling collection
  *
  * @api events are the persistence-API of the content repository
  */
@@ -76,7 +56,8 @@ final readonly class NodeAggregateWasMoved implements
     public function __construct(
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
-        public OriginNodeMoveMappings $nodeMoveMappings,
+        public ?NodeAggregateId $newParentNodeAggregateId,
+        public InterdimensionalSiblings $succeedingSiblingsForCoverage,
     ) {
     }
 
@@ -95,16 +76,43 @@ final readonly class NodeAggregateWasMoved implements
         return new self(
             $targetContentStreamId,
             $this->nodeAggregateId,
-            $this->nodeMoveMappings,
+            $this->newParentNodeAggregateId,
+            $this->succeedingSiblingsForCoverage,
         );
     }
 
     public static function fromArray(array $values): self
     {
+        if (array_key_exists('nodeMoveMappings', $values)) {
+            $newParentNodeAggregateId = null;
+            $succeedingSiblings = [];
+            foreach ($values['nodeMoveMappings'] as $nodeMoveMapping) {
+                // we don't care about origins anymore
+                foreach ($nodeMoveMapping['newLocations'] as $newLocation) {
+                    if (array_key_exists('newParent', $newLocation)) {
+                        $newParentNodeAggregateId = NodeAggregateId::fromString($newLocation['newParent']);
+                    }
+                    $succeedingSiblings[] = new InterdimensionalSibling(
+                        DimensionSpacePoint::fromArray($newLocation['coveredDimensionSpacePoint']),
+                        ($newLocation['newSucceedingSibling'] ?? null)
+                            ? NodeAggregateId::fromString($newLocation['newSucceedingSibling'])
+                            : null
+                    );
+                }
+            }
+            $succeedingSiblingsForCoverage = new InterdimensionalSiblings(...$succeedingSiblings);
+        } else {
+            $newParentNodeAggregateId = $values['newParentNodeAggregateId'] === null
+                ? null
+                : NodeAggregateId::fromString($values['newParentNodeAggregateId']);
+            $succeedingSiblingsForCoverage = InterdimensionalSiblings::fromArray($values['succeedingSiblingsForCoverage']);
+        }
+
         return new self(
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
-            OriginNodeMoveMappings::fromArray($values['nodeMoveMappings']),
+            $newParentNodeAggregateId,
+            $succeedingSiblingsForCoverage,
         );
     }
 
