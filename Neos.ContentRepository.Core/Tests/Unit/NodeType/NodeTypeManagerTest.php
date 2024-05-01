@@ -433,8 +433,8 @@ class NodeTypeManagerTest extends TestCase
      */
     public function getAutoCreatedChildNodesReturnsLowercaseNames()
     {
-        $parentNodeType = $this->nodeTypeManager->getNodeType(NodeTypeName::fromString('Neos.ContentRepository.Testing:Page2'));
-        $autoCreatedChildNodes = $this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($parentNodeType);
+        $parentNodeTypeName = NodeTypeName::fromString('Neos.ContentRepository.Testing:Page2');
+        $autoCreatedChildNodes = $this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($parentNodeTypeName);
         // This is configured as "nodeName" above, but should be normalized to "nodename"
         self::assertArrayHasKey('nodename', $autoCreatedChildNodes);
     }
