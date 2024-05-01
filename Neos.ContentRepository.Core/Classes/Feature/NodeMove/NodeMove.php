@@ -98,10 +98,10 @@ trait NodeMove
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->dimensionSpacePoint);
 
-        $affectedDimensionSpacePoints = $this->resolveAffectedDimensionSpacePointSet(
+        $affectedDimensionSpacePoints = $command->relationDistributionStrategy->resolveAffectedDimensionSpacePointSet(
             $nodeAggregate,
-            $command->relationDistributionStrategy,
-            $command->dimensionSpacePoint
+            $command->dimensionSpacePoint,
+            $this->interDimensionalVariationGraph
         );
 
         if ($command->newParentNodeAggregateId) {
@@ -223,22 +223,6 @@ trait NodeMove
             ),
             $expectedVersion
         );
-    }
-
-    private function resolveAffectedDimensionSpacePointSet(
-        NodeAggregate $nodeAggregate,
-        Dto\RelationDistributionStrategy $relationDistributionStrategy,
-        DimensionSpace\DimensionSpacePoint $referenceDimensionSpacePoint
-    ): DimensionSpacePointSet {
-        return match ($relationDistributionStrategy) {
-            Dto\RelationDistributionStrategy::STRATEGY_SCATTER =>
-            new DimensionSpacePointSet([$referenceDimensionSpacePoint]),
-            RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS =>
-            $nodeAggregate->coveredDimensionSpacePoints->getIntersection(
-                $this->getInterDimensionalVariationGraph()->getSpecializationSet($referenceDimensionSpacePoint)
-            ),
-            default => $nodeAggregate->coveredDimensionSpacePoints,
-        };
     }
 
     /**
