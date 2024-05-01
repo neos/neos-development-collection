@@ -139,11 +139,14 @@ trait SubtreeTagging
         $nodeTags = $this->nodeTagsForNode($nodeAggregateId, $contentStreamId, $coveredDimensionSpacePoint);
         $newParentSubtreeTags = $this->nodeTagsForNode($newParentNodeAggregateId, $contentStreamId, $coveredDimensionSpacePoint);
         $newSubtreeTags = [];
+        $newDescendantSubtreeTags = [];
         foreach ($nodeTags->withoutInherited() as $tag) {
             $newSubtreeTags[$tag->value] = true;
+            $newDescendantSubtreeTags[$tag->value] = null;
         }
         foreach ($newParentSubtreeTags as $tag) {
-            $newSubtreeTags[$tag->value] = null;
+            $newSubtreeTags[$tag->value] ??= null;
+            $newDescendantSubtreeTags[$tag->value] = null;
         }
         if ($newSubtreeTags === [] && $nodeTags->isEmpty()) {
             return;
@@ -151,7 +154,9 @@ trait SubtreeTagging
         $this->getDatabaseConnection()->executeStatement('
             UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
             SET h.subtreetags = JSON_MERGE_PATCH(:newParentTags, JSON_MERGE_PATCH(\'{}\', h.subtreetags))
-            WHERE h.childnodeanchor IN (
+            WHERE h.contentstreamid = :contentStreamId
+            AND h.dimensionspacepointhash = :dimensionSpacePointHash
+            AND h.childnodeanchor IN (
               WITH RECURSIVE cte (id) AS (
                 SELECT ch.childnodeanchor
                 FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation ch
@@ -173,7 +178,7 @@ trait SubtreeTagging
             'contentStreamId' => $contentStreamId->value,
             'nodeAggregateId' => $nodeAggregateId->value,
             'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-            'newParentTags' => json_encode($newSubtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
+            'newParentTags' => json_encode($newDescendantSubtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
         ]);
         $this->getDatabaseConnection()->executeStatement('
             UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h

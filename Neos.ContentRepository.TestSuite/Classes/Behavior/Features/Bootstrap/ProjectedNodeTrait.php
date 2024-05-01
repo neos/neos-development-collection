@@ -243,23 +243,29 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to be exactly explicitly tagged "(.*)"$/
-     * @param string $tagList the comma-separated list of tag names
+     * @param string $expectedTagList the comma-separated list of tag names
      */
-    public function iExpectThisNodeToBeExactlyExplicitlyTagged(string $tagList): void
+    public function iExpectThisNodeToBeExactlyExplicitlyTagged(string $expectedTagList): void
     {
-        $this->assertOnCurrentNode(function (Node $currentNode) use ($tagList) {
-            $currentNode->tags->withoutInherited()->toStringArray() === explode(',', $tagList);
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedTagList) {
+            Assert::assertSame(
+                ($expectedTagList === '') ? [] : explode(',', $expectedTagList),
+                $currentNode->tags->withoutInherited()->toStringArray()
+            );
         });
     }
 
     /**
      * @Then /^I expect this node to exactly inherit the tags "(.*)"$/
-     * @param string $tagList the comma-separated list of tag names
+     * @param string $expectedTagList the comma-separated list of tag names
      */
-    public function iExpectThisNodeToExactlyInheritTheTags(string $tagList): void
+    public function iExpectThisNodeToExactlyInheritTheTags(string $expectedTagList): void
     {
-        $this->assertOnCurrentNode(function (Node $currentNode) use ($tagList) {
-            $currentNode->tags->onlyInherited()->toStringArray() === explode(',', $tagList);
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedTagList) {
+            Assert::assertSame(
+                ($expectedTagList === '') ? [] : explode(',', $expectedTagList),
+                $currentNode->tags->onlyInherited()->toStringArray(),
+            );
         });
     }
 
