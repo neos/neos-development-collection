@@ -324,30 +324,36 @@ final class ContentHypergraph implements ContentGraphInterface
     public function findAllContentStreamIds(): iterable
     {
         // TODO: Implement findAllContentStreamIds() method.
+        return [];
     }
 
     public function findUnusedContentStreams(bool $findTemporaryContentStreams): iterable
     {
         // TODO: Implement findUnusedContentStreams() method.
+        return [];
     }
 
     public function findStateForContentStream(ContentStreamId $contentStreamId): ?ContentStreamState
     {
         // TODO: Implement findStateForContentStream() method.
+        return null;
     }
 
     public function findUnusedAndRemovedContentStreams(): iterable
     {
         // TODO: Implement findUnusedAndRemovedContentStreams() method.
+        return [];
     }
 
     public function findVersionForContentStream(ContentStreamId $contentStreamId): MaybeVersion
     {
         // TODO: Implement findVersionForContentStream() method.
+        return MaybeVersion::fromVersionOrNull(null);
     }
 
     public function hasContentStream(ContentStreamId $contentStreamId): bool
     {
         // TODO: Implement hasContentStream() method.
+        return false;
     }
 }

@@ -346,6 +346,7 @@ final class ContentGraph implements ContentGraphInterface
 
     public function findUsedNodeTypeNames(): iterable
     {
+        /** @phpstan-ignore-next-line */
         return array_map(NodeTypeName::fromString(...), $this->fetchFirstColumn($this->createQueryBuilder()
             ->select('DISTINCT nodetypename')
             ->from($this->tableNamePrefix . '_node')));
@@ -365,6 +366,7 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->createQueryBuilder()
             ->select('contentstreamid')
             ->from($this->tableNamePrefix . '_contentstream');
+        /** @phpstan-ignore-next-line */
         return array_map(ContentStreamId::fromString(...), $this->fetchFirstColumn($queryBuilder));
     }
 
@@ -384,6 +386,7 @@ final class ContentGraph implements ContentGraphInterface
             ->where('removed = 0')
             ->andWhere('state IN (:states)')
             ->setParameter('states', $states, Connection::PARAM_STR_ARRAY);
+        /** @phpstan-ignore-next-line */
         return array_map(ContentStreamId::fromString(...), $this->fetchFirstColumn($queryBuilder));
     }
 

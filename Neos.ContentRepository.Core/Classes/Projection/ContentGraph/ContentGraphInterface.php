@@ -194,5 +194,4 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @internal To be moved to ContentGraphAdapter, see https://github.com/neos/neos-development-collection/pull/4979
      */
     public function hasContentStream(ContentStreamId $contentStreamId): bool;
-
 }

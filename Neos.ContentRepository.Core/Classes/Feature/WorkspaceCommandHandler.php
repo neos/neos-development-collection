@@ -361,7 +361,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        $oldWorkspaceContentStreamIdState = $contentRepository->getContentStreamFinder()
+        $oldWorkspaceContentStreamIdState = $contentRepository->getContentGraph()
             ->findStateForContentStream($oldWorkspaceContentStreamId);
         if ($oldWorkspaceContentStreamIdState === null) {
             throw new \DomainException('Cannot rebase a workspace with a stateless content stream', 1711718314);

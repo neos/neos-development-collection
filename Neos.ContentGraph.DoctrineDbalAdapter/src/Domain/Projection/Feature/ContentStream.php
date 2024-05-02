@@ -89,5 +89,4 @@ trait ContentStream
             'contentStreamId' => $contentStreamId->value
         ]);
     }
-
 }
