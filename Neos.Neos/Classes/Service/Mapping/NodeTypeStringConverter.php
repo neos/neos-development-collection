@@ -20,8 +20,8 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
- * Convert a boolean to a JavaScript compatible string representation.
- *
+ * @internal
+ * @deprecated todo still used?
  * @Flow\Scope("singleton")
  */
 class NodeTypeStringConverter extends AbstractTypeConverter

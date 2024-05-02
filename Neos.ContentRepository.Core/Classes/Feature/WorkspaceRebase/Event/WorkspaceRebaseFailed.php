@@ -20,6 +20,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @api events are the persistence-API of the content repository
+ * @deprecated this is no longer logged, instead an exception is thrown
+ * @see Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed
  */
 final readonly class WorkspaceRebaseFailed implements EventInterface
 {

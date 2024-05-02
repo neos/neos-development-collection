@@ -115,6 +115,12 @@ trait NodeReferencing
         );
         $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->nodeTypeName, $command->referenceName);
 
+        $this->requireNodeTypeToAllowNumberOfReferencesInReference(
+            $command->references,
+            $command->referenceName,
+            $sourceNodeAggregate->nodeTypeName
+        );
+
         foreach ($command->references as $reference) {
             assert($reference instanceof SerializedNodeReference);
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
@@ -135,7 +141,7 @@ trait NodeReferencing
         }
 
         $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->nodeTypeName);
-        $scopeDeclaration = $sourceNodeType->getProperties()[$command->referenceName->value]['scope'] ?? '';
+        $scopeDeclaration = $sourceNodeType->getReferences()[$command->referenceName->value]['scope'] ?? '';
         $scope = PropertyScope::tryFrom($scopeDeclaration) ?: PropertyScope::SCOPE_NODE;
 
         $affectedOrigins = $scope->resolveAffectedOrigins(

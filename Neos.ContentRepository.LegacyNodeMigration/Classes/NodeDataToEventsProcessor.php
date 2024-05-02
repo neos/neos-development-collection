@@ -15,15 +15,11 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
@@ -170,11 +166,12 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
     private function exportEvent(EventInterface $event): void
     {
+        $normalizedEvent = $this->eventNormalizer->normalize($event);
         $exportedEvent = new ExportedEvent(
-            Uuid::uuid4()->toString(),
-            $this->eventNormalizer->getEventType($event)->value,
-            json_decode($this->eventNormalizer->getEventData($event)->value, true),
-            []
+            $normalizedEvent->id->value,
+            $normalizedEvent->type->value,
+            json_decode($normalizedEvent->data->value, true),
+            [],
         );
         assert($this->eventFileResource !== null);
         fwrite($this->eventFileResource, $exportedEvent->toJson() . chr(10));
@@ -346,14 +343,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
 
         foreach ($decodedProperties as $propertyName => $propertyValue) {
-            try {
-                $type = $nodeType->getPropertyType($propertyName);
-            } catch (\InvalidArgumentException $exception) {
-                $this->dispatch(Severity::WARNING, 'Skipped node data processing for the property "%s". The property name is not part of the NodeType schema for the NodeType "%s". (Node: %s)', $propertyName, $nodeType->name->value, $nodeDataRow['identifier']);
-                continue;
-            }
-
-            if ($type === 'reference' || $type === 'references') {
+            if ($nodeType->hasReference($propertyName)) {
                 if (!empty($propertyValue)) {
                     if (!is_array($propertyValue)) {
                         $propertyValue = [$propertyValue];
@@ -363,6 +353,11 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                 continue;
             }
 
+            if (!$nodeType->hasProperty($propertyName)) {
+                $this->dispatch(Severity::WARNING, 'Skipped node data processing for the property "%s". The property name is not part of the NodeType schema for the NodeType "%s". (Node: %s)', $propertyName, $nodeType->name->value, $nodeDataRow['identifier']);
+                continue;
+            }
+            $type = $nodeType->getPropertyType($propertyName);
             // In the old `Node`, we call the property mapper to convert the returned properties from NodeData;
             // so we need to do the same here.
             try {
@@ -477,23 +472,13 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $this->exportEvent(new NodeAggregateWasMoved(
                 $this->contentStreamId,
                 $nodeAggregateId,
-                OriginNodeMoveMappings::fromArray([
-                    new OriginNodeMoveMapping(
-                        $originDimensionSpacePoint,
-                        CoverageNodeMoveMappings::create(
-                            CoverageNodeMoveMapping::createForNewSucceedingSibling(
-                                $originDimensionSpacePoint->toDimensionSpacePoint(),
-                                SucceedingSiblingNodeMoveDestination::create(
-                                    $parentNodeAggregate->nodeAggregateId,
-                                    $variantSourceOriginDimensionSpacePoint,
-
-                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId,
-                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->originDimensionSpacePoint
-                                )
-                            )
-                        )
+                $parentNodeAggregate->nodeAggregateId,
+                new InterdimensionalSiblings(
+                    new InterdimensionalSibling(
+                        $originDimensionSpacePoint->toDimensionSpacePoint(),
+                        null
                     )
-                ])
+                )
             ));
         }
     }

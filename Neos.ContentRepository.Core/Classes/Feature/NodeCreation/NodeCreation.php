@@ -102,12 +102,7 @@ trait NodeCreation
 
         $nodeType = $this->requireNodeType($nodeTypeName);
         foreach ($propertyValues->values as $propertyName => $propertyValue) {
-            if (!isset($nodeType->getProperties()[$propertyName])) {
-                throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
-                    PropertyName::fromString($propertyName),
-                    $nodeTypeName
-                );
-            }
+            $this->requireNodeTypeToDeclareProperty($nodeTypeName, PropertyName::fromString($propertyName));
             $propertyType = PropertyType::fromNodeTypeDeclaration(
                 $nodeType->getPropertyType($propertyName),
                 PropertyName::fromString($propertyName),
@@ -180,7 +175,9 @@ trait NodeCreation
                 $contentStreamId,
                 $command->nodeName,
                 $command->parentNodeAggregateId,
-                $command->originDimensionSpacePoint,
+                $parentNodeAggregate->classification->isRoot()
+                    ? DimensionSpace\OriginDimensionSpacePoint::createWithoutDimensions()
+                    : $command->originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
                 $contentRepository
             );
