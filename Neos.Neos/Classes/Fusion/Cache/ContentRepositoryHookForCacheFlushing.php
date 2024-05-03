@@ -99,7 +99,7 @@ class ContentRepositoryHookForCacheFlushing implements ContentRepositoryHookInte
     }
 
 
-    public function onBeforeCatchUp(): void
+    public function onBeforeEvents(): void
     {
     }
 
@@ -146,7 +146,7 @@ class ContentRepositoryHookForCacheFlushing implements ContentRepositoryHookInte
         }
     }
 
-    public function onAfterCatchUp(): void
+    public function onAfterEvents(): void
     {
         foreach ($this->cacheFlushesOnAfterCatchUp as $entry) {
             $this->contentCacheFlusher->flushNodeAggregate($entry['cr'], $entry['csi'], $entry['nai']);

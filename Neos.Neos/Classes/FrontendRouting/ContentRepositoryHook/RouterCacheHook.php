@@ -31,7 +31,7 @@ final class RouterCacheHook implements ContentRepositoryHookInterface
     ) {
     }
 
-    public function onBeforeCatchUp(): void
+    public function onBeforeEvents(): void
     {
         // Nothing to do here
     }
@@ -58,7 +58,7 @@ final class RouterCacheHook implements ContentRepositoryHookInterface
         };
     }
 
-    public function onAfterCatchUp(): void
+    public function onAfterEvents(): void
     {
         // Nothing to do here
     }

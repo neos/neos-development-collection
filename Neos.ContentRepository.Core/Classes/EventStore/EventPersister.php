@@ -13,7 +13,6 @@ use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Events;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Lock\Store\SemaphoreStore;
 
 /**
  * Internal service to persist {@see EventInterface} with the proper normalization, and triggering the
@@ -28,6 +27,7 @@ final readonly class EventPersister
         private EventNormalizer $eventNormalizer,
         private Projections $projections,
         private ContentRepositoryHooksFactory $hooksFactory,
+        private LockFactory $lockFactory,
     ) {
     }
 
@@ -51,9 +51,7 @@ final readonly class EventPersister
             $eventsToPublish->expectedVersion
         );
         $hooks = $this->hooksFactory->build($contentRepository);
-        $store = new SemaphoreStore();
-        $factory = new LockFactory($store);
-        $lock = $factory->createLock($contentRepository->id->value . '_catchup');
+        $lock = $this->lockFactory->createLock($contentRepository->id->value . '_catchup');
         $lock->acquire(true);
 
         $expectedCheckpoint = SequenceNumber::fromInteger($commitResult->highestCommittedSequenceNumber->value - $eventsToPublish->events->count());

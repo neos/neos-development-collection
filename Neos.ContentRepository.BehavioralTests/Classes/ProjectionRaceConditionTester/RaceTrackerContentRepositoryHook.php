@@ -107,7 +107,7 @@ final class RaceTrackerContentRepositoryHook implements ContentRepositoryHookInt
     protected $configuration;
     private bool $inCriticalSection = false;
 
-    public function onBeforeCatchUp(): void
+    public function onBeforeEvents(): void
     {
         RedisInterleavingLogger::connect($this->configuration['redis']['host'], $this->configuration['redis']['port']);
     }
@@ -126,7 +126,7 @@ final class RaceTrackerContentRepositoryHook implements ContentRepositoryHookInt
     {
     }
 
-    public function onAfterCatchUp(): void
+    public function onAfterEvents(): void
     {
         // we only want to track relevant lock release calls (i.e. if we were in the event processing loop before)
         if ($this->inCriticalSection) {

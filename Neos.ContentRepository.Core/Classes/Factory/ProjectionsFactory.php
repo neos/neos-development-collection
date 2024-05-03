@@ -13,7 +13,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 final class ProjectionsFactory
 {
     /**
-     * @var array<class-string<ProjectionInterface<ProjectionStateInterface>>, array{factory: ProjectionFactoryInterface<ProjectionInterface<ProjectionStateInterface>>, options: array<string, mixed>}>
+     * @var array<array{factory: ProjectionFactoryInterface<ProjectionInterface<ProjectionStateInterface>>, options: array<string, mixed>}>
      */
     private array $factories = [];
 
@@ -25,7 +25,7 @@ final class ProjectionsFactory
      */
     public function registerFactory(ProjectionFactoryInterface $factory, array $options): void
     {
-        $this->factories[get_class($factory)] = [
+        $this->factories[] = [
             'factory' => $factory,
             'options' => $options,
         ];

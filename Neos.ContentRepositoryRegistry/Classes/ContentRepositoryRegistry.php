@@ -256,6 +256,7 @@ final class ContentRepositoryRegistry
         return $hooksFactory;
     }
 
+    /** @param array<string, mixed> $contentRepositorySettings */
     private function buildUserIdProvider(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): UserIdProviderInterface
     {
         isset($contentRepositorySettings['userIdProvider']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have userIdProvider.factoryObjectName configured.', $contentRepositoryId->value);

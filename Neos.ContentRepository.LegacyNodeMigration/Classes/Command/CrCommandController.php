@@ -19,12 +19,12 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
+use Neos\ContentRepository\Core\Service\ProjectionServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
-use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -47,7 +47,7 @@ class CrCommandController extends CommandController
         private readonly PropertyMapper $propertyMapper,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly SiteRepository $siteRepository,
-        private readonly ProjectionReplayServiceFactory $projectionReplayServiceFactory,
+        private readonly ProjectionServiceFactory $projectionServiceFactory,
     ) {
         parent::__construct();
     }
@@ -120,7 +120,7 @@ class CrCommandController extends CommandController
         }
         $this->connection->executeStatement('TRUNCATE ' . $connection->quoteIdentifier($eventTableName));
         // we also need to reset the projections; in order to ensure the system runs deterministically
-        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
         $projectionService->resetAllProjections();
         $this->outputLine('Truncated events');
 

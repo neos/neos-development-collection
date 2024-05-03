@@ -18,6 +18,8 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Service\ProjectionService;
+use Neos\ContentRepository\Core\Service\ProjectionServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GherkinTableNodeBasedContentDimensionSource;
 use Neos\EventStore\EventStoreInterface;
@@ -179,7 +181,9 @@ trait CRBehavioralTestsSubjectProvider
         $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
         $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
         $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
-        $contentRepository->resetProjectionStates();
+        /** @var ProjectionService $projectionService */
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->getObject(ProjectionServiceFactory::class));
+        $projectionService->resetAllProjections();
 
         return $contentRepository;
     }

@@ -33,6 +33,8 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\Store\SemaphoreStore;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -93,7 +95,6 @@ final class ContentRepositoryFactory
                 $this->buildCommandBus(),
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projections,
-                $this->projectionFactoryDependencies->eventNormalizer,
                 $this->buildEventPersister(),
                 $this->projectionFactoryDependencies->nodeTypeManager,
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
@@ -167,6 +168,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->eventNormalizer,
                 $this->projections,
                 $this->hooksFactory,
+                new LockFactory(new SemaphoreStore()), // TODO make configurable
             );
         }
         return $this->eventPersister;

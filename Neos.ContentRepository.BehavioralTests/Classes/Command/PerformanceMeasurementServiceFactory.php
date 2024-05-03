@@ -36,7 +36,8 @@ class PerformanceMeasurementServiceFactory implements ContentRepositoryServiceFa
             $serviceFactoryDependencies->eventPersister,
             $serviceFactoryDependencies->contentRepository,
             $this->dbal,
-            $serviceFactoryDependencies->contentRepositoryId
+            $serviceFactoryDependencies->contentRepositoryId,
+            $serviceFactoryDependencies->projections,
         );
     }
 }

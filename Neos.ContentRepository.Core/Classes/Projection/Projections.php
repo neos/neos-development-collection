@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection;
 
+use Neos\ContentRepository\Core\Service\ProjectionService;
+
 /**
  * An immutable set of Content Repository projections ({@see ProjectionInterface}
  *
  * @implements \IteratorAggregate<ProjectionInterface>
- * @internal
+ * @internal only used by framework code or services such as {@see ProjectionService}
  */
 final class Projections implements \IteratorAggregate, \Countable
 {
@@ -84,6 +86,13 @@ final class Projections implements \IteratorAggregate, \Countable
     public function getClassNames(): array
     {
         return array_keys($this->projections);
+    }
+
+    public function resetAll(): void
+    {
+        foreach ($this->projections as $projection) {
+            $projection->reset();
+        }
     }
 
     /**

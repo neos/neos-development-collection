@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\ContentRepository;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -28,11 +29,11 @@ use Neos\EventStore\Model\EventEnvelope;
 interface ContentRepositoryHookInterface
 {
     /**
-     * This hook is called at the beginning of {@see ContentRepository::catchUpProjections()};
+     * This hook is by {@see EventPersister::publishEvents()} before a batch of one or more events are applied
      *
      * @return void
      */
-    public function onBeforeCatchUp(): void;
+    public function onBeforeEvents(): void;
 
     /**
      * This hook is called for every event during the catchup process, **before** the projections are updated.
@@ -45,8 +46,7 @@ interface ContentRepositoryHookInterface
     public function onAfterEvent(EventInterface $event, EventEnvelope $eventEnvelope): void;
 
     /**
-     * This hook is called at the END of {@see ProjectionInterface::catchUpProjections()}, directly
-     * before exiting the method.
+     * This hook is called at the END of {@see EventPersister::publishEvents()} after a batch of one or more events were applied
      */
-    public function onAfterCatchUp(): void;
+    public function onAfterEvents(): void;
 }

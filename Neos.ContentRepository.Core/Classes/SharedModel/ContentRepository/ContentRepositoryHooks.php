@@ -43,7 +43,7 @@ final class ContentRepositoryHooks implements \IteratorAggregate
     public function dispatchBeforeCatchUp(): void
     {
         foreach ($this->hooks as $hook) {
-            $hook->onBeforeCatchUp();
+            $hook->onBeforeEvents();
         }
     }
 
@@ -54,7 +54,7 @@ final class ContentRepositoryHooks implements \IteratorAggregate
         }
     }
 
-    public function dispatchAfterEvent(EventInterface $event, EventEnvelope $eventEnvelope)
+    public function dispatchAfterEvent(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         foreach ($this->hooks as $hook) {
             $hook->onAfterEvent($event, $eventEnvelope);
@@ -64,7 +64,7 @@ final class ContentRepositoryHooks implements \IteratorAggregate
     public function dispatchAfterCatchup(): void
     {
         foreach ($this->hooks as $hook) {
-            $hook->onAfterCatchUp();
+            $hook->onAfterEvents();
         }
     }
 

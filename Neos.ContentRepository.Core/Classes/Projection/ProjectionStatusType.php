@@ -11,4 +11,5 @@ enum ProjectionStatusType
     case ERROR;
     case SETUP_REQUIRED;
     case REPLAY_REQUIRED;
+    case CATCHUP_REQUIRED;
 }
