@@ -113,7 +113,7 @@ final class CrCommandController extends CommandController
      *
      * @param string $projection Full Qualified Class Name or alias of the projection to replay (e.g. "contentStream")
      * @param string $contentRepository Identifier of the Content Repository instance to operate on
-     * @param int $until Until which sequence number should projections be replayed? useful for debugging
+     * @param int $until Until which sequence number should projections be caught up to? useful for debugging
      */
     public function projectionCatchUpCommand(string $projection, string $contentRepository = 'default', int $until = 0): void
     {
@@ -132,6 +132,47 @@ final class CrCommandController extends CommandController
         $projectionService->catchUpProjection($projection, $options);
         $progressBar->finish();
         $this->outputLine();
+        $this->outputLine('<success>Done.</success>');
+    }
+
+    /**
+     * Applies un-applied events to all projections of the specified Content Repository by performing a catchup
+     *
+     * @param string $contentRepository Identifier of the Content Repository instance to operate on
+     * @param int $until Until which sequence number should projections be caught up to? useful for debugging
+     */
+    public function projectionCatchUpAllCommand(string $contentRepository = 'default', int $until = 0): void
+    {
+        $mainSection = ($this->output->getOutput() instanceof ConsoleOutput) ? $this->output->getOutput()->section() : $this->output->getOutput();
+        $mainProgressBar = new ProgressBar($mainSection);
+        $mainProgressBar->setBarCharacter('<success>█</success>');
+        $mainProgressBar->setEmptyBarCharacter('░');
+        $mainProgressBar->setProgressCharacter('<success>█</success>');
+        $mainProgressBar->setFormat('debug');
+
+        $subSection = ($this->output->getOutput() instanceof ConsoleOutput) ? $this->output->getOutput()->section() : $this->output->getOutput();
+        $progressBar = new ProgressBar($subSection);
+        $progressBar->setFormat(' %message% - %current%/%max% [%bar%] %percent:3s%% %elapsed:16s%/%estimated:-16s% %memory:6s%');
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
+        $this->outputLine('Replaying events for all projections of Content Repository "%s" ...', [$contentRepositoryId->value]);
+        $options = CatchUpOptions::create();
+        $options = $options->with(progressCallback: fn () => $progressBar->advance());
+        if ($until > 0) {
+            $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));
+        }
+        $highestSequenceNumber = max($until > 0 ? $until : $projectionService->highestSequenceNumber()->value, 1);
+        $mainProgressBar->start($projectionService->numberOfProjections());
+        $mainProgressCallback = static function (string $projectionAlias) use ($mainProgressBar, $progressBar, $highestSequenceNumber) {
+                $mainProgressBar->advance();
+                $progressBar->setMessage($projectionAlias);
+                $progressBar->start($highestSequenceNumber);
+                $progressBar->setProgress(0);
+            };
+        $projectionService->replayAllProjections($options, $mainProgressCallback);
+        $mainProgressBar->finish();
+        $progressBar->finish();
         $this->outputLine('<success>Done.</success>');
     }
 

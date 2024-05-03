@@ -37,6 +37,17 @@ class ProjectionService implements ContentRepositoryServiceInterface
         $this->catchUpProjectionInternal($projection, $options);
     }
 
+    public function catchUpAllProjections(CatchUpOptions $options, ?\Closure $progressCallback = null): void
+    {
+        foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
+            if ($progressCallback) {
+                $progressCallback($classNamesAndAlias['alias']);
+            }
+            $projection = $this->projections->get($classNamesAndAlias['className']);
+            $this->catchUpProjectionInternal($projection, $options);
+        }
+    }
+
     public function replayProjection(string $projectionAliasOrClassName, CatchUpOptions $options): void
     {
         $projection = $this->resolveProjection($projectionAliasOrClassName);
