@@ -24,3 +24,6 @@ Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
       value: Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory
     2:
       object: 'Doctrine\DBAL\Connection'
+
+Neos\ContentRepository\Core\Service\ProjectionServiceFactory:
+  scope: singleton
