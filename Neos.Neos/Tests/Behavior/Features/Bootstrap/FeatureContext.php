@@ -37,6 +37,7 @@ class FeatureContext implements BehatContext
     use MigrationsTrait;
     use FusionTrait;
 
+    use ContentCacheTrait;
     use AssetTrait;
 
     protected Environment $environment;
