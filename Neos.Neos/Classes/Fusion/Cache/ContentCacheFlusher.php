@@ -50,7 +50,7 @@ class ContentCacheFlusher
     /**
      * @var array<string,string>
      */
-    private array $tagsToFlushOnShutdown = [];
+    private array $tagsToFlushAfterPersistance = [];
 
     public function __construct(
         protected readonly ContentCache $contentCache,
@@ -302,15 +302,20 @@ class ContentCacheFlusher
             }
         }
 
-        $this->tagsToFlushOnShutdown = array_merge($tagsToFlush, $this->tagsToFlushOnShutdown);
+        $this->tagsToFlushAfterPersistance = array_merge($tagsToFlush, $this->tagsToFlushAfterPersistance);
     }
 
     /**
      * Flush caches according to the previously registered changes.
      */
+    public function flushCollectedTags(): void
+    {
+        $this->flushTags($this->tagsToFlushAfterPersistance);
+        $this->tagsToFlushAfterPersistance = [];
+    }
+
     public function shutdownObject(): void
     {
-        $this->flushTags($this->tagsToFlushOnShutdown);
-        $this->tagsToFlushOnShutdown = [];
+        $this->flushCollectedTags();
     }
 }
