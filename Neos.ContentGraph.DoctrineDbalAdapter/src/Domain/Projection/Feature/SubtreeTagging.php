@@ -136,84 +136,42 @@ trait SubtreeTagging
 
     private function moveSubtreeTags(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeAggregateId $newParentNodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint): void
     {
-        $nodeTags = $this->nodeTagsForNode($nodeAggregateId, $contentStreamId, $coveredDimensionSpacePoint);
-        $newParentSubtreeTags = $this->nodeTagsForNode($newParentNodeAggregateId, $contentStreamId, $coveredDimensionSpacePoint);
-        $newSubtreeTags = [];
-        $newDescendantSubtreeTags = [];
-        foreach ($nodeTags->withoutInherited() as $tag) {
-            $newSubtreeTags[$tag->value] = true;
-            $newDescendantSubtreeTags[$tag->value] = null;
-        }
-        foreach ($newParentSubtreeTags as $tag) {
-            $newSubtreeTags[$tag->value] ??= null;
-            $newDescendantSubtreeTags[$tag->value] = null;
-        }
-        if ($newSubtreeTags === [] && $nodeTags->isEmpty()) {
-            return;
-        }
         $this->getDatabaseConnection()->executeStatement('
-            UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
-            SET h.subtreetags = JSON_MERGE_PATCH(:newParentTags, JSON_MERGE_PATCH(\'{}\', h.subtreetags))
-            WHERE h.contentstreamid = :contentStreamId
-            AND h.dimensionspacepointhash = :dimensionSpacePointHash
-            AND h.childnodeanchor IN (
-              WITH RECURSIVE cte (id) AS (
-                SELECT ch.childnodeanchor
-                FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation ch
-                INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = ch.parentnodeanchor
-                WHERE
-                  n.nodeaggregateid = :nodeAggregateId
-                  AND ch.contentstreamid = :contentStreamId
-                  AND ch.dimensionspacepointhash = :dimensionSpacePointHash
-                UNION ALL
+            UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h,
+            (
+              WITH RECURSIVE cte AS (
                 SELECT
-                  dh.childnodeanchor
+                  JSON_KEYS(th.subtreetags) subtreeTagsToInherit, th.childnodeanchor
+                FROM
+                  ' . $this->getTableNamePrefix() . '_hierarchyrelation th
+                  INNER JOIN ' . $this->getTableNamePrefix() . '_node tn ON tn.relationanchorpoint = th.childnodeanchor
+                WHERE
+                  tn.nodeaggregateid = :nodeAggregateId
+                  AND th.contentstreamid = :contentStreamId
+                  AND th.dimensionspacepointhash = :dimensionSpacePointHash
+                UNION
+                SELECT JSON_MERGE(cte.subtreetagsToInherit, JSON_KEYS(JSON_MERGE_PATCH(\'{}\', dh.subtreetags))) subtreeTagsToInherit, dh.childnodeanchor
                 FROM
                   cte
-                  JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation dh ON dh.parentnodeanchor = cte.id
+                  JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation dh ON dh.parentnodeanchor = cte.childnodeanchor
               )
-              SELECT id FROM cte
+              SELECT * FROM cte
+            ) AS r
+            SET h.subtreetags = (
+              SELECT
+                JSON_MERGE_PATCH(JSON_OBJECTAGG(htk.k, null), JSON_MERGE_PATCH(\'{}\', h.subtreetags))
+              FROM
+                JSON_TABLE(r.subtreeTagsToInherit, \'$[*]\' COLUMNS (k VARCHAR(36) PATH \'$\')) htk
             )
-            ', [
-            'contentStreamId' => $contentStreamId->value,
-            'nodeAggregateId' => $nodeAggregateId->value,
-            'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-            'newParentTags' => json_encode($newDescendantSubtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
-        ]);
-        $this->getDatabaseConnection()->executeStatement('
-            UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
-            INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = h.childnodeanchor
-            SET h.subtreetags = :newParentTags
             WHERE
-              n.nodeaggregateid = :nodeAggregateId
+              h.childnodeanchor = r.childnodeanchor
               AND h.contentstreamid = :contentStreamId
               AND h.dimensionspacepointhash = :dimensionSpacePointHash
-        ', [
-            'contentStreamId' => $contentStreamId->value,
-            'nodeAggregateId' => $nodeAggregateId->value,
-            'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-            'newParentTags' => json_encode($newSubtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
-        ]);
-    }
-
-    private function nodeTagsForNode(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): NodeTags
-    {
-        $subtreeTagsJson = $this->getDatabaseConnection()->fetchOne('
-                SELECT h.subtreetags FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation h
-                INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = h.childnodeanchor
-                WHERE
-                  n.nodeaggregateid = :nodeAggregateId
-                  AND h.contentstreamid = :contentStreamId
-                  AND h.dimensionspacepointhash = :dimensionSpacePointHash
             ', [
-            'nodeAggregateId' => $nodeAggregateId->value,
             'contentStreamId' => $contentStreamId->value,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+            'nodeAggregateId' => $newParentNodeAggregateId->value,
+            'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
         ]);
-        if (!is_string($subtreeTagsJson)) {
-            throw new \RuntimeException(sprintf('Failed to fetch SubtreeTags for node "%s" in content subgraph "%s@%s"', $nodeAggregateId->value, $dimensionSpacePoint->toJson(), $contentStreamId->value), 1698838865);
-        }
-        return NodeFactory::extractNodeTagsFromJson($subtreeTagsJson);
     }
 
     private function subtreeTagsForHierarchyRelation(ContentStreamId $contentStreamId, NodeRelationAnchorPoint $parentNodeAnchorPoint, DimensionSpacePoint $dimensionSpacePoint): NodeTags
