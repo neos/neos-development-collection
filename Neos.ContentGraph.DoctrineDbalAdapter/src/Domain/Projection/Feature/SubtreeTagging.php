@@ -134,8 +134,11 @@ trait SubtreeTagging
         ]);
     }
 
-    private function moveSubtreeTags(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeAggregateId $newParentNodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint): void
-    {
+    private function moveSubtreeTags(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $newParentNodeAggregateId,
+        DimensionSpacePoint $coveredDimensionSpacePoint
+    ): void {
         $this->getDatabaseConnection()->executeStatement('
             UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h,
             (
@@ -146,20 +149,36 @@ trait SubtreeTagging
                   ' . $this->getTableNamePrefix() . '_hierarchyrelation th
                   INNER JOIN ' . $this->getTableNamePrefix() . '_node tn ON tn.relationanchorpoint = th.childnodeanchor
                 WHERE
-                  tn.nodeaggregateid = :nodeAggregateId
+                  tn.nodeaggregateid = :newParentNodeAggregateId
                   AND th.contentstreamid = :contentStreamId
                   AND th.dimensionspacepointhash = :dimensionSpacePointHash
                 UNION
-                SELECT JSON_MERGE(cte.subtreetagsToInherit, JSON_KEYS(JSON_MERGE_PATCH(\'{}\', dh.subtreetags))) subtreeTagsToInherit, dh.childnodeanchor
+                SELECT
+                    JSON_MERGE_PRESERVE(
+                        cte.subtreeTagsToInherit,
+                        JSON_KEYS(JSON_MERGE_PATCH(
+                            \'{}\',
+                            dh.subtreetags
+                        ))
+                    ) subtreeTagsToInherit,
+                    dh.childnodeanchor
                 FROM
                   cte
-                  JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation dh ON dh.parentnodeanchor = cte.childnodeanchor
+                JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation dh
+                    ON
+                        dh.parentnodeanchor = cte.childnodeanchor
+                    WHERE
+                        dh.contentstreamid = :contentStreamId
+                        AND dh.dimensionspacepointhash = :dimensionSpacePointHash
               )
               SELECT * FROM cte
             ) AS r
             SET h.subtreetags = (
               SELECT
-                JSON_MERGE_PATCH(JSON_OBJECTAGG(htk.k, null), JSON_MERGE_PATCH(\'{}\', h.subtreetags))
+                JSON_MERGE_PATCH(
+                    IFNULL(JSON_OBJECTAGG(htk.k, null), \'{}\'),
+                    JSON_MERGE_PATCH(\'{}\', h.subtreetags)
+                )
               FROM
                 JSON_TABLE(r.subtreeTagsToInherit, \'$[*]\' COLUMNS (k VARCHAR(36) PATH \'$\')) htk
             )
@@ -169,7 +188,7 @@ trait SubtreeTagging
               AND h.dimensionspacepointhash = :dimensionSpacePointHash
             ', [
             'contentStreamId' => $contentStreamId->value,
-            'nodeAggregateId' => $newParentNodeAggregateId->value,
+            'newParentNodeAggregateId' => $newParentNodeAggregateId->value,
             'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
         ]);
     }

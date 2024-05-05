@@ -248,9 +248,11 @@ trait ProjectedNodeTrait
     public function iExpectThisNodeToBeExactlyExplicitlyTagged(string $expectedTagList): void
     {
         $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedTagList) {
+            $actualTags = $currentNode->tags->withoutInherited()->toStringArray();
+            sort($actualTags);
             Assert::assertSame(
                 ($expectedTagList === '') ? [] : explode(',', $expectedTagList),
-                $currentNode->tags->withoutInherited()->toStringArray()
+                $actualTags
             );
         });
     }
@@ -262,9 +264,11 @@ trait ProjectedNodeTrait
     public function iExpectThisNodeToExactlyInheritTheTags(string $expectedTagList): void
     {
         $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedTagList) {
+            $actualTags = $currentNode->tags->onlyInherited()->toStringArray();
+            sort($actualTags);
             Assert::assertSame(
                 ($expectedTagList === '') ? [] : explode(',', $expectedTagList),
-                $currentNode->tags->onlyInherited()->toStringArray(),
+                $actualTags,
             );
         });
     }
