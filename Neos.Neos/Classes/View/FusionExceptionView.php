@@ -22,9 +22,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\RequestHandler as HttpRequestHandler;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -32,13 +29,15 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime as FusionRuntime;
 use Neos\Fusion\Core\RuntimeFactory;
-use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionFailedException;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class FusionExceptionView extends AbstractView
 {
@@ -90,14 +89,7 @@ class FusionExceptionView extends AbstractView
     #[Flow\Inject]
     protected DomainRepository $domainRepository;
 
-    /**
-     * @return string
-     * @throws \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
-     * @throws \Neos\Fusion\Exception
-     * @throws \Neos\Neos\Domain\Exception
-     * @throws \Neos\Flow\Security\Exception
-     */
-    public function render()
+    public function render(): ResponseInterface|StreamInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
 
@@ -107,7 +99,12 @@ class FusionExceptionView extends AbstractView
 
         $httpRequest = $requestHandler->getHttpRequest();
 
-        $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
+        try {
+            $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
+        } catch (SiteDetectionFailedException) {
+            return $this->renderErrorWelcomeScreen();
+        }
+
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
         $fusionExceptionViewInternals = $this->contentRepositoryRegistry->buildService(
             $siteDetectionResult->contentRepositoryId,
@@ -128,75 +125,37 @@ class FusionExceptionView extends AbstractView
             );
         }
 
+        if (!$currentSiteNode) {
+            return $this->renderErrorWelcomeScreen();
+        }
+
         $request = ActionRequest::fromHttpRequest($httpRequest);
         $request->setControllerPackageKey('Neos.Neos');
         $request->setFormat('html');
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
-        $controllerContext = new ControllerContext(
-            $request,
-            new ActionResponse(),
-            new Arguments([]),
-            $uriBuilder
-        );
 
         /** @var SecurityContext $securityContext */
         $securityContext = $this->objectManager->get(SecurityContext::class);
         $securityContext->setRequest($request);
 
-        if ($currentSiteNode) {
-            $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
+        $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $request);
 
-            $this->setFallbackRuleFromDimension($dimensionSpacePoint);
+        $this->setFallbackRuleFromDimension($dimensionSpacePoint);
 
-            $fusionRuntime->pushContextArray(array_merge(
-                $this->variables,
-                [
-                    'node' => $currentSiteNode,
-                    'documentNode' => $currentSiteNode,
-                    'site' => $currentSiteNode,
-                    'editPreviewMode' => null
-                ]
-            ));
-
-            try {
-                $output = $fusionRuntime->render('error');
-                return $this->extractBodyFromOutput($output);
-            } catch (RuntimeException $exception) {
-                throw $exception->getPrevious() ?: $exception;
-            } finally {
-                $fusionRuntime->popContext();
-            }
-        }
-
-        return '';
+        return $fusionRuntime->renderEntryPathWithContext('error', array_merge(
+            $this->variables,
+            [
+                'node' => $currentSiteNode,
+                'documentNode' => $currentSiteNode,
+                'site' => $currentSiteNode
+            ]
+        ));
     }
 
-    /**
-     * @param string $output
-     * @return string The message body without the message head
-     */
-    protected function extractBodyFromOutput(string $output): string
-    {
-        if (substr($output, 0, 5) === 'HTTP/') {
-            $endOfHeader = strpos($output, "\r\n\r\n");
-            if ($endOfHeader !== false) {
-                $output = substr($output, $endOfHeader + 4);
-            }
-        }
-        return $output;
-    }
-
-    /**
-     * @param Node $currentSiteNode
-     * @param ControllerContext $controllerContext
-     * @return FusionRuntime
-     * @throws \Neos\Fusion\Exception
-     * @throws \Neos\Neos\Domain\Exception
-     */
     protected function getFusionRuntime(
         Node $currentSiteNode,
-        ControllerContext $controllerContext
+        ActionRequest $actionRequest
     ): FusionRuntime {
         if ($this->fusionRuntime === null) {
             $site = $this->siteRepository->findSiteBySiteNode($currentSiteNode);
@@ -204,19 +163,33 @@ class FusionExceptionView extends AbstractView
             $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite($site);
 
             $fusionGlobals = FusionGlobals::fromArray([
-                'request' => $controllerContext->getRequest(),
-                'renderingModeName' => RenderingMode::FRONTEND
+                'request' => $actionRequest,
+                'renderingMode' => RenderingMode::createFrontend()
             ]);
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $fusionConfiguration,
                 $fusionGlobals
             );
-            $this->fusionRuntime->setControllerContext($controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
             }
         }
         return $this->fusionRuntime;
+    }
+
+    private function renderErrorWelcomeScreen(): ResponseInterface|StreamInterface
+    {
+        // in case no neos site being there or no site node we cannot continue with the fusion exception view,
+        // as we wouldn't know the site and cannot get the site's root.fusion
+        // instead we render the welcome screen directly
+        /** @var \Neos\Fusion\View\FusionView $view */
+        $view = \Neos\Fusion\View\FusionView::createWithOptions([
+            'fusionPath' => 'Neos/Fusion/NotFoundExceptions',
+            'fusionPathPatterns' => ['resource://Neos.Neos/Private/Fusion/Error/Root.fusion'],
+            'enableContentCache' => false,
+        ]);
+        $view->assignMultiple($this->variables);
+        return $view->render();
     }
 }

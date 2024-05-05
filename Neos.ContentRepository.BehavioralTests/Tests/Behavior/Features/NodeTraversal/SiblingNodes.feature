@@ -12,13 +12,14 @@ Feature: Find sibling nodes using the findPrecedingSiblingNodes and findSucceedi
       properties:
         text:
           type: string
+      references:
         refs:
-          type: references
           properties:
             foo:
               type: string
         ref:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             foo:
               type: string
@@ -63,7 +64,7 @@ Feature: Find sibling nodes using the findPrecedingSiblingNodes and findSucceedi
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |

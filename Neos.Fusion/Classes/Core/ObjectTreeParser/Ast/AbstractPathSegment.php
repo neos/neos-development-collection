@@ -15,7 +15,8 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 
 use Neos\Flow\Annotations as Flow;
 
+/** @internal */
 #[Flow\Proxy(false)]
-abstract class AbstractPathSegment extends AbstractNode
+abstract readonly class AbstractPathSegment extends AbstractNode
 {
 }

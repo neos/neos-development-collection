@@ -38,8 +38,7 @@ Feature: Create a root node aggregate with tethered children
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
-    And I am in dimension space point {}
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And I am user identified by "initiating-user-identifier"
 
   Scenario: Create root node with tethered children
@@ -59,27 +58,27 @@ Feature: Create a root node aggregate with tethered children
       | coveredDimensionSpacePoints | [[]]                                                        |
       | nodeAggregateClassification | "root"                                                      |
     And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                                                |
-      | contentStreamId             | "cs-identifier"                                         |
-      | nodeAggregateId             | "nody-mc-nodeface"                                      |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:SubNode"                |
-      | originDimensionSpacePoint   | []                                                      |
-      | coveredDimensionSpacePoints | [[]]                                                    |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                                |
-      | nodeName                    | "child-node"                                            |
-      | initialPropertyValues       | {"text": {"value": "my sub default", "type": "string"}} |
-      | nodeAggregateClassification | "tethered"                                              |
+      | Key                           | Expected                                                |
+      | contentStreamId               | "cs-identifier"                                         |
+      | nodeAggregateId               | "nody-mc-nodeface"                                      |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:SubNode"                |
+      | originDimensionSpacePoint     | []                                                      |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":[],"nodeAggregateId":null}]     |
+      | parentNodeAggregateId         | "lady-eleonode-rootford"                                |
+      | nodeName                      | "child-node"                                            |
+      | initialPropertyValues         | {"text": {"value": "my sub default", "type": "string"}} |
+      | nodeAggregateClassification   | "tethered"                                              |
     And event at index 3 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                                                    |
-      | contentStreamId             | "cs-identifier"                                             |
-      | nodeAggregateId             | "nodimus-prime"                                             |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:SubSubNode"                 |
-      | originDimensionSpacePoint   | []                                                          |
-      | coveredDimensionSpacePoints | [[]]                                                        |
-      | parentNodeAggregateId       | "nody-mc-nodeface"                                          |
-      | nodeName                    | "grandchild-node"                                           |
-      | initialPropertyValues       | {"text": {"value": "my sub sub default", "type": "string"}} |
-      | nodeAggregateClassification | "tethered"                                                  |
+      | Key                           | Expected                                                    |
+      | contentStreamId               | "cs-identifier"                                             |
+      | nodeAggregateId               | "nodimus-prime"                                             |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:SubSubNode"                 |
+      | originDimensionSpacePoint     | []                                                          |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":[],"nodeAggregateId":null}]         |
+      | parentNodeAggregateId         | "nody-mc-nodeface"                                          |
+      | nodeName                      | "grandchild-node"                                           |
+      | initialPropertyValues         | {"text": {"value": "my sub sub default", "type": "string"}} |
+      | nodeAggregateClassification   | "tethered"                                                  |
 
     And I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
@@ -134,11 +133,11 @@ Feature: Create a root node aggregate with tethered children
       | Key  | Value                |
       | text | "my sub sub default" |
 
-    When I am in content stream "cs-identifier" and dimension space point []
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no parent node
     And I expect this node to have the following child nodes:
-      | Name | NodeDiscriminator                 |
+      | Name       | NodeDiscriminator                 |
       | child-node | cs-identifier;nody-mc-nodeface;{} |
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings

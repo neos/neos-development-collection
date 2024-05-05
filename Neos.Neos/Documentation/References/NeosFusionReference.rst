@@ -146,7 +146,7 @@ Render each item in ``items`` using ``itemRenderer`` and return the result as an
 Neos.Fusion:Reduce
 ------------------
 
-Reduce the given items to a single value by using ``itemRenderer``.
+Reduce the given items to a single value by using ``itemReducer``.
 
 :items: (array/Iterable, **required**) The array or iterable to iterate over (to calculate ``iterator.isLast`` items have to be ``countable``)
 :itemName: (string, defaults to ``item``) Context variable name for each item
@@ -246,9 +246,9 @@ Example::
 
   # the initial value is not changed, so you can define the Debug prototype anywhere in your Fusion code
 
-.. _Neos_Fusion__DebugConsole:
+.. _Neos_Fusion__Debug_Console:
 
-Neos.Fusion:DebugConsole
+Neos.Fusion:Debug.Console
 -----------------
 
 Wraps the given value with a script tag to print it to the browser console.

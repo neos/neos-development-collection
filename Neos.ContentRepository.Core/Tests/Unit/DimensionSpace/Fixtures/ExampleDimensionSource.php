@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Core\Tests\Unit\DimensionSpace\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Core\Dimension;
 
 /**

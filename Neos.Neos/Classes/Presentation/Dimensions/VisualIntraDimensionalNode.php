@@ -17,20 +17,20 @@ namespace Neos\Neos\Presentation\Dimensions;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-final class VisualIntraDimensionalNode
+final readonly class VisualIntraDimensionalNode
 {
-    public readonly int $textX;
+    public int $textX;
 
-    public readonly int $textY;
+    public int $textY;
 
-    public readonly string $color;
+    public string $color;
 
     public function __construct(
-        public readonly int $id,
-        public readonly string $name,
-        public readonly int $parent,
-        public readonly int $x,
-        public readonly int $y
+        public int $id,
+        public string $name,
+        public int $parent,
+        public int $x,
+        public int $y
     ) {
         $this->textX = $x - 40;
         $this->textY = $y - 5 + 50; // 50 for padding

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -22,14 +23,26 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class PublishWorkspace implements CommandInterface
+final readonly class PublishWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Name of the workspace to publish
      */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
+        public WorkspaceName $workspaceName,
+        public ContentStreamId $newContentStreamId,
     ) {
+    }
+
+    /**
+     * During the publish process, we create a new content stream.
+     *
+     * This method adds its ID, so that the command
+     * can run fully deterministic - we need this for the test cases.
+     */
+    public function withNewContentStreamId(ContentStreamId $newContentStreamId): self
+    {
+        return new self($this->workspaceName, $newContentStreamId);
     }
 
     /**
@@ -37,6 +50,6 @@ final class PublishWorkspace implements CommandInterface
      */
     public static function create(WorkspaceName $workspaceName): self
     {
-        return new self($workspaceName);
+        return new self($workspaceName, ContentStreamId::create());
     }
 }

@@ -18,24 +18,26 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * A node aggregate was disabled
  *
- * @api events are the persistence-API of the content repository
+ * @deprecated This event will never be emitted, it is up-casted to a corresponding {@see SubtreeWasTagged} event instead in the {@see EventNormalizer}. This implementation is just kept for backwards-compatibility
+ * @internal
  */
-final class NodeAggregateWasDisabled implements
+final readonly class NodeAggregateWasDisabled implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
         /** The dimension space points the node aggregate was disabled in */
-        public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
+        public DimensionSpacePointSet $affectedDimensionSpacePoints,
     ) {
     }
 

@@ -7,14 +7,14 @@ namespace Neos\ContentRepository\Core\Projection;
 /**
  * @internal
  */
-final class ProjectionsAndCatchUpHooks
+final readonly class ProjectionsAndCatchUpHooks
 {
     /**
      * @param array<class-string<ProjectionInterface<ProjectionStateInterface>>, CatchUpHookFactories> $catchUpHookFactoriesByProjectionClassName
      */
     public function __construct(
-        public readonly Projections $projections,
-        private readonly array $catchUpHookFactoriesByProjectionClassName,
+        public Projections $projections,
+        private array $catchUpHookFactoriesByProjectionClassName,
     ) {
     }
 

@@ -21,18 +21,18 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 /**
  * @api events are the persistence-API of the content repository
  */
-final class WorkspaceWasRebased implements EventInterface
+final readonly class WorkspaceWasRebased implements EventInterface
 {
     public function __construct(
-        public readonly WorkspaceName $workspaceName,
+        public WorkspaceName $workspaceName,
         /**
          * The new content stream ID (after the rebase was successful)
          */
-        public readonly ContentStreamId $newContentStreamId,
+        public ContentStreamId $newContentStreamId,
         /**
          * The old content stream ID (which is not active anymore now)
          */
-        public readonly ContentStreamId $previousContentStreamId,
+        public ContentStreamId $previousContentStreamId,
     ) {
     }
 

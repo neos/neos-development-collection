@@ -16,22 +16,22 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
@@ -95,6 +95,7 @@ trait ProjectedNodeTrait
             return $currentNodeAggregate->getNodeByOccupiedDimensionSpacePoint($nodeDiscriminator->originDimensionSpacePoint);
         });
     }
+
 
     /**
      * @Then /^I expect node aggregate identifier "([^"]*)" to lead to node (.*)$/
@@ -195,6 +196,73 @@ trait ProjectedNodeTrait
         $this->iExpectPathToLeadToNoNode($serializedNodePath);
     }
 
+    /**
+     * @Then /^I expect the node with aggregate identifier "([^"]*)" to be explicitly tagged "([^"]*)"$/
+     */
+    public function iExpectTheNodeWithAggregateIdentifierToBeExplicitlyTagged(string $serializedNodeAggregateId, string $serializedTag): void
+    {
+        $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
+        $expectedTag = SubtreeTag::fromString($serializedTag);
+        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
+            $currentNode = $subgraph->findNodeById($nodeAggregateId);
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
+            Assert::assertTrue($currentNode->tags->withoutInherited()->contain($expectedTag));
+            return $currentNode;
+        });
+    }
+
+    /**
+     * @Then /^I expect the node with aggregate identifier "([^"]*)" to inherit the tag "([^"]*)"$/
+     */
+    public function iExpectTheNodeWithAggregateIdentifierToInheritTheTag(string $serializedNodeAggregateId, string $serializedTag): void
+    {
+        $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
+        $expectedTag = SubtreeTag::fromString($serializedTag);
+        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
+            $currentNode = $subgraph->findNodeById($nodeAggregateId);
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
+            Assert::assertTrue($currentNode->tags->onlyInherited()->contain($expectedTag));
+            return $currentNode;
+        });
+    }
+
+    /**
+     * @Then /^I expect the node with aggregate identifier "([^"]*)" to not contain the tag "([^"]*)"$/
+     */
+    public function iExpectTheNodeWithAggregateIdentifierToNotContainTheTag(string $serializedNodeAggregateId, string $serializedTag): void
+    {
+        $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
+        $expectedTag = SubtreeTag::fromString($serializedTag);
+        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
+            $currentNode = $subgraph->findNodeById($nodeAggregateId);
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
+            Assert::assertFalse($currentNode->tags->contain($expectedTag), sprintf('Node with id "%s" in content subgraph "%s@%s", was not expected to contain the subtree tag "%s" but it does', $nodeAggregateId->value, $this->currentDimensionSpacePoint->toJson(), $this->currentContentStreamId->value, $expectedTag->value));
+            return $currentNode;
+        });
+    }
+
+    /**
+     * @Then /^I expect this node to be exactly explicitly tagged "(.*)"$/
+     * @param string $tagList the comma-separated list of tag names
+     */
+    public function iExpectThisNodeToBeExactlyExplicitlyTagged(string $tagList): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($tagList) {
+            $currentNode->tags->withoutInherited()->toStringArray() === explode(',', $tagList);
+        });
+    }
+
+    /**
+     * @Then /^I expect this node to exactly inherit the tags "(.*)"$/
+     * @param string $tagList the comma-separated list of tag names
+     */
+    public function iExpectThisNodeToExactlyInheritTheTags(string $tagList): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($tagList) {
+            $currentNode->tags->onlyInherited()->toStringArray() === explode(',', $tagList);
+        });
+    }
+
     protected function initializeCurrentNodeFromContentGraph(callable $query): void
     {
         $this->currentNode = $query($this->currentContentRepository->getContentGraph());
@@ -256,6 +324,29 @@ trait ProjectedNodeTrait
     }
 
     /**
+     * @Then /^I expect this node to have the following serialized properties:$/
+     * @param TableNode $expectedPropertyTypes
+     */
+    public function iExpectThisNodeToHaveTheFollowingSerializedPropertyTypes(TableNode $expectedPropertyTypes): void
+    {
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedPropertyTypes) {
+            $serialized = $currentNode->properties->serialized();
+            foreach ($expectedPropertyTypes->getHash() as $row) {
+                Assert::assertTrue($serialized->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
+                Assert::assertEquals($row['Type'], $serialized->getProperty($row['Key'])->type, 'Serialized node property ' . $row['Key'] . ' does not match expected type.');
+                if (str_starts_with($row['Value'], 'NOT:')) {
+                    // special case. assert NOT equals:
+                    $value = json_decode(mb_substr($row['Value'], 4), true, 512, JSON_THROW_ON_ERROR);
+                    Assert::assertNotEquals($value, $serialized->getProperty($row['Key'])->value, 'Serialized node property ' . $row['Key'] . ' does match value it should not.');
+                } else {
+                    $value = json_decode($row['Value'], true, 512, JSON_THROW_ON_ERROR);
+                    Assert::assertEquals($value, $serialized->getProperty($row['Key'])->value, 'Serialized node property ' . $row['Key'] . ' does not match expected value.');
+                }
+            }
+        });
+    }
+
+    /**
      * @Then /^I expect this node to have the following properties:$/
      * @param TableNode $expectedProperties
      */
@@ -268,6 +359,10 @@ trait ProjectedNodeTrait
                 $expectedPropertyValue = $this->resolvePropertyValue($row['Value']);
                 $actualPropertyValue = $properties->offsetGet($row['Key']);
                 if ($row['Value'] === 'Date:now') {
+                    // special case as It's hard to work with relative times. We only handle `now` right now (pun intended) but this or similar handling would also be required for `yesterday` or `after rep tv`
+                    // as It's hard to check otherwise, we have to verify that `now` was not actually saved as string `now` but as timestamp when it was created
+                    $serializedValue = $currentNode->properties->serialized()->getProperty($row['Key'])?->value;
+                    Assert::assertNotEquals('now', $serializedValue, 'Relative DateTime must be serialized as absolute time in the events/serialized-properties');
                     // we accept 10s offset for the projector to be fine
                     Assert::assertLessThan($actualPropertyValue, $expectedPropertyValue->sub(new \DateInterval('PT10S')), 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($expectedPropertyValue) . '; Actual: ' . json_encode($actualPropertyValue));
                 } else {
@@ -456,7 +551,7 @@ trait ProjectedNodeTrait
             Assert::assertTrue($expectedParentDiscriminator->equals($actualParentDiscriminator), 'Parent discriminator does not match. Expected was ' . json_encode($expectedParentDiscriminator) . ', given was ' . json_encode($actualParentDiscriminator));
 
             $expectedChildDiscriminator = NodeDiscriminator::fromNode($currentNode);
-            $child = $subgraph->findChildNodeConnectedThroughEdgeName($parent->nodeAggregateId, $currentNode->nodeName);
+            $child = $subgraph->findNodeByPath($currentNode->nodeName, $parent->nodeAggregateId);
             $actualChildDiscriminator = NodeDiscriminator::fromNode($child);
             Assert::assertTrue($expectedChildDiscriminator->equals($actualChildDiscriminator), 'Child discriminator does not match. Expected was ' . json_encode($expectedChildDiscriminator) . ', given was ' . json_encode($actualChildDiscriminator));
         });

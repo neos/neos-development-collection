@@ -12,12 +12,12 @@ use Neos\EventStore\Model\Event\StreamName;
  *
  * @internal
  */
-final class WorkspaceEventStreamName
+final readonly class WorkspaceEventStreamName
 {
     private const EVENT_STREAM_NAME_PREFIX = 'Workspace:';
 
     private function __construct(
-        public readonly string $eventStreamName,
+        public string $eventStreamName,
     ) {
     }
 

@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -33,7 +33,7 @@ class PrevUntilOperation extends AbstractOperation
      *
      * @var string
      */
-    protected static $shortName = 'nextUntil';
+    protected static $shortName = 'prevUntil';
 
     /**
      * {@inheritdoc}
@@ -70,22 +70,21 @@ class PrevUntilOperation extends AbstractOperation
     {
         $output = [];
         $outputNodeIdentifiers = [];
-        $until = [];
 
         foreach ($flowQuery->getContext() as $contextNode) {
-            $prevNodes = $this->getPrevForNode($contextNode);
+            $prevNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                ->findPrecedingSiblingNodes(
+                    $contextNode->nodeAggregateId,
+                    FindPrecedingSiblingNodesFilter::create()
+                );
             if (isset($arguments[0]) && !empty($arguments[0])) {
                 $untilQuery = new FlowQuery($prevNodes);
                 $untilQuery->pushOperation('filter', [$arguments[0]]);
-
-                $until = $untilQuery->getContext();
+                $untilNodes = Nodes::fromArray(iterator_to_array($untilQuery));
             }
-            /** @var array<int,mixed> $until */
-
-            if (isset($until[0]) && !empty($until[0])) {
-                $prevNodes = $prevNodes->until($until[0]);
+            if (isset($untilNodes) && !$untilNodes->isEmpty()) {
+                $prevNodes = $prevNodes->previousAll($untilNodes->first())->reverse();
             }
-
             foreach ($prevNodes as $prevNode) {
                 if ($prevNode !== null &&
                     !isset($outputNodeIdentifiers[$prevNode->nodeAggregateId->value])) {
@@ -100,21 +99,5 @@ class PrevUntilOperation extends AbstractOperation
         if (isset($arguments[1]) && !empty($arguments[1])) {
             $flowQuery->pushOperation('filter', [$arguments[1]]);
         }
-    }
-
-    /**
-     * @param Node $contextNode The node for which the next nodes should be found
-     * @return Nodes The following nodes of $contextNode
-     */
-    protected function getPrevForNode(Node $contextNode): Nodes
-    {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
-        if ($parentNode === null) {
-            return Nodes::createEmpty();
-        }
-
-        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create())
-            ->previousAll($contextNode);
     }
 }

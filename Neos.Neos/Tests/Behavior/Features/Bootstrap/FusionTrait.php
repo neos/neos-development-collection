@@ -12,7 +12,6 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
@@ -24,11 +23,12 @@ use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\RuntimeFactory;
-use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Fusion\Exception\RuntimeException;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\RenderingModeService;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
+use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
  * @internal only for behat tests within the Neos.Neos package
@@ -48,6 +48,8 @@ trait FusionTrait
 
     private ?\Throwable $lastRenderingException = null;
 
+    private $contentCacheEnabled = false;
+
     /**
      * @template T of object
      * @param class-string<T> $className
@@ -64,16 +66,17 @@ trait FusionTrait
         $this->fusionGlobalContext = [];
         $this->fusionContext = [];
         $this->fusionCode = null;
+        $this->contentCacheEnabled = false;
         $this->renderingResult = null;
     }
 
     /**
-     * @When I am in Fusion rendering mode:
+     * @When the Fusion renderingMode is :requestUri
      */
-    public function iAmInFusionRenderingMode(TableNode $renderingModeData): void
+    public function iAmInFusionRenderingMode(string $renderingModeName): void
     {
-        $data = $renderingModeData->getHash()[0];
-        $this->fusionGlobalContext['renderingMode'] = new RenderingMode($data['name'] ?? 'Testing', strtolower($data['isEdit'] ?? 'false') === 'true', strtolower($data['isPreview'] ?? 'false') === 'true', $data['title'] ?? 'Testing', $data['fusionPath'] ?? 'root', []);
+        $renderingMode = $this->getObject(RenderingModeService::class)->findByName($renderingModeName);
+        $this->fusionGlobalContext['renderingMode'] = $renderingMode;
     }
 
     /**
@@ -116,6 +119,14 @@ trait FusionTrait
     }
 
     /**
+     * @When I have Fusion content cache enabled
+     */
+    public function iHaveFusionContentCacheEnabled(): void
+    {
+        $this->contentCacheEnabled = true;
+    }
+
+    /**
      * @When I execute the following Fusion code:
      * @When I execute the following Fusion code on path :path:
      */
@@ -132,6 +143,7 @@ trait FusionTrait
         $fusionGlobals = FusionGlobals::fromArray($this->fusionGlobalContext);
 
         $fusionRuntime = (new RuntimeFactory())->createFromConfiguration($fusionAst, $fusionGlobals);
+        $fusionRuntime->setEnableContentCache($this->contentCacheEnabled);
         $fusionRuntime->overrideExceptionHandler($this->getObject(ThrowingHandler::class));
         $fusionRuntime->pushContextArray($this->fusionContext);
         try {
@@ -191,6 +203,14 @@ trait FusionTrait
         if ($this->lastRenderingException !== null) {
             throw new \RuntimeException(sprintf('The last rendering led to an error: %s', $this->lastRenderingException->getMessage()), 1698319254, $this->lastRenderingException);
         }
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function clearFusionCaches()
+    {
+        $this->getObject(ContentCache::class)->flush();
     }
 
 }

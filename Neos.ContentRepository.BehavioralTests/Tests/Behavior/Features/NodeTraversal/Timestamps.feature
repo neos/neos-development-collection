@@ -14,13 +14,14 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       properties:
         text:
           type: string
+      references:
         refs:
-          type: references
           properties:
             foo:
               type: string
         ref:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             foo:
               type: string
@@ -74,7 +75,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | newContentStreamId | "cs-user"   |
       | workspaceOwner     | "some-user" |
     And the graph projection is fully up to date
-    And I am in content stream "cs-user" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "user-test" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -88,7 +89,6 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     And the current date and time is "2023-03-16T12:30:00+01:00"
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value             |
-      | contentStreamId | "cs-user"         |
       | nodeAggregateId | "a"               |
       | sourceOrigin    | {"language":"de"} |
       | targetOrigin    | {"language":"ch"} |
@@ -98,7 +98,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value               |
-      | contentStreamId           | "cs-user"           |
+      | workspaceName             | "user-test"         |
       | originDimensionSpacePoint | {"language": "ch"}  |
       | nodeAggregateId           | "a"                 |
       | propertyValues            | {"text": "Changed"} |
@@ -117,7 +117,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command "ChangeNodeAggregateName" is executed with payload:
       | Key             | Value       |
-      | contentStreamId | "cs-user"   |
+      | workspaceName             | "user-test"         |
       | nodeAggregateId | "a"         |
       | newNodeName     | "a-renamed" |
     And the graph projection is fully up to date
@@ -135,7 +135,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value              |
-      | contentStreamId                 | "cs-user"          |
+      | workspaceName             | "user-test"         |
       | sourceOriginDimensionSpacePoint | {"language": "ch"} |
       | sourceNodeAggregateId           | "a"                |
       | referenceName                   | "ref"              |
@@ -161,7 +161,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command ChangeNodeAggregateType was published with payload:
       | Key             | Value                                        |
-      | contentStreamId | "cs-user"                                    |
+      | workspaceName             | "user-test"         |
       | nodeAggregateId | "a"                                          |
       | newNodeTypeName | "Neos.ContentRepository.Testing:SpecialPage" |
       | strategy        | "happypath"                                  |
@@ -217,7 +217,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
-      | contentStreamId              | "cs-user"               |
+      | workspaceName             | "user-test"         |
       | dimensionSpacePoint          | {"language": "ch"}      |
       | relationDistributionStrategy | "gatherSpecializations" |
       | nodeAggregateId              | "a"                     |
@@ -249,11 +249,11 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 |              |                      |
 
-  Scenario: NodeAggregateWasEnabled and NodeAggregateWasDisabled events don't update last modified timestamps
+  Scenario: SubtreeWasTagged and SubtreeWasUntagged events don't update last modified timestamps
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | contentStreamId              | "cs-user"            |
+      | workspaceName             | "user-test"         |
       | coveredDimensionSpacePoint   | {"language": "ch"}   |
       | nodeAggregateId              | "a"                  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
@@ -272,7 +272,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     When the current date and time is "2023-03-16T14:00:00+01:00"
     And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | contentStreamId              | "cs-user"            |
+      | workspaceName             | "user-test"         |
       | coveredDimensionSpacePoint   | {"language": "ch"}   |
       | nodeAggregateId              | "a"                  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
@@ -292,7 +292,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeProperties is executed with payload:
       | Key             | Value               |
-      | contentStreamId | "cs-user"           |
+      | workspaceName             | "user-test"         |
       | nodeAggregateId | "a"                 |
       | propertyValues  | {"text": "Changed"} |
     And I execute the findNodeById query for node aggregate id "non-existing" I expect no node to be returned

@@ -22,10 +22,10 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
 use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\Domain\Model\Site;
 
 /**
  * The Site Command Controller
@@ -158,12 +158,12 @@ class SiteCommandController extends CommandController
 
         foreach ($sites as $site) {
             /** @var Site $site */
-            array_push($availableSites, [
+            $availableSites[] = [
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName()->value,
                 'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey(),
                 'status' => ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline'
-            ]);
+            ];
             if (strlen($site->getName()) > $longestSiteName) {
                 $longestSiteName = strlen($site->getName());
             }

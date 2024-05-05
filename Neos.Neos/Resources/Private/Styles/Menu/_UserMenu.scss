@@ -1,0 +1,186 @@
+#neos-user-actions {
+	float: none;
+
+	.neos-dropdown-toggle {
+		outline: none;
+
+		&:hover span {
+			color: $blue;
+
+			i {
+				color: white;
+			}
+		}
+	}
+
+	.neos-dropdown-menu {
+		@import "../Shared/Checkboxes";
+		border: 0;
+		right: 0;
+		background: none;
+		padding: 2px;
+		margin: -2px 0 0;
+		-webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+		box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+
+		li {
+			height: $unit;
+			background: $grayDarker;
+			border-top: 1px solid $grayDark;
+
+			a,
+			button {
+				height: $unit;
+				color: white;
+				font-size: $generalFontSize;
+				line-height: $unit;
+				padding: 0 $defaultMargin;
+				box-sizing: border-box;
+				border: 0;
+
+				&:hover {
+					background: $blue;
+				}
+			}
+
+			button {
+				width: 100%;
+				text-align: left;
+				background-color: $grayDarker;
+
+				&:hover {
+					background-color: $blue;
+				}
+			}
+
+			label {
+				padding-top: 9px;
+			}
+
+			button i {
+				line-height: 18px;
+			}
+		}
+
+		label {
+			font-size: $generalFontSize;
+		}
+	}
+
+	.neos-user-menu.neos-dropdown-open {
+		.neos-dropdown-menu {
+			display: block;
+		}
+	}
+
+	.neos-user-menu.neos-button-group {
+		font-size: $generalFontSize;
+
+		.neos-button.neos-dropdown-toggle {
+			background: none;
+			height: 40px;
+			padding-top: 2em;
+			padding-bottom: 2em;
+			width: 100%;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+
+			&:hover span {
+				color: var(--colors-PrimaryBlue);
+			}
+
+			i {
+				width: $menuButtonWidth;
+				height: $unit;
+				font-size: 14px;
+				line-height: $unit;
+				position: absolute;
+				top: 50%;
+				right: 0;
+				transform: translateY(-50%);
+				padding: 0;
+				margin: 0;
+			}
+		}
+	}
+
+	.neos-user-menu {
+		width: 100%;
+		background: $grayDarker;
+	}
+
+	i {
+		margin-left: $relatedMargin;
+		margin-right: .75em;
+	}
+
+	.neos-dropdown-menu {
+		border: 0;
+		right: 0;
+		padding: 2px;
+		margin: -2px 0 0 !important;
+		display: none;
+		position: relative;
+		min-width: 160px;
+		background: $grayDarker;
+		width: 100%;
+		box-shadow: none;
+
+		li {
+			height: $unit;
+			background: $grayDarker;
+			border-top: 1px solid $grayDark;
+
+			a,
+			button {
+				height: $unit;
+				color: white;
+				font-size: $generalFontSize;
+				line-height: $unit;
+				padding: 0 $defaultMargin;
+				box-sizing: border-box;
+				border: 0;
+
+				&:hover span {
+					background: $blue;
+				}
+			}
+
+			button {
+				width: 100%;
+				text-align: left;
+				background-color: $grayDarker;
+
+				&:hover {
+					background-color: $blue;
+				}
+			}
+
+			label {
+				padding-top: 9px;
+			}
+
+			button i {
+				line-height: 18px;
+			}
+		}
+
+		label {
+			font-size: $generalFontSize;
+		}
+	}
+
+	.neos-user-image {
+		margin-right: 2em;
+		border-radius: 100%;
+		background: var(--colors-ContrastBright);
+		height: 32px;
+		width: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		align-content: center;
+		flex-wrap: nowrap;
+	}
+}

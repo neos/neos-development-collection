@@ -13,9 +13,9 @@ use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNod
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
@@ -62,6 +62,11 @@ class FeatureContext implements Context
      */
     private array $loggedErrors = [];
 
+    /**
+     * @var array<string>
+     */
+    private array $loggedWarnings = [];
+
     private ContentRepository $contentRepository;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -103,6 +108,8 @@ class FeatureContext implements Context
                 'properties' => !empty($row['Properties']) ? $row['Properties'] : '{}',
                 'dimensionvalues' => !empty($row['Dimension Values']) ? $row['Dimension Values'] : '{}',
                 'hiddeninindex' => $row['Hidden in index'] ?? '0',
+                'hiddenbeforedatetime' =>  !empty($row['Hidden before DateTime']) ? ($row['Hidden before DateTime']): null,
+                'hiddenafterdatetime' =>  !empty($row['Hidden after DateTime']) ? ($row['Hidden after DateTime']) : null,
                 'hidden' => $row['Hidden'] ?? '0',
             ];
         }, $nodeDataRows->getHash());
@@ -141,6 +148,8 @@ class FeatureContext implements Context
         $migration->onMessage(function (Severity $severity, string $message) {
             if ($severity === Severity::ERROR) {
                 $this->loggedErrors[] = $message;
+            } elseif ($severity === Severity::WARNING) {
+                $this->loggedWarnings[] = $message;
             }
         });
         $this->lastMigrationResult = $migration->run();
@@ -186,10 +195,19 @@ class FeatureContext implements Context
     /**
      * @Then I expect the following errors to be logged
      */
-    public function iExpectTheFollwingErrorsToBeLogged(TableNode $table): void
+    public function iExpectTheFollowingErrorsToBeLogged(TableNode $table): void
     {
         Assert::assertSame($table->getColumn(0), $this->loggedErrors, 'Expected logged errors do not match');
         $this->loggedErrors = [];
+    }
+
+    /**
+     * @Then I expect the following warnings to be logged
+     */
+    public function iExpectTheFollowingWarningsToBeLogged(TableNode $table): void
+    {
+        Assert::assertSame($table->getColumn(0), $this->loggedWarnings, 'Expected logged warnings do not match');
+        $this->loggedWarnings = [];
     }
 
     /**
@@ -307,6 +325,8 @@ class FeatureContext implements Context
         $migration->onMessage(function (Severity $severity, string $message) {
             if ($severity === Severity::ERROR) {
                 $this->loggedErrors[] = $message;
+            } elseif ($severity === Severity::WARNING) {
+                $this->loggedWarnings[] = $message;
             }
         });
         $this->lastMigrationResult = $migration->run();

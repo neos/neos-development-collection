@@ -34,12 +34,12 @@ use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteNodeName;
 
-class SiteServiceInternals implements ContentRepositoryServiceInterface
+readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(
-        private readonly ContentRepository $contentRepository,
-        private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private readonly NodeTypeManager $nodeTypeManager
+        private ContentRepository $contentRepository,
+        private InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        private NodeTypeManager $nodeTypeManager
     ) {
     }
 
@@ -56,13 +56,13 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         }
         $contentGraph = $this->contentRepository->getContentGraph();
 
-        foreach ($this->contentRepository->getContentStreamFinder()->findAllIds() as $contentStreamId) {
+        foreach ($this->contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
-                $contentStreamId,
+                $workspace->currentContentStreamId,
                 NodeTypeNameFactory::forSites()
             );
             $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
-                $contentStreamId,
+                $workspace->currentContentStreamId,
                 $sitesNodeAggregate->nodeAggregateId,
                 $siteNodeName->toNodeName()
             );
@@ -70,7 +70,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
             foreach ($siteNodeAggregates as $siteNodeAggregate) {
                 assert($siteNodeAggregate instanceof NodeAggregate);
                 $this->contentRepository->handle(RemoveNodeAggregate::create(
-                    $contentStreamId,
+                    $workspace->workspaceName,
                     $siteNodeAggregate->nodeAggregateId,
                     $arbitraryDimensionSpacePoint,
                     NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
@@ -82,18 +82,16 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
     public function createSiteNodeIfNotExists(Site $site, string $nodeTypeName): void
     {
         $bootstrapper = ContentRepositoryBootstrapper::create($this->contentRepository);
-        $liveContentStreamId = $bootstrapper->getOrCreateLiveContentStream();
+        $liveWorkspace = $bootstrapper->getOrCreateLiveWorkspace();
         $sitesNodeIdentifier = $bootstrapper->getOrCreateRootNodeAggregate(
-            $liveContentStreamId,
+            $liveWorkspace,
             NodeTypeNameFactory::forSites()
         );
-        try {
-            $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        } catch (NodeTypeNotFoundException $exception) {
+        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$siteNodeType) {
             throw new NodeTypeNotFoundException(
                 'Cannot create a site using a non-existing node type.',
-                1412372375,
-                $exception
+                1412372375
             );
         }
 
@@ -102,7 +100,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         }
 
         $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $liveContentStreamId,
+            $liveWorkspace->currentContentStreamId,
             $sitesNodeIdentifier,
             $site->getNodeName()->toNodeName(),
         );
@@ -122,7 +120,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
 
         $siteNodeAggregateId = NodeAggregateId::create();
         $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
-            $liveContentStreamId,
+            $liveWorkspace->workspaceName,
             $siteNodeAggregateId,
             NodeTypeName::fromString($nodeTypeName),
             OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
@@ -137,7 +135,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         // Handle remaining root dimension space points by creating peer variants
         foreach ($rootDimensionSpacePoints as $rootDimensionSpacePoint) {
             $this->contentRepository->handle(CreateNodeVariant::create(
-                $liveContentStreamId,
+                $liveWorkspace->workspaceName,
                 $siteNodeAggregateId,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootDimensionSpacePoint),

@@ -27,7 +27,8 @@ prototype(Neos.Neos:DefaultExceptionRenderer) < prototype(Neos.Fusion:Component)
   renderingOptions = null
 
   renderer = afx`
-    <Neos.Neos:ErrorPage title='Neos Error'>
+    <Neos.Neos:Core.BackendPage title='Neos Error'>
+      <link @path='additionalResources.errorStyles' href={StaticResource.uri('Neos.Neos', 'Public/Styles/Error.css')} rel="stylesheet"/>
       <body class="neos">
       <div class="neos-error-screen">
         <div class="neos-message-header">
@@ -42,6 +43,6 @@ prototype(Neos.Neos:DefaultExceptionRenderer) < prototype(Neos.Fusion:Component)
         <p @if={props.renderingOptions.renderTechnicalDetails} class="technical-details">#{props.exception.code}: {props.exception.message}</p>
       </div>
       </body>
-    </Neos.Neos:ErrorPage>
+    </Neos.Neos:Core.BackendPage>
   `
 }

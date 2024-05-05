@@ -14,6 +14,7 @@ namespace Neos\Fusion\Core\Cache;
  */
 
 use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 
 /**
  * Helper around the ParsePartials Cache.
@@ -38,8 +39,8 @@ class ParserCacheFlusher
     }
 
     /**
-     * @param $fileMonitorIdentifier
-     * @param array $changedFiles
+     * @param string $fileMonitorIdentifier
+     * @param array<string, int> $changedFiles
      * @return void
      */
     public function flushPartialCacheOnFileChanges($fileMonitorIdentifier, array $changedFiles)
@@ -50,7 +51,21 @@ class ParserCacheFlusher
 
         $identifiersToFlush = [];
         foreach ($changedFiles as $changedFile => $status) {
-            $identifiersToFlush[] = $this->getCacheIdentifierForFile($changedFile);
+            // flow returns linux style file paths without directory traversal from the file monitor.
+            // As discovered via https://github.com/neos/neos-development-collection/issues/4915 the paths will point to symlinks instead of the actual file.
+            // Thus, we still need to invoke `realpath` as the cache invalidation otherwise would not work (due to a different hash)
+            // But attempting to use realpath on removed/moved files fails because it surely cannot be resolved via file system.
+            if ($status === ChangeDetectionStrategyInterface::STATUS_DELETED) {
+                // Ignoring removed files means we cannot flush removed files, but this is a compromise for now.
+                // See https://github.com/neos/neos-development-collection/issues/4415 as reminder that flushing is disabled for deleted files
+                continue;
+            }
+            $fusionFileRealPath = realpath($changedFile);
+            if ($fusionFileRealPath === false) {
+                // should not happen as we ignored deleted files beforehand.
+                throw new \RuntimeException("Couldn't resolve realpath for: '$changedFile'", 1709122619);
+            }
+            $identifiersToFlush[] = $this->getCacheIdentifierForAbsoluteUnixStyleFilePathWithoutDirectoryTraversal($fusionFileRealPath);
         }
 
         if ($identifiersToFlush !== []) {

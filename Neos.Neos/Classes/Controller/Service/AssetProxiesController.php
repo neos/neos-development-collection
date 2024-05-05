@@ -17,7 +17,6 @@ namespace Neos\Neos\Controller\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
@@ -86,7 +85,7 @@ class AssetProxiesController extends ActionController
      * @param ViewInterface $view
      * @return void
      */
-    public function initializeView(ViewInterface $view)
+    protected function initializeView(ViewInterface $view)
     {
         $view->assign('asyncThumbnails', $this->asyncThumbnails);
     }
@@ -143,7 +142,6 @@ class AssetProxiesController extends ActionController
      * @param string $assetProxyIdentifier
      * @return void
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function showAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
     {
@@ -168,7 +166,6 @@ class AssetProxiesController extends ActionController
      * @return void
      * @throws AssetSourceServiceException
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
     public function importAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
     {

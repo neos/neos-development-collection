@@ -31,7 +31,9 @@ use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamClosing;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCopying;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCreation;
@@ -43,6 +45,7 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRe
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRenaming;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeTypeChange;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeVariation;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\SubtreeTagging;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
@@ -64,10 +67,12 @@ trait CRTestSuiteTrait
     use GenericCommandExecutionAndEventPublication;
 
     use ContentStreamForking;
+    use ContentStreamClosing;
 
     use NodeCreation;
     use NodeCopying;
     use NodeDisabling;
+    use SubtreeTagging;
     use NodeModification;
     use NodeMove;
     use NodeReferencing;
@@ -80,14 +85,12 @@ trait CRTestSuiteTrait
     use WorkspaceDiscarding;
     use WorkspacePublishing;
 
-    protected function setupCRTestSuiteTrait(bool $alwaysRunCrSetup = false): void
+    protected function setupCRTestSuiteTrait(): void
     {
         if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
             CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
         }
     }
-
-    private static bool $wasContentRepositorySetupCalled = false;
 
     /**
      * @BeforeScenario
@@ -174,6 +177,16 @@ trait CRTestSuiteTrait
         $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
 
         Assert::assertNotEquals($rawContentStreamId, $workspace->currentContentStreamId->value);
+    }
+
+    /**
+     * @Then /^workspace ([^"]*) has status ([^"]*)$/
+     */
+    public function workspaceHasStatus(string $rawWorkspaceName, string $status): void
+    {
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+
+        Assert::assertSame($status, $workspace->status->value);
     }
 
     /**
@@ -267,7 +280,7 @@ trait CRTestSuiteTrait
         $contentStreamFinder = $this->currentContentRepository->getContentStreamFinder();
 
         $actual = $contentStreamFinder->findStateForContentStream($contentStreamId);
-        Assert::assertEquals($expectedState, $actual);
+        Assert::assertSame(ContentStreamState::tryFrom($expectedState), $actual);
     }
 
     /**

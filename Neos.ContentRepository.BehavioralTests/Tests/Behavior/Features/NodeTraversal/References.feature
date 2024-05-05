@@ -22,13 +22,14 @@ Feature: Find and count references and their target nodes using the findReferenc
           type: integer
         dateProperty:
           type: DateTime
+      references:
         refs:
-          type: references
           properties:
             foo:
               type: string
         ref:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             foo:
               type: string
@@ -73,7 +74,7 @@ Feature: Find and count references and their target nodes using the findReferenc
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |

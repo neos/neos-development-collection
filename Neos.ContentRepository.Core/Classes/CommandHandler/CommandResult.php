@@ -7,9 +7,9 @@ namespace Neos\ContentRepository\Core\CommandHandler;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\EventStore\CommitResult;
-use Neos\EventStore\Model\Event\SequenceNumber;
 
 /**
  * Result of the {@see ContentRepository::handle()} method to be able to block until the projections were updated.
@@ -18,11 +18,11 @@ use Neos\EventStore\Model\Event\SequenceNumber;
  *
  * @api
  */
-final class CommandResult
+final readonly class CommandResult
 {
     public function __construct(
-        private readonly PendingProjections $pendingProjections,
-        public readonly CommitResult $commitResult,
+        private PendingProjections $pendingProjections,
+        public CommitResult $commitResult,
     ) {
     }
 

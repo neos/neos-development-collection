@@ -8,6 +8,7 @@
 prototype(Neos.Neos:Content) < prototype(Neos.Fusion:Template) {
   node = ${node}
 
+  // @todo simple array join in fusion
   attributes = Neos.Fusion:DataStructure
   attributes.class = ''
 

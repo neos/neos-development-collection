@@ -3,32 +3,32 @@
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="tabs.default" xml:space="preserve">
-				<source>General</source>
+        <source>General</source>
         <target state="translated">Geral</target>
       </trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve">
-				<source>Metadata</source>
+        <source>Metadata</source>
         <target state="translated">Metadados</target>
       </trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve">
-				<source>Metadata</source>
+        <source>Metadata</source>
         <target state="translated">Metadados</target>
       </trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve">
-				<source>Additional info</source>
+        <source>Additional info</source>
         <target state="translated">Informação adicional</target>
       </trans-unit>
       <trans-unit id="groups.type" xml:space="preserve">
-				<source>Change type</source>
+        <source>Change type</source>
         <target state="translated">Alterar tipo</target>
       </trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve">
-				<source>Type</source>
+        <source>Type</source>
         <target state="translated">Tipo</target>
       </trans-unit>
       <trans-unit id="groups.default" xml:space="preserve">
-				<source>General</source>
-        <target state="needs-translation">Geral</target>
+        <source>General</source>
+        <target state="translated">Geral</target>
       </trans-unit>
     </body>
   </file>

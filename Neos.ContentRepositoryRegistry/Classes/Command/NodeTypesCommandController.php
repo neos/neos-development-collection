@@ -12,7 +12,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -40,21 +40,25 @@ class NodeTypesCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $nodeTypeManager = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeTypeManager();
 
-        if (!$nodeTypeManager->hasNodeType($nodeTypeName)) {
+        $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType) {
             $this->outputLine('<error>NodeType "%s" was not found!</error>', [$nodeTypeName]);
             $this->quit();
         }
-
-        $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
 
         if ($path && !$nodeType->hasConfiguration($path)) {
             $this->outputLine('<b>NodeType "%s" does not have configuration "%s".</b>', [$nodeTypeName, $path]);
             $this->quit();
         }
 
-        $configuration = $path
-            ? self::truncateArrayAtLevel($nodeType->getConfiguration($path), $level)
-            : [$nodeTypeName => self::truncateArrayAtLevel($nodeType->getFullConfiguration(), $level)];
+        if (empty($path)) {
+            $configuration = [$nodeTypeName => self::truncateArrayAtLevel($nodeType->getFullConfiguration(), $level)];
+        } else {
+            $configuration = $nodeType->getConfiguration($path);
+            if (is_array($configuration)) {
+                $configuration = self::truncateArrayAtLevel($configuration, $level);
+            }
+        }
 
         $yaml = Yaml::dump($configuration, 99);
 

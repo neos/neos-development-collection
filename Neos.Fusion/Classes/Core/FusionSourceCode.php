@@ -13,11 +13,19 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
 
+/**
+ * @internal The Fusion parsing is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
+ */
 final class FusionSourceCode
 {
-    protected function __construct(
+    /**
+     * @Flow\Autowiring(false)
+     */
+    private function __construct(
         private ?string $filePath,
         private string|\Closure $sourceCodeOrFactory,
     ) {
@@ -25,7 +33,7 @@ final class FusionSourceCode
 
     public static function fromString(string $string): self
     {
-        return new static(null, $string);
+        return new self(null, $string);
     }
 
     public static function fromFilePath(string $filePath): self
@@ -33,7 +41,7 @@ final class FusionSourceCode
         if (is_readable($filePath) === false) {
             throw new Fusion\Exception("Trying to read Fusion source code from file, but '$filePath' is not readable.", 1657963790);
         }
-        return new static($filePath, fn () => file_get_contents($filePath));
+        return new self($filePath, fn () => file_get_contents($filePath));
     }
 
     /**
@@ -41,7 +49,7 @@ final class FusionSourceCode
      */
     public static function fromDangerousPotentiallyDifferingSourceCodeAndFilePath(string $sourceCode, string $filePath): self
     {
-        return new static($filePath, $sourceCode);
+        return new self($filePath, $sourceCode);
     }
 
     public function getSourceCode(): string

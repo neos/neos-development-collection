@@ -1,0 +1,134 @@
+`8.0.17 (2024-02-23) <https://github.com/neos/neos-development-collection/releases/tag/8.0.17>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fusion parser fix multi line comment <https://github.com/neos/neos-development-collection/pull/4882>`_
+---------------------------------------------------------------------------------------------------------------
+
+This fixes a bug where the Fusion parser would not parse following c-style comments correctly:
+
+```
+/**
+comment with multiple stars even
+**/
+```
+
+This happed when the ending count of ``*`` was even. So ending a comment with ``***/`` worked previously.
+
+Now we use the "correct" regex from Jeffrey E.F. Friedl's book "Mastering Regular Expressions" Page 272 "Unrolling C Comments"
+We already use his regex for string matching and it is really fast due to the unrolled loop. Faster than using the lazy quantifier ``~^/\\*.*?\\*/~s``.
+
+I did a performance test with 1 million iteration on three different comment samples (with each sample having a dynamic part to clear possible caches):
+
+| Unrolled (this pr) | Simple Lazy Quantifier  |
+|--------|--------|
+| 0.143725s | 0.160235s |
+| 0.181047s | 0.203759s |
+| 0.156254s | 0.170144s | 
+
+
+Additionally the error message for comments starting with ``/**`` was improved. Previously $nextLine->char(1) would return ``**`` instead of just one ``*`` because wrongly implemented.
+
+**Upgrade instructions**
+
+
+* Packages: ``Fusion``
+
+`BUGFIX: Use a dynamic URL for user impersonation <https://github.com/neos/neos-development-collection/pull/4875>`_
+-------------------------------------------------------------------------------------------------------------------
+
+As described in the issue, the impersonation does not work when Neos is running in a subfolder. This change adds a data attribute with a dynamic URL to the DOM, and the user impersonation is using this module URL as base.
+
+* Fixes: `#4797 <https://github.com/neos/neos-development-collection/issues/4797>`_
+
+**Review instructions**
+
+Use the user impersonation in the Backend modules (User Management and other) when Neos is running in a subfolder.
+e.g. BASEURL.com/cms/neos
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Add assetcollection privilege condition to asset edit view in Media.Browser <https://github.com/neos/neos-development-collection/pull/4404>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In the Media.Browser you can change the AssetCollections via checkboxes even when you don't have the privilege (Neos.Media.Browser:ManageAssetCollections) to do so.
+With this PR the checkboxes are only rendered with the right privilege.
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: MenuHelper uses content dimensions to get node for privilege check <https://github.com/neos/neos-development-collection/pull/4269>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4625 <https://github.com/neos/neos-development-collection/issues/4625>`_
+
+The Neos backend MenuHelper received a bugfix to filter sites listed by the menu using NodePrivileges. In case of sites with multiple dimensions the dimensionCombinations are considered too.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+This bugfix tries to fix #4025. If 7.3 and upwards is used on a multi site project with multiple dimensions, it might be that
+```
+$node = $context->getNode(\\Neos\\ContentRepository\\Domain\\Utility\\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
+```
+returns ``null``, causing the next line
+```
+if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+```
+to throw an exception. Thus the backend is not accessible anymore.  
+The reason is, that for multisite projects with multiple dimensions it might be that ``$node`` cannot be retrieved by the default context created.
+
+The fix is to use ``contentDimensionCombinator`` and also to explicitly check if ``$node`` could be retrieved.  
+I'm also using the property ``invisibleContentShown`` and ``inaccessibleContentShown`` because it might be that an editor set the Home of a site to ``hidden`` by mistake. Thus the site might not accessible via the menu anymore to possibly fix an editor mistake.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Fusion avoid error parser cache to crash if cache is broken <https://github.com/neos/neos-development-collection/pull/4839>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4595 <https://github.com/neos/neos-development-collection/issues/4595>`_
+
+It seems a cache's ``has`` operation doesnt work that reliable thats why we will be using ``get`` instead and check against false.  
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Add dimensions to Workspace module <https://github.com/neos/neos-development-collection/pull/3986>`_
+-------------------------------------------------------------------------------------------------------------
+
+resolves: `#3470 <https://github.com/neos/neos-development-collection/issues/3470>`_
+
+This adds Dimension handling to the current workspaces module. 
+
+Currently the Module only displays changes in different languages as one change. This is because the node path is the same in different languages after they are copied.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Fusion avoid error on cache invalidation while developing <https://github.com/neos/neos-development-collection/pull/4838>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Replaces `#4509 <https://github.com/neos/neos-development-collection/issues/4509>`_
+* Resolves: `#4415 <https://github.com/neos/neos-development-collection/issues/4415>`_
+
+After deleting a fusion file like ``BrandLogo.fusion`` one will face the error after booting flow and thus triggering the file monitor and its listeners: (even like a simple ``flow help``)
+
+```
+Couldn't resolve realpath for: '/absolutePath/Code/core/Neos.NeosIo/Packages/Sites/Neos.NeosIo/Resources/Private/Fusion/Content/BrandLogo/BrandLogo.fusion'
+```
+
+This is caused as ``realpath`` returns false if the file was deleted, and we were to eager validating this. But as flows file monitor already returns absolute paths we can skip the realpath calculation here and move it to the ``ParserCache::cacheForFusionFile``. Initially the call to ``realpath`` was made in a single place to avoid making to many assumptions about the form flow returned file paths.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.0.16...8.0.17>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

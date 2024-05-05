@@ -42,8 +42,11 @@ final class LazyReference
         }
 
         $this->isLocked = true;
-        $this->value = ($this->calculateValueCallback)();
-        $this->hasBeenDereferenced = true;
+        try {
+            $this->value = ($this->calculateValueCallback)();
+        } finally {
+            $this->hasBeenDereferenced = true;
+        }
 
         return $this->value;
     }

@@ -1,5 +1,11 @@
 Neos:
   Flow:
+    persistence:
+      doctrine:
+        migrations:
+          ignoredTables:
+            'cr_.*': true
+
     # Improve debug output for node objects by ignoring large classes
     error:
       debugger:
@@ -67,8 +73,6 @@ Neos:
             factoryObjectName: Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory
           'Neos.ContentRepository:Workspace':
             factoryObjectName: Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory
-          'Neos.ContentRepository:NodeHiddenState':
-            factoryObjectName: Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
           # NOTE: the following name must be stable, because we use it f.e. in Neos UI to register
           #       catchUpHooks for content cache flushing
           #'Neos.ContentRepository:ContentGraph':

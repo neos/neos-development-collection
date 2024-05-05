@@ -12,11 +12,11 @@ use ValueError;
 /**
  * @api This class is used for the {@see ContentSubgraphInterface} ordering
  */
-final class OrderingField implements JsonSerializable
+final readonly class OrderingField implements JsonSerializable
 {
     private function __construct(
-        public readonly PropertyName|TimestampField $field,
-        public readonly OrderingDirection $direction,
+        public PropertyName|TimestampField $field,
+        public OrderingDirection $direction,
     ) {
     }
 

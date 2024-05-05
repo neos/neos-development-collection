@@ -9,8 +9,6 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Fusion implementation for a dimensions menu.
@@ -210,14 +208,12 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         if ($this->getContentDimensionIdentifierToLimitTo()) {
             return $metadata[$this->getContentDimensionIdentifierToLimitTo()->value]['label'] ?: '';
+        } elseif ($variant) {
+            return $variant->getLabel() ?: '';
         } else {
-            if ($variant) {
-                return $variant->getLabel() ?: '';
-            } else {
-                return array_reduce($metadata, function ($carry, $item) {
-                    return $carry . (empty($carry) ? '' : '-') . $item['label'];
-                }, '');
-            }
+            return array_reduce($metadata, function ($carry, $item) {
+                return $carry . (empty($carry) ? '' : '-') . $item['label'];
+            }, '');
         }
     }
 

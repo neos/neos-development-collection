@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Moved a dimension space point to a new location; basically moving all content to the new dimension space point.
@@ -28,12 +28,12 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
  *
  * @api events are the persistence-API of the content repository
  */
-final class DimensionSpacePointWasMoved implements EventInterface, PublishableToOtherContentStreamsInterface
+final readonly class DimensionSpacePointWasMoved implements EventInterface, PublishableToOtherContentStreamsInterface
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly DimensionSpacePoint $source,
-        public readonly DimensionSpacePoint $target
+        public ContentStreamId $contentStreamId,
+        public DimensionSpacePoint $source,
+        public DimensionSpacePoint $target
     ) {
     }
 

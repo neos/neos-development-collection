@@ -6,21 +6,19 @@ namespace Neos\ContentRepository\NodeMigration;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\NodeMigration\Filter\InvalidMigrationFilterSpecified;
-use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
-use Neos\ContentRepository\NodeMigration\Filter\FiltersFactory;
-use Neos\ContentRepository\NodeMigration\Transformation\TransformationsFactory;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\Neos\PendingChangesProjection\ChangeProjection;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
+use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
+use Neos\ContentRepository\NodeMigration\Filter\FiltersFactory;
+use Neos\ContentRepository\NodeMigration\Filter\InvalidMigrationFilterSpecified;
+use Neos\ContentRepository\NodeMigration\Transformation\TransformationsFactory;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 
 /**
@@ -52,12 +50,12 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
  * you'll operate on the result state of all *previous* submigrations;
  * but you do not see the modified state of the current submigration while you are running it.
  */
-class NodeMigrationService implements ContentRepositoryServiceInterface
+readonly class NodeMigrationService implements ContentRepositoryServiceInterface
 {
     public function __construct(
-        private readonly ContentRepository $contentRepository,
-        private readonly FiltersFactory $filterFactory,
-        private readonly TransformationsFactory $transformationFactory
+        private ContentRepository $contentRepository,
+        private FiltersFactory $filterFactory,
+        private TransformationsFactory $transformationFactory
     ) {
     }
 
@@ -77,8 +75,6 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
                 throw new MigrationException(sprintf('Target workspace "%s" already exists an is not empty. Please clear the workspace before.', $targetWorkspace->workspaceName->value));
             }
 
-            $targetContentStreamId = $targetWorkspace->currentContentStreamId;
-
         } else {
             $targetContentStreamId = ContentStreamId::create();
             $this->contentRepository->handle(
@@ -96,8 +92,8 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
             /** array $migrationDescription */
             $this->executeSubMigrationAndBlock(
                 $migrationDescription,
-                $sourceWorkspace->currentContentStreamId,
-                $targetContentStreamId
+                $sourceWorkspace,
+                $targetWorkspace
             );
         }
 
@@ -122,8 +118,8 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
      */
     protected function executeSubMigrationAndBlock(
         array $migrationDescription,
-        ContentStreamId $contentStreamForReading,
-        ContentStreamId $contentStreamForWriting
+        Workspace $workspaceForReading,
+        Workspace $workspaceForWriting,
     ): void {
         $filters = $this->filterFactory->buildFilterConjunction($migrationDescription['filters'] ?? []);
         $transformations = $this->transformationFactory->buildTransformation(
@@ -152,17 +148,17 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
         }
 
         if ($transformations->containsGlobal()) {
-            $transformations->executeGlobalAndBlock($contentStreamForReading, $contentStreamForWriting);
+            $transformations->executeGlobalAndBlock($workspaceForWriting->workspaceName);
         } elseif ($transformations->containsNodeAggregateBased()) {
             foreach ($this->contentRepository->getContentGraph()->findUsedNodeTypeNames() as $nodeTypeName) {
                 foreach (
                     $this->contentRepository->getContentGraph()->findNodeAggregatesByType(
-                        $contentStreamForReading,
+                        $workspaceForReading->currentContentStreamId,
                         $nodeTypeName
                     ) as $nodeAggregate
                 ) {
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
-                        $transformations->executeNodeAggregateBasedAndBlock($nodeAggregate, $contentStreamForWriting);
+                        $transformations->executeNodeAggregateBasedAndBlock($nodeAggregate, $workspaceForWriting->workspaceName, $workspaceForWriting->currentContentStreamId);
                     }
                 }
             }
@@ -170,7 +166,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
             foreach ($this->contentRepository->getContentGraph()->findUsedNodeTypeNames() as $nodeTypeName) {
                 foreach (
                     $this->contentRepository->getContentGraph()->findNodeAggregatesByType(
-                        $contentStreamForReading,
+                        $workspaceForReading->currentContentStreamId,
                         $nodeTypeName
                     ) as $nodeAggregate
                 ) {
@@ -191,7 +187,8 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
                                 $transformations->executeNodeBasedAndBlock(
                                     $node,
                                     $coveredDimensionSpacePoints,
-                                    $contentStreamForWriting
+                                    $workspaceForWriting->workspaceName,
+                                    $workspaceForWriting->currentContentStreamId
                                 );
                             }
                         }

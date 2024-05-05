@@ -4,13 +4,13 @@ namespace Neos\ContentRepository\Export\Asset\ValueObject;
 
 use Neos\Flow\ResourceManagement\PersistentResource;
 
-final class SerializedResource implements \JsonSerializable
+final readonly class SerializedResource implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $filename,
-        public readonly string $collectionName,
-        public readonly string $mediaType,
-        public readonly string $sha1,
+        public string $filename,
+        public string $collectionName,
+        public string $mediaType,
+        public string $sha1,
     ) {}
 
     public static function fromResource(PersistentResource $resource): self

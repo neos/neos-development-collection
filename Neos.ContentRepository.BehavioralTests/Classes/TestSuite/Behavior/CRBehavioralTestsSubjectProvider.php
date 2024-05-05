@@ -18,7 +18,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GherkinTableNodeBasedContentDimensionSource;
 use Neos\EventStore\EventStoreInterface;
 
@@ -36,7 +36,7 @@ trait CRBehavioralTestsSubjectProvider
      * A runtime cache of all content repositories already set up, represented by their ID
      * @var array<ContentRepositoryId>
      */
-    protected array $alreadySetUpContentRepositories = [];
+    protected static array $alreadySetUpContentRepositories = [];
 
     protected ?ContentRepository $currentContentRepository = null;
 
@@ -169,8 +169,9 @@ trait CRBehavioralTestsSubjectProvider
          * Catch Up process and the testcase reset.
          */
         $contentRepository = $this->createContentRepository($contentRepositoryId);
-        if (!in_array($contentRepository->id, $this->alreadySetUpContentRepositories)) {
+        if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
             $contentRepository->setUp();
+            self::$alreadySetUpContentRepositories[] = $contentRepository->id;
         }
         /** @var EventStoreInterface $eventStore */
         $eventStore = (new \ReflectionClass($contentRepository))->getProperty('eventStore')->getValue($contentRepository);

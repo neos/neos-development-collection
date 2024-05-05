@@ -75,9 +75,9 @@ final class SiteNodeUtility
         );
         $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($dimensionSpacePoint);
 
-        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName(
-            $rootNode->nodeAggregateId,
-            $site->getNodeName()->toNodeName()
+        $siteNode = $subgraph->findNodeByPath(
+            $site->getNodeName()->toNodeName(),
+            $rootNode->nodeAggregateId
         );
 
         if (!$siteNode) {

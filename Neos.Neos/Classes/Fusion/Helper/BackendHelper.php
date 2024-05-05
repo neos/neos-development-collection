@@ -32,6 +32,7 @@ class BackendHelper implements ProtectedContextAwareInterface
      *
      *     Translation.id("mh").locale(Neos.Backend.interfaceLanguage()).translate()
      *
+     * @return string
      */
     public function interfaceLanguage(): string
     {

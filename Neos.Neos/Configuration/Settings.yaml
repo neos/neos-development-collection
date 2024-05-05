@@ -11,9 +11,6 @@
 Neos:
 
   Neos:
-    contentDimensions:
-      resolution:
-        uriPathSegmentDelimiter: '_'
 
     fusion:
       # if set to true, Fusion is cached on a per-site basis.
@@ -54,19 +51,6 @@ Neos:
       More information and contribution opportunities at https://www.neos.io
       -->
 
-    routing:
-      # Setting this to true allows to use an empty uriSegment for default dimensions.
-      # The only limitation is that all segments must be unique across all dimenions.
-      supportEmptySegmentForDimensions: true
-
-    sites:
-      '*':
-        uriPathSuffix: '.html'
-        contentRepository: default
-        contentDimensions:
-          resolver:
-            factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolverFactory
-
     nodeTypes:
       groups:
         general:
@@ -81,6 +65,10 @@ Neos:
           position: 200
           label: 'Neos.Neos:Main:nodeTypes.groups.plugins'
           collapsed: true
+
+    frontend:
+      # HTTP Status Code used for redirecting Neos.Neos:Shortcut to target
+      shortcutRedirectHttpStatusCode: 303
 
     userInterface:
 
@@ -226,11 +214,11 @@ Neos:
             editor: Neos.Neos/Inspector/Editors/DateTimeEditor
             editorOptions:
               format: d-m-Y
+          # special types uses for NodeType references to wire the "editor"
+          # singular "reference" will be used if constraints.maxItems is set to 1
           reference:
-            typeConverter: Neos\Neos\Service\Mapping\NodeReferenceConverter
             editor: Neos.Neos/Inspector/Editors/ReferenceEditor
           references:
-            typeConverter: Neos\Neos\Service\Mapping\NodeReferenceConverter
             editor: Neos.Neos/Inspector/Editors/ReferencesEditor
         editors:
           Neos.Neos/Inspector/Editors/CodeEditor:
@@ -467,15 +455,13 @@ Neos:
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseException
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseStructureException
-            options: &welcomeTemplate
-              viewClassName: Neos\FluidAdaptor\View\StandaloneView
+            options:
+              viewClassName: Neos\Fusion\View\FusionView
               viewOptions:
-                templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Welcome.html'
-                layoutRootPaths: ['resource://Neos.Neos/Private/Layouts/']
-          noHomepageException:
-            matchingExceptionClassNames:
-              - Neos\Neos\Routing\Exception\NoHomepageException
-            options: *welcomeTemplate
+                fusionPath: 'Neos/Fusion/DatabaseConnectionExceptions'
+                fusionPathPatterns: ['resource://Neos.Neos/Private/Fusion/Error/Root.fusion']
+                enableContentCache: false
+                templatePathAndFilename: ~
       debugger:
         ignoredClasses:
           Neos\\Neos\\Domain\\Service\\ContentContextFactory: true
@@ -528,7 +514,6 @@ Neos:
       Neos.Node: Neos\Neos\Fusion\Helper\NodeHelper
       Neos.Link: Neos\Neos\Fusion\Helper\LinkHelper
       Neos.Array: Neos\Neos\Fusion\Helper\ArrayHelper
-      Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
       Neos.Dimension: Neos\Neos\Fusion\Helper\DimensionHelper
       Neos.Backend: Neos\Neos\Fusion\Helper\BackendHelper
@@ -634,19 +619,6 @@ Neos:
             namespaces:
               f: Neos\FluidAdaptor\ViewHelpers
               neos: Neos\Neos\ViewHelpers
-      'Neos:ContentRepositoryViewHelpers':
-        title: 'Content Repository ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/ContentRepository.rst'
-        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
-        affectedClasses:
-          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
-          classNamePattern: '/^Neos\\ContentRepository\\ViewHelpers\\.*$/i'
-        parser:
-          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
-          options:
-            namespaces:
-              f: Neos\FluidAdaptor\ViewHelpers
-              neos: Neos\Neos\ViewHelpers
       'Neos:FusionViewHelpers':
         title: 'Fusion ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Fusion.rst'
@@ -711,15 +683,6 @@ Neos:
           includeAbstractClasses: true
         parser:
           implementationClassName: Neos\DocTools\Domain\Service\SignalsParser
-      'Neos:ContentRepositorySignals':
-        title: 'Content Repository Signals Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/ContentRepository.rst'
-        affectedClasses:
-          classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
-          classNamePattern: '/^Neos\\ContentRepository\\.*$/i'
-          includeAbstractClasses: true
-        parser:
-          implementationClassName: Neos\DocTools\Domain\Service\SignalsParser
       'Neos:FlowQueryOperations':
         title: 'FlowQuery Operation Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/FlowQueryOperationReference.rst'
@@ -732,6 +695,7 @@ Neos:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/EelHelpersReference.rst'
         affectedClasses:
           interface: Neos\Eel\ProtectedContextAwareInterface
-          classNamePattern: '/^.*Helper$/i'
+          # exclude possible EEL helpers residing in `Neos.Ui` as they are internal
+          classNamePattern: '/^(?!Neos\\Neos\\Ui\\).*Helper$/i'
         parser:
           implementationClassName: Neos\DocTools\Domain\Service\EelHelperClassParser

@@ -27,7 +27,7 @@ use Psr\Http\Message\UriInterface;
  *
  * @internal
  */
-final class PropertyType
+final readonly class PropertyType
 {
     public const TYPE_BOOL = 'boolean';
     public const TYPE_INT = 'integer';
@@ -39,10 +39,10 @@ final class PropertyType
     public const PATTERN_ARRAY_OF = '/array<[^>]+>/';
 
     /** only set if {@see sef:: isArrayOf()} */
-    private self $arrayOfType;
+    private ?self $arrayOfType;
 
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
         if ($this->isArrayOf()) {
             $arrayOfType = self::tryFromString($this->getArrayOf());
@@ -53,6 +53,8 @@ final class PropertyType
                 ));
             }
             $this->arrayOfType = $arrayOfType;
+        } else {
+            $this->arrayOfType = null;
         }
     }
 
@@ -64,9 +66,6 @@ final class PropertyType
         PropertyName $propertyName,
         NodeTypeName $nodeTypeName
     ): self {
-        if ($declaration === 'reference' || $declaration === 'references') {
-            throw PropertyTypeIsInvalid::becauseItIsReference($propertyName, $nodeTypeName);
-        }
         $type = self::tryFromString($declaration);
         if (!$type) {
             throw PropertyTypeIsInvalid::becauseItIsUndefined($propertyName, $declaration, $nodeTypeName);
@@ -76,9 +75,6 @@ final class PropertyType
 
     private static function tryFromString(string $declaration): ?self
     {
-        if ($declaration === 'reference' || $declaration === 'references') {
-            return null;
-        }
         if ($declaration === 'bool' || $declaration === 'boolean') {
             return self::bool();
         }
@@ -218,7 +214,7 @@ final class PropertyType
                 return false;
             }
             foreach ($propertyValue as $value) {
-                if (!$this->arrayOfType->isMatchedBy($value)) {
+                if (!$this->arrayOfType?->isMatchedBy($value)) {
                     return false;
                 }
             }

@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
  *
  * @api
  */
-final class NodeAggregateId implements \JsonSerializable
+final readonly class NodeAggregateId implements \JsonSerializable
 {
     /**
      * A preg pattern to match against node aggregate identifiers
@@ -29,7 +29,7 @@ final class NodeAggregateId implements \JsonSerializable
     public const PATTERN = '/^([a-z0-9\-]{1,64})$/';
 
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
         if (!preg_match(self::PATTERN, $value)) {
             throw new \InvalidArgumentException(

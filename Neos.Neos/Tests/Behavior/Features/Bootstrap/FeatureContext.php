@@ -11,14 +11,13 @@
  */
 
 use Behat\Behat\Context\Context as BehatContext;
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Neos\Behat\FlowBootstrapTrait;
 use Neos\Behat\FlowEntitiesTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
@@ -38,6 +37,8 @@ class FeatureContext implements BehatContext
     use MigrationsTrait;
     use FusionTrait;
 
+    use AssetTrait;
+
     protected Environment $environment;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -48,13 +49,20 @@ class FeatureContext implements BehatContext
         $this->environment = $this->getObject(Environment::class);
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
 
-        $this->setupCRTestSuiteTrait(true);
+        $this->setupCRTestSuiteTrait();
     }
+
+    /*
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+     *  Please don't add any generic step definitions here and use   *
+     *  a dedicated trait instead to keep this main class tidied up. *
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+     */
 
     /**
      * @BeforeScenario
      */
-    public function resetContentRepositoryComponents(BeforeScenarioScope $scope): void
+    public function resetContentRepositoryComponents(): void
     {
         GherkinTableNodeBasedContentDimensionSourceFactory::reset();
         GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
@@ -65,9 +73,6 @@ class FeatureContext implements BehatContext
      */
     public function resetPersistenceManagerAndFeedbackCollection()
     {
-        // FIXME: we have some strange race condition between the scenarios; my theory is that
-        // somehow projectors still run in the background when we start from scratch...
-        sleep(2);
         $this->getObject(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->clearState();
         // FIXME: FeedbackCollection is a really ugly, hacky SINGLETON; so it needs to be RESET!
         $this->getObject(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();

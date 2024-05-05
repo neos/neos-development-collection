@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export;
 
-final class ProcessorResult
+final readonly class ProcessorResult
 {
-
     private function __construct(
-        public readonly Severity $severity,
-        public readonly ?string $message = null
+        public Severity $severity,
+        public ?string $message = null
     ) {}
 
     public static function success(?string $message = null): self

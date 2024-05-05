@@ -15,10 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 
@@ -68,5 +68,18 @@ trait WorkspaceDiscarding
         }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+    }
+
+
+    /**
+     * @Given /^the command DiscardIndividualNodesFromWorkspace is executed with payload and exceptions are caught:$/
+     */
+    public function theCommandDiscardIndividualNodesFromWorkspaceIsExecutedAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandDiscardIndividualNodesFromWorkspaceIsExecuted($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
     }
 }

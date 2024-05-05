@@ -24,7 +24,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
@@ -39,15 +38,16 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSibl
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -269,8 +269,10 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         ) : null;
     }
 
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
+    public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node
     {
+        $path = $path instanceof NodeName ? NodePath::fromNodeNames($path) : $path;
+
         $startingNode = $this->findNodeById($startingNodeAggregateId);
 
         return $startingNode
@@ -287,9 +289,9 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             : null;
     }
 
-    public function findChildNodeConnectedThroughEdgeName(
+    private function findChildNodeConnectedThroughEdgeName(
         NodeAggregateId $parentNodeAggregateId,
-        NodeName $edgeName
+        NodeName $nodeName
     ): ?Node {
         $query = HypergraphChildQuery::create(
             $this->contentStreamId,
@@ -298,7 +300,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints)
-            ->withChildNodeName($edgeName);
+            ->withChildNodeName($nodeName);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
@@ -532,14 +534,8 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->databaseClient->getConnection();
     }
 
-    /**
-     * @return array<string,mixed>
-     */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ContentSubgraphIdentity
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'dimensionSpacePoint' => $this->dimensionSpacePoint
-        ];
+        return $this->getIdentity();
     }
 }

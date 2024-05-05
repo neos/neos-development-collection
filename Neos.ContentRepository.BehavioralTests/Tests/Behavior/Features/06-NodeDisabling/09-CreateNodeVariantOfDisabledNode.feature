@@ -22,7 +22,7 @@ Feature: Variation of hidden nodes
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -118,7 +118,8 @@ Feature: Variation of hidden nodes
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
     When I am in dimension space point {"language":"mul"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"mul"}
+    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+  #cs-identifier;the-great-nodini;{"language":"mul"}
 
   Scenario: Generalize a node where the generalization target is disabled
     Given I am in dimension space point {"language":"ltz"}

@@ -157,16 +157,16 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id :parentNodeIdSerialized and edge name :edgeNameSerialized I expect no node to be returned
-     * @When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id :parentNodeIdSerialized and edge name :edgeNameSerialized I expect the node :expectedNodeIdSerialized to be returned
+     * @When I execute the findNodeByPath query for parent node aggregate id :parentNodeIdSerialized and node name :edgeNameSerialized as path I expect no node to be returned
+     * @When I execute the findNodeByPath query for parent node aggregate id :parentNodeIdSerialized and node name :edgeNameSerialized as path I expect the node :expectedNodeIdSerialized to be returned
      */
-    public function iExecuteTheFindChildNodeConnectedThroughEdgeNameQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $edgeNameSerialized, string $expectedNodeIdSerialized = null): void
+    public function iExecuteTheFindChildNodeByNodeNameQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $edgeNameSerialized, string $expectedNodeIdSerialized = null): void
     {
         $parentNodeAggregateId = NodeAggregateId::fromString($parentNodeIdSerialized);
         $edgeName = NodeName::fromString($edgeNameSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        $actualNode = $this->getCurrentSubgraph()->findChildNodeConnectedThroughEdgeName($parentNodeAggregateId, $edgeName);
+        $actualNode = $this->getCurrentSubgraph()->findNodeByPath($edgeName, $parentNodeAggregateId);
         Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
     }
 
@@ -225,12 +225,13 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdsSerialized I expect the following tree:
-     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdsSerialized I expect no results
-     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdsSerialized and filter :filterSerialized I expect the following tree:
-     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdsSerialized and filter :filterSerialized I expect no results
+     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdSerialized I expect the following tree:
+     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdSerialized I expect no results
+     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdSerialized and filter :filterSerialized I expect the following tree:
+     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdSerialized and filter :filterSerialized I expect no results
+     * @When /^I execute the findSubtree query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)" I expect the following tree (?<withTags>with tags):$/
      */
-    public function iExecuteTheFindSubtreeQueryIExpectTheFollowingTrees(string $entryNodeIdSerialized, string $filterSerialized = null, PyStringNode $expectedTree = null): void
+    public function iExecuteTheFindSubtreeQueryIExpectTheFollowingTrees(string $entryNodeIdSerialized, string $filterSerialized = null, PyStringNode $expectedTree = null, string $withTags = null): void
     {
         $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
@@ -245,7 +246,11 @@ trait NodeTraversalTrait
         while ($subtreeStack !== []) {
             /** @var Subtree $subtree */
             $subtree = array_shift($subtreeStack);
-            $result[] = str_repeat(' ', $subtree->level) . $subtree->node->nodeAggregateId->value;
+            $tags = [];
+            if ($withTags !== null) {
+                $tags = [...array_map(static fn(string $tag) => $tag . '*', $subtree->node->tags->withoutInherited()->toStringArray()), ...$subtree->node->tags->onlyInherited()->toStringArray()];
+            }
+            $result[] = str_repeat(' ', $subtree->level) . $subtree->node->nodeAggregateId->value . ($tags !== [] ? ' (' . implode(',', $tags) . ')' : '');
             $subtreeStack = [...$subtree->children, ...$subtreeStack];
         }
         Assert::assertSame($expectedTree?->getRaw() ?? '', implode(chr(10), $result));

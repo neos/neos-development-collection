@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
  * @implements \IteratorAggregate<NodeReferenceToWrite>
  * @api used as part of commands
  */
-final readonly class NodeReferencesToWrite implements \IteratorAggregate, \JsonSerializable
+final readonly class NodeReferencesToWrite implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
      * @var array<NodeReferenceToWrite>
@@ -56,6 +56,14 @@ final readonly class NodeReferencesToWrite implements \IteratorAggregate, \JsonS
                 => NodeReferenceToWrite::fromArray($serializedReference),
             $values
         ));
+    }
+
+    /**
+     * Unset all references for this reference name.
+     */
+    public static function createEmpty(): self
+    {
+        return new self();
     }
 
     public static function fromNodeAggregateIds(NodeAggregateIds $nodeAggregateIds): self
@@ -89,5 +97,10 @@ final readonly class NodeReferencesToWrite implements \IteratorAggregate, \JsonS
     public function jsonSerialize(): array
     {
         return $this->references;
+    }
+
+    public function count(): int
+    {
+        return count($this->references);
     }
 }

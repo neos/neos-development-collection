@@ -24,12 +24,3 @@ Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
       value: Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory
     2:
       object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
-
-Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory:
-  scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
-  arguments:
-    1:
-      value: Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
-    2:
-      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'

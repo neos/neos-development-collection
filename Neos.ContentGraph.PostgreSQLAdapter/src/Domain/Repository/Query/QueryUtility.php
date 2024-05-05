@@ -28,18 +28,9 @@ final class QueryUtility
         string $tableNamePrefix,
         string $prefix = ''
     ): string {
-        if ($visibilityConstraints->isDisabledContentShown()) {
-            return '';
-        }
+        // TODO evaluate $visibilityConstraints->tagConstraints {@see Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph::addSubtreeTagConstraints}
 
-        return '
-            AND NOT EXISTS (
-                SELECT 1
-                FROM ' . $tableNamePrefix . '_restrictionhyperrelation rest
-                WHERE rest.contentstreamid = ' . $prefix . 'h.contentstreamid
-                    AND rest.dimensionspacepointhash = ' . $prefix . 'h.dimensionspacepointhash
-                    AND ' . $prefix . 'n.nodeaggregateid = ANY(rest.affectednodeaggregateids)
-            )';
+        return '';
     }
 
     /**

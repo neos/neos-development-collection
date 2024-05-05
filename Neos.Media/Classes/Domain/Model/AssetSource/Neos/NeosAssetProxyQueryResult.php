@@ -100,6 +100,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
     /**
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->flowPersistenceQueryResult->next();
@@ -108,6 +109,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
     /**
      * @return AssetProxyInterface|null
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->flowPersistenceQueryResult->key();
@@ -116,6 +118,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->flowPersistenceQueryResult->valid();
@@ -134,6 +137,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @param mixed $offset
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this->flowPersistenceQueryResult->offsetExists($offset);
@@ -143,6 +147,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @param mixed $offset
      * @return AssetProxyInterface|mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset): ?AssetProxyInterface
     {
         return new NeosAssetProxy($this->flowPersistenceQueryResult->offsetGet($offset), $this->assetSource);
@@ -152,6 +157,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @param mixed $offset
      * @param mixed $value
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new \RuntimeException('Unsupported operation: ' . __METHOD__, 1510060444);
@@ -160,6 +166,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
     /**
      * @param mixed $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new \RuntimeException('Unsupported operation: ' . __METHOD__, 1510060467);

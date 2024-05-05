@@ -64,7 +64,6 @@ class ImageController extends AssetController
      * @param AssetInterface $asset
      * @return void
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function editAction(string $assetSourceIdentifier = null, string $assetProxyIdentifier = null, AssetInterface $asset = null): void
     {

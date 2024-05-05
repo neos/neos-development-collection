@@ -31,9 +31,9 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                    |
-      | contentStreamId             | "cs-identifier"          |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
     And the graph projection is fully up to date
@@ -59,8 +59,9 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: 'default'
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
@@ -90,7 +91,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
   Scenario: Change uri path segment
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                            |
-      | contentStreamId           | "cs-identifier"                                  |
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
@@ -102,14 +102,12 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
   Scenario: Change uri path segment works multiple times (bug #4253)
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
-      | contentStreamId           | "cs-identifier"                                    |
       | nodeAggregateId           | "sir-david-nodenborough"                           |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-a"} |
     And The documenturipath projection is up to date
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
-      | contentStreamId           | "cs-identifier"                                    |
       | nodeAggregateId           | "sir-david-nodenborough"                           |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-b"} |
@@ -129,7 +127,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
   Scenario: Move node upwards in the tree
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
-      | contentStreamId                     | "cs-identifier"         |
       | nodeAggregateId                     | "earl-o-documentbourgh" |
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "shernode-homes"        |
@@ -142,7 +139,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
   Scenario: Move node downwards in the tree
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
-      | contentStreamId                     | "cs-identifier"         |
       | nodeAggregateId                     | "nody-mc-nodeface"      |
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "earl-o-documentbourgh" |

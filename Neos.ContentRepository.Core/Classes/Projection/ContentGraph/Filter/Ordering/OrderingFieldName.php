@@ -11,9 +11,9 @@ use JsonSerializable;
  *
  * @api This class is used for the {@see ContentSubgraphInterface} ordering
  */
-final class OrderingFieldName implements JsonSerializable
+final readonly class OrderingFieldName implements JsonSerializable
 {
-    public readonly string $value;
+    public string $value;
 
     private function __construct(string $value)
     {

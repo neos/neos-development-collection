@@ -13,15 +13,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class ChangeWorkspaceOwner implements CommandInterface
+final readonly class ChangeWorkspaceOwner implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Name of the workspace to change the owner for
      * @param string|null $newWorkspaceOwner The id of the new workspace owner or NULL to remove the owner
      */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly ?string $newWorkspaceOwner,
+        public WorkspaceName $workspaceName,
+        public ?string $newWorkspaceOwner,
     ) {
     }
 

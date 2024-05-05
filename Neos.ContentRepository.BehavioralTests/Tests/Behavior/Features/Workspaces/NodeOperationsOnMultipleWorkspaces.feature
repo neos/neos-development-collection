@@ -17,9 +17,9 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
-      | contentStreamId     | "cs-identifier"               |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -45,7 +45,6 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
     And the graph projection is fully up to date
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | contentStreamId   | "cs-identifier"              |
       | nodeAggregateId   | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Original"}         |
@@ -60,7 +59,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
   Scenario: Set property of a node
     Given the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | contentStreamId   | "user-cs-identifier"         |
+      | workspaceName              | "user-test"          |
       | nodeAggregateId   | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Changed"}          |

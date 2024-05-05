@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.2']
+        php-versions: ['8.2', '8.3']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
 
@@ -136,6 +136,7 @@ jobs:
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v2
+        timeout-minutes: 30
         with:
           path: |
             ~/.cache/composer
@@ -248,7 +249,7 @@ jobs:
           # DEBUG MODE: ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
           set +e
-          CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1 composer test:behavioral:stop-on-failure
+          composer test:behavioral:stop-on-failure:sync
           retVal=$?
 
           # automatically search for race conditions
