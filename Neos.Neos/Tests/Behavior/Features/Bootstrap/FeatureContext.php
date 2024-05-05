@@ -24,6 +24,8 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrai
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Utility\Environment;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 
 class FeatureContext implements BehatContext
 {
@@ -31,7 +33,9 @@ class FeatureContext implements BehatContext
     use FlowEntitiesTrait;
     use BrowserTrait;
 
-    use CRTestSuiteTrait;
+    use CRTestSuiteTrait {
+        deserializeProperties  as deserializePropertiesCrTestSuiteTrait;
+    }
     use CRBehavioralTestsSubjectProvider;
     use RoutingTrait;
     use MigrationsTrait;
@@ -43,12 +47,14 @@ class FeatureContext implements BehatContext
     protected Environment $environment;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+    protected PersistenceManagerInterface $persistenceManager;
 
     public function __construct()
     {
         self::bootstrapFlow();
         $this->environment = $this->getObject(Environment::class);
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
+        $this->persistenceManager = $this->getObject(PersistenceManagerInterface::class);
 
         $this->setupCRTestSuiteTrait();
     }
@@ -102,5 +108,28 @@ class FeatureContext implements BehatContext
         GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
 
         return $contentRepository;
+    }
+
+    protected function deserializeProperties(array $properties): PropertyValuesToWrite
+    {
+        $properties = array_map(
+            $this->loadFlowObjectsRecursive(...),
+            $properties
+        );
+
+        return $this->deserializePropertiesCrTestSuiteTrait($properties);
+    }
+
+    public function loadFlowObjectsRecursive(mixed $value): mixed
+    {
+        if (is_array($value) && isset($value['__flow_object_type'])) {
+            return $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type'], true);
+        } elseif (is_array($value)) {
+            return array_map(
+                $this->loadFlowObjectsRecursive(...),
+                $value
+            );
+        }
+        return $value;
     }
 }

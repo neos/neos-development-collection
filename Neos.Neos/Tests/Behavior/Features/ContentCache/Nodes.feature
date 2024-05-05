@@ -227,8 +227,8 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
     """
 
     When the command SetNodeProperties is executed with payload:
-      | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
+      | Key             | Value                      |
+      | contentStreamId | "cs-identifier"            |
       | nodeAggregateId | "a1-1"                     |
       | propertyValues  | {"title": "Node a1-1 new"} |
     And the graph projection is fully up to date

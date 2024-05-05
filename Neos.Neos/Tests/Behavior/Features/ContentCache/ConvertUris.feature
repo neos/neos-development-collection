@@ -32,9 +32,9 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user-test"          |
-      | baseWorkspaceName          | "live"               |
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
     And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -43,13 +43,13 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
       | nodeTypeName    | "Neos.Neos:Sites" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                            | nodeName |
-      | a               | root                  | Neos.Neos:Site               | {}                                               | a     |
-      | a1              | a                     | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1", "title": "Node a1"}     | a1       |
-      | a2              | a                     | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a2", "title": "Node a2"}     | a2       |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                        | nodeName |
+      | a               | root                  | Neos.Neos:Site               | {}                                           | a        |
+      | a1              | a                     | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1", "title": "Node a1"} | a1       |
+      | a2              | a                     | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a2", "title": "Node a2"} | a2       |
     When the command RebaseWorkspace is executed with payload:
-      | Key                      | Value                        |
-      | workspaceName            | "user-test"                  |
+      | Key           | Value       |
+      | workspaceName | "user-test" |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
     """yaml
@@ -114,9 +114,9 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
     """
 
     When the command SetNodeProperties is executed with payload:
-      | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
-      | nodeAggregateId | "a1"                     |
+      | Key             | Value                        |
+      | contentStreamId | "cs-identifier"              |
+      | nodeAggregateId | "a1"                         |
       | propertyValues  | {"uriPathSegment": "a1-new"} |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
@@ -151,9 +151,9 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
 
     And I am in the active content stream of workspace "user-test" and dimension space point {}
     When the command SetNodeProperties is executed with payload:
-      | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
-      | nodeAggregateId | "a1"                     |
+      | Key             | Value                        |
+      | contentStreamId | "cs-identifier"              |
+      | nodeAggregateId | "a1"                         |
       | propertyValues  | {"uriPathSegment": "a1-new"} |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
