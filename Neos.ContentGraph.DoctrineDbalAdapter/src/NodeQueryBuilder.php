@@ -3,11 +3,9 @@
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
@@ -33,13 +31,13 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 /**
  * @internal Implementation detail of the DoctrineDbalAdapter
  */
-class NodeQueryBuilder
+final readonly class NodeQueryBuilder
 {
-    public readonly ContentGraphTableNames $contentGraphTableNames;
+    public ContentGraphTableNames $contentGraphTableNames;
 
     public function __construct(
-        private readonly Connection $connection,
-        private readonly string $tableNamePrefix
+        private Connection $connection,
+        string $tableNamePrefix
     ) {
         $this->contentGraphTableNames = ContentGraphTableNames::withPrefix($tableNamePrefix);
     }

@@ -6,9 +6,9 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
  * Encapsulates table name generation for content graph tables
  * @internal
  */
-final class ContentGraphTableNames
+final readonly class ContentGraphTableNames
 {
-    private function __construct(private readonly string $tableNamePrefix)
+    private function __construct(private string $tableNamePrefix)
     {
     }
 
