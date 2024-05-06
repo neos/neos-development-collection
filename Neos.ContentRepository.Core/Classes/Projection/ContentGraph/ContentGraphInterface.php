@@ -149,7 +149,9 @@ interface ContentGraphInterface extends ProjectionStateInterface
      */
     public function countNodes(): int;
 
+    /** The workspace this content graph is operating on */
     public function getWorkspaceName(): WorkspaceName;
 
+    /** @internal The content stream id where the workspace name points to for this instance */
     public function getContentStreamId(): ContentStreamId;
 }
