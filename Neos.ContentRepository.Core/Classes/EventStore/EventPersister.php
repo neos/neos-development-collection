@@ -58,14 +58,14 @@ final readonly class EventPersister
 
         $projectionsToUpdate = [];
         foreach ($this->projections as $projection) {
+            if ($projection instanceof WithMarkStaleInterface) {
+                $projection->markStale();
+            }
             if (!$projection->getCheckpoint()->equals($expectedCheckpoint)) {
                 //throw new \RuntimeException(sprintf('Projection %s is at checkpoint %d, but was expected to be at %d', $projection::class, $projection->getCheckpoint()->value, $expectedCheckpoint->value), 1714062281);
                 continue;
             }
             $projectionsToUpdate[] = $projection;
-            if ($projection instanceof WithMarkStaleInterface) {
-                $projection->markStale();
-            }
         }
 
         $hooks->dispatchBeforeCatchUp();
