@@ -167,8 +167,7 @@ trait SubtreeTagging
                 JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation dh
                     ON
                         dh.parentnodeanchor = cte.childnodeanchor
-                    WHERE
-                        dh.contentstreamid = :contentStreamId
+                        AND dh.contentstreamid = :contentStreamId
                         AND dh.dimensionspacepointhash = :dimensionSpacePointHash
               )
               SELECT * FROM cte
