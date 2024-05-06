@@ -184,7 +184,7 @@ class ChangeProjection implements ProjectionInterface
     {
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
-            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event, $eventEnvelope),
+            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
             NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
@@ -231,7 +231,7 @@ class ChangeProjection implements ProjectionInterface
         }
     }
 
-    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event, EventEnvelope $eventEnvelope): void
+    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
         $affectedDimensionSpacePoints = iterator_to_array($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet());
         $arbitraryDimensionSpacePoint = reset($affectedDimensionSpacePoints);

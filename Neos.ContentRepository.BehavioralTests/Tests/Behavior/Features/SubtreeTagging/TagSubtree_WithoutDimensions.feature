@@ -173,11 +173,11 @@ Feature: Tag subtree without dimensions
     """
     b (tag2*)
      b1 (tag3*,tag2)
-      a1a (tag4*,tag3,tag2)
-       a1a1 (tag4*,tag1*,tag3,tag2)
-        a1a1a (tag4*,tag3,tag2)
-        a1a1b (tag4*,tag3,tag2)
-       a1a2 (tag4*,tag3,tag2)
+      a1a (tag4*,tag2,tag3)
+       a1a1 (tag1*,tag2,tag3,tag4)
+        a1a1a (tag1,tag2,tag3,tag4)
+        a1a1b (tag1,tag2,tag3,tag4)
+       a1a2 (tag2,tag3,tag4)
     """
 
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -189,12 +189,12 @@ Feature: Tag subtree without dimensions
     """
     b (tag2*)
      b1 (tag3*,tag2)
-      a1a (tag4*,tag3,tag2)
-       a1a1 (tag4*,tag1*,tag3,tag2)
-        a1a1a (tag4*,tag3,tag2)
-        a1a1b (tag4*,tag3,tag2)
-       a1a2 (tag4*,tag3,tag2)
-       a1a3 (tag4,tag3,tag2)
+      a1a (tag4*,tag2,tag3)
+       a1a1 (tag1*,tag2,tag3,tag4)
+        a1a1a (tag1,tag2,tag3,tag4)
+        a1a1b (tag1,tag2,tag3,tag4)
+       a1a2 (tag2,tag3,tag4)
+       a1a3 (tag2,tag3,tag4)
     """
 
     When the command UntagSubtree is executed with payload:
@@ -206,10 +206,10 @@ Feature: Tag subtree without dimensions
     """
     b (tag2*)
      b1 (tag3*,tag2)
-      a1a (tag3,tag2)
-       a1a1 (tag4*,tag1*,tag3,tag2)
-        a1a1a (tag4*,tag3,tag2)
-        a1a1b (tag4*,tag3,tag2)
-       a1a2 (tag4*,tag3,tag2)
-       a1a3 (tag3,tag2)
+      a1a (tag2,tag3)
+       a1a1 (tag1*,tag2,tag3)
+        a1a1a (tag1,tag2,tag3)
+        a1a1b (tag1,tag2,tag3)
+       a1a2 (tag2,tag3)
+       a1a3 (tag2,tag3)
     """

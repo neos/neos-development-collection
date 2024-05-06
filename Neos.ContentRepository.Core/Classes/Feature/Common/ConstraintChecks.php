@@ -562,7 +562,7 @@ trait ConstraintChecks
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         )->findSucceedingSiblingNodes($referenceNodeAggregateId, FindSucceedingSiblingNodesFilter::create());
-        if ($succeedingSiblings->mapToNodeAggregateIds()->contain($siblingNodeAggregateId)) {
+        if ($succeedingSiblings->toNodeAggregateIds()->contain($siblingNodeAggregateId)) {
             return;
         }
 
@@ -571,7 +571,7 @@ trait ConstraintChecks
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         )->findPrecedingSiblingNodes($referenceNodeAggregateId, FindPrecedingSiblingNodesFilter::create());
-        if ($precedingSiblings->mapToNodeAggregateIds()->contain($siblingNodeAggregateId)) {
+        if ($precedingSiblings->toNodeAggregateIds()->contain($siblingNodeAggregateId)) {
             return;
         }
 
@@ -597,7 +597,7 @@ trait ConstraintChecks
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         )->findChildNodes($parentNodeAggregateId, FindChildNodesFilter::create());
-        if ($childNodes->mapToNodeAggregateIds()->contain($childNodeAggregateId)) {
+        if ($childNodes->toNodeAggregateIds()->contain($childNodeAggregateId)) {
             return;
         }
 

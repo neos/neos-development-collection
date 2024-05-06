@@ -48,7 +48,7 @@ trait NodeMove
                 }
 
                 if ($event->newParentNodeAggregateId) {
-                    $this->moveNodeIntoParent(
+                    $this->moveNodeBeneathParent(
                         $event->contentStreamId,
                         $nodeToBeMoved,
                         $event->newParentNodeAggregateId,
@@ -56,7 +56,6 @@ trait NodeMove
                     );
                     $this->moveSubtreeTags(
                         $event->contentStreamId,
-                        $event->nodeAggregateId,
                         $event->newParentNodeAggregateId,
                         $succeedingSiblingForCoverage->dimensionSpacePoint
                     );
@@ -96,7 +95,7 @@ trait NodeMove
 
         $newSucceedingSibling = null;
         if ($succeedingSiblingForCoverage->nodeAggregateId) {
-            // find the new succeeding sibling NodeRecord; We need this records because we'll use its RelationAnchorPoint later.
+            // find the new succeeding sibling NodeRecord; We need this record because we'll use its RelationAnchorPoint later.
             $newSucceedingSibling = $projectionContentGraph->findNodeInAggregate(
                 $contentStreamId,
                 $succeedingSiblingForCoverage->nodeAggregateId,
@@ -132,10 +131,10 @@ trait NodeMove
      * which incoming HierarchyRelation should be moved and where exactly.
      *
      * The move target is given as $parentNodeAggregateId and $succeedingSiblingForCoverage.
-     * We always move to parent after the succeeding sibling if given (or to the end)
+     * We always move beneath the parent before the succeeding sibling if given (or to the end)
      * @throws DBALException
      */
-    private function moveNodeIntoParent(
+    private function moveNodeBeneathParent(
         ContentStreamId $contentStreamId,
         NodeRecord $nodeToBeMoved,
         NodeAggregateId $parentNodeAggregateId,
