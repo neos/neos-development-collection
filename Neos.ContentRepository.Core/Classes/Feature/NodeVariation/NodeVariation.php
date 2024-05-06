@@ -50,12 +50,12 @@ trait NodeVariation
         CreateNodeVariant $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $this->requireContentStream($command->workspaceName, $contentRepository);
+        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $contentGraph,
+            $command->nodeAggregateId
         );
         // we do this check first, because it gives a more meaningful error message on what you need to do.
         // we cannot use sentences with "." because the UI will only print the 1st sentence :/
@@ -66,10 +66,9 @@ trait NodeVariation
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->sourceOrigin);
         $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->targetOrigin);
         $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
-            $contentStreamId,
+            $contentGraph,
             $command->nodeAggregateId,
-            $command->sourceOrigin,
-            $contentRepository
+            $command->sourceOrigin
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $parentNodeAggregate,
@@ -77,15 +76,14 @@ trait NodeVariation
         );
 
         $events = $this->createEventsForVariations(
-            $contentStreamId,
+            $contentGraph,
             $command->sourceOrigin,
             $command->targetOrigin,
-            $nodeAggregate,
-            $contentRepository
+            $nodeAggregate
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events

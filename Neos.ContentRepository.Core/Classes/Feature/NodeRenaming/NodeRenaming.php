@@ -32,38 +32,36 @@ trait NodeRenaming
 
     private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command, ContentRepository $contentRepository): EventsToPublish
     {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $contentGraph,
+            $command->nodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be renamed');
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
-        foreach ($contentRepository->getContentGraph()->findParentNodeAggregates($contentStreamId, $command->nodeAggregateId) as $parentNodeAggregate) {
+        foreach ($contentGraph->findParentNodeAggregates($command->nodeAggregateId) as $parentNodeAggregate) {
             foreach ($parentNodeAggregate->occupiedDimensionSpacePoints as $occupiedParentDimensionSpacePoint) {
                 $this->requireNodeNameToBeUnoccupied(
-                    $contentStreamId,
+                    $contentGraph,
                     $command->newNodeName,
                     $parentNodeAggregate->nodeAggregateId,
                     $occupiedParentDimensionSpacePoint,
-                    $parentNodeAggregate->coveredDimensionSpacePoints,
-                    $contentRepository
+                    $parentNodeAggregate->coveredDimensionSpacePoints
                 );
             }
         }
 
         $events = Events::with(
             new NodeAggregateNameWasChanged(
-                $contentStreamId,
+                $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->newNodeName,
             ),
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events

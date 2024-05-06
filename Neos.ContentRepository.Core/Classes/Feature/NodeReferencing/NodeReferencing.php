@@ -26,9 +26,9 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNod
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -38,9 +38,8 @@ trait NodeReferencing
     use ConstraintChecks;
 
     abstract protected function requireProjectedNodeAggregate(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        ContentRepository $contentRepository
+        ContentGraphInterface $contentGraph,
+        NodeAggregateId $nodeAggregateId
     ): NodeAggregate;
 
 
@@ -48,12 +47,12 @@ trait NodeReferencing
         SetNodeReferences $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $this->requireContentStream($command->workspaceName, $contentRepository);
+        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
-            $command->sourceNodeAggregateId,
-            $contentRepository
+            $contentGraph,
+            $command->sourceNodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
         $nodeTypeName = $sourceNodeAggregate->nodeTypeName;
@@ -98,15 +97,14 @@ trait NodeReferencing
         SetSerializedNodeReferences $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $contentRepository);
         $this->requireDimensionSpacePointToExist(
             $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
         );
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
-            $command->sourceNodeAggregateId,
-            $contentRepository
+            $contentGraph,
+            $command->sourceNodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint(
@@ -124,9 +122,8 @@ trait NodeReferencing
         foreach ($command->references as $reference) {
             assert($reference instanceof SerializedNodeReference);
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
-                $contentStreamId,
-                $reference->targetNodeAggregateId,
-                $contentRepository
+                $contentGraph,
+                $reference->targetNodeAggregateId
             );
             $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
             $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -152,7 +149,7 @@ trait NodeReferencing
 
         $events = Events::with(
             new NodeReferencesWereSet(
-                $contentStreamId,
+                $contentGraph->getContentStreamId(),
                 $command->sourceNodeAggregateId,
                 $affectedOrigins,
                 $command->referenceName,
@@ -161,7 +158,7 @@ trait NodeReferencing
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

@@ -52,6 +52,9 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\SubtreeTagging;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -73,39 +76,17 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     use TetheredNodeInternals;
 
     /**
-     * Used for constraint checks against the current outside configuration state of node types
-     */
-    private NodeTypeManager $nodeTypeManager;
-
-    /**
-     * Used for variation resolution from the current outside state of content dimensions
-     */
-    private DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph;
-
-    /**
-     * Used for constraint checks against the current outside configuration state of content dimensions
-     */
-    private DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper;
-
-    protected PropertyConverter $propertyConverter;
-
-    /**
      * can be disabled in {@see NodeAggregateCommandHandler::withoutAncestorNodeTypeConstraintChecks()}
      */
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
     public function __construct(
-        NodeTypeManager $nodeTypeManager,
-        DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
-        DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        PropertyConverter $propertyConverter
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
+        private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        private readonly PropertyConverter $propertyConverter,
     ) {
-        $this->nodeTypeManager = $nodeTypeManager;
-        $this->contentDimensionZookeeper = $contentDimensionZookeeper;
-        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
-        $this->propertyConverter = $propertyConverter;
     }
-
 
     public function canHandle(CommandInterface $command): bool
     {
@@ -118,22 +99,22 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         return match ($command::class) {
             SetNodeProperties::class => $this->handleSetNodeProperties($command, $contentRepository),
             SetSerializedNodeProperties::class
-                => $this->handleSetSerializedNodeProperties($command, $contentRepository),
+            => $this->handleSetSerializedNodeProperties($command, $contentRepository),
             SetNodeReferences::class => $this->handleSetNodeReferences($command, $contentRepository),
             SetSerializedNodeReferences::class
-                => $this->handleSetSerializedNodeReferences($command, $contentRepository),
+            => $this->handleSetSerializedNodeReferences($command, $contentRepository),
             ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $contentRepository),
             RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $contentRepository),
             CreateNodeAggregateWithNode::class
-                => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
+            => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
             CreateNodeAggregateWithNodeAndSerializedProperties::class
-                => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository),
+            => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository),
             MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $contentRepository),
             CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $contentRepository),
             CreateRootNodeAggregateWithNode::class
-                => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
+            => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
             UpdateRootNodeAggregateDimensions::class
-                => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
+            => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
             DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
             EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
             TagSubtree::class => $this->handleTagSubtree($command, $contentRepository),

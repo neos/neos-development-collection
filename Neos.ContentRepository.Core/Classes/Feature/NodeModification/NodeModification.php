@@ -26,10 +26,10 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -39,21 +39,20 @@ trait NodeModification
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
     abstract protected function requireProjectedNodeAggregate(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        ContentRepository $contentRepository
+        ContentGraphInterface $contentGraph,
+        NodeAggregateId $nodeAggregateId
     ): NodeAggregate;
 
     private function handleSetNodeProperties(
         SetNodeProperties $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $this->requireContentStream($command->workspaceName, $contentRepository);
+        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $contentGraph,
+            $command->nodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $nodeTypeName = $nodeAggregate->nodeTypeName;
@@ -78,13 +77,12 @@ trait NodeModification
         SetSerializedNodeProperties $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $contentRepository);
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $contentGraph,
+            $command->nodeAggregateId
         );
         $nodeType = $this->requireNodeType($nodeAggregate->nodeTypeName);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->originDimensionSpacePoint);
@@ -98,7 +96,7 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
-                    $contentStreamId,
+                    $contentGraph->getContentStreamId(),
                     $command->nodeAggregateId,
                     $affectedOrigin,
                     $nodeAggregate->getCoverageByOccupant($affectedOrigin),
@@ -117,7 +115,7 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
-                    $contentStreamId,
+                    $contentGraph->getContentStreamId(),
                     $command->nodeAggregateId,
                     $affectedOrigin,
                     $nodeAggregate->getCoverageByOccupant($affectedOrigin),
@@ -130,7 +128,7 @@ trait NodeModification
         $events = $this->mergeSplitEvents($events);
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
@@ -152,7 +150,7 @@ trait NodeModification
         }
 
         return array_map(
-            fn(array $propertyValues): PropertyNames => PropertyNames::fromArray($propertyValues),
+            static fn(array $propertyValues): PropertyNames => PropertyNames::fromArray($propertyValues),
             $propertiesToUnsetByScope
         );
     }

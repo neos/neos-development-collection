@@ -39,6 +39,7 @@ use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventEnvelope;
@@ -234,9 +235,9 @@ final class ContentRepository
         return $this->nodeTypeManager;
     }
 
-    public function getContentGraph(): ContentGraphInterface
+    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        return $this->projectionState(ContentGraphInterface::class);
+        return $this->projectionState(ContentGraphFinder::class)->fromWorkspaceName($workspaceName);
     }
 
     public function getWorkspaceFinder(): WorkspaceFinder

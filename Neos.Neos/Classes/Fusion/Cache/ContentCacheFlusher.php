@@ -53,6 +53,8 @@ class ContentCacheFlusher
     /**
      * Main entry point to *directly* flush the caches of a given NodeAggregate
      *
+     * FIXME workspaceName instead of contentStreamId
+     *
      * @param ContentRepository $contentRepository
      * @param ContentStreamId $contentStreamId
      * @param NodeAggregateId $nodeAggregateId
@@ -67,8 +69,13 @@ class ContentCacheFlusher
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
         $this->registerChangeOnNodeIdentifier($contentRepository->id, $contentStreamId, $nodeAggregateId, $tagsToFlush);
-        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
-            $contentStreamId,
+
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($contentStreamId);
+        if (is_null($workspace)) {
+            return;
+        }
+        $contentGraph = $contentRepository->getContentGraph($workspace->workspaceName);
+        $nodeAggregate = $contentGraph->findNodeAggregateById(
             $nodeAggregateId
         );
         if (!$nodeAggregate) {
@@ -87,8 +94,7 @@ class ContentCacheFlusher
 
         $parentNodeAggregates = [];
         foreach (
-            $contentRepository->getContentGraph()->findParentNodeAggregates(
-                $contentStreamId,
+            $contentGraph->findParentNodeAggregates(
                 $nodeAggregateId
             ) as $parentNodeAggregate
         ) {
@@ -122,8 +128,7 @@ class ContentCacheFlusher
             );
 
             foreach (
-                $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $nodeAggregate->contentStreamId,
+                $contentGraph->findParentNodeAggregates(
                     $nodeAggregate->nodeAggregateId
                 ) as $parentNodeAggregate
             ) {

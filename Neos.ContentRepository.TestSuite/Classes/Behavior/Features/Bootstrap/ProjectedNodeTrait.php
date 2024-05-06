@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -80,9 +81,9 @@ trait ProjectedNodeTrait
     public function iExpectANodeIdentifiedByXToExistInTheContentGraph(string $serializedNodeDiscriminator): void
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
+        $this->currentContentStreamId = $nodeDiscriminator->contentStreamId;
         $this->initializeCurrentNodeFromContentGraph(function (ContentGraphInterface $contentGraph) use ($nodeDiscriminator) {
             $currentNodeAggregate = $contentGraph->findNodeAggregateById(
-                $nodeDiscriminator->contentStreamId,
                 $nodeDiscriminator->nodeAggregateId
             );
             Assert::assertTrue(
@@ -265,7 +266,15 @@ trait ProjectedNodeTrait
 
     protected function initializeCurrentNodeFromContentGraph(callable $query): void
     {
-        $this->currentNode = $query($this->currentContentRepository->getContentGraph());
+        $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
+        $contentGraphFinder->reset();
+        if (isset($this->currentContentStreamId)) {
+            $contentGraph = $contentGraphFinder->fromWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId);
+        } else {
+            $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+        }
+        // FIXME: query->workspaceName this _might_ be wrong as the query could use a different workspace/contentstream
+        $this->currentNode = $query($contentGraph);
     }
 
     protected function initializeCurrentNodeFromContentSubgraph(callable $query): void

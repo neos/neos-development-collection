@@ -81,8 +81,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
             return null;
         }
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $workspace->currentContentStreamId,
+        $subgraph = $contentRepository->getContentGraph($workspace->workspaceName)->getSubgraph(
             DimensionSpacePoint::fromArray($serializedNode['dimensionSpacePoint']),
             $workspace->isPublicWorkspace()
                 ? VisibilityConstraints::frontend()

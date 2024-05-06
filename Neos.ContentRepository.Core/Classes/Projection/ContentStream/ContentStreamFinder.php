@@ -179,21 +179,4 @@ final readonly class ContentStreamFinder implements ProjectionStateInterface
 
         return MaybeVersion::fromVersionOrNull(Version::fromInteger($version));
     }
-
-    public function hasContentStream(ContentStreamId $contentStreamId): bool
-    {
-        $connection = $this->client->getConnection();
-        /* @var $state string|false */
-        $version = $connection->executeQuery(
-            '
-            SELECT version FROM ' . $this->tableName . '
-                WHERE contentStreamId = :contentStreamId
-            ',
-            [
-                'contentStreamId' => $contentStreamId->value
-            ]
-        )->fetchOne();
-
-        return $version !== false;
-    }
 }

@@ -33,9 +33,6 @@ use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\Dimension
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Exception\DimensionSpacePointAlreadyExists;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -67,14 +64,13 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         MoveDimensionSpacePoint $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStreamForWorkspaceName($command->workspaceName, $contentRepository);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
             ->getEventStreamName();
 
         self::requireDimensionSpacePointToBeEmptyInContentStream(
-            $command->target,
-            $contentStreamId,
-            $contentRepository->getContentGraph()
+            $contentGraph,
+            $command->target
         );
         $this->requireDimensionSpacePointToExist($command->target);
 
@@ -82,7 +78,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             $streamName,
             Events::with(
                 new DimensionSpacePointWasMoved(
-                    $contentStreamId,
+                    $contentGraph->getContentStreamId(),
                     $command->source,
                     $command->target
                 ),
@@ -95,14 +91,13 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         AddDimensionShineThrough $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStreamForWorkspaceName($command->workspaceName, $contentRepository);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
             ->getEventStreamName();
 
         self::requireDimensionSpacePointToBeEmptyInContentStream(
-            $command->target,
-            $contentStreamId,
-            $contentRepository->getContentGraph()
+            $contentGraph,
+            $command->target
         );
         $this->requireDimensionSpacePointToExist($command->target);
 
@@ -112,7 +107,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             $streamName,
             Events::with(
                 new DimensionShineThroughWasAdded(
-                    $contentStreamId,
+                    $contentGraph->getContentStreamId(),
                     $command->source,
                     $command->target
                 )
@@ -133,19 +128,14 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
     }
 
     private static function requireDimensionSpacePointToBeEmptyInContentStream(
-        DimensionSpacePoint $dimensionSpacePoint,
-        ContentStreamId $contentStreamId,
-        ContentGraphInterface $contentGraph
+        ContentGraphInterface $contentGraph,
+        DimensionSpacePoint $dimensionSpacePoint
     ): void {
-        $subgraph = $contentGraph->getSubgraph(
-            $contentStreamId,
-            $dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        );
-        if ($subgraph->countNodes() > 0) {
+        $hasNodes = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::withoutRestrictions())->countNodes();
+        if ($hasNodes > 0) {
             throw new DimensionSpacePointAlreadyExists(sprintf(
                 'the content stream %s already contained nodes in dimension space point %s - this is not allowed.',
-                $contentStreamId->value,
+                $contentGraph->getContentStreamId()->value,
                 $dimensionSpacePoint->toJson(),
             ), 1612898126);
         }
@@ -163,24 +153,5 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         ) {
             throw DimensionSpacePointIsNoSpecialization::butWasSupposedToBe($target, $source);
         }
-    }
-
-    /**
-     * @throws ContentStreamDoesNotExistYet
-     */
-    protected function requireContentStreamForWorkspaceName(
-        WorkspaceName $workspaceName,
-        ContentRepository $contentRepository
-    ): ContentStreamId {
-        $contentStreamId = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
-            ?->currentContentStreamId;
-        if (!$contentStreamId || !$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
-            throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamId?->value . '" does not exist yet.',
-                1521386692
-            );
-        }
-
-        return $contentStreamId;
     }
 }

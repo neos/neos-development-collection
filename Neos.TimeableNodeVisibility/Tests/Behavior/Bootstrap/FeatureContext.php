@@ -60,8 +60,7 @@ class FeatureContext implements Context
     public function iExpectThisNodeToBeEnabled(): void
     {
         Assert::assertNotNull($this->currentNode, 'No current node selected');
-        $subgraph = $this->currentContentRepository->getContentGraph()->getSubgraph(
-            $this->currentContentStreamId,
+        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions(),
         );
@@ -76,8 +75,7 @@ class FeatureContext implements Context
     public function iExpectThisNodeToBeDisabled(): void
     {
         Assert::assertNotNull($this->currentNode, 'No current node selected');
-        $subgraph = $this->currentContentRepository->getContentGraph()->getSubgraph(
-            $this->currentContentStreamId,
+        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions(),
         );

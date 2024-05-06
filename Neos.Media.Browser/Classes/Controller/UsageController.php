@@ -98,7 +98,10 @@ class UsageController extends ActionController
 
             $contentRepository = $this->contentRepositoryRegistry->get($usage->getContentRepositoryId());
 
-            $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
+
+            // FIXME: AssetUsageReference->workspaceName ?
+            $nodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(
                 $usage->getContentStreamId(),
                 $usage->getNodeAggregateId()
             );
@@ -107,7 +110,7 @@ class UsageController extends ActionController
             } catch (NodeTypeNotFoundException $e) {
                 $nodeType = null;
             }
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
+
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
             $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeAggregateId()->value;
@@ -121,7 +124,7 @@ class UsageController extends ActionController
                 continue;
             }
 
-            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $subgraph = $contentRepository->getContentGraph($workspace->workspaceName)->getSubgraph(
                 $usage->getContentStreamId(),
                 $usage->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
                 VisibilityConstraints::withoutRestrictions()

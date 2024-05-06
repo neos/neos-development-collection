@@ -52,7 +52,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
         return match ($command::class) {
-            CreateContentStream::class => $this->handleCreateContentStream($command, $contentRepository),
+            CreateContentStream::class => $this->handleCreateContentStream($command),
             CloseContentStream::class => $this->handleCloseContentStream($command, $contentRepository),
             ReopenContentStream::class => $this->handleReopenContentStream($command, $contentRepository),
             ForkContentStream::class => $this->handleForkContentStream($command, $contentRepository),
@@ -65,10 +65,8 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
      * @throws ContentStreamAlreadyExists
      */
     private function handleCreateContentStream(
-        CreateContentStream $command,
-        ContentRepository $contentRepository
+        CreateContentStream $command
     ): EventsToPublish {
-        $this->requireContentStreamToNotExistYet($command->contentStreamId, $contentRepository);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
             ->getEventStreamName();
 
@@ -134,10 +132,9 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->sourceContentStreamId, $contentRepository);
         $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId, $contentRepository);
-        $this->requireContentStreamToNotExistYet($command->newContentStreamId, $contentRepository);
 
-        $sourceContentStreamVersion = $contentRepository->getContentStreamFinder()
-            ->findVersionForContentStream($command->sourceContentStreamId);
+        // TOOD: THis is not great
+        $sourceContentStreamVersion = $contentRepository->getContentStreamFinder()->findVersionForContentStream($command->sourceContentStreamId);
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->newContentStreamId)
             ->getEventStreamName();
@@ -180,29 +177,14 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 
     /**
      * @param ContentStreamId $contentStreamId
-     * @throws ContentStreamAlreadyExists
-     */
-    protected function requireContentStreamToNotExistYet(
-        ContentStreamId $contentStreamId,
-        ContentRepository $contentRepository
-    ): void {
-        if ($contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
-            throw new ContentStreamAlreadyExists(
-                'Content stream "' . $contentStreamId->value . '" already exists.',
-                1521386345
-            );
-        }
-    }
-
-    /**
-     * @param ContentStreamId $contentStreamId
      * @throws ContentStreamDoesNotExistYet
      */
     protected function requireContentStreamToExist(
         ContentStreamId $contentStreamId,
         ContentRepository $contentRepository
     ): void {
-        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
+        $maybeVersion = $contentRepository->getContentStreamFinder()->findVersionForContentStream($contentStreamId);
+        if ($maybeVersion->isNothing()) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692
@@ -214,7 +196,8 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         ContentRepository $contentRepository
     ): void {
-        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) === ContentStreamState::STATE_CLOSED) {
+        $contentStreamState = $contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId);
+        if ($contentStreamState === ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
                 1710260081
@@ -226,7 +209,8 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         ContentRepository $contentRepository
     ): void {
-        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) !== ContentStreamState::STATE_CLOSED) {
+        $contentStreamState = $contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId);
+        if ($contentStreamState !== ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsNotClosed(
                 'Content stream "' . $contentStreamId->value . '" is not closed.',
                 1710405911
@@ -238,9 +222,9 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         ContentRepository $contentRepository
     ): ExpectedVersion {
+        $maybeVersion = $contentRepository->getContentStreamFinder()->findVersionForContentStream($contentStreamId);
         return ExpectedVersion::fromVersion(
-            $contentRepository->getContentStreamFinder()
-                ->findVersionForContentStream($contentStreamId)
+            $maybeVersion
                 ->unwrap()
         );
     }

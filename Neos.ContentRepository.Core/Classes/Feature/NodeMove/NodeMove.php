@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
@@ -52,25 +53,22 @@ trait NodeMove
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
 
     abstract protected function requireProjectedNodeAggregate(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         NodeAggregateId $nodeAggregateId,
-        ContentRepository $contentRepository
     ): NodeAggregate;
 
     abstract protected function requireNodeAggregateToBeSibling(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         NodeAggregateId $referenceNodeAggregateId,
         NodeAggregateId $siblingNodeAggregateId,
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentRepository $contentRepository,
     ): void;
 
     abstract protected function requireNodeAggregateToBeChild(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         NodeAggregateId $childNodeAggregateId,
-        NodeAggregateId $parentNodAggregateId,
+        NodeAggregateId $parentNodeAggregateId,
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentRepository $contentRepository,
     ): void;
 
     /**
@@ -86,13 +84,13 @@ trait NodeMove
         MoveNodeAggregate $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
+        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
         $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->dimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
+            $contentGraph,
             $command->nodeAggregateId,
-            $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
@@ -106,27 +104,24 @@ trait NodeMove
 
         if ($command->newParentNodeAggregateId) {
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $contentStreamId,
+                $contentGraph,
                 $this->requireNodeType($nodeAggregate->nodeTypeName),
                 $nodeAggregate->nodeName,
                 [$command->newParentNodeAggregateId],
-                $contentRepository
             );
 
             $newParentNodeAggregate = $this->requireProjectedNodeAggregate(
-                $contentStreamId,
+                $contentGraph,
                 $command->newParentNodeAggregateId,
-                $contentRepository
             );
 
             $this->requireNodeNameToBeUncovered(
-                $contentStreamId,
+                $contentGraph,
                 $nodeAggregate->nodeName,
                 $command->newParentNodeAggregateId,
                 // We need to check all covered DSPs of the parent node aggregate to prevent siblings
                 // with different node aggregate IDs but the same name
                 $newParentNodeAggregate->coveredDimensionSpacePoints,
-                $contentRepository
             );
 
             $this->requireNodeAggregateToCoverDimensionSpacePoints(
@@ -135,58 +130,51 @@ trait NodeMove
             );
 
             $this->requireNodeAggregateToNotBeDescendant(
-                $contentStreamId,
+                $contentGraph,
                 $newParentNodeAggregate,
                 $nodeAggregate,
-                $contentRepository
             );
         }
 
         if ($command->newPrecedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $contentStreamId,
+                $contentGraph,
                 $command->newPrecedingSiblingNodeAggregateId,
-                $contentRepository
             );
             if ($command->newParentNodeAggregateId) {
                 $this->requireNodeAggregateToBeChild(
-                    $contentStreamId,
+                    $contentGraph,
                     $command->newPrecedingSiblingNodeAggregateId,
                     $command->newParentNodeAggregateId,
                     $command->dimensionSpacePoint,
-                    $contentRepository
                 );
             } else {
                 $this->requireNodeAggregateToBeSibling(
-                    $contentStreamId,
+                    $contentGraph,
                     $command->nodeAggregateId,
                     $command->newPrecedingSiblingNodeAggregateId,
                     $command->dimensionSpacePoint,
-                    $contentRepository
                 );
             }
         }
         if ($command->newSucceedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $contentStreamId,
+                $contentGraph,
                 $command->newSucceedingSiblingNodeAggregateId,
-                $contentRepository
             );
             if ($command->newParentNodeAggregateId) {
                 $this->requireNodeAggregateToBeChild(
-                    $contentStreamId,
+                    $contentGraph,
                     $command->newSucceedingSiblingNodeAggregateId,
                     $command->newParentNodeAggregateId,
                     $command->dimensionSpacePoint,
-                    $contentRepository
                 );
             } else {
                 $this->requireNodeAggregateToBeSibling(
-                    $contentStreamId,
+                    $contentGraph,
                     $command->nodeAggregateId,
                     $command->newSucceedingSiblingNodeAggregateId,
                     $command->dimensionSpacePoint,
-                    $contentRepository
                 );
             }
         }
@@ -197,7 +185,7 @@ trait NodeMove
                 $command->nodeAggregateId,
                 $command->newParentNodeAggregateId,
                 $this->resolveInterdimensionalSiblingsForMove(
-                    $contentStreamId,
+                    $contentGraph,
                     $command->dimensionSpacePoint,
                     $affectedDimensionSpacePoints,
                     $command->nodeAggregateId,
@@ -205,8 +193,7 @@ trait NodeMove
                     $command->newSucceedingSiblingNodeAggregateId,
                     $command->newPrecedingSiblingNodeAggregateId,
                     $command->newParentNodeAggregateId !== null
-                        || $command->newSucceedingSiblingNodeAggregateId === null && $command->newPrecedingSiblingNodeAggregateId === null,
-                    $contentRepository
+                        || ($command->newSucceedingSiblingNodeAggregateId === null) && ($command->newPrecedingSiblingNodeAggregateId === null),
                 )
             )
         );
@@ -250,7 +237,7 @@ trait NodeMove
      *                          False when no new parent is set, which will result in the node not being moved
      */
     private function resolveInterdimensionalSiblingsForMove(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         DimensionSpacePoint $selectedDimensionSpacePoint,
         DimensionSpacePointSet $affectedDimensionSpacePoints,
         NodeAggregateId $nodeAggregateId,
@@ -258,10 +245,8 @@ trait NodeMove
         ?NodeAggregateId $succeedingSiblingId,
         ?NodeAggregateId $precedingSiblingId,
         bool $completeSet,
-        ContentRepository $contentRepository,
     ): InterdimensionalSiblings {
-        $selectedSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
+        $selectedSubgraph = $contentGraph->getSubgraph(
             $selectedDimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -280,8 +265,7 @@ trait NodeMove
 
         $interdimensionalSiblings = [];
         foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
-            $variantSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $contentStreamId,
+            $variantSubgraph = $contentGraph->getSubgraph(
                 $dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );

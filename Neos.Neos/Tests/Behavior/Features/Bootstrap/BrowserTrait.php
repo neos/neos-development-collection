@@ -113,7 +113,7 @@ trait BrowserTrait
      */
     public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateId, $alias = 'DEFAULT')
     {
-        $subgraph = $this->currentContentRepository->getContentGraph()->getSubgraph($this->currentContentStreamId, $this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
+        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
         $node = $subgraph->findNodeById($nodeAggregateId);
         Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId->value . '"');
@@ -136,7 +136,7 @@ trait BrowserTrait
      */
     public function iGetTheNodeAddressForTheNodeAtPath(string $serializedNodePath, $alias = 'DEFAULT')
     {
-        $subgraph = $this->currentContentRepository->getContentGraph()->getSubgraph($this->currentContentStreamId, $this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
+        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         if (!$this->getRootNodeAggregateId()) {
             throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }

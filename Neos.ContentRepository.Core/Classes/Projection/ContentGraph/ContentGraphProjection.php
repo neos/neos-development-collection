@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
@@ -12,13 +13,13 @@ use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
- * @implements ProjectionInterface<ContentGraphInterface>
+ * @implements ProjectionInterface<ContentGraphFinder>
  * @api people load this projection class name to access the Content Graph
  */
 final class ContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {
     /**
-     * @param WithMarkStaleInterface&ProjectionInterface<ContentGraphInterface> $projectionImplementation
+     * @param WithMarkStaleInterface&ProjectionInterface<ContentGraphFinder> $projectionImplementation
      */
     public function __construct(
         private readonly ProjectionInterface&WithMarkStaleInterface $projectionImplementation
@@ -45,7 +46,7 @@ final class ContentGraphProjection implements ProjectionInterface, WithMarkStale
         return $this->projectionImplementation->canHandle($event);
     }
 
-    public function getState(): ContentGraphInterface
+    public function getState(): ContentGraphFinder
     {
         return $this->projectionImplementation->getState();
     }

@@ -27,6 +27,7 @@ use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
@@ -82,14 +83,16 @@ trait ConstraintChecks
         WorkspaceName $workspaceName,
         ContentRepository $contentRepository
     ): ContentStreamId {
-        $contentStreamId = ContentStreamIdOverride::resolveContentStreamIdForWorkspace($contentRepository, $workspaceName);
-        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
+        $contentStreamId = $contentRepository->getContentGraph($workspaceName)->getContentStreamId();
+        $state = $contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId);
+        if ($state === null) {
             throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamId->value . '" does not exist yet.',
+                'Content stream for "' . $workspaceName->value . '" does not exist yet.',
                 1521386692
             );
         }
-        if ($contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId) === ContentStreamState::STATE_CLOSED) {
+
+        if ($state === ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
                 1710260081
@@ -156,19 +159,16 @@ trait ConstraintChecks
     }
 
     protected function requireRootNodeTypeToBeUnoccupied(
-        NodeTypeName $nodeTypeName,
-        ContentStreamId $contentStreamId,
-        ContentRepository $contentRepository
+        ContentGraphInterface $contentGraph,
+        NodeTypeName $nodeTypeName
     ): void {
         try {
-            $rootNodeAggregate = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $contentStreamId,
-                $nodeTypeName
-            );
-            throw RootNodeAggregateTypeIsAlreadyOccupied::butWasExpectedNotTo($nodeTypeName);
-        } catch (RootNodeAggregateDoesNotExist $exception) {
-            // all is well
+            $contentGraph->findRootNodeAggregateByType($nodeTypeName);
+        } catch (RootNodeAggregateDoesNotExist $_) {
+            return;
         }
+
+        throw RootNodeAggregateTypeIsAlreadyOccupied::butWasExpectedNotTo($nodeTypeName);
     }
 
     /**
@@ -259,24 +259,22 @@ trait ConstraintChecks
     /**
      * NodeType and NodeName must belong together to the same node, which is the to-be-checked one.
      *
-     * @param ContentStreamId $contentStreamId
+     * @param ContentGraphInterface $contentGraph
      * @param NodeType $nodeType
      * @param NodeName|null $nodeName
      * @param array|NodeAggregateId[] $parentNodeAggregateIds
      * @throws NodeConstraintException
      */
     protected function requireConstraintsImposedByAncestorsAreMet(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        array $parentNodeAggregateIds,
-        ContentRepository $contentRepository
+        array $parentNodeAggregateIds
     ): void {
         foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
             $parentAggregate = $this->requireProjectedNodeAggregate(
-                $contentStreamId,
-                $parentNodeAggregateId,
-                $contentRepository
+                $contentGraph,
+                $parentNodeAggregateId
             );
             if (!$parentAggregate->classification->isTethered()) {
                 try {
@@ -289,8 +287,7 @@ trait ConstraintChecks
             }
 
             foreach (
-                $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $contentStreamId,
+                $contentGraph->findParentNodeAggregates(
                     $parentNodeAggregateId
                 ) as $grandParentNodeAggregate
             ) {
@@ -389,14 +386,9 @@ trait ConstraintChecks
         ?NodeName $parentNodeName,
         NodeType $nodeType
     ): bool {
-        if (
-            $parentNodeName
+        return !($parentNodeName
             && $grandParentsNodeType->hasTetheredNode($parentNodeName)
-            && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType, $parentNodeName, $nodeType)
-        ) {
-            return false;
-        }
-        return true;
+            && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType, $parentNodeName, $nodeType));
     }
 
     /**
@@ -404,12 +396,10 @@ trait ConstraintChecks
      * @throws NodeAggregateCurrentlyDoesNotExist
      */
     protected function requireProjectedNodeAggregate(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        ContentRepository $contentRepository
+        ContentGraphInterface $contentGraph,
+        NodeAggregateId $nodeAggregateId
     ): NodeAggregate {
-        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
-            $contentStreamId,
+        $nodeAggregate = $contentGraph->findNodeAggregateById(
             $nodeAggregateId
         );
 
@@ -428,12 +418,10 @@ trait ConstraintChecks
      * @throws NodeAggregateCurrentlyExists
      */
     protected function requireProjectedNodeAggregateToNotExist(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        ContentRepository $contentRepository
+        ContentGraphInterface $contentGraph,
+        NodeAggregateId $nodeAggregateId
     ): void {
-        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
-            $contentStreamId,
+        $nodeAggregate = $contentGraph->findNodeAggregateById(
             $nodeAggregateId
         );
 
@@ -449,14 +437,12 @@ trait ConstraintChecks
      * @throws NodeAggregateCurrentlyDoesNotExist
      */
     public function requireProjectedParentNodeAggregate(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         NodeAggregateId $childNodeAggregateId,
-        OriginDimensionSpacePoint $childOriginDimensionSpacePoint,
-        ContentRepository $contentRepository
+        OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): NodeAggregate {
-        $parentNodeAggregate = $contentRepository->getContentGraph()
+        $parentNodeAggregate = $contentGraph
             ->findParentNodeAggregateByChildOriginDimensionSpacePoint(
-                $contentStreamId,
                 $childNodeAggregateId,
                 $childOriginDimensionSpacePoint
             );
@@ -465,7 +451,7 @@ trait ConstraintChecks
             throw new NodeAggregateCurrentlyDoesNotExist(
                 'Parent node aggregate for ' . $childNodeAggregateId->value
                     . ' does currently not exist in origin dimension space point ' . $childOriginDimensionSpacePoint->toJson()
-                    . ' and content stream ' . $contentStreamId->value,
+                    . ' and workspace ' . $contentGraph->getWorkspaceName()->value,
                 1645368685
             );
         }
@@ -484,7 +470,7 @@ trait ConstraintChecks
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
                 'Node aggregate "' . $nodeAggregate->nodeAggregateId->value
                     . '" does currently not cover dimension space point '
-                    . json_encode($dimensionSpacePoint) . '.',
+                    . json_encode($dimensionSpacePoint, JSON_THROW_ON_ERROR) . '.',
                 1541678877
             );
         }
@@ -536,10 +522,9 @@ trait ConstraintChecks
      * @throws NodeAggregateIsDescendant
      */
     protected function requireNodeAggregateToNotBeDescendant(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         NodeAggregate $nodeAggregate,
-        NodeAggregate $referenceNodeAggregate,
-        ContentRepository $contentRepository
+        NodeAggregate $referenceNodeAggregate
     ): void {
         if ($nodeAggregate->nodeAggregateId->equals($referenceNodeAggregate->nodeAggregateId)) {
             throw new NodeAggregateIsDescendant(
@@ -549,16 +534,14 @@ trait ConstraintChecks
             );
         }
         foreach (
-            $contentRepository->getContentGraph()->findChildNodeAggregates(
-                $contentStreamId,
+            $contentGraph->findChildNodeAggregates(
                 $referenceNodeAggregate->nodeAggregateId
             ) as $childReferenceNodeAggregate
         ) {
             $this->requireNodeAggregateToNotBeDescendant(
-                $contentStreamId,
+                $contentGraph,
                 $nodeAggregate,
-                $childReferenceNodeAggregate,
-                $contentRepository
+                $childReferenceNodeAggregate
             );
         }
     }
@@ -567,14 +550,12 @@ trait ConstraintChecks
      * @throws NodeAggregateIsNoSibling
      */
     protected function requireNodeAggregateToBeSibling(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         NodeAggregateId $referenceNodeAggregateId,
         NodeAggregateId $siblingNodeAggregateId,
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentRepository $contentRepository,
     ): void {
-        $succeedingSiblings = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
+        $succeedingSiblings = $contentGraph->getSubgraph(
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         )->findSucceedingSiblingNodes($referenceNodeAggregateId, FindSucceedingSiblingNodesFilter::create());
@@ -582,8 +563,7 @@ trait ConstraintChecks
             return;
         }
 
-        $precedingSiblings = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
+        $precedingSiblings = $contentGraph->getSubgraph(
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         )->findPrecedingSiblingNodes($referenceNodeAggregateId, FindPrecedingSiblingNodesFilter::create());
@@ -602,14 +582,12 @@ trait ConstraintChecks
      * @throws NodeAggregateIsNoChild
      */
     protected function requireNodeAggregateToBeChild(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         NodeAggregateId $childNodeAggregateId,
         NodeAggregateId $parentNodeAggregateId,
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentRepository $contentRepository,
     ): void {
-        $childNodes = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
+        $childNodes = $contentGraph->getSubgraph(
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         )->findChildNodes($parentNodeAggregateId, FindChildNodesFilter::create());
@@ -628,19 +606,17 @@ trait ConstraintChecks
      * @throws NodeNameIsAlreadyOccupied
      */
     protected function requireNodeNameToBeUnoccupied(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         ?NodeName $nodeName,
         NodeAggregateId $parentNodeAggregateId,
         OriginDimensionSpacePoint $parentOriginDimensionSpacePoint,
-        DimensionSpacePointSet $dimensionSpacePoints,
-        ContentRepository $contentRepository
+        DimensionSpacePointSet $dimensionSpacePoints
     ): void {
         if ($nodeName === null) {
             return;
         }
-        $dimensionSpacePointsOccupiedByChildNodeName = $contentRepository->getContentGraph()
+        $dimensionSpacePointsOccupiedByChildNodeName = $contentGraph
             ->getDimensionSpacePointsOccupiedByChildNodeName(
-                $contentStreamId,
                 $nodeName,
                 $parentNodeAggregateId,
                 $parentOriginDimensionSpacePoint,
@@ -659,17 +635,16 @@ trait ConstraintChecks
      * @throws NodeNameIsAlreadyCovered
      */
     protected function requireNodeNameToBeUncovered(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         ?NodeName $nodeName,
         NodeAggregateId $parentNodeAggregateId,
-        DimensionSpacePointSet $dimensionSpacePointsToBeCovered,
-        ContentRepository $contentRepository
+        DimensionSpacePointSet $dimensionSpacePointsToBeCovered
     ): void {
         if ($nodeName === null) {
             return;
         }
-        $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $contentStreamId,
+
+        $childNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
             $parentNodeAggregateId,
             $nodeName
         );
@@ -696,7 +671,7 @@ trait ConstraintChecks
     ): void {
         if (!$nodeAggregate->occupiesDimensionSpacePoint($originDimensionSpacePoint)) {
             throw new DimensionSpacePointIsNotYetOccupied(
-                'Dimension space point ' . json_encode($originDimensionSpacePoint)
+                'Dimension space point ' . json_encode($originDimensionSpacePoint, JSON_THROW_ON_ERROR)
                     . ' is not yet occupied by node aggregate "' . $nodeAggregate->nodeAggregateId->value . '"',
                 1552595396
             );
@@ -712,7 +687,7 @@ trait ConstraintChecks
     ): void {
         if ($nodeAggregate->occupiesDimensionSpacePoint($originDimensionSpacePoint)) {
             throw new DimensionSpacePointIsAlreadyOccupied(
-                'Dimension space point ' . json_encode($originDimensionSpacePoint)
+                'Dimension space point ' . json_encode($originDimensionSpacePoint, JSON_THROW_ON_ERROR)
                     . ' is already occupied by node aggregate "' . $nodeAggregate->nodeAggregateId->value . '"',
                 1552595441
             );
@@ -758,10 +733,9 @@ trait ConstraintChecks
         ContentStreamId $contentStreamId,
         ContentRepository $contentRepository
     ): ExpectedVersion {
+
         return ExpectedVersion::fromVersion(
-            $contentRepository->getContentStreamFinder()
-                ->findVersionForContentStream($contentStreamId)
-                ->unwrap()
+            $contentRepository->getContentStreamFinder()->findVersionForContentStream($contentStreamId)->unwrap()
         );
     }
 }

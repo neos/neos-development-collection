@@ -12,6 +12,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\DimensionAdjustment;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\DisallowedChildNodeAdjustment;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\ProjectedNodeIterator;
@@ -33,11 +34,10 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         private readonly EventPersister $eventPersister,
         NodeTypeManager $nodeTypeManager,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        PropertyConverter $propertyConverter
+        PropertyConverter $propertyConverter,
     ) {
         $projectedNodeIterator = new ProjectedNodeIterator(
-            $contentRepository->getWorkspaceFinder(),
-            $contentRepository->getContentGraph(),
+            $contentRepository->getContentGraph(WorkspaceName::forLive()),
         );
 
         $this->tetheredNodeAdjustments = new TetheredNodeAdjustments(
@@ -53,7 +53,6 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
             $nodeTypeManager
         );
         $this->disallowedChildNodeAdjustment = new DisallowedChildNodeAdjustment(
-            $this->contentRepository,
             $projectedNodeIterator,
             $nodeTypeManager
         );
@@ -73,7 +72,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
      */
     public function findAllAdjustments(): \Generator
     {
-        foreach ($this->contentRepository->getContentGraph()->findUsedNodeTypeNames() as $nodeTypeName) {
+        foreach ($this->contentRepository->getContentGraph(WorkspaceName::forLive())->findUsedNodeTypeNames() as $nodeTypeName) {
             yield from $this->findAdjustmentsForNodeType($nodeTypeName);
         }
     }

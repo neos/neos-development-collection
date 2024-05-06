@@ -33,7 +33,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * From the central Content Repository instance, you can fetch the singleton
  * {@see ContentGraphInterface}. There, you can call
  * {@see ContentGraphInterface::getSubgraph()} and pass in
- * the {@see ContentStreamId}, {@see DimensionSpacePoint} and
+ * the {@see DimensionSpacePoint} and
  * {@see VisibilityConstraints} you want to have.
  *
  *
