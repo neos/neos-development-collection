@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  * @internal only used inside the
  * @see ContentGraphFinder
  */
-readonly final class ContentGraphFactory implements ContentGraphFactoryInterface
+final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
 {
     public function __construct(
         private DbalClientInterface $client,
@@ -37,13 +37,14 @@ readonly final class ContentGraphFactory implements ContentGraphFactoryInterface
         $tableName = strtolower(sprintf(
             'cr_%s_p_%s',
             $this->contentRepositoryId->value,
-            'Workspace'
+            'workspace'
         ));
 
         $row = $this->client->getConnection()->executeQuery(
             '
                 SELECT * FROM ' . $tableName . '
                 WHERE workspaceName = :workspaceName
+                LIMIT 1
             ',
             [
                 'workspaceName' => $workspaceName->value,
