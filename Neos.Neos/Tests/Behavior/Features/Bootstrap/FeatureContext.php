@@ -113,20 +113,21 @@ class FeatureContext implements BehatContext
     protected function deserializeProperties(array $properties): PropertyValuesToWrite
     {
         $properties = array_map(
-            $this->loadFlowObjectsRecursive(...),
+            $this->loadObjectsRecursive(...),
             $properties
         );
 
         return $this->deserializePropertiesCrTestSuiteTrait($properties);
     }
 
-    public function loadFlowObjectsRecursive(mixed $value): mixed
+    private function loadObjectsRecursive(mixed $value): mixed
     {
-        if (is_array($value) && isset($value['__flow_object_type'])) {
-            return $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type'], true);
+        if (is_string($value) && str_starts_with($value, 'Asset:')) {
+            $assetIdentier = substr($value, strlen('Asset:'));
+            return $this->persistenceManager->getObjectByIdentifier($assetIdentier, 'Neos\\Media\\Domain\\Model\\Asset', true);
         } elseif (is_array($value)) {
             return array_map(
-                $this->loadFlowObjectsRecursive(...),
+                $this->loadObjectsRecursive(...),
                 $value
             );
         }
