@@ -55,7 +55,6 @@ trait NodeMove
                 );
                 $this->moveSubtreeTags(
                     $event->contentStreamId,
-                    $event->nodeAggregateId,
                     $event->newParentNodeAggregateId,
                     $succeedingSiblingForCoverage->dimensionSpacePoint
                 );

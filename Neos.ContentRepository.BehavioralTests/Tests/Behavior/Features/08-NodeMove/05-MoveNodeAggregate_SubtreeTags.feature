@@ -442,7 +442,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to be exactly explicitly tagged "tag1"
-    And I expect this node to exactly inherit the tags "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -453,7 +453,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to be exactly explicitly tagged "tag1"
-    And I expect this node to exactly inherit the tags "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -520,7 +520,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to be exactly explicitly tagged "tag1"
-    And I expect this node to exactly inherit the tags "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -587,7 +587,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to be exactly explicitly tagged "tag1"
-    And I expect this node to exactly inherit the tags "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -654,7 +654,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example":"general"}
     And I expect this node to be exactly explicitly tagged "tag1"
-    And I expect this node to exactly inherit the tags "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -980,7 +980,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to be exactly explicitly tagged "tag1"
-    And I expect this node to exactly inherit the tags "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -991,7 +991,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to be exactly explicitly tagged "tag1"
-    And I expect this node to exactly inherit the tags "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1058,7 +1058,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to be exactly explicitly tagged "tag1"
-    And I expect this node to exactly inherit the tags "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1125,7 +1125,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to be exactly explicitly tagged "tag1"
-    And I expect this node to exactly inherit the tags "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1192,7 +1192,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
     And I expect this node to be exactly explicitly tagged "tag1"
-    And I expect this node to exactly inherit the tags "tag1"
+    And I expect this node to exactly inherit the tags ""
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1717,7 +1717,7 @@ Feature: Move a node aggregate into and out of a tagged parent
     When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     And I expect this node to be a child of node cs-identifier;nodimus-prime;{"example":"general"}
-    And I expect this node to be exactly explicitly tagged "tag1"
+    And I expect this node to be exactly explicitly tagged ""
     And I expect this node to exactly inherit the tags "tag1"
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "esquire/esquire-child/document/child-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"general"}
@@ -1740,7 +1740,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     Given the command TagSubtree is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateId              | "nody-mc-nodeface"   |
+      | nodeAggregateId              | "sir-david-nodenborough"   |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
@@ -1807,7 +1807,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     Given the command TagSubtree is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateId              | "nody-mc-nodeface"   |
+      | nodeAggregateId              | "sir-david-nodenborough"   |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
@@ -1874,7 +1874,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     Given the command TagSubtree is executed with payload:
       | Key                          | Value                 |
-      | nodeAggregateId              | "nody-mc-nodeface"    |
+      | nodeAggregateId              | "sir-david-nodenborough"    |
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
@@ -1941,7 +1941,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     Given the command TagSubtree is executed with payload:
       | Key                          | Value                 |
-      | nodeAggregateId              | "nody-mc-nodeface"    |
+      | nodeAggregateId              | "sir-david-nodenborough"    |
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
@@ -2008,7 +2008,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     Given the command TagSubtree is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateId              | "nody-mc-nodeface"   |
+      | nodeAggregateId              | "sir-david-nodenborough"   |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
@@ -2075,7 +2075,7 @@ Feature: Move a node aggregate into and out of a tagged parent
 
     Given the command TagSubtree is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateId              | "nody-mc-nodeface"   |
+      | nodeAggregateId              | "sir-david-nodenborough"   |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
