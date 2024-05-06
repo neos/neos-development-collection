@@ -63,7 +63,7 @@ class AssetUsageSyncService implements ContentRepositoryServiceInterface
         if (is_null($workspace)) {
             return false;
         }
-        $subGraph = $this->contentGraphFinder->fromWorkspaceName($workspace->workspaceName) ->getSubgraph(
+        $subGraph = $this->contentGraphFinder->getByWorkspaceName($workspace->workspaceName) ->getSubgraph(
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );

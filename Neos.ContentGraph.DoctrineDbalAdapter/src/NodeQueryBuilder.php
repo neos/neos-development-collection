@@ -101,12 +101,6 @@ class NodeQueryBuilder
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
     }
 
-    public function buildBasicNodeByIdQuery(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
-    {
-        return $this->buildBasicNodeQuery($contentStreamId, $dimensionSpacePoint)
-            ->andWhere('n.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value);
-    }
-
     public function buildBasicChildNodesQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
     {
         return $this->createQueryBuilder()
@@ -260,54 +254,15 @@ class NodeQueryBuilder
         return 'JSON_SEARCH(' . $nodeTableAlias . '.properties, \'one\', :' . $paramName . ', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
     }
 
-    public function getTablenameForNode(): string
-    {
-        return $this->tableNamePrefix . '_node';
-    }
-
-    public function getTablenameForHierachyRelation(): string
-    {
-        return $this->tableNamePrefix . '_hierarchyrelation';
-    }
-
-    public function getTablenameForDimensionSpacePoints(): string
-    {
-        return $this->tableNamePrefix . '_dimensionspacepoints';
-    }
-
-    public function getTablenameForReferenceRelation(): string
-    {
-        return $this->tableNamePrefix . '_referencerelation';
-    }
-
     /**
-     * @return array<int, array<string, mixed>>
+     * @return QueryBuilder
      * @throws DBALException
      */
-    public function findUsedNodeTypeNames(): array
+    public function buildfindUsedNodeTypeNamesQuery(): QueryBuilder
     {
-        $rows = $this->fetchRows($this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->select('DISTINCT nodetypename')
-            ->from($this->contentGraphTableNames->node()));
-
-        return $rows;
-    }
-
-    /**
-     * @return array<int,array<string,mixed>>
-     * @throws DBALException
-     */
-    public function fetchRows(QueryBuilder $queryBuilder): array
-    {
-        $result = $queryBuilder->execute();
-        if (!$result instanceof Result) {
-            throw new \RuntimeException(sprintf('Failed to execute query. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701443535);
-        }
-        try {
-            return $result->fetchAllAssociative();
-        } catch (DriverException $e) {
-            throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
-        }
+            ->from($this->contentGraphTableNames->node());
     }
 
     private function createQueryBuilder(): QueryBuilder

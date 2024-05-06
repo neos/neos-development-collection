@@ -269,7 +269,7 @@ trait ProjectedNodeTrait
         $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
         $contentGraphFinder->reset();
         if (isset($this->currentContentStreamId)) {
-            $contentGraph = $contentGraphFinder->fromWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId);
+            $contentGraph = $contentGraphFinder->getByWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId);
         } else {
             $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
         }

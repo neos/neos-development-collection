@@ -164,10 +164,10 @@ trait CRTestSuiteRuntimeVariables
         $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
         $contentGraphFinder->reset();
         if (isset($this->currentContentStreamId)) {
-            return $contentGraphFinder->fromWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
+            return $contentGraphFinder->getByWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         }
 
-        return $contentGraphFinder->fromWorkspaceName($this->currentWorkspaceName)->getSubgraph(
+        return $contentGraphFinder->getByWorkspaceName($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints
         );

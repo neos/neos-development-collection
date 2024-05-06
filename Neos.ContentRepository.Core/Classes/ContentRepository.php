@@ -237,7 +237,7 @@ final class ContentRepository
 
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        return $this->projectionState(ContentGraphFinder::class)->fromWorkspaceName($workspaceName);
+        return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);
     }
 
     public function getWorkspaceFinder(): WorkspaceFinder

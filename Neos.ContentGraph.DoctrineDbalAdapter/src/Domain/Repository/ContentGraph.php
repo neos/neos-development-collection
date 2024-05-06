@@ -130,11 +130,12 @@ final class ContentGraph implements ContentGraphInterface
             ));
         }
 
-        if (!$rootNodeAggregates->first()) {
+        $rootNodeAggregate = $rootNodeAggregates->first();
+        if ($rootNodeAggregate === null) {
             throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
         }
 
-        return $rootNodeAggregates->first();
+        return $rootNodeAggregate;
     }
 
     public function findRootNodeAggregates(
@@ -308,7 +309,10 @@ final class ContentGraph implements ContentGraphInterface
 
     public function findUsedNodeTypeNames(): iterable
     {
-        return array_map(static fn (array $row) => NodeTypeName::fromString($row['nodetypename']), $this->nodeQueryBuilder->findUsedNodeTypeNames());
+        return array_map(
+            static fn (array $row) => NodeTypeName::fromString($row['nodetypename']),
+            $this->fetchRows($this->nodeQueryBuilder->buildfindUsedNodeTypeNamesQuery())
+        );
     }
 
     /**
@@ -354,11 +358,13 @@ final class ContentGraph implements ContentGraphInterface
         }
     }
 
+    /** The workspace this content graph is operating on */
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
     }
 
+    /** @internal The content stream id where the workspace name points to for this instance */
     public function getContentStreamId(): ContentStreamId
     {
         return $this->contentStreamId;
