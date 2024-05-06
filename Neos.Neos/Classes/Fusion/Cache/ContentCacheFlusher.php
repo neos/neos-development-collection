@@ -86,7 +86,7 @@ class ContentCacheFlusher
     /**
      * @return array<string,string>
      */
-    protected function collectTagsForChangeOnNodeAggregate(
+    private function collectTagsForChangeOnNodeAggregate(
         ContentRepository $contentRepository,
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId
