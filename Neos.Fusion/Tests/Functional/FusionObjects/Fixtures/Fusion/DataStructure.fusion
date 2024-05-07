@@ -143,7 +143,12 @@ dataStructure.untypedChildKeysWithPositionOrdering = Neos.Fusion:DataStructure {
   }
 }
 
-dataStructure.unsetUntypedChildKeyWillRenderAsDataStructure = Neos.Fusion:DataStructure {
+dataStructure.unsetChildKeyWillNotRender = Neos.Fusion:DataStructure {
+  foo = 'bar'
+  baz >
+}
+
+dataStructure.unsetUntypedChildKeyWillNotRender = Neos.Fusion:DataStructure {
   keyWithUnsetType = Neos.Fusion:Value {
     value = 123
   }
@@ -152,4 +157,16 @@ dataStructure.unsetUntypedChildKeyWillRenderAsDataStructure = Neos.Fusion:DataSt
     bat = 123
   }
   buz = 456
+}
+
+dataStructure.nulledChildKeyWillRenderAsNull = Neos.Fusion:DataStructure {
+  foo = 'bar'
+  null1 = null
+  null2 = ${null}
+}
+
+dataStructure.appliedNullValueWillRenderAsNull = Neos.Fusion:DataStructure {
+  @apply.attributes = ${{
+    nullAttribute: null
+  }}
 }

@@ -105,11 +105,12 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
 
         $result = [];
         foreach ($sortedChildFusionKeys as $key) {
-            if ($this->isUnset($key)) {
+            $isUntyped = $this->isUntyped($key);
+            if ($isUntyped && $this->isUnset($key)) {
                 continue;
             }
             $propertyPath = $key;
-            if ($defaultFusionPrototypeName !== null && $this->isUntyped($key)) {
+            if ($defaultFusionPrototypeName !== null && $isUntyped) {
                 $propertyPath .= '<' . $defaultFusionPrototypeName . '>';
             }
             try {
@@ -168,7 +169,8 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
         if (!is_array($property)) {
             return false;
         }
-        return isset($property['__stopInheritanceChain']) && $property['__stopInheritanceChain'] === true;
+        return array_key_exists('__stopInheritanceChain', $property)
+            && $property['__stopInheritanceChain'] === true;
     }
 
     /**

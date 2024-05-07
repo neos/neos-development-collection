@@ -139,10 +139,40 @@ class DataStructureTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function unsetUntypedChildKeysWillRenderAsDataStructure(): void
+    public function unsetChildKeyWillNotRender(): void
     {
         $view = $this->buildView();
-        $view->setFusionPath('dataStructure/unsetUntypedChildKeyWillRenderAsDataStructure');
-        self::assertEquals(['buz' => 456, 'keyWithUnsetType' => ['bat' => 123]], $view->render());
+        $view->setFusionPath('dataStructure/unsetChildKeyWillNotRender');
+        self::assertEquals(['foo' => 'bar'], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function unsetUntypedChildKeyWillNotRender(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/unsetUntypedChildKeyWillNotRender');
+        self::assertEquals(['buz' => 456], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function nulledChildKeyWillRenderAsNull(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/nulledChildKeyWillRenderAsNull');
+        self::assertEquals(['foo' => 'bar', 'null2' => null], $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function appliedNullValueWillRenderAsNull(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/appliedNullValueWillRenderAsNull');
+        self::assertEquals(['nullAttribute' => null], $view->render());
     }
 }
