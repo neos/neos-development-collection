@@ -215,11 +215,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      */
     protected function isUnset(string|int $key): bool
     {
-        $property = $this->properties[$key];
-        if (!is_array($property) ) {
-            return false;
-        }
-        return isset($property['__stopInheritanceChain']) && $property['__stopInheritanceChain'] === true;
+        return $this->properties[$key] === ['__stopInheritanceChain' => true];
     }
 
     /**
