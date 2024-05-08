@@ -3,11 +3,9 @@
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
@@ -33,13 +31,13 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 /**
  * @internal Implementation detail of the DoctrineDbalAdapter
  */
-class NodeQueryBuilder
+final readonly class NodeQueryBuilder
 {
-    public readonly ContentGraphTableNames $contentGraphTableNames;
+    public ContentGraphTableNames $contentGraphTableNames;
 
     public function __construct(
-        private readonly Connection $connection,
-        private readonly string $tableNamePrefix
+        private Connection $connection,
+        string $tableNamePrefix
     ) {
         $this->contentGraphTableNames = ContentGraphTableNames::withPrefix($tableNamePrefix);
     }
@@ -99,12 +97,6 @@ class NodeQueryBuilder
             ->innerJoin($nodeTableAlias, $this->contentGraphTableNames->hierachyRelation(), 'h', 'h.childnodeanchor = ' . $nodeTableAlias . '.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $dimensionSpacePoint->hash);
-    }
-
-    public function buildBasicNodeByIdQuery(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
-    {
-        return $this->buildBasicNodeQuery($contentStreamId, $dimensionSpacePoint)
-            ->andWhere('n.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value);
     }
 
     public function buildBasicChildNodesQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
@@ -260,54 +252,15 @@ class NodeQueryBuilder
         return 'JSON_SEARCH(' . $nodeTableAlias . '.properties, \'one\', :' . $paramName . ', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
     }
 
-    public function getTablenameForNode(): string
-    {
-        return $this->tableNamePrefix . '_node';
-    }
-
-    public function getTablenameForHierachyRelation(): string
-    {
-        return $this->tableNamePrefix . '_hierarchyrelation';
-    }
-
-    public function getTablenameForDimensionSpacePoints(): string
-    {
-        return $this->tableNamePrefix . '_dimensionspacepoints';
-    }
-
-    public function getTablenameForReferenceRelation(): string
-    {
-        return $this->tableNamePrefix . '_referencerelation';
-    }
-
     /**
-     * @return array<int, array<string, mixed>>
+     * @return QueryBuilder
      * @throws DBALException
      */
-    public function findUsedNodeTypeNames(): array
+    public function buildfindUsedNodeTypeNamesQuery(): QueryBuilder
     {
-        $rows = $this->fetchRows($this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->select('DISTINCT nodetypename')
-            ->from($this->contentGraphTableNames->node()));
-
-        return $rows;
-    }
-
-    /**
-     * @return array<int,array<string,mixed>>
-     * @throws DBALException
-     */
-    public function fetchRows(QueryBuilder $queryBuilder): array
-    {
-        $result = $queryBuilder->execute();
-        if (!$result instanceof Result) {
-            throw new \RuntimeException(sprintf('Failed to execute query. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701443535);
-        }
-        try {
-            return $result->fetchAllAssociative();
-        } catch (DriverException $e) {
-            throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
-        }
+            ->from($this->contentGraphTableNames->node());
     }
 
     private function createQueryBuilder(): QueryBuilder
