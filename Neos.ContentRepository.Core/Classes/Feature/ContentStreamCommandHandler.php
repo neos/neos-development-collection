@@ -84,7 +84,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 
     private function handleCloseContentStream(
         CloseContentStream $command,
-        CommandHandlingDependencies $commandHandlingDependencies
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamId, $commandHandlingDependencies);
         $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $commandHandlingDependencies);
@@ -104,7 +104,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 
     private function handleReopenContentStream(
         ReopenContentStream $command,
-        CommandHandlingDependencies $commandHandlingDependencies
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamId, $commandHandlingDependencies);
         $expectedVersion = $this->getExpectedVersionOfContentStream($command->contentStreamId, $commandHandlingDependencies);
@@ -134,7 +134,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         $this->requireContentStreamToExist($command->sourceContentStreamId, $commandHandlingDependencies);
         $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId, $commandHandlingDependencies);
 
-        // TOOD: THis is not great
+        // TODO: This is not great
         $sourceContentStreamVersion = $commandHandlingDependencies->getContentStreamFinder()->findVersionForContentStream($command->sourceContentStreamId);
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->newContentStreamId)

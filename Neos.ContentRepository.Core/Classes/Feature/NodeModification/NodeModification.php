@@ -150,7 +150,7 @@ trait NodeModification
         }
 
         return array_map(
-            static fn(array $propertyValues): PropertyNames => PropertyNames::fromArray($propertyValues),
+            PropertyNames::fromArray(...),
             $propertiesToUnsetByScope
         );
     }

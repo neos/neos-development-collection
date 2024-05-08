@@ -62,7 +62,6 @@ final class ContentRepositoryFactory
             $contentDimensionSource,
             $contentDimensionZookeeper
         );
-        $propertyConverter = new PropertyConverter($propertySerializer);
         $this->projectionFactoryDependencies = new ProjectionFactoryDependencies(
             $contentRepositoryId,
             $eventStore,
@@ -101,7 +100,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 $this->projectionFactoryDependencies->contentDimensionSource,
                 $this->userIdProvider,
-                $this->clock
+                $this->clock,
             );
         }
         return $this->contentRepository;
@@ -126,7 +125,7 @@ final class ContentRepositoryFactory
             $this->projectionFactoryDependencies,
             $this->getOrBuild(),
             $this->buildEventPersister(),
-            $this->projectionsAndCatchUpHooks->projections
+            $this->projectionsAndCatchUpHooks->projections,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }

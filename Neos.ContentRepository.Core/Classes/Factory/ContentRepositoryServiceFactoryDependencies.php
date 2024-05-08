@@ -46,7 +46,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         public ContentRepository $contentRepository,
         // we don't need CommandBus, because this is included in ContentRepository->handle()
         public EventPersister $eventPersister,
-        public Projections $projections
+        public Projections $projections,
     ) {
     }
 
@@ -57,7 +57,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         ContentRepository $contentRepository,
         EventPersister $eventPersister,
-        Projections $projections
+        Projections $projections,
     ): self {
         return new self(
             $projectionFactoryDependencies->contentRepositoryId,
@@ -70,7 +70,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
             $projectionFactoryDependencies->propertyConverter,
             $contentRepository,
             $eventPersister,
-            $projections
+            $projections,
         );
     }
 }
