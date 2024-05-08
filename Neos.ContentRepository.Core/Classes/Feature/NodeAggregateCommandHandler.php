@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -52,9 +53,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\SubtreeTagging;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -93,33 +91,33 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
+    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
-            SetNodeProperties::class => $this->handleSetNodeProperties($command, $contentRepository),
+            SetNodeProperties::class => $this->handleSetNodeProperties($command, $commandHandlingDependencies),
             SetSerializedNodeProperties::class
-            => $this->handleSetSerializedNodeProperties($command, $contentRepository),
-            SetNodeReferences::class => $this->handleSetNodeReferences($command, $contentRepository),
+            => $this->handleSetSerializedNodeProperties($command, $commandHandlingDependencies),
+            SetNodeReferences::class => $this->handleSetNodeReferences($command, $commandHandlingDependencies),
             SetSerializedNodeReferences::class
-            => $this->handleSetSerializedNodeReferences($command, $contentRepository),
-            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $contentRepository),
-            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $contentRepository),
+            => $this->handleSetSerializedNodeReferences($command, $commandHandlingDependencies),
+            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $commandHandlingDependencies),
+            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $commandHandlingDependencies),
             CreateNodeAggregateWithNode::class
-            => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
+            => $this->handleCreateNodeAggregateWithNode($command, $commandHandlingDependencies),
             CreateNodeAggregateWithNodeAndSerializedProperties::class
-            => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository),
-            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $contentRepository),
-            CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $contentRepository),
+            => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $commandHandlingDependencies),
+            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $commandHandlingDependencies),
+            CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $commandHandlingDependencies),
             CreateRootNodeAggregateWithNode::class
-            => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
+            => $this->handleCreateRootNodeAggregateWithNode($command, $commandHandlingDependencies),
             UpdateRootNodeAggregateDimensions::class
-            => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
-            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
-            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
-            TagSubtree::class => $this->handleTagSubtree($command, $contentRepository),
-            UntagSubtree::class => $this->handleUntagSubtree($command, $contentRepository),
-            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $contentRepository),
+            => $this->handleUpdateRootNodeAggregateDimensions($command, $commandHandlingDependencies),
+            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $commandHandlingDependencies),
+            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $commandHandlingDependencies),
+            TagSubtree::class => $this->handleTagSubtree($command, $commandHandlingDependencies),
+            UntagSubtree::class => $this->handleUntagSubtree($command, $commandHandlingDependencies),
+            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $commandHandlingDependencies),
         };
     }
 

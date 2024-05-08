@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
@@ -81,10 +81,10 @@ trait ConstraintChecks
      */
     protected function requireContentStream(
         WorkspaceName $workspaceName,
-        ContentRepository $contentRepository
+        CommandHandlingDependencies $commandHandlingDependencies
     ): ContentStreamId {
-        $contentStreamId = $contentRepository->getContentGraph($workspaceName)->getContentStreamId();
-        $state = $contentRepository->getContentStreamFinder()->findStateForContentStream($contentStreamId);
+        $contentStreamId = $commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
+        $state = $commandHandlingDependencies->getContentStreamFinder()->findStateForContentStream($contentStreamId);
         if ($state === null) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream for "' . $workspaceName->value . '" does not exist yet.',
@@ -731,11 +731,11 @@ trait ConstraintChecks
 
     protected function getExpectedVersionOfContentStream(
         ContentStreamId $contentStreamId,
-        ContentRepository $contentRepository
+        CommandHandlingDependencies $commandHandlingDependencies
     ): ExpectedVersion {
 
         return ExpectedVersion::fromVersion(
-            $contentRepository->getContentStreamFinder()->findVersionForContentStream($contentStreamId)->unwrap()
+            $commandHandlingDependencies->getContentStreamFinder()->findVersionForContentStream($contentStreamId)->unwrap()
         );
     }
 }

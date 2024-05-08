@@ -64,6 +64,8 @@ final class ContentRepository
      */
     private array $projectionStateCache;
 
+    private CommandHandlingDependencies $commandHandlingDependencies;
+
 
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
@@ -81,6 +83,7 @@ final class ContentRepository
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
+        $this->commandHandlerToBeNamed = new CommandHandlingDependencies($this);
     }
 
     /**
@@ -97,7 +100,7 @@ final class ContentRepository
     {
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
-        $eventsToPublish = $this->commandBus->handle($command, $this);
+        $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlerToBeNamed);
 
         // TODO meaningful exception message
         $initiatingUserId = $this->userIdProvider->getUserId();

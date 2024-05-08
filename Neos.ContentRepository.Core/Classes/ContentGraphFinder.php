@@ -80,35 +80,6 @@ final class ContentGraphFinder implements ProjectionStateInterface
      */
     public function getByWorkspaceNameAndContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
     {
-        if (isset($this->contentGraphInstances[$workspaceName->value]) && $this->contentGraphInstances[$workspaceName->value]->getContentStreamId() === $contentStreamId) {
-            return $this->contentGraphInstances[$workspaceName->value];
-        }
-
         return $this->contentGraphFactory->buildForWorkspaceAndContentStream($workspaceName, $contentStreamId);
-    }
-
-    /**
-     * Stateful (dirty) override of the chosen ContentStreamId for a given workspace, it applies within the given closure.
-     * Implementations must ensure that requesting the contentStreamId for this workspace will resolve to the given
-     * override ContentStreamId and vice versa resolving the WorkspaceName from this ContentStreamId should result in the
-     * given WorkspaceName within the closure.
-     *
-     * @internal Used in write operations applying commands to a contentstream that will have WorkspaceName in the future
-     * but doesn't have one yet.
-     */
-    public function overrideContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId, \Closure $fn): void
-    {
-        $contentGraph = $this->contentGraphFactory->buildForWorkspaceAndContentStream($workspaceName, $contentStreamId);
-        $replacedAdapter = $this->contentGraphInstances[$workspaceName->value] ?? null;
-        $this->contentGraphInstances[$workspaceName->value] = $contentGraph;
-
-        try {
-            $fn();
-        } finally {
-            unset($this->contentGraphInstances[$workspaceName->value]);
-            if ($replacedAdapter) {
-                $this->contentGraphInstances[$workspaceName->value] = $replacedAdapter;
-            }
-        }
     }
 }

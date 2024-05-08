@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification;
 
-use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 
+
 /**
  * @internal implementation detail of Command Handlers
  */
@@ -45,10 +46,10 @@ trait NodeModification
 
     private function handleSetNodeProperties(
         SetNodeProperties $command,
-        ContentRepository $contentRepository
+        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $this->requireContentStream($command->workspaceName, $contentRepository);
-        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
@@ -70,15 +71,15 @@ trait NodeModification
             $command->propertyValues->getPropertiesToUnset()
         );
 
-        return $this->handleSetSerializedNodeProperties($lowLevelCommand, $contentRepository);
+        return $this->handleSetSerializedNodeProperties($lowLevelCommand, $commandHandlingDependencies);
     }
 
     private function handleSetSerializedNodeProperties(
         SetSerializedNodeProperties $command,
-        ContentRepository $contentRepository
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $contentRepository);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,

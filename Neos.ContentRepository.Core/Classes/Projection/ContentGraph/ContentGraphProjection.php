@@ -19,10 +19,10 @@ use Neos\EventStore\Model\EventEnvelope;
 final class ContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {
     /**
-     * @param WithMarkStaleInterface&ProjectionInterface<ContentGraphFinder> $projectionImplementation
+     * @param ProjectionInterface<ContentGraphFinder> $projectionImplementation
      */
     public function __construct(
-        private readonly ProjectionInterface&WithMarkStaleInterface $projectionImplementation
+        private readonly ProjectionInterface $projectionImplementation
     ) {
     }
 
@@ -63,6 +63,10 @@ final class ContentGraphProjection implements ProjectionInterface, WithMarkStale
 
     public function markStale(): void
     {
-        $this->projectionImplementation->markStale();
+        if ($this->projectionImplementation instanceof WithMarkStaleInterface) {
+            $this->projectionImplementation->markStale();
+        }
+
+        $this->getState()->forgetInstances();
     }
 }

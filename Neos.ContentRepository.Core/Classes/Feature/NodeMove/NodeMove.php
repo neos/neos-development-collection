@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeMove;
 
-use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -41,7 +41,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -82,11 +81,11 @@ trait NodeMove
      */
     private function handleMoveNodeAggregate(
         MoveNodeAggregate $command,
-        ContentRepository $contentRepository
+        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $commandHandlingDependencies);
         $this->requireDimensionSpacePointToExist($command->dimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
@@ -192,8 +191,8 @@ trait NodeMove
                     $command->newParentNodeAggregateId,
                     $command->newSucceedingSiblingNodeAggregateId,
                     $command->newPrecedingSiblingNodeAggregateId,
-                    $command->newParentNodeAggregateId !== null
-                        || ($command->newSucceedingSiblingNodeAggregateId === null) && ($command->newPrecedingSiblingNodeAggregateId === null),
+                    ($command->newParentNodeAggregateId !== null)
+                        || (($command->newSucceedingSiblingNodeAggregateId === null) && ($command->newPrecedingSiblingNodeAggregateId === null)),
                 )
             )
         );

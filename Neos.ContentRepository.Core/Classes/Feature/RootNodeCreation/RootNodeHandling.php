@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\RootNodeCreation;
 
-use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
@@ -59,7 +59,7 @@ trait RootNodeHandling
 
     /**
      * @param CreateRootNodeAggregateWithNode $command
-     * @param ContentRepository $contentRepository
+     * @param CommandHandlingDependencies $commandHandlingDependencies
      * @return EventsToPublish
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
@@ -69,11 +69,11 @@ trait RootNodeHandling
      */
     private function handleCreateRootNodeAggregateWithNode(
         CreateRootNodeAggregateWithNode $command,
-        ContentRepository $contentRepository
+        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $this->requireContentStream($command->workspaceName, $contentRepository);
-        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $contentRepository);
+        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
         $this->requireProjectedNodeAggregateToNotExist(
             $contentGraph,
             $command->nodeAggregateId
@@ -145,10 +145,10 @@ trait RootNodeHandling
      */
     private function handleUpdateRootNodeAggregateDimensions(
         UpdateRootNodeAggregateDimensions $command,
-        ContentRepository $contentRepository
+        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $contentRepository);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
             $command->nodeAggregateId

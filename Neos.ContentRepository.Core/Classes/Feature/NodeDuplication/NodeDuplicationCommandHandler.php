@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeDuplication;
 
-use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
@@ -54,9 +54,9 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
     ) {
     }
 
-    protected function getContentGraph(WorkspaceName $workspaceName, ContentRepository $contentRepository): ContentGraphInterface
+    protected function getContentGraph(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): ContentGraphInterface
     {
-        return $contentRepository->getContentGraph($workspaceName);
+        return $commandHandlingDependencies->getContentGraph($workspaceName);
     }
 
     protected function getNodeTypeManager(): NodeTypeManager
@@ -74,11 +74,11 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
+    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
-            CopyNodesRecursively::class => $this->handleCopyNodesRecursively($command, $contentRepository),
+            CopyNodesRecursively::class => $this->handleCopyNodesRecursively($command, $commandHandlingDependencies),
         };
     }
 
@@ -87,11 +87,11 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
      */
     private function handleCopyNodesRecursively(
         CopyNodesRecursively $command,
-        ContentRepository $contentRepository
+        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
         // Basic constraints (Content Stream / Dimension Space Point / Node Type of to-be-inserted root node)
-        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $contentRepository);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
         $this->requireDimensionSpacePointToExist(
             $command->targetDimensionSpacePoint->toDimensionSpacePoint()
         );

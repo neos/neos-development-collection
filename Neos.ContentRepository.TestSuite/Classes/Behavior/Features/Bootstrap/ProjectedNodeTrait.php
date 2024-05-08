@@ -283,7 +283,6 @@ trait ProjectedNodeTrait
         } else {
             $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
         }
-        // FIXME: query->workspaceName this _might_ be wrong as the query could use a different workspace/contentstream
         $this->currentNode = $query($contentGraph);
     }
 

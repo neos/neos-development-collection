@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging;
  * source code.
  */
 
-use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
@@ -36,9 +36,9 @@ trait SubtreeTagging
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
-    private function handleTagSubtree(TagSubtree $command, ContentRepository $contentRepository): EventsToPublish
+    private function handleTagSubtree(TagSubtree $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
-        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate($contentGraph, $command->nodeAggregateId);
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -78,9 +78,9 @@ trait SubtreeTagging
         );
     }
 
-    public function handleUntagSubtree(UntagSubtree $command, ContentRepository $contentRepository): EventsToPublish
+    public function handleUntagSubtree(UntagSubtree $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
-        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,

@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -51,20 +52,20 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
+    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
-            MoveDimensionSpacePoint::class => $this->handleMoveDimensionSpacePoint($command, $contentRepository),
-            AddDimensionShineThrough::class => $this->handleAddDimensionShineThrough($command, $contentRepository),
+            MoveDimensionSpacePoint::class => $this->handleMoveDimensionSpacePoint($command, $commandHandlingDependencies),
+            AddDimensionShineThrough::class => $this->handleAddDimensionShineThrough($command, $commandHandlingDependencies),
         };
     }
 
     private function handleMoveDimensionSpacePoint(
         MoveDimensionSpacePoint $command,
-        ContentRepository $contentRepository
+        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
             ->getEventStreamName();
 
@@ -89,9 +90,9 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
 
     private function handleAddDimensionShineThrough(
         AddDimensionShineThrough $command,
-        ContentRepository $contentRepository
+        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $contentGraph = $contentRepository->getContentGraph($command->workspaceName);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
             ->getEventStreamName();
 

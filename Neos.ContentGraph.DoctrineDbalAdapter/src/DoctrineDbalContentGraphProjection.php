@@ -14,7 +14,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTaggi
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\ContentGraphFinder;
@@ -53,7 +52,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
-use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -65,7 +63,7 @@ use Neos\EventStore\Model\EventEnvelope;
  * @implements ProjectionInterface<ContentGraphFinder>
  * @internal but the graph projection is api
  */
-final class DoctrineDbalContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
+final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 {
     use NodeVariation;
     use SubtreeTagging;
@@ -226,11 +224,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     public function getState(): ContentGraphFinder
     {
         return $this->contentGraphFinder;
-    }
-
-    public function markStale(): void
-    {
-        $this->getState()->forgetInstances();
     }
 
     /**
