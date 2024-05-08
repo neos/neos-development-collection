@@ -83,7 +83,7 @@ final class ContentRepository
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
-        $this->commandHandlerToBeNamed = new CommandHandlingDependencies($this);
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this);
     }
 
     /**
@@ -100,7 +100,7 @@ final class ContentRepository
     {
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
-        $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlerToBeNamed);
+        $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlingDependencies);
 
         // TODO meaningful exception message
         $initiatingUserId = $this->userIdProvider->getUserId();
