@@ -31,7 +31,7 @@ final class ContentGraphFinder implements ContentGraphFinderInterface
     /**
      * @var array<string, ContentGraphInterface>
      */
-    private array $contenGraphInstances = [];
+    private array $contentGraphInstances = [];
 
     public function __construct(
         private readonly ContentGraphFactoryInterface $contentGraphFactory
@@ -44,25 +44,21 @@ final class ContentGraphFinder implements ContentGraphFinderInterface
      */
     public function fromWorkspaceName(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        if (isset($this->contenGraphInstances[$workspaceName->value])) {
-            return $this->contenGraphInstances[$workspaceName->value];
+        if (isset($this->contentGraphInstances[$workspaceName->value])) {
+            return $this->contentGraphInstances[$workspaceName->value];
         }
 
-        $this->contenGraphInstances[$workspaceName->value] = $this->contentGraphFactory->buildForWorkspace($workspaceName);
-        return $this->contenGraphInstances[$workspaceName->value];
+        $this->contentGraphInstances[$workspaceName->value] = $this->contentGraphFactory->buildForWorkspace($workspaceName);
+        return $this->contentGraphInstances[$workspaceName->value];
     }
 
     /**
-     * @return ContentGraphInterface[]
+     * Remove runtime cache..
+     * @internal
      */
-    public function getInstances(): array
+    public function forgetInstances(): void
     {
-        return $this->contenGraphInstances;
-    }
-
-    public function reset(): void
-    {
-        $this->contenGraphInstances = [];
+        $this->contentGraphInstances = [];
     }
 
     /**
@@ -73,8 +69,8 @@ final class ContentGraphFinder implements ContentGraphFinderInterface
      */
     public function fromWorkspaceNameAndContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
     {
-        if (isset($this->contenGraphInstances[$workspaceName->value]) && $this->contenGraphInstances[$workspaceName->value]->getContentStreamId() === $contentStreamId) {
-            return $this->contenGraphInstances[$workspaceName->value];
+        if (isset($this->contentGraphInstances[$workspaceName->value]) && $this->contentGraphInstances[$workspaceName->value]->getContentStreamId() === $contentStreamId) {
+            return $this->contentGraphInstances[$workspaceName->value];
         }
 
         return $this->contentGraphFactory->buildForWorkspaceAndContentStream($workspaceName, $contentStreamId);
@@ -91,15 +87,15 @@ final class ContentGraphFinder implements ContentGraphFinderInterface
     public function overrideContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId, \Closure $fn): void
     {
         $contentGraph = $this->contentGraphFactory->buildForWorkspaceAndContentStream($workspaceName, $contentStreamId);
-        $replacedAdapter = $this->contenGraphInstances[$workspaceName->value] ?? null;
-        $this->contenGraphInstances[$workspaceName->value] = $contentGraph;
+        $replacedAdapter = $this->contentGraphInstances[$workspaceName->value] ?? null;
+        $this->contentGraphInstances[$workspaceName->value] = $contentGraph;
 
         try {
             $fn();
         } finally {
-            unset($this->contenGraphInstances[$workspaceName->value]);
+            unset($this->contentGraphInstances[$workspaceName->value]);
             if ($replacedAdapter) {
-                $this->contenGraphInstances[$workspaceName->value] = $replacedAdapter;
+                $this->contentGraphInstances[$workspaceName->value] = $replacedAdapter;
             }
         }
     }

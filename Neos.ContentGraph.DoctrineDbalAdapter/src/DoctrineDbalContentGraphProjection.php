@@ -157,14 +157,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-
-        $contentGraphFinder = $this->getState();
-        /** @var ContentGraph $contentGraph */
-        foreach ($contentGraphFinder->getInstances() as $contentGraph) {
-            foreach ($contentGraph->getSubgraphs() as $subgraph) {
-                $subgraph->inMemoryCache->enable();
-            }
-        }
+        $this->getState()->forgetInstances();
     }
 
     private function truncateDatabaseTables(): void
@@ -237,13 +230,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public function markStale(): void
     {
-        $contentGraphFinder = $this->getState();
-        /** @var ContentGraph $contentGraph */
-        foreach ($contentGraphFinder->getInstances() as $contentGraph) {
-            foreach ($contentGraph->getSubgraphs() as $subgraph) {
-                $subgraph->inMemoryCache->disable();
-            }
-        }
+        $this->getState()->forgetInstances();
     }
 
     /**

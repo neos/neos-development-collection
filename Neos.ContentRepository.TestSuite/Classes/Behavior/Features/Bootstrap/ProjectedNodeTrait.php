@@ -267,7 +267,7 @@ trait ProjectedNodeTrait
     protected function initializeCurrentNodeFromContentGraph(callable $query): void
     {
         $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
-        $contentGraphFinder->reset();
+        $contentGraphFinder->forgetInstances();
         if (isset($this->currentContentStreamId)) {
             $contentGraph = $contentGraphFinder->fromWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId);
         } else {

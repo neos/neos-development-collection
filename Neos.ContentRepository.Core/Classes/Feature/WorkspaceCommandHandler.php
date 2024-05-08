@@ -1017,6 +1017,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
     private function resetContentGraphCache(ContentRepository $contentRepository): void
     {
-        $contentRepository->projectionState(ContentGraphFinder::class)->reset();
+        $contentRepository->projectionState(ContentGraphFinder::class)->forgetInstances();
     }
 }
