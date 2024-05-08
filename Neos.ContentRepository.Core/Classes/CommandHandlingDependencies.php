@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
