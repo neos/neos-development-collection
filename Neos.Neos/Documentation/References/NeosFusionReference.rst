@@ -1107,7 +1107,7 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 :dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
-:renderHiddenInMenu: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
+:renderHiddenInMenu: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-menu"
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Each ``item`` has the following properties:
