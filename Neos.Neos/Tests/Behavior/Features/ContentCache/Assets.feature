@@ -60,13 +60,13 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on asset changes
       | nodeTypeName    | "Neos.Neos:Sites" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                                                                                                                                        | nodeName |
-      | a               | root                  | Neos.Neos:Site               | {}                                                                                                                                                           | site     |
-      | a1              | a                     | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1", "title": "Node a1", "asset": {"__flow_object_type":"Neos\\Media\\Domain\\Model\\Asset","__identifier":"an-asset-to-change"}}        | a1       |
-      | a1-1            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-1", "title": "Node a1-1", "assets": [{"__flow_object_type":"Neos\\Media\\Domain\\Model\\Asset","__identifier":"an-asset-to-change"}]} | a1-1     |
-      | a1-2            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-2", "title": "Node a1-2", "asset": {"__flow_object_type":"Neos\\Media\\Domain\\Model\\Asset","__identifier":"some-other-asset"}}      | a1-2     |
-      | a2              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2", "text": "Link to asset://an-asset-to-change."}                                                                  | a2       |
-      | a3              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2", "text": "Link to asset://some-other-asset."}                                                                    | a3       |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                                                                       | nodeName |
+      | a               | root                  | Neos.Neos:Site               | {}                                                                                          | site     |
+      | a1              | a                     | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1", "title": "Node a1", "asset": "Asset:an-asset-to-change"}           | a1       |
+      | a1-1            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-1", "title": "Node a1-1", "assets": ["Asset:an-asset-to-change"]}    | a1-1     |
+      | a1-2            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-2", "title": "Node a1-2", "asset": "Asset:some-other-asset"}         | a1-2     |
+      | a2              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2", "text": "Link to asset://an-asset-to-change."} | a2       |
+      | a3              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2", "text": "Link to asset://some-other-asset."}   | a3       |
     When the command RebaseWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
