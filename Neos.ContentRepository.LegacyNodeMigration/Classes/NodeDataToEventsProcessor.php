@@ -376,7 +376,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             }
         }
 
-        // hiddenInIndex is stored as separate column in the nodedata table, but we need it as (internal) property
+        // hiddenInIndex is stored as separate column in the nodedata table, but we need it as property
         if ($nodeDataRow['hiddeninindex']) {
             $properties['hiddenInMenu'] = true;
         }
