@@ -46,14 +46,14 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): ContentSubgraphInterface;
 
     /**
-     * @throws RootNodeAggregateDoesNotExist
-     * @api
      * Throws exception if no root aggregate found, because a Content Repository needs at least
      * one root node to function.
      *
      * Also throws exceptions if multiple root node aggregates of the given $nodeTypeName were found,
      * as this would lead to nondeterministic results in your code.
      *
+     * @throws RootNodeAggregateDoesNotExist
+     * @api
      */
     public function findRootNodeAggregateByType(
         NodeTypeName $nodeTypeName
@@ -145,6 +145,8 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): DimensionSpacePointSet;
 
     /**
+     * Provides the total number of projected nodes regardless of workspace or content stream.
+     *
      * @internal only for consumption in testcases
      */
     public function countNodes(): int;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
@@ -11,9 +13,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * @internal only command handlers
+ * An adapter to provide aceess to read projection data and delegate (sub) commands
+ *
+ * @internal only command handlers are provided with this via the
+ * @see ContentRepository::handle()
  */
-class CommandHandlingDependencies
+final class CommandHandlingDependencies
 {
     /**
      * WorkspaceName->value to ContentGraphInterface
