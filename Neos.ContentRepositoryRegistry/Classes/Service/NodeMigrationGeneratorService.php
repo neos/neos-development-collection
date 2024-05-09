@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepositoryRegistry\Service;
 
 /*
@@ -25,8 +26,7 @@ class NodeMigrationGeneratorService
 
     public function __construct(
         private readonly PackageManager $packageManager
-    )
-    {
+    ) {
     }
 
     /**

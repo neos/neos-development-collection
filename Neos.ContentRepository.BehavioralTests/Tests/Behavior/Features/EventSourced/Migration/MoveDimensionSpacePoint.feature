@@ -35,17 +35,16 @@ Feature: Move dimension space point
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
+    And I am in the active content stream of workspace "live"
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
-      | contentStreamId | "cs-identifier"               |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "sir-david-nodenborough"                  |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {"language": "de"}                        |
@@ -91,14 +90,13 @@ Feature: Move dimension space point
 
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "de"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the graph projection is fully up to date
 
     # ensure the node is disabled
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
@@ -122,7 +120,7 @@ Feature: Move dimension space point
     """
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}

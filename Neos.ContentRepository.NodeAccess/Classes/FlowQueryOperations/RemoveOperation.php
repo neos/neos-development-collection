@@ -11,12 +11,9 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\OperationInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Removes the given Node from the current context.
@@ -34,11 +31,27 @@ final class RemoveOperation implements OperationInterface
 {
     use CreateNodeHashTrait;
 
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'remove';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 100;
+
+    /** @param array<int, mixed> $context */
     public function canEvaluate($context): bool
     {
         return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
+    /** @param array<int, mixed> $arguments */
     public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
         $nodeHashesToRemove = [];

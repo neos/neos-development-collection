@@ -7,13 +7,13 @@ use Neos\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 /**
  * @implements \IteratorAggregate<SerializedImageAdjustment>
  */
-final class SerializedImageAdjustments implements \IteratorAggregate, \JsonSerializable
+final readonly class SerializedImageAdjustments implements \IteratorAggregate, \JsonSerializable
 {
     /**
      * @param array<SerializedImageAdjustment> $serializedAdjustments
      */
     private function __construct(
-        private readonly array $serializedAdjustments,
+        private array $serializedAdjustments,
     ) {}
 
     /**
@@ -35,12 +35,11 @@ final class SerializedImageAdjustments implements \IteratorAggregate, \JsonSeria
     }
 
     /**
-     * @return \Traversable<SerializedImageAdjustment>|SerializedImageAdjustment[]
-     * @noinspection PhpDocSignatureInspection
+     * @return \Traversable<SerializedImageAdjustment>
      */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->serializedAdjustments);
+        yield from $this->serializedAdjustments;
     }
 
     /**

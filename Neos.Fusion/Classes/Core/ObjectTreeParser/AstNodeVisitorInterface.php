@@ -35,6 +35,9 @@ use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueCopy;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\AssignedObjectPath;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\ValueUnset;
 
+/**
+ * @internal
+ */
 interface AstNodeVisitorInterface
 {
     public function visitFusionFile(FusionFile $fusionFile);

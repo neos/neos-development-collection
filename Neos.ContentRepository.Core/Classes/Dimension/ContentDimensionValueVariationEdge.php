@@ -19,11 +19,11 @@ namespace Neos\ContentRepository\Core\Dimension;
  *
  * @internal
  */
-final class ContentDimensionValueVariationEdge
+final readonly class ContentDimensionValueVariationEdge
 {
     public function __construct(
-        public readonly ContentDimensionValue $specialization,
-        public readonly ContentDimensionValue $generalization,
+        public ContentDimensionValue $specialization,
+        public ContentDimensionValue $generalization,
     ) {
     }
 }

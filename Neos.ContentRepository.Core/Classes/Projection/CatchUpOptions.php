@@ -15,15 +15,15 @@ use Neos\EventStore\Model\EventEnvelope;
  *
  * @api *NOTE:** The signature of the {@see create()} and {@see with()} methods might be extended in the future, so they should only ever be used with named arguments
  */
-final class CatchUpOptions
+final readonly class CatchUpOptions
 {
     /**
      * @param SequenceNumber|null $maximumSequenceNumber If specified the catch-up will stop at the specified {@see SequenceNumber}
      * @param Closure(EventInterface $event, EventEnvelope $eventEnvelope): void|null $progressCallback If specified the given closure will be invoked for every event with the current {@see EventInterface} and {@see EventEnvelope} passed as arguments
      */
     private function __construct(
-        public readonly ?SequenceNumber $maximumSequenceNumber,
-        public readonly ?Closure $progressCallback,
+        public ?SequenceNumber $maximumSequenceNumber,
+        public ?Closure $progressCallback,
     ) {
     }
 

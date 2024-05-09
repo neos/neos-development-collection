@@ -1,12 +1,10 @@
-@fixtures @contentrepository
+@flowEntities @contentrepository
 Feature: Linking between multiple websites
 
   Background:
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
-
     'Neos.Neos:Sites':
       superTypes:
         'Neos.ContentRepository:Root': true
@@ -41,9 +39,9 @@ Feature: Linking between multiple websites
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                    |
-      | contentStreamId             | "cs-identifier"          |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
     And the graph projection is fully up to date
@@ -54,7 +52,6 @@ Feature: Linking between multiple websites
     #        duke-of-contentshire (content node)
     #        earl-o-documentbourgh
     #
-    And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId         | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues                    | nodeName |
       | homepage1               | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-1   |
@@ -68,8 +65,15 @@ Feature: Linking between multiple websites
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'site-1':
+            preset: default
+            uriPathSuffix: ''
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+          'site-2':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory

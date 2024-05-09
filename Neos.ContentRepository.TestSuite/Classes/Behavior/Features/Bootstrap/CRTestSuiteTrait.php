@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWri
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -31,7 +31,9 @@ use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamClosing;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCopying;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCreation;
@@ -43,6 +45,7 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRe
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRenaming;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeTypeChange;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeVariation;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\SubtreeTagging;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
@@ -64,10 +67,12 @@ trait CRTestSuiteTrait
     use GenericCommandExecutionAndEventPublication;
 
     use ContentStreamForking;
+    use ContentStreamClosing;
 
     use NodeCreation;
     use NodeCopying;
     use NodeDisabling;
+    use SubtreeTagging;
     use NodeModification;
     use NodeMove;
     use NodeReferencing;
@@ -80,14 +85,12 @@ trait CRTestSuiteTrait
     use WorkspaceDiscarding;
     use WorkspacePublishing;
 
-    protected function setupCRTestSuiteTrait(bool $alwaysRunCrSetup = false): void
+    protected function setupCRTestSuiteTrait(): void
     {
         if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
             CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
         }
     }
-
-    private static bool $wasContentRepositorySetupCalled = false;
 
     /**
      * @BeforeScenario
@@ -177,6 +180,16 @@ trait CRTestSuiteTrait
     }
 
     /**
+     * @Then /^workspace ([^"]*) has status ([^"]*)$/
+     */
+    public function workspaceHasStatus(string $rawWorkspaceName, string $status): void
+    {
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+
+        Assert::assertSame($status, $workspace->status->value);
+    }
+
+    /**
      * @Then /^I expect the graph projection to consist of exactly (\d+) node(?:s)?$/
      * @param int $expectedNumberOfNodes
      */
@@ -191,16 +204,16 @@ trait CRTestSuiteTrait
      */
     public function theSubtreeForNodeAggregateWithNodeTypesAndLevelsDeepShouldBe(
         string $serializedNodeAggregateId,
-        string $serializedNodeTypeConstraints,
+        string $serializedNodeTypeCriteria,
         int $maximumLevels,
         TableNode $table
     ): void {
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
-        $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($serializedNodeTypeConstraints);
+        $nodeTypeCriteria = NodeTypeCriteria::fromFilterString($serializedNodeTypeCriteria);
         $expectedRows = $table->getHash();
 
         $subtree = $this->getCurrentSubgraph()
-            ->findSubtree($nodeAggregateId, FindSubtreeFilter::create(nodeTypeConstraints: $nodeTypeConstraints, maximumLevels: $maximumLevels));
+            ->findSubtree($nodeAggregateId, FindSubtreeFilter::create(nodeTypes: $nodeTypeCriteria, maximumLevels: $maximumLevels));
 
         /** @var Subtree[] $flattenedSubtree */
         $flattenedSubtree = [];
@@ -267,7 +280,7 @@ trait CRTestSuiteTrait
         $contentStreamFinder = $this->currentContentRepository->getContentStreamFinder();
 
         $actual = $contentStreamFinder->findStateForContentStream($contentStreamId);
-        Assert::assertEquals($expectedState, $actual);
+        Assert::assertSame(ContentStreamState::tryFrom($expectedState), $actual);
     }
 
     /**

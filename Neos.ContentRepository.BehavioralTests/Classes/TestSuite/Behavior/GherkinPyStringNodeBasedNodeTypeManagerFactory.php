@@ -15,12 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\TestSuite\Behavior;
 
 use Behat\Gherkin\Node\PyStringNode;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -45,7 +45,7 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
     public static function initializeWithPyStringNode(PyStringNode $nodeTypesToUse): void
     {
         self::$nodeTypesToUse = new NodeTypeManager(
-            fn (): array => Yaml::parse($nodeTypesToUse->getRaw()),
+            fn (): array => Yaml::parse($nodeTypesToUse->getRaw()) ?? [],
             new class implements NodeLabelGeneratorFactoryInterface {
                 public function create(NodeType $nodeType): NodeLabelGeneratorInterface
                 {

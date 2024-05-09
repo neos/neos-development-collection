@@ -16,18 +16,19 @@ namespace Neos\Neos\Fusion\Helper;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\Neos\Domain\Exception;
 use Neos\Neos\Presentation\VisualNodePath;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Eel helper for ContentRepository Nodes
@@ -148,6 +149,11 @@ class NodeHelper implements ProtectedContextAwareInterface
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         return $nodeAddressFactory->createFromNode($node)->serializeForUri();
+    }
+
+    public function subgraphForNode(Node $node): ContentSubgraphInterface
+    {
+        return $this->contentRepositoryRegistry->subgraphForNode($node);
     }
 
     /**

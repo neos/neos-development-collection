@@ -12,9 +12,9 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\Property;
  */
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\Tests\Unit\Fixtures\PostalAddress;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
@@ -51,7 +51,7 @@ class PropertyTypeTest extends TestCase
         }
     }
 
-    public function declarationAndValueProvider(): array
+    public static function declarationAndValueProvider(): array
     {
         $bool = true;
         $int = 42;
@@ -154,7 +154,7 @@ class PropertyTypeTest extends TestCase
         }
     }
 
-    public function declarationTypeProvider(): array
+    public static function declarationTypeProvider(): array
     {
         return [
             [['bool', 'boolean'], 'boolean'],

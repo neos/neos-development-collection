@@ -17,12 +17,13 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 class AddNewPropertyTransformationFactory implements TransformationFactoryInterface
 {
@@ -56,20 +57,27 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
+                WorkspaceName $workspaceNameForWriting,
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
+                if ($this->serializedValue === null) {
+                    // we don't need to unset a non-existing property
+                    return null;
+                }
+
                 if (!$node->hasProperty($this->newPropertyName)) {
                     return $this->contentRepository->handle(
                         SetSerializedNodeProperties::create(
-                            $contentStreamForWriting,
+                            $workspaceNameForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
-                                $this->newPropertyName => new SerializedPropertyValue(
+                                $this->newPropertyName => SerializedPropertyValue::create(
                                     $this->serializedValue,
                                     $this->type
                                 )
                             ]),
+                            PropertyNames::createEmpty()
                         )
                     );
                 }

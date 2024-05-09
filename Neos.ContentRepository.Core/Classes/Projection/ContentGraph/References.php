@@ -17,8 +17,6 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 /**
  * An immutable, 0-indexed, type-safe collection of Reference objects
  *
- * A reference is a node property of type "reference" or "references"
- *
  * Each reference describes the edge with its properties to another node.
  *
  * - references:
@@ -31,25 +29,24 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
  *
  * The properties {@see Reference::$properties} are declared directly on the reference, and can provide information how one node is linked to another.
  *
- * If multiple "outgoing" references are allowed via type "references", this collection will return multiple references with the same name {@see Reference::$name}.
+ * This collection might return multiple references with the same name {@see Reference::$name} if multiple "outgoing" references were set.
  *
  * @implements \IteratorAggregate<int,Reference>
  * @implements \ArrayAccess<int,Reference>
  *
  * @api
  */
-final class References implements \IteratorAggregate, \ArrayAccess, \Countable
+final readonly class References implements \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
      * @var array<int,Reference>
      */
-    public readonly array $references;
+    public array $references;
 
     private function __construct(
         Reference ...$references
     ) {
-        /** @var array<int,Reference> $references */
-        $this->references = $references;
+        $this->references = array_values($references);
     }
 
     /**
@@ -69,11 +66,11 @@ final class References implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @return \ArrayIterator<int,Reference>
+     * @return \Traversable<int,Reference>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->references);
+        yield from $this->references;
     }
 
     public function offsetExists(mixed $offset): bool

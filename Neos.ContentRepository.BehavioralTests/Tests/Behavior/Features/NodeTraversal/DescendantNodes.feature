@@ -9,7 +9,6 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
       properties:
@@ -66,7 +65,7 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -89,7 +88,6 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
     And the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeProperties is executed with payload:
       | Key             | Value                   |
-      | contentStreamId | "cs-identifier"         |
       | nodeAggregateId | "a2a2b"                 |
       | propertyValues  | {"integerProperty": 20} |
     And the command DisableNodeAggregate is executed with payload:
@@ -118,12 +116,12 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
 
       # findDescendantNodes queries with results
     When I execute the findDescendantNodes query for entry node aggregate id "home" I expect the nodes "terms,contact,a,b,a1,b1,a2,a3,a2a,a2a1,a2a2,a2a2b" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a,b,a1,b1,a2,a3,a2a1,a2a2,a2a2b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a,b,a1,b1,a2,a3,a2a1,a2a2,a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2"}' I expect the nodes "a2,a2a,a2a1,a2a2,a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a1"}' I expect the nodes "a1,a2a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\""}' I expect the nodes "a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\" OR text $= \"a1\""}' I expect the nodes "a1,a2a1" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty *= \"späci\" OR text $= \"a1\""}' I expect the nodes "b,a1,a2a1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty *= \"späCi\" OR text $= \"a1\""}' I expect the nodes "b,a1,a2a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = true"}' I expect the nodes "a,a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = false"}' I expect the nodes "a3" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty >= 20"}' I expect the nodes "a1,a2,a2a2b" to be returned

@@ -11,7 +11,6 @@ Feature: Node References with Dimensions
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithReferences':
       properties:
         referenceProperty:
@@ -31,7 +30,7 @@ Feature: Node References with Dimensions
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -50,7 +49,7 @@ Feature: Node References with Dimensions
       | references                    | [{"target": "anthony-destinode"}] |
     And the graph projection is fully up to date
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -60,7 +59,7 @@ Feature: Node References with Dimensions
       | Name              | Node                                               | Properties |
       | referenceProperty | cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |

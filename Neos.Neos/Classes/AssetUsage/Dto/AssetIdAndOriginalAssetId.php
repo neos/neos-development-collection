@@ -10,11 +10,11 @@ use Neos\Flow\Annotations as Flow;
  * @internal
  */
 #[Flow\Proxy(false)]
-class AssetIdAndOriginalAssetId
+readonly class AssetIdAndOriginalAssetId
 {
     public function __construct(
-        public readonly string $assetId,
-        public readonly ?string $originalAssetId,
+        public string $assetId,
+        public ?string $originalAssetId,
     ) {
     }
 }

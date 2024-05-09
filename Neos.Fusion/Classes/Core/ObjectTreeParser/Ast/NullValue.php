@@ -16,10 +16,11 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
+/** @internal */
 #[Flow\Proxy(false)]
-class NullValue extends AbstractPathValue
+final readonly class NullValue extends AbstractPathValue
 {
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitNullValue($this, ...$args);
     }

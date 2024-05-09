@@ -15,12 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -113,10 +113,7 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         return new self($query, $parameters, $this->types);
     }
 
-    /**
-     * @return ResultStatement<int,mixed>
-     */
-    public function execute(Connection $databaseConnection): ResultStatement
+    public function execute(Connection $databaseConnection): Result
     {
         return $databaseConnection->executeQuery($this->query, $this->parameters, $this->types);
     }

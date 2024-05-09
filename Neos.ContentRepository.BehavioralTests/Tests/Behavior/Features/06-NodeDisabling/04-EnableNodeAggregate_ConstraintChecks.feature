@@ -11,7 +11,6 @@ Feature: Enable a node aggregate
       | language   | de, gsw, en | gsw->de, en     |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
     And using identifier "default", I define a content repository
@@ -24,7 +23,7 @@ Feature: Enable a node aggregate
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -37,7 +36,7 @@ Feature: Enable a node aggregate
   Scenario: Try to enable a node aggregate in a non-existing content stream
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
-      | contentStreamId      | "i-do-not-exist"         |
+      | workspaceName      | "i-do-not-exist"         |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"

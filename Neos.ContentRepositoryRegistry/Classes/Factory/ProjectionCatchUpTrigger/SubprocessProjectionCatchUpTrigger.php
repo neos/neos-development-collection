@@ -2,11 +2,11 @@
 declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Command\SubprocessProjectionCatchUpCommandController;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Booting\Scripts;
 
 /**
@@ -16,14 +16,13 @@ class SubprocessProjectionCatchUpTrigger implements ProjectionCatchUpTriggerInte
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow")
-     * @var array
+     * @var array<string, mixed>
      */
     protected $flowSettings;
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId
-    )
-    {
+    ) {
     }
 
     public function triggerCatchUp(Projections $projections): void

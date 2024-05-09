@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 
 /**
@@ -28,41 +28,32 @@ final class QueryUtility
         string $tableNamePrefix,
         string $prefix = ''
     ): string {
-        if ($visibilityConstraints->isDisabledContentShown()) {
-            return '';
-        }
+        // TODO evaluate $visibilityConstraints->tagConstraints {@see Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph::addSubtreeTagConstraints}
 
-        return '
-            AND NOT EXISTS (
-                SELECT 1
-                FROM ' . $tableNamePrefix . '_restrictionhyperrelation rest
-                WHERE rest.contentstreamid = ' . $prefix . 'h.contentstreamid
-                    AND rest.dimensionspacepointhash = ' . $prefix . 'h.dimensionspacepointhash
-                    AND ' . $prefix . 'n.nodeaggregateid = ANY(rest.affectednodeaggregateids)
-            )';
+        return '';
     }
 
     /**
-     * @param NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraints
+     * @param ExpandedNodeTypeCriteria $nodeTypeCriteria
      * @param string $prefix
      * @param array<string,mixed> $parameters
      * @param array<string,int|string> $types
      * @return string
      */
-    public static function getNodeTypeConstraintsClause(
-        NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraints,
+    public static function getNodeTypeCriteriaClause(
+        ExpandedNodeTypeCriteria $nodeTypeCriteria,
         string $prefix,
         array &$parameters,
         array &$types,
     ): string {
         $query = '';
-        $parameters['allowedNodeTypeNames'] = $nodeTypeConstraints->explicitlyAllowedNodeTypeNames->toStringArray();
-        $parameters['disallowedNodeTypeNames'] = $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->toStringArray();
+        $parameters['allowedNodeTypeNames'] = $nodeTypeCriteria->explicitlyAllowedNodeTypeNames->toStringArray();
+        $parameters['disallowedNodeTypeNames'] = $nodeTypeCriteria->explicitlyDisallowedNodeTypeNames->toStringArray();
         $types['allowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
         $types['disallowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
-        if (!$nodeTypeConstraints->explicitlyAllowedNodeTypeNames->isEmpty()) {
-            if (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
-                if ($nodeTypeConstraints->isWildCardAllowed) {
+        if (!$nodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()) {
+            if (!$nodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty()) {
+                if ($nodeTypeCriteria->isWildCardAllowed) {
                     $query .= '
             AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)
             OR ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
@@ -72,12 +63,12 @@ final class QueryUtility
             AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
                 }
             } else {
-                if (!$nodeTypeConstraints->isWildCardAllowed) {
+                if (!$nodeTypeCriteria->isWildCardAllowed) {
                     $query .= '
             AND ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
                 }
             }
-        } elseif (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
+        } elseif (!$nodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty()) {
             $query .= '
             AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
         }

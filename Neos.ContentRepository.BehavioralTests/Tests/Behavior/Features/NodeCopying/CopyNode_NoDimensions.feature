@@ -5,7 +5,6 @@ Feature: Copy nodes (without dimensions)
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
     And using identifier "default", I define a content repository
@@ -17,9 +16,9 @@ Feature: Copy nodes (without dimensions)
       | workspaceDescription           | "The live workspace"                   |
       | newContentStreamId     | "cs-identifier"                        |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                  |
-      | contentStreamId     | "cs-identifier"                        |
       | nodeAggregateId     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -55,12 +54,11 @@ Feature: Copy nodes (without dimensions)
     And the graph projection is fully up to date
 
   Scenario: Copy
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     # node to copy (currentNode): "sir-nodeward-nodington-iii"
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     When the command CopyNodesRecursively is executed, copying the current node aggregate with payload:
       | Key                                            | Value                                                             |
-      | contentStreamId                        | "cs-identifier"                                                   |
       | targetDimensionSpacePoint                      | {}                                                                |
       | targetParentNodeAggregateId            | "nody-mc-nodeface"                                                |
       | targetNodeName                                 | "target-nn"                                                       |

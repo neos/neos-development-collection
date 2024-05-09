@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\Projection;
 
-use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
@@ -196,6 +196,28 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     }
 
     /**
+     * @throws NodeNotFoundException
+     * @internal
+     */
+    public function getLastChildNodeNotBeing(
+        NodeAggregateId $parentNodeAggregateId,
+        string $dimensionSpacePointHash,
+        NodeAggregateId $excludedNodeAggregateId
+    ): DocumentNodeInfo {
+        return $this->fetchSingle(
+            'dimensionSpacePointHash = :dimensionSpacePointHash
+                AND parentNodeAggregateId = :parentNodeAggregateId
+                AND nodeAggregateId != :excludedNodeAggregateId
+                AND succeedingNodeAggregateId IS NULL',
+            [
+                'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                'parentNodeAggregateId' => $parentNodeAggregateId->value,
+                'excludedNodeAggregateId' => $excludedNodeAggregateId->value
+            ]
+        );
+    }
+
+    /**
      * @api
      */
     public function getLiveContentStreamId(): ContentStreamId
@@ -242,7 +264,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to load node for query "%s": %s',
+                'Failed to fetch a node, please ensure the projection is setup. Query "%s". %s',
                 $where,
                 $e->getMessage()
             ), 1599664746, $e);
@@ -273,7 +295,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to load node for query "%s": %s',
+                'Failed to fetch multiple nodes, please ensure the projection is setup. Query "%s". %s',
                 $where,
                 $e->getMessage()
             ), 1683808640, $e);
@@ -314,7 +336,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     public function getDescendantsOfNode(DocumentNodeInfo $node): DocumentNodeInfos
     {
         return $this->fetchMultiple(
-            'dimensionSpacePointHash = :dimensionSpacePointHash 
+            'dimensionSpacePointHash = :dimensionSpacePointHash
             AND nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix',
             [
                 'dimensionSpacePointHash' => $node->getDimensionSpacePointHash(),

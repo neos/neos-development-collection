@@ -1,0 +1,251 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\Projections\\:\\:getClassNames\" is called\\.$#"
+			count: 1
+			path: Neos.ContentRepositoryRegistry/Classes/Service/ProjectionReplayService.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Backend\\\\MenuHelper\\:\\:buildModuleList\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Backend/MenuHelper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Backend\\\\MenuHelper\\:\\:buildSiteList\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Backend/MenuHelper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Backend\\\\MenuHelper\\:\\:collectModuleData\\(\\) has parameter \\$moduleConfiguration with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Backend/MenuHelper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Backend\\\\MenuHelper\\:\\:collectModuleData\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Backend/MenuHelper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Backend\\\\MenuHelper\\:\\:injectSettings\\(\\) has parameter \\$settings with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Backend/MenuHelper.php
+
+		-
+			message: "#^Property Neos\\\\Neos\\\\Controller\\\\Backend\\\\MenuHelper\\:\\:\\$moduleListFirstLevelCache type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Backend/MenuHelper.php
+
+		-
+			message: "#^Property Neos\\\\Neos\\\\Controller\\\\Backend\\\\MenuHelper\\:\\:\\$settings type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Backend/MenuHelper.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\ContentSubgraphWithRuntimeCaches\\:\\:findSubtree\" is called\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\:\\:getAllChildNodesByNodeIdCache\" is called\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\:\\:getNamedChildNodeByNodeIdCache\" is called\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\:\\:getParentNodeIdByChildNodeIdCache\" is called\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\\\AllChildNodesByNodeIdCache\\:\\:add\" is called\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\\\NamedChildNodeByNodeIdCache\\:\\:add\" is called\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\ContentGraphWithRuntimeCaches\\\\InMemoryCache\\\\ParentNodeIdByChildNodeIdCache\\:\\:add\" is called\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
+
+		-
+			message: "#^Cannot call method getName\\(\\) on Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\|null\\.$#"
+			count: 2
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:createAction\\(\\) has parameter \\$password with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:createAction\\(\\) has parameter \\$roleIdentifiers with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:getAllowedRoles\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:getAuthenticationProviders\\(\\) should return array\\<string\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:updateAccountAction\\(\\) has parameter \\$password with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:updateAccountAction\\(\\) has parameter \\$roleIdentifiers with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Parameter \\#1 \\$messageBody of method Neos\\\\Flow\\\\Mvc\\\\Controller\\\\AbstractController\\:\\:addFlashMessage\\(\\) expects string, string\\|null given\\.$#"
+			count: 16
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Parameter \\#1 \\$user of method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:isEditingAllowed\\(\\) expects Neos\\\\Neos\\\\Domain\\\\Model\\\\User, Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\|null given\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Parameter \\#1 \\$user of method Neos\\\\Neos\\\\Domain\\\\Service\\\\UserService\\:\\:setUserPassword\\(\\) expects Neos\\\\Neos\\\\Domain\\\\Model\\\\User, Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\|null given\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Parameter \\#2 \\$messageTitle of method Neos\\\\Flow\\\\Mvc\\\\Controller\\\\AbstractController\\:\\:addFlashMessage\\(\\) expects string, string\\|null given\\.$#"
+			count: 18
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Property Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:\\$authenticationProviderSettings type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Property Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:\\$currentUser \\(Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\) does not accept Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\|null\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\User\\\\UserSettingsController\\:\\:updateAccountAction\\(\\) has parameter \\$password with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/User/UserSettingsController.php
+
+		-
+			message: "#^Parameter \\#1 \\$messageBody of method Neos\\\\Flow\\\\Mvc\\\\Controller\\\\AbstractController\\:\\:addFlashMessage\\(\\) expects string, string\\|null given\\.$#"
+			count: 4
+			path: Neos.Neos/Classes/Controller/Module/User/UserSettingsController.php
+
+		-
+			message: "#^Parameter \\#2 \\$messageTitle of method Neos\\\\Flow\\\\Mvc\\\\Controller\\\\AbstractController\\:\\:addFlashMessage\\(\\) expects string, string\\|null given\\.$#"
+			count: 5
+			path: Neos.Neos/Classes/Controller/Module/User/UserSettingsController.php
+
+		-
+			message: "#^Property Neos\\\\Neos\\\\Controller\\\\Module\\\\User\\\\UserSettingsController\\:\\:\\$currentUser \\(Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\) does not accept Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\|null\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Controller/Module/User/UserSettingsController.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\DimensionSpace\\\\WeightedDimensionSpacePoint\\:\\:getIdentityHash\" is called\\.$#"
+			count: 3
+			path: Neos.Neos/Classes/Presentation/Dimensions/VisualInterDimensionalVariationGraph.php
+
+		-
+			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\DimensionSpace\\\\WeightedDimensionSpacePoint\\:\\:getIdentityHash\" is called\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/Presentation/Dimensions/VisualWeightedDimensionSpacePoint.php
+
+		-
+			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:cast\\(\\) should return resource but returns false\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:pathStat\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:pathStat\\(\\) should return array but returns array\\<int\\|string, int\\>\\|false\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:pathStat\\(\\) should return array but returns false\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:read\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:readDirectory\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:resourceStat\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:resourceStat\\(\\) should return array but returns array\\<int\\|string, int\\>\\|false\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:tell\\(\\) should return int but returns int\\|false\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:write\\(\\) should return int but returns int\\<0, max\\>\\|false\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Parameter \\#2 \\$length of function fread expects int\\<0, max\\>, int given\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Parameter \\#3 \\$recursive of function mkdir expects bool, int\\<0, 1\\> given\\.$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Return type \\(void\\) of method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:makeDirectory\\(\\) should be compatible with return type \\(bool\\) of method Neos\\\\Flow\\\\ResourceManagement\\\\Streams\\\\StreamWrapperInterface\\:\\:makeDirectory\\(\\)$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
+
+		-
+			message: "#^Return type \\(void\\) of method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:removeDirectory\\(\\) should be compatible with return type \\(bool\\) of method Neos\\\\Flow\\\\ResourceManagement\\\\Streams\\\\StreamWrapperInterface\\:\\:removeDirectory\\(\\)$#"
+			count: 1
+			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php

@@ -14,32 +14,30 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\Projection;
 
-use Traversable;
-
 /**
  * @implements \IteratorAggregate<DocumentNodeInfo>
  */
-final class DocumentNodeInfos implements \IteratorAggregate
+final readonly class DocumentNodeInfos implements \IteratorAggregate
 {
     /**
      * @param array<DocumentNodeInfo> $documentNodeInfos
      */
     private function __construct(
-        private readonly array $documentNodeInfos
+        private array $documentNodeInfos
     ) {
     }
 
     /**
      * @param array<DocumentNodeInfo> $documentNodeInfos
-     * @return static
+     * @return self
      */
-    public static function create(array $documentNodeInfos): static
+    public static function create(array $documentNodeInfos): self
     {
-        return new static($documentNodeInfos);
+        return new self($documentNodeInfos);
     }
 
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->documentNodeInfos);
+        yield from $this->documentNodeInfos;
     }
 }

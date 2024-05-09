@@ -11,24 +11,20 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -45,7 +41,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * Example (absolute path):
  *
- *  q(node).find('/sites/my-site/home')
+ *  q(node).find('/<Neos.Neos:Sites>/my-site/home')
  *
  * Example (identifier):
  *
@@ -121,53 +117,63 @@ class FindOperation extends AbstractOperation
             return;
         }
 
-        /** @var Node[] $result */
-        $result = [];
         $selectorAndFilter = $arguments[0];
 
-        $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilter);
-
-        /** @todo fetch them $elsewhere (fusion runtime?) */
         $firstContextNode = reset($contextNodes);
         assert($firstContextNode instanceof Node);
-        $contentRepository = $this->contentRepositoryRegistry->get($firstContextNode->subgraphIdentity->contentRepositoryId);
 
         $entryPoints = $this->getEntryPoints($contextNodes);
-        foreach ($parsedFilter['Filters'] as $filter) {
-            $filterResults = [];
-            $generatedNodes = false;
-            if (isset($filter['IdentifierFilter'])) {
-                $nodeAggregateId = NodeAggregateId::fromString($filter['IdentifierFilter']);
-                $filterResults = $this->addNodesById($nodeAggregateId, $entryPoints, $filterResults);
-                $generatedNodes = true;
-            } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
-                $nodePath = AbsoluteNodePath::tryFromString($filter['PropertyNameFilter'] ?? $filter['PathFilter'])
-                    ?: NodePath::fromString($filter['PropertyNameFilter'] ?? $filter['PathFilter']);
-                $filterResults = $this->addNodesByPath($nodePath, $entryPoints, $filterResults);
-                $generatedNodes = true;
+
+        /** @var Node[] $result */
+        $result = [];
+        $selectorAndFilterParts = explode(',', $selectorAndFilter);
+        foreach ($selectorAndFilterParts as $selectorAndFilterPart) {
+
+            // handle absolute node pathes separately as fizzle cannot parse this syntax (yet)
+            if ($nodePath = AbsoluteNodePath::tryFromString($selectorAndFilterPart)) {
+                $nodes = $this->addNodesByPath($nodePath, $entryPoints, []);
+                $result = array_merge($result, $nodes);
+                continue;
             }
 
-            if (isset($filter['AttributeFilters']) && $filter['AttributeFilters'][0]['Operator'] === 'instanceof') {
-                $nodeTypeName = NodeTypeName::fromString($filter['AttributeFilters'][0]['Operand']);
-                $filterResults = $this->addNodesByType($nodeTypeName, $entryPoints, $filterResults, $contentRepository);
-                unset($filter['AttributeFilters'][0]);
-                $generatedNodes = true;
-            }
-            if (isset($filter['AttributeFilters']) && count($filter['AttributeFilters']) > 0) {
-                if (!$generatedNodes) {
-                    throw new FlowQueryException(
-                        'find() needs an identifier, path or instanceof filter for the first filter part',
-                        1436884196
-                    );
+            $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilterPart);
+            $entryPoints = $this->getEntryPoints($contextNodes);
+            foreach ($parsedFilter['Filters'] as $filter) {
+                $filterResults = [];
+                $generatedNodes = false;
+                if (isset($filter['IdentifierFilter'])) {
+                    $nodeAggregateId = NodeAggregateId::fromString($filter['IdentifierFilter']);
+                    $filterResults = $this->addNodesById($nodeAggregateId, $entryPoints, $filterResults);
+                    $generatedNodes = true;
+                } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
+                    $nodePath = AbsoluteNodePath::tryFromString($filter['PropertyNameFilter'] ?? $filter['PathFilter'])
+                        ?: NodePath::fromString($filter['PropertyNameFilter'] ?? $filter['PathFilter']);
+                    $filterResults = $this->addNodesByPath($nodePath, $entryPoints, $filterResults);
+                    $generatedNodes = true;
                 }
-                $filterQuery = new FlowQuery($filterResults);
-                foreach ($filter['AttributeFilters'] as $attributeFilter) {
-                    $filterQuery->pushOperation('filter', [$attributeFilter['text']]);
+
+                if (isset($filter['AttributeFilters']) && $filter['AttributeFilters'][0]['Operator'] === 'instanceof') {
+                    $nodeTypeName = NodeTypeName::fromString($filter['AttributeFilters'][0]['Operand']);
+                    $filterResults = $this->addNodesByType($nodeTypeName, $entryPoints, $filterResults);
+                    unset($filter['AttributeFilters'][0]);
+                    $generatedNodes = true;
                 }
-                /** @var array<int,mixed> $filterResults */
-                $filterResults = $filterQuery->getContext();
+                if (isset($filter['AttributeFilters']) && count($filter['AttributeFilters']) > 0) {
+                    if (!$generatedNodes) {
+                        throw new FlowQueryException(
+                            'find() needs an identifier, path or instanceof filter for the first filter part',
+                            1436884196
+                        );
+                    }
+                    $filterQuery = new FlowQuery($filterResults);
+                    foreach ($filter['AttributeFilters'] as $attributeFilter) {
+                        $filterQuery->pushOperation('filter', [$attributeFilter['text']]);
+                    }
+                    /** @var array<int,mixed> $filterResults */
+                    $filterResults = iterator_to_array($filterQuery);
+                }
+                $result = array_merge($result, $filterResults);
             }
-            $result = array_merge($result, $filterResults);
         }
 
         $uniqueResult = [];
@@ -260,16 +266,16 @@ class FindOperation extends AbstractOperation
      * @param array<int,Node> $result
      * @return array<int,Node>
      */
-    protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result, ContentRepository $contentRepository): array
+    protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result): array
     {
-        $nodeTypeFilter = NodeTypeConstraints::create(NodeTypeNames::with($nodeTypeName), NodeTypeNames::createEmpty());
+        $nodeTypeFilter = NodeTypeCriteria::create(NodeTypeNames::with($nodeTypeName), NodeTypeNames::createEmpty());
         foreach ($entryPoints as $entryPoint) {
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];
 
             /** @var Node $node */
             foreach ($entryPoint['nodes'] as $node) {
-                foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::create(nodeTypeConstraints: $nodeTypeFilter)) as $descendant) {
+                foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::create(nodeTypes: $nodeTypeFilter)) as $descendant) {
                     $result[] = $descendant;
                 }
             }

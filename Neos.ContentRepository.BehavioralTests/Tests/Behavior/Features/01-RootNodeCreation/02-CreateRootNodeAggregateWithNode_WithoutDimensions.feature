@@ -10,7 +10,6 @@ Feature: Create a root node aggregate
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository:AnotherRoot':
       superTypes:
         'Neos.ContentRepository:Root': true
@@ -26,7 +25,7 @@ Feature: Create a root node aggregate
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
 
   Scenario: Create the initial root node aggregate using valid payload without dimensions
     When the command CreateRootNodeAggregateWithNode is executed with payload:

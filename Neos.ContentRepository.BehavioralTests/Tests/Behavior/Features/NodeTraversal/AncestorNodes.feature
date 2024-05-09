@@ -8,7 +8,6 @@ Feature: Find and count nodes using the findAncestorNodes and countAncestorNodes
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
     'Neos.ContentRepository.Testing:SomeMixin':
@@ -52,7 +51,7 @@ Feature: Find and count nodes using the findAncestorNodes and countAncestorNodes
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -93,4 +92,4 @@ Feature: Find and count nodes using the findAncestorNodes and countAncestorNodes
 
     # findAncestorNodes queries with results
     When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned and the total count to be 6
-    When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a2a2,a2,a" to be returned and the total count to be 3
+    When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a2a2,a2,a" to be returned and the total count to be 3

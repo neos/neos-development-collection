@@ -10,7 +10,6 @@ Feature: Run projection integrity violation detection regarding root connection
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
     And using identifier "default", I define a content repository
@@ -53,10 +52,11 @@ Feature: Run projection integrity violation detection regarding root connection
       | nodeAggregateClassification | "regular"                                 |
     And the graph projection is fully up to date
     And the event NodeAggregateWasMoved was published with payload:
-      | Key                               | Value                                                                                                                                                                                                                                                                                                                                                            |
-      | contentStreamId                   | "cs-identifier"                                                                                                                                                                                                                                                                                                                                                  |
-      | nodeAggregateId                   | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                                         |
-      | nodeMoveMappings                  | [{"movedNodeOrigin":{"language":"de"},"newLocations":[{"coveredDimensionSpacePoint": {"language":"de"},"newParent":{"nodeAggregateId":"nody-mc-nodeface","originDimensionSpacePoint":{"language":"de"}}}, {"coveredDimensionSpacePoint": {"language":"gsw"},"newParent":{"nodeAggregateId":"nody-mc-nodeface","originDimensionSpacePoint":{"language":"de"}}}]}] |
+      | Key                           | Value                                                                                                                                  |
+      | contentStreamId               | "cs-identifier"                                                                                                                        |
+      | nodeAggregateId               | "sir-david-nodenborough"                                                                                                               |
+      | newParentNodeAggregateId      | "nody-mc-nodeface"                                                                                                                     |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language":"de"},"nodeAggregateId": null},{"dimensionSpacePoint":{"language":"gsw"},"nodeAggregateId": null}] |
     And the graph projection is fully up to date
     And I run integrity violation detection
     # one error per subgraph

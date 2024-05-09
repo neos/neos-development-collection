@@ -5,27 +5,43 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 
 class DimensionAdjustment
 {
-    protected ProjectedNodeIterator $projectedNodeIterator;
-    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
-
     public function __construct(
-        ProjectedNodeIterator $projectedNodeIterator,
-        InterDimensionalVariationGraph $interDimensionalVariationGraph
+        protected ProjectedNodeIterator $projectedNodeIterator,
+        protected InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        protected NodeTypeManager $nodeTypeManager,
     ) {
-        $this->projectedNodeIterator = $projectedNodeIterator;
-        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
     }
 
     /**
-     * @return \Generator<int,StructureAdjustment>
+     * @return iterable<int,StructureAdjustment>
      */
-    public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
+    public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): iterable
     {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType) {
+            return [];
+        }
+        if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
+            foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
+                if (
+                    !$nodeAggregate->coveredDimensionSpacePoints->equals($this->interDimensionalVariationGraph->getDimensionSpacePoints())
+                ) {
+                    throw new \Exception(
+                        'Cannot determine structure adjustments for root node type ' . $nodeTypeName->value
+                        . ', run UpdateRootNodeAggregateDimensions first'
+                    );
+                }
+            }
+            return [];
+        }
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             foreach ($nodeAggregate->getNodes() as $node) {
                 foreach (

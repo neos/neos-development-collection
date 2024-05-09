@@ -2,16 +2,22 @@
     "name": "neos/contentrepository-testsuite",
     "type": "neos-package",
     "description": "Testing support suite for the Neos Content Repository. Contains fixtures and helpers for all layers of tests",
+    "support": {
+        "source": "https://github.com/neos/contentrepository-testsuite.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/contentrepository-core": "*",
-        "neos/contentrepository-structureadjustment": "*",
-        "neos/contentrepository-nodemigration": "*",
-        "neos/utility-arrays": "*",
+        "neos/utility-arrays": "~9.0.0",
+        "neos/contentrepository-core": "self.version",
+        "neos/contentrepository-structureadjustment": "self.version",
+        "neos/contentrepository-nodemigration": "self.version",
         "behat/behat": "^3.5",
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^9.6",
+        "brianium/paratest": "^6.11"
     },
     "autoload": {
         "psr-4": {

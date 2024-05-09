@@ -11,20 +11,19 @@ declare(strict_types=1);
  * source code.
  */
 
-require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
 
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\Behat\FlowBootstrapTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
@@ -33,7 +32,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
  */
 class FeatureContext implements BehatContext
 {
-    use FlowContextTrait;
+    use FlowBootstrapTrait;
     use ProjectionIntegrityViolationDetectionTrait;
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
@@ -42,11 +41,8 @@ class FeatureContext implements BehatContext
 
     public function __construct()
     {
-        if (self::$bootstrap === null) {
-            self::$bootstrap = $this->initializeFlow();
-        }
-        $this->objectManager = self::$bootstrap->getObjectManager();
-        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+        self::bootstrapFlow();
+        $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
 
         $this->setupCRTestSuiteTrait();
         $this->setupDbalGraphAdapterIntegrityViolationTrait();

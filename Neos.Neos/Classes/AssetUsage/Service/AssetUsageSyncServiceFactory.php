@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Service;
 
-use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 
 /**

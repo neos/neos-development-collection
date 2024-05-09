@@ -10,7 +10,6 @@ Feature: On forking a content stream, node references should be copied as well.
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithReferences':
       properties:
         referenceProperty:
@@ -30,7 +29,7 @@ Feature: On forking a content stream, node references should be copied as well.
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -81,7 +80,6 @@ Feature: On forking a content stream, node references should be copied as well.
     When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
     And the command SetNodeProperties is executed with payload:
       | Key                     | Value                                  |
-      | contentStreamId | "user-cs-identifier"                   |
       | nodeAggregateId | "source-nodandaise"                    |
       | propertyValues          | {"text": "Modified in live workspace"} |
     And the graph projection is fully up to date

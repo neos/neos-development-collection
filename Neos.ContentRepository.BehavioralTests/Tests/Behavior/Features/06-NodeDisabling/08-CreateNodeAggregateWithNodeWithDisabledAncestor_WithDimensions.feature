@@ -12,7 +12,6 @@ Feature: Creation of nodes underneath disabled nodes
       | language   | mul, de, en, gsw, ltz | ltz->de->mul, gsw->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Document': {}
     """
     And using identifier "default", I define a content repository
@@ -25,7 +24,7 @@ Feature: Creation of nodes underneath disabled nodes
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |

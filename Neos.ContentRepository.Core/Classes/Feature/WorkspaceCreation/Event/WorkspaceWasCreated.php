@@ -14,13 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event;
 
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
  * Event triggered to indicate that a workspace was created, based on a base workspace.
@@ -30,15 +30,15 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
  *
  * @api events are the persistence-API of the content repository
  */
-final class WorkspaceWasCreated implements EventInterface
+final readonly class WorkspaceWasCreated implements EventInterface
 {
     public function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly WorkspaceName $baseWorkspaceName,
-        public readonly WorkspaceTitle $workspaceTitle,
-        public readonly WorkspaceDescription $workspaceDescription,
-        public readonly ContentStreamId $newContentStreamId,
-        public readonly ?UserId $workspaceOwner = null
+        public WorkspaceName $workspaceName,
+        public WorkspaceName $baseWorkspaceName,
+        public WorkspaceTitle $workspaceTitle,
+        public WorkspaceDescription $workspaceDescription,
+        public ContentStreamId $newContentStreamId,
+        public ?UserId $workspaceOwner = null
     ) {
     }
 

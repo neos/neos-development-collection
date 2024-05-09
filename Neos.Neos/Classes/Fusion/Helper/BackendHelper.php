@@ -32,11 +32,10 @@ class BackendHelper implements ProtectedContextAwareInterface
      *
      *     Translation.id("mh").locale(Neos.Backend.interfaceLanguage()).translate()
      *
+     * @return string
      */
     public function interfaceLanguage(): string
     {
-        $currentUser = $this->userService->getBackendUser();
-        assert($currentUser !== null, "No backend user");
         return $this->userService->getInterfaceLanguage();
     }
 

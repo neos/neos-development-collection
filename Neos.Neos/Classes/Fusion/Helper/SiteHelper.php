@@ -14,16 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Model\SiteNodeName;
-use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\Neos\Domain\Exception;
+use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
  * Eel helper for accessing the Site object
@@ -36,17 +31,13 @@ class SiteHelper implements ProtectedContextAwareInterface
      */
     protected $siteRepository;
 
-    /**
-     *
-     * @throws Exception
-     */
     public function findBySiteNode(Node $siteNode): ?Site
     {
-        if ($siteNode->nodeName === null) {
+        try {
+            return $this->siteRepository->findSiteBySiteNode($siteNode);
+        } catch (\Neos\Neos\Domain\Exception) {
             return null;
         }
-        $siteNodeName = SiteNodeName::fromNodeName($siteNode->nodeName);
-        return $this->siteRepository->findOneByNodeName($siteNodeName);
     }
 
     /**

@@ -7,21 +7,24 @@ Feature: Node References without Dimensions
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:ReferencedNode': []
+
     'Neos.ContentRepository.Testing:NodeWithReferences':
+      # legacy notation
       properties:
         referenceProperty:
           type: reference
         referencesProperty:
           type: references
+      references:
         restrictedReferenceProperty:
-          type: reference
           constraints:
             nodeTypes:
               '*': false
-              'Neos.ContentRepository.Testing:NodeWithReferences': true
+              'Neos.ContentRepository.Testing:ReferencedNode': true
         referencePropertyWithProperty:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             text:
               type: string
@@ -30,7 +33,6 @@ Feature: Node References without Dimensions
             postalAddress:
               type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
         referencesPropertyWithProperty:
-          type: references
           properties:
             text:
               type: string
@@ -49,7 +51,7 @@ Feature: Node References without Dimensions
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -58,9 +60,10 @@ Feature: Node References without Dimensions
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId   | parentNodeAggregateId  | nodeTypeName                                      |
       | source-nodandaise | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
-      | anthony-destinode | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
-      | berta-destinode   | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
-      | carl-destinode    | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
+      | node-wan-kenodi   | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
+      | anthony-destinode | lady-eleonode-rootford | Neos.ContentRepository.Testing:ReferencedNode     |
+      | berta-destinode   | lady-eleonode-rootford | Neos.ContentRepository.Testing:ReferencedNode     |
+      | carl-destinode    | lady-eleonode-rootford | Neos.ContentRepository.Testing:ReferencedNode     |
 
   Scenario: Ensure that a single reference between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
@@ -236,7 +239,7 @@ Feature: Node References without Dimensions
 
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
-      | sourceNodeAggregateId | "berta-destinode"                 |
+      | sourceNodeAggregateId | "node-wan-kenodi"                 |
       | references            | [{"target": "anthony-destinode"}] |
       | referenceName         | "referenceProperty"               |
     And the graph projection is fully up to date
@@ -244,7 +247,7 @@ Feature: Node References without Dimensions
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
     And I expect this node to be referenced by:
       | Name              | Node                               | Properties |
-      | referenceProperty | cs-identifier;berta-destinode;{}   | null       |
+      | referenceProperty | cs-identifier;node-wan-kenodi;{}   | null       |
       | referenceProperty | cs-identifier;source-nodandaise;{} | null       |
 
   Scenario: Ensure that a reference between nodes can be set and read when matching constraints

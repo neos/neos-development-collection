@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
 final class NodeTypeNameFactory
@@ -61,5 +61,10 @@ final class NodeTypeNameFactory
     public static function forSites(): NodeTypeName
     {
         return NodeTypeName::fromString(self::NAME_SITES);
+    }
+
+    public static function forRoot(): NodeTypeName
+    {
+        return NodeTypeName::fromString(NodeTypeName::ROOT_NODE_TYPE_NAME);
     }
 }

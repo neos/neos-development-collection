@@ -9,7 +9,6 @@ Feature: Set properties
       | language   | mul, de, gsw | gsw->de->mul    |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
         string:
@@ -65,7 +64,7 @@ Feature: Set properties
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -92,7 +91,6 @@ Feature: Set properties
   Scenario: Set node properties
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                                                                                                                                                                                                                                                                                                                                         |
-      | contentStreamId           | "cs-identifier"                                                                                                                                                                                                                                                                                                                                               |
       | nodeAggregateId           | "nody-mc-nodeface"                                                                                                                                                                                                                                                                                                                                            |
       | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                                                                                                                                                                                                            |
       | propertyValues            | {"string":"My new string", "int":8472, "float":72.84, "bool":true, "array":{"givenName":"David", "familyName":"Nodenborough","age":84}, "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io", "postalAddress":"PostalAddress:anotherDummy", "price":"PriceSpecification:anotherDummy"} |
@@ -114,7 +112,6 @@ Feature: Set properties
   Scenario: Set node properties, partially
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                      |
-      | contentStreamId           | "cs-identifier"            |
       | nodeAggregateId           | "nody-mc-nodeface"         |
       | originDimensionSpacePoint | {"language": "de"}         |
       | propertyValues            | {"string":"My new string"} |

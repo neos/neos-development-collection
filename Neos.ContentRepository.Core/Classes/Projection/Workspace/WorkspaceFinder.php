@@ -192,7 +192,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         return new Workspace(
             WorkspaceName::fromString($row['workspacename']),
             !empty($row['baseworkspacename']) ? WorkspaceName::fromString($row['baseworkspacename']) : null,
-            !empty($row['workspacetitle']) ? WorkspaceTitle::fromString($row['workspacetitle']) : null,
+            WorkspaceTitle::fromString($row['workspacetitle']),
             WorkspaceDescription::fromString($row['workspacedescription']),
             ContentStreamId::fromString($row['currentcontentstreamid']),
             WorkspaceStatus::from($row['status']),

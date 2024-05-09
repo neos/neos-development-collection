@@ -22,15 +22,15 @@ use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValuesAreInv
  * @implements \IteratorAggregate<string,ContentDimensionValue>
  * @api because used as return value of Dimension Eel helper
  */
-final class ContentDimensionValues implements \IteratorAggregate
+final readonly class ContentDimensionValues implements \IteratorAggregate
 {
     /**
      * The actual values, indexed by string representation
      * @var array<string,ContentDimensionValue>
      */
-    public readonly array $values;
+    public array $values;
 
-    public readonly ContentDimensionValueSpecializationDepth $maximumDepth;
+    public ContentDimensionValueSpecializationDepth $maximumDepth;
 
     /**
      * @param array<string,ContentDimensionValue> $values
@@ -60,11 +60,11 @@ final class ContentDimensionValues implements \IteratorAggregate
     }
 
     /**
-     * @return \ArrayIterator<string,ContentDimensionValue>|ContentDimensionValue[]
+     * @return \Traversable<string,ContentDimensionValue>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->values);
+        yield from $this->values;
     }
 
     public function getValue(string $value): ?ContentDimensionValue

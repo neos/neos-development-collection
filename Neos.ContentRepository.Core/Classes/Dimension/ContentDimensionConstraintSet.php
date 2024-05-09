@@ -56,11 +56,11 @@ final class ContentDimensionConstraintSet implements \IteratorAggregate
     }
 
     /**
-     * @return \ArrayIterator<string,ContentDimensionConstraints>|ContentDimensionConstraints[]
+     * @return \Traversable<string,ContentDimensionConstraints>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->constraints);
+        yield from $this->constraints;
     }
 
     public function getConstraints(ContentDimensionId $dimensionId): ?ContentDimensionConstraints
@@ -72,8 +72,7 @@ final class ContentDimensionConstraintSet implements \IteratorAggregate
         ContentDimensionId $contentDimensionId,
         ContentDimensionValue $contentDimensionValue
     ): bool {
-        return isset($this->constraints[$contentDimensionId->value])
-            ? $this->constraints[$contentDimensionId->value]->allowsCombinationWith($contentDimensionValue)
-            : true;
+        return !isset($this->constraints[$contentDimensionId->value])
+            || $this->constraints[$contentDimensionId->value]->allowsCombinationWith($contentDimensionValue);
     }
 }

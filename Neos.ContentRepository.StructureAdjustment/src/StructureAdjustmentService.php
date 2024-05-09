@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\DimensionAdjustment;
@@ -32,8 +33,8 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         private readonly EventPersister $eventPersister,
         NodeTypeManager $nodeTypeManager,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
-    )
-    {
+        PropertyConverter $propertyConverter
+    ) {
         $projectedNodeIterator = new ProjectedNodeIterator(
             $contentRepository->getWorkspaceFinder(),
             $contentRepository->getContentGraph(),
@@ -44,6 +45,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
             $projectedNodeIterator,
             $nodeTypeManager,
             $interDimensionalVariationGraph,
+            $propertyConverter
         );
 
         $this->unknownNodeTypeAdjustment = new UnknownNodeTypeAdjustment(
@@ -61,7 +63,8 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         );
         $this->dimensionAdjustment = new DimensionAdjustment(
             $projectedNodeIterator,
-            $interDimensionalVariationGraph
+            $interDimensionalVariationGraph,
+            $nodeTypeManager
         );
     }
 

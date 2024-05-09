@@ -224,7 +224,7 @@ class UsersController extends AbstractModuleController
     {
         if (!$this->isEditingAllowed($user)) {
             $this->addFlashMessage(
-                $this->translator->translateById('users.userEditingDenied.editing.body', [htmlspecialchars($user->getName())], null, null, 'Modules', 'Neos.Neos'),
+                $this->translator->translateById('users.userEditingDenied.editing.body', [htmlspecialchars((string)$user->getName())], null, null, 'Modules', 'Neos.Neos'),
                 $this->translator->translateById('users.userEditingDenied.editing.‚title', [], null, null, 'Modules', 'Neos.Neos'),
                 Message::SEVERITY_ERROR,
                 [],
@@ -479,7 +479,6 @@ class UsersController extends AbstractModuleController
         $user->removeElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        /** @var PersonName $personName */
         $personName = $user->getName();
         $name = $personName ? $personName->getFullName() : '';
         $this->addFlashMessage(

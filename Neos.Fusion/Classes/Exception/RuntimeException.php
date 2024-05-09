@@ -26,10 +26,19 @@ class RuntimeException extends Exception
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getFusionPath()
     {
         return $this->fusionPath;
+    }
+
+    /**
+     * Unwrap this Fusion RuntimeException
+     */
+    public function getWrappedException(): \Exception
+    {
+        /** @phpstan-ignore-next-line due to overridden construction, we are sure that the previous exists. */
+        return $this->getPrevious();
     }
 }

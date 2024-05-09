@@ -14,25 +14,25 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeTypeChange\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @api events are the persistence-API of the content repository
  */
-final class NodeAggregateTypeWasChanged implements
+final readonly class NodeAggregateTypeWasChanged implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeTypeName $newNodeTypeName
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public NodeTypeName $newNodeTypeName
     ) {
     }
 

@@ -6,18 +6,18 @@ namespace Neos\ContentRepository\NodeMigration;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\NodeMigration\Filter\InvalidMigrationFilterSpecified;
-use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
-use Neos\ContentRepository\NodeMigration\Filter\FiltersFactory;
-use Neos\ContentRepository\NodeMigration\Transformation\TransformationsFactory;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
+use Neos\ContentRepository\NodeMigration\Filter\FiltersFactory;
+use Neos\ContentRepository\NodeMigration\Filter\InvalidMigrationFilterSpecified;
+use Neos\ContentRepository\NodeMigration\Transformation\TransformationsFactory;
 
 /**
  * Node Migrations are manually written adjustments to the Node tree;
@@ -48,14 +48,13 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  * you'll operate on the result state of all *previous* submigrations;
  * but you do not see the modified state of the current submigration while you are running it.
  */
-class NodeMigrationService implements ContentRepositoryServiceInterface
+readonly class NodeMigrationService implements ContentRepositoryServiceInterface
 {
     public function __construct(
-        private readonly ContentRepository $contentRepository,
-        private readonly FiltersFactory $filterFactory,
-        private readonly TransformationsFactory $transformationFactory
-    )
-    {
+        private ContentRepository $contentRepository,
+        private FiltersFactory $filterFactory,
+        private TransformationsFactory $transformationFactory
+    ) {
     }
 
     public function executeMigration(ExecuteMigration $command): void
@@ -70,9 +69,10 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
 
         foreach ($command->getMigrationConfiguration()->getMigration() as $step => $migrationDescription) {
             $contentStreamForWriting = $command->getOrCreateContentStreamIdForWriting($step);
+            $workspaceNameForWriting = WorkspaceName::fromString($contentStreamForWriting->value);
             $this->contentRepository->handle(
                 CreateWorkspace::create(
-                    WorkspaceName::fromString($contentStreamForWriting->value),
+                    $workspaceNameForWriting,
                     $workspace->workspaceName,
                     WorkspaceTitle::fromString($contentStreamForWriting->value),
                     WorkspaceDescription::fromString(''),
@@ -82,7 +82,8 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
             /** array $migrationDescription */
             $this->executeSubMigrationAndBlock(
                 $migrationDescription,
-                $workspace->currentContentStreamId,
+                $workspace,
+                $workspaceNameForWriting,
                 $contentStreamForWriting
             );
         }
@@ -96,10 +97,10 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
      */
     protected function executeSubMigrationAndBlock(
         array $migrationDescription,
-        ContentStreamId $contentStreamForReading,
+        Workspace $workspaceForReading,
+        WorkspaceName $workspaceNameForWriting,
         ContentStreamId $contentStreamForWriting
-    ): void
-    {
+    ): void {
         $filters = $this->filterFactory->buildFilterConjunction($migrationDescription['filters'] ?? []);
         $transformations = $this->transformationFactory->buildTransformation(
             $migrationDescription['transformations'] ?? []
@@ -127,17 +128,17 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
         }
 
         if ($transformations->containsGlobal()) {
-            $transformations->executeGlobalAndBlock($contentStreamForReading, $contentStreamForWriting);
+            $transformations->executeGlobalAndBlock($workspaceNameForWriting);
         } elseif ($transformations->containsNodeAggregateBased()) {
             foreach ($this->contentRepository->getContentGraph()->findUsedNodeTypeNames() as $nodeTypeName) {
                 foreach (
                     $this->contentRepository->getContentGraph()->findNodeAggregatesByType(
-                        $contentStreamForReading,
+                        $workspaceForReading->currentContentStreamId,
                         $nodeTypeName
                     ) as $nodeAggregate
                 ) {
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
-                        $transformations->executeNodeAggregateBasedAndBlock($nodeAggregate, $contentStreamForWriting);
+                        $transformations->executeNodeAggregateBasedAndBlock($nodeAggregate, $workspaceNameForWriting, $contentStreamForWriting);
                     }
                 }
             }
@@ -145,7 +146,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
             foreach ($this->contentRepository->getContentGraph()->findUsedNodeTypeNames() as $nodeTypeName) {
                 foreach (
                     $this->contentRepository->getContentGraph()->findNodeAggregatesByType(
-                        $contentStreamForReading,
+                        $workspaceForReading->currentContentStreamId,
                         $nodeTypeName
                     ) as $nodeAggregate
                 ) {
@@ -166,6 +167,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
                                 $transformations->executeNodeBasedAndBlock(
                                     $node,
                                     $coveredDimensionSpacePoints,
+                                    $workspaceNameForWriting,
                                     $contentStreamForWriting
                                 );
                             }

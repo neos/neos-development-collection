@@ -41,11 +41,11 @@ class DisallowedChildNodeAdjustment
         }
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
-            if (!$this->nodeTypeManager->hasNodeType($nodeAggregate->nodeTypeName)) {
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName);
+            if (!$nodeType) {
                 // unknown child node type, so we skip this test as we won't be able to find out node type constraints
                 continue;
             }
-            $nodeType = $this->nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName);
 
             // Here, we iterate over the covered dimension space points of the node aggregate one by one;
             // as it can happen that the constraint is only violated in e.g. "AT", but not in "DE".
@@ -62,13 +62,13 @@ class DisallowedChildNodeAdjustment
                     ? $subgraph->findParentNode($parentNode->nodeAggregateId)
                     : null;
 
-
                 $allowedByParent = true;
                 $parentNodeType = null;
                 if ($parentNode !== null) {
-                    if ($this->nodeTypeManager->hasNodeType($parentNode->nodeTypeName)) {
-                        $parentNodeType = $this->nodeTypeManager->getNodeType($parentNode->nodeTypeName);
-                        $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType);
+                    $parentNodeType = $this->nodeTypeManager->getNodeType($parentNode->nodeTypeName);
+                    if ($parentNodeType) {
+                        $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType)
+                            || $nodeAggregate->nodeName && $parentNodeType->hasTetheredNode($nodeAggregate->nodeName);
                     }
                 }
 
@@ -76,14 +76,15 @@ class DisallowedChildNodeAdjustment
                 $grandparentNodeType = null;
                 if (
                     $parentNode !== null
-                    && $grandparentNode != null
+                    && $grandparentNode !== null
                     && $parentNode->classification->isTethered()
                     && !is_null($parentNode->nodeName)
                 ) {
-                    if ($this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName)) {
-                        $grandparentNodeType = $this->nodeTypeManager->getNodeType($grandparentNode->nodeTypeName);
-                        $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType(
-                            $parentNode->nodeName->value,
+                    $grandparentNodeType = $this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName) ? $this->nodeTypeManager->getNodeType($grandparentNode->nodeTypeName) : null;
+                    if ($grandparentNodeType !== null) {
+                        $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
+                            $grandparentNodeType,
+                            $parentNode->nodeName,
                             $nodeType
                         );
                     }
@@ -97,10 +98,10 @@ class DisallowedChildNodeAdjustment
 
                     $message = sprintf(
                         '
-                        The parent node type "%s" is not allowing children of type "%s",
-                        and the grandparent node type "%s" is not allowing grandchildren of type "%s".
-                        Thus, the node is invalid at this location and should be removed.
-                    ',
+                    The parent node type "%s" is not allowing children of type "%s",
+                    and the grandparent node type "%s" is not allowing grandchildren of type "%s".
+                    Thus, the node is invalid at this location and should be removed.
+                ',
                         $parentNodeType !== null ? $parentNodeType->name->value : '',
                         $node->nodeTypeName->value,
                         $grandparentNodeType !== null ? $grandparentNodeType->name->value : '',
@@ -122,6 +123,7 @@ class DisallowedChildNodeAdjustment
             }
         }
     }
+
 
     private function removeNodeInSingleDimensionSpacePoint(
         NodeAggregate $nodeAggregate,

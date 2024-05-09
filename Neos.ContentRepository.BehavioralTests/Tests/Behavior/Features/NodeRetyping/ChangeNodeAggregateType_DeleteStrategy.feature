@@ -9,7 +9,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:AutoCreated': []
     'Neos.ContentRepository.Testing:ParentNodeType':
       childNodes:
@@ -67,16 +66,15 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
-      | contentStreamId | "cs-identifier"               |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                           |
-      | contentStreamId           | "cs-identifier"                                 |
       | nodeAggregateId           | "sir-david-nodenborough"                        |
       | nodeTypeName              | "Neos.ContentRepository.Testing:ParentNodeType" |
       | originDimensionSpacePoint | {"language":"de"}                               |
@@ -89,7 +87,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
   Scenario: Try to change to a node type that disallows already present children with the delete conflict resolution strategy
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                      |
-      | contentStreamId           | "cs-identifier"                            |
       | nodeAggregateId           | "nody-mc-nodeface"                         |
       | nodeTypeName              | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint | {"language":"de"}                          |
@@ -98,26 +95,24 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command ChangeNodeAggregateType was published with payload:
       | Key             | Value                                            |
-      | contentStreamId | "cs-identifier"                                  |
       | nodeAggregateId | "sir-david-nodenborough"                         |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
       | strategy        | "delete"                                         |
     And the graph projection is fully up to date
 
     # the type has changed
-    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:ParentNodeTypeB"
 
     # the child nodes have been removed
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
-    When I am in content stream "cs-identifier" and dimension space point {"language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
   Scenario: Try to change to a node type that disallows already present grandchildren with the delete conflict resolution strategy
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                           |
-      | contentStreamId                    | "cs-identifier"                                 |
       | nodeAggregateId                    | "parent2-na"                                    |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:ParentNodeType" |
       | originDimensionSpacePoint          | {"language":"de"}                               |
@@ -128,7 +123,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                      |
-      | contentStreamId           | "cs-identifier"                            |
       | nodeAggregateId           | "nody-mc-nodeface"                         |
       | nodeTypeName              | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint | {"language":"de"}                          |
@@ -138,33 +132,31 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command ChangeNodeAggregateType was published with payload:
       | Key             | Value                                            |
-      | contentStreamId | "cs-identifier"                                  |
       | nodeAggregateId | "parent2-na"                                     |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
       | strategy        | "delete"                                         |
     And the graph projection is fully up to date
 
     # the type has changed
-    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "parent2-na" to lead to node cs-identifier;parent2-na;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:ParentNodeTypeB"
 
     # the child nodes still exist
-    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "autocreated-child" to lead to node cs-identifier;autocreated-child;{"language":"de"}
-    When I am in content stream "cs-identifier" and dimension space point {"language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "autocreated-child" to lead to node cs-identifier;autocreated-child;{"language":"de"}
 
     # the grandchild nodes have been removed
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
-    When I am in content stream "cs-identifier" and dimension space point {"language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
 
   Scenario: Change node type successfully
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                      |
-      | contentStreamId                    | "cs-identifier"                            |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint          | {"language":"de"}                          |
@@ -175,7 +167,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
-      | contentStreamId | "cs-identifier"       |
       | nodeAggregateId | "nodea-identifier-de" |
       | sourceOrigin    | {"language":"de"}     |
       | targetOrigin    | {"language":"gsw"}    |
@@ -183,7 +174,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command ChangeNodeAggregateType was published with payload:
       | Key                                | Value                                      |
-      | contentStreamId                    | "cs-identifier"                            |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy                           | "delete"                                   |
@@ -191,11 +181,11 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     And the graph projection is fully up to date
 
     # the type has changed
-    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 
-    When I am in content stream "cs-identifier" and dimension space point {"language":"gsw"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"gsw"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
     And I expect this node to have the following child nodes:
@@ -206,7 +196,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
   Scenario: When changing node type, a non-allowed tethered node should stay (Tethered nodes are not taken into account when checking constraints)
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                      |
-      | contentStreamId                    | "cs-identifier"                            |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint          | {"language":"de"}                          |
@@ -217,7 +206,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
-      | contentStreamId | "cs-identifier"       |
       | nodeAggregateId | "nodea-identifier-de" |
       | sourceOrigin    | {"language":"de"}     |
       | targetOrigin    | {"language":"gsw"}    |
@@ -225,7 +213,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command ChangeNodeAggregateType was published with payload:
       | Key                                | Value                                      |
-      | contentStreamId                    | "cs-identifier"                            |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy                           | "delete"                                   |
@@ -233,7 +220,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
     And the graph projection is fully up to date
 
     # the type has changed
-    When I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 

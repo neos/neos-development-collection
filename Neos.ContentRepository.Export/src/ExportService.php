@@ -8,9 +8,9 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Export\Processors\AssetExportProcessor;
 use Neos\ContentRepository\Export\Processors\EventExportProcessor;
-use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 
 /**
  * @internal
@@ -29,13 +29,14 @@ class ExportService implements ContentRepositoryServiceInterface
 
     public function runAllProcessors(\Closure $outputLineFn, bool $verbose = false): void
     {
+        /** @var array<string, ProcessorInterface> $processors */
         $processors = [
-            'Exporting events' => new  EventExportProcessor(
+            'Exporting events' => new EventExportProcessor(
                 $this->filesystem,
                 $this->workspaceFinder,
                 $this->eventStore
             ),
-            'Exporting assets' => new  AssetExportProcessor(
+            'Exporting assets' => new AssetExportProcessor(
                 $this->filesystem,
                 $this->assetRepository,
                 $this->workspaceFinder,
@@ -50,7 +51,7 @@ class ExportService implements ContentRepositoryServiceInterface
             );
             $result = $processor->run();
             if ($result->severity === Severity::ERROR) {
-                throw new \RuntimeException($label . ': ' . $result->message ?? '');
+                throw new \RuntimeException($label . ': ' . ($result->message ?? ''));
             }
             $outputLineFn('  ' . $result->message);
             $outputLineFn();

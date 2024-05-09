@@ -20,9 +20,9 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query\ProjectionHyperg
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The alternate reality-aware projection-time hypergraph for the PostgreSQL backend via Doctrine DBAL
@@ -71,7 +71,6 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
         $query =  $query->withDimensionSpacePoint($dimensionSpacePoint)
             ->withNodeAggregateId($nodeAggregateId);
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
@@ -89,7 +88,6 @@ final class ProjectionHypergraph
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
         $query = $query->withNodeAggregateId($nodeAggregateId);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
         return $result ? NodeRecord::fromDatabaseRow($result) : null;
@@ -191,7 +189,6 @@ final class ProjectionHypergraph
         $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
         $query = $query->withNodeAggregateId($nodeAggregateId);
 
-        /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
         return array_map(function ($row) {

@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class CreateWorkspace implements CommandInterface
+final readonly class CreateWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Unique name of the workspace to create
@@ -37,12 +37,12 @@ final class CreateWorkspace implements CommandInterface
      * @param UserId|null $workspaceOwner Owner of the new workspace (optional)
      */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly WorkspaceName $baseWorkspaceName,
-        public readonly WorkspaceTitle $workspaceTitle,
-        public readonly WorkspaceDescription $workspaceDescription,
-        public readonly ContentStreamId $newContentStreamId,
-        public readonly ?UserId $workspaceOwner,
+        public WorkspaceName $workspaceName,
+        public WorkspaceName $baseWorkspaceName,
+        public WorkspaceTitle $workspaceTitle,
+        public WorkspaceDescription $workspaceDescription,
+        public ContentStreamId $newContentStreamId,
+        public ?UserId $workspaceOwner,
     ) {
     }
 

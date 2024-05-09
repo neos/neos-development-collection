@@ -2,21 +2,29 @@
     "name": "neos/media-browser",
     "type": "neos-package",
     "description": "This module allows managing of media assets including pictures, videos, audio and documents.",
+    "support": {
+        "source": "https://github.com/neos/media-browser.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],
     "require": {
         "php": "^8.2",
+        "ext-libxml": "*",
         "neos/media": "self.version",
         "neos/contentrepository-core": "self.version",
         "neos/neos": "self.version",
         "neos/flow": "*",
         "neos/fluid-adaptor": "*",
+        "neos/twitter-bootstrap": "^3.0.6",
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
         "doctrine/common": "^2.7 || ^3.0",
-        "doctrine/orm": "^2.6"
+        "doctrine/orm": "^2.6",
+        "enshrined/svg-sanitize": "^0.17.0"
     },
     "autoload": {
         "psr-4": {

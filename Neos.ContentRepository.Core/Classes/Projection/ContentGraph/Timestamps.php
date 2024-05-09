@@ -53,7 +53,7 @@ use DateTimeImmutable;
  *
  * @api
  */
-final class Timestamps
+final readonly class Timestamps
 {
     /**
      * @param DateTimeImmutable $created When was the node created in its content stream
@@ -62,10 +62,10 @@ final class Timestamps
      * @param ?DateTimeImmutable $originalLastModified When was the node last updated originally, or NULL if it was never changed
      */
     private function __construct(
-        public readonly DateTimeImmutable $created,
-        public readonly DateTimeImmutable $originalCreated,
-        public readonly ?DateTimeImmutable $lastModified,
-        public readonly ?DateTimeImmutable $originalLastModified,
+        public DateTimeImmutable $created,
+        public DateTimeImmutable $originalCreated,
+        public ?DateTimeImmutable $lastModified,
+        public ?DateTimeImmutable $originalLastModified,
     ) {
     }
 

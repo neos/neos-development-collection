@@ -11,16 +11,16 @@ use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\Video;
 use Neos\Utility\TypeHandling;
 
-final class SerializedAsset implements \JsonSerializable
+final readonly class SerializedAsset implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $identifier,
-        public readonly AssetType $type,
-        public readonly string $title,
-        public readonly string $copyrightNotice,
-        public readonly string $caption,
-        public readonly string $assetSourceIdentifier,
-        public readonly SerializedResource $resource,
+        public string $identifier,
+        public AssetType $type,
+        public string $title,
+        public string $copyrightNotice,
+        public string $caption,
+        public string $assetSourceIdentifier,
+        public SerializedResource $resource,
     ) {}
 
     public static function fromAsset(Asset $asset): self
@@ -30,11 +30,12 @@ final class SerializedAsset implements \JsonSerializable
         if ($resource === null) {
             throw new \InvalidArgumentException(sprintf('Failed to load resource for asset "%s"', $asset->getIdentifier()), 1645871592);
         }
-        $type = match (TypeHandling::getTypeForValue($asset)) {
+        $type = match ($typeForValue = TypeHandling::getTypeForValue($asset)) {
             Image::class => AssetType::IMAGE,
             Audio::class => AssetType::AUDIO,
             Document::class => AssetType::DOCUMENT,
             Video::class => AssetType::VIDEO,
+            default => throw new \InvalidArgumentException(sprintf('Invalid asset type "%s" for asset "%s"', $typeForValue, $asset->getIdentifier()), 1698584356)
         };
         return new self(
             $asset->getIdentifier(),

@@ -16,16 +16,18 @@ namespace Neos\ContentRepository\Core\Feature\NodeTypeChange;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -36,12 +38,9 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /** @codingStandardsIgnoreStart */
-use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 /** @codingStandardsIgnoreEnd  */
 
 /**
@@ -49,6 +48,8 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChan
  */
 trait NodeTypeChange
 {
+    abstract protected function getNodeTypeManager(): NodeTypeManager;
+
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
@@ -87,15 +88,9 @@ trait NodeTypeChange
         NodeType $nodeType
     ): bool;
 
-    abstract protected static function populateNodeAggregateIds(
-        NodeType $nodeType,
-        NodeAggregateIdsByNodePaths $nodeAggregateIds,
-        NodePath $childPath = null
-    ): NodeAggregateIdsByNodePaths;
-
     abstract protected function createEventsForMissingTetheredNode(
         NodeAggregate $parentNodeAggregate,
-        Node $parentNode,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeName $tetheredNodeName,
         NodeAggregateId $tetheredNodeAggregateId,
         NodeType $expectedTetheredNodeType,
@@ -116,10 +111,11 @@ trait NodeTypeChange
          * Constraint checks
          **************/
         // existence of content stream, node type and node aggregate
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -137,7 +133,7 @@ trait NodeTypeChange
         foreach ($parentNodeAggregates as $parentNodeAggregate) {
             assert($parentNodeAggregate instanceof NodeAggregate);
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $command->contentStreamId,
+                $contentStreamId,
                 $newNodeType,
                 $nodeAggregate->nodeName,
                 [$parentNodeAggregate->nodeAggregateId],
@@ -156,9 +152,9 @@ trait NodeTypeChange
         /**************
          * Preparation - make the command fully deterministic in case of rebase
          **************/
-        $descendantNodeAggregateIds = static::populateNodeAggregateIds(
-            $newNodeType,
-            $command->tetheredDescendantNodeAggregateIds
+        $descendantNodeAggregateIds = $command->tetheredDescendantNodeAggregateIds->completeForNodeOfType(
+            $newNodeType->name,
+            $this->nodeTypeManager
         );
         // Write the auto-created descendant node aggregate ids back to the command;
         // so that when rebasing the command, it stays fully deterministic.
@@ -169,7 +165,7 @@ trait NodeTypeChange
          **************/
         $events = [
             new NodeAggregateTypeWasChanged(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->nodeAggregateId,
                 $command->newNodeTypeName
             ),
@@ -190,7 +186,7 @@ trait NodeTypeChange
         }
 
         // new tethered child nodes
-        $expectedTetheredNodes = $newNodeType->getAutoCreatedChildNodes();
+        $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($newNodeType);
         foreach ($nodeAggregate->getNodes() as $node) {
             assert($node instanceof Node);
             foreach ($expectedTetheredNodes as $serializedTetheredNodeName => $expectedTetheredNodeType) {
@@ -201,9 +197,9 @@ trait NodeTypeChange
                     $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                     VisibilityConstraints::withoutRestrictions()
                 );
-                $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
-                    $node->nodeAggregateId,
-                    $tetheredNodeName
+                $tetheredNode = $subgraph->findNodeByPath(
+                    $tetheredNodeName,
+                    $node->nodeAggregateId
                 );
                 if ($tetheredNode === null) {
                     $tetheredNodeAggregateId = $command->tetheredDescendantNodeAggregateIds
@@ -211,7 +207,7 @@ trait NodeTypeChange
                         ?: NodeAggregateId::create();
                     array_push($events, ...iterator_to_array($this->createEventsForMissingTetheredNode(
                         $nodeAggregate,
-                        $node,
+                        $node->originDimensionSpacePoint,
                         $tetheredNodeName,
                         $tetheredNodeAggregateId,
                         $expectedTetheredNodeType,
@@ -222,14 +218,12 @@ trait NodeTypeChange
         }
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId(
-                $command->contentStreamId
-            )->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 Events::fromArray($events),
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 
@@ -371,7 +365,7 @@ trait NodeTypeChange
         NodeType $newNodeType,
         ContentRepository $contentRepository
     ): Events {
-        $expectedTetheredNodes = $newNodeType->getAutoCreatedChildNodes();
+        $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($newNodeType);
 
         $events = [];
         // find disallowed tethered nodes

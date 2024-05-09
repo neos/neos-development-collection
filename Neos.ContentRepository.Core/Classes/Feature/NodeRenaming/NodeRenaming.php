@@ -18,11 +18,10 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
+use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
-use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -33,32 +32,43 @@ trait NodeRenaming
 
     private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command, ContentRepository $contentRepository): EventsToPublish
     {
-
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be renamed');
+        $this->requireNodeAggregateToBeUntethered($nodeAggregate);
+        foreach ($contentRepository->getContentGraph()->findParentNodeAggregates($contentStreamId, $command->nodeAggregateId) as $parentNodeAggregate) {
+            foreach ($parentNodeAggregate->occupiedDimensionSpacePoints as $occupiedParentDimensionSpacePoint) {
+                $this->requireNodeNameToBeUnoccupied(
+                    $contentStreamId,
+                    $command->newNodeName,
+                    $parentNodeAggregate->nodeAggregateId,
+                    $occupiedParentDimensionSpacePoint,
+                    $parentNodeAggregate->coveredDimensionSpacePoints,
+                    $contentRepository
+                );
+            }
+        }
 
         $events = Events::with(
             new NodeAggregateNameWasChanged(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->nodeAggregateId,
                 $command->newNodeName,
             ),
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId(
-                $command->contentStreamId
-            )->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events
             ),
-            ExpectedVersion::ANY()
+            $expectedVersion
         );
     }
 }

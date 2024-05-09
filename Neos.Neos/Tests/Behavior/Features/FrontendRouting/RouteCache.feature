@@ -1,11 +1,10 @@
-@fixtures @contentrepository
+@flowEntities @contentrepository
 Feature: Route cache invalidation
 
   Background:
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
     'Neos.Neos:Sites':
       superTypes:
         'Neos.ContentRepository:Root': true
@@ -31,9 +30,9 @@ Feature: Route cache invalidation
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
     And the graph projection is fully up to date
@@ -59,8 +58,9 @@ Feature: Route cache invalidation
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
@@ -73,7 +73,6 @@ Feature: Route cache invalidation
     And The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                            |
-      | contentStreamId           | "cs-identifier"                                  |
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
@@ -88,14 +87,12 @@ Feature: Route cache invalidation
     And The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
-      | contentStreamId           | "cs-identifier"                                    |
       | nodeAggregateId           | "sir-david-nodenborough"                           |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-a"} |
     And The documenturipath projection is up to date
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
-      | contentStreamId           | "cs-identifier"                                    |
       | nodeAggregateId           | "sir-david-nodenborough"                           |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-b"} |
@@ -114,7 +111,6 @@ Feature: Route cache invalidation
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
-      | contentStreamId                     | "cs-identifier"         |
       | nodeAggregateId                     | "earl-o-documentbourgh" |
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "shernode-homes"        |
@@ -129,7 +125,6 @@ Feature: Route cache invalidation
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
-      | contentStreamId                     | "cs-identifier"         |
       | nodeAggregateId                     | "nody-mc-nodeface"      |
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "earl-o-documentbourgh" |
@@ -145,7 +140,6 @@ Feature: Route cache invalidation
 
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
@@ -162,7 +156,6 @@ Feature: Route cache invalidation
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |

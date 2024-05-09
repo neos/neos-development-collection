@@ -120,11 +120,11 @@ final class NeosAssetSource implements AssetSourceInterface
     /**
      * @param string $assetSourceIdentifier
      * @param array $assetSourceOptions
-     * @return AssetSourceInterface
+     * @return self
      */
-    public static function createFromConfiguration(string $assetSourceIdentifier, array $assetSourceOptions): AssetSourceInterface
+    public static function createFromConfiguration(string $assetSourceIdentifier, array $assetSourceOptions): self
     {
-        return new static($assetSourceIdentifier, $assetSourceOptions);
+        return new self($assetSourceIdentifier, $assetSourceOptions);
     }
 
     /**

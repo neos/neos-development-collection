@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepositoryRegistry\Migration\Factory;
 
 /*
@@ -27,8 +28,19 @@ class MigrationFactory
      */
     protected $migrationConfiguration;
 
+    /**
+     * @param string $version
+     */
     public function getMigrationForVersion($version): MigrationConfiguration
     {
         return new MigrationConfiguration($this->migrationConfiguration->getMigrationVersion($version));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getAvailableVersions(): array
+    {
+        return $this->migrationConfiguration->getAvailableVersions();
     }
 }

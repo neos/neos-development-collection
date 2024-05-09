@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository.DimensionSpace package.
+ * This file is part of the Neos.ContentRepository.Core package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,50 +17,32 @@ namespace Neos\ContentRepository\Core\Dimension;
 /**
  * A set of content dimension value variation edges
  *
- * @implements \IteratorAggregate<int,ContentDimensionValueVariationEdge>
+ * @implements \IteratorAggregate<ContentDimensionValueVariationEdge>
  * @internal
  */
 final class ContentDimensionValueVariationEdges implements \IteratorAggregate
 {
     /**
-     * @var array<int,ContentDimensionValueVariationEdge>
+     * @var array<ContentDimensionValueVariationEdge>
      */
     private array $edges;
 
-    /**
-     * @var \ArrayIterator<int,ContentDimensionValueVariationEdge>
-     */
-    private \ArrayIterator $iterator;
-
-    /**
-     * @param array<int,ContentDimensionValueVariationEdge> $array
-     */
-    public function __construct(array $array)
+    public function __construct(ContentDimensionValueVariationEdge ...$edges)
     {
-        foreach ($array as $edge) {
-            if (!$edge instanceof ContentDimensionValueVariationEdge) {
-                throw new \InvalidArgumentException(
-                    'ContentDimensionValueVariationEdges may only contain ContentDimensionValueVariationEdge objects',
-                    1639661280
-                );
-            }
-        }
-
-        $this->edges = $array;
-        $this->iterator = new \ArrayIterator($this->edges);
+        $this->edges = $edges;
     }
 
     public static function createEmpty(): self
     {
-        return new self([]);
+        return new self();
     }
 
     /**
-     * @return \ArrayIterator<int,ContentDimensionValueVariationEdge>|ContentDimensionValueVariationEdge[]
+     * @return \Traversable<ContentDimensionValueVariationEdge>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        yield from $this->edges;
     }
 
     public function isEmpty(): bool

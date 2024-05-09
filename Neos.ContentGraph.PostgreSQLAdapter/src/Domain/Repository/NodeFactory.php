@@ -16,32 +16,32 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
+use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 
 /**
  * The node factory for mapping database rows to nodes and node aggregates
@@ -76,7 +76,7 @@ final class NodeFactory
             ? $this->nodeTypeManager->getNodeType($nodeRow['nodetypename'])
             : null;
 
-        return new Node(
+        return Node::create(
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
                 $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
@@ -93,6 +93,8 @@ final class NodeFactory
                 $this->propertyConverter
             ),
             $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
+            // TODO implement {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowToNode()}
+            NodeTags::createEmpty(),
             Timestamps::create(
                 // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
                 self::parseDateTimeString('2023-03-17 12:00:00'),
@@ -161,21 +163,22 @@ final class NodeFactory
         array $nodeRows,
         VisibilityConstraints $visibilityConstraints
     ): ?Subtree {
-        $subtreesByParentNodeAggregateId = [];
-        foreach ($nodeRows as $nodeRow) {
-            $node = $this->mapNodeRowToNode(
-                $nodeRow,
-                $visibilityConstraints
-            );
-
-            $subtreesByParentNodeAggregateId[$nodeRow['parentnodeaggregateid']][] = new Subtree(
-                (int)$nodeRow['level'],
-                $node,
-                $subtreesByParentNodeAggregateId[$nodeRow['nodeaggregateid']] ?? []
-            );
+        /** @var array<string, Subtree[]> $subtreesByParentNodeId */
+        $subtreesByParentNodeId = [];
+        foreach (array_reverse($nodeRows) as $nodeRow) {
+            $nodeAggregateId = $nodeRow['nodeaggregateid'];
+            $parentNodeAggregateId = $nodeRow['parentnodeaggregateid'];
+            $node = $this->mapNodeRowToNode($nodeRow, $visibilityConstraints);
+            $subtree = new Subtree((int)$nodeRow['level'], $node, array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ? array_reverse($subtreesByParentNodeId[$nodeAggregateId]) : []);
+            if ($subtree->level === 0) {
+                return $subtree;
+            }
+            if (!array_key_exists($parentNodeAggregateId, $subtreesByParentNodeId)) {
+                $subtreesByParentNodeId[$parentNodeAggregateId] = [];
+            }
+            $subtreesByParentNodeId[$parentNodeAggregateId][] = $subtree;
         }
-
-        return Subtrees::fromArray($subtreesByParentNodeAggregateId['ROOT'])->first();
+        return null;
     }
 
     /**
@@ -250,7 +253,8 @@ final class NodeFactory
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoint,
             OriginByCoverage::fromArray($occupationByCovered),
-            new DimensionSpacePointSet($disabledDimensionSpacePoints)
+            // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregate())
+            DimensionSpacePointsBySubtreeTags::create(),
         );
     }
 
@@ -346,7 +350,8 @@ final class NodeFactory
                 new DimensionSpacePointSet($coveredDimensionSpacePoints[$key]),
                 $nodesByCoveredDimensionSpacePoint[$key],
                 OriginByCoverage::fromArray($occupationByCovered[$key]),
-                new DimensionSpacePointSet($disabledDimensionSpacePoints[$key])
+                // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregates())
+                DimensionSpacePointsBySubtreeTags::create(),
             );
         }
     }

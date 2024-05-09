@@ -49,12 +49,6 @@ conditions.dataStructure = Neos.Fusion:DataStructure {
   keyNotSet.@if.cond = false
 }
 
-conditions.attributes = Neos.Fusion:Attributes {
-  key = 'foo'
-  keyNotSet = 'bar'
-  keyNotSet.@if.cond = false
-}
-
 conditions.supportForConditionInProcess = Neos.Fusion:Value {
   value = 'originalValue'
   @process.wrap {
@@ -92,7 +86,7 @@ conditions.supportForConditionInProcessWithAdvancedProcessFalse = Neos.Fusion:Va
 conditions.supportForFusionObjectWithSubEvaluationUsedInProcessor = Neos.Fusion:Value {
   value = 'basic'
 
-  theArray = Neos.Fusion:Array {
+  theArray = Neos.Fusion:Join {
     something = ' appended'
     another = Neos.Fusion:Value {
       value = ' more'

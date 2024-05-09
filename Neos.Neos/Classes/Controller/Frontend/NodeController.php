@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -34,7 +35,6 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
@@ -47,9 +47,6 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\View\FusionView;
 
-/**
- * Event Sourced Node Controller; as Replacement of NodeController
- */
 class NodeController extends ActionController
 {
     use NodeTypeWithFallbackProvider;
@@ -103,20 +100,16 @@ class NodeController extends ActionController
      */
     protected $view;
 
-    /**
-     * @Flow\Inject
-     * @var NodeSiteResolvingService
-     */
-    protected $nodeSiteResolvingService;
-
     #[Flow\Inject]
     protected RenderingModeService $renderingModeService;
 
+    #[Flow\InjectConfiguration(path: "frontend.shortcutRedirectHttpStatusCode", package: "Neos.Neos")]
+    protected int $shortcutRedirectHttpStatusCode;
+
     /**
-     * @param string $node Legacy name for backwards compatibility of route components
+     * @param string $node
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
@@ -145,10 +138,7 @@ class NodeController extends ActionController
             $visibilityConstraints
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
-            $nodeAddress,
-            $siteDetectionResult->contentRepositoryId
-        );
+        $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
@@ -164,7 +154,11 @@ class NodeController extends ActionController
             );
         }
 
-        if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT) && $nodeAddress->isInLiveWorkspace()) {
+        if (
+            $this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)
+            && !$renderingMode->isEdit
+            && $nodeAddress->workspaceName->isLive() // shortcuts are only resolvable for the live workspace
+        ) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
@@ -175,15 +169,11 @@ class NodeController extends ActionController
             'site' => $site,
         ]);
 
-        if (!$nodeAddress->isInLiveWorkspace()) {
+        if ($renderingMode->isEdit) {
             $this->overrideViewVariablesFromInternalArguments();
             $this->response->setHttpHeader('Cache-Control', 'no-cache');
             if (!$this->view->canRenderWithNodeAndPath()) {
                 $this->view->setFusionPath('rawContent');
-            }
-
-            if ($this->session->isStarted()) {
-                $this->session->putData('lastVisitedNode', $nodeAddress);
             }
         }
     }
@@ -194,7 +184,6 @@ class NodeController extends ActionController
      * @param string $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
@@ -202,7 +191,7 @@ class NodeController extends ActionController
      * with unsafe requests from widgets or plugins that are rendered on the node
      * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function showAction(string $node, bool $showInvisible = false): void
+    public function showAction(string $node): void
     {
         $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
@@ -212,32 +201,23 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
-        $visibilityConstraints = VisibilityConstraints::frontend();
-        if ($showInvisible && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
-            $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        }
-
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
             $nodeAddress->contentStreamId,
             $nodeAddress->dimensionSpacePoint,
-            $visibilityConstraints
+            VisibilityConstraints::frontend()
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
-            $nodeAddress,
-            $siteDetectionResult->contentRepositoryId
-        );
+        $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        if ($nodeInstance === null) {
+            throw new NodeNotFoundException(sprintf('The cached node address for this uri could not be resolved. Possibly you have to flush the "Flow_Mvc_Routing_Route" cache. %s', $nodeAddress), 1707300738);
+        }
+
+        $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
-            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
+            throw new NodeNotFoundException(sprintf('The site node of %s could not be resolved.', $nodeAddress), 1707300861);
         }
 
         $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
-
-        $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
-
-        if (is_null($nodeInstance)) {
-            throw new NodeNotFoundException('The requested node does not exist', 1596191460);
-        }
 
         if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
@@ -286,12 +266,11 @@ class NodeController extends ActionController
     }
 
     /**
-     * Handles redirects to shortcut targets in live rendering.
+     * Handles redirects to shortcut targets of nodes in the live workspace.
      *
      * @param NodeAddress $nodeAddress
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
     protected function handleShortcutNode(NodeAddress $nodeAddress, ContentRepository $contentRepository): void
     {
@@ -320,7 +299,8 @@ class NodeController extends ActionController
         } else {
             $resolvedUri = $resolvedTarget;
         }
-        $this->redirectToUri($resolvedUri);
+
+        $this->redirectToUri($resolvedUri, statusCode: $this->shortcutRedirectHttpStatusCode);
     }
 
     private function fillCacheWithContentNodes(
@@ -335,7 +315,7 @@ class NodeController extends ActionController
 
         $subtree = $subgraph->findSubtree(
             $nodeAggregateId,
-            FindSubtreeFilter::create(nodeTypeConstraints: '!' . NodeTypeNameFactory::NAME_DOCUMENT, maximumLevels: 20)
+            FindSubtreeFilter::create(nodeTypes: '!' . NodeTypeNameFactory::NAME_DOCUMENT, maximumLevels: 20)
         );
         if ($subtree === null) {
             return;

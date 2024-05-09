@@ -20,24 +20,30 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 /**
  * A collection of SerializedNodeReference objects, to be used when creating reference relations.
  *
- * @implements \IteratorAggregate<int,SerializedNodeReference>
- * @api used as part of commands/events
+ * @implements \IteratorAggregate<SerializedNodeReference>
+ * @internal
  */
-final class SerializedNodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
+final readonly class SerializedNodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array<int,SerializedNodeReference>
+     * @var array<SerializedNodeReference>
      */
-    public readonly array $references;
+    public array $references;
 
     private function __construct(SerializedNodeReference ...$references)
     {
-        /** @var array<int,SerializedNodeReference> $references */
+        $existingTargets = [];
+        foreach ($references as $reference) {
+            if (isset($existingTargets[$reference->targetNodeAggregateId->value])) {
+                throw new \InvalidArgumentException(sprintf('Duplicate entry in references to write. Target "%s" already exists in collection.', $reference->targetNodeAggregateId->value), 1700150910);
+            }
+            $existingTargets[$reference->targetNodeAggregateId->value] = true;
+        }
         $this->references = $references;
     }
 
     /**
-     * @param array<int,SerializedNodeReference> $references
+     * @param array<SerializedNodeReference> $references
      */
     public static function fromReferences(array $references): self
     {
@@ -45,7 +51,7 @@ final class SerializedNodeReferences implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @param array<int,array<string,mixed>> $referenceData
+     * @param array<array<string,mixed>> $referenceData
      */
     public static function fromArray(array $referenceData): self
     {
@@ -59,8 +65,8 @@ final class SerializedNodeReferences implements \IteratorAggregate, \Countable, 
     {
         return new self(...array_map(
             static fn (NodeAggregateId $nodeAggregateId): SerializedNodeReference
-            => new SerializedNodeReference($nodeAggregateId, null),
-            $nodeAggregateIds->getIterator()->getArrayCopy()
+                => new SerializedNodeReference($nodeAggregateId, null),
+            iterator_to_array($nodeAggregateIds)
         ));
     }
 
@@ -75,11 +81,11 @@ final class SerializedNodeReferences implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return \ArrayIterator<int,SerializedNodeReference>
+     * @return \Traversable<SerializedNodeReference>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->references);
+        yield from $this->references;
     }
 
     public function count(): int
@@ -88,7 +94,7 @@ final class SerializedNodeReferences implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return array<int,SerializedNodeReference>
+     * @return array<SerializedNodeReference>
      */
     public function jsonSerialize(): array
     {

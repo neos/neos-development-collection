@@ -5,20 +5,19 @@ declare(strict_types=1);
 namespace Neos\Neos\AssetUsage\Dto;
 
 use Neos\Flow\Annotations as Flow;
-use Traversable;
 
 /**
  * @implements \IteratorAggregate<string, array<AssetIdAndOriginalAssetId>>
  * @internal
  */
 #[Flow\Proxy(false)]
-final class AssetIdsByProperty implements \IteratorAggregate
+final readonly class AssetIdsByProperty implements \IteratorAggregate
 {
     /**
      * @param array<string, array<AssetIdAndOriginalAssetId>> $assetIds
      */
     public function __construct(
-        private readonly array $assetIds,
+        private array $assetIds,
     ) {
     }
 
@@ -30,8 +29,8 @@ final class AssetIdsByProperty implements \IteratorAggregate
         return array_keys($this->assetIds);
     }
 
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->assetIds);
+        yield from $this->assetIds;
     }
 }

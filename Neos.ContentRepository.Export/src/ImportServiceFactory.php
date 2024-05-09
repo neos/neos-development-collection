@@ -7,13 +7,14 @@ use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\Flow\ResourceManagement\ResourceRepository;
-use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 
 /**
  * @internal
+ * @implements ContentRepositoryServiceFactoryInterface<ImportService>
  */
 class ImportServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
@@ -25,8 +26,7 @@ class ImportServiceFactory implements ContentRepositoryServiceFactoryInterface
         private readonly ResourceRepository $resourceRepository,
         private readonly ResourceManager $resourceManager,
         private readonly PersistenceManagerInterface $persistenceManager,
-    )
-    {
+    ) {
     }
 
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ImportService

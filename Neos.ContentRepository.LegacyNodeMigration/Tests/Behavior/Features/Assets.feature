@@ -7,8 +7,10 @@ Feature: Export of used Assets, Image Variants and Persistent Resources
       | language   | en      | en, de, ch | ch->de          |
     And using the following node types:
     """yaml
-    'unstructured': {}
-    'Some.Package:SomeNodeType':
+    'Neos.Neos:Site': {}
+    'Some.Package:Homepage':
+      superTypes:
+        'Neos.Neos:Site': true
       properties:
         'string':
           type: string
@@ -41,9 +43,9 @@ Feature: Export of used Assets, Image Variants and Persistent Resources
 
   Scenario: Exporting an Image Variant includes the original Image asset as well
     When I have the following node data rows:
-      | Identifier    | Path             | Node Type                 | Properties                       |
-      | sites-node-id | /sites           | unstructured              |                                  |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"string": "asset:\/\/variant1"} |
+      | Identifier    | Path             | Node Type             | Properties                       |
+      | sites-node-id | /sites           | unstructured          |                                  |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"string": "asset:\/\/variant1"} |
     And I run the asset migration
     Then I expect the following Assets to be exported:
     """
@@ -85,12 +87,12 @@ Feature: Export of used Assets, Image Variants and Persistent Resources
 
   Scenario: Assets and image variants are only exported once each
     When I have the following node data rows:
-      | Identifier    | Path             | Node Type                 | Dimension Values     | Properties                                                                                                                                                                                                                                                                                    |
-      | sites-node-id | /sites           | unstructured              |                      |                                                                                                                                                                                                                                                                                               |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType |                      | {"string": "asset:\/\/asset1"}                                                                                                                                                                                                                                                                |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["ch"]} | {"image": {"__flow_object_type": "Neos\\Media\\Domain\\Model\\Image", "__identifier": "asset2"}}                                                                                                                                                                                              |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["en"]} | {"assets": [{"__flow_object_type": "Neos\\Media\\Domain\\Model\\Document", "__identifier": "asset3"}, {"__flow_object_type": "Neos\\Media\\Domain\\Model\\Image", "__identifier": "asset2"}, {"__flow_object_type": "Neos\\Media\\Domain\\Model\\ImageVariant", "__identifier": "variant1"}]} |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"language": ["de"]} | {"string": "some text with an <a href=\"asset:\/\/asset4\">asset link</a>"}                                                                                                                                                                                                                   |
+      | Identifier    | Path             | Node Type             | Dimension Values     | Properties                                                                                                                                                                                                                                                                                    |
+      | sites-node-id | /sites           | unstructured          |                      |                                                                                                                                                                                                                                                                                               |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage |                      | {"string": "asset:\/\/asset1"}                                                                                                                                                                                                                                                                |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["ch"]} | {"image": {"__flow_object_type": "Neos\\Media\\Domain\\Model\\Image", "__identifier": "asset2"}}                                                                                                                                                                                              |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["en"]} | {"assets": [{"__flow_object_type": "Neos\\Media\\Domain\\Model\\Document", "__identifier": "asset3"}, {"__flow_object_type": "Neos\\Media\\Domain\\Model\\Image", "__identifier": "asset2"}, {"__flow_object_type": "Neos\\Media\\Domain\\Model\\ImageVariant", "__identifier": "variant1"}]} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} | {"string": "some text with an <a href=\"asset:\/\/asset4\">asset link</a>"}                                                                                                                                                                                                                   |
     And I run the asset migration
     Then I expect the following Assets to be exported:
     """
@@ -176,12 +178,22 @@ Feature: Export of used Assets, Image Variants and Persistent Resources
 
   Scenario: Referring to non-existing asset
     When I have the following node data rows:
-      | Identifier    | Path             | Node Type                 | Properties                                 |
-      | sites-node-id | /sites           | unstructured              |                                            |
-      | site-node-id  | /sites/test-site | Some.Package:SomeNodeType | {"string": "asset:\/\/non-existing-asset"} |
+      | Identifier    | Path             | Node Type             | Properties                                 |
+      | sites-node-id | /sites           | unstructured          |                                            |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"string": "asset:\/\/non-existing-asset"} |
     And I run the asset migration
     Then I expect no Assets to be exported
     And I expect no ImageVariants to be exported
     And I expect no PersistentResources to be exported
     And I expect the following errors to be logged
-      | Failed to extract assets of property "string" of node "site-node-id" (type: "Some.Package:SomeNodeType"): Failed to find mock asset with id "non-existing-asset" |
+      | Failed to extract assets of property "string" of node "site-node-id" (type: "Some.Package:Homepage"): Failed to find mock asset with id "non-existing-asset" |
+
+  Scenario: Nodes with properties that are not part of the node type schema (see https://github.com/neos/neos-development-collection/issues/4804)
+    When I have the following node data rows:
+      | Identifier    | Path             | Node Type             | Properties                                |
+      | sites-node-id | /sites           | unstructured          |                                           |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"unknownProperty": "asset:\/\/variant1"} |
+    And I run the asset migration
+    Then I expect no Assets to be exported
+    And I expect the following warnings to be logged
+      | Skipped node data processing for the property "unknownProperty". The property name is not part of the NodeType schema for the NodeType "Some.Package:Homepage". (Node: site-node-id) |

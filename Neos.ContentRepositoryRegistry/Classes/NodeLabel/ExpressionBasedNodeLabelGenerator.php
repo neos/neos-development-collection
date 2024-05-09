@@ -11,12 +11,11 @@ namespace Neos\ContentRepositoryRegistry\NodeLabel;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 
 /**
  * The expression based node label generator that is used as default if a label expression is configured.
@@ -26,13 +25,12 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
 {
     /**
      * @Flow\Inject
-     * @var EelEvaluatorInterface
      */
-    protected $eelEvaluator;
+    protected EelEvaluatorInterface $eelEvaluator;
 
     /**
      * @Flow\InjectConfiguration(package="Neos.ContentRepository", path="labelGenerator.eel.defaultContext")
-     * @var array
+     * @var array<string, string>
      */
     protected $defaultContextConfiguration;
 
@@ -49,22 +47,9 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
         return $this->expression;
     }
 
-    /**
-     * @param string $expression
-     */
-    public function setExpression($expression)
+    public function setExpression(string $expression): void
     {
         $this->expression = $expression;
-    }
-
-    /**
-     * @return void
-     */
-    public function initializeObject()
-    {
-        if ($this->eelEvaluator instanceof DependencyProxy) {
-            $this->eelEvaluator->_activateDependency();
-        }
     }
 
     /**

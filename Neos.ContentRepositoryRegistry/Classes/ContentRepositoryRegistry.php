@@ -6,7 +6,6 @@ namespace Neos\ContentRepositoryRegistry;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Factory\ProjectionsAndCatchUpHooksFactory;
@@ -16,6 +15,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
@@ -41,7 +41,6 @@ use Symfony\Component\Serializer\Serializer;
 #[Flow\Scope("singleton")]
 final class ContentRepositoryRegistry
 {
-
     /**
      * @var array<string, ContentRepositoryFactory>
      */
@@ -57,6 +56,23 @@ final class ContentRepositoryRegistry
     }
 
     /**
+     * This is the main entry point for Neos / Flow installations to fetch a content repository.
+     * A content repository is not a singleton and must be fetched by its identifier.
+     *
+     * To get a hold of a content repository identifier, it has to be passed along.
+     *
+     * For Neos web requests, the current content repository can be inferred by the domain and the connected site:
+     * {@see \Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult::fromRequest()}
+     * Or it has to be encoded manually as part of a query parameter.
+     *
+     * For CLI applications, it's a necessity to specify the content repository as argument from the outside,
+     * generally via `--content-repository default`
+     *
+     * The content repository identifier should never be hard-coded without being aware of its implications.
+     *
+     * Hint: in case you are already in a service that is scoped to a content repository or a projection catchup hook,
+     * the content repository will likely be already available via e.g. the service factory.
+     *
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
     public function get(ContentRepositoryId $contentRepositoryId): ContentRepository
@@ -148,6 +164,7 @@ final class ContentRepositoryRegistry
         }
     }
 
+    /** @param array<string, mixed> $contentRepositorySettings */
     private function buildEventStore(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, ClockInterface $clock): EventStoreInterface
     {
         isset($contentRepositorySettings['eventStore']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have eventStore.factoryObjectName configured.', $contentRepositoryId->value);
@@ -158,6 +175,7 @@ final class ContentRepositoryRegistry
         return $eventStoreFactory->build($contentRepositoryId, $contentRepositorySettings['eventStore']['options'] ?? [], $clock);
     }
 
+    /** @param array<string, mixed> $contentRepositorySettings */
     private function buildNodeTypeManager(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): NodeTypeManager
     {
         isset($contentRepositorySettings['nodeTypeManager']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have nodeTypeManager.factoryObjectName configured.', $contentRepositoryId->value);
@@ -168,6 +186,7 @@ final class ContentRepositoryRegistry
         return $nodeTypeManagerFactory->build($contentRepositoryId, $contentRepositorySettings['nodeTypeManager']['options'] ?? []);
     }
 
+    /** @param array<string, mixed> $contentRepositorySettings */
     private function buildContentDimensionSource(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ContentDimensionSourceInterface
     {
         isset($contentRepositorySettings['contentDimensionSource']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have contentDimensionSource.factoryObjectName configured.', $contentRepositoryId->value);
@@ -185,6 +204,7 @@ final class ContentRepositoryRegistry
 
     }
 
+    /** @param array<string, mixed> $contentRepositorySettings */
     private function buildPropertySerializer(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): Serializer
     {
         (isset($contentRepositorySettings['propertyConverters']) && is_array($contentRepositorySettings['propertyConverters'])) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have propertyConverters configured, or the value is no array.', $contentRepositoryId->value);
@@ -192,7 +212,7 @@ final class ContentRepositoryRegistry
 
         $normalizers = [];
         foreach ($propertyConvertersConfiguration as $propertyConverterConfiguration) {
-            $normalizer = new $propertyConverterConfiguration['className'];
+            $normalizer = new $propertyConverterConfiguration['className']();
             if (!$normalizer instanceof NormalizerInterface && !$normalizer instanceof DenormalizerInterface) {
                 throw InvalidConfigurationException::fromMessage('Serializers can only be created of %s and %s, %s given', NormalizerInterface::class, DenormalizerInterface::class, get_debug_type($normalizer));
             }
@@ -201,17 +221,24 @@ final class ContentRepositoryRegistry
         return new Serializer($normalizers);
     }
 
+    /** @param array<string, mixed> $contentRepositorySettings */
     private function buildProjectionsFactory(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ProjectionsAndCatchUpHooksFactory
     {
         (isset($contentRepositorySettings['projections']) && is_array($contentRepositorySettings['projections'])) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have projections configured, or the value is no array.', $contentRepositoryId->value);
         $projectionsFactory = new ProjectionsAndCatchUpHooksFactory();
         foreach ($contentRepositorySettings['projections'] as $projectionName => $projectionOptions) {
+            if ($projectionOptions === null) {
+                continue;
+            }
             $projectionFactory = $this->objectManager->get($projectionOptions['factoryObjectName']);
             if (!$projectionFactory instanceof ProjectionFactoryInterface) {
                 throw InvalidConfigurationException::fromMessage('Projection factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s.', $projectionName, $contentRepositoryId->value, ProjectionFactoryInterface::class, get_debug_type($projectionFactory));
             }
             $projectionsFactory->registerFactory($projectionFactory, $projectionOptions['options'] ?? []);
             foreach (($projectionOptions['catchUpHooks'] ?? []) as $catchUpHookOptions) {
+                if ($catchUpHookOptions === null) {
+                    continue;
+                }
                 $catchUpHookFactory = $this->objectManager->get($catchUpHookOptions['factoryObjectName']);
                 if (!$catchUpHookFactory instanceof CatchUpHookFactoryInterface) {
                     throw InvalidConfigurationException::fromMessage('CatchUpHook factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s', $projectionName, $contentRepositoryId->value, CatchUpHookFactoryInterface::class, get_debug_type($catchUpHookFactory));
@@ -222,6 +249,7 @@ final class ContentRepositoryRegistry
         return $projectionsFactory;
     }
 
+    /** @param array<string, mixed> $contentRepositorySettings */
     private function buildProjectionCatchUpTrigger(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ProjectionCatchUpTriggerInterface
     {
         isset($contentRepositorySettings['projectionCatchUpTrigger']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have projectionCatchUpTrigger.factoryObjectName configured.', $contentRepositoryId->value);
@@ -232,6 +260,7 @@ final class ContentRepositoryRegistry
         return $projectionCatchUpTriggerFactory->build($contentRepositoryId, $contentRepositorySettings['projectionCatchUpTrigger']['options'] ?? []);
     }
 
+    /** @param array<string, mixed> $contentRepositorySettings */
     private function buildUserIdProvider(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): UserIdProviderInterface
     {
         isset($contentRepositorySettings['userIdProvider']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have userIdProvider.factoryObjectName configured.', $contentRepositoryId->value);
@@ -242,6 +271,7 @@ final class ContentRepositoryRegistry
         return $userIdProviderFactory->build($contentRepositoryId, $contentRepositorySettings['userIdProvider']['options'] ?? []);
     }
 
+    /** @param array<string, mixed> $contentRepositorySettings */
     private function buildClock(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings): ClockInterface
     {
         isset($contentRepositorySettings['clock']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have clock.factoryObjectName configured.', $contentRepositoryIdentifier->value);

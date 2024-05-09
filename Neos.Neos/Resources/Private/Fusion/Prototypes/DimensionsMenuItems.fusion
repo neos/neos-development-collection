@@ -1,15 +1,27 @@
-prototype(Neos.Neos:DimensionsMenuItems) < prototype(Neos.Neos:MenuItems)  {
- @class = 'Neos\\Neos\\Fusion\\DimensionsMenuItemsImplementation'
+prototype(Neos.Neos:DimensionsMenuItems) {
+  @class = 'Neos\\Neos\\Fusion\\DimensionsMenuItemsImplementation'
 
-  # if documents which are hidden in index should be rendered or not
+  # (Node) The current node. Defaults to ``node`` from the fusion context
+  node = ${documentNode}
+
+  # (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
   renderHiddenInIndex = true
 
-  # name of the dimension to use (optional)
+  # (optional, string): name of the dimension which this menu should be based on. Example: "language".
   dimension = null
 
-  # list of presets, if the default order should be overridden, only used with "dimension" set
+  # (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
   presets = null
 
-  # if true, items for all presets will be included, ignoring dimension constraints
+  # (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
   includeAllPresets = false
+
+  # (boolean) activate the *expensive* calculation of item states defaults to ``false``
+  calculateItemStates = false
+
+  // This property is used internally by `MenuItemsImplementation` to render each items uri.
+  // It can be modified to change behaviour for all rendered uris.
+  itemUriRenderer = Neos.Neos:NodeUri {
+    node = ${itemNode}
+  }
 }

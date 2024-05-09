@@ -22,7 +22,8 @@ final class EventMigrationServiceFactory implements ContentRepositoryServiceFact
 {
     public function __construct(
         private readonly Connection $connection,
-    ) {}
+    ) {
+    }
 
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
     {
@@ -31,9 +32,7 @@ final class EventMigrationServiceFactory implements ContentRepositoryServiceFact
         }
 
         return new EventMigrationService(
-            $serviceFactoryDependencies->projections,
             $serviceFactoryDependencies->contentRepositoryId,
-            $serviceFactoryDependencies->contentRepository,
             $serviceFactoryDependencies->eventStore,
             $this->connection
         );

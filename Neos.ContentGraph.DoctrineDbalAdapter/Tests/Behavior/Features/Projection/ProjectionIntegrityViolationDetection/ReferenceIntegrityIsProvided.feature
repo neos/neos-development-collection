@@ -9,7 +9,6 @@ Feature: Run integrity violation detection regarding reference relations
       | language   | de, gsw, fr | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
         referenceProperty:
@@ -24,9 +23,9 @@ Feature: Run integrity violation detection regarding reference relations
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
-      | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -52,7 +51,6 @@ Feature: Run integrity violation detection regarding reference relations
   Scenario: Detach a reference relation from its source
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamId                 | "cs-identifier"                   |
       | sourceOriginDimensionSpacePoint | {"language":"de"}                 |
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | referenceName                   | "referenceProperty"               |

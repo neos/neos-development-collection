@@ -11,7 +11,6 @@ Feature: Create node aggregate with node
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes':
       properties:
         defaultText:
@@ -31,7 +30,7 @@ Feature: Create node aggregate with node
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -48,38 +47,38 @@ Feature: Create node aggregate with node
 
     Then I expect exactly 5 events to be published on stream "ContentStream:cs-identifier"
     And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                                                                                                        |
-      | contentStreamId             | "cs-identifier"                                                                                                 |
-      | nodeAggregateId             | "sir-david-nodenborough"                                                                                        |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes"                                                  |
-      | originDimensionSpacePoint   | []                                                                                                              |
-      | coveredDimensionSpacePoints | [[]]                                                                                                            |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                                                                                        |
-      | nodeName                    | "node"                                                                                                          |
-      | initialPropertyValues       | {"defaultText": {"value": "my default", "type": "string"}, "text": {"value": "initial text", "type": "string"}} |
-      | nodeAggregateClassification | "regular"                                                                                                       |
+      | Key                           | Expected                                                                                                        |
+      | contentStreamId               | "cs-identifier"                                                                                                 |
+      | nodeAggregateId               | "sir-david-nodenborough"                                                                                        |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes"                                                  |
+      | originDimensionSpacePoint     | []                                                                                                              |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":[],"nodeAggregateId":null}]                                                             |
+      | parentNodeAggregateId         | "lady-eleonode-rootford"                                                                                        |
+      | nodeName                      | "node"                                                                                                          |
+      | initialPropertyValues         | {"defaultText": {"value": "my default", "type": "string"}, "text": {"value": "initial text", "type": "string"}} |
+      | nodeAggregateClassification   | "regular"                                                                                                       |
     And event at index 3 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                                                       |
-      | contentStreamId             | "cs-identifier"                                                |
-      | nodeAggregateId             | "nody-mc-nodeface"                                             |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
-      | originDimensionSpacePoint   | []                                                             |
-      | coveredDimensionSpacePoints | [[]]                                                           |
-      | parentNodeAggregateId       | "sir-david-nodenborough"                                       |
-      | nodeName                    | "child-node"                                                   |
-      | initialPropertyValues       | {"defaultText": {"value": "my default", "type": "string"}}     |
-      | nodeAggregateClassification | "regular"                                                      |
+      | Key                           | Expected                                                       |
+      | contentStreamId               | "cs-identifier"                                                |
+      | nodeAggregateId               | "nody-mc-nodeface"                                             |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
+      | originDimensionSpacePoint     | []                                                             |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":[],"nodeAggregateId":null}]            |
+      | parentNodeAggregateId         | "sir-david-nodenborough"                                       |
+      | nodeName                      | "child-node"                                                   |
+      | initialPropertyValues         | {"defaultText": {"value": "my default", "type": "string"}}     |
+      | nodeAggregateClassification   | "regular"                                                      |
     And event at index 4 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                                                       |
-      | contentStreamId             | "cs-identifier"                                                |
-      | nodeAggregateId             | "sir-nodeward-nodington-iii"                                   |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
-      | originDimensionSpacePoint   | []                                                             |
-      | coveredDimensionSpacePoints | [[]]                                                           |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                                       |
-      | nodeName                    | "esquire"                                                      |
-      | initialPropertyValues       | {"defaultText": {"value": "my default", "type": "string"}}     |
-      | nodeAggregateClassification | "regular"                                                      |
+      | Key                           | Expected                                                       |
+      | contentStreamId               | "cs-identifier"                                                |
+      | nodeAggregateId               | "sir-nodeward-nodington-iii"                                   |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
+      | originDimensionSpacePoint     | []                                                             |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":[],"nodeAggregateId":null}]            |
+      | parentNodeAggregateId         | "lady-eleonode-rootford"                                       |
+      | nodeName                      | "esquire"                                                      |
+      | initialPropertyValues         | {"defaultText": {"value": "my default", "type": "string"}}     |
+      | nodeAggregateClassification   | "regular"                                                      |
 
     And I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
@@ -150,7 +149,7 @@ Feature: Create node aggregate with node
       | Key         | Value        |
       | defaultText | "my default" |
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect the subgraph projection to consist of exactly 4 nodes
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no parent node
@@ -191,7 +190,6 @@ Feature: Create node aggregate with node
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes': []
     """
     And using identifier "default", I define a content repository
@@ -203,7 +201,7 @@ Feature: Create node aggregate with node
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -236,15 +234,14 @@ Feature: Create node aggregate with node
       | nodeAggregateId             | "sir-nodeward-nodington-iii"                                   |
       | nodeTypeName                | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
       | originDimensionSpacePoint   | []                                                             |
-      | coveredDimensionSpacePoints | [[]]                                                           |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":[],"nodeAggregateId":"sir-david-nodenborough"}] |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                       |
       | nodeName                    | "esquire"                                                      |
       | initialPropertyValues       | []                                                             |
       | nodeAggregateClassification | "regular"                                                      |
-      | succeedingNodeAggregateId   | "sir-david-nodenborough"                                       |
 
     When the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
@@ -257,7 +254,6 @@ Feature: Create node aggregate with node
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:SubSubNode':
       properties:
         text:
@@ -289,7 +285,7 @@ Feature: Create node aggregate with node
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -315,7 +311,7 @@ Feature: Create node aggregate with node
       | nodeAggregateId             | "sir-david-nodenborough"                                    |
       | nodeTypeName                | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes" |
       | originDimensionSpacePoint   | []                                                          |
-      | coveredDimensionSpacePoints | [[]]                                                        |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":[],"nodeAggregateId":null}]                                                             |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                    |
       | nodeName                    | "node"                                                      |
       | initialPropertyValues       | {"text": {"value": "my default", "type": "string"}}         |
@@ -326,7 +322,7 @@ Feature: Create node aggregate with node
       | nodeAggregateId             | "nody-mc-nodeface"                                      |
       | nodeTypeName                | "Neos.ContentRepository.Testing:SubNode"                |
       | originDimensionSpacePoint   | []                                                      |
-      | coveredDimensionSpacePoints | [[]]                                                    |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":[],"nodeAggregateId":null}]                                                             |
       | parentNodeAggregateId       | "sir-david-nodenborough"                                |
       | nodeName                    | "child-node"                                            |
       | initialPropertyValues       | {"text": {"value": "my sub default", "type": "string"}} |
@@ -337,7 +333,7 @@ Feature: Create node aggregate with node
       | nodeAggregateId             | "nodimus-prime"                                             |
       | nodeTypeName                | "Neos.ContentRepository.Testing:SubSubNode"                 |
       | originDimensionSpacePoint   | []                                                          |
-      | coveredDimensionSpacePoints | [[]]                                                        |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":[],"nodeAggregateId":null}]                                                             |
       | parentNodeAggregateId       | "nody-mc-nodeface"                                          |
       | nodeName                    | "grandchild-node"                                           |
       | initialPropertyValues       | {"text": {"value": "my sub sub default", "type": "string"}} |
@@ -411,7 +407,7 @@ Feature: Create node aggregate with node
       | Key  | Value                |
       | text | "my sub sub default" |
 
-    When I am in content stream "cs-identifier" and dimension space point []
+    When I am in the active content stream of workspace "live" and dimension space point []
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no parent node
     And I expect this node to have the following child nodes:
@@ -454,7 +450,6 @@ Feature: Create node aggregate with node
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:SubNode': []
     'Neos.ContentRepository.Testing:NodeWithTetheredChildNodes':
       childNodes:
@@ -474,7 +469,7 @@ Feature: Create node aggregate with node
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -484,13 +479,13 @@ Feature: Create node aggregate with node
     And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                                | Value                                                                                    |
-      | nodeAggregateId                    | "sir-david-nodenborough"                                                                 |
-      | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes"                              |
-      | originDimensionSpacePoint          | {}                                                                                       |
-      | parentNodeAggregateId              | "lady-eleonode-rootford"                                                                 |
-      | nodeName                           | "node"                                                                                   |
-      | tetheredDescendantNodeAggregateIds | {"invalidcasedname": "nody-mc-nodeface", "invalidcharactors": "lord-from-nodding-hill"}  |
+      | Key                                | Value                                                                                   |
+      | nodeAggregateId                    | "sir-david-nodenborough"                                                                |
+      | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes"                             |
+      | originDimensionSpacePoint          | {}                                                                                      |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                                                                |
+      | nodeName                           | "node"                                                                                  |
+      | tetheredDescendantNodeAggregateIds | {"invalidcasedname": "nody-mc-nodeface", "invalidcharactors": "lord-from-nodding-hill"} |
     And the graph projection is fully up to date
 
     And I expect the node aggregate "lady-eleonode-rootford" to exist

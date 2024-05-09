@@ -9,7 +9,6 @@ Feature: Create two nodes with the same node aggregate identifier in the same su
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
     And using identifier "default", I define a content repository
@@ -21,9 +20,9 @@ Feature: Create two nodes with the same node aggregate identifier in the same su
       | workspaceDescription       | "The live workspace"                   |
       | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
-      | contentStreamId     | "cs-identifier"                           |
       | nodeAggregateId     | "lady-eleonode-rootford"                  |
       | nodeTypeName                | "Neos.ContentRepository:Root"             |
     And the graph projection is fully up to date

@@ -30,7 +30,6 @@ Feature: UriPathResolver works as expected
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"

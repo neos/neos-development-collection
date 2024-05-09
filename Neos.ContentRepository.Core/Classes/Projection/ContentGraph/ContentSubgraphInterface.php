@@ -49,6 +49,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 interface ContentSubgraphInterface extends \JsonSerializable
 {
     /**
+     * Returns the subgraph's identity, i.e. the current perspective we look at content from, composed of
+     * * the content repository the subgraph belongs to
+     * * the ID of the content stream we are currently working in
+     * * the dimension space point we are currently looking at
+     * * the applied visibility constraints
+     */
+    public function getIdentity(): ContentSubgraphIdentity;
+
+    /**
      * Find a single node by its aggregate id
      *
      * @return Node|null the node or NULL if no node with the specified id is accessible in this subgraph
@@ -90,13 +99,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * Find all nodes that are positioned _before_ the specified sibling and match the specified $filter
      */
     public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, Filter\FindPrecedingSiblingNodesFilter $filter): Nodes;
-
-    /**
-     * Find a single child node by its name
-     *
-     * @return Node|null the node that is connected to its parent with the specified $edgeName, or NULL if no matching node exists or the parent node is not accessible
-     */
-    public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node;
 
     /**
      * Recursively find all nodes above the $entryNodeAggregateId that match the specified $filter and return them as a flat list
@@ -142,7 +144,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Find all "outgoing" references of a given node that match the specified $filter
      *
-     * A reference is a node property of type "reference" or "references"
      * Because each reference has a name and can contain properties itself, this method does not return the target nodes
      * directly, but a collection of references {@see References}.
      * The corresponding nodes can be retrieved via {@see References::getNodes()}
@@ -172,10 +173,12 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Find a single node underneath $startingNodeAggregateId that matches the specified $path
      *
+     * If a node name as $path is given it will be treated as path with a single segment.
+     *
      * NOTE: This operation is most likely to be deprecated since the concept of node paths is not really used in the core, and it has some logical issues
      * @return Node|null the node that matches the given $path, or NULL if no node on that path is accessible
      */
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node;
+    public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node;
 
     /**
      * Find a single node underneath that matches the specified absolute $path
@@ -188,7 +191,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Determine the absolute path of a node
      *
-     * @deprecated use ${@see self::findAncestorNodes()} instead
+     * @deprecated use {@see self::findAncestorNodes()} in combination with {@see AbsoluteNodePath::fromLeafNodeAndAncestors()} instead
      * @throws \InvalidArgumentException if the node path could not be retrieved because it is inaccessible or contains no valid path. The latter can happen if any node in the hierarchy has no name
      */
     public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath;
@@ -200,4 +203,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @internal this method might change without further notice.
      */
     public function countNodes(): int;
+
+    public function jsonSerialize(): ContentSubgraphIdentity;
 }

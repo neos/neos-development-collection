@@ -27,6 +27,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
@@ -37,15 +38,16 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSibl
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -69,17 +71,28 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @internal but the public {@see ContentSubgraphInterface} is API
  */
-final class ContentSubhypergraph implements ContentSubgraphInterface
+final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 {
     public function __construct(
-        private readonly ContentStreamId $contentStreamId,
-        private readonly DimensionSpacePoint $dimensionSpacePoint,
-        private readonly VisibilityConstraints $visibilityConstraints,
-        private readonly PostgresDbalClientInterface $databaseClient,
-        private readonly NodeFactory $nodeFactory,
-        private readonly NodeTypeManager $nodeTypeManager,
-        private readonly string $tableNamePrefix
+        private ContentRepositoryId $contentRepositoryId,
+        private ContentStreamId $contentStreamId,
+        private DimensionSpacePoint $dimensionSpacePoint,
+        private VisibilityConstraints $visibilityConstraints,
+        private PostgresDbalClientInterface $databaseClient,
+        private NodeFactory $nodeFactory,
+        private NodeTypeManager $nodeTypeManager,
+        private string $tableNamePrefix
     ) {
+    }
+
+    public function getIdentity(): ContentSubgraphIdentity
+    {
+        return ContentSubgraphIdentity::create(
+            $this->contentRepositoryId,
+            $this->contentStreamId,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
@@ -126,12 +139,12 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
-        if (!is_null($filter->nodeTypeConstraints)) {
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $filter->nodeTypeConstraints,
+        if (!is_null($filter->nodeTypes)) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
                 $this->nodeTypeManager
             );
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'cn');
+            $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'cn');
         }
         if (!is_null($filter->pagination)) {
             $query = $query
@@ -204,12 +217,12 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             ->withSourceRestriction($this->visibilityConstraints)
             ->withTargetRestriction($this->visibilityConstraints);
 
-        if ($filter->nodeTypeConstraints) {
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $filter->nodeTypeConstraints,
+        if ($filter->nodeTypes) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
                 $this->nodeTypeManager
             );
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'srcn');
+            $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'srcn');
         }
         $orderings = [];
         if ($filter->referenceName) {
@@ -256,8 +269,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         ) : null;
     }
 
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
+    public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node
     {
+        $path = $path instanceof NodeName ? NodePath::fromNodeNames($path) : $path;
+
         $startingNode = $this->findNodeById($startingNodeAggregateId);
 
         return $startingNode
@@ -274,9 +289,9 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             : null;
     }
 
-    public function findChildNodeConnectedThroughEdgeName(
+    private function findChildNodeConnectedThroughEdgeName(
         NodeAggregateId $parentNodeAggregateId,
-        NodeName $edgeName
+        NodeName $nodeName
     ): ?Node {
         $query = HypergraphChildQuery::create(
             $this->contentStreamId,
@@ -285,7 +300,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints)
-            ->withChildNodeName($edgeName);
+            ->withChildNodeName($nodeName);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
@@ -303,7 +318,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->findAnySiblings(
             $siblingNodeAggregateId,
             HypergraphSiblingQueryMode::MODE_ONLY_SUCCEEDING,
-            $filter->nodeTypeConstraints,
+            $filter->nodeTypes,
             $filter->pagination,
         );
     }
@@ -315,7 +330,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->findAnySiblings(
             $siblingNodeAggregateId,
             HypergraphSiblingQueryMode::MODE_ONLY_PRECEDING,
-            $filter->nodeTypeConstraints,
+            $filter->nodeTypes,
             $filter->pagination,
         );
     }
@@ -323,7 +338,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     private function findAnySiblings(
         NodeAggregateId $sibling,
         HypergraphSiblingQueryMode $mode,
-        ?NodeTypeConstraints $nodeTypeConstraints = null,
+        ?NodeTypeCriteria $nodeTypeCriteria = null,
         ?Pagination $pagination = null,
     ): Nodes {
         $query = HypergraphSiblingQuery::create(
@@ -334,12 +349,12 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $this->tableNamePrefix
         );
         $query = $query->withRestriction($this->visibilityConstraints);
-        if (!is_null($nodeTypeConstraints)) {
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $nodeTypeConstraints,
+        if (!is_null($nodeTypeCriteria)) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $nodeTypeCriteria,
                 $this->nodeTypeManager
             );
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'sn');
+            $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'sn');
         }
         $query = $query->withOrdinalityOrdering($mode->isOrderingToBeReversed());
         if (!is_null($pagination)) {
@@ -370,14 +385,14 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         ];
 
         $types = [];
-        if ($filter->nodeTypeConstraints !== null) {
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $filter->nodeTypeConstraints,
+        if ($filter->nodeTypes !== null) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
                 $this->nodeTypeManager
             );
-            $nodeTypeConstraintsClause = QueryUtility::getNodeTypeConstraintsClause($nodeTypeConstraintsWithSubNodeTypes, 'cn', $parameters, $types);
+            $nodeTypeCriteriaClause = QueryUtility::getNodeTypeCriteriaClause($expandedNodeTypeCriteria, 'cn', $parameters, $types);
         } else {
-            $nodeTypeConstraintsClause = '';
+            $nodeTypeCriteriaClause = '';
         }
 
         $query = /** @lang PostgreSQL */
@@ -425,7 +440,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 		    AND ch.dimensionspacepointhash = :dimensionSpacePointHash
 		    ' . ($filter->maximumLevels !== null ? 'AND p.level + 1 <= :maximumLevels' : '') . '
             ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNamePrefix, 'c') . '
-		    ' . $nodeTypeConstraintsClause . '
+		    ' . $nodeTypeCriteriaClause . '
     )
     SELECT * FROM subtree
     -- NOTE: it is crucially important that *inside* a single level, we
@@ -519,14 +534,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->databaseClient->getConnection();
     }
 
-    /**
-     * @return array<string,mixed>
-     */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ContentSubgraphIdentity
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'dimensionSpacePoint' => $this->dimensionSpacePoint
-        ];
+        return $this->getIdentity();
     }
 }

@@ -15,11 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 
@@ -42,12 +41,12 @@ trait NodeVariation
     public function theCommandCreateNodeVariantIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamId = isset($commandArguments['contentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->currentContentStreamId;
+        $workspaceName = isset($commandArguments['workspaceName'])
+            ? WorkspaceName::fromString($commandArguments['workspaceName'])
+            : $this->currentWorkspaceName;
 
         $command = CreateNodeVariant::create(
-            $contentStreamId,
+            $workspaceName,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($commandArguments['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($commandArguments['targetOrigin']),
@@ -67,62 +66,5 @@ trait NodeVariation
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
-    }
-
-    /**
-     * @Given /^the event NodeGeneralizationVariantWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theEventNodeGeneralizationVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = $this->currentContentStreamId->value;
-        }
-        $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            $contentStreamId
-        );
-
-        $this->publishEvent('NodeGeneralizationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
-    }
-
-    /**
-     * @Given /^the event NodeSpecializationVariantWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theEventNodeSpecializationVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = $this->currentContentStreamId->value;
-        }
-        $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            $contentStreamId
-        );
-
-        $this->publishEvent('NodeSpecializationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
-    }
-
-    /**
-     * @Given /^the event NodePeerVariantWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theEventNodePeerVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = $this->currentContentStreamId->value;
-        }
-        $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            $contentStreamId
-        );
-
-        $this->publishEvent('NodePeerVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 }

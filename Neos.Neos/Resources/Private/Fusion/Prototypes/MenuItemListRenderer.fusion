@@ -1,0 +1,17 @@
+# Neos.Neos:MenuItemListRenderer provides basic menu rendering
+#
+prototype(Neos.Neos:MenuItemListRenderer) < prototype(Neos.Fusion:Component) {
+  items = null
+  attributes = Neos.Fusion:DataStructure
+
+  renderer = afx`
+    <ul {...props.attributes}>
+    <Neos.Fusion:Loop items={props.items} itemName="item">
+      <li class={item.state}>
+        <Neos.Fusion:Tag tagName={item.uri ? 'a' : 'span'} attributes.href={item.uri} attributes.title={item.label}>{item.label}</Neos.Fusion:Tag>
+        <Neos.Neos:MenuItemListRenderer @if={item.children} items={item.children} />
+      </li>
+    </Neos.Fusion:Loop>
+    </ul>
+  `
+}

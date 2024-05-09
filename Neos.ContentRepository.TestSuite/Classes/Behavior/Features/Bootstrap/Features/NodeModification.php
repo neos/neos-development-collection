@@ -15,12 +15,13 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 use PHPUnit\Framework\Assert;
@@ -43,16 +44,19 @@ trait NodeModification
     public function theCommandSetPropertiesIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        if (!isset($commandArguments['contentStreamId'])) {
-            $commandArguments['contentStreamId'] = $this->currentContentStreamId->value;
+        if (!isset($commandArguments['workspaceName'])) {
+            $commandArguments['workspaceName'] = $this->currentWorkspaceName->value;
         }
         if (!isset($commandArguments['originDimensionSpacePoint'])) {
             $commandArguments['originDimensionSpacePoint'] = $this->currentDimensionSpacePoint->jsonSerialize();
         }
 
+        $rawNodeAggregateId = $commandArguments['nodeAggregateId'];
         $command = SetNodeProperties::create(
-            ContentStreamId::fromString($commandArguments['contentStreamId']),
-            NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
+            WorkspaceName::fromString($commandArguments['workspaceName']),
+            \str_starts_with($rawNodeAggregateId, '$')
+                ? $this->rememberedNodeAggregateIds[\mb_substr($rawNodeAggregateId, 1)]
+                : NodeAggregateId::fromString($rawNodeAggregateId),
             OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint']),
             $this->deserializeProperties($commandArguments['propertyValues']),
         );
