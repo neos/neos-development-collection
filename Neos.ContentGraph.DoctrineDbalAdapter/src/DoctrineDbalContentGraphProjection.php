@@ -75,16 +75,17 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 
     private DbalCheckpointStorage $checkpointStorage;
 
-    private ContentGraphTableNames $contentGraphTableNames;
+    /** @deprecated */
+    private readonly string $tableNamePrefix;
 
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly ProjectionContentGraph $projectionContentGraph,
-        private readonly string $tableNamePrefix,
+        private readonly ContentGraphTableNames $contentGraphTableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
         private readonly ContentGraphFinder $contentGraphFinder
     ) {
-        $this->contentGraphTableNames = ContentGraphTableNames::withPrefix($tableNamePrefix);
+        $this->tableNamePrefix = $this->contentGraphTableNames->tableNamePrefix;
         $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbalClient->getConnection(),
             $this->contentGraphTableNames->checkpoint(),
@@ -120,7 +121,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
+        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->contentGraphTableNames))->buildSchema($schemaManager);
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 

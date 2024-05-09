@@ -18,6 +18,7 @@ use Doctrine\DBAL\Driver\Exception as DbalDriverException;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\ForwardCompatibility\Result;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
@@ -99,9 +100,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
         private readonly DbalClientInterface $client,
         private readonly NodeFactory $nodeFactory,
         private readonly NodeTypeManager $nodeTypeManager,
-        string $tableNamePrefix
+        ContentGraphTableNames $tableNames
     ) {
-        $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $tableNamePrefix);
+        $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $tableNames);
     }
 
     public function getIdentity(): ContentSubgraphIdentity

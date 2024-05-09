@@ -19,6 +19,7 @@ use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
+use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -77,11 +78,11 @@ final class ContentGraph implements ContentGraphInterface
         private readonly NodeFactory $nodeFactory,
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
-        private readonly string $tableNamePrefix,
+        private readonly ContentGraphTableNames $tableNames,
         public readonly WorkspaceName $workspaceName,
         public readonly ContentStreamId $contentStreamId
     ) {
-        $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $this->tableNamePrefix);
+        $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $this->tableNames);
     }
 
     public function getSubgraph(
@@ -100,7 +101,7 @@ final class ContentGraph implements ContentGraphInterface
                     $this->client,
                     $this->nodeFactory,
                     $this->nodeTypeManager,
-                    $this->tableNamePrefix
+                    $this->tableNames
                 )
             );
         }

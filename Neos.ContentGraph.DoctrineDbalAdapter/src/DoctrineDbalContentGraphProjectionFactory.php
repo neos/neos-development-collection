@@ -28,21 +28,15 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
     ) {
     }
 
-    public static function graphProjectionTableNamePrefix(
-        ContentRepositoryId $contentRepositoryId
-    ): string {
-        return sprintf('cr_%s_p_graph', $contentRepositoryId->value);
-    }
-
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
     ): ContentGraphProjection {
-        $tableNamePrefix = self::graphProjectionTableNamePrefix(
+        $tableNames = ContentGraphTableNames::create(
             $projectionFactoryDependencies->contentRepositoryId
         );
 
-        $dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbalClient->getConnection(), $tableNamePrefix);
+        $dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbalClient->getConnection(), $tableNames);
 
         $nodeFactory = new NodeFactory(
             $projectionFactoryDependencies->contentRepositoryId,
@@ -56,7 +50,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
             $nodeFactory,
             $projectionFactoryDependencies->contentRepositoryId,
             $projectionFactoryDependencies->nodeTypeManager,
-            $tableNamePrefix
+            $tableNames
         );
 
         return new ContentGraphProjection(
@@ -64,9 +58,9 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
                 $this->dbalClient,
                 new ProjectionContentGraph(
                     $this->dbalClient,
-                    $tableNamePrefix
+                    $tableNames->tableNamePrefix
                 ),
-                $tableNamePrefix,
+                $tableNames,
                 $dimensionSpacePointsRepository,
                 new ContentGraphFinder($contentGraphFactory)
             )

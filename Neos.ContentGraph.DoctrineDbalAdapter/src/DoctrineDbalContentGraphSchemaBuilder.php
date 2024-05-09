@@ -17,12 +17,9 @@ class DoctrineDbalContentGraphSchemaBuilder
 {
     private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
 
-    private readonly ContentGraphTableNames $contentGraphTableNames;
-
     public function __construct(
-        string $tableNamePrefix
+        private readonly ContentGraphTableNames $contentGraphTableNames
     ) {
-        $this->contentGraphTableNames = ContentGraphTableNames::withPrefix($tableNamePrefix);
     }
 
     public function buildSchema(AbstractSchemaManager $schemaManager): Schema

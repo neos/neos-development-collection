@@ -33,13 +33,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final readonly class NodeQueryBuilder
 {
-    public ContentGraphTableNames $contentGraphTableNames;
-
     public function __construct(
         private Connection $connection,
-        string $tableNamePrefix
+        public ContentGraphTableNames $contentGraphTableNames
     ) {
-        $this->contentGraphTableNames = ContentGraphTableNames::withPrefix($tableNamePrefix);
     }
 
     public function buildBasicNodeAggregateQuery(): QueryBuilder

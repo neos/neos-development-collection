@@ -31,13 +31,10 @@ final class DimensionSpacePointsRepository
      */
     private array $dimensionspacePointsRuntimeCache = [];
 
-    private readonly ContentGraphTableNames $contentGraphTableNames;
-
     public function __construct(
         private readonly Connection $databaseConnection,
-        string $tableNamePrefix
+        private readonly ContentGraphTableNames $contentGraphTableNames
     ) {
-        $this->contentGraphTableNames = ContentGraphTableNames::withPrefix($tableNamePrefix);
     }
 
     public function insertDimensionSpacePoint(AbstractDimensionSpacePoint $dimensionSpacePoint): void

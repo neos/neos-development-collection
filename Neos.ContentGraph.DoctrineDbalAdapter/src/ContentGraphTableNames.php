@@ -2,16 +2,24 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+
 /**
  * Encapsulates table name generation for content graph tables
  * @internal
  */
 final readonly class ContentGraphTableNames
 {
-    private function __construct(private string $tableNamePrefix)
+    private function __construct(public string $tableNamePrefix)
     {
     }
 
+    public static function create(ContentRepositoryId $contentRepositoryId): self
+    {
+        return new self(sprintf('cr_%s_p_graph', $contentRepositoryId->value));
+    }
+
+    /** @deprecated */
     public static function withPrefix(string $tableNamePrefix): self
     {
         return new self($tableNamePrefix);
