@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Service;
 
-use Neos\ContentRepository\Core\ContentGraphFinder;
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\Dto\AssetUsage;
@@ -28,9 +26,8 @@ class AssetUsageSyncService implements ContentRepositoryServiceInterface
     private array $existingAssetsById = [];
 
     public function __construct(
+        private readonly ContentRepository $contentRepository,
         private readonly AssetUsageFinder $assetUsageFinder,
-        private readonly ContentGraphFinder $contentGraphFinder,
-        private readonly WorkspaceFinder $workspaceFinder,
         private readonly AssetRepository $assetRepository,
         private readonly AssetUsageRepository $assetUsageRepository,
     ) {
@@ -59,11 +56,11 @@ class AssetUsageSyncService implements ContentRepositoryServiceInterface
         $dimensionSpacePoint = $usage->originDimensionSpacePoint->toDimensionSpacePoint();
 
         // FIXME: AssetUsage->workspaceName ?
-        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId($usage->contentStreamId);
+        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->contentStreamId);
         if (is_null($workspace)) {
             return false;
         }
-        $subGraph = $this->contentGraphFinder->getByWorkspaceName($workspace->workspaceName) ->getSubgraph(
+        $subGraph = $this->contentRepository->getContentGraph($workspace->workspaceName)->getSubgraph(
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );

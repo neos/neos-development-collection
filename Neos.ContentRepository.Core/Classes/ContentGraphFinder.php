@@ -22,12 +22,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * A finder for ContentGraphInterface bound to contentStream/Workspace
+ * A finder for a ContentGraph bound to contentStream / workspaceName
  *
- * Userland code should not use this directly. You should get a ContentGraph
- * via ContentRepository::getContentGraph()
+ * The API way of accessing a ContentGraph is via ContentRepository::getContentGraph()
  *
- * @api Not for userland code, only for read access during write operations and in services
+ * @internal User land code should not use this directly.
  * @see ContentRepository::getContentGraph()
  */
 final class ContentGraphFinder implements ProjectionStateInterface
@@ -48,7 +47,6 @@ final class ContentGraphFinder implements ProjectionStateInterface
      *
      * @throws WorkspaceDoesNotExist if there is no workspace with the provided name
      * @throws ContentStreamDoesNotExistYet if the provided workspace does not resolve to an existing content stream
-     * @api
      * @see ContentRepository::getContentGraph()
      */
     public function getByWorkspaceName(WorkspaceName $workspaceName): ContentGraphInterface
