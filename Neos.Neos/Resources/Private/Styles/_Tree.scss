@@ -54,6 +54,7 @@ ul.neos-tree-container {
       }
     }
 
+		/* todo legacy, should now be named hiddenInMenu */
     &.neos-hiddenInIndex {
       span + span {
         opacity: 0.5;

@@ -24,7 +24,7 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
  * Base class for Menu and DimensionsMenu
  *
  * Main Options:
- *  - renderHiddenInMenu: if TRUE, hidden-in-index nodes will be shown in the menu. FALSE by default.
+ *  - renderHiddenInMenu: if TRUE, nodes with the property ``hiddenInMenu`` will be shown in the menu. FALSE by default.
  */
 abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 {
