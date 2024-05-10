@@ -119,7 +119,7 @@ trait NodeMove
         $ingoingHierarchyRelation->assignNewPosition(
             $newPosition,
             $this->getDatabaseConnection(),
-            $this->contentGraphTableNames
+            $this->tableNames
         );
     }
 
@@ -188,7 +188,7 @@ trait NodeMove
             $newParent->relationAnchorPoint,
             $newPosition,
             $this->getDatabaseConnection(),
-            $this->contentGraphTableNames
+            $this->tableNames
         );
     }
 

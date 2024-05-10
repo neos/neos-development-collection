@@ -78,13 +78,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly ProjectionContentGraph $projectionContentGraph,
-        private readonly ContentGraphTableNames $contentGraphTableNames,
+        private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
         private readonly ContentGraphFinder $contentGraphFinder
     ) {
         $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbalClient->getConnection(),
-            $this->contentGraphTableNames->checkpoint(),
+            $this->tableNames->checkpoint(),
             self::class
         );
     }
@@ -112,7 +112,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->contentGraphTableNames))->buildSchema($schemaManager);
+        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNames))->buildSchema($schemaManager);
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
@@ -153,10 +153,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     private function truncateDatabaseTables(): void
     {
         $connection = $this->dbalClient->getConnection();
-        $connection->executeQuery('TRUNCATE table ' . $this->contentGraphTableNames->node());
-        $connection->executeQuery('TRUNCATE table ' . $this->contentGraphTableNames->hierachyRelation());
-        $connection->executeQuery('TRUNCATE table ' . $this->contentGraphTableNames->referenceRelation());
-        $connection->executeQuery('TRUNCATE table ' . $this->contentGraphTableNames->dimensionSpacePoints());
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNames->node());
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNames->hierachyRelation());
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
     }
 
     public function canHandle(EventInterface $event): bool
@@ -227,7 +227,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
             $node = NodeRecord::createNewInDatabase(
                 $this->getDatabaseConnection(),
-                $this->contentGraphTableNames,
+                $this->tableNames,
                 $event->nodeAggregateId,
                 $originDimensionSpacePoint->coordinates,
                 $originDimensionSpacePoint->hash,
@@ -273,7 +273,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         $this->transactional(function () use ($rootNodeAnchorPoint, $event) {
             // delete all hierarchy edges of the root node
             $this->getDatabaseConnection()->executeUpdate('
-                DELETE FROM ' . $this->contentGraphTableNames->hierachyRelation() . '
+                DELETE FROM ' . $this->tableNames->hierachyRelation() . '
                 WHERE
                     parentnodeanchor = :parentNodeAnchor
                     AND childnodeanchor = :childNodeAnchor
@@ -322,8 +322,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     {
         $this->transactional(function () use ($event, $eventEnvelope) {
             $this->getDatabaseConnection()->executeStatement('
-                UPDATE ' . $this->contentGraphTableNames->hierachyRelation() . ' h
-                INNER JOIN ' . $this->contentGraphTableNames->node() . ' n on
+                UPDATE ' . $this->tableNames->hierachyRelation() . ' h
+                INNER JOIN ' . $this->tableNames->node() . ' n on
                     h.childnodeanchor = n.relationanchorpoint
                 SET
                   h.name = :newName,
@@ -363,7 +363,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     ): void {
         $node = NodeRecord::createNewInDatabase(
             $this->getDatabaseConnection(),
-            $this->contentGraphTableNames,
+            $this->tableNames,
             $nodeAggregateId,
             $originDimensionSpacePoint->jsonSerialize(),
             $originDimensionSpacePoint->hash,
@@ -455,7 +455,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                 $inheritedSubtreeTags,
             );
 
-            $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
+            $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNames);
         }
     }
 
@@ -542,7 +542,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                 $position = $offset;
                 $offset += self::RELATION_DEFAULT_OFFSET;
             }
-            $relation->assignNewPosition($offset, $this->getDatabaseConnection(), $this->contentGraphTableNames);
+            $relation->assignNewPosition($offset, $this->getDatabaseConnection(), $this->tableNames);
         }
 
         return $position;
@@ -559,7 +559,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             // 1) Copy HIERARCHY RELATIONS (this is the MAIN OPERATION here)
             //
             $this->getDatabaseConnection()->executeUpdate('
-                INSERT INTO ' . $this->contentGraphTableNames->hierachyRelation() . ' (
+                INSERT INTO ' . $this->tableNames->hierachyRelation() . ' (
                   parentnodeanchor,
                   childnodeanchor,
                   `name`,
@@ -577,7 +577,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                   h.subtreetags,
                   "' . $event->newContentStreamId->value . '" AS contentstreamid
                 FROM
-                    ' . $this->contentGraphTableNames->hierachyRelation() . ' h
+                    ' . $this->tableNames->hierachyRelation() . ' h
                     WHERE h.contentstreamid = :sourceContentStreamId
             ', [
                 'sourceContentStreamId' => $event->sourceContentStreamId->value
@@ -594,7 +594,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 
             // Drop hierarchy relations
             $this->getDatabaseConnection()->executeUpdate('
-                DELETE FROM ' . $this->contentGraphTableNames->hierachyRelation() . '
+                DELETE FROM ' . $this->tableNames->hierachyRelation() . '
                 WHERE
                     contentstreamid = :contentStreamId
             ', [
@@ -603,23 +603,23 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 
             // Drop non-referenced nodes (which do not have a hierarchy relation anymore)
             $this->getDatabaseConnection()->executeUpdate('
-                DELETE FROM ' . $this->contentGraphTableNames->node() . '
+                DELETE FROM ' . $this->tableNames->node() . '
                 WHERE NOT EXISTS
                     (
-                        SELECT 1 FROM ' . $this->contentGraphTableNames->hierachyRelation() . '
-                        WHERE ' . $this->contentGraphTableNames->hierachyRelation() . '.childnodeanchor
-                                  = ' . $this->contentGraphTableNames->node() . '.relationanchorpoint
+                        SELECT 1 FROM ' . $this->tableNames->hierachyRelation() . '
+                        WHERE ' . $this->tableNames->hierachyRelation() . '.childnodeanchor
+                                  = ' . $this->tableNames->node() . '.relationanchorpoint
                     )
             ');
 
             // Drop non-referenced reference relations (i.e. because the referenced nodes are gone by now)
             $this->getDatabaseConnection()->executeUpdate('
-                DELETE FROM ' . $this->contentGraphTableNames->referenceRelation() . '
+                DELETE FROM ' . $this->tableNames->referenceRelation() . '
                 WHERE NOT EXISTS
                     (
-                        SELECT 1 FROM ' . $this->contentGraphTableNames->node() . '
-                        WHERE ' . $this->contentGraphTableNames->node() . '.relationanchorpoint
-                                  = ' . $this->contentGraphTableNames->referenceRelation() . '.nodeanchorpoint
+                        SELECT 1 FROM ' . $this->tableNames->node() . '
+                        WHERE ' . $this->tableNames->node() . '.relationanchorpoint
+                                  = ' . $this->tableNames->referenceRelation() . '.nodeanchorpoint
                     )
             ');
         });
@@ -704,7 +704,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                     );
 
                 // remove old
-                $this->getDatabaseConnection()->delete($this->contentGraphTableNames->referenceRelation(), [
+                $this->getDatabaseConnection()->delete($this->tableNames->referenceRelation(), [
                     'nodeanchorpoint' => $nodeAnchorPoint?->value,
                     'name' => $event->referenceName->value
                 ]);
@@ -713,7 +713,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                 $position = 0;
                 /** @var SerializedNodeReference $reference */
                 foreach ($event->references as $reference) {
-                    $this->getDatabaseConnection()->insert($this->contentGraphTableNames->referenceRelation(), [
+                    $this->getDatabaseConnection()->insert($this->tableNames->referenceRelation(), [
                         'name' => $event->referenceName->value,
                         'position' => $position,
                         'nodeanchorpoint' => $nodeAnchorPoint?->value,
@@ -757,7 +757,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             ),
             $inheritedSubtreeTags,
         );
-        $copy->addToDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
+        $copy->addToDatabase($this->getDatabaseConnection(), $this->tableNames);
 
         return $copy;
     }
@@ -772,7 +772,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     ): NodeRecord {
         return NodeRecord::createNewInDatabase(
             $this->getDatabaseConnection(),
-            $this->contentGraphTableNames,
+            $this->tableNames,
             $sourceNode->nodeAggregateId,
             $originDimensionSpacePoint->coordinates,
             $originDimensionSpacePoint->hash,
@@ -824,15 +824,15 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             // 1) fetch node, adjust properties, assign new Relation Anchor Point
             /** @var NodeRecord $originalNode The anchor point appears in a content stream, so there must be a node */
             $originalNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPoint);
-            $copiedNode = NodeRecord::createCopyFromNodeRecord($this->getDatabaseConnection(), $this->contentGraphTableNames, $originalNode);
+            $copiedNode = NodeRecord::createCopyFromNodeRecord($this->getDatabaseConnection(), $this->tableNames, $originalNode);
             $result = $operations($copiedNode);
-            $copiedNode->updateToDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
+            $copiedNode->updateToDatabase($this->getDatabaseConnection(), $this->tableNames);
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node".
             // IMPORTANT: We need to reconnect BOTH the incoming and outgoing edges.
             $this->getDatabaseConnection()->executeStatement(
                 '
-                UPDATE ' . $this->contentGraphTableNames->hierachyRelation() . ' h
+                UPDATE ' . $this->tableNames->hierachyRelation() . ' h
                     SET
                         -- if our (copied) node is the child, we update h.childNodeAnchor
                         h.childnodeanchor
@@ -865,7 +865,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             }
 
             $result = $operations($node);
-            $node->updateToDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
+            $node->updateToDatabase($this->getDatabaseConnection(), $this->tableNames);
         }
         return $result;
     }
@@ -876,7 +876,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         NodeRelationAnchorPoint $destinationRelationAnchorPoint
     ): void {
         $this->getDatabaseConnection()->executeStatement('
-                INSERT INTO ' . $this->contentGraphTableNames->referenceRelation() . ' (
+                INSERT INTO ' . $this->tableNames->referenceRelation() . ' (
                   nodeanchorpoint,
                   name,
                   position,
@@ -888,7 +888,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                   ref.position,
                   ref.destinationnodeaggregateid
                 FROM
-                    ' . $this->contentGraphTableNames->referenceRelation() . ' ref
+                    ' . $this->tableNames->referenceRelation() . ' ref
                     WHERE ref.nodeanchorpoint = :sourceNodeAnchorPoint
             ', [
             'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,
@@ -907,8 +907,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             // 1) originDimensionSpacePoint on Node
             $rel = $this->getDatabaseConnection()->executeQuery(
                 'SELECT n.relationanchorpoint, n.origindimensionspacepointhash
-                     FROM ' . $this->contentGraphTableNames->node() . ' n
-                     INNER JOIN ' . $this->contentGraphTableNames->hierachyRelation() . ' h
+                     FROM ' . $this->tableNames->node() . ' n
+                     INNER JOIN ' . $this->tableNames->hierachyRelation() . ' h
                         ON h.childnodeanchor = n.relationanchorpoint
 
                      AND h.contentstreamid = :contentStreamId
@@ -937,7 +937,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             // 2) hierarchy relations
             $this->getDatabaseConnection()->executeStatement(
                 '
-                UPDATE ' . $this->contentGraphTableNames->hierachyRelation() . ' h
+                UPDATE ' . $this->tableNames->hierachyRelation() . ' h
                     SET
                         h.dimensionspacepointhash = :newDimensionSpacePointHash
                     WHERE
@@ -961,7 +961,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             // 1) hierarchy relations
             $this->getDatabaseConnection()->executeStatement(
                 '
-                INSERT INTO ' . $this->contentGraphTableNames->hierachyRelation() . ' (
+                INSERT INTO ' . $this->tableNames->hierachyRelation() . ' (
                   parentnodeanchor,
                   childnodeanchor,
                   `name`,
@@ -979,7 +979,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                  :newDimensionSpacePointHash AS dimensionspacepointhash,
                   h.contentstreamid
                 FROM
-                    ' . $this->contentGraphTableNames->hierachyRelation() . ' h
+                    ' . $this->tableNames->hierachyRelation() . ' h
                     WHERE h.contentstreamid = :contentStreamId
                     AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash',
                 [

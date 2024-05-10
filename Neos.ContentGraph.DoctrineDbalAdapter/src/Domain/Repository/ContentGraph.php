@@ -184,8 +184,8 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateId $childNodeAggregateId
     ): iterable {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
-            ->innerJoin('n', $this->nodeQueryBuilder->contentGraphTableNames->hierachyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
-            ->innerJoin('ch', $this->nodeQueryBuilder->contentGraphTableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
+            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierachyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
+            ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->andWhere('ch.contentstreamid = :contentStreamId')
             ->andWhere('cn.nodeaggregateid = :nodeAggregateId')
             ->setParameters([
@@ -210,9 +210,9 @@ final class ContentGraph implements ContentGraphInterface
     {
         $subQueryBuilder = $this->createQueryBuilder()
             ->select('pn.nodeaggregateid')
-            ->from($this->nodeQueryBuilder->contentGraphTableNames->node(), 'pn')
-            ->innerJoin('pn', $this->nodeQueryBuilder->contentGraphTableNames->hierachyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
-            ->innerJoin('ch', $this->nodeQueryBuilder->contentGraphTableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
+            ->from($this->nodeQueryBuilder->tableNames->node(), 'pn')
+            ->innerJoin('pn', $this->nodeQueryBuilder->tableNames->hierachyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
+            ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->where('ch.contentstreamid = :contentStreamId')
             ->andWhere('ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash')
             ->andWhere('cn.nodeaggregateid = :childNodeAggregateId')
@@ -220,9 +220,9 @@ final class ContentGraph implements ContentGraphInterface
 
         $queryBuilder = $this->createQueryBuilder()
             ->select('n.*, h.name, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
-            ->from($this->nodeQueryBuilder->contentGraphTableNames->node(), 'n')
-            ->innerJoin('n', $this->nodeQueryBuilder->contentGraphTableNames->hierachyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->innerJoin('h', $this->nodeQueryBuilder->contentGraphTableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
+            ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
+            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierachyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->innerJoin('h', $this->nodeQueryBuilder->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->where('n.nodeaggregateid = (' . $subQueryBuilder->getSQL() . ')')
             ->andWhere('h.contentstreamid = :contentStreamId')
             ->setParameters([
@@ -251,10 +251,10 @@ final class ContentGraph implements ContentGraphInterface
     {
         $queryBuilder = $this->createQueryBuilder()
             ->select('dsp.dimensionspacepoint, h.dimensionspacepointhash')
-            ->from($this->nodeQueryBuilder->contentGraphTableNames->hierachyRelation(), 'h')
-            ->innerJoin('h', $this->nodeQueryBuilder->contentGraphTableNames->node(), 'n', 'n.relationanchorpoint = h.parentnodeanchor')
-            ->innerJoin('h', $this->nodeQueryBuilder->contentGraphTableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
-            ->innerJoin('n', $this->nodeQueryBuilder->contentGraphTableNames->hierachyRelation(), 'ph', 'ph.childnodeanchor = n.relationanchorpoint')
+            ->from($this->nodeQueryBuilder->tableNames->hierachyRelation(), 'h')
+            ->innerJoin('h', $this->nodeQueryBuilder->tableNames->node(), 'n', 'n.relationanchorpoint = h.parentnodeanchor')
+            ->innerJoin('h', $this->nodeQueryBuilder->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
+            ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierachyRelation(), 'ph', 'ph.childnodeanchor = n.relationanchorpoint')
             ->where('n.nodeaggregateid = :parentNodeAggregateId')
             ->andWhere('n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash')
             ->andWhere('ph.contentstreamid = :contentStreamId')
@@ -296,7 +296,7 @@ final class ContentGraph implements ContentGraphInterface
     {
         $queryBuilder = $this->createQueryBuilder()
             ->select('COUNT(*)')
-            ->from($this->nodeQueryBuilder->contentGraphTableNames->node());
+            ->from($this->nodeQueryBuilder->tableNames->node());
         $result = $queryBuilder->execute();
         if (!$result instanceof Result) {
             throw new \RuntimeException(sprintf('Failed to count nodes. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);

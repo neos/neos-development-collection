@@ -33,7 +33,7 @@ final class DimensionSpacePointsRepository
 
     public function __construct(
         private readonly Connection $databaseConnection,
-        private readonly ContentGraphTableNames $contentGraphTableNames
+        private readonly ContentGraphTableNames $tableNames
     ) {
     }
 
@@ -82,7 +82,7 @@ final class DimensionSpacePointsRepository
     private function writeDimensionSpacePoint(string $hash, string $dimensionSpacePointCoordinatesJson): void
     {
         $this->databaseConnection->executeStatement(
-            'INSERT IGNORE INTO ' . $this->contentGraphTableNames->dimensionSpacePoints() . ' (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
+            'INSERT IGNORE INTO ' . $this->tableNames->dimensionSpacePoints() . ' (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
             [
                 'dimensionspacepointhash' => $hash,
                 'dimensionspacepoint' => $dimensionSpacePointCoordinatesJson
@@ -97,7 +97,7 @@ final class DimensionSpacePointsRepository
 
     private function fillRuntimeCacheFromDatabase(): void
     {
-        $allDimensionSpacePoints = $this->databaseConnection->fetchAllAssociative('SELECT hash, dimensionspacepoint FROM ' . $this->contentGraphTableNames->dimensionSpacePoints());
+        $allDimensionSpacePoints = $this->databaseConnection->fetchAllAssociative('SELECT hash, dimensionspacepoint FROM ' . $this->tableNames->dimensionSpacePoints());
         foreach ($allDimensionSpacePoints as $dimensionSpacePointRow) {
             $this->dimensionspacePointsRuntimeCache[(string)$dimensionSpacePointRow['hash']] = (string)$dimensionSpacePointRow['dimensionspacepoint'];
         }

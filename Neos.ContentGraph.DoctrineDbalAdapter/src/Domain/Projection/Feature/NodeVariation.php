@@ -66,7 +66,7 @@ trait NodeVariation
                 $hierarchyRelation->assignNewChildNode(
                     $specializedNode->relationAnchorPoint,
                     $this->getDatabaseConnection(),
-                    $this->contentGraphTableNames
+                    $this->tableNames
                 );
                 unset($uncoveredDimensionSpacePoints[$hierarchyRelation->dimensionSpacePointHash]);
             }
@@ -118,7 +118,7 @@ trait NodeVariation
                         ),
                         NodeTags::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all()),
                     );
-                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
+                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNames);
                 }
             }
 
@@ -133,7 +133,7 @@ trait NodeVariation
                     $specializedNode->relationAnchorPoint,
                     null,
                     $this->getDatabaseConnection(),
-                    $this->contentGraphTableNames
+                    $this->tableNames
                 );
             }
 
@@ -187,7 +187,7 @@ trait NodeVariation
                 $existingIngoingHierarchyRelation->assignNewChildNode(
                     $generalizedNode->relationAnchorPoint,
                     $this->getDatabaseConnection(),
-                    $this->contentGraphTableNames
+                    $this->tableNames
                 );
                 $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
                     new DimensionSpacePointSet([
@@ -207,7 +207,7 @@ trait NodeVariation
                     $generalizedNode->relationAnchorPoint,
                     null,
                     $this->getDatabaseConnection(),
-                    $this->contentGraphTableNames
+                    $this->tableNames
                 );
             }
 
@@ -299,7 +299,7 @@ trait NodeVariation
                 $existingIngoingHierarchyRelation->assignNewChildNode(
                     $peerNode->relationAnchorPoint,
                     $this->getDatabaseConnection(),
-                    $this->contentGraphTableNames
+                    $this->tableNames
                 );
                 $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
                     new DimensionSpacePointSet([
@@ -319,7 +319,7 @@ trait NodeVariation
                     $peerNode->relationAnchorPoint,
                     null,
                     $this->getDatabaseConnection(),
-                    $this->contentGraphTableNames
+                    $this->tableNames
                 );
             }
 

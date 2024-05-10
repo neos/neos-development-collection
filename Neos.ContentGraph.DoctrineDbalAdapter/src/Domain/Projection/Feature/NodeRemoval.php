@@ -49,7 +49,7 @@ trait NodeRemoval
     protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(
         HierarchyRelation $ingoingRelation
     ): void {
-        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
+        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNames);
 
         foreach (
             $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNode(
@@ -65,11 +65,11 @@ trait NodeRemoval
         // also remove outbound reference relations
         $this->getDatabaseConnection()->executeStatement(
             '
-            DELETE n, r FROM ' . $this->contentGraphTableNames->node() . ' n
-                LEFT JOIN ' . $this->contentGraphTableNames->referenceRelation() . ' r
+            DELETE n, r FROM ' . $this->tableNames->node() . ' n
+                LEFT JOIN ' . $this->tableNames->referenceRelation() . ' r
                     ON r.nodeanchorpoint = n.relationanchorpoint
                 LEFT JOIN
-                    ' . $this->contentGraphTableNames->hierachyRelation() . ' h
+                    ' . $this->tableNames->hierachyRelation() . ' h
                         ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
