@@ -236,7 +236,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
             $node = NodeRecord::createNewInDatabase(
                 $this->getDatabaseConnection(),
-                $this->tableNamePrefix,
+                $this->contentGraphTableNames,
                 $event->nodeAggregateId,
                 $originDimensionSpacePoint->coordinates,
                 $originDimensionSpacePoint->hash,
@@ -372,7 +372,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     ): void {
         $node = NodeRecord::createNewInDatabase(
             $this->getDatabaseConnection(),
-            $this->tableNamePrefix,
+            $this->contentGraphTableNames,
             $nodeAggregateId,
             $originDimensionSpacePoint->jsonSerialize(),
             $originDimensionSpacePoint->hash,
@@ -781,7 +781,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     ): NodeRecord {
         return NodeRecord::createNewInDatabase(
             $this->getDatabaseConnection(),
-            $this->tableNamePrefix,
+            $this->contentGraphTableNames,
             $sourceNode->nodeAggregateId,
             $originDimensionSpacePoint->coordinates,
             $originDimensionSpacePoint->hash,
@@ -833,9 +833,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             // 1) fetch node, adjust properties, assign new Relation Anchor Point
             /** @var NodeRecord $originalNode The anchor point appears in a content stream, so there must be a node */
             $originalNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPoint);
-            $copiedNode = NodeRecord::createCopyFromNodeRecord($this->getDatabaseConnection(), $this->tableNamePrefix, $originalNode);
+            $copiedNode = NodeRecord::createCopyFromNodeRecord($this->getDatabaseConnection(), $this->contentGraphTableNames, $originalNode);
             $result = $operations($copiedNode);
-            $copiedNode->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $copiedNode->updateToDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node".
             // IMPORTANT: We need to reconnect BOTH the incoming and outgoing edges.
@@ -874,7 +874,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             }
 
             $result = $operations($node);
-            $node->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $node->updateToDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
         }
         return $result;
     }

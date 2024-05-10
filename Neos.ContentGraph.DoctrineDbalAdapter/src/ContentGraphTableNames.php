@@ -10,19 +10,14 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
  */
 final readonly class ContentGraphTableNames
 {
-    private function __construct(public string $tableNamePrefix)
-    {
+    private function __construct(
+        public string $tableNamePrefix
+    ) {
     }
 
     public static function create(ContentRepositoryId $contentRepositoryId): self
     {
         return new self(sprintf('cr_%s_p_graph', $contentRepositoryId->value));
-    }
-
-    /** @deprecated */
-    public static function withPrefix(string $tableNamePrefix): self
-    {
-        return new self($tableNamePrefix);
     }
 
     public function node(): string
