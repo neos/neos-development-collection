@@ -30,8 +30,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * The read only content graph for use by the {@see GraphProjector}. This is the class for low-level operations
- * within the projector, where implementation details of the graph structure are known.
+ * The read only content graph for use by the {@see DoctrineDbalContentGraphProjection}. This is the class for low-level operations
+ * within the projection, where implementation details of the graph structure are known.
  *
  * This is NO PUBLIC API in any way.
  *
@@ -112,35 +112,6 @@ class ProjectionContentGraph
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash
-            ]
-        )->fetchAssociative();
-
-        return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
-    }
-
-    /**
-     * @param ContentStreamId $contentStreamId
-     * @param NodeAggregateId $nodeAggregateId
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
-     * @return NodeRecord|null
-     * @throws \Exception
-     */
-    public function findNodeByIds(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?NodeRecord {
-        $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name, h.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint FROM ' . $this->tableNamePrefix . '_node n
- INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
- INNER JOIN ' . $this->tableNamePrefix . '_dimensionspacepoints dsp ON n.origindimensionspacepointhash = dsp.hash
- WHERE n.nodeaggregateid = :nodeAggregateId
- AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
- AND h.contentstreamid = :contentStreamId',
-            [
-                'contentStreamId' => $contentStreamId->value,
-                'nodeAggregateId' => $nodeAggregateId->value,
-                'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]
         )->fetchAssociative();
 
@@ -572,79 +543,6 @@ class ProjectionContentGraph
         }
 
         return $contentStreamIds;
-    }
-
-    /**
-     * Finds all descendant node aggregate ids, indexed by dimension space point hash
-     *
-     * @param ContentStreamId $contentStreamId
-     * @param NodeAggregateId $entryNodeAggregateId
-     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
-     * @return array|NodeAggregateId[][]
-     * @throws DBALException
-     */
-    public function findDescendantNodeAggregateIds(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $entryNodeAggregateId,
-        DimensionSpacePointSet $affectedDimensionSpacePoints
-    ): array {
-        $rows = $this->getDatabaseConnection()->executeQuery(
-            '
-            -- ProjectionContentGraph::findDescendantNodeAggregateIds
-
-            WITH RECURSIVE nestedNodes AS (
-                    -- --------------------------------
-                    -- INITIAL query: select the root nodes
-                    -- --------------------------------
-                    SELECT
-                       n.nodeaggregateid,
-                       n.relationanchorpoint,
-                       h.dimensionspacepointhash
-                    FROM
-                        ' . $this->tableNamePrefix . '_node n
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
-                        on h.childnodeanchor = n.relationanchorpoint
-                    WHERE n.nodeaggregateid = :entryNodeAggregateId
-                    AND h.contentstreamid = :contentStreamId
-                    AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
-
-                UNION
-                    -- --------------------------------
-                    -- RECURSIVE query: do one "child" query step
-                    -- --------------------------------
-                    SELECT
-                        c.nodeaggregateid,
-                        c.relationanchorpoint,
-                       h.dimensionspacepointhash
-                    FROM
-                        nestedNodes p
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
-                        on h.parentnodeanchor = p.relationanchorpoint
-                    INNER JOIN ' . $this->tableNamePrefix . '_node c
-                        on h.childnodeanchor = c.relationanchorpoint
-                    WHERE
-                        h.contentstreamid = :contentStreamId
-                        AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
-            )
-            select nodeaggregateid, dimensionspacepointhash from nestedNodes
-            ',
-            [
-                'entryNodeAggregateId' => $entryNodeAggregateId->value,
-                'contentStreamId' => $contentStreamId->value,
-                'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
-            ],
-            [
-                'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-            ]
-        )->fetchAllAssociative();
-
-        $nodeAggregateIds = [];
-        foreach ($rows as $row) {
-            $nodeAggregateIds[$row['nodeaggregateid']][$row['dimensionspacepointhash']]
-                = NodeAggregateId::fromString($row['nodeaggregateid']);
-        }
-
-        return $nodeAggregateIds;
     }
 
     /**
