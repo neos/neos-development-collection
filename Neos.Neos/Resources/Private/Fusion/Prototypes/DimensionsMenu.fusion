@@ -24,7 +24,7 @@ prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Fusion:Component) {
   @private {
     items = Neos.Neos:DimensionsMenuItems {
       node = ${props.node}
-      renderHiddenInIndex = ${props.renderHiddenInIndex}
+      renderHiddenInMenu = ${props.renderHiddenInMenu}
       dimension = ${props.dimension}
       presets = ${props.presets}
       includeAllPresets = ${props.includeAllPresets}

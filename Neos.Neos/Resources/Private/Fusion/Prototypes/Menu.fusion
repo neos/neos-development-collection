@@ -40,7 +40,7 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Component) {
       maximumLevels = ${props.maximumLevels}
       startingPoint = ${props.startingPoint}
       filter = ${props.filter}
-      renderHiddenInIndex = ${props.renderHiddenInIndex}
+      renderHiddenInMenu = ${props.renderHiddenInMenu}
       calculateItemStates = ${props.calculateItemStates}
       itemCollection = ${props.itemCollection}
     }

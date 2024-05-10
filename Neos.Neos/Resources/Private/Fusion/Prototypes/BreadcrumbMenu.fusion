@@ -21,7 +21,7 @@ prototype(Neos.Neos:BreadcrumbMenu) < prototype(Neos.Fusion:Component) {
     items = Neos.Neos:BreadcrumbMenuItems {
       node = ${props.node}
       maximumLevels = ${props.maximumLevels}
-      renderHiddenInIndex = ${props.renderHiddenInIndex}
+      renderHiddenInMenu = ${props.renderHiddenInMenu}
       calculateItemStates = ${props.calculateItemStates}
     }
   }
