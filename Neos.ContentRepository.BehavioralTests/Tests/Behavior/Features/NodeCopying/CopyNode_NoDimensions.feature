@@ -16,7 +16,7 @@ Feature: Copy nodes (without dimensions)
       | workspaceDescription           | "The live workspace"                   |
       | newContentStreamId     | "cs-identifier"                        |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                  |
       | nodeAggregateId     | "lady-eleonode-rootford"               |
@@ -54,7 +54,7 @@ Feature: Copy nodes (without dimensions)
     And the graph projection is fully up to date
 
   Scenario: Copy
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     # node to copy (currentNode): "sir-nodeward-nodington-iii"
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     When the command CopyNodesRecursively is executed, copying the current node aggregate with payload:

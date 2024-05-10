@@ -17,7 +17,7 @@ Feature: Node Property Conversion
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
@@ -35,7 +35,7 @@ Feature: Node Property Conversion
 
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key          | Value                          |
@@ -58,7 +58,7 @@ Feature: Node Property Conversion
       | propertyValues            | {"dateProperty": "Date:1997-07-19T19:20:30+05:00"} |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key          | Value                          |

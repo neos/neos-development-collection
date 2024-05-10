@@ -23,7 +23,7 @@ Feature: Publishing moved nodes without dimensions
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                  |
       | nodeAggregateId     | "lady-eleonode-rootford"               |
@@ -89,7 +89,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -129,7 +129,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -180,7 +180,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -224,7 +224,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings

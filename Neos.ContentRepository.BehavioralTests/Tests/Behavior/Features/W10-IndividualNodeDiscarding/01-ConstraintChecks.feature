@@ -30,7 +30,7 @@ Feature: Workspace discarding - complex chained functionality
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    And I am in workspace "live" and dimension space point {"language": "de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -84,5 +84,5 @@ Feature: Workspace discarding - complex chained functionality
       | workspaceName      | "user-ws"                                                                                                                                                                                                                                                                                                                                             |
       | newContentStreamId | "user-cs-id-yet-again-rebased"                                                                                                                                                                                                                                                                                                                                |
     And the graph projection is fully up to date
-    When I am in the active content stream of workspace "user-ws" and dimension space point {"language": "de"}
+    When I am in workspace "user-ws" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-id-yet-again-rebased;nody-mc-nodeface;{"language": "de"}

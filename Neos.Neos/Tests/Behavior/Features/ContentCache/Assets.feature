@@ -53,7 +53,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on asset changes
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "root"            |
@@ -260,7 +260,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on asset changes
 
   Scenario: ContentCache gets flushed for user workspace when a referenced asset in a property text has changed
     Given I have Fusion content cache enabled
-    And I am in the active content stream of workspace "user-test" and dimension space point {}
+    And I am in workspace "user-test" and dimension space point {}
     And the Fusion context node is a2
 
     And I execute the following Fusion code:
@@ -274,11 +274,11 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on asset changes
     cacheVerifier=first execution, text=Link to asset://an-asset-to-change.
     """
 
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     Then the asset "an-asset-to-change" has the title "First changed asset"
     And the ContentCacheFlusher flushes all collected tags
 
-    And I am in the active content stream of workspace "user-test" and dimension space point {}
+    And I am in workspace "user-test" and dimension space point {}
     Then the Fusion context node is a2
     And I execute the following Fusion code:
     """fusion

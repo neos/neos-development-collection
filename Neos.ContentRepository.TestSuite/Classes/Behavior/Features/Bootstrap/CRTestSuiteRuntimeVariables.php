@@ -112,20 +112,6 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
-     * @Given /^I am in the active content stream of workspace "([^"]*)"$/
-     * @throws \Exception
-     */
-    public function iAmInTheActiveContentStreamOfWorkspace(string $workspaceName): void
-    {
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
-        if ($workspace === null) {
-            throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
-        }
-        $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
-        $this->currentContentStreamId = $workspace->currentContentStreamId;
-    }
-
-    /**
      * @Given /^I am in dimension space point (.*)$/
      */
     public function iAmInDimensionSpacePoint(string $dimensionSpacePoint): void
@@ -149,16 +135,6 @@ trait CRTestSuiteRuntimeVariables
     public function iAmInContentStreamAndDimensionSpacePoint(string $contentStreamId, string $dimensionSpacePoint): void
     {
         $this->iAmInContentStream($contentStreamId);
-        $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
-    }
-
-    /**
-     * @Given /^I am in the active content stream of workspace "([^"]*)" and dimension space point (.*)$/
-     * @throws \Exception
-     */
-    public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint): void
-    {
-        $this->iAmInTheActiveContentStreamOfWorkspace($workspaceName);
         $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
     }
 

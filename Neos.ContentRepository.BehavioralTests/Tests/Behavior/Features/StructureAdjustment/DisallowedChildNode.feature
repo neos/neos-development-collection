@@ -31,7 +31,7 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
@@ -85,7 +85,7 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
 
@@ -121,7 +121,7 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
@@ -184,6 +184,6 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:SubDocument"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:SubDocument"
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "subdoc" to lead to no node
 
