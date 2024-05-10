@@ -52,7 +52,7 @@ final readonly class HierarchyRelation
             $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNames);
             $dimensionSpacePoints->insertDimensionSpacePoint($this->dimensionSpacePoint);
 
-            $databaseConnection->insert($tableNames->hierachyRelation(), [
+            $databaseConnection->insert($tableNames->hierarchyRelation(), [
                 'parentnodeanchor' => $this->parentNodeAnchor->value,
                 'childnodeanchor' => $this->childNodeAnchor->value,
                 'name' => $this->name?->value,
@@ -69,7 +69,7 @@ final readonly class HierarchyRelation
      */
     public function removeFromDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
-        $databaseConnection->delete($tableNames->hierachyRelation(), $this->getDatabaseId());
+        $databaseConnection->delete($tableNames->hierarchyRelation(), $this->getDatabaseId());
     }
 
     /**
@@ -82,7 +82,7 @@ final readonly class HierarchyRelation
         ContentGraphTableNames $tableNames
     ): void {
         $databaseConnection->update(
-            $tableNames->hierachyRelation(),
+            $tableNames->hierarchyRelation(),
             [
                 'childnodeanchor' => $childAnchorPoint->value
             ],
@@ -106,7 +106,7 @@ final readonly class HierarchyRelation
             $data['position'] = $position;
         }
         $databaseConnection->update(
-            $tableNames->hierachyRelation(),
+            $tableNames->hierarchyRelation(),
             $data,
             $this->getDatabaseId()
         );
@@ -115,7 +115,7 @@ final readonly class HierarchyRelation
     public function assignNewPosition(int $position, Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
         $databaseConnection->update(
-            $tableNames->hierachyRelation(),
+            $tableNames->hierarchyRelation(),
             [
                 'position' => $position
             ],

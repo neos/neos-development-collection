@@ -55,7 +55,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createHierarchyRelationTable(): Table
     {
-        $table = new Table($this->contentGraphTableNames->hierachyRelation(), [
+        $table = new Table($this->contentGraphTableNames->hierarchyRelation(), [
             (new Column('name', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
             (new Column('position', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotnull(true),

@@ -69,7 +69,7 @@ trait NodeRemoval
                 LEFT JOIN ' . $this->tableNames->referenceRelation() . ' r
                     ON r.nodeanchorpoint = n.relationanchorpoint
                 LEFT JOIN
-                    ' . $this->tableNames->hierachyRelation() . ' h
+                    ' . $this->tableNames->hierarchyRelation() . ' h
                         ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode

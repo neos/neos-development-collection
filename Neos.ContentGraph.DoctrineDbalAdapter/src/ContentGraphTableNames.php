@@ -25,7 +25,7 @@ final readonly class ContentGraphTableNames
         return $this->tableNamePrefix . '_node';
     }
 
-    public function hierachyRelation(): string
+    public function hierarchyRelation(): string
     {
         return $this->tableNamePrefix . '_hierarchyrelation';
     }

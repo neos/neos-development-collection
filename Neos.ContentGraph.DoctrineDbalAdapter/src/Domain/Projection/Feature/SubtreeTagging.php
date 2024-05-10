@@ -27,12 +27,12 @@ trait SubtreeTagging
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
         $this->getDatabaseConnection()->executeStatement('
-            UPDATE ' . $this->tableNames->hierachyRelation() . ' h
+            UPDATE ' . $this->tableNames->hierarchyRelation() . ' h
             SET h.subtreetags = JSON_INSERT(h.subtreetags, :tagPath, null)
             WHERE h.childnodeanchor IN (
               WITH RECURSIVE cte (id) AS (
                 SELECT ch.childnodeanchor
-                FROM ' . $this->tableNames->hierachyRelation() . ' ch
+                FROM ' . $this->tableNames->hierarchyRelation() . ' ch
                 INNER JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ch.parentnodeanchor
                 WHERE
                   n.nodeaggregateid = :nodeAggregateId
@@ -44,7 +44,7 @@ trait SubtreeTagging
                   dh.childnodeanchor
                 FROM
                   cte
-                  JOIN ' . $this->tableNames->hierachyRelation() . ' dh ON dh.parentnodeanchor = cte.id
+                  JOIN ' . $this->tableNames->hierarchyRelation() . ' dh ON dh.parentnodeanchor = cte.id
                 WHERE
                   NOT JSON_CONTAINS_PATH(dh.subtreetags, \'one\', :tagPath)
               )
@@ -62,7 +62,7 @@ trait SubtreeTagging
             ]);
 
         $this->getDatabaseConnection()->executeStatement('
-            UPDATE ' . $this->tableNames->hierachyRelation() . ' h
+            UPDATE ' . $this->tableNames->hierarchyRelation() . ' h
             INNER JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = h.childnodeanchor
             SET h.subtreetags = JSON_SET(h.subtreetags, :tagPath, true)
             WHERE
@@ -85,14 +85,14 @@ trait SubtreeTagging
     private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
         $this->getDatabaseConnection()->executeStatement('
-            UPDATE ' . $this->tableNames->hierachyRelation() . ' h
-            INNER JOIN ' . $this->tableNames->hierachyRelation() . ' ph ON ph.childnodeanchor = h.parentnodeanchor
+            UPDATE ' . $this->tableNames->hierarchyRelation() . ' h
+            INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' ph ON ph.childnodeanchor = h.parentnodeanchor
             SET h.subtreetags = IF((
               SELECT
                 JSON_CONTAINS_PATH(ph.subtreetags, \'one\', :tagPath)
               FROM
-                ' . $this->tableNames->hierachyRelation() . ' ph
-                INNER JOIN ' . $this->tableNames->hierachyRelation() . ' ch ON ch.parentnodeanchor = ph.childnodeanchor
+                ' . $this->tableNames->hierarchyRelation() . ' ph
+                INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' ch ON ch.parentnodeanchor = ph.childnodeanchor
                 INNER JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ch.childnodeanchor
               WHERE
                 n.nodeaggregateid = :nodeAggregateId
@@ -103,7 +103,7 @@ trait SubtreeTagging
             WHERE h.childnodeanchor IN (
               WITH RECURSIVE cte (id) AS (
                 SELECT ch.childnodeanchor
-                FROM ' . $this->tableNames->hierachyRelation() . ' ch
+                FROM ' . $this->tableNames->hierarchyRelation() . ' ch
                 INNER JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ch.childnodeanchor
                 WHERE
                   n.nodeaggregateid = :nodeAggregateId
@@ -114,7 +114,7 @@ trait SubtreeTagging
                   dh.childnodeanchor
                 FROM
                   cte
-                  JOIN ' . $this->tableNames->hierachyRelation() . ' dh ON dh.parentnodeanchor = cte.id
+                  JOIN ' . $this->tableNames->hierarchyRelation() . ' dh ON dh.parentnodeanchor = cte.id
                 WHERE
                   JSON_EXTRACT(dh.subtreetags, :tagPath) != TRUE
               )
@@ -138,13 +138,13 @@ trait SubtreeTagging
         DimensionSpacePoint $coveredDimensionSpacePoint
     ): void {
         $this->getDatabaseConnection()->executeStatement('
-            UPDATE ' . $this->tableNames->hierachyRelation() . ' h,
+            UPDATE ' . $this->tableNames->hierarchyRelation() . ' h,
             (
               WITH RECURSIVE cte AS (
                 SELECT
                   JSON_KEYS(th.subtreetags) subtreeTagsToInherit, th.childnodeanchor
                 FROM
-                  ' . $this->tableNames->hierachyRelation() . ' th
+                  ' . $this->tableNames->hierarchyRelation() . ' th
                   INNER JOIN ' . $this->tableNames->node() . ' tn ON tn.relationanchorpoint = th.childnodeanchor
                 WHERE
                   tn.nodeaggregateid = :newParentNodeAggregateId
@@ -162,7 +162,7 @@ trait SubtreeTagging
                     dh.childnodeanchor
                 FROM
                   cte
-                JOIN ' . $this->tableNames->hierachyRelation() . ' dh
+                JOIN ' . $this->tableNames->hierarchyRelation() . ' dh
                     ON
                         dh.parentnodeanchor = cte.childnodeanchor
                         AND dh.contentstreamid = :contentStreamId
@@ -196,7 +196,7 @@ trait SubtreeTagging
             return NodeTags::createEmpty();
         }
         $subtreeTagsJson = $this->getDatabaseConnection()->fetchOne('
-                SELECT h.subtreetags FROM ' . $this->tableNames->hierachyRelation() . ' h
+                SELECT h.subtreetags FROM ' . $this->tableNames->hierarchyRelation() . ' h
                 WHERE
                   h.childnodeanchor = :parentNodeAnchorPoint
                   AND h.contentstreamid = :contentStreamId
