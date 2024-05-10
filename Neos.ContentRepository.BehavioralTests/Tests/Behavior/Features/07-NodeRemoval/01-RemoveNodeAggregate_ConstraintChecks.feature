@@ -44,7 +44,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language":"de"}        |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to remove a node aggregate in a workspace whose content stream is closed
     When the command CloseContentStream is executed with payload:

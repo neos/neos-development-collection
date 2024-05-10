@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -55,6 +56,9 @@ final class CommandHandlingDependencies
         return $this->contentRepository->getContentStreamFinder();
     }
 
+    /**
+     * @throws WorkspaceDoesNotExist if the workspace does not exist
+     */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
         if (isset($this->overridenContentGraphInstances[$workspaceName->value])) {

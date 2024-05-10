@@ -77,7 +77,7 @@ Feature: Constraint checks on SetNodeReferences
       | sourceNodeAggregateId | "source-nodandaise"             |
       | referenceName                 | "referenceProperty"             |
       | references                    | [{"target":"anthony-destinode"}] |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet" with code 1714839710
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist" with code 1513924741
 
   # checks for sourceNodeAggregateId
   Scenario: Try to reference nodes in a non-existent node aggregate
