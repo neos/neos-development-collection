@@ -126,18 +126,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         CreateWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        try {
-            $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-            $contentStreamId = $contentGraph->getContentStreamId();
-        } catch (ContentStreamDoesNotExistYet $e) {
-            // Desired outcome
-        }
-
-        isset($contentStreamId)
-        && throw new WorkspaceAlreadyExists(sprintf(
-            'The workspace %s already exists',
-            $command->workspaceName->value
-        ), 1505830958921);
+        $this->requireWorkspaceToNotExist($command->workspaceName, $commandHandlingDependencies);
 
         $baseWorkspace = $commandHandlingDependencies->getWorkspaceFinder()->findOneByName($command->baseWorkspaceName);
         if ($baseWorkspace === null) {
@@ -209,18 +198,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         CreateRootWorkspace $command,
         CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        try {
-            $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-            $contentStreamId = $contentGraph->getContentStreamId();
-        } catch (ContentStreamDoesNotExistYet $e) {
-            // Desired outcome
-        }
-
-        isset($contentStreamId)
-        && throw new WorkspaceAlreadyExists(sprintf(
-            'The workspace %s already exists',
-            $command->workspaceName->value
-        ), 1505848624450);
+        $this->requireWorkspaceToNotExist($command->workspaceName, $commandHandlingDependencies);
 
         $newContentStreamId = $command->newContentStreamId;
         $commandHandlingDependencies->handle(
@@ -915,6 +893,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $events,
             ExpectedVersion::STREAM_EXISTS()
         );
+    }
+
+    private function requireWorkspaceToNotExist(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): void
+    {
+        try {
+            $commandHandlingDependencies->getContentGraph($workspaceName);
+        } catch (WorkspaceDoesNotExist) {
+            // Desired outcome
+            return;
+        }
+
+        throw new WorkspaceAlreadyExists(sprintf(
+            'The workspace %s already exists',
+            $workspaceName->value
+        ), 1715341085);
     }
 
     /**

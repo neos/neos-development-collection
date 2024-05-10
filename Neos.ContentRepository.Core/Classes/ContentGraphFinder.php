@@ -45,8 +45,7 @@ final class ContentGraphFinder implements ProjectionStateInterface
      * The default way to get a content graph to operate on.
      * The currently assigned ContentStreamId for the given Workspace is resolved internally.
      *
-     * @throws WorkspaceDoesNotExist if there is no workspace with the provided name
-     * @throws ContentStreamDoesNotExistYet if the provided workspace does not resolve to an existing content stream
+     * @throws WorkspaceDoesNotExist if the provided workspace does not resolve to an existing content stream
      * @see ContentRepository::getContentGraph()
      */
     public function getByWorkspaceName(WorkspaceName $workspaceName): ContentGraphInterface

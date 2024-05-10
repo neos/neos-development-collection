@@ -38,6 +38,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\EventStoreInterface;
@@ -238,6 +239,9 @@ final class ContentRepository
         return $this->nodeTypeManager;
     }
 
+    /**
+     * @throws WorkspaceDoesNotExist if the workspace does not exist
+     */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
         return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);

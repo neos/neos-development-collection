@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\ContentGraphFactoryInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -58,7 +58,7 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
         )->fetchAssociative();
 
         if ($row === false) {
-            throw new ContentStreamDoesNotExistYet('The workspace "' . $workspaceName->value . '" does not exist.', 1714839710);
+            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
 
         return $this->buildForWorkspaceAndContentStream($workspaceName, ContentStreamId::fromString($row['currentcontentstreamid']));
