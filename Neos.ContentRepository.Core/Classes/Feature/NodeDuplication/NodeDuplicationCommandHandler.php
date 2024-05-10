@@ -54,11 +54,6 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
     ) {
     }
 
-    protected function getContentGraph(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): ContentGraphInterface
-    {
-        return $commandHandlingDependencies->getContentGraph($workspaceName);
-    }
-
     protected function getNodeTypeManager(): NodeTypeManager
     {
         return $this->nodeTypeManager;

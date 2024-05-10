@@ -254,10 +254,4 @@ class TetheredNodeAdjustments
             ExpectedVersion::ANY()
         );
     }
-
-    protected function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
-    {
-        return $this->contentRepository->getContentGraph($workspaceName);
-    }
-
 }
