@@ -28,11 +28,6 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
  */
 abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 {
-    public const STATE_NORMAL = 'normal';
-    public const STATE_CURRENT = 'current';
-    public const STATE_ACTIVE = 'active';
-    public const STATE_ABSENT = 'absent';
-
     /**
      * An internal cache for the built menu items array.
      *
