@@ -65,8 +65,6 @@ class ContentCacheFlusher
     /**
      * Main entry point to *directly* flush the caches of a given NodeAggregate
      *
-     * FIXME workspaceName instead of contentStreamId
-     *
      * @param ContentRepository $contentRepository
      * @param ContentStreamId $contentStreamId
      * @param NodeAggregateId $nodeAggregateId

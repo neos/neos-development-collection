@@ -134,7 +134,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         $this->requireContentStreamToExist($command->sourceContentStreamId, $commandHandlingDependencies);
         $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId, $commandHandlingDependencies);
 
-        // TODO: This is not great
         $sourceContentStreamVersion = $commandHandlingDependencies->getContentStreamFinder()->findVersionForContentStream($command->sourceContentStreamId);
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->newContentStreamId)
