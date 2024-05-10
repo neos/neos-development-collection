@@ -53,7 +53,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
         return match ($command::class) {
-            CreateContentStream::class => $this->handleCreateContentStream($command),
+            CreateContentStream::class => $this->handleCreateContentStream($command, $commandHandlingDependencies),
             CloseContentStream::class => $this->handleCloseContentStream($command, $commandHandlingDependencies),
             ReopenContentStream::class => $this->handleReopenContentStream($command, $commandHandlingDependencies),
             ForkContentStream::class => $this->handleForkContentStream($command, $commandHandlingDependencies),
@@ -66,8 +66,10 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
      * @throws ContentStreamAlreadyExists
      */
     private function handleCreateContentStream(
-        CreateContentStream $command
+        CreateContentStream $command,
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
+        $this->requireContentStreamToNotExistYet($command->contentStreamId, $commandHandlingDependencies);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
             ->getEventStreamName();
 
@@ -133,6 +135,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->sourceContentStreamId, $commandHandlingDependencies);
         $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId, $commandHandlingDependencies);
+        $this->requireContentStreamToNotExistYet($command->newContentStreamId, $commandHandlingDependencies);
 
         $sourceContentStreamVersion = $commandHandlingDependencies->getContentStreamFinder()->findVersionForContentStream($command->sourceContentStreamId);
 
@@ -177,6 +180,24 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 
     /**
      * @param ContentStreamId $contentStreamId
+     * @param CommandHandlingDependencies $commandHandlingDependencies
+     * @throws ContentStreamAlreadyExists
+     */
+    protected function requireContentStreamToNotExistYet(
+        ContentStreamId $contentStreamId,
+        CommandHandlingDependencies $commandHandlingDependencies
+    ): void {
+        if ($commandHandlingDependencies->getContentStreamFinder()->hasContentStream($contentStreamId)) {
+            throw new ContentStreamAlreadyExists(
+                'Content stream "' . $contentStreamId->value . '" already exists.',
+                1521386345
+            );
+        }
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId
+     * @param CommandHandlingDependencies $commandHandlingDependencies
      * @throws ContentStreamDoesNotExistYet
      */
     protected function requireContentStreamToExist(
