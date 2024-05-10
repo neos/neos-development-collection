@@ -72,13 +72,11 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 
     /**
      * Should nodes that have "hiddenInMenu" set still be visible in this menu.
-     *
-     * @return boolean
      */
-    public function getRenderHiddenInMenu()
+    public function getRenderHiddenInMenu(): bool
     {
         if ($this->renderHiddenInMenu === null) {
-            $this->renderHiddenInMenu = (bool)($this->fusionValue('renderHiddenInMenu') ?? $this->fusionValue('renderHiddenInIndex'));
+            $this->renderHiddenInMenu = (bool)$this->fusionValue('renderHiddenInMenu');
         }
 
         return $this->renderHiddenInMenu;
