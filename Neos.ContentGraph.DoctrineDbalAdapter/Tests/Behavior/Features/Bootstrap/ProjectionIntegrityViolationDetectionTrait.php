@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstra
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
@@ -54,9 +54,9 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     protected function getTableNamePrefix(): string
     {
-        return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
+        return ContentGraphTableNames::create(
             $this->currentContentRepository->id
-        );
+        )->tableNamePrefix;
     }
 
     public function setupDbalGraphAdapterIntegrityViolationTrait()

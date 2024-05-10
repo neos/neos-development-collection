@@ -17,12 +17,9 @@ class DoctrineDbalContentGraphSchemaBuilder
 {
     private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
 
-    private readonly ContentGraphTableNames $contentGraphTableNames;
-
     public function __construct(
-        string $tableNamePrefix
+        private readonly ContentGraphTableNames $contentGraphTableNames
     ) {
-        $this->contentGraphTableNames = ContentGraphTableNames::withPrefix($tableNamePrefix);
     }
 
     public function buildSchema(AbstractSchemaManager $schemaManager): Schema
@@ -58,7 +55,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createHierarchyRelationTable(): Table
     {
-        $table = new Table($this->contentGraphTableNames->hierachyRelation(), [
+        $table = new Table($this->contentGraphTableNames->hierarchyRelation(), [
             (new Column('name', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
             (new Column('position', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotnull(true),

@@ -33,7 +33,7 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
         private NodeFactory $nodeFactory,
         private ContentRepositoryId $contentRepositoryId,
         private NodeTypeManager $nodeTypeManager,
-        private string $tableNamePrefix
+        private ContentGraphTableNames $tableNames
     ) {
     }
 
@@ -66,6 +66,6 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
 
     public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraph
     {
-        return new ContentGraph($this->client, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNamePrefix, $workspaceName, $contentStreamId);
+        return new ContentGraph($this->client, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $contentStreamId);
     }
 }

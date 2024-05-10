@@ -31,13 +31,10 @@ final class DimensionSpacePointsRepository
      */
     private array $dimensionspacePointsRuntimeCache = [];
 
-    private readonly ContentGraphTableNames $contentGraphTableNames;
-
     public function __construct(
         private readonly Connection $databaseConnection,
-        string $tableNamePrefix
+        private readonly ContentGraphTableNames $tableNames
     ) {
-        $this->contentGraphTableNames = ContentGraphTableNames::withPrefix($tableNamePrefix);
     }
 
     public function insertDimensionSpacePoint(AbstractDimensionSpacePoint $dimensionSpacePoint): void
@@ -85,7 +82,7 @@ final class DimensionSpacePointsRepository
     private function writeDimensionSpacePoint(string $hash, string $dimensionSpacePointCoordinatesJson): void
     {
         $this->databaseConnection->executeStatement(
-            'INSERT IGNORE INTO ' . $this->contentGraphTableNames->dimensionSpacePoints() . ' (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
+            'INSERT IGNORE INTO ' . $this->tableNames->dimensionSpacePoints() . ' (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
             [
                 'dimensionspacepointhash' => $hash,
                 'dimensionspacepoint' => $dimensionSpacePointCoordinatesJson
@@ -100,7 +97,7 @@ final class DimensionSpacePointsRepository
 
     private function fillRuntimeCacheFromDatabase(): void
     {
-        $allDimensionSpacePoints = $this->databaseConnection->fetchAllAssociative('SELECT hash, dimensionspacepoint FROM ' . $this->contentGraphTableNames->dimensionSpacePoints());
+        $allDimensionSpacePoints = $this->databaseConnection->fetchAllAssociative('SELECT hash, dimensionspacepoint FROM ' . $this->tableNames->dimensionSpacePoints());
         foreach ($allDimensionSpacePoints as $dimensionSpacePointRow) {
             $this->dimensionspacePointsRuntimeCache[(string)$dimensionSpacePointRow['hash']] = (string)$dimensionSpacePointRow['dimensionspacepoint'];
         }
