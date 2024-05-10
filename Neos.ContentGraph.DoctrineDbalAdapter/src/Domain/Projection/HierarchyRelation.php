@@ -44,15 +44,15 @@ final readonly class HierarchyRelation
     /**
      * @param Connection $databaseConnection
      */
-    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
+    public function addToDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
         $databaseConnection->transactional(function ($databaseConnection) use (
-            $tableNamePrefix
+            $tableNames
         ) {
-            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, ContentGraphTableNames::withPrefix($tableNamePrefix));
+            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNames);
             $dimensionSpacePoints->insertDimensionSpacePoint($this->dimensionSpacePoint);
 
-            $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
+            $databaseConnection->insert($tableNames->hierachyRelation(), [
                 'parentnodeanchor' => $this->parentNodeAnchor->value,
                 'childnodeanchor' => $this->childNodeAnchor->value,
                 'name' => $this->name?->value,
@@ -67,9 +67,9 @@ final readonly class HierarchyRelation
     /**
      * @param Connection $databaseConnection
      */
-    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
+    public function removeFromDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
-        $databaseConnection->delete($tableNamePrefix . '_hierarchyrelation', $this->getDatabaseId());
+        $databaseConnection->delete($tableNames->hierachyRelation(), $this->getDatabaseId());
     }
 
     /**
@@ -79,10 +79,10 @@ final readonly class HierarchyRelation
     public function assignNewChildNode(
         NodeRelationAnchorPoint $childAnchorPoint,
         Connection $databaseConnection,
-        string $tableNamePrefix
+        ContentGraphTableNames $tableNames
     ): void {
         $databaseConnection->update(
-            $tableNamePrefix . '_hierarchyrelation',
+            $tableNames->hierachyRelation(),
             [
                 'childnodeanchor' => $childAnchorPoint->value
             ],
@@ -97,7 +97,7 @@ final readonly class HierarchyRelation
         NodeRelationAnchorPoint $parentAnchorPoint,
         ?int $position,
         Connection $databaseConnection,
-        string $tableNamePrefix
+        ContentGraphTableNames $tableNames
     ): void {
         $data = [
             'parentnodeanchor' => $parentAnchorPoint->value
@@ -106,16 +106,16 @@ final readonly class HierarchyRelation
             $data['position'] = $position;
         }
         $databaseConnection->update(
-            $tableNamePrefix . '_hierarchyrelation',
+            $tableNames->hierachyRelation(),
             $data,
             $this->getDatabaseId()
         );
     }
 
-    public function assignNewPosition(int $position, Connection $databaseConnection, string $tableNamePrefix): void
+    public function assignNewPosition(int $position, Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
         $databaseConnection->update(
-            $tableNamePrefix . '_hierarchyrelation',
+            $tableNames->hierachyRelation(),
             [
                 'position' => $position
             ],

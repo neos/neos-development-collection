@@ -464,7 +464,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                 $inheritedSubtreeTags,
             );
 
-            $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
         }
     }
 
@@ -551,7 +551,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
                 $position = $offset;
                 $offset += self::RELATION_DEFAULT_OFFSET;
             }
-            $relation->assignNewPosition($offset, $this->getDatabaseConnection(), $this->tableNamePrefix);
+            $relation->assignNewPosition($offset, $this->getDatabaseConnection(), $this->contentGraphTableNames);
         }
 
         return $position;
@@ -766,7 +766,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             ),
             $inheritedSubtreeTags,
         );
-        $copy->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+        $copy->addToDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
 
         return $copy;
     }

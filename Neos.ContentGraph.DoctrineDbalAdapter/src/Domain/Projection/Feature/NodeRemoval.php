@@ -20,8 +20,6 @@ trait NodeRemoval
 {
     abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
 
-    abstract protected function getTableNamePrefix(): string;
-
     protected LoggerInterface $systemLogger;
 
     /**
@@ -51,7 +49,7 @@ trait NodeRemoval
     protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(
         HierarchyRelation $ingoingRelation
     ): void {
-        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection(), $this->contentGraphTableNames);
 
         foreach (
             $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNode(
