@@ -986,7 +986,7 @@ The following fusion properties are passed over to :ref:`Neos_Neos__DimensionsMe
 :dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
-:renderHiddenInMenu: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
+:renderHiddenInMenu: (boolean, default **true**) Whether nodes with the property ``hiddenInMenu`` should be rendered
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 .. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuItems` which
