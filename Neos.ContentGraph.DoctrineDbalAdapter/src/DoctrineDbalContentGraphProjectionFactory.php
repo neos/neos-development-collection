@@ -58,7 +58,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
                 $this->dbalClient,
                 new ProjectionContentGraph(
                     $this->dbalClient,
-                    $tableNames->tableNamePrefix
+                    $tableNames
                 ),
                 $tableNames,
                 $dimensionSpacePointsRepository,
