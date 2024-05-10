@@ -27,7 +27,7 @@ class DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory implements 
                 $this->dbalClient,
                 ContentGraphTableNames::create(
                     $serviceFactoryDependencies->contentRepositoryId
-                )->tableNamePrefix
+                )
             )
         );
     }
