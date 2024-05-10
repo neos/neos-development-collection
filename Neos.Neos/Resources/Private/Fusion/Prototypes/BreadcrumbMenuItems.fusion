@@ -7,7 +7,7 @@ prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Fusion:Component) {
   maximumLevels = 0
 
   # (boolean) Whether nodes with the property ``hiddenInMenu`` should be rendered (the current documentNode is always included), defaults to ``false``.
-  renderHiddenInIndex = true
+  renderHiddenInMenu = true
 
   # (boolean) activate the *expensive* calculation of item states defaults to ``false``
   calculateItemStates = false
@@ -24,7 +24,7 @@ prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Fusion:Component) {
     currentItem = Neos.Neos:MenuItems {
       node = ${props.node}
       calculateItemStates = ${props.calculateItemStates}
-      renderHiddenInIndex = true
+      renderHiddenInMenu = true
       maximumLevels = ${props.maximumLevels}
       itemCollection = ${[documentNode]}
     }

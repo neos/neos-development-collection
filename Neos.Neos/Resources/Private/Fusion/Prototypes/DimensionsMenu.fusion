@@ -7,7 +7,7 @@ prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Fusion:Component) {
   attributes = Neos.Fusion:DataStructure
 
   # (boolean, default **true**) Whether nodes with the property ``hiddenInMenu`` should be rendered
-  renderHiddenInIndex = true
+  renderHiddenInMenu = true
 
   # (optional, string): name of the dimension which this menu should be based on. Example: "language".
   dimension = null

@@ -5,7 +5,7 @@ prototype(Neos.Neos:DimensionsMenuItems) {
   node = ${documentNode}
 
   # (boolean, default **true**) Whether nodes with the property ``hiddenInMenu`` should be rendered
-  renderHiddenInIndex = true
+  renderHiddenInMenu = true
 
   # (optional, string): name of the dimension which this menu should be based on. Example: "language".
   dimension = null

@@ -469,13 +469,13 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
     """
 
-  Scenario: MenuItems (startingPoint a1c, renderHiddenInIndex)
+  Scenario: MenuItems (startingPoint a1c, renderHiddenInMenu)
     When I execute the following Fusion code:
     """fusion
     test = Neos.Neos:Test.Menu {
       items = Neos.Neos:MenuItems {
         startingPoint = ${q(node).find('#a1c').get(0)}
-        renderHiddenInIndex = true
+        renderHiddenInMenu = true
       }
     }
     """

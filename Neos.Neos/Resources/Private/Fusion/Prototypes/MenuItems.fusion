@@ -20,7 +20,7 @@ prototype(Neos.Neos:MenuItems) {
   filter = 'Neos.Neos:Document'
 
   # (boolean) Whether nodes with the property ``hiddenInMenu`` should be rendered, defaults to ``false``
-  renderHiddenInIndex = false
+  renderHiddenInMenu = false
 
   # (boolean) activate the *expensive* calculation of item states defaults to ``false``.
   calculateItemStates = false
