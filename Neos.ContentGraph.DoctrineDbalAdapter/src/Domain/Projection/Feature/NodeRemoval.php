@@ -65,11 +65,11 @@ trait NodeRemoval
         // also remove outbound reference relations
         $this->getDatabaseConnection()->executeStatement(
             '
-            DELETE n, r FROM ' . $this->getTableNamePrefix() . '_node n
-                LEFT JOIN ' . $this->getTableNamePrefix() . '_referencerelation r
+            DELETE n, r FROM ' . $this->contentGraphTableNames->node() . ' n
+                LEFT JOIN ' . $this->contentGraphTableNames->referenceRelation() . ' r
                     ON r.nodeanchorpoint = n.relationanchorpoint
                 LEFT JOIN
-                    ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                    ' . $this->contentGraphTableNames->hierachyRelation() . ' h
                         ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
