@@ -103,7 +103,12 @@ trait CRTestSuiteRuntimeVariables
      */
     public function iAmInWorkspace(string $workspaceName): void
     {
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
+        if ($workspace === null) {
+            throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
+        }
         $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
+        $this->currentContentStreamId = $workspace->currentContentStreamId;
     }
 
     /**
@@ -126,6 +131,16 @@ trait CRTestSuiteRuntimeVariables
     public function iAmInDimensionSpacePoint(string $dimensionSpacePoint): void
     {
         $this->currentDimensionSpacePoint = DimensionSpacePoint::fromJsonString($dimensionSpacePoint);
+    }
+
+    /**
+     * @Given /^I am in workspace "([^"]*)" and dimension space point (.*)$/
+     * @throws \Exception
+     */
+    public function iAmInWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint): void
+    {
+        $this->iAmInWorkspace($workspaceName);
+        $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
     }
 
     /**
@@ -164,6 +179,7 @@ trait CRTestSuiteRuntimeVariables
         $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
         $contentGraphFinder->forgetInstances();
         if (isset($this->currentContentStreamId)) {
+            // This must still be supported for low level tests, e.g. for content stream forking
             return $contentGraphFinder->getByWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         }
 
