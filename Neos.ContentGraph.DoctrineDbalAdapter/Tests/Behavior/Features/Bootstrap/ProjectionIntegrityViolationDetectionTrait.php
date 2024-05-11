@@ -133,8 +133,8 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
         $relationAnchorPoint = $this->dbalClient->getConnection()->executeQuery(
-            'SELECT n.relationanchorpoint FROM ' . $this->getTableNamePrefix() . '_node n
-                JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+            'SELECT n.relationanchorpoint FROM ' . $this->tableNames()->node() . ' n
+                JOIN ' . $this->tableNames()->hierarchyRelation() . ' h ON h.childnodeanchor = n.relationanchorpoint
                 WHERE h.contentstreamid = :contentStreamId
                 AND n.nodeaggregateId = :nodeAggregateId
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash',
