@@ -42,7 +42,7 @@ final readonly class NodeQueryBuilder
     public function buildBasicNodeAggregateQuery(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.contentstreamid, h.name, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->select('n.*, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'n')
             ->innerJoin('n', $this->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
@@ -54,7 +54,7 @@ final readonly class NodeQueryBuilder
     public function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId): QueryBuilder
     {
         return $this->createQueryBuilder()
-            ->select('cn.*, ch.name, ch.contentstreamid, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->select('cn.*, ch.contentstreamid, ch.subtreetags, cdsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'pn')
             ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ph', 'ph.childnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = pn.relationanchorpoint')
@@ -86,7 +86,7 @@ final readonly class NodeQueryBuilder
         return $queryBuilder;
     }
 
-    public function buildBasicNodeQuery(ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint, string $nodeTableAlias = 'n', string $select = 'n.*, h.name, h.subtreetags'): QueryBuilder
+    public function buildBasicNodeQuery(ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint, string $nodeTableAlias = 'n', string $select = 'n.*, h.subtreetags'): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select($select)
@@ -99,7 +99,7 @@ final readonly class NodeQueryBuilder
     public function buildBasicChildNodesQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
     {
         return $this->createQueryBuilder()
-            ->select('n.*, h.name, h.subtreetags')
+            ->select('n.*, h.subtreetags')
             ->from($this->tableNames->node(), 'pn')
             ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'n', 'h.childnodeanchor = n.relationanchorpoint')
@@ -111,7 +111,7 @@ final readonly class NodeQueryBuilder
     public function buildBasicParentNodeQuery(NodeAggregateId $childNodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): QueryBuilder
     {
         return $this->createQueryBuilder()
-            ->select('pn.*, ch.name, ch.subtreetags')
+            ->select('pn.*, ch.subtreetags')
             ->from($this->tableNames->node(), 'pn')
             ->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
