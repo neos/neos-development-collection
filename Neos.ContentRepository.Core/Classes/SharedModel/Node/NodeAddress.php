@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *          $nodeAddress->dimensionSpacePoint,
  *          VisibilityConstraints::withoutRestrictions()
  *      );
- *      $node = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+ *      $node = $subgraph->findNodeById($nodeAddress->aggregateId);
  *
  * @api
  */
@@ -29,7 +29,7 @@ final readonly class NodeAddress implements \JsonSerializable
         public ContentRepositoryId $contentRepositoryId,
         public WorkspaceName $workspaceName,
         public DimensionSpacePoint $dimensionSpacePoint,
-        public NodeAggregateId $nodeAggregateId,
+        public NodeAggregateId $aggregateId,
     ) {
     }
 
@@ -37,9 +37,9 @@ final readonly class NodeAddress implements \JsonSerializable
         ContentRepositoryId $contentRepositoryId,
         WorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateId,
+        NodeAggregateId $aggregateId,
     ): self {
-        return new self($contentRepositoryId, $workspaceName, $dimensionSpacePoint, $nodeAggregateId);
+        return new self($contentRepositoryId, $workspaceName, $dimensionSpacePoint, $aggregateId);
     }
 
     /**
@@ -51,7 +51,7 @@ final readonly class NodeAddress implements \JsonSerializable
             ContentRepositoryId::fromString($array['contentRepositoryId']),
             WorkspaceName::fromString($array['workspaceName']),
             DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
-            NodeAggregateId::fromString($array['nodeAggregateId'])
+            NodeAggregateId::fromString($array['aggregateId'])
         );
     }
 
@@ -60,9 +60,9 @@ final readonly class NodeAddress implements \JsonSerializable
         return self::fromArray(\json_decode($jsonString, true, JSON_THROW_ON_ERROR));
     }
 
-    public function withNodeAggregateId(NodeAggregateId $nodeAggregateId): self
+    public function withAggregateId(NodeAggregateId $aggregateId): self
     {
-        return new self($this->contentRepositoryId, $this->workspaceName, $this->dimensionSpacePoint, $nodeAggregateId);
+        return new self($this->contentRepositoryId, $this->workspaceName, $this->dimensionSpacePoint, $aggregateId);
     }
 
     public function equals(self $other): bool
@@ -70,7 +70,7 @@ final readonly class NodeAddress implements \JsonSerializable
         return $this->contentRepositoryId->equals($other->contentRepositoryId)
             && $this->workspaceName->equals($other->workspaceName)
             && $this->dimensionSpacePoint->equals($other->dimensionSpacePoint)
-            && $this->nodeAggregateId->equals($other->nodeAggregateId);
+            && $this->aggregateId->equals($other->aggregateId);
     }
 
     public function toJson(): string
@@ -84,7 +84,7 @@ final readonly class NodeAddress implements \JsonSerializable
             'contentRepositoryId' => $this->contentRepositoryId,
             'workspaceName' => $this->workspaceName,
             'dimensionSpacePoint' => $this->dimensionSpacePoint,
-            'nodeAggregateId' => $this->nodeAggregateId
+            'aggregateId' => $this->aggregateId
         ];
     }
 }
