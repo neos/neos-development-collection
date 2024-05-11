@@ -41,7 +41,6 @@ final class NodeRecord
         public SerializedPropertyValues $properties,
         public NodeTypeName $nodeTypeName,
         public NodeAggregateClassification $classification,
-        /** Transient node name to store a node name after fetching a node with hierarchy (not always available) */
         public ?NodeName $nodeName,
         public Timestamps $timestamps,
     ) {
