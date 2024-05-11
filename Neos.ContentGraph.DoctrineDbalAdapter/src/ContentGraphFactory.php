@@ -39,16 +39,9 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
 
     public function buildForWorkspace(WorkspaceName $workspaceName): ContentGraph
     {
-        // FIXME: Should be part of this projection, this is forbidden
-        $tableName = strtolower(sprintf(
-            'cr_%s_p_%s',
-            $this->contentRepositoryId->value,
-            'workspace'
-        ));
-
         $row = $this->client->getConnection()->executeQuery(
             '
-                SELECT * FROM ' . $tableName . '
+                SELECT * FROM ' . $this->tableNames->workspaces() . '
                 WHERE workspaceName = :workspaceName
                 LIMIT 1
             ',
