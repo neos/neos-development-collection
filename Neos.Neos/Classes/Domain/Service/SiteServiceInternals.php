@@ -30,7 +30,6 @@ use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteNodeName;
@@ -96,10 +95,11 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             throw SiteNodeTypeIsInvalid::becauseItIsNotOfTypeSite(NodeTypeName::fromString($nodeTypeName));
         }
 
-        $siteNodeAggregate = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->findChildNodeAggregateByName(
-            $sitesNodeIdentifier,
-            $site->getNodeName()->toNodeName(),
-        );
+        $siteNodeAggregate = $this->contentRepository->getContentGraph($liveWorkspace->workspaceName)
+            ->findChildNodeAggregateByName(
+                $sitesNodeIdentifier,
+                $site->getNodeName()->toNodeName(),
+            );
         if ($siteNodeAggregate instanceof NodeAggregate) {
             // Site node already exists
             return;
