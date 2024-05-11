@@ -350,10 +350,10 @@ class LinkingService
         $this->lastLinkedNode = $node;
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->address->contentRepositoryId
         );
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $node->subgraphIdentity->contentStreamId
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+            $node->address->workspaceName
         );
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
