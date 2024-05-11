@@ -41,7 +41,6 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         );
 
         $this->tetheredNodeAdjustments = new TetheredNodeAdjustments(
-            $contentRepository,
             $projectedNodeIterator,
             $nodeTypeManager,
             $interDimensionalVariationGraph,
