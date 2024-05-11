@@ -204,7 +204,7 @@ class SitesController extends AbstractModuleController
             }
 
             foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
-                $siteNodeAggregate = $contentRepository->getContentGraph()->findChildNodeAggregateByName(
+                $siteNodeAggregate = $contentRepository->getContentGraph(WorkspaceName::forLive())->findChildNodeAggregateByName(
                     $sitesNode->nodeAggregateId,
                     $site->getNodeName()->toNodeName()
                 );
