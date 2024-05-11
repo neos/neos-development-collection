@@ -253,7 +253,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findChildNodeAggregateByName(
         NodeAggregateId $parentNodeAggregateId,
         NodeName $name
-    ): NodeAggregate {
+    ): ?NodeAggregate {
         $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamId)
             ->andWhere('cn.name = :relationName')
             ->setParameter('relationName', $name->value);
@@ -321,7 +321,7 @@ final class ContentGraph implements ContentGraphInterface
         return $this->client->getConnection()->createQueryBuilder();
     }
 
-    private function mapQueryBuilderToNodeAggregate(QueryBuilder $queryBuilder): NodeAggregate
+    private function mapQueryBuilderToNodeAggregate(QueryBuilder $queryBuilder): ?NodeAggregate
     {
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
