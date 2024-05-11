@@ -9,8 +9,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 trait CreateNodeHashTrait
 {
     /**
-     * Create a string hash containing the nodeAggregateId, cr-id, contentStream->id, dimensionSpacePoint->hash
-     * and visibilityConstraints->hash. To be used for ensuring uniqueness or removing nodes.
+     * Create a string hash containing the node-aggregateId, cr-id, workspace-name, dimensionSpacePoint-hash
+     * and visibilityConstraints-hash. To be used for ensuring uniqueness or removing nodes.
      *
      * @see Node::equals() for comparison
      */
@@ -21,9 +21,9 @@ trait CreateNodeHashTrait
                 ':',
                 [
                     $node->nodeAggregateId->value,
-                    $node->subgraphIdentity->contentRepositoryId->value,
-                    $node->subgraphIdentity->contentStreamId->value,
-                    $node->subgraphIdentity->dimensionSpacePoint->hash,
+                    $node->address->contentRepositoryId->value,
+                    $node->address->workspaceName->value,
+                    $node->address->dimensionSpacePoint->hash,
                     $node->subgraphIdentity->visibilityConstraints->getHash()
                 ]
             )

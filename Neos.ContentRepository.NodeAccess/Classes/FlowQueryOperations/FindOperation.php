@@ -62,6 +62,8 @@ use Neos\Flow\Annotations as Flow;
  */
 class FindOperation extends AbstractOperation
 {
+    use CreateNodeHashTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -179,7 +181,7 @@ class FindOperation extends AbstractOperation
         $uniqueResult = [];
         $usedKeys = [];
         foreach ($result as $item) {
-            $identifier = $item->subgraphIdentity->contentStreamId->value . '@' . $item->subgraphIdentity->dimensionSpacePoint->hash . '@' . $item->nodeAggregateId->value;
+            $identifier = $this->createNodeHash($item);
             if (!isset($usedKeys[$identifier])) {
                 $uniqueResult[] = $item;
                 $usedKeys[$identifier] = $identifier;
@@ -199,8 +201,8 @@ class FindOperation extends AbstractOperation
         foreach ($contextNodes as $contextNode) {
             assert($contextNode instanceof Node);
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-            $subgraphIdentifier = md5($contextNode->subgraphIdentity->contentStreamId->value
-                . '@' . $contextNode->subgraphIdentity->dimensionSpacePoint->toJson());
+            $subgraphIdentifier = md5($subgraph->getIdentity()->contentStreamId->value
+                . '@' . $contextNode->address->dimensionSpacePoint->toJson());
             if (!isset($entryPoints[(string) $subgraphIdentifier])) {
                 $entryPoints[(string) $subgraphIdentifier] = [
                     'subgraph' => $subgraph,
