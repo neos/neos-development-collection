@@ -39,7 +39,7 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
     public function __construct(
         private ContentRepository $contentRepository,
         private InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private NodeTypeManager $nodeTypeManager
+        private NodeTypeManager $nodeTypeManager,
     ) {
     }
 
@@ -54,15 +54,13 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
                 1651921482
             );
         }
-        $contentGraph = $this->contentRepository->getContentGraph();
 
         foreach ($this->contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+            $contentGraph = $this->contentRepository->getContentGraph($workspace->workspaceName);
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
-                $workspace->currentContentStreamId,
                 NodeTypeNameFactory::forSites()
             );
             $siteNodeAggregate = $contentGraph->findChildNodeAggregateByName(
-                $workspace->currentContentStreamId,
                 $sitesNodeAggregate->nodeAggregateId,
                 $siteNodeName->toNodeName()
             );
@@ -98,7 +96,6 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
         }
 
         $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregateByName(
-            $liveWorkspace->currentContentStreamId,
             $sitesNodeIdentifier,
             $site->getNodeName()->toNodeName(),
         );

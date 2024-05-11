@@ -31,8 +31,6 @@ trait NodeVariation
 {
     abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
 
-    abstract protected function getTableNamePrefix(): string;
-
     /**
      * @param NodeSpecializationVariantWasCreated $event
      * @throws \Exception
@@ -68,7 +66,7 @@ trait NodeVariation
                 $hierarchyRelation->assignNewChildNode(
                     $specializedNode->relationAnchorPoint,
                     $this->getDatabaseConnection(),
-                    $this->tableNamePrefix
+                    $this->tableNames
                 );
                 unset($uncoveredDimensionSpacePoints[$hierarchyRelation->dimensionSpacePointHash]);
             }
@@ -119,7 +117,7 @@ trait NodeVariation
                         ),
                         NodeTags::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all()),
                     );
-                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->getTableNamePrefix());
+                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNames);
                 }
             }
 
@@ -134,7 +132,7 @@ trait NodeVariation
                     $specializedNode->relationAnchorPoint,
                     null,
                     $this->getDatabaseConnection(),
-                    $this->getTableNamePrefix()
+                    $this->tableNames
                 );
             }
 
@@ -188,7 +186,7 @@ trait NodeVariation
                 $existingIngoingHierarchyRelation->assignNewChildNode(
                     $generalizedNode->relationAnchorPoint,
                     $this->getDatabaseConnection(),
-                    $this->tableNamePrefix
+                    $this->tableNames
                 );
                 $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
                     new DimensionSpacePointSet([
@@ -208,7 +206,7 @@ trait NodeVariation
                     $generalizedNode->relationAnchorPoint,
                     null,
                     $this->getDatabaseConnection(),
-                    $this->getTableNamePrefix()
+                    $this->tableNames
                 );
             }
 
@@ -300,7 +298,7 @@ trait NodeVariation
                 $existingIngoingHierarchyRelation->assignNewChildNode(
                     $peerNode->relationAnchorPoint,
                     $this->getDatabaseConnection(),
-                    $this->tableNamePrefix
+                    $this->tableNames
                 );
                 $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
                     new DimensionSpacePointSet([
@@ -320,7 +318,7 @@ trait NodeVariation
                     $peerNode->relationAnchorPoint,
                     null,
                     $this->getDatabaseConnection(),
-                    $this->getTableNamePrefix()
+                    $this->tableNames
                 );
             }
 

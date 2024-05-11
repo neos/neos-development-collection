@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstra
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
@@ -53,9 +53,9 @@ trait ProjectionIntegrityViolationDetectionTrait
      */
     abstract private function getObject(string $className): object;
 
-    protected function getTableNamePrefix(): string
+    private function tableNames(): ContentGraphTableNames
     {
-        return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
+        return ContentGraphTableNames::create(
             $this->currentContentRepository->id
         );
     }
@@ -81,7 +81,7 @@ trait ProjectionIntegrityViolationDetectionTrait
             throw new \RuntimeException(sprintf('Failed to remove subtree tag "%s" because that tag is not set', $subtreeTagToRemove->value), 1708618267);
         }
         $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_hierarchyrelation',
+            $this->tableNames()->hierarchyRelation(),
             [
                 'subtreetags' => json_encode($subtreeTags->without($subtreeTagToRemove), JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
             ],
@@ -98,7 +98,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         $this->dbalClient->getConnection()->insert(
-            $this->getTableNamePrefix() . '_hierarchyrelation',
+            $this->tableNames()->hierarchyRelation(),
             $record
         );
     }
@@ -115,7 +115,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         unset($record['position']);
 
         $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_hierarchyrelation',
+            $this->tableNames()->hierarchyRelation(),
             [
                 'dimensionspacepointhash' => $dataset['newDimensionSpacePointHash']
             ],
@@ -146,7 +146,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         )->fetchOne();
 
         $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_node',
+            $this->tableNames()->node(),
             [
                 'name' => $dataset['newName']
             ],
@@ -172,7 +172,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         ];
 
         $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_hierarchyrelation',
+            $this->tableNames()->hierarchyRelation(),
             [
                 'position' => $dataset['newPosition']
             ],
@@ -190,7 +190,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
         $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_referencerelation',
+            $this->tableNames()->referenceRelation(),
             [
                 'nodeanchorpoint' => 7777777
             ],
@@ -208,7 +208,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
         $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_referencerelation',
+            $this->tableNames()->referenceRelation(),
             [
                 'position' => $dataset['newPosition']
             ],
@@ -279,8 +279,8 @@ trait ProjectionIntegrityViolationDetectionTrait
     ): array {
         $nodeRecord = $this->dbalClient->getConnection()->executeQuery(
             'SELECT h.*
-                FROM ' . $this->getTableNamePrefix() . '_node n
-                INNER JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                FROM ' . $this->tableNames()->node() . ' n
+                INNER JOIN ' . $this->tableNames()->hierarchyRelation() . ' h
                 ON n.relationanchorpoint = h.childnodeanchor
                 WHERE n.nodeaggregateid = :nodeAggregateId
                 AND h.contentstreamid = :contentStreamId

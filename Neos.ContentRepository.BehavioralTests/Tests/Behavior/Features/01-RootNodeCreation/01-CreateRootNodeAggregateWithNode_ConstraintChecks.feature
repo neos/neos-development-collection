@@ -40,7 +40,7 @@ Feature: Create a root node aggregate
       | workspaceName   | "i-do-not-exist"              |
       | nodeAggregateId | "nody-mc-nodeface"            |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to create a root node aggregate in a closed content stream:
     When the command CloseContentStream is executed with payload:

@@ -44,7 +44,7 @@ Feature: Change node name
       | workspaceName   | "i-do-not-exist"         |
       | nodeAggregateId | "sir-david-nodenborough" |
       | newNodeName     | "new-name"               |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to rename a node aggregate in a workspace whose content stream is closed:
     When the command CloseContentStream is executed with payload:

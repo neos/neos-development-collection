@@ -60,7 +60,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId              | "sir-david-nodenborough" |
       | dimensionSpacePoint          | {"example": "source"}    |
       | relationDistributionStrategy | "scatter"                |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to move a node in a workspace whose content stream is closed:
     When the command CloseContentStream is executed with payload:

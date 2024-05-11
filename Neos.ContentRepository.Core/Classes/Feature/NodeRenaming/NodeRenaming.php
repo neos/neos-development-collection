@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeRenaming;
 
-use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -31,37 +30,35 @@ trait NodeRenaming
 {
     use ConstraintChecks;
 
-    private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command, ContentRepository $contentRepository): EventsToPublish
+    private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $contentRepository);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
+            $contentGraph,
+            $command->nodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be renamed');
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
-        foreach ($contentRepository->getContentGraph()->findParentNodeAggregates($contentStreamId, $command->nodeAggregateId) as $parentNodeAggregate) {
+        foreach ($contentGraph->findParentNodeAggregates($command->nodeAggregateId) as $parentNodeAggregate) {
             $this->requireNodeNameToBeUncovered(
-                $contentStreamId,
+                $contentGraph,
                 $command->newNodeName,
                 $parentNodeAggregate->nodeAggregateId,
-                $contentRepository
             );
             $this->requireNodeTypeNotToDeclareTetheredChildNodeName($parentNodeAggregate->nodeTypeName, $command->newNodeName);
         }
 
         $events = Events::with(
             new NodeAggregateNameWasChanged(
-                $contentStreamId,
+                $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->newNodeName,
             ),
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events

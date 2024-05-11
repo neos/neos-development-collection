@@ -185,8 +185,7 @@ class SitesController extends AbstractModuleController
             }
 
             try {
-                $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                    $liveWorkspace->currentContentStreamId,
+                $sitesNode = $contentRepository->getContentGraph($liveWorkspace->workspaceName)->findRootNodeAggregateByType(
                     NodeTypeNameFactory::forSites()
                 );
             } catch (\Exception $exception) {
@@ -206,7 +205,6 @@ class SitesController extends AbstractModuleController
 
             foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
                 $siteNodeAggregate = $contentRepository->getContentGraph()->findChildNodeAggregateByName(
-                    $workspace->currentContentStreamId,
                     $sitesNode->nodeAggregateId,
                     $site->getNodeName()->toNodeName()
                 );

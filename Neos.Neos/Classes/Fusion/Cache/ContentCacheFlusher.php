@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Cache;
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -91,28 +92,33 @@ class ContentCacheFlusher
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId
     ): array {
-        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
-            $contentStreamId,
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($contentStreamId);
+        if (is_null($workspace)) {
+            return [];
+        }
+        $contentGraph = $contentRepository->getContentGraph($workspace->workspaceName);
+
+
+        $nodeAggregate = $contentGraph->findNodeAggregateById(
             $nodeAggregateId
         );
         if (!$nodeAggregate) {
             // Node Aggregate was removed in the meantime, so no need to clear caches on this one anymore.
             return [];
         }
-        $tagsToFlush = $this->collectTagsForChangeOnNodeIdentifier($contentRepository->id, $contentStreamId, $nodeAggregateId);
+        $tagsToFlush = $this->collectTagsForChangeOnNodeIdentifier($contentRepository->id, $contentGraph->getContentStreamId(), $nodeAggregateId);
 
         $tagsToFlush = array_merge($this->collectTagsForChangeOnNodeType(
             $nodeAggregate->nodeTypeName,
             $contentRepository->id,
-            $contentStreamId,
+            $contentGraph->getContentStreamId(),
             $nodeAggregateId,
             $contentRepository
         ), $tagsToFlush);
 
         $parentNodeAggregates = [];
         foreach (
-            $contentRepository->getContentGraph()->findParentNodeAggregates(
-                $contentStreamId,
+            $contentGraph->findParentNodeAggregates(
                 $nodeAggregateId
             ) as $parentNodeAggregate
         ) {
@@ -146,8 +152,7 @@ class ContentCacheFlusher
             );
 
             foreach (
-                $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $nodeAggregate->contentStreamId,
+                $contentGraph->findParentNodeAggregates(
                     $nodeAggregate->nodeAggregateId
                 ) as $parentNodeAggregate
             ) {

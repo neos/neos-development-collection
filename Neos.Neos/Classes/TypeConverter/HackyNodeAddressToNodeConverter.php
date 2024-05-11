@@ -80,9 +80,8 @@ class HackyNodeAddressToNodeConverter extends AbstractTypeConverter
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromUriString($source);
 
-        $subgraph = $contentRepository->getContentGraph()
+        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)
             ->getSubgraph(
-                $nodeAddress->contentStreamId,
                 $nodeAddress->dimensionSpacePoint,
                 $nodeAddress->isInLiveWorkspace()
                     ? VisibilityConstraints::frontend()

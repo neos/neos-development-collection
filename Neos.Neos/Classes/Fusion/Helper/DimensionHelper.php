@@ -144,10 +144,14 @@ final class DimensionHelper implements ProtectedContextAwareInterface
         $contentDimensionValue = is_string($dimensionValue) ? new ContentDimensionValue($dimensionValue) : $dimensionValue;
         $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
 
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($node->subgraphIdentity->contentStreamId);
+        if (is_null($workspace)) {
+            return null;
+        }
+        // FIXME: node->workspaceName
         return $contentRepository
-            ->getContentGraph()
+            ->getContentGraph($workspace->workspaceName)
             ->getSubgraph(
-                $node->subgraphIdentity->contentStreamId,
                 $node->subgraphIdentity->dimensionSpacePoint->vary($contentDimensionId, $contentDimensionValue->value),
                 $node->subgraphIdentity->visibilityConstraints
             )->findNodeById($node->nodeAggregateId);

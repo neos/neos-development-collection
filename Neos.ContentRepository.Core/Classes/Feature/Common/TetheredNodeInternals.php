@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Core\Feature\Common;
  * source code.
  */
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -23,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -40,11 +40,10 @@ trait TetheredNodeInternals
     abstract protected function getPropertyConverter(): PropertyConverter;
 
     abstract protected function createEventsForVariations(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        NodeAggregate $nodeAggregate,
-        ContentRepository $contentRepository
+        NodeAggregate $nodeAggregate
     ): Events;
 
     /**
@@ -56,15 +55,14 @@ trait TetheredNodeInternals
      * @throws \Exception
      */
     protected function createEventsForMissingTetheredNode(
+        ContentGraphInterface $contentGraph,
         NodeAggregate $parentNodeAggregate,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeName $tetheredNodeName,
         ?NodeAggregateId $tetheredNodeAggregateId,
-        NodeType $expectedTetheredNodeType,
-        ContentRepository $contentRepository
+        NodeType $expectedTetheredNodeType
     ): Events {
-        $childNodeAggregate = $contentRepository->getContentGraph()->findChildNodeAggregateByName(
-            $parentNodeAggregate->contentStreamId,
+        $childNodeAggregate = $contentGraph->findChildNodeAggregateByName(
             $parentNodeAggregate->nodeAggregateId,
             $tetheredNodeName
         );
@@ -140,11 +138,10 @@ trait TetheredNodeInternals
             }
             /** @var Node $childNodeSource Node aggregates are never empty */
             return $this->createEventsForVariations(
-                $parentNodeAggregate->contentStreamId,
+                $contentGraph,
                 $childNodeSource->originDimensionSpacePoint,
                 $originDimensionSpacePoint,
-                $parentNodeAggregate,
-                $contentRepository
+                $parentNodeAggregate
             );
         }
     }

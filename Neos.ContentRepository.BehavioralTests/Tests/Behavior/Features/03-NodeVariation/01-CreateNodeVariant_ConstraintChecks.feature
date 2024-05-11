@@ -48,7 +48,7 @@ Feature: Create node variant
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin    | {"market":"CH", "language":"gsw"} |
       | targetOrigin    | {"market":"DE", "language":"de"}  |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to create a variant in a workspace that does not exist
     When the command CloseContentStream is executed with payload:
