@@ -89,7 +89,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
             return null;
         }
 
-        $node = $subgraph->findNodeById(NodeAggregateId::fromString($serializedNode['nodeAggregateId']));
+        $node = $subgraph->findNodeById(NodeAggregateId::fromString($serializedNode['aggregateId']));
         if (!$node) {
             // instead of crashing the whole rendering, by silently returning null we will most likely just break
             // rendering of the sub part here that needs the node
@@ -104,22 +104,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
      */
     private function serializeNode(Node $source): array
     {
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $source->subgraphIdentity->contentRepositoryId
-        );
-
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($source->subgraphIdentity->contentStreamId);
-
-        if (!$workspace) {
-            throw new \RuntimeException(sprintf('Could not fetch workspace for node (%s) in content stream (%s).', $source->nodeAggregateId->value, $source->subgraphIdentity->contentStreamId->value), 1699780153);
-        }
-
-        return [
-            'contentRepositoryId' => $source->subgraphIdentity->contentRepositoryId->value,
-            'workspaceName' => $workspace->workspaceName->value,
-            'dimensionSpacePoint' => $source->subgraphIdentity->dimensionSpacePoint->jsonSerialize(),
-            'nodeAggregateId' => $source->nodeAggregateId->value
-        ];
+        return $source->address->jsonSerialize();
     }
 
     public function supportsDenormalization(mixed $data, string $type, string $format = null)
