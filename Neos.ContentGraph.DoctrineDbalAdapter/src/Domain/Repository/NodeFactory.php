@@ -79,7 +79,7 @@ final class NodeFactory
                 $this->contentRepositoryId,
                 $workspaceName,
                 $dimensionSpacePoint,
-                $nodeId = NodeAggregateId::fromString($nodeRow['nodeaggregateid'])
+                NodeAggregateId::fromString($nodeRow['nodeaggregateid'])
             ),
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
@@ -87,7 +87,6 @@ final class NodeFactory
                 $dimensionSpacePoint,
                 $visibilityConstraints
             ),
-            $nodeId,
             $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),

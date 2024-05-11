@@ -58,6 +58,7 @@ final readonly class Node
         public NodeAddress $address,
         /** @deprecated will be removed before the final 9.0 release */
         public ContentSubgraphIdentity $subgraphIdentity,
+        /** @deprecated will be removed before the final 9.0 release (use address.aggregateId instead) */
         public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
         public NodeAggregateClassification $classification,
@@ -76,9 +77,9 @@ final readonly class Node
     /**
      * @internal The signature of this method can change in the future!
      */
-    public static function create(NodeAddress $address, ContentSubgraphIdentity $subgraphIdentity, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, ?NodeType $nodeType, PropertyCollection $properties, ?NodeName $nodeName, NodeTags $tags, Timestamps $timestamps): self
+    public static function create(NodeAddress $address, ContentSubgraphIdentity $subgraphIdentity, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, ?NodeType $nodeType, PropertyCollection $properties, ?NodeName $nodeName, NodeTags $tags, Timestamps $timestamps): self
     {
-        return new self($address, $subgraphIdentity, $nodeAggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $nodeType, $properties, $nodeName, $tags, $timestamps);
+        return new self($address, $subgraphIdentity, $address->aggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $nodeType, $properties, $nodeName, $tags, $timestamps);
     }
 
     /**

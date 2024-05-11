@@ -84,7 +84,7 @@ final class NodeFactory
                 // todo use actual workspace name
                 WorkspaceName::fromString('missing'),
                 $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
-                $nodeId = NodeAggregateId::fromString($nodeRow['nodeaggregateid'])
+                NodeAggregateId::fromString($nodeRow['nodeaggregateid'])
             ),
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
@@ -92,7 +92,6 @@ final class NodeFactory
                 $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
                 $visibilityConstraints
             ),
-            $nodeId,
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),

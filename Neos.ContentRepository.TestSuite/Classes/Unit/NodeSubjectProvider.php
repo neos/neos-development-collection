@@ -93,7 +93,7 @@ final class NodeSubjectProvider
                 ContentRepositoryId::fromString('default'),
                 WorkspaceName::forLive(),
                 DimensionSpacePoint::createWithoutDimensions(),
-                $id = NodeAggregateId::create()
+                NodeAggregateId::create()
             ),
             ContentSubgraphIdentity::create(
                 ContentRepositoryId::fromString('default'),
@@ -101,7 +101,6 @@ final class NodeSubjectProvider
                 DimensionSpacePoint::createWithoutDimensions(),
                 VisibilityConstraints::withoutRestrictions()
             ),
-            $id,
             OriginDimensionSpacePoint::createWithoutDimensions(),
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
             $nodeType->name,
