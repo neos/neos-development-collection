@@ -149,32 +149,32 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | newNodeName     | "a-renamed" |
     And the graph projection is fully up to date
 
-    And I am in the active content stream of workspace "user-test" and dimension space point {"language":"de"}
+    And I am in workspace "user-test" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified        | originalLastModified |
       | 2023-03-16 13:00:00 | 2023-03-16 12:00:00 | 2023-03-16 14:00:00 | 2023-03-16 14:00:00  |
 
-    And I am in the active content stream of workspace "user-test" and dimension space point {"language":"ch"}
+    And I am in workspace "user-test" and dimension space point {"language":"ch"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified        | originalLastModified |
       | 2023-03-16 13:00:00 | 2023-03-16 12:30:00 | 2023-03-16 14:00:00 | 2023-03-16 14:00:00  |
 
-    When I am in the active content stream of workspace "review" and dimension space point {"language":"de"}
+    When I am in workspace "review" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 13:00:00 | 2023-03-16 12:00:00 |              |                      |
 
-    When I am in the active content stream of workspace "review" and dimension space point {"language":"ch"}
+    When I am in workspace "review" and dimension space point {"language":"ch"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 13:00:00 | 2023-03-16 12:30:00 |              |                      |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    When I am in workspace "live" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 13:00:00 | 2023-03-16 12:00:00 |              |                      |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"ch"}
+    When I am in workspace "live" and dimension space point {"language":"ch"}
     Then I expect the node "a" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 13:00:00 | 2023-03-16 12:30:00 |              |                      |

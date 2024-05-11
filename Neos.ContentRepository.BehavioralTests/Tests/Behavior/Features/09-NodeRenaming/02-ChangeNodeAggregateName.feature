@@ -24,7 +24,7 @@ Feature: Change node aggregate name
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    And I am in workspace "live" and dimension space point {"example":"source"}
 
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -68,22 +68,22 @@ Feature: Change node aggregate name
 
     And I expect the graph projection to consist of exactly 9 nodes
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "parent-document/renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"general"}
     Then I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/renamed-document/tethered/grandchild-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "parent-document/renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"source"}
     Then I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/renamed-document/tethered/grandchild-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"source"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "parent-document/renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"source"}
     Then I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/renamed-document/tethered/grandchild-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"source"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peer"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "parent-document/renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"peer"}
     Then I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/renamed-document/tethered/grandchild-document" to lead to no node
@@ -114,22 +114,22 @@ Feature: Change node aggregate name
 
     And I expect the graph projection to consist of exactly 9 nodes
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "parent-document/renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"general"}
     Then I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/renamed-document/tethered/grandchild-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "parent-document/renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"source"}
     Then I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/renamed-document/tethered/grandchild-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"source"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "parent-document/renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"source"}
     Then I expect node aggregate identifier "nodimus-mediocre" and node path "parent-document/renamed-document/tethered/grandchild-document" to lead to node cs-identifier;nodimus-mediocre;{"example":"source"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "renamed-document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"peer"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "renamed-document/tethered" to lead to node cs-identifier;nodimus-prime;{"example":"peer"}
     Then I expect node aggregate identifier "nodimus-mediocre" and node path "renamed-document/tethered/grandchild-document" to lead to no node
