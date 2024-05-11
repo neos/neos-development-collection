@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\AbstractDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
@@ -32,7 +33,7 @@ final class DimensionSpacePointsRepository
 
     public function __construct(
         private readonly Connection $databaseConnection,
-        private readonly string $tableNamePrefix
+        private readonly ContentGraphTableNames $tableNames
     ) {
     }
 
@@ -81,7 +82,7 @@ final class DimensionSpacePointsRepository
     private function writeDimensionSpacePoint(string $hash, string $dimensionSpacePointCoordinatesJson): void
     {
         $this->databaseConnection->executeStatement(
-            'INSERT IGNORE INTO ' . $this->tableNamePrefix . '_dimensionspacepoints (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
+            'INSERT IGNORE INTO ' . $this->tableNames->dimensionSpacePoints() . ' (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
             [
                 'dimensionspacepointhash' => $hash,
                 'dimensionspacepoint' => $dimensionSpacePointCoordinatesJson
@@ -96,7 +97,7 @@ final class DimensionSpacePointsRepository
 
     private function fillRuntimeCacheFromDatabase(): void
     {
-        $allDimensionSpacePoints = $this->databaseConnection->fetchAllAssociative('SELECT hash, dimensionspacepoint FROM ' . $this->tableNamePrefix . '_dimensionspacepoints');
+        $allDimensionSpacePoints = $this->databaseConnection->fetchAllAssociative('SELECT hash, dimensionspacepoint FROM ' . $this->tableNames->dimensionSpacePoints());
         foreach ($allDimensionSpacePoints as $dimensionSpacePointRow) {
             $this->dimensionspacePointsRuntimeCache[(string)$dimensionSpacePointRow['hash']] = (string)$dimensionSpacePointRow['dimensionspacepoint'];
         }

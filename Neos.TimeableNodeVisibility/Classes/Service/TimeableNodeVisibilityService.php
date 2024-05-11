@@ -95,11 +95,10 @@ class TimeableNodeVisibilityService
 
         foreach ($dimensionSpacePoints as $dimensionSpacePoint) {
 
-            $contentGraph = $contentRepository->getContentGraph();
+            $contentGraph = $contentRepository->getContentGraph($liveWorkspace->workspaceName);
 
             // We fetch without restriction to get also all disabled nodes
             $subgraph = $contentGraph->getSubgraph(
-                $liveWorkspace->currentContentStreamId,
                 $dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
@@ -166,7 +165,7 @@ class TimeableNodeVisibilityService
             sprintf('Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]: %s',
                 $result->type->value,
                 $result->node->nodeAggregateId->value,
-                join(',', $result->node->originDimensionSpacePoint->coordinates),
+                implode(',', $result->node->originDimensionSpacePoint->coordinates),
                 $result->node->getLabel())
         );
     }

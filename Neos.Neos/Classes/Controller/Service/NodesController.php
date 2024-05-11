@@ -140,14 +140,12 @@ class NodesController extends ActionController
                     1645631728
                 );
             }
-            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $workspace->currentContentStreamId,
+            $subgraph = $contentRepository->getContentGraph(WorkspaceName::fromString($workspaceName))->getSubgraph(
                 DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
                 VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
             );
         } else {
-            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $nodeAddress->contentStreamId,
+            $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
             );
@@ -211,9 +209,8 @@ class NodesController extends ActionController
         assert($workspace instanceof Workspace);
 
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
-        $subgraph = $contentRepository->getContentGraph()
+        $subgraph = $contentRepository->getContentGraph(WorkspaceName::fromString($workspaceName))
             ->getSubgraph(
-                $workspace->currentContentStreamId,
                 $dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
@@ -223,7 +220,7 @@ class NodesController extends ActionController
         if ($node === null) {
             $this->addExistingNodeVariantInformationToResponse(
                 $nodeAggregateId,
-                $workspace->currentContentStreamId,
+                $workspace->workspaceName,
                 $dimensionSpacePoint,
                 $contentRepository
             );
@@ -280,17 +277,16 @@ class NodesController extends ActionController
             ->findOneByName(WorkspaceName::fromString($workspaceName));
         assert($workspace instanceof Workspace);
 
-        $sourceSubgraph = $contentRepository->getContentGraph()
+        $contentGraph = $contentRepository->getContentGraph(WorkspaceName::fromString($workspaceName));
+        $sourceSubgraph = $contentGraph
             ->getSubgraph(
-                $workspace->currentContentStreamId,
                 DimensionSpacePoint::fromLegacyDimensionArray($sourceDimensions),
                 VisibilityConstraints::withoutRestrictions()
             );
 
         $targetDimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
-        $targetSubgraph = $contentRepository->getContentGraph()
+        $targetSubgraph = $contentGraph
             ->getSubgraph(
-                $workspace->currentContentStreamId,
                 $targetDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
@@ -323,13 +319,13 @@ class NodesController extends ActionController
      */
     protected function addExistingNodeVariantInformationToResponse(
         NodeAggregateId $identifier,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
         ContentRepository $contentRepository
     ): void {
-        $contentGraph = $contentRepository->getContentGraph();
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
-        $nodeAggregate = $contentGraph->findNodeAggregateById($contentStreamId, $identifier);
+        $nodeAggregate = $contentGraph->findNodeAggregateById($identifier);
 
         if ($nodeAggregate && $nodeAggregate->coveredDimensionSpacePoints->count() > 0) {
             $this->response->setHttpHeader('X-Neos-Node-Exists-In-Other-Dimensions', 'true');
@@ -346,7 +342,7 @@ class NodesController extends ActionController
                 $missingNodesOnRootline = 0;
                 while (
                     $parentAggregate = self::firstNodeAggregate(
-                        $contentGraph->findParentNodeAggregates($contentStreamId, $identifier)
+                        $contentGraph->findParentNodeAggregates($identifier)
                     )
                 ) {
                     if (!$parentAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
@@ -382,6 +378,12 @@ class NodesController extends ActionController
     /**
      * Adopt (translate) the given node and parents that are not yet visible to the given context
      *
+     * @param WorkspaceName $workspaceName
+     * @param NodeAggregateId $nodeAggregateId
+     * @param ContentSubgraphInterface $sourceSubgraph
+     * @param ContentSubgraphInterface $targetSubgraph
+     * @param DimensionSpacePoint $targetDimensionSpacePoint
+     * @param ContentRepository $contentRepository
      * @param boolean $copyContent true if the content from the nodes that are translated should be copied
      * @return void
      */

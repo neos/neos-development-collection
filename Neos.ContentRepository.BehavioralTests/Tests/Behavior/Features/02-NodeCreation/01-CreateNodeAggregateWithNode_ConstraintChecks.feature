@@ -54,7 +54,7 @@ Feature: Create node aggregate with node
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
       | nodeName              | "document"                            |
 
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to create a node aggregate in a workspace whose content stream is closed:
     When the command CloseContentStream is executed with payload:
@@ -149,7 +149,6 @@ Feature: Create node aggregate with node
       | Key                       | Value                                 |
       | nodeAggregateId           | "nody-mc-nodeface"                    |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
-      | originDimensionSpacePoint | {}                                    |
       | parentNodeAggregateId     | "lady-eleonode-rootford"              |
       | nodeName                  | "document"                            |
 

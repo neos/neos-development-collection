@@ -70,9 +70,7 @@ final readonly class ContentRepositoryBootstrapper
         NodeTypeName $rootNodeTypeName
     ): NodeAggregateId {
         try {
-            $contentStreamId = $workspace->currentContentStreamId;
-            return $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $contentStreamId,
+            return $this->contentRepository->getContentGraph($workspace->workspaceName)->findRootNodeAggregateByType(
                 $rootNodeTypeName
             )->nodeAggregateId;
 

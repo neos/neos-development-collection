@@ -20,8 +20,8 @@ use Neos\Utility\ObjectAccess;
 /**
  * Step implementations for tests inside Neos.Neos
  *
-* @internal only for behat tests within the Neos.Neos package
-*/
+ * @internal only for behat tests within the Neos.Neos package
+ */
 trait AssetTrait
 {
     /**
@@ -44,6 +44,24 @@ trait AssetTrait
         ObjectAccess::setProperty($asset, 'Persistence_Object_Identifier', $assetId, true);
 
         $this->getObject(AssetRepository::class)->add($asset);
+        $this->getObject(PersistenceManagerInterface::class)->persistAll();
+    }
+
+    /**
+     * @Given the asset :assetId has the title :title
+     * @Given the asset :assetId has the title :title and caption :caption
+     * @Given the asset :assetId has the title :title and caption :caption and copyright notice :copyrightNotice
+     */
+    public function theAssetHasTheTitleAndCaptionAndCopyrightNotice($assetId, $title, $caption = null, $copyrightNotice = null): void
+    {
+        $repository = $this->getObject(AssetRepository::class);
+        $asset = $repository->findByIdentifier($assetId);
+
+        $asset->setTitle($title);
+        $caption && $asset->setCaption($caption);
+        $copyrightNotice && $asset->setCopyrightNotice($copyrightNotice);
+
+        $repository->update($asset);
         $this->getObject(PersistenceManagerInterface::class)->persistAll();
     }
 }

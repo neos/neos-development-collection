@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Unit\NodeSubjectProvider;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
+use Neos\Fusion\Tests\Functional\FusionObjects\TestingViewForFusionRuntime;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -107,7 +108,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
         self::assertEquals('Some -', (string)$view->render());
     }
 
-    protected function buildView()
+    protected function buildView(): TestingViewForFusionRuntime
     {
         $view = parent::buildView();
 
