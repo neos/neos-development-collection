@@ -273,8 +273,7 @@ class NodeViewHelper extends AbstractViewHelper
                 NodeAggregateId::fromString(\mb_substr($path, 7))
             );
         }
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $documentNodeAddress->contentStreamId,
+        $subgraph = $contentRepository->getContentGraph($documentNodeAddress->workspaceName)->getSubgraph(
             $documentNodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );

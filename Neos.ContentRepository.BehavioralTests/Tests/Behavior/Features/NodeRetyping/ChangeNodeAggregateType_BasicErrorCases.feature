@@ -74,7 +74,7 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId | "sir-david-nodenborough"                          |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ChildOfNodeTypeA" |
       | strategy        | "happypath"                                       |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to change the type on a non-existing node aggregate
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:

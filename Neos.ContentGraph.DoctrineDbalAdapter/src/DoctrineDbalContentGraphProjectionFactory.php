@@ -7,6 +7,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
@@ -27,39 +28,41 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
     ) {
     }
 
-    public static function graphProjectionTableNamePrefix(
-        ContentRepositoryId $contentRepositoryId
-    ): string {
-        return sprintf('cr_%s_p_graph', $contentRepositoryId->value);
-    }
-
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
     ): ContentGraphProjection {
-        $tableNamePrefix = self::graphProjectionTableNamePrefix(
+        $tableNames = ContentGraphTableNames::create(
             $projectionFactoryDependencies->contentRepositoryId
         );
 
-        $dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbalClient->getConnection(), $tableNamePrefix);
+        $dimensionSpacePointsRepository = new DimensionSpacePointsRepository($this->dbalClient->getConnection(), $tableNames);
+
+        $nodeFactory = new NodeFactory(
+            $projectionFactoryDependencies->contentRepositoryId,
+            $projectionFactoryDependencies->nodeTypeManager,
+            $projectionFactoryDependencies->propertyConverter,
+            $dimensionSpacePointsRepository
+        );
+
+        $contentGraphFactory = new ContentGraphFactory(
+            $this->dbalClient,
+            $nodeFactory,
+            $projectionFactoryDependencies->contentRepositoryId,
+            $projectionFactoryDependencies->nodeTypeManager,
+            $tableNames
+        );
 
         return new ContentGraphProjection(
             new DoctrineDbalContentGraphProjection(
                 $this->dbalClient,
-                new NodeFactory(
-                    $projectionFactoryDependencies->contentRepositoryId,
-                    $projectionFactoryDependencies->nodeTypeManager,
-                    $projectionFactoryDependencies->propertyConverter,
-                    $dimensionSpacePointsRepository
-                ),
-                $projectionFactoryDependencies->contentRepositoryId,
-                $projectionFactoryDependencies->nodeTypeManager,
                 new ProjectionContentGraph(
                     $this->dbalClient,
-                    $tableNamePrefix
+                    $tableNames
                 ),
-                $tableNamePrefix,
-                $dimensionSpacePointsRepository
+                $tableNames,
+                $dimensionSpacePointsRepository,
+                new ContentGraphFinder($contentGraphFactory)
             )
         );
     }

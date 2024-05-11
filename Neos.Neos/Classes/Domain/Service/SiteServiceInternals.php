@@ -39,7 +39,7 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
     public function __construct(
         private ContentRepository $contentRepository,
         private InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private NodeTypeManager $nodeTypeManager
+        private NodeTypeManager $nodeTypeManager,
     ) {
     }
 
@@ -54,15 +54,14 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
                 1651921482
             );
         }
-        $contentGraph = $this->contentRepository->getContentGraph();
 
         foreach ($this->contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+            $contentGraph = $this->contentRepository->getContentGraph($workspace->workspaceName);
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
-                $workspace->currentContentStreamId,
                 NodeTypeNameFactory::forSites()
             );
+
             $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
-                $workspace->currentContentStreamId,
                 $sitesNodeAggregate->nodeAggregateId,
                 $siteNodeName->toNodeName()
             );
@@ -99,8 +98,8 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             throw SiteNodeTypeIsInvalid::becauseItIsNotOfTypeSite(NodeTypeName::fromString($nodeTypeName));
         }
 
-        $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $liveWorkspace->currentContentStreamId,
+        $contentGraph = $this->contentRepository->getContentGraph($liveWorkspace->workspaceName);
+        $siteNodeAggregate = $contentGraph->findChildNodeAggregatesByName(
             $sitesNodeIdentifier,
             $site->getNodeName()->toNodeName(),
         );

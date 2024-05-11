@@ -11,14 +11,12 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Fusion\View\FusionView;
-use Psr\Http\Message\ServerRequestFactoryInterface;
+use Neos\Fusion\Core\FusionGlobals;
+use Neos\Fusion\Core\FusionSourceCodeCollection;
+use Neos\Fusion\Core\RuntimeFactory;
 
 /**
  * Testcase for the Fusion View
@@ -27,39 +25,21 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 abstract class AbstractFusionObjectTest extends FunctionalTestCase
 {
     /**
-     * @var ControllerContext
+     * @var ActionRequest
      */
-    protected $controllerContext;
+    protected $request;
 
-    /**
-     * Helper to build a Fusion view object
-     *
-     * @return FusionView
-     */
-    protected function buildView()
+    protected function buildView(): TestingViewForFusionRuntime
     {
-        $view = new FusionView();
+        $this->request = ActionRequest::fromHttpRequest(new ServerRequest('GET', 'http://localhost/'));
 
-        /** @var ServerRequestFactoryInterface $httpRequestFactory */
-        $httpRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
-        $httpRequest = $httpRequestFactory->createServerRequest('GET', 'http://localhost/');
-        $request = ActionRequest::fromHttpRequest($httpRequest);
-
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
-
-        $this->controllerContext = new ControllerContext(
-            $request,
-            new ActionResponse(),
-            new Arguments([]),
-            $uriBuilder
+        $runtime = $this->objectManager->get(RuntimeFactory::class)->createFromSourceCode(
+            FusionSourceCodeCollection::fromFilePath(__DIR__ . '/Fixtures/Fusion/Root.fusion'),
+            FusionGlobals::fromArray(['request' => $this->request])
         );
 
-        $view->setControllerContext($this->controllerContext);
-        $view->setPackageKey('Neos.Fusion');
-        $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
+        $view = new TestingViewForFusionRuntime($runtime);
         $view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
-
         return $view;
     }
 

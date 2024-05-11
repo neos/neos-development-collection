@@ -11,6 +11,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Message;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\ProtectedContext;
 use Neos\Flow\Exception;
@@ -19,9 +20,12 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Fusion\Core\FusionConfiguration;
 use Neos\Fusion\Core\FusionGlobals;
+use Neos\Fusion\Core\IllegalEntryFusionPathValueException;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\ValueImplementation;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class RuntimeTest extends UnitTestCase
 {
@@ -36,9 +40,9 @@ class RuntimeTest extends UnitTestCase
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'), 'root');
         $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->disableOriginalConstructor()->getMock();
         $runtime->expects(self::any())->method('evaluate')->will(self::throwException($runtimeException));
-        $runtime->expects(self::once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->will(self::returnValue('Exception Message'));
+        $runtime->expects(self::once())->method('handleRenderingException')->with('foo/bar', $runtimeException)->will(self::returnValue('Exception Message'));
 
-        $output = $runtime->render('/foo/bar');
+        $output = $runtime->render('foo/bar');
 
         self::assertEquals('Exception Message', $output);
     }
@@ -63,7 +67,7 @@ class RuntimeTest extends UnitTestCase
         $objectManager->expects(self::once())->method('isRegistered')->with($exceptionHandlerSetting)->will(self::returnValue(true));
         $objectManager->expects(self::once())->method('get')->with($exceptionHandlerSetting)->will(self::returnValue(new ThrowingHandler()));
 
-        $runtime->handleRenderingException('/foo/bar', $runtimeException);
+        $runtime->handleRenderingException('foo/bar', $runtimeException);
     }
 
     /**
@@ -119,7 +123,7 @@ class RuntimeTest extends UnitTestCase
         $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->disableOriginalConstructor()->getMock();
         $runtime->expects(self::any())->method('evaluate')->will(self::throwException($securityException));
 
-        $runtime->render('/foo/bar');
+        $runtime->render('foo/bar');
     }
 
     /**
@@ -208,6 +212,18 @@ class RuntimeTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function renderResponseIsNotAllowedToOverrideFusionGlobals()
+    {
+        $this->expectException(\Neos\Fusion\Exception::class);
+        $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
+
+        $runtime->renderEntryPathWithContext('foo', ['request' =>'anything']);
+    }
+
+    /**
      * Legacy compatible layer to possibly override fusion globals like "request".
      * This functionality is only allowed for internal packages.
      * Currently Neos.Fusion.Form overrides the request, and we need to keep this behaviour.
@@ -221,5 +237,149 @@ class RuntimeTest extends UnitTestCase
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
         $runtime->pushContextArray(['bing' => 'beer', 'request' => 'anything']);
         self::assertTrue(true);
+    }
+
+    public static function renderStreamExamples(): iterable
+    {
+        yield 'simple string' => [
+            'rawValue' => 'my string',
+            'streamContents' => 'my string'
+        ];
+
+        yield 'string cast object (\Stringable)' => [
+            'rawValue' => new class implements \Stringable {
+                public function __toString()
+                {
+                    return 'my string karsten';
+                }
+            },
+            'streamContents' => 'my string karsten'
+        ];
+
+        yield 'empty string' => [
+            'rawValue' => '',
+            'streamContents' => ''
+        ];
+
+        yield 'null value' => [
+            'rawValue' => null,
+            'streamContents' => ''
+        ];
+    }
+
+    public function renderResponseExamples(): iterable
+    {
+        yield 'stringified http response string is upcasted' => [
+            'rawValue' => <<<'TEXT'
+            HTTP/1.1 418 OK
+            Content-Type: text/html
+            X-MyCustomHeader: marc
+
+            <!DOCTYPE html>
+            <head></head>
+            <body>Hello World</body>
+            TEXT,
+            'response' => <<<'TEXT'
+            HTTP/1.1 418 OK
+            Content-Type: text/html
+            X-MyCustomHeader: marc
+
+            <!DOCTYPE html>
+            <head></head>
+            <body>Hello World</body>
+            TEXT
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider renderStreamExamples
+     */
+    public function renderEntryPathStream(mixed $rawValue, string $expectedStreamContents)
+    {
+        $runtime = $this->getMockBuilder(Runtime::class)
+            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
+            ->onlyMethods(['render'])
+            ->getMock();
+
+        $runtime->expects(self::once())->method('render')->willReturn(
+            $rawValue
+        );
+
+        $response = $runtime->renderEntryPathWithContext('path', []);
+
+        self::assertInstanceOf(StreamInterface::class, $response);
+        self::assertSame($expectedStreamContents, $response->getContents());
+    }
+
+    /**
+     * @test
+     * @dataProvider renderResponseExamples
+     */
+    public function renderEntryPathResponse(mixed $rawValue, string $expectedHttpResponseString)
+    {
+        $runtime = $this->getMockBuilder(Runtime::class)
+            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
+            ->onlyMethods(['render'])
+            ->getMock();
+
+        $runtime->expects(self::once())->method('render')->willReturn(
+            is_string($rawValue) ? str_replace("\n", "\r\n", $rawValue) : $rawValue
+        );
+
+        $response = $runtime->renderEntryPathWithContext('path', []);
+
+        self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertSame(str_replace("\n", "\r\n", $expectedHttpResponseString), Message::toString($response));
+    }
+
+    public static function renderResponseIllegalValueExamples(): iterable
+    {
+        yield 'array' => [
+            'rawValue' => ['my' => 'array', 'with' => 'values']
+        ];
+
+        yield '\stdClass' => [
+            'rawValue' => (object)[]
+        ];
+
+        yield '\JsonSerializable' => [
+            'rawValue' => new class implements \JsonSerializable {
+                public function jsonSerialize(): mixed
+                {
+                    return 123;
+                }
+            }
+        ];
+
+        yield 'any class' => [
+            'rawValue' => new class {
+            }
+        ];
+
+        yield 'boolean' => [
+            'rawValue' => false
+        ];
+    }
+
+    /**
+     * @dataProvider renderResponseIllegalValueExamples
+     * @test
+     */
+    public function renderResponseThrowsIfNotStringable(mixed $illegalValue)
+    {
+        $this->expectException(IllegalEntryFusionPathValueException::class);
+        $this->expectExceptionMessage(sprintf('Fusion entry path "path" is expected to render a compatible http response body: string|\Stringable|null. Got %s instead.', get_debug_type($illegalValue)));
+
+        $runtime = $this->getMockBuilder(Runtime::class)
+            ->setConstructorArgs([FusionConfiguration::fromArray([]), FusionGlobals::empty()])
+            ->onlyMethods(['render'])
+            ->getMock();
+
+        $runtime->expects(self::once())->method('render')->willReturn(
+            $illegalValue
+        );
+
+        $runtime->renderEntryPathWithContext('path', []);
     }
 }

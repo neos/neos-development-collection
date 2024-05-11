@@ -42,7 +42,7 @@ Feature: Change node name
       | workspaceName   | "i-do-not-exist"         |
       | nodeAggregateId | "sir-david-nodenborough" |
       | newNodeName     | "new-name"               |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to rename a non-existing node aggregate
     When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:

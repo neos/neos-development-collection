@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
@@ -123,10 +124,14 @@ class FeatureContext implements Context
     {
         $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
         $propertyMapper = $this->getObject(PropertyMapper::class);
-        $contentGraph = $this->currentContentRepository->getContentGraph();
-        $nodeFactory = (new \ReflectionClass($contentGraph))
+        $contentGraphFinder = $this->currentContentRepository->projectionState(\Neos\ContentRepository\Core\ContentGraphFinder::class);
+        // FIXME: Dirty
+        $contentGraphFactory = (new \ReflectionClass($contentGraphFinder))
+            ->getProperty('contentGraphFactory')
+            ->getValue($contentGraphFinder);
+        $nodeFactory = (new \ReflectionClass($contentGraphFactory))
             ->getProperty('nodeFactory')
-            ->getValue($contentGraph);
+            ->getValue($contentGraphFactory);
         $propertyConverter = (new \ReflectionClass($nodeFactory))
             ->getProperty('propertyConverter')
             ->getValue($nodeFactory);

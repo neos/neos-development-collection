@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -48,13 +48,12 @@ final class NodeRecord
     }
 
     /**
-     * @param Connection $databaseConnection
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function updateToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
+    public function updateToDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
         $databaseConnection->update(
-            $tableNamePrefix . '_node',
+            $tableNames->node(),
             [
                 'nodeaggregateid' => $this->nodeAggregateId->value,
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
@@ -72,18 +71,6 @@ final class NodeRecord
                 'originallastmodified' => Types::DATETIME_IMMUTABLE,
             ]
         );
-    }
-
-    /**
-     * @param Connection $databaseConnection
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
-    {
-        $databaseConnection->delete($tableNamePrefix . '_node', [
-            'relationanchorpoint' => $this->relationAnchorPoint->value
-        ]);
     }
 
     /**
@@ -113,22 +100,12 @@ final class NodeRecord
     /**
      * Insert a node record with the given data and return it.
      *
-     * @param Connection $databaseConnection
-     * @param string $tableNamePrefix
-     * @param NodeAggregateId $nodeAggregateId
      * @param array<string,string> $originDimensionSpacePoint
-     * @param string $originDimensionSpacePointHash
-     * @param SerializedPropertyValues $properties
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeAggregateClassification $classification
-     * @param NodeName|null $nodeName
-     * @param Timestamps $timestamps
-     * @return self
      * @throws \Doctrine\DBAL\Exception
      */
     public static function createNewInDatabase(
         Connection $databaseConnection,
-        string $tableNamePrefix,
+        ContentGraphTableNames $tableNames,
         NodeAggregateId $nodeAggregateId,
         array $originDimensionSpacePoint,
         string $originDimensionSpacePointHash,
@@ -140,7 +117,7 @@ final class NodeRecord
         Timestamps $timestamps,
     ): self {
         $relationAnchorPoint = $databaseConnection->transactional(function ($databaseConnection) use (
-            $tableNamePrefix,
+            $tableNames,
             $nodeAggregateId,
             $originDimensionSpacePoint,
             $originDimensionSpacePointHash,
@@ -149,10 +126,10 @@ final class NodeRecord
             $classification,
             $timestamps
         ) {
-            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNamePrefix);
+            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNames);
             $dimensionSpacePoints->insertDimensionSpacePointByHashAndCoordinates($originDimensionSpacePointHash, $originDimensionSpacePoint);
 
-            $databaseConnection->insert($tableNamePrefix . '_node', [
+            $databaseConnection->insert($tableNames->node(), [
                 'nodeaggregateid' => $nodeAggregateId->value,
                 'origindimensionspacepointhash' => $originDimensionSpacePointHash,
                 'properties' => json_encode($properties),
@@ -188,20 +165,16 @@ final class NodeRecord
     /**
      * Creates a copy of this NodeRecord with a new anchor point.
      *
-     * @param Connection $databaseConnection
-     * @param string $tableNamePrefix
-     * @param NodeRecord $copyFrom
-     * @return self
      * @throws \Doctrine\DBAL\Exception
      */
     public static function createCopyFromNodeRecord(
         Connection $databaseConnection,
-        string $tableNamePrefix,
+        ContentGraphTableNames $tableNames,
         NodeRecord $copyFrom
     ): self {
         return self::createNewInDatabase(
             $databaseConnection,
-            $tableNamePrefix,
+            $tableNames,
             $copyFrom->nodeAggregateId,
             $copyFrom->originDimensionSpacePoint,
             $copyFrom->originDimensionSpacePointHash,

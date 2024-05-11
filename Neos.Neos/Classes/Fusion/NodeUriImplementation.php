@@ -14,14 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Psr\Log\LoggerInterface;
 
@@ -159,7 +161,18 @@ class NodeUriImplementation extends AbstractFusionObject
         );*/
 
         $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
+        $possibleRequest = $this->runtime->fusionGlobals->get('request');
+        if ($possibleRequest instanceof ActionRequest) {
+            $uriBuilder->setRequest($possibleRequest);
+        } else {
+            // unfortunately, the uri-builder always needs a request at hand and cannot build uris without
+            // even, if the default param merging would not be required
+            // this will improve with a reformed uri building:
+            // https://github.com/neos/flow-development-collection/pull/2744
+            $uriBuilder->setRequest(
+                ActionRequest::fromHttpRequest(ServerRequest::fromGlobals())
+            );
+        }
         $uriBuilder
             ->setFormat($this->getFormat())
             ->setCreateAbsoluteUri($this->isAbsolute())
