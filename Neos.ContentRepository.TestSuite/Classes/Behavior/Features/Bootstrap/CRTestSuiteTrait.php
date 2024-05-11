@@ -196,7 +196,7 @@ trait CRTestSuiteTrait
      */
     public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes): void
     {
-        $actualNumberOfNodes = $this->currentContentRepository->getContentGraph()->countNodes();
+        $actualNumberOfNodes = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->countNodes();
         Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
     }
 
@@ -263,8 +263,7 @@ trait CRTestSuiteTrait
         }
 
         try {
-            return $this->currentContentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $this->currentContentStreamId,
+            return $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findRootNodeAggregateByType(
                 NodeTypeName::fromString('Neos.Neos:Sites')
             )->nodeAggregateId;
         } catch (RootNodeAggregateDoesNotExist) {

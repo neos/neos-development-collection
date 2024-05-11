@@ -21,21 +21,19 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 trait SubtreeTagging
 {
-    abstract protected function getTableNamePrefix(): string;
-
     /**
      * @throws \Throwable
      */
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
         $this->getDatabaseConnection()->executeStatement('
-            UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+            UPDATE ' . $this->tableNames->hierarchyRelation() . ' h
             SET h.subtreetags = JSON_INSERT(h.subtreetags, :tagPath, null)
             WHERE h.childnodeanchor IN (
               WITH RECURSIVE cte (id) AS (
                 SELECT ch.childnodeanchor
-                FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation ch
-                INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = ch.parentnodeanchor
+                FROM ' . $this->tableNames->hierarchyRelation() . ' ch
+                INNER JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ch.parentnodeanchor
                 WHERE
                   n.nodeaggregateid = :nodeAggregateId
                   AND ch.contentstreamid = :contentStreamId
@@ -46,7 +44,7 @@ trait SubtreeTagging
                   dh.childnodeanchor
                 FROM
                   cte
-                  JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation dh ON dh.parentnodeanchor = cte.id
+                  JOIN ' . $this->tableNames->hierarchyRelation() . ' dh ON dh.parentnodeanchor = cte.id
                 WHERE
                   NOT JSON_CONTAINS_PATH(dh.subtreetags, \'one\', :tagPath)
               )
@@ -64,8 +62,8 @@ trait SubtreeTagging
             ]);
 
         $this->getDatabaseConnection()->executeStatement('
-            UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
-            INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = h.childnodeanchor
+            UPDATE ' . $this->tableNames->hierarchyRelation() . ' h
+            INNER JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = h.childnodeanchor
             SET h.subtreetags = JSON_SET(h.subtreetags, :tagPath, true)
             WHERE
               n.nodeaggregateid = :nodeAggregateId
@@ -87,15 +85,15 @@ trait SubtreeTagging
     private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
         $this->getDatabaseConnection()->executeStatement('
-            UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
-            INNER JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation ph ON ph.childnodeanchor = h.parentnodeanchor
+            UPDATE ' . $this->tableNames->hierarchyRelation() . ' h
+            INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' ph ON ph.childnodeanchor = h.parentnodeanchor
             SET h.subtreetags = IF((
               SELECT
                 JSON_CONTAINS_PATH(ph.subtreetags, \'one\', :tagPath)
               FROM
-                ' . $this->getTableNamePrefix() . '_hierarchyrelation ph
-                INNER JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation ch ON ch.parentnodeanchor = ph.childnodeanchor
-                INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = ch.childnodeanchor
+                ' . $this->tableNames->hierarchyRelation() . ' ph
+                INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' ch ON ch.parentnodeanchor = ph.childnodeanchor
+                INNER JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ch.childnodeanchor
               WHERE
                 n.nodeaggregateid = :nodeAggregateId
                 AND ph.contentstreamid = :contentStreamId
@@ -105,8 +103,8 @@ trait SubtreeTagging
             WHERE h.childnodeanchor IN (
               WITH RECURSIVE cte (id) AS (
                 SELECT ch.childnodeanchor
-                FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation ch
-                INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = ch.childnodeanchor
+                FROM ' . $this->tableNames->hierarchyRelation() . ' ch
+                INNER JOIN ' . $this->tableNames->node() . ' n ON n.relationanchorpoint = ch.childnodeanchor
                 WHERE
                   n.nodeaggregateid = :nodeAggregateId
                   AND ch.contentstreamid = :contentStreamId
@@ -116,7 +114,7 @@ trait SubtreeTagging
                   dh.childnodeanchor
                 FROM
                   cte
-                  JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation dh ON dh.parentnodeanchor = cte.id
+                  JOIN ' . $this->tableNames->hierarchyRelation() . ' dh ON dh.parentnodeanchor = cte.id
                 WHERE
                   JSON_EXTRACT(dh.subtreetags, :tagPath) != TRUE
               )
@@ -140,14 +138,14 @@ trait SubtreeTagging
         DimensionSpacePoint $coveredDimensionSpacePoint
     ): void {
         $this->getDatabaseConnection()->executeStatement('
-            UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h,
+            UPDATE ' . $this->tableNames->hierarchyRelation() . ' h,
             (
               WITH RECURSIVE cte AS (
                 SELECT
                   JSON_KEYS(th.subtreetags) subtreeTagsToInherit, th.childnodeanchor
                 FROM
-                  ' . $this->getTableNamePrefix() . '_hierarchyrelation th
-                  INNER JOIN ' . $this->getTableNamePrefix() . '_node tn ON tn.relationanchorpoint = th.childnodeanchor
+                  ' . $this->tableNames->hierarchyRelation() . ' th
+                  INNER JOIN ' . $this->tableNames->node() . ' tn ON tn.relationanchorpoint = th.childnodeanchor
                 WHERE
                   tn.nodeaggregateid = :newParentNodeAggregateId
                   AND th.contentstreamid = :contentStreamId
@@ -164,7 +162,7 @@ trait SubtreeTagging
                     dh.childnodeanchor
                 FROM
                   cte
-                JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation dh
+                JOIN ' . $this->tableNames->hierarchyRelation() . ' dh
                     ON
                         dh.parentnodeanchor = cte.childnodeanchor
                         AND dh.contentstreamid = :contentStreamId
@@ -198,7 +196,7 @@ trait SubtreeTagging
             return NodeTags::createEmpty();
         }
         $subtreeTagsJson = $this->getDatabaseConnection()->fetchOne('
-                SELECT h.subtreetags FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                SELECT h.subtreetags FROM ' . $this->tableNames->hierarchyRelation() . ' h
                 WHERE
                   h.childnodeanchor = :parentNodeAnchorPoint
                   AND h.contentstreamid = :contentStreamId

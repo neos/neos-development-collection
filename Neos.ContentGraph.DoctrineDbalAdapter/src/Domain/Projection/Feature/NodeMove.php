@@ -27,8 +27,6 @@ trait NodeMove
 {
     abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
 
-    abstract protected function getTableNamePrefix(): string;
-
     /**
      * @param NodeAggregateWasMoved $event
      * @throws \Throwable
@@ -121,7 +119,7 @@ trait NodeMove
         $ingoingHierarchyRelation->assignNewPosition(
             $newPosition,
             $this->getDatabaseConnection(),
-            $this->getTableNamePrefix()
+            $this->tableNames
         );
     }
 
@@ -190,7 +188,7 @@ trait NodeMove
             $newParent->relationAnchorPoint,
             $newPosition,
             $this->getDatabaseConnection(),
-            $this->getTableNamePrefix()
+            $this->tableNames
         );
     }
 
