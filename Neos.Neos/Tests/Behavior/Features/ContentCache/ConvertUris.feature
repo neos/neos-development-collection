@@ -36,7 +36,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "root"            |
@@ -135,7 +135,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
 
   Scenario: ContentCache doesn't get flushed when target node changes in different workspace
     Given I have Fusion content cache enabled
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a2
 
     And I execute the following Fusion code:
@@ -149,7 +149,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
     cacheVerifier=first execution, title=Node a2, link=Some value with node URI: /a1.
     """
 
-    And I am in the active content stream of workspace "user-test" and dimension space point {}
+    And I am in workspace "user-test" and dimension space point {}
     When the command SetNodeProperties is executed with payload:
       | Key             | Value                        |
       | contentStreamId | "cs-identifier"              |
@@ -158,7 +158,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
 
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a2
     And I execute the following Fusion code:
     """fusion

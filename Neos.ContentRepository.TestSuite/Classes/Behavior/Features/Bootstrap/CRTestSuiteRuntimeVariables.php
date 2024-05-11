@@ -103,15 +103,6 @@ trait CRTestSuiteRuntimeVariables
      */
     public function iAmInWorkspace(string $workspaceName): void
     {
-        $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
-    }
-
-    /**
-     * @Given /^I am in the active content stream of workspace "([^"]*)"$/
-     * @throws \Exception
-     */
-    public function iAmInTheActiveContentStreamOfWorkspace(string $workspaceName): void
-    {
         $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
         if ($workspace === null) {
             throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
@@ -129,21 +120,21 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
+     * @Given /^I am in workspace "([^"]*)" and dimension space point (.*)$/
+     * @throws \Exception
+     */
+    public function iAmInWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint): void
+    {
+        $this->iAmInWorkspace($workspaceName);
+        $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
+    }
+
+    /**
      * @Given /^I am in content stream "([^"]*)" and dimension space point (.*)$/
      */
     public function iAmInContentStreamAndDimensionSpacePoint(string $contentStreamId, string $dimensionSpacePoint): void
     {
         $this->iAmInContentStream($contentStreamId);
-        $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
-    }
-
-    /**
-     * @Given /^I am in the active content stream of workspace "([^"]*)" and dimension space point (.*)$/
-     * @throws \Exception
-     */
-    public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint): void
-    {
-        $this->iAmInTheActiveContentStreamOfWorkspace($workspaceName);
         $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
     }
 
@@ -164,6 +155,7 @@ trait CRTestSuiteRuntimeVariables
         $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
         $contentGraphFinder->forgetInstances();
         if (isset($this->currentContentStreamId)) {
+            // This must still be supported for low level tests, e.g. for content stream forking
             return $contentGraphFinder->getByWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         }
 

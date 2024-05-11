@@ -85,9 +85,6 @@ trait NodeModification
     public function theEventNodePropertiesWereSetWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = $this->currentContentStreamId->value;
-        }
         if (!isset($eventPayload['originDimensionSpacePoint'])) {
             $eventPayload['originDimensionSpacePoint'] = json_encode($this->currentDimensionSpacePoint);
         }

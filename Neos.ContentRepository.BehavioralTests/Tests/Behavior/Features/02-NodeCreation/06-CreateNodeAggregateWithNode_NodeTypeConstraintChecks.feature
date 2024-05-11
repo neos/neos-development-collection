@@ -32,7 +32,6 @@ Feature: Create node aggregate with node
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
-    And I am in workspace "live"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -41,8 +40,7 @@ Feature: Create node aggregate with node
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
-    And I am in dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
