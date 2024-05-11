@@ -18,7 +18,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
 
     public function __construct(
-        private readonly ContentGraphTableNames $contentGraphTableNames
+        private readonly ContentGraphTableNames $tableNames
     ) {
     }
 
@@ -35,7 +35,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createNodeTable(): Table
     {
-        $table = new Table($this->contentGraphTableNames->node(), [
+        $table = new Table($this->tableNames->node(), [
             DbalSchemaFactory::columnForNodeAnchorPoint('relationanchorpoint')->setAutoincrement(true),
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotnull(false),
@@ -56,7 +56,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createHierarchyRelationTable(): Table
     {
-        $table = new Table($this->contentGraphTableNames->hierarchyRelation(), [
+        $table = new Table($this->tableNames->hierarchyRelation(), [
             (new Column('name', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
             (new Column('position', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotnull(true),
@@ -76,7 +76,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createDimensionSpacePointsTable(): Table
     {
-        $table = new Table($this->contentGraphTableNames->dimensionSpacePoints(), [
+        $table = new Table($this->tableNames->dimensionSpacePoints(), [
             DbalSchemaFactory::columnForDimensionSpacePointHash('hash')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePoint('dimensionspacepoint')->setNotnull(true)
         ]);
@@ -87,7 +87,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createReferenceRelationTable(): Table
     {
-        $table = new Table($this->contentGraphTableNames->referenceRelation(), [
+        $table = new Table($this->tableNames->referenceRelation(), [
             (new Column('name', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
             (new Column('position', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('nodeanchorpoint'),
@@ -101,7 +101,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createWorkspacesTable(): Table
     {
-        $workspaceTable = new Table($this->contentGraphTableNames->workspaces(), [
+        $workspaceTable = new Table($this->tableNames->workspaces(), [
             (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
             DbalSchemaFactory::columnForContentStreamId('currentcontentstreamid')->setNotNull(true),
         ]);
