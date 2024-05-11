@@ -33,6 +33,7 @@ trait NodeRenaming
     private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
