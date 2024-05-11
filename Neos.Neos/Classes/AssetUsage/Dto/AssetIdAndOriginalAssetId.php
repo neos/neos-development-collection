@@ -9,7 +9,6 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @internal
  */
-
 #[Flow\Proxy(false)]
 readonly class AssetIdAndOriginalAssetId
 {

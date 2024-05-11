@@ -20,7 +20,6 @@ use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -314,15 +313,6 @@ final class ContentGraph implements ContentGraphInterface
             static fn (array $row) => NodeTypeName::fromString($row['nodetypename']),
             $this->fetchRows($this->nodeQueryBuilder->buildfindUsedNodeTypeNamesQuery())
         );
-    }
-
-    /**
-     * @return ContentSubgraphWithRuntimeCaches[]
-     * @internal only used for {@see DoctrineDbalContentGraphProjection}
-     */
-    public function getSubgraphs(): array
-    {
-        return $this->subgraphs;
     }
 
     private function createQueryBuilder(): QueryBuilder

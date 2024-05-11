@@ -671,7 +671,7 @@ trait ConstraintChecks
     ): void {
         if (!$nodeAggregate->occupiesDimensionSpacePoint($originDimensionSpacePoint)) {
             throw new DimensionSpacePointIsNotYetOccupied(
-                'Dimension space point ' . json_encode($originDimensionSpacePoint, JSON_THROW_ON_ERROR)
+                'Dimension space point ' . json_encode($originDimensionSpacePoint, JSON_PARTIAL_OUTPUT_ON_ERROR)
                     . ' is not yet occupied by node aggregate "' . $nodeAggregate->nodeAggregateId->value . '"',
                 1552595396
             );
@@ -687,7 +687,7 @@ trait ConstraintChecks
     ): void {
         if ($nodeAggregate->occupiesDimensionSpacePoint($originDimensionSpacePoint)) {
             throw new DimensionSpacePointIsAlreadyOccupied(
-                'Dimension space point ' . json_encode($originDimensionSpacePoint, JSON_THROW_ON_ERROR)
+                'Dimension space point ' . json_encode($originDimensionSpacePoint, JSON_PARTIAL_OUTPUT_ON_ERROR)
                     . ' is already occupied by node aggregate "' . $nodeAggregate->nodeAggregateId->value . '"',
                 1552595441
             );

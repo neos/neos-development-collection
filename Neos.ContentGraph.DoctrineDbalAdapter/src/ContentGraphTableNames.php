@@ -11,7 +11,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 final readonly class ContentGraphTableNames
 {
     private function __construct(
-        public string $tableNamePrefix
+        private string $tableNamePrefix
     ) {
     }
 
