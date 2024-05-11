@@ -15,6 +15,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
@@ -93,8 +94,12 @@ final class ContentRepositoryRegistry
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
         $contentRepository = $this->get($node->subgraphIdentity->contentRepositoryId);
-        return $contentRepository->getContentGraph()->getSubgraph(
-            $node->subgraphIdentity->contentStreamId,
+
+        // FIXME: node->workspace
+        /** @var Workspace $workspace */
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($node->subgraphIdentity->contentStreamId);
+
+        return $contentRepository->getContentGraph($workspace->workspaceName)->getSubgraph(
             $node->subgraphIdentity->dimensionSpacePoint,
             $node->subgraphIdentity->visibilityConstraints
         );
@@ -157,7 +162,7 @@ final class ContentRepositoryRegistry
                 $this->buildProjectionsFactory($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionCatchUpTrigger($contentRepositoryId, $contentRepositorySettings),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
-                $clock,
+                $clock
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryId, $exception);

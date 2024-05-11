@@ -152,9 +152,8 @@ class ContentController extends ActionController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($nodeAddressString);
 
-        $node = $contentRepository->getContentGraph()
+        $node = $contentRepository->getContentGraph($nodeAddress->workspaceName)
             ->getSubgraph(
-                $nodeAddress->contentStreamId,
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             )

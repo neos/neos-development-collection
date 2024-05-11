@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -80,9 +81,9 @@ trait ProjectedNodeTrait
     public function iExpectANodeIdentifiedByXToExistInTheContentGraph(string $serializedNodeDiscriminator): void
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
+        $this->currentContentStreamId = $nodeDiscriminator->contentStreamId;
         $this->initializeCurrentNodeFromContentGraph(function (ContentGraphInterface $contentGraph) use ($nodeDiscriminator) {
             $currentNodeAggregate = $contentGraph->findNodeAggregateById(
-                $nodeDiscriminator->contentStreamId,
                 $nodeDiscriminator->nodeAggregateId
             );
             Assert::assertTrue(
@@ -243,29 +244,46 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to be exactly explicitly tagged "(.*)"$/
-     * @param string $tagList the comma-separated list of tag names
+     * @param string $expectedTagList the comma-separated list of tag names
      */
-    public function iExpectThisNodeToBeExactlyExplicitlyTagged(string $tagList): void
+    public function iExpectThisNodeToBeExactlyExplicitlyTagged(string $expectedTagList): void
     {
-        $this->assertOnCurrentNode(function (Node $currentNode) use ($tagList) {
-            $currentNode->tags->withoutInherited()->toStringArray() === explode(',', $tagList);
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedTagList) {
+            $actualTags = $currentNode->tags->withoutInherited()->toStringArray();
+            sort($actualTags);
+            Assert::assertSame(
+                ($expectedTagList === '') ? [] : explode(',', $expectedTagList),
+                $actualTags
+            );
         });
     }
 
     /**
      * @Then /^I expect this node to exactly inherit the tags "(.*)"$/
-     * @param string $tagList the comma-separated list of tag names
+     * @param string $expectedTagList the comma-separated list of tag names
      */
-    public function iExpectThisNodeToExactlyInheritTheTags(string $tagList): void
+    public function iExpectThisNodeToExactlyInheritTheTags(string $expectedTagList): void
     {
-        $this->assertOnCurrentNode(function (Node $currentNode) use ($tagList) {
-            $currentNode->tags->onlyInherited()->toStringArray() === explode(',', $tagList);
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedTagList) {
+            $actualTags = $currentNode->tags->onlyInherited()->toStringArray();
+            sort($actualTags);
+            Assert::assertSame(
+                ($expectedTagList === '') ? [] : explode(',', $expectedTagList),
+                $actualTags,
+            );
         });
     }
 
     protected function initializeCurrentNodeFromContentGraph(callable $query): void
     {
-        $this->currentNode = $query($this->currentContentRepository->getContentGraph());
+        $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
+        $contentGraphFinder->forgetInstances();
+        if (isset($this->currentContentStreamId)) {
+            $contentGraph = $contentGraphFinder->getByWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId);
+        } else {
+            $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+        }
+        $this->currentNode = $query($contentGraph);
     }
 
     protected function initializeCurrentNodeFromContentSubgraph(callable $query): void

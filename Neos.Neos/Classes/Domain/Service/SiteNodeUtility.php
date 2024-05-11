@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\Site;
@@ -57,20 +58,19 @@ final class SiteNodeUtility
      */
     public function findSiteNodeBySite(
         Site $site,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
         $contentRepository = $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId);
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
+        $subgraph = $contentGraph->getSubgraph(
             $dimensionSpacePoint,
             $visibilityConstraints,
         );
 
-        $rootNodeAggregate = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
-            $contentStreamId,
+        $rootNodeAggregate = $contentGraph->findRootNodeAggregateByType(
             NodeTypeNameFactory::forSites()
         );
         $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($dimensionSpacePoint);

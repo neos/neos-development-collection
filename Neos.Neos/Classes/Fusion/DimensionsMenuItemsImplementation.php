@@ -7,6 +7,7 @@ namespace Neos\Neos\Fusion;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
@@ -58,15 +59,21 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         $interDimensionalVariationGraph = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph;
         $currentDimensionSpacePoint = $currentNode->subgraphIdentity->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
+        // FIXME: node->workspaceName
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($currentNode->subgraphIdentity->contentStreamId);
+        if (is_null($workspace)) {
+            return $menuItems;
+        }
+        $contentGraph = $contentRepository->getContentGraph($workspace->workspaceName);
+
         foreach ($interDimensionalVariationGraph->getDimensionSpacePoints() as $dimensionSpacePoint) {
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
                     $variant = $currentNode;
                 } else {
-                    $variant = $contentRepository->getContentGraph()
+                    $variant = $contentGraph
                         ->getSubgraph(
-                            $currentNode->subgraphIdentity->contentStreamId,
                             $dimensionSpacePoint,
                             $currentNode->subgraphIdentity->visibilityConstraints,
                         )
@@ -79,7 +86,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                         $contentDimensionIdentifierToLimitTo,
                         $currentNode->nodeAggregateId,
                         $dimensionMenuItemsImplementationInternals,
-                        $contentRepository
+                        $contentGraph
                     );
                 }
 
@@ -147,7 +154,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         ContentDimensionId $contentDimensionIdentifier,
         NodeAggregateId $nodeAggregateId,
         DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals,
-        ContentRepository $contentRepository
+        ContentGraphInterface $contentGraph
     ): ?Node {
         $generalizations = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph
             ->getWeightedGeneralizations($dimensionSpacePoint);
@@ -157,11 +164,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 $generalization->getCoordinate($contentDimensionIdentifier)
                 === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)
             ) {
-                $variant = $contentRepository->getContentGraph()
+                $variant = $contentGraph
                     ->getSubgraph(
-                        $this->currentNode->subgraphIdentity->contentStreamId,
                         $generalization,
-                        $this->currentNode->subgraphIdentity->visibilityConstraints,
+                        $this->getCurrentNode()->subgraphIdentity->visibilityConstraints,
                     )
                     ->findNodeById($nodeAggregateId);
                 if ($variant) {

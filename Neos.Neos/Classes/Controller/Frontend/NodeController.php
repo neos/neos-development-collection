@@ -132,8 +132,7 @@ class NodeController extends ActionController
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamId,
+        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
             $nodeAddress->dimensionSpacePoint,
             $visibilityConstraints
         );
@@ -201,8 +200,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamId,
+        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
             $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::frontend()
         );
