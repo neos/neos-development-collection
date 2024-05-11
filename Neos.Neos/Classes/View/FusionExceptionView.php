@@ -119,7 +119,7 @@ class FusionExceptionView extends AbstractView
         if ($liveWorkspace && $site) {
             $currentSiteNode = $this->siteNodeUtility->findSiteNodeBySite(
                 $site,
-                $liveWorkspace->currentContentStreamId,
+                $liveWorkspace->workspaceName,
                 $dimensionSpacePoint,
                 VisibilityConstraints::frontend()
             );

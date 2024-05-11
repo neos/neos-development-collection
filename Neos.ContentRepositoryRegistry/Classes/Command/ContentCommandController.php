@@ -60,8 +60,7 @@ final class ContentCommandController extends CommandController
         $this->outputLine('Refreshing root node dimensions in workspace <b>%s</b> (content repository <b>%s</b>)', [$workspaceInstance->workspaceName->value, $contentRepositoryId->value]);
         $this->outputLine('Resolved content stream <b>%s</b>', [$workspaceInstance->currentContentStreamId->value]);
 
-        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph()->findRootNodeAggregates(
-            $workspaceInstance->currentContentStreamId,
+        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph($workspaceInstance->workspaceName)->findRootNodeAggregates(
             FindRootNodeAggregatesFilter::create()
         );
 
@@ -153,14 +152,13 @@ final class ContentCommandController extends CommandController
         $this->outputLine('Creating <b>%s</b> to <b>%s</b> in workspace <b>%s</b> (content repository <b>%s</b>)', [$sourceSpacePoint->toJson(), $targetSpacePoint->toJson(), $workspaceInstance->workspaceName->value, $contentRepositoryId->value]);
         $this->outputLine('Resolved content stream <b>%s</b>', [$workspaceInstance->currentContentStreamId->value]);
 
-        $sourceSubgraph = $contentRepositoryInstance->getContentGraph()->getSubgraph(
-            $workspaceInstance->currentContentStreamId,
+        $sourceSubgraph = $contentRepositoryInstance->getContentGraph(WorkspaceName::fromString($workspace))->getSubgraph(
             $sourceSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
 
-        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph()
-            ->findRootNodeAggregates($workspaceInstance->currentContentStreamId, FindRootNodeAggregatesFilter::create());
+        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph($workspaceInstance->workspaceName)
+            ->findRootNodeAggregates(FindRootNodeAggregatesFilter::create());
 
 
         foreach ($rootNodeAggregates as $rootNodeAggregate) {

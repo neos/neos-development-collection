@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
+use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
@@ -33,7 +34,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 {
     public function __construct(
         private readonly DbalClientInterface $client,
-        private readonly string $tableNamePrefix
+        private readonly ContentGraphTableNames $tableNames
     ) {
     }
 
@@ -45,9 +46,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $result = new Result();
 
         $disconnectedHierarchyRelationRecords = $this->client->getConnection()->executeQuery(
-            'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
-                LEFT JOIN ' . $this->tableNamePrefix . '_node p ON h.parentnodeanchor = p.relationanchorpoint
-                LEFT JOIN ' . $this->tableNamePrefix . '_node c ON h.childnodeanchor = c.relationanchorpoint
+            'SELECT h.* FROM ' . $this->tableNames->hierarchyRelation() . ' h
+                LEFT JOIN ' . $this->tableNames->node() . ' p ON h.parentnodeanchor = p.relationanchorpoint
+                LEFT JOIN ' . $this->tableNames->node() . ' c ON h.childnodeanchor = c.relationanchorpoint
                 WHERE h.parentnodeanchor != :rootNodeAnchor
                 AND (
                     p.relationanchorpoint IS NULL
@@ -67,7 +68,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         $invalidlyHashedHierarchyRelationRecords = $this->client->getConnection()->executeQuery(
-            'SELECT * FROM ' . $this->tableNamePrefix . '_hierarchyrelation h LEFT JOIN ' . $this->tableNamePrefix . '_dimensionspacepoints dsp ON dsp.hash = h.dimensionspacepointhash
+            'SELECT * FROM ' . $this->tableNames->hierarchyRelation() . ' h LEFT JOIN ' . $this->tableNames->dimensionSpacePoints() . ' dsp ON dsp.hash = h.dimensionspacepointhash
                 HAVING dsp.dimensionspacepoint IS NULL'
         )->fetchAllAssociative();
 
@@ -80,9 +81,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         $hierarchyRelationRecordsAppearingMultipleTimes = $this->client->getConnection()->executeQuery(
-            'SELECT COUNT(*) as uniquenessCounter, h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
-                LEFT JOIN ' . $this->tableNamePrefix . '_node p ON h.parentnodeanchor = p.relationanchorpoint
-                LEFT JOIN ' . $this->tableNamePrefix . '_node c ON h.childnodeanchor = c.relationanchorpoint
+            'SELECT COUNT(*) as uniquenessCounter, h.* FROM ' . $this->tableNames->hierarchyRelation() . ' h
+                LEFT JOIN ' . $this->tableNames->node() . ' p ON h.parentnodeanchor = p.relationanchorpoint
+                LEFT JOIN ' . $this->tableNames->node() . ' c ON h.childnodeanchor = c.relationanchorpoint
                 WHERE h.parentnodeanchor != :rootNodeAnchor
                 GROUP BY p.nodeaggregateid, c.nodeaggregateid,
                          h.dimensionspacepointhash, h.contentstreamid
@@ -113,7 +114,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         $ambiguouslySortedHierarchyRelationRecords = $this->client->getConnection()->executeQuery(
             'SELECT *, COUNT(position)
-                    FROM ' . $this->tableNamePrefix . '_hierarchyrelation
+                    FROM ' . $this->tableNames->hierarchyRelation() . '
                     GROUP BY position, parentnodeanchor, contentstreamid, dimensionspacepointhash
                     HAVING COUNT(position) > 1'
         );
@@ -127,7 +128,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         foreach ($ambiguouslySortedHierarchyRelationRecords as $hierarchyRelationRecord) {
             $ambiguouslySortedNodeRecords = $this->client->getConnection()->executeQuery(
                 'SELECT nodeaggregateid
-                    FROM ' . $this->tableNamePrefix . '_node
+                    FROM ' . $this->tableNames->node() . '
                     WHERE relationanchorpoint = :relationAnchorPoint',
                 [
                     'relationAnchorPoint' => $hierarchyRelationRecord['childnodeanchor']
@@ -155,8 +156,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $result = new Result();
         $unnamedTetheredNodeRecords = $this->client->getConnection()->executeQuery(
             'SELECT n.nodeaggregateid, h.contentstreamid
-                    FROM ' . $this->tableNamePrefix . '_node n
-                INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                    FROM ' . $this->tableNames->node() . ' n
+                INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
                     ON h.childnodeanchor = n.relationanchorpoint
                 WHERE n.classification = :tethered
               AND h.name IS NULL
@@ -192,8 +193,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             'SELECT
               ph.name
             FROM
-              ' . $this->tableNamePrefix . '_hierarchyrelation h
-              INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
+              ' . $this->tableNames->hierarchyRelation() . ' h
+              INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' ph
                 ON ph.childnodeanchor = h.parentnodeanchor
                 AND ph.contentstreamid = h.contentstreamid
                 AND ph.dimensionspacepointhash = h.dimensionspacepointhash
@@ -222,9 +223,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $result = new Result();
 
         $referenceRelationRecordsDetachedFromSource = $this->client->getConnection()->executeQuery(
-            'SELECT * FROM ' . $this->tableNamePrefix . '_referencerelation
+            'SELECT * FROM ' . $this->tableNames->referenceRelation() . '
                 WHERE nodeanchorpoint NOT IN (
-                    SELECT relationanchorpoint FROM ' . $this->tableNamePrefix . '_node
+                    SELECT relationanchorpoint FROM ' . $this->tableNames->node() . '
                 )'
         )->fetchAllAssociative();
 
@@ -240,13 +241,13 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             'SELECT sh.contentstreamid AS contentstreamId,
                     s.nodeaggregateid AS sourceNodeAggregateId,
                     r.destinationnodeaggregateid AS destinationNodeAggregateId
-                FROM ' . $this->tableNamePrefix . '_referencerelation r
-                INNER JOIN ' . $this->tableNamePrefix . '_node s ON r.nodeanchorpoint = s.relationanchorpoint
-                INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation sh
+                FROM ' . $this->tableNames->referenceRelation() . ' r
+                INNER JOIN ' . $this->tableNames->node() . ' s ON r.nodeanchorpoint = s.relationanchorpoint
+                INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' sh
                     ON r.nodeanchorpoint = sh.childnodeanchor
                 LEFT JOIN (
-                    ' . $this->tableNamePrefix . '_node d
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation dh
+                    ' . $this->tableNames->node() . ' d
+                    INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' dh
                         ON d.relationanchorpoint = dh.childnodeanchor
                 ) ON r.destinationnodeaggregateid = d.nodeaggregateid
                     AND sh.contentstreamid = dh.contentstreamid
@@ -291,7 +292,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     SELECT
      	h.childnodeanchor
     FROM
-        ' . $this->tableNamePrefix . '_hierarchyrelation h
+        ' . $this->tableNames->hierarchyRelation() . ' h
     WHERE
         h.parentnodeanchor = :rootAnchorPoint
         AND h.contentstreamid = :contentStreamId
@@ -304,14 +305,14 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         h.childnodeanchor
      FROM
         subgraph p
-	 INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+	 INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
         on h.parentnodeanchor = p.childnodeanchor
 	 WHERE
 	 	h.contentstreamid = :contentStreamId
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
 )
-SELECT nodeaggregateid FROM ' . $this->tableNamePrefix . '_node n
-INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+SELECT nodeaggregateid FROM ' . $this->tableNames->node() . ' n
+INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
     ON h.childnodeanchor = n.relationanchorpoint
 WHERE
     h.contentstreamid = :contentStreamId
@@ -364,8 +365,8 @@ WHERE
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $ambiguousNodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT n.nodeaggregateid, COUNT(n.relationanchorpoint)
-                    FROM ' . $this->tableNamePrefix . '_node n
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                    FROM ' . $this->tableNames->node() . ' n
+                    INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
                         ON h.childnodeanchor = n.relationanchorpoint
                     WHERE h.contentstreamid = :contentStreamId
                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
@@ -401,8 +402,8 @@ WHERE
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $nodeRecordsWithMultipleParents = $this->client->getConnection()->executeQuery(
                     'SELECT c.nodeaggregateid
-                    FROM ' . $this->tableNamePrefix . '_node c
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                    FROM ' . $this->tableNames->node() . ' c
+                    INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
                         ON h.childnodeanchor = c.relationanchorpoint
                     WHERE h.contentstreamid = :contentStreamId
                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
@@ -441,8 +442,8 @@ WHERE
                 ) as $nodeAggregateId
             ) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
-                    'SELECT DISTINCT n.nodetypename FROM ' . $this->tableNamePrefix . '_node n
-                        INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                    'SELECT DISTINCT n.nodetypename FROM ' . $this->tableNames->node() . ' n
+                        INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
                             ON h.childnodeanchor = n.relationanchorpoint
                         WHERE h.contentstreamid = :contentStreamId
                         AND n.nodeaggregateid = :nodeAggregateId',
@@ -484,8 +485,8 @@ WHERE
                 ) as $nodeAggregateId
             ) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
-                    'SELECT DISTINCT n.classification FROM ' . $this->tableNamePrefix . '_node n
-                        INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                    'SELECT DISTINCT n.classification FROM ' . $this->tableNames->node() . ' n
+                        INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
                             ON h.childnodeanchor = n.relationanchorpoint
                         WHERE h.contentstreamid = :contentStreamId
                         AND n.nodeaggregateid = :nodeAggregateId',
@@ -523,10 +524,10 @@ WHERE
         foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             $excessivelyCoveringNodeRecords = $this->client->getConnection()->executeQuery(
                 'SELECT n.nodeaggregateid, c.dimensionspacepointhash
-                    FROM ' . $this->tableNamePrefix . '_hierarchyrelation c
-                    INNER JOIN ' . $this->tableNamePrefix . '_node n
+                    FROM ' . $this->tableNames->hierarchyRelation() . ' c
+                    INNER JOIN ' . $this->tableNames->node() . ' n
                         ON c.childnodeanchor = n.relationanchorpoint
-                    LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyrelation p
+                    LEFT JOIN ' . $this->tableNames->hierarchyRelation() . ' p
                         ON c.parentnodeanchor = p.childnodeanchor
                     WHERE c.contentstreamid = :contentStreamId
                     AND p.contentstreamid = :contentStreamId
@@ -560,16 +561,16 @@ WHERE
         foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             $nodeRecordsWithMissingOriginCoverage = $this->client->getConnection()->executeQuery(
                 'SELECT nodeaggregateid, origindimensionspacepointhash
-                    FROM ' . $this->tableNamePrefix . '_node n
-                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
+                    FROM ' . $this->tableNames->node() . ' n
+                    INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
                         ON h.childnodeanchor = n.relationanchorpoint
                     WHERE
                         h.contentstreamid = :contentStreamId
                     AND nodeaggregateid NOT IN (
                         -- this query finds all nodes whose origin *IS COVERED* by an incoming hierarchy relation.
                         SELECT n.nodeaggregateid
-                        FROM ' . $this->tableNamePrefix . '_node n
-                        LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyrelation p
+                        FROM ' . $this->tableNames->node() . ' n
+                        LEFT JOIN ' . $this->tableNames->hierarchyRelation() . ' p
                             ON p.childnodeanchor = n.relationanchorpoint
                             AND p.dimensionspacepointhash = n.origindimensionspacepointhash
                             WHERE p.contentstreamid = :contentStreamId
@@ -605,7 +606,7 @@ WHERE
         $connection = $this->client->getConnection();
 
         $rows = $connection->executeQuery(
-            'SELECT DISTINCT contentstreamid FROM ' . $this->tableNamePrefix . '_hierarchyrelation'
+            'SELECT DISTINCT contentstreamid FROM ' . $this->tableNames->hierarchyRelation()
         )->fetchAllAssociative();
 
         return array_map(function (array $row) {
@@ -621,7 +622,7 @@ WHERE
     protected function findProjectedDimensionSpacePoints(): DimensionSpacePointSet
     {
         $records = $this->client->getConnection()->executeQuery(
-            'SELECT dimensionspacepoint FROM ' . $this->tableNamePrefix . '_dimensionspacepoints'
+            'SELECT dimensionspacepoint FROM ' . $this->tableNames->dimensionSpacePoints()
         )->fetchAllAssociative();
 
         $records = array_map(function (array $record) {
@@ -639,7 +640,7 @@ WHERE
         ContentStreamId $contentStreamId
     ): array {
         $records = $this->client->getConnection()->executeQuery(
-            'SELECT DISTINCT nodeaggregateid FROM ' . $this->tableNamePrefix . '_node'
+            'SELECT DISTINCT nodeaggregateid FROM ' . $this->tableNames->node()
         )->fetchAllAssociative();
 
         return array_map(function (array $record) {

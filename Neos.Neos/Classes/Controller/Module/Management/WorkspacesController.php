@@ -723,8 +723,7 @@ class WorkspacesController extends AbstractModuleController
             );
 
         foreach ($changes as $change) {
-            $contentStreamId = $change->contentStreamId;
-
+            $workspaceName = $selectedWorkspace->workspaceName;
             if ($change->deleted) {
                 // If we deleted a node, there is no way for us to anymore find the deleted node in the ContentStream
                 // where the node was deleted.
@@ -732,10 +731,9 @@ class WorkspacesController extends AbstractModuleController
                 //
                 // This is safe because the UI basically shows what would be removed once the deletion is published.
                 $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($selectedWorkspace, $contentRepository);
-                $contentStreamId = $baseWorkspace->currentContentStreamId;
+                $workspaceName = $baseWorkspace->workspaceName;
             }
-            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $contentStreamId,
+            $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
                 $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                 VisibilityConstraints::withoutRestrictions()
             );
@@ -845,17 +843,14 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function getOriginalNode(
         Node $modifiedNode,
-        ContentStreamId $baseContentStreamId,
+        WorkspaceName $workspaceName,
         ContentRepository $contentRepository,
     ): ?Node {
-        $baseSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $baseContentStreamId,
+        $baseSubgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
             $modifiedNode->subgraphIdentity->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $node = $baseSubgraph->findNodeById($modifiedNode->nodeAggregateId);
-
-        return $node;
+        return $baseSubgraph->findNodeById($modifiedNode->nodeAggregateId);
     }
 
     /**
@@ -875,8 +870,7 @@ class WorkspacesController extends AbstractModuleController
         $originalNode = null;
         if ($currentWorkspace !== null) {
             $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($currentWorkspace, $contentRepository);
-            $baseContentStreamId = $baseWorkspace->currentContentStreamId;
-            $originalNode = $this->getOriginalNode($changedNode, $baseContentStreamId, $contentRepository);
+            $originalNode = $this->getOriginalNode($changedNode, $baseWorkspace->workspaceName, $contentRepository);
         }
 
 
@@ -887,7 +881,7 @@ class WorkspacesController extends AbstractModuleController
         $renderer = new HtmlArrayRenderer();
         foreach ($changedNode->properties as $propertyName => $changedPropertyValue) {
             if (
-                $originalNode === null && empty($changedPropertyValue)
+                ($originalNode === null && empty($changedPropertyValue))
                 || (
                     isset($changeNodePropertiesDefaults[$propertyName])
                     && $changedPropertyValue === $changeNodePropertiesDefaults[$propertyName]

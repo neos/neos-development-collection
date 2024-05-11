@@ -15,9 +15,6 @@ use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\Dimension
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
@@ -618,49 +615,36 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             return;
         }
 
-        foreach ($event->nodeMoveMappings as $moveMapping) {
-            /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveMapping */
-            foreach ($moveMapping->newLocations as $newLocation) {
-                /* @var $newLocation CoverageNodeMoveMapping */
-                $node = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
-                    $event->nodeAggregateId,
-                    $newLocation->coveredDimensionSpacePoint->hash
-                ));
-                if (!$node) {
-                    // node probably no document node, skip
-                    continue;
-                }
-
-                match ($newLocation->destination::class) {
-                    SucceedingSiblingNodeMoveDestination::class => $this->moveNode(
-                        /** @var SucceedingSiblingNodeMoveDestination $newLocation->destination */
-                        $node,
-                        $newLocation->destination->parentNodeAggregateId,
-                        $newLocation->destination->nodeAggregateId
-                    ),
-                    ParentNodeMoveDestination::class => $this->moveNode(
-                        /** @var ParentNodeMoveDestination $newLocation->destination */
-                        $node,
-                        $newLocation->destination->nodeAggregateId,
-                        null
-                    ),
-                };
-
-                $this->getState()->purgeCacheFor($node);
+        foreach ($event->succeedingSiblingsForCoverage as $succeedingSiblingForCoverage) {
+            $node = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+                $event->nodeAggregateId,
+                $succeedingSiblingForCoverage->dimensionSpacePoint->hash
+            ));
+            if (!$node) {
+                // node probably no document node, skip
+                continue;
             }
+
+            $this->moveNode(
+                $node,
+                $event->newParentNodeAggregateId,
+                $succeedingSiblingForCoverage->nodeAggregateId
+            );
+
+            $this->getState()->purgeCacheFor($node);
         }
     }
 
     private function moveNode(
         DocumentNodeInfo $node,
-        NodeAggregateId $newParentNodeAggregateId,
+        ?NodeAggregateId $newParentNodeAggregateId,
         ?NodeAggregateId $newSucceedingNodeAggregateId
     ): void {
         $this->disconnectNodeFromSiblings($node);
 
-        $this->connectNodeWithSiblings($node, $newParentNodeAggregateId, $newSucceedingNodeAggregateId);
+        $this->connectNodeWithSiblings($node, $newParentNodeAggregateId ?: $node->getParentNodeAggregateId(), $newSucceedingNodeAggregateId);
 
-        if ($newParentNodeAggregateId->equals($node->getParentNodeAggregateId())) {
+        if (!$newParentNodeAggregateId || $newParentNodeAggregateId->equals($node->getParentNodeAggregateId())) {
             return;
         }
         $newParentNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(

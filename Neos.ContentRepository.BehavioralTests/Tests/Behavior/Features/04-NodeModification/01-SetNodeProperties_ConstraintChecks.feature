@@ -45,7 +45,7 @@ Feature: Set node properties: Constraint checks
       | nodeAggregateId   | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {"language":"de"}    |
       | propertyValues            | {"text":"New text"}  |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to set properties in a workspace whose content stream is closed
     When the command CloseContentStream is executed with payload:

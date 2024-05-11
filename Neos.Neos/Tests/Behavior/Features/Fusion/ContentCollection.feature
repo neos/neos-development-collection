@@ -56,8 +56,9 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'a':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
