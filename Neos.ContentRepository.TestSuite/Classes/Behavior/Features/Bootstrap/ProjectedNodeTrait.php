@@ -81,22 +81,23 @@ trait ProjectedNodeTrait
     public function iExpectANodeIdentifiedByXToExistInTheContentGraph(string $serializedNodeDiscriminator): void
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
-        $this->currentContentStreamId = $nodeDiscriminator->contentStreamId;
-        $this->initializeCurrentNodeFromContentGraph(function (ContentGraphInterface $contentGraph) use ($nodeDiscriminator) {
-            $currentNodeAggregate = $contentGraph->findNodeAggregateById(
-                $nodeDiscriminator->nodeAggregateId
-            );
-            Assert::assertTrue(
-                $currentNodeAggregate?->occupiesDimensionSpacePoint($nodeDiscriminator->originDimensionSpacePoint),
-                'Node with aggregate id "' . $nodeDiscriminator->nodeAggregateId->value
-                . '" and originating in dimension space point "' . $nodeDiscriminator->originDimensionSpacePoint->toJson()
-                . '" was not found in content stream "' . $nodeDiscriminator->contentStreamId->value . '"'
-            );
-
-            return $currentNodeAggregate->getNodeByOccupiedDimensionSpacePoint($nodeDiscriminator->originDimensionSpacePoint);
-        });
+        $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
+        $contentGraphFinder->forgetInstances();
+        $workspaceName = $this->currentContentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+            $nodeDiscriminator->contentStreamId
+        )->workspaceName;
+        $contentGraph = $this->currentContentRepository->getContentGraph($workspaceName);
+        $currentNodeAggregate = $contentGraph->findNodeAggregateById(
+            $nodeDiscriminator->nodeAggregateId
+        );
+        Assert::assertTrue(
+            $currentNodeAggregate?->occupiesDimensionSpacePoint($nodeDiscriminator->originDimensionSpacePoint),
+            'Node with aggregate id "' . $nodeDiscriminator->nodeAggregateId->value
+            . '" and originating in dimension space point "' . $nodeDiscriminator->originDimensionSpacePoint->toJson()
+            . '" was not found in content stream "' . $nodeDiscriminator->contentStreamId->value . '"'
+        );
+        $this->currentNode = $currentNodeAggregate->getNodeByOccupiedDimensionSpacePoint($nodeDiscriminator->originDimensionSpacePoint);
     }
-
 
     /**
      * @Then /^I expect node aggregate identifier "([^"]*)" to lead to node (.*)$/
@@ -109,7 +110,7 @@ trait ProjectedNodeTrait
         $expectedDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedDiscriminator) {
             $currentNode = $subgraph->findNodeById($nodeAggregateId);
-            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"');
             $actualDiscriminator = NodeDiscriminator::fromNode($currentNode);
             Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
             return $currentNode;
@@ -126,7 +127,7 @@ trait ProjectedNodeTrait
         if (!is_null($nodeByAggregateId)) {
             Assert::fail(
                 'A node was found by node aggregate id "' . $nodeAggregateId->value
-                . '" in content subgraph {' . $this->currentDimensionSpacePoint->toJson() . ',' . $this->currentContentStreamId->value . '}'
+                . '" in content subgraph {' . $this->currentDimensionSpacePoint->toJson() . ',' . $this->currentWorkspaceName->value . '}'
             );
         }
     }
@@ -146,7 +147,7 @@ trait ProjectedNodeTrait
         $expectedDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodePath, $expectedDiscriminator) {
             $currentNode = $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-            Assert::assertNotNull($currentNode, 'No node could be found by node path "' . $nodePath->serializeToString() . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
+            Assert::assertNotNull($currentNode, 'No node could be found by node path "' . $nodePath->serializeToString() . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"');
             $actualDiscriminator = NodeDiscriminator::fromNode($currentNode);
             Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator));
             return $currentNode;
@@ -168,7 +169,7 @@ trait ProjectedNodeTrait
         Assert::assertNull(
             $nodeByPath,
             'A node was found by node path "' . $nodePath->serializeToString()
-                . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"'
+                . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"'
         );
     }
 
@@ -206,7 +207,7 @@ trait ProjectedNodeTrait
         $expectedTag = SubtreeTag::fromString($serializedTag);
         $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
             $currentNode = $subgraph->findNodeById($nodeAggregateId);
-            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"');
             Assert::assertTrue($currentNode->tags->withoutInherited()->contain($expectedTag));
             return $currentNode;
         });
@@ -221,7 +222,7 @@ trait ProjectedNodeTrait
         $expectedTag = SubtreeTag::fromString($serializedTag);
         $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
             $currentNode = $subgraph->findNodeById($nodeAggregateId);
-            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"');
             Assert::assertTrue($currentNode->tags->onlyInherited()->contain($expectedTag));
             return $currentNode;
         });
@@ -236,8 +237,8 @@ trait ProjectedNodeTrait
         $expectedTag = SubtreeTag::fromString($serializedTag);
         $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
             $currentNode = $subgraph->findNodeById($nodeAggregateId);
-            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
-            Assert::assertFalse($currentNode->tags->contain($expectedTag), sprintf('Node with id "%s" in content subgraph "%s@%s", was not expected to contain the subtree tag "%s" but it does', $nodeAggregateId->value, $this->currentDimensionSpacePoint->toJson(), $this->currentContentStreamId->value, $expectedTag->value));
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentWorkspaceName->value . '"');
+            Assert::assertFalse($currentNode->tags->contain($expectedTag), sprintf('Node with id "%s" in content subgraph "%s@%s", was not expected to contain the subtree tag "%s" but it does', $nodeAggregateId->value, $this->currentDimensionSpacePoint->toJson(), $this->currentWorkspaceName->value, $expectedTag->value));
             return $currentNode;
         });
     }
@@ -272,18 +273,6 @@ trait ProjectedNodeTrait
                 $actualTags,
             );
         });
-    }
-
-    protected function initializeCurrentNodeFromContentGraph(callable $query): void
-    {
-        $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
-        $contentGraphFinder->forgetInstances();
-        if (isset($this->currentContentStreamId)) {
-            $contentGraph = $contentGraphFinder->getByWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId);
-        } else {
-            $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
-        }
-        $this->currentNode = $query($contentGraph);
     }
 
     protected function initializeCurrentNodeFromContentSubgraph(callable $query): void

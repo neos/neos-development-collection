@@ -124,7 +124,6 @@ trait CRTestSuiteTrait
                 $propertyOrMethodName = \mb_substr($line['Value'], \mb_strlen('$this->'));
                 $value = match ($propertyOrMethodName) {
                     'currentNodeAggregateId' => $this->getCurrentNodeAggregateId()->value,
-                    'contentStreamId' => $this->currentContentStreamId->value,
                     default => method_exists($this, $propertyOrMethodName) ? (string)$this->$propertyOrMethodName() : (string)$this->$propertyOrMethodName,
                 };
             } else {
@@ -288,7 +287,13 @@ trait CRTestSuiteTrait
      */
     public function theCurrentContentStreamHasState(string $expectedState): void
     {
-        $this->theContentStreamHasState($this->currentContentStreamId->value, $expectedState);
+        $this->theContentStreamHasState(
+            $this->currentContentRepository
+                ->getWorkspaceFinder()
+                ->findOneByName($this->currentWorkspaceName)
+                ->currentContentStreamId->value,
+            $expectedState
+        );
     }
 
     /**

@@ -24,7 +24,7 @@ Feature: Filter - Property not empty
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId             | "lady-eleonode-rootford"      |
@@ -91,7 +91,7 @@ Feature: Filter - Property not empty
               newSerializedValue: 'fixed value'
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "na-name1" to lead to node cs-identifier;na-name1;{}
     And I expect this node to have the following properties:
       | Key  | Value            |

@@ -14,7 +14,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
       | nodeAggregateId  | "root-node"                            |
@@ -47,7 +47,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | workspaceName            | "user-test"                  |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then the current content stream has state "IN_USE_BY_WORKSPACE"
     And the content stream "user-cs-identifier" has state "NO_LONGER_IN_USE"
 
@@ -72,7 +72,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     When I am in content stream "user-cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "root-node" to lead to no node
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "root-node" to lead to node user-cs-identifier-rebased;root-node;{}
 
   Scenario: NO_LONGER_IN_USE content streams can be cleaned up completely (simple case)

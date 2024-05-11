@@ -43,7 +43,7 @@ trait ProjectedNodeAggregateTrait
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
         $this->initializeCurrentNodeAggregate(function (ContentGraphInterface $contentGraph) use ($nodeAggregateId) {
             $currentNodeAggregate = $contentGraph->findNodeAggregateById($nodeAggregateId);
-            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s".', $nodeAggregateId->value, $this->currentContentStreamId->value));
+            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current workspace "%s".', $nodeAggregateId->value, $this->currentWorkspaceName->value));
             return $currentNodeAggregate;
         });
     }
