@@ -125,7 +125,7 @@ class FusionExceptionView extends AbstractView
                 $dimensionSpacePoint,
                 VisibilityConstraints::frontend()
             );
-        } catch (WorkspaceDoesNotExist|\RuntimeException $exception) {
+        } catch (WorkspaceDoesNotExist | \RuntimeException) {
             return $this->renderErrorWelcomeScreen();
         }
 

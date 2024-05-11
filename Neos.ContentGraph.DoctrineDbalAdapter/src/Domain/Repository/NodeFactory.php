@@ -278,11 +278,11 @@ final class NodeFactory
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePointsByNodeAggregate
                     [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
-                    $nodeRow,
-                    $workspaceName,
-                    $contentStreamId,
-                    $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
-                    $visibilityConstraints
+                        $nodeRow,
+                        $workspaceName,
+                        $contentStreamId,
+                        $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
+                        $visibilityConstraints
                     );
                 $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId][]
                     = $occupiedDimensionSpacePoint;
