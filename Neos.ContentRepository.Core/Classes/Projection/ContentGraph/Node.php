@@ -190,9 +190,14 @@ final readonly class Node
         return $this->nodeType?->getNodeLabelGenerator()->getLabel($this) ?: $this->nodeTypeName->value;
     }
 
+    /**
+     * Checks if the node's "Read Model" identity equals with the given one
+     */
     public function equals(Node $other): bool
     {
-        return $this->subgraphIdentity->equals($other->subgraphIdentity)
-            && $this->nodeAggregateId->equals($other->nodeAggregateId);
+        return $this->contentRepositoryId->equals($other->contentRepositoryId)
+            && $this->workspaceName->equals($other->workspaceName)
+            && $this->dimensionSpacePoint->equals($other->dimensionSpacePoint)
+            && $this->aggregateId->equals($other->aggregateId);
     }
 }
