@@ -328,3 +328,50 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     typeFilter: a1a,a1b1a,a1a2,a1b2,a1a3,a1a4,a1a5,a1a6
     combinedFilter: a1b1a
     """
+
+  Scenario: Node accessors (final Node access operations)
+    When the Fusion context node is "a1"
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      property = ${q(node).property('title')}
+      identifier = ${q(node).id()}
+      label = ${q(node).label()}
+      nodeTypeName = ${q(node).nodeTypeName()}
+      @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    {
+        "property": "Node a1",
+        "identifier": "a1",
+        "label": "Neos.Neos:Test.DocumentType1 (a1)",
+        "nodeTypeName": "Neos.Neos:Test.DocumentType1"
+    }
+    """
+    # changing the node type config will invoke the Neos.Neos:FallbackNode handling
+    When I have the following NodeTypes configuration:
+    """yaml
+    'unstructured': {}
+    'Neos.Neos:FallbackNode': {}
+    """
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      property = ${q(node).property('title')}
+      identifier = ${q(node).id()}
+      label = ${q(node).label()}
+      nodeTypeName = ${q(node).nodeTypeName()}
+      @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    {
+        "property": "Node a1",
+        "identifier": "a1",
+        "label": "Neos.Neos:FallbackNode (a1)",
+        "nodeTypeName": "Neos.Neos:FallbackNode"
+    }
+    """
