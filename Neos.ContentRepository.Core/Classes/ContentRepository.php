@@ -40,6 +40,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
+use Neos\ContentRepository\Core\SharedModel\Exception\ForeignContentRepositoryUsed;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -254,6 +255,12 @@ final class ContentRepository
      */
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
+        if (!$this->id->equals($node->contentRepositoryId)) {
+            throw new ForeignContentRepositoryUsed(
+                sprintf('ContentRepository "%s" cannot get subgraph for Node of ContentRepository "%s".', $this->id->value, $node->contentRepositoryId->value),
+                1715531407
+            );
+        }
         return $this->getContentGraph($node->workspaceName)->getSubgraph(
             $node->dimensionSpacePoint,
             $node->visibilityConstraints
