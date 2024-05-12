@@ -31,7 +31,7 @@ trait MigrationsTrait
     use CRTestSuiteRuntimeVariables;
 
     /**
-     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName:
+     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName, with publishing on success:
      */
     public function iRunTheFollowingNodeMigrationWithTargetWorkspace(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string, bool $publishingOnSuccess = true): void
     {
@@ -46,14 +46,6 @@ trait MigrationsTrait
         /** @var NodeMigrationService $nodeMigrationService */
         $nodeMigrationService = $this->getContentRepositoryService(new NodeMigrationServiceFactory());
         $nodeMigrationService->executeMigration($command);
-    }
-
-    /**
-     * @When I run the following node migration for workspace :sourceWorkspaceName:
-     */
-    public function iRunTheFollowingNodeMigration(string $sourceWorkspaceName, PyStringNode $string): void
-    {
-        $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, sprintf("migration-%s-%s", $sourceWorkspaceName, sha1($string->getRaw())), $string);
     }
 
     /**
