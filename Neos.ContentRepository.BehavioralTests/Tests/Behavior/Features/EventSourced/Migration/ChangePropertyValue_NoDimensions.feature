@@ -66,7 +66,7 @@ Feature: Change Property
       | text | "Original text" |
 
     # the node type was changed inside the new content stream
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {}
+    When I am in workspace "migration-workspace" and dimension space point {}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value         |
@@ -90,7 +90,7 @@ Feature: Change Property
               newSerializedValue: 'fixed value'
     """
     # we did not change anything because notExisting does not exist
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {}
+    When I am in workspace "migration-workspace" and dimension space point {}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
@@ -113,7 +113,7 @@ Feature: Change Property
               property: 'text'
               newSerializedValue: 'bla {current}'
     """
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {}
+    When I am in workspace "migration-workspace" and dimension space point {}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value               |
@@ -137,7 +137,7 @@ Feature: Change Property
               currentValuePlaceholder: '{otherPlaceholder}'
               newSerializedValue: 'bla {otherPlaceholder}'
     """
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {}
+    When I am in workspace "migration-workspace" and dimension space point {}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value               |
@@ -161,7 +161,7 @@ Feature: Change Property
               search: 'Original'
               replace: 'alternative'
     """
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {}
+    When I am in workspace "migration-workspace" and dimension space point {}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value              |
@@ -186,7 +186,7 @@ Feature: Change Property
               search: 'Original'
               replace: 'alternative'
     """
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {}
+    When I am in workspace "migration-workspace" and dimension space point {}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value                  |

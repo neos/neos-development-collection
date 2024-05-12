@@ -84,10 +84,10 @@ Feature: Adjust node types with a node migration
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
     # the node type was changed inside the new content stream
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"
     # ... also in the fallback dimension
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"

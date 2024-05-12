@@ -65,7 +65,7 @@ Feature: Strip Tags on Property
       | text | "Original <p>text</p>" |
 
     # the node type was changed inside the new content stream
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {}
+    When I am in workspace "migration-workspace" and dimension space point {}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |

@@ -99,19 +99,19 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
 
     # the node was changed inside the new content stream, but only in DE (and shined through to CH; not in EN)
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
@@ -149,13 +149,13 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # the node was changed inside the new content stream, but only in DE
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     Then I get the node with id "sir-david-nodenborough"
     # !!! CH is still unmodified
     And I expect this node to have the following properties:
@@ -196,13 +196,13 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # the node was changed inside the new content stream in DE and EN
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     Then I get the node with id "sir-david-nodenborough"
     # !!! CH is modified now
     And I expect this node to have the following properties:
@@ -235,13 +235,13 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # neither DE or CH is modified
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
@@ -273,13 +273,13 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # neither DE or CH is modified
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |

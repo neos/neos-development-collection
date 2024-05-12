@@ -96,7 +96,7 @@ Feature: Filter - Node Name
       | text | "no node name" |
 
     # we filter based on the node name
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {}
+    When I am in workspace "migration-workspace" and dimension space point {}
     Then I get the node with id "na-name1"
     # only changed here
     And I expect this node to have the following properties:

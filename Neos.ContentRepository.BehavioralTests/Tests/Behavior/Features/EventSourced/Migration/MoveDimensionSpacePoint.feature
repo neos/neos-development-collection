@@ -76,9 +76,9 @@ Feature: Move dimension space point
 
 
     # we find the node underneath the new DimensionSpacePoint, but not underneath the old.
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de_DE"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de_DE"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
@@ -127,7 +127,7 @@ Feature: Move dimension space point
     When VisibilityConstraints are set to "frontend"
 
     # The visibility edges were modified
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de_DE"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de_DE"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I get the node with id "sir-david-nodenborough"

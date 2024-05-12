@@ -84,12 +84,12 @@ Feature: Add Dimension Specialization
 
 
     # now, we find the node underneath both DimensionSpacePoints
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value   |
       | text | "hello" |
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     # shine through added
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
@@ -111,12 +111,12 @@ Feature: Add Dimension Specialization
       | originDimensionSpacePoint | {"language": "de"}       |
       | propertyValues            | {"text": "changed"}      |
     And the graph projection is fully up to date
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value     |
       | text | "changed" |
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     # ch shines through to the DE node
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
@@ -169,14 +169,14 @@ Feature: Add Dimension Specialization
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I get the node with id "sir-david-nodenborough"
     When VisibilityConstraints are set to "frontend"
 
     # The visibility edges were modified
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I get the node with id "sir-david-nodenborough"

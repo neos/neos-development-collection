@@ -79,13 +79,13 @@ Feature: Rename Node Aggregate
     Then I expect the node "sir-david-nodenborough" to have the name "foo"
 
     # the node was changed inside the new content stream, across all dimensions
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect the node "sir-david-nodenborough" to have the name "other"
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     Then I expect the node "sir-david-nodenborough" to have the name "other"
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect the node "sir-david-nodenborough" to have the name "other"
 
 

@@ -82,13 +82,13 @@ Feature: Remove Nodes
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in de and gsw (virtual specialization)
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
 
     When I run integrity violation detection
@@ -128,13 +128,13 @@ Feature: Remove Nodes
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in de and gsw, since it is a specialization
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
 
     When I run integrity violation detection
@@ -198,13 +198,13 @@ Feature: Remove Nodes
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in gsw
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
 
     When I run integrity violation detection
@@ -239,13 +239,13 @@ Feature: Remove Nodes
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in gsw
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
 
     When I run integrity violation detection
@@ -285,13 +285,13 @@ Feature: Remove Nodes
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in gsw
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I run integrity violation detection
@@ -323,13 +323,13 @@ Feature: Remove Nodes
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in gsw
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "gsw"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
-    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "en"}
+    When I am in workspace "migration-workspace" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I run integrity violation detection
