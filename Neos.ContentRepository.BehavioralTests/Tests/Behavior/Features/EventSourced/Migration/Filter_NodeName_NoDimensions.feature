@@ -23,7 +23,7 @@ Feature: Filter - Node Name
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -81,7 +81,7 @@ Feature: Filter - Node Name
               newSerializedValue: 'fixed value'
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I get the node with id "na-name1"
     And I expect this node to have the following properties:
       | Key  | Value            |

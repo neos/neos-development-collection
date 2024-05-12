@@ -30,7 +30,7 @@ Feature: Adjust node types with a node migration
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -75,11 +75,11 @@ Feature: Adjust node types with a node migration
               newType: 'Neos.ContentRepository.Testing:OtherDocument'
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     # ... also in the fallback dimension
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 

@@ -26,7 +26,7 @@ Feature: Enable a node aggregate
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
+    And I am in workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -82,7 +82,7 @@ Feature: Enable a node aggregate
       | tag                          | "disabled"                                                |
 
     When the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 7 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{"language":"mul"} to exist in the content graph
@@ -378,7 +378,7 @@ Feature: Enable a node aggregate
       | tag                          | "disabled"                          |
 
     When the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 7 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{"language":"mul"} to exist in the content graph
@@ -706,7 +706,7 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"      |
 
     When the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
 
     Then I expect the node aggregate "the-great-nodini" to exist
     And I expect this node aggregate to disable dimension space points []

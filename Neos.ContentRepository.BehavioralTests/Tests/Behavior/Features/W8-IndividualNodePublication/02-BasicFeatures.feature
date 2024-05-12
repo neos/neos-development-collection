@@ -44,7 +44,7 @@ Feature: Individual node publication
   Scenario: It is possible to publish a single node; and only this one is live.
     # create nodes in user WS
     Given I am in workspace "user-test"
-    And I am in the active content stream of workspace "user-test"
+    And I am in workspace "user-test"
     And I am in dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName | tetheredDescendantNodeAggregateIds |
@@ -60,7 +60,7 @@ Feature: Individual node publication
       | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                            |
     And the graph projection is fully up to date
 
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
 
     Then I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
 

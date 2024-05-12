@@ -185,8 +185,7 @@ class SitesController extends AbstractModuleController
             }
 
             try {
-                $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                    $liveWorkspace->currentContentStreamId,
+                $sitesNode = $contentRepository->getContentGraph($liveWorkspace->workspaceName)->findRootNodeAggregateByType(
                     NodeTypeNameFactory::forSites()
                 );
             } catch (\Exception $exception) {
@@ -208,8 +207,7 @@ class SitesController extends AbstractModuleController
                 // technically, due to the name being the "identifier", there might be more than one :/
                 /** @var NodeAggregate[] $siteNodeAggregates */
                 /** @var Workspace $workspace */
-                $siteNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-                    $workspace->currentContentStreamId,
+                $siteNodeAggregates = $contentRepository->getContentGraph($workspace->workspaceName)->findChildNodeAggregatesByName(
                     $sitesNode->nodeAggregateId,
                     $site->getNodeName()->toNodeName()
                 );

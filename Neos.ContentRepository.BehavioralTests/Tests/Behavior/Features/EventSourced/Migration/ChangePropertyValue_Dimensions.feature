@@ -29,7 +29,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -79,19 +79,19 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |

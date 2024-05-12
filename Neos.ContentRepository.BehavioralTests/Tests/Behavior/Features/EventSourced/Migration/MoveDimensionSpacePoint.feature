@@ -35,7 +35,7 @@ Feature: Move dimension space point
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -96,7 +96,7 @@ Feature: Move dimension space point
     And the graph projection is fully up to date
 
     # ensure the node is disabled
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I get the node with id "sir-david-nodenborough"
@@ -120,7 +120,7 @@ Feature: Move dimension space point
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I get the node with id "sir-david-nodenborough"

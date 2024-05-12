@@ -24,7 +24,7 @@ Feature: Remove Property
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -58,7 +58,7 @@ Feature: Remove Property
               property: 'text'
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |

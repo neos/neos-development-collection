@@ -27,7 +27,7 @@ Feature: Rename Node Aggregate
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -72,10 +72,10 @@ Feature: Rename Node Aggregate
 
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect the node "sir-david-nodenborough" to have the name "foo"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect the node "sir-david-nodenborough" to have the name "foo"
 
     # the node was changed inside the new content stream, across all dimensions

@@ -27,7 +27,7 @@ Feature: Remove Nodes
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -72,13 +72,13 @@ Feature: Remove Nodes
             type: 'RemoveNode'
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in de and gsw (virtual specialization)
@@ -118,13 +118,13 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in de and gsw, since it is a specialization
@@ -188,13 +188,13 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in gsw
@@ -229,13 +229,13 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in gsw
@@ -275,13 +275,13 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in gsw
@@ -313,13 +313,13 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I get the node with id "sir-david-nodenborough"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I get the node with id "sir-david-nodenborough"
 
     # the node was removed inside the new content stream, but only in gsw

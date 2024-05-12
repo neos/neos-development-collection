@@ -19,7 +19,7 @@ Feature: Single Node operations on live workspace
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
@@ -51,7 +51,7 @@ Feature: Single Node operations on live workspace
       | propertyValues.text.value | "Hello"                      |
 
     When the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value   |

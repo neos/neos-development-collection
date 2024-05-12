@@ -23,7 +23,7 @@ Feature: Enable a node aggregate
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -39,7 +39,7 @@ Feature: Enable a node aggregate
       | workspaceName      | "i-do-not-exist"         |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to enable a non-existing node aggregate
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:
