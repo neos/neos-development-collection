@@ -21,10 +21,10 @@ trait CreateNodeHashTrait
                 ':',
                 [
                     $node->nodeAggregateId->value,
-                    $node->address->contentRepositoryId->value,
-                    $node->address->workspaceName->value,
-                    $node->address->dimensionSpacePoint->hash,
-                    $node->subgraphIdentity->visibilityConstraints->getHash()
+                    $node->contentRepositoryId->value,
+                    $node->workspaceName->value,
+                    $node->dimensionSpacePoint->hash,
+                    $node->visibilityConstraints->getHash()
                 ]
             )
         );

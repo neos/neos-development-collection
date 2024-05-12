@@ -5,12 +5,19 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * The content-repository-id workspace-name dimension-space-point and the node-aggregate-id
- * Are used in combination to distinctly identify a single node.
+ * This describes a node's read model identity namely:
+ *
+ * - {@see ContentRepositoryId}
+ * - {@see WorkspaceName}
+ * - {@see DimensionSpacePoint} (not to be confused with the {@see Node::$originDimensionSpacePoint})
+ * - {@see NodeAggregateId}
+ *
+ * In combination the parts can be used to distinctly identify a single node.
  *
  * By using the content graph for the content repository
  * one can build a subgraph with the right perspective to find this node:
@@ -40,6 +47,16 @@ final readonly class NodeAddress implements \JsonSerializable
         NodeAggregateId $aggregateId,
     ): self {
         return new self($contentRepositoryId, $workspaceName, $dimensionSpacePoint, $aggregateId);
+    }
+
+    public static function fromNode(Node $node): self
+    {
+        return new self(
+            $node->contentRepositoryId,
+            $node->workspaceName,
+            $node->dimensionSpacePoint,
+            $node->nodeAggregateId
+        );
     }
 
     /**

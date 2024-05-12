@@ -135,11 +135,11 @@ class CachingHelper implements ProtectedContextAwareInterface
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->address->contentRepositoryId
+            $node->contentRepositoryId
         );
 
         $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-            $node->address->workspaceName
+            $node->workspaceName
         );
         $workspaceChain = [];
         // TODO: Maybe write CTE here

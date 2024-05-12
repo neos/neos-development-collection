@@ -75,22 +75,13 @@ final class NodeFactory
             : null;
 
         return Node::create(
-            NodeAddress::create(
-                $this->contentRepositoryId,
-                $workspaceName,
-                $dimensionSpacePoint,
-                NodeAggregateId::fromString($nodeRow['nodeaggregateid'])
-            ),
-            ContentSubgraphIdentity::create(
-                $this->contentRepositoryId,
-                $contentStreamId,
-                $dimensionSpacePoint,
-                $visibilityConstraints
-            ),
+            $this->contentRepositoryId,
+            $workspaceName,
+            $dimensionSpacePoint,
+            NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
             $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
-            $nodeType,
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             self::extractNodeTagsFromJson($nodeRow['subtreetags']),
@@ -100,6 +91,9 @@ final class NodeFactory
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
+            $visibilityConstraints,
+            $nodeType,
+            $contentStreamId
         );
     }
 
