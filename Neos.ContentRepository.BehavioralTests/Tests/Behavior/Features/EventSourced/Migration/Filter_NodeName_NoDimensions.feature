@@ -26,9 +26,9 @@ Feature: Filter - Node Name
     And I am in the active content stream of workspace "live"
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId             | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     # Node /name1
     When the command CreateNodeAggregateWithNode is executed with payload:

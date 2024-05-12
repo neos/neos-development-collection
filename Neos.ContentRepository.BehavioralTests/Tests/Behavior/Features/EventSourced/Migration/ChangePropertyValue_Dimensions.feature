@@ -31,9 +31,9 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     And the graph projection is fully up to date
     And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                                      |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                                   |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     # Node /document (in "de")
     When the command CreateNodeAggregateWithNode is executed with payload:
