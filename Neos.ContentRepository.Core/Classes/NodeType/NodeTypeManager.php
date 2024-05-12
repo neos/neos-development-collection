@@ -198,7 +198,11 @@ final class NodeTypeManager
      */
     public function getTypeOfTetheredNode(NodeTypeName $nodeTypeName, NodeName $tetheredNodeName): NodeType
     {
-        $nameOfTetheredNode = $this->requireNodeType($nodeTypeName)->getNodeTypeNameOfTetheredNode($tetheredNodeName);
+        $nodeType = $this->requireNodeType($nodeTypeName);
+        $nameOfTetheredNode = $nodeType->getNodeTypeNameOfTetheredNode($tetheredNodeName);
+        if ($nameOfTetheredNode === null) {
+            throw new TetheredNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $tetheredNodeName->value, $nodeTypeName->value), 1694786811);
+        }
         return $this->requireNodeType($nameOfTetheredNode);
     }
 

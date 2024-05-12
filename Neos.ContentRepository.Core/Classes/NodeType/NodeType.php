@@ -493,20 +493,10 @@ final class NodeType
     public function hasTetheredNode(NodeName $nodeName): bool
     {
         $this->initialize();
-        foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
-            if (isset($configurationForChildNode['type'])) {
-                if (NodeName::transliterateFromString($rawChildNodeName)->equals($nodeName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return (bool)$this->getNodeTypeNameOfTetheredNode($nodeName);
     }
 
-    /**
-     * @throws TetheredNodeNotConfigured if the requested tethred node is not configured. Check via {@see NodeType::hasTetheredNode()}.
-     */
-    public function getNodeTypeNameOfTetheredNode(NodeName $nodeName): NodeTypeName
+    public function getNodeTypeNameOfTetheredNode(NodeName $nodeName): ?NodeTypeName
     {
         $this->initialize();
         foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
@@ -516,7 +506,7 @@ final class NodeType
                 }
             }
         }
-        throw new TetheredNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $nodeName->value, $this->name->value), 1694786811);
+        return null;
     }
 
     /**
