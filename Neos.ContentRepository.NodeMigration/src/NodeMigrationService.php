@@ -88,6 +88,11 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
             $targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getTargetWorkspaceName());
             $targetWorkspaceWasCreated = true;
         }
+
+        if($targetWorkspace === null) {
+            throw new MigrationException(sprintf('Target workspace "%s" could not loaded nor created.', $targetWorkspace->workspaceName->value));
+        }
+
         foreach ($command->getMigrationConfiguration()->getMigration() as $migrationDescription) {
             /** array $migrationDescription */
             $this->executeSubMigrationAndBlock(
