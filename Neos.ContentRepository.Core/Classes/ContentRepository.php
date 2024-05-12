@@ -30,6 +30,8 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
@@ -245,6 +247,17 @@ final class ContentRepository
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
         return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);
+    }
+
+    /**
+     * Simple utility method to get the subgraph for a node using the public API {@see getContentGraph()}
+     */
+    public function subgraphForNode(Node $node): ContentSubgraphInterface
+    {
+        return $this->getContentGraph($node->workspaceName)->getSubgraph(
+            $node->dimensionSpacePoint,
+            $node->visibilityConstraints
+        );
     }
 
     public function getWorkspaceFinder(): WorkspaceFinder
