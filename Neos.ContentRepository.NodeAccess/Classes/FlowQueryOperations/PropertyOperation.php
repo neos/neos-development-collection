@@ -23,9 +23,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
- * Used to access properties of a ContentRepository Node. If the property mame is
- * prefixed with _, internal node properties like start time, end time,
- * hidden are accessed.
+ * Used to access properties of a ContentRepository Node.
  */
 class PropertyOperation extends AbstractOperation
 {
@@ -80,7 +78,7 @@ class PropertyOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments): mixed
     {
         if (empty($arguments[0])) {
-            throw new FlowQueryException('property() does not support returning all attributes yet', 1332492263);
+            throw new FlowQueryException(static::$shortName . '() does not allow returning all properties.', 1332492263);
         }
         /** @var array<int,mixed> $context */
         $context = $flowQuery->getContext();
