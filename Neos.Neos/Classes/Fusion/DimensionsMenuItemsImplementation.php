@@ -61,7 +61,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         $currentDimensionSpacePoint = $currentNode->subgraphIdentity->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
         try {
-            $contentGraph = $contentRepository->getContentGraph($currentNode->address->workspaceName);
+            $contentGraph = $contentRepository->getContentGraph($currentNode->workspaceName);
         } catch (WorkspaceDoesNotExist) {
             return $menuItems;
         }

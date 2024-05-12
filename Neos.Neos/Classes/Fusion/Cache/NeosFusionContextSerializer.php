@@ -101,7 +101,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
      */
     private function serializeNode(Node $source): array
     {
-        return $source->address->jsonSerialize();
+        return NodeAddress::fromNode($source)->jsonSerialize();
     }
 
     public function supportsDenormalization(mixed $data, string $type, string $format = null)

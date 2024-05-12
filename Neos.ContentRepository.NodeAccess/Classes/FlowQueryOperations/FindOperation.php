@@ -202,7 +202,7 @@ class FindOperation extends AbstractOperation
             assert($contextNode instanceof Node);
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
             $subgraphIdentifier = md5($subgraph->getIdentity()->contentStreamId->value
-                . '@' . $contextNode->address->dimensionSpacePoint->toJson());
+                . '@' . $contextNode->dimensionSpacePoint->toJson());
             if (!isset($entryPoints[(string) $subgraphIdentifier])) {
                 $entryPoints[(string) $subgraphIdentifier] = [
                     'subgraph' => $subgraph,

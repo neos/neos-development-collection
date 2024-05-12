@@ -79,23 +79,14 @@ final class NodeFactory
             : null;
 
         return Node::create(
-            NodeAddress::create(
-                $this->contentRepositoryId,
-                // todo use actual workspace name
-                WorkspaceName::fromString('missing'),
-                $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
-                NodeAggregateId::fromString($nodeRow['nodeaggregateid'])
-            ),
-            ContentSubgraphIdentity::create(
-                $this->contentRepositoryId,
-                $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
-                $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
-                $visibilityConstraints
-            ),
+            $this->contentRepositoryId,
+            // todo use actual workspace name
+            WorkspaceName::fromString('missing'),
+            $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
+            NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
-            $nodeType,
             new PropertyCollection(
                 SerializedPropertyValues::fromJsonString($nodeRow['properties']),
                 $this->propertyConverter
@@ -110,6 +101,9 @@ final class NodeFactory
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
+            $visibilityConstraints,
+            $nodeType,
+            $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
         );
     }
 

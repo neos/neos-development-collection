@@ -89,22 +89,13 @@ final class NodeSubjectProvider
     ): Node {
         $serializedDefaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->propertyConverter);
         return Node::create(
-            NodeAddress::create(
-                ContentRepositoryId::fromString('default'),
-                WorkspaceName::forLive(),
-                DimensionSpacePoint::createWithoutDimensions(),
-                NodeAggregateId::create()
-            ),
-            ContentSubgraphIdentity::create(
-                ContentRepositoryId::fromString('default'),
-                ContentStreamId::fromString('cs-id'),
-                DimensionSpacePoint::createWithoutDimensions(),
-                VisibilityConstraints::withoutRestrictions()
-            ),
+            ContentRepositoryId::fromString('default'),
+            WorkspaceName::forLive(),
+            DimensionSpacePoint::createWithoutDimensions(),
+            NodeAggregateId::create(),
             OriginDimensionSpacePoint::createWithoutDimensions(),
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
             $nodeType->name,
-            $nodeType,
             new PropertyCollection(
                 $propertyValues
                     ? $serializedDefaultPropertyValues->merge($propertyValues)
@@ -118,7 +109,10 @@ final class NodeSubjectProvider
                 new \DateTimeImmutable(),
                 new \DateTimeImmutable(),
                 new \DateTimeImmutable()
-            )
+            ),
+            VisibilityConstraints::withoutRestrictions(),
+            $nodeType,
+            ContentStreamId::fromString('cs-id'),
         );
     }
 }
