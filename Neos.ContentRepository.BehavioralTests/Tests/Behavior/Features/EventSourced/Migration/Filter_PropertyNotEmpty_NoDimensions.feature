@@ -74,7 +74,7 @@ Feature: Filter - Property not empty
 
 
   Scenario: PropertyNotEmpty
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
     """yaml
     migration:
       -
@@ -92,34 +92,34 @@ Feature: Filter - Property not empty
     """
     # the original content stream has not been touched
     When I am in the active content stream of workspace "live" and dimension space point {}
-    Then I expect node aggregate identifier "na-name1" to lead to node cs-identifier;na-name1;{}
+    Then I get the node with id "na-name1"
     And I expect this node to have the following properties:
       | Key  | Value            |
       | text | "Original name1" |
-    Then I expect node aggregate identifier "na-name2" to lead to node cs-identifier;na-name2;{}
+    Then I get the node with id "na-name2"
     And I expect this node to have the following properties:
       | Key  | Value |
       | text | ""    |
-    Then I expect node aggregate identifier "na-null-value" to lead to node cs-identifier;na-null-value;{}
+    Then I get the node with id "na-null-value"
     And I expect this node to have no properties
 
-    Then I expect node aggregate identifier "na-no-text" to lead to node cs-identifier;na-no-text;{}
+    Then I get the node with id "na-no-text"
     And I expect this node to not have the property "text"
 
     # we filter based on the node name
-    When I am in content stream "migration-cs" and dimension space point {}
-    Then I expect node aggregate identifier "na-name1" to lead to node migration-cs;na-name1;{}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {}
+    Then I get the node with id "na-name1"
     # only changed here
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
-    Then I expect node aggregate identifier "na-name2" to lead to node migration-cs;na-name2;{}
+    Then I get the node with id "na-name2"
     And I expect this node to have the following properties:
       | Key  | Value |
       | text | ""    |
-    Then I expect node aggregate identifier "na-null-value" to lead to node migration-cs;na-null-value;{}
+    Then I get the node with id "na-null-value"
     And I expect this node to have no properties
 
-    Then I expect node aggregate identifier "na-no-text" to lead to node migration-cs;na-no-text;{}
+    Then I get the node with id "na-no-text"
     And I expect this node to not have the property "text"
 

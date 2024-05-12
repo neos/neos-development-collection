@@ -76,16 +76,16 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
             }
 
         } else {
-            $targetContentStreamId = ContentStreamId::create();
             $this->contentRepository->handle(
                 CreateWorkspace::create(
                     $command->getTargetWorkspaceName(),
                     $sourceWorkspace->workspaceName,
                     WorkspaceTitle::fromString($command->getTargetWorkspaceName()->value),
                     WorkspaceDescription::fromString(''),
-                    $targetContentStreamId,
+                    ContentStreamId::create(),
                 )
             )->block();
+            $targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getTargetWorkspaceName());
             $targetWorkspaceWasCreated = true;
         }
         foreach ($command->getMigrationConfiguration()->getMigration() as $migrationDescription) {

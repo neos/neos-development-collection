@@ -73,6 +73,19 @@ trait ProjectedNodeTrait
     }
 
     /**
+     * @Then /^I get the node with id "([^"]*)"$/
+     * @param string $id
+     * @throws \Exception
+     */
+    public function iGetTheNodeWithId(string $id): void
+    {
+        $nodeAggregateId = NodeAggregateId::fromString($id);
+        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId) {
+            return $subgraph->findNodeById($nodeAggregateId);
+        });
+    }
+
+    /**
      * @Then /^I expect a node identified by (.*) to exist in the content graph$/
      * @param string $serializedNodeDiscriminator
      * @throws \Exception

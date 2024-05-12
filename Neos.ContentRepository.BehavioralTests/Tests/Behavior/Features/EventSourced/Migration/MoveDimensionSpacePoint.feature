@@ -58,7 +58,7 @@ Feature: Move dimension space point
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
     """yaml
     migration:
       -
@@ -71,15 +71,15 @@ Feature: Move dimension space point
     """
     # the original content stream has not been touched
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
 
     # we find the node underneath the new DimensionSpacePoint, but not underneath the old.
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
-    When I am in content stream "migration-cs" and dimension space point {"language": "de_DE"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de_DE"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de_DE"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
     When I run integrity violation detection
@@ -99,7 +99,7 @@ Feature: Move dimension space point
     When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    Then I get the node with id "sir-david-nodenborough"
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
@@ -107,7 +107,7 @@ Feature: Move dimension space point
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
     """yaml
     migration:
       -
@@ -123,14 +123,14 @@ Feature: Move dimension space point
     When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    Then I get the node with id "sir-david-nodenborough"
     When VisibilityConstraints are set to "frontend"
 
     # The visibility edges were modified
-    When I am in content stream "migration-cs" and dimension space point {"language": "de_DE"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de_DE"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de_DE"}
+    Then I get the node with id "sir-david-nodenborough"
     When VisibilityConstraints are set to "frontend"
 
     When I run integrity violation detection

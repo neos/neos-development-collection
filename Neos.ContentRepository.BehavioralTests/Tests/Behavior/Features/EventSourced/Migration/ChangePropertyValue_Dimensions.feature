@@ -55,7 +55,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
 
   Scenario: change materialized "de" node, should shine through in "ch", but not in "en"
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
     """yaml
     migration:
       -
@@ -80,39 +80,39 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
     # the original content stream has not been touched
     When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
     When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
 
     # the node was changed inside the new content stream, but only in DE (and shined through to CH; not in EN)
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "en"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "en"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "en"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
@@ -126,7 +126,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | targetOrigin    | {"language":"ch"}        |
     And the graph projection is fully up to date
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
     """yaml
     migration:
       -
@@ -149,14 +149,14 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # the node was changed inside the new content stream, but only in DE
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    Then I get the node with id "sir-david-nodenborough"
     # !!! CH is still unmodified
     And I expect this node to have the following properties:
       | Key  | Value           |
@@ -172,7 +172,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | targetOrigin    | {"language":"ch"}        |
     And the graph projection is fully up to date
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
     """yaml
     migration:
       -
@@ -196,14 +196,14 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # the node was changed inside the new content stream in DE and EN
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "ch"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    Then I get the node with id "sir-david-nodenborough"
     # !!! CH is modified now
     And I expect this node to have the following properties:
       | Key  | Value         |
@@ -211,7 +211,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
 
   Scenario: matching only happens based on originDimensionSpacePoint, not on visibleDimensionSpacePoints - we try to change CH, but should not see any modification (includeSpecializations = FALSE - default)
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
     """yaml
     migration:
       -
@@ -235,20 +235,20 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # neither DE or CH is modified
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
   Scenario: matching only happens based on originDimensionSpacePoint, not on visibleDimensionSpacePoints - we try to change CH, but should not see any modification (includeSpecializations = TRUE)
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
     """yaml
     migration:
       -
@@ -273,14 +273,14 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     # neither DE or CH is modified
-    When I am in content stream "migration-cs" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "de"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
-    When I am in content stream "migration-cs" and dimension space point {"language": "ch"}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
+    When I am in the active content stream of workspace "migration-workspace" and dimension space point {"language": "ch"}
+    Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |

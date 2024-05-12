@@ -33,7 +33,7 @@ trait MigrationsTrait
     /**
      * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName:
      */
-    public function iRunTheFollowingNodeMigration(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string, bool $publishingOnSuccess = true): void
+    public function iRunTheFollowingNodeMigrationWithTargetWorkspace(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string, bool $publishingOnSuccess = true): void
     {
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
         $command = new ExecuteMigration(
@@ -49,11 +49,19 @@ trait MigrationsTrait
     }
 
     /**
+     * @When I run the following node migration for workspace :sourceWorkspaceName:
+     */
+    public function iRunTheFollowingNodeMigration(string $sourceWorkspaceName, PyStringNode $string): void
+    {
+        $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, sprintf("migration-%s-%s", $sourceWorkspaceName, sha1($string->getRaw())), $string);
+    }
+
+    /**
      * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName, without publishing on success:
      */
     public function iRunTheFollowingNodeMigrationWithoutPublishingOnSuccess(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string): void
     {
-        $this->iRunTheFollowingNodeMigration($sourceWorkspaceName, $targetWorkspaceName, $string, false);
+        $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, $targetWorkspaceName, $string, false);
     }
 
     /**
@@ -62,7 +70,7 @@ trait MigrationsTrait
     public function iRunTheFollowingNodeMigrationAndExceptionsAreCaught(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string): void
     {
         try {
-            $this->iRunTheFollowingNodeMigration($sourceWorkspaceName, $targetWorkspaceName, $string);
+            $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, $targetWorkspaceName, $string);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
