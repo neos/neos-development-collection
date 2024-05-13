@@ -97,11 +97,6 @@ final readonly class NodeAddress implements \JsonSerializable
 
     public function jsonSerialize(): mixed
     {
-        return [
-            'contentRepositoryId' => $this->contentRepositoryId,
-            'workspaceName' => $this->workspaceName,
-            'dimensionSpacePoint' => $this->dimensionSpacePoint,
-            'aggregateId' => $this->aggregateId
-        ];
+        return get_object_vars($this);
     }
 }
