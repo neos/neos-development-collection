@@ -92,7 +92,11 @@ final readonly class NodeAddress implements \JsonSerializable
 
     public function toJson(): string
     {
-        return json_encode($this, JSON_THROW_ON_ERROR);
+        try {
+            return json_encode($this, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode NodeAddress: %s', $e->getMessage()), 1715608338, $e);
+        }
     }
 
     public function jsonSerialize(): mixed
