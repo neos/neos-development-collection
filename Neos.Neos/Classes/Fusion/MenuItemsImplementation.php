@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Exception as FusionException;
-use Neos\Neos\Domain\NodeLabel\NodeLabelRendererInterface;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
@@ -65,7 +65,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected ?NodeTypeCriteria $nodeTypeCriteria = null;
 
     #[Flow\Inject()]
-    protected NodeLabelRendererInterface $nodeLabelRenderer;
+    protected NodeLabelGeneratorInterface $nodeLabelGenerator;
 
     /**
      * The last navigation level which should be rendered.
@@ -220,7 +220,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return new MenuItem(
             $node,
             $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
-            $this->nodeLabelRenderer->renderNodeLabel($node)->value,
+            $this->nodeLabelGenerator->getLabel($node)->value,
             0,
             [],
             $this->buildUri($node)
@@ -244,7 +244,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return new MenuItem(
             $node,
             $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
-            $this->nodeLabelRenderer->renderNodeLabel($node)->value,
+            $this->nodeLabelGenerator->getLabel($node)->value,
             $subtree->level + $startLevel,
             $children,
             $this->buildUri($node)

@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Neos\Domain\NodeLabel\NodeLabelRendererInterface;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
@@ -152,9 +152,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeLabelRendererInterface
+     * @var NodeLabelGeneratorInterface
      */
-    protected $nodeLabelRenderer;
+    protected $nodeLabelGenerator;
 
     /**
      * Initialize arguments
@@ -347,7 +347,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $this->templateVariableContainer->remove($this->arguments['nodeVariableName']);
 
         if ($content === null && $resolvedNode !== null) {
-            $content = $this->nodeLabelRenderer->renderNodeLabel($resolvedNode)->value;
+            $content = $this->nodeLabelGenerator->getLabel($resolvedNode)->value;
         }
 
         $this->tag->setContent($content);

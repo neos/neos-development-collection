@@ -12,10 +12,10 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
- * @internal please reference the interface {@see NodeLabelRendererInterface} instead.
+ * @internal please reference the interface {@see NodeLabelGeneratorInterface} instead.
  */
 #[Flow\Scope('singleton')]
-final readonly class NodeLabelRenderer implements NodeLabelRendererInterface
+final readonly class DelegatingNodeLabelRenderer implements NodeLabelGeneratorInterface
 {
     public function __construct(
         private ContentRepositoryRegistry $contentRepositoryRegistry,
@@ -23,16 +23,21 @@ final readonly class NodeLabelRenderer implements NodeLabelRendererInterface
     ) {
     }
 
-    public function renderNodeLabel(Node $node): NodeLabel
+    public function getLabel(Node $node): NodeLabel
     {
-        $nodeTypeManager = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId)->getNodeTypeManager();
+        $nodeTypeManager = $this->contentRepositoryRegistry->get($node->contentRepositoryId)->getNodeTypeManager();
         $nodeType = $nodeTypeManager->getNodeType($node->nodeTypeName)
             ?? $nodeTypeManager->getNodeType(NodeTypeNameFactory::forFallback());
-        $generator = $this->getNodeLabelGeneratorForNodeType($nodeType);
+        $generator = $this->getDelegatedGenerator($nodeType);
+        if ($generator instanceof DelegatingNodeLabelRenderer) {
+            throw new \RuntimeException(
+                'Recursion detected, cannot specify DelegatingNodeLabelRenderer as generatorClass for NodeLabel as this is the default.', 1715622960
+            );
+        }
         return $generator->getLabel($node);
     }
 
-    private function getNodeLabelGeneratorForNodeType(?NodeType $nodeType): NodeLabelGeneratorInterface
+    private function getDelegatedGenerator(?NodeType $nodeType): NodeLabelGeneratorInterface
     {
         if ($nodeType?->hasConfiguration('label.generatorClass')) {
             $nodeLabelGeneratorClassName = $nodeType->getConfiguration('label.generatorClass');
@@ -49,8 +54,20 @@ final readonly class NodeLabelRenderer implements NodeLabelRendererInterface
             $nodeLabelGenerator = $this->objectManager->get(ExpressionBasedNodeLabelGenerator::class);
             $nodeLabelGenerator->setExpression($nodeType->getConfiguration('label'));
         } else {
-            /** @var NodeLabelGeneratorInterface $nodeLabelGenerator */
-            $nodeLabelGenerator = $this->objectManager->get(NodeLabelGeneratorInterface::class);
+            $nodeLabelGenerator = new class implements NodeLabelGeneratorInterface {
+                public function getLabel(Node $node): NodeLabel
+                {
+                    return NodeLabel::fromString(
+                        sprintf(
+                            '%s %s',
+                            $node->nodeTypeName->value,
+                            $node->name
+                                ? sprintf('(%s)', $node->name->value)
+                                : ''
+                        )
+                    );
+                }
+            };
         }
 
         return $nodeLabelGenerator;

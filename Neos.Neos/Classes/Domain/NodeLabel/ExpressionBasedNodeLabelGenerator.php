@@ -19,6 +19,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The expression based node label generator that is used as default if a label expression is configured.
+ *
+ * @internal please reference the interface {@see NodeLabelGeneratorInterface} instead.
  */
 class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
 {
