@@ -196,7 +196,7 @@ final class NodeTypeManager
      * @return NodeType
      * @throws TetheredNodeNotConfigured if the requested tethered node is not configured. Check via {@see NodeType::hasTetheredNode()}.
      */
-    public function getTypeOfTetheredNode(NodeTypeName $nodeTypeName, NodeName $tetheredNodeName): NodeType
+    public function getNodeTypeOfTetheredNode(NodeTypeName $nodeTypeName, NodeName $tetheredNodeName): NodeType
     {
         $nodeType = $this->requireNodeType($nodeTypeName);
         $nameOfTetheredNode = $nodeType->getNodeTypeNameOfTetheredNode($tetheredNodeName);
@@ -207,6 +207,7 @@ final class NodeTypeManager
     }
 
     /**
+     * Return an array with child nodes which should be automatically created
      * Return an array with child nodes which should be automatically created
      *
      * @return array<string,NodeType> the key of this array is the name of the child, and the value its NodeType.
@@ -238,7 +239,7 @@ final class NodeTypeManager
     public function isNodeTypeAllowedAsChildToTetheredNode(NodeTypeName $parentNodeTypeName, NodeName $tetheredNodeName, NodeTypeName $nodeTypeName): bool
     {
         try {
-            $typeOfTetheredNode = $this->getTypeOfTetheredNode($parentNodeTypeName, $tetheredNodeName);
+            $typeOfTetheredNode = $this->getNodeTypeOfTetheredNode($parentNodeTypeName, $tetheredNodeName);
         } catch (TetheredNodeNotConfigured $exception) {
             throw new \InvalidArgumentException(
                 sprintf(
