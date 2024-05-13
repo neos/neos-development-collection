@@ -160,7 +160,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
                     ON h.childnodeanchor = n.relationanchorpoint
                 WHERE n.classification = :tethered
-              AND h.name IS NULL
+              AND n.name IS NULL
               GROUP BY n.nodeaggregateid, h.contentstreamid',
             [
                 'tethered' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
@@ -191,7 +191,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         // This could probably be solved with JSON_ARRAY_INTERSECT(JSON_KEYS(ph.subtreetags), JSON_KEYS(h.subtreetags) but unfortunately that's only available with MariaDB 11.2+ according to https://mariadb.com/kb/en/json_array_intersect/
         $hierarchyRelationsWithMissingSubtreeTags = $this->client->getConnection()->executeQuery(
             'SELECT
-              ph.name
+              ph.*
             FROM
               ' . $this->tableNames->hierarchyRelation() . ' h
               INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' ph

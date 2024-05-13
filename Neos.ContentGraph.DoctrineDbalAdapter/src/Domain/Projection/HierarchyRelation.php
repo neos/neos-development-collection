@@ -19,7 +19,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -32,7 +31,6 @@ final readonly class HierarchyRelation
     public function __construct(
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
-        public ?NodeName $name,
         public ContentStreamId $contentStreamId,
         public DimensionSpacePoint $dimensionSpacePoint,
         public string $dimensionSpacePointHash,
@@ -55,7 +53,6 @@ final readonly class HierarchyRelation
             $databaseConnection->insert($tableNames->hierarchyRelation(), [
                 'parentnodeanchor' => $this->parentNodeAnchor->value,
                 'childnodeanchor' => $this->childNodeAnchor->value,
-                'name' => $this->name?->value,
                 'contentstreamid' => $this->contentStreamId->value,
                 'dimensionspacepointhash' => $this->dimensionSpacePointHash,
                 'position' => $this->position,

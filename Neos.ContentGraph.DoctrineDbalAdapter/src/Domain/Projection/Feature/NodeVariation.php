@@ -105,7 +105,6 @@ trait NodeVariation
                     $hierarchyRelation = new HierarchyRelation(
                         $parentNode->relationAnchorPoint,
                         $specializedNode->relationAnchorPoint,
-                        $sourceNode->nodeName,
                         $event->contentStreamId,
                         $uncoveredDimensionSpacePoint,
                         $uncoveredDimensionSpacePoint->hash,
@@ -358,7 +357,6 @@ trait NodeVariation
                     $peerNode->relationAnchorPoint,
                     new DimensionSpacePointSet([$coveredDimensionSpacePoint]),
                     $peerSucceedingSiblingNode?->relationAnchorPoint,
-                    $sourceNode->nodeName
                 );
             }
 
@@ -391,7 +389,6 @@ trait NodeVariation
         NodeRelationAnchorPoint $childNodeAnchorPoint,
         DimensionSpacePointSet $dimensionSpacePointSet,
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
-        NodeName $relationName = null
     ): void;
 
     abstract protected function copyReferenceRelations(

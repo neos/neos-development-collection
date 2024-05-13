@@ -72,7 +72,7 @@ class ProjectionContentGraph
                 : $originDimensionSpacePoint->hash
         ];
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.*, ph.contentstreamid, ph.name, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint FROM ' . $this->tableNames->node() . ' p
+            'SELECT p.*, ph.contentstreamid, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint FROM ' . $this->tableNames->node() . ' p
  INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' ph ON ph.childnodeanchor = p.relationanchorpoint
  INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' ch ON ch.parentnodeanchor = p.relationanchorpoint
  INNER JOIN ' . $this->tableNames->node() . ' c ON ch.childnodeanchor = c.relationanchorpoint
@@ -103,7 +103,7 @@ class ProjectionContentGraph
         DimensionSpacePoint $coveredDimensionSpacePoint
     ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name, h.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint FROM ' . $this->tableNames->node() . ' n
+            'SELECT n.*, h.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint FROM ' . $this->tableNames->node() . ' n
  INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h ON h.childnodeanchor = n.relationanchorpoint
  INNER JOIN ' . $this->tableNames->dimensionSpacePoints() . ' dsp ON n.origindimensionspacepointhash = dsp.hash
  WHERE n.nodeaggregateid = :nodeAggregateId
@@ -556,7 +556,6 @@ class ProjectionContentGraph
         return new HierarchyRelation(
             NodeRelationAnchorPoint::fromInteger((int)$rawData['parentnodeanchor']),
             NodeRelationAnchorPoint::fromInteger((int)$rawData['childnodeanchor']),
-            $rawData['name'] ? NodeName::fromString($rawData['name']) : null,
             ContentStreamId::fromString($rawData['contentstreamid']),
             DimensionSpacePoint::fromJsonString($dimensionspacepointRaw),
             $rawData['dimensionspacepointhash'],

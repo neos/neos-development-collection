@@ -62,19 +62,12 @@ trait TetheredNodeInternals
         ?NodeAggregateId $tetheredNodeAggregateId,
         NodeType $expectedTetheredNodeType
     ): Events {
-        $childNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
+        $childNodeAggregate = $contentGraph->findChildNodeAggregateByName(
             $parentNodeAggregate->nodeAggregateId,
             $tetheredNodeName
         );
 
-        $tmp = [];
-        foreach ($childNodeAggregates as $childNodeAggregate) {
-            $tmp[] = $childNodeAggregate;
-        }
-        /** @var array<int,NodeAggregate> $childNodeAggregates */
-        $childNodeAggregates = $tmp;
-
-        if (count($childNodeAggregates) === 0) {
+        if ($childNodeAggregate === null) {
             // there is no tethered child node aggregate already; let's create it!
             $nodeType = $this->nodeTypeManager->requireNodeType($parentNodeAggregate->nodeTypeName);
             if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
@@ -129,9 +122,7 @@ trait TetheredNodeInternals
                     )
                 );
             }
-        } elseif (count($childNodeAggregates) === 1) {
-            /** @var NodeAggregate $childNodeAggregate */
-            $childNodeAggregate = current($childNodeAggregates);
+        } else {
             if (!$childNodeAggregate->classification->isTethered()) {
                 throw new \RuntimeException(
                     'We found a child node aggregate through the given node path; but it is not tethered.'
@@ -151,11 +142,6 @@ trait TetheredNodeInternals
                 $childNodeSource->originDimensionSpacePoint,
                 $originDimensionSpacePoint,
                 $parentNodeAggregate
-            );
-        } else {
-            throw new \RuntimeException(
-                'There is >= 2 ChildNodeAggregates with the same name reachable from the parent' .
-                    '- this is ambiguous and we should analyze how this may happen. That is very likely a bug.'
             );
         }
     }

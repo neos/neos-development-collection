@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
@@ -41,6 +42,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -50,6 +52,8 @@ trait NodeMove
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
+
+    abstract protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void;
 
     abstract protected function requireProjectedNodeAggregate(
         ContentGraphInterface $contentGraph,
@@ -105,7 +109,6 @@ trait NodeMove
             $this->requireConstraintsImposedByAncestorsAreMet(
                 $contentGraph,
                 $this->requireNodeType($nodeAggregate->nodeTypeName),
-                $nodeAggregate->nodeName,
                 [$command->newParentNodeAggregateId],
             );
 
@@ -118,10 +121,10 @@ trait NodeMove
                 $contentGraph,
                 $nodeAggregate->nodeName,
                 $command->newParentNodeAggregateId,
-                // We need to check all covered DSPs of the parent node aggregate to prevent siblings
-                // with different node aggregate IDs but the same name
-                $newParentNodeAggregate->coveredDimensionSpacePoints,
             );
+            if ($nodeAggregate->nodeName) {
+                $this->requireNodeTypeNotToDeclareTetheredChildNodeName($newParentNodeAggregate->nodeTypeName, $nodeAggregate->nodeName);
+            }
 
             $this->requireNodeAggregateToCoverDimensionSpacePoints(
                 $newParentNodeAggregate,

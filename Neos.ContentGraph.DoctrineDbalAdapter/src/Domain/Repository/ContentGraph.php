@@ -177,6 +177,10 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
+     * Parent node aggregates can have a greater dimension space coverage than the given child.
+     * Thus, it is not enough to just resolve them from the nodes and edges connected to the given child node aggregate.
+     * Instead, we resolve all parent node aggregate ids instead and fetch the complete aggregates from there.
+     *
      * @return iterable<NodeAggregate>
      */
     public function findParentNodeAggregates(
@@ -218,7 +222,7 @@ final class ContentGraph implements ContentGraphInterface
             ->andWhere('cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash');
 
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->select('n.*, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->nodeQueryBuilder->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
@@ -246,6 +250,17 @@ final class ContentGraph implements ContentGraphInterface
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
+    public function findChildNodeAggregateByName(
+        NodeAggregateId $parentNodeAggregateId,
+        NodeName $name
+    ): ?NodeAggregate {
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamId)
+            ->andWhere('cn.name = :relationName')
+            ->setParameter('relationName', $name->value);
+
+        return $this->mapQueryBuilderToNodeAggregate($queryBuilder);
+    }
+
     public function getDimensionSpacePointsOccupiedByChildNodeName(NodeName $nodeName, NodeAggregateId $parentNodeAggregateId, OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint, DimensionSpacePointSet $dimensionSpacePointsToCheck): DimensionSpacePointSet
     {
         $queryBuilder = $this->createQueryBuilder()
@@ -259,7 +274,7 @@ final class ContentGraph implements ContentGraphInterface
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')
-            ->andWhere('h.name = :nodeName')
+            ->andWhere('n.name = :nodeName')
             ->setParameters([
                 'parentNodeAggregateId' => $parentNodeAggregateId->value,
                 'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->hash,
@@ -275,20 +290,6 @@ final class ContentGraph implements ContentGraphInterface
         }
 
         return new DimensionSpacePointSet($dimensionSpacePoints);
-    }
-
-    /**
-     * @return iterable<NodeAggregate>
-     */
-    public function findChildNodeAggregatesByName(
-        NodeAggregateId $parentNodeAggregateId,
-        NodeName $name
-    ): iterable {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamId)
-            ->andWhere('ch.name = :relationName')
-            ->setParameter('relationName', $name->value);
-
-        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
     public function countNodes(): int
@@ -318,6 +319,15 @@ final class ContentGraph implements ContentGraphInterface
     private function createQueryBuilder(): QueryBuilder
     {
         return $this->client->getConnection()->createQueryBuilder();
+    }
+
+    private function mapQueryBuilderToNodeAggregate(QueryBuilder $queryBuilder): ?NodeAggregate
+    {
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            $this->fetchRows($queryBuilder),
+            $this->contentStreamId,
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 
     /**

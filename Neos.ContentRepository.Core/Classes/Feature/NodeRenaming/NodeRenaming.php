@@ -33,6 +33,7 @@ trait NodeRenaming
     private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
         $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
@@ -41,15 +42,12 @@ trait NodeRenaming
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be renamed');
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         foreach ($contentGraph->findParentNodeAggregates($command->nodeAggregateId) as $parentNodeAggregate) {
-            foreach ($parentNodeAggregate->occupiedDimensionSpacePoints as $occupiedParentDimensionSpacePoint) {
-                $this->requireNodeNameToBeUnoccupied(
-                    $contentGraph,
-                    $command->newNodeName,
-                    $parentNodeAggregate->nodeAggregateId,
-                    $occupiedParentDimensionSpacePoint,
-                    $parentNodeAggregate->coveredDimensionSpacePoints
-                );
-            }
+            $this->requireNodeNameToBeUncovered(
+                $contentGraph,
+                $command->newNodeName,
+                $parentNodeAggregate->nodeAggregateId,
+            );
+            $this->requireNodeTypeNotToDeclareTetheredChildNodeName($parentNodeAggregate->nodeTypeName, $command->newNodeName);
         }
 
         $events = Events::with(

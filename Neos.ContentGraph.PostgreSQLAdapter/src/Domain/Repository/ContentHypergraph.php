@@ -221,13 +221,10 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
-    /**
-     * @return iterable<NodeAggregate>
-     */
-    public function findChildNodeAggregatesByName(
+    public function findChildNodeAggregateByName(
         NodeAggregateId $parentNodeAggregateId,
         NodeName $name
-    ): iterable {
+    ): ?NodeAggregate {
         $query = HypergraphChildQuery::create(
             $this->contentStreamId,
             $parentNodeAggregateId,
@@ -237,7 +234,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
             VisibilityConstraints::withoutRestrictions()
         );

@@ -63,6 +63,8 @@ trait NodeCreation
 
     abstract protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void;
 
+    abstract protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void;
+
     abstract protected function getPropertyConverter(): PropertyConverter;
 
     abstract protected function getNodeTypeManager(): NodeTypeManager;
@@ -139,7 +141,6 @@ trait NodeCreation
             $this->requireConstraintsImposedByAncestorsAreMet(
                 $contentGraph,
                 $nodeType,
-                $command->nodeName,
                 [$command->parentNodeAggregateId]
             );
         }
@@ -168,15 +169,12 @@ trait NodeCreation
             $parentNodeAggregate->coveredDimensionSpacePoints
         );
         if ($command->nodeName) {
-            $this->requireNodeNameToBeUnoccupied(
+            $this->requireNodeNameToBeUncovered(
                 $contentGraph,
                 $command->nodeName,
                 $command->parentNodeAggregateId,
-                $parentNodeAggregate->classification->isRoot()
-                    ? DimensionSpace\OriginDimensionSpacePoint::createWithoutDimensions()
-                    : $command->originDimensionSpacePoint,
-                $coveredDimensionSpacePoints,
             );
+            $this->requireNodeTypeNotToDeclareTetheredChildNodeName($parentNodeAggregate->nodeTypeName, $command->nodeName);
         }
 
         $descendantNodeAggregateIds = $command->tetheredDescendantNodeAggregateIds->completeForNodeOfType(

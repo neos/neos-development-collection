@@ -135,7 +135,7 @@ Feature: Change node aggregate type - basic error cases
       | strategy        | "happypath"                                |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
-  Scenario: Try to change the node type of an auto created child node to anything other than defined:
+  Scenario: Try to change the node type of an tethered child node:
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                           |
       | nodeAggregateId                    | "parent2-na"                                    |
@@ -152,4 +152,4 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId | "nody-mc-nodeface"                              |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeType" |
       | strategy        | "happypath"                                     |
-    Then the last command should have thrown an exception of type "NodeConstraintException"
+    Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
