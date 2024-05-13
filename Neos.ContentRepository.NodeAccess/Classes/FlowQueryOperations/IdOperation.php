@@ -68,7 +68,9 @@ class IdOperation extends AbstractOperation
         if ($arguments !== []) {
             throw new FlowQueryException(static::$shortName . '() does not require any argument.', 1715510778);
         }
-        $node = $flowQuery->getContext()[0] ?? null;
+        /** @var array<int,mixed> $context */
+        $context = $flowQuery->getContext();
+        $node = $context[0] ?? null;
         if (!$node instanceof Node) {
             return null;
         }
