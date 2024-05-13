@@ -417,10 +417,9 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
         "nodeTypeName": "Neos.Neos:Test.DocumentType1"
     }
     """
-    # changing the node type config will invoke the Neos.Neos:FallbackNode handling
+    # if the node type config is empty, the operation should still work
     When I change the node types in content repository "default" to:
     """yaml
-    'Neos.Neos:FallbackNode': {}
     """
     When I execute the following Fusion code:
     """fusion
@@ -438,6 +437,6 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
         "property": "Node a1",
         "identifier": "a1",
         "label": "Neos.Neos:Test.DocumentType1",
-        "nodeTypeName": "Neos.Neos:FallbackNode"
+        "nodeTypeName": "Neos.Neos:Test.DocumentType1"
     }
     """

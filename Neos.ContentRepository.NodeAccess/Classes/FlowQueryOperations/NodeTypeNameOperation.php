@@ -12,12 +12,9 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
  * Used to access the NodeTypeName of a ContentRepository Node.
@@ -44,11 +41,6 @@ class NodeTypeNameOperation extends AbstractOperation
      * @var boolean
      */
     protected static $final = true;
-
-    /**
-     * @Flow\Inject
-     */
-    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -81,10 +73,6 @@ class NodeTypeNameOperation extends AbstractOperation
             return null;
         }
 
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-
-        return $contentRepository->getNodeTypeManager()->hasNodeType($node->nodeTypeName)
-            ? $node->nodeTypeName
-            : NodeTypeNameFactory::forFallback()->value;
+        return $node->nodeTypeName->value;
     }
 }

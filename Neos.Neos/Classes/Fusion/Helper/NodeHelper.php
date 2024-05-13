@@ -142,6 +142,12 @@ class NodeHelper implements ProtectedContextAwareInterface
         return $this->getNodeTypeInternal($node);
     }
 
+    public function isNodeTypeExistent(Node $node): bool
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
+        return $contentRepository->getNodeTypeManager()->hasNodeType($node->nodeTypeName);
+    }
+
     public function serializedNodeAddress(Node $node): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(

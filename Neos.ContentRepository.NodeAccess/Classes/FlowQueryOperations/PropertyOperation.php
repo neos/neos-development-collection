@@ -57,8 +57,6 @@ class PropertyOperation extends AbstractOperation
      */
     protected $contentRepositoryRegistry;
 
-    use NodeTypeWithFallbackProvider;
-
     /**
      * {@inheritdoc}
      *
@@ -113,7 +111,10 @@ class PropertyOperation extends AbstractOperation
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
-        if ($this->getNodeType($element)->hasReference($propertyName)) {
+        $contentRepository = $this->contentRepositoryRegistry->get($element->subgraphIdentity->contentRepositoryId);
+        $nodeTypeManager = $contentRepository->getNodeTypeManager();
+
+        if ($nodeTypeManager->getNodeType($element->nodeTypeName)?->hasReference($propertyName)) {
             // legacy access layer for references
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             $references = $subgraph->findReferences(
@@ -121,7 +122,7 @@ class PropertyOperation extends AbstractOperation
                 FindReferencesFilter::create(referenceName: $propertyName)
             )->getNodes();
 
-            $maxItems = $this->getNodeType($element)->getReferences()[$propertyName]['constraints']['maxItems'] ?? null;
+            $maxItems = $nodeTypeManager->getNodeType($element->nodeTypeName)->getReferences()[$propertyName]['constraints']['maxItems'] ?? null;
             if ($maxItems === 1) {
                 // legacy layer references with only one item like the previous `type: reference`
                 // (the node type transforms that to constraints.maxItems = 1)
