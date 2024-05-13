@@ -34,7 +34,6 @@ class TetheredNodeAdjustments
     use TetheredNodeInternals;
 
     public function __construct(
-        private readonly ContentRepository $contentRepository,
         private readonly ProjectedNodeIterator $projectedNodeIterator,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
@@ -55,8 +54,6 @@ class TetheredNodeAdjustments
         $expectedTetheredNodes = $this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeType);
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
-            // TODO: We should use $nodeAggregate->workspaceName as soon as it's available
-            $contentGraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive());
             // find missing tethered nodes
             $foundMissingOrDisallowedTetheredNodes = false;
             $originDimensionSpacePoints = $nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)
@@ -69,7 +66,7 @@ class TetheredNodeAdjustments
                 foreach ($expectedTetheredNodes as $tetheredNodeName => $expectedTetheredNodeType) {
                     $tetheredNodeName = NodeName::fromString($tetheredNodeName);
 
-                    $tetheredNode = $contentGraph->getSubgraph(
+                    $tetheredNode = $this->projectedNodeIterator->contentGraph->getSubgraph(
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     )->findNodeByPath(
@@ -86,9 +83,9 @@ class TetheredNodeAdjustments
                             $nodeAggregate->nodeAggregateId,
                             StructureAdjustment::TETHERED_NODE_MISSING,
                             'The tethered child node "' . $tetheredNodeName->value . '" is missing.',
-                            function () use ($nodeAggregate, $originDimensionSpacePoint, $tetheredNodeName, $expectedTetheredNodeType, $contentGraph) {
+                            function () use ($nodeAggregate, $originDimensionSpacePoint, $tetheredNodeName, $expectedTetheredNodeType) {
                                 $events = $this->createEventsForMissingTetheredNode(
-                                    $contentGraph,
+                                    $this->projectedNodeIterator->contentGraph,
                                     $nodeAggregate,
                                     $originDimensionSpacePoint,
                                     $tetheredNodeName,
@@ -112,7 +109,7 @@ class TetheredNodeAdjustments
             }
 
             // find disallowed tethered nodes
-            $tetheredNodeAggregates = $contentGraph->findTetheredChildNodeAggregates(
+            $tetheredNodeAggregates = $this->projectedNodeIterator->contentGraph->findTetheredChildNodeAggregates(
                 $nodeAggregate->nodeAggregateId
             );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
@@ -134,7 +131,7 @@ class TetheredNodeAdjustments
             // find wrongly ordered tethered nodes
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($originDimensionSpacePoints as $originDimensionSpacePoint) {
-                    $childNodes = $contentGraph->getSubgraph($originDimensionSpacePoint->toDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions())->findChildNodes($nodeAggregate->nodeAggregateId, FindChildNodesFilter::create());
+                    $childNodes = $this->projectedNodeIterator->contentGraph->getSubgraph($originDimensionSpacePoint->toDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions())->findChildNodes($nodeAggregate->nodeAggregateId, FindChildNodesFilter::create());
 
                     /** is indexed by node name, and the value is the tethered node itself */
                     $actualTetheredChildNodes = [];

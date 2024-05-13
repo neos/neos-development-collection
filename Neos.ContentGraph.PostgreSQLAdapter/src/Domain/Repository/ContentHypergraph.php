@@ -68,6 +68,16 @@ final class ContentHypergraph implements ContentGraphInterface
         $this->nodeFactory = $nodeFactory;
     }
 
+    public function getContentRepositoryId(): ContentRepositoryId
+    {
+        return $this->contentRepositoryId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
     public function getSubgraph(
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
@@ -77,6 +87,7 @@ final class ContentHypergraph implements ContentGraphInterface
             $this->subhypergraphs[$index] = new ContentSubhypergraph(
                 $this->contentRepositoryId,
                 $this->contentStreamId,
+                $this->workspaceName,
                 $dimensionSpacePoint,
                 $visibilityConstraints,
                 $this->databaseClient,
@@ -305,11 +316,6 @@ final class ContentHypergraph implements ContentGraphInterface
     private function getDatabaseConnection(): DatabaseConnection
     {
         return $this->databaseClient->getConnection();
-    }
-
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
     }
 
     public function getContentStreamId(): ContentStreamId

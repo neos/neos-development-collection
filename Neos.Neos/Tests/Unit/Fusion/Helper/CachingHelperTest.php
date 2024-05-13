@@ -14,6 +14,8 @@ namespace Neos\Neos\Tests\Unit\Fusion\Helper;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Tests\UnitTestCase;
@@ -198,21 +200,20 @@ class CachingHelperTest extends UnitTestCase
     {
         $now = new \DateTimeImmutable();
         return Node::create(
-            ContentSubgraphIdentity::create(
-                ContentRepositoryId::fromString("default"),
-                ContentStreamId::fromString("cs-identifier"),
-                DimensionSpacePoint::createWithoutDimensions(),
-                VisibilityConstraints::withoutRestrictions()
-            ),
+            ContentRepositoryId::fromString("default"),
+            WorkspaceName::forLive(),
+            DimensionSpacePoint::createWithoutDimensions(),
             $nodeAggregateId,
             OriginDimensionSpacePoint::createWithoutDimensions(),
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
             NodeTypeName::fromString("SomeNodeTypeName"),
-            null,
             new PropertyCollection(SerializedPropertyValues::fromArray([]), new PropertyConverter(new Serializer([], []))),
             null,
             NodeTags::createEmpty(),
-            Timestamps::create($now, $now, null, null)
+            Timestamps::create($now, $now, null, null),
+            VisibilityConstraints::withoutRestrictions(),
+            null,
+            ContentStreamId::fromString("cs-identifier"),
         );
     }
 }

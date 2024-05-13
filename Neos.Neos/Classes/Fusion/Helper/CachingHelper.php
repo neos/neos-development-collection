@@ -135,17 +135,15 @@ class CachingHelper implements ProtectedContextAwareInterface
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->contentRepositoryId
         );
 
-
-        /** @var Workspace $currentWorkspace */
-        $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $node->subgraphIdentity->contentStreamId
+        $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+            $node->workspaceName
         );
         $workspaceChain = [];
         // TODO: Maybe write CTE here
-        while ($currentWorkspace instanceof Workspace) {
+        while ($currentWorkspace !== null) {
             $workspaceChain[$currentWorkspace->workspaceName->value] = $currentWorkspace;
             $currentWorkspace = $currentWorkspace->baseWorkspaceName
                 ? $contentRepository->getWorkspaceFinder()->findOneByName($currentWorkspace->baseWorkspaceName)
