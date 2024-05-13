@@ -25,7 +25,6 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
-use Neos\Neos\Domain\NodeLabel\NodeLabelRenderer;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\Presentation\VisualNodePath;
@@ -42,9 +41,6 @@ class NodeHelper implements ProtectedContextAwareInterface
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
-
-    #[Flow\Inject]
-    protected NodeLabelRenderer $nodeLabelRenderer;
 
     /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
@@ -109,14 +105,6 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function labelForNode(Node $node): NodeLabelToken
     {
         return new NodeLabelToken($node);
-    }
-
-    /**
-     * Renders the actual node label based on the NodeType definition in Fusion.
-     */
-    public function renderLabel(Node $node): string
-    {
-        return $this->nodeLabelRenderer->renderNodeLabel($node);
     }
 
     /**

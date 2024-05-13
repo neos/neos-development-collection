@@ -33,5 +33,5 @@ prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
     }
   }
 
-  content = ${Neos.Node.renderLabel(node)}
+  content = ${q(node).label()}
 }

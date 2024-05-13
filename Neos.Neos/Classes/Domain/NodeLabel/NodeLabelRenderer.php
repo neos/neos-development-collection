@@ -8,11 +8,10 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\Fusion\Helper\NodeHelper;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
- * @api For PHP, in Fusion one can use ${Neos.Node.renderLabel(node)} {@see NodeHelper::renderLabel()}
+ * @api For PHP, in Fusion one can use ${q(node).label()} to access the label
  */
 final readonly class NodeLabelRenderer
 {
