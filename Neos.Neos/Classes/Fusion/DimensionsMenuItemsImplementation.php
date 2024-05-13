@@ -11,7 +11,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\NodeLabel\NodeLabelRenderer;
+use Neos\Neos\Domain\NodeLabel\NodeLabelRendererInterface;
 
 /**
  * Fusion implementation for a dimensions menu.
@@ -31,7 +31,7 @@ use Neos\Neos\Domain\NodeLabel\NodeLabelRenderer;
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
     #[Flow\Inject()]
-    protected NodeLabelRenderer $nodeLabelRenderer;
+    protected NodeLabelRendererInterface $nodeLabelRenderer;
 
     /**
      * @return array<mixed>

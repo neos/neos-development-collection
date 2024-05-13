@@ -7,13 +7,15 @@ namespace Neos\Neos\Domain\NodeLabel;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
- * @api For PHP, in Fusion one can use ${q(node).label()} to access the label
+ * @internal please reference the interface {@see NodeLabelRendererInterface} instead.
  */
-final readonly class NodeLabelRenderer
+#[Flow\Scope('singleton')]
+final readonly class NodeLabelRenderer implements NodeLabelRendererInterface
 {
     use NodeTypeWithFallbackProvider;
 
@@ -30,10 +32,7 @@ final readonly class NodeLabelRenderer
         return $generator->getLabel($node);
     }
 
-    /**
-     * @internal
-     */
-    public function getNodeLabelGeneratorForNodeType(NodeType $nodeType): NodeLabelGeneratorInterface
+    private function getNodeLabelGeneratorForNodeType(NodeType $nodeType): NodeLabelGeneratorInterface
     {
         if ($nodeType->hasConfiguration('label.generatorClass')) {
             $nodeLabelGeneratorClassName = $nodeType->getConfiguration('label.generatorClass');

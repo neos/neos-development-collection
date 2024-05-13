@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Exception as FusionException;
-use Neos\Neos\Domain\NodeLabel\NodeLabelRenderer;
+use Neos\Neos\Domain\NodeLabel\NodeLabelRendererInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
@@ -65,7 +65,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected ?NodeTypeCriteria $nodeTypeCriteria = null;
 
     #[Flow\Inject()]
-    protected NodeLabelRenderer $nodeLabelRenderer;
+    protected NodeLabelRendererInterface $nodeLabelRenderer;
 
     /**
      * The last navigation level which should be rendered.

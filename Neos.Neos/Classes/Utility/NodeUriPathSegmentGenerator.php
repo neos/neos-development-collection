@@ -18,7 +18,7 @@ use Behat\Transliterator\Transliterator;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
-use Neos\Neos\Domain\NodeLabel\NodeLabelRenderer;
+use Neos\Neos\Domain\NodeLabel\NodeLabelRendererInterface;
 use Neos\Neos\Exception;
 use Neos\Neos\Service\TransliterationService;
 
@@ -32,7 +32,7 @@ class NodeUriPathSegmentGenerator
     protected TransliterationService $transliterationService;
 
     #[Flow\Inject]
-    protected NodeLabelRenderer $nodeLabelRenderer;
+    protected NodeLabelRendererInterface $nodeLabelRenderer;
 
     /**
      * Generates a URI path segment for a given node taking its language dimension value into account

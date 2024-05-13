@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Neos\Domain\NodeLabel\NodeLabelRenderer;
+use Neos\Neos\Domain\NodeLabel\NodeLabelRendererInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
@@ -152,7 +152,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeLabelRenderer
+     * @var NodeLabelRendererInterface
      */
     protected $nodeLabelRenderer;
 
