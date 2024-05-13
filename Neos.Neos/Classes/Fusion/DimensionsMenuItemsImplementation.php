@@ -220,7 +220,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         if ($this->getContentDimensionIdentifierToLimitTo()) {
             return $metadata[$this->getContentDimensionIdentifierToLimitTo()->value]['label'] ?: '';
         } elseif ($variant) {
-            return $this->nodeLabelRenderer->renderNodeLabel($variant) ?: '';
+            return $this->nodeLabelRenderer->renderNodeLabel($variant)->value ?: '';
         } else {
             return array_reduce($metadata, function ($carry, $item) {
                 return $carry . (empty($carry) ? '' : '-') . $item['label'];

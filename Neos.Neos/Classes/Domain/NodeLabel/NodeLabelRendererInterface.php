@@ -9,5 +9,5 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
  */
 interface NodeLabelRendererInterface
 {
-    public function renderNodeLabel(Node $node): string;
+    public function renderNodeLabel(Node $node): NodeLabel;
 }

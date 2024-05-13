@@ -25,7 +25,7 @@ final readonly class NodeLabelRenderer implements NodeLabelRendererInterface
     ) {
     }
 
-    public function renderNodeLabel(Node $node): string
+    public function renderNodeLabel(Node $node): NodeLabel
     {
         $nodeType = $this->getNodeType($node);
         $generator = $this->getNodeLabelGeneratorForNodeType($nodeType);

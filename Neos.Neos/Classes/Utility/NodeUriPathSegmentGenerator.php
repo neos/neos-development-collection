@@ -44,7 +44,7 @@ class NodeUriPathSegmentGenerator
     {
         $language = null;
         if ($node) {
-            $text = $text ?: $this->nodeLabelRenderer->renderNodeLabel($node) ?: ($node->nodeName?->value ?? '');
+            $text = $text ?: $this->nodeLabelRenderer->renderNodeLabel($node)->value ?: ($node->nodeName?->value ?? '');
             $languageDimensionValue = $node->originDimensionSpacePoint->coordinates['language'] ?? null;
             if (!is_null($languageDimensionValue)) {
                 $locale = new Locale($languageDimensionValue);

@@ -27,5 +27,5 @@ interface NodeLabelGeneratorInterface
      * Render a node label
      * @api
      */
-    public function getLabel(Node $node): string;
+    public function getLabel(Node $node): NodeLabel;
 }
