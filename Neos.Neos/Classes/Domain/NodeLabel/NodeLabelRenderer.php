@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
  * @internal please reference the interface {@see NodeLabelRendererInterface} instead.
@@ -17,8 +17,6 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 #[Flow\Scope('singleton')]
 final readonly class NodeLabelRenderer implements NodeLabelRendererInterface
 {
-    use NodeTypeWithFallbackProvider;
-
     public function __construct(
         private ContentRepositoryRegistry $contentRepositoryRegistry,
         private ObjectManagerInterface $objectManager
@@ -27,14 +25,16 @@ final readonly class NodeLabelRenderer implements NodeLabelRendererInterface
 
     public function renderNodeLabel(Node $node): NodeLabel
     {
-        $nodeType = $this->getNodeType($node);
+        $nodeTypeManager = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId)->getNodeTypeManager();
+        $nodeType = $nodeTypeManager->getNodeType($node->nodeTypeName)
+            ?? $nodeTypeManager->getNodeType(NodeTypeNameFactory::forFallback());
         $generator = $this->getNodeLabelGeneratorForNodeType($nodeType);
         return $generator->getLabel($node);
     }
 
-    private function getNodeLabelGeneratorForNodeType(NodeType $nodeType): NodeLabelGeneratorInterface
+    private function getNodeLabelGeneratorForNodeType(?NodeType $nodeType): NodeLabelGeneratorInterface
     {
-        if ($nodeType->hasConfiguration('label.generatorClass')) {
+        if ($nodeType?->hasConfiguration('label.generatorClass')) {
             $nodeLabelGeneratorClassName = $nodeType->getConfiguration('label.generatorClass');
             $nodeLabelGenerator = $this->objectManager->get($nodeLabelGeneratorClassName);
             if (!$nodeLabelGenerator instanceof NodeLabelGeneratorInterface) {
@@ -44,7 +44,7 @@ final readonly class NodeLabelRenderer implements NodeLabelRendererInterface
                     1682950942
                 );
             }
-        } elseif ($nodeType->hasConfiguration('label') && is_string($nodeType->getConfiguration('label'))) {
+        } elseif ($nodeType?->hasConfiguration('label') && is_string($nodeType->getConfiguration('label'))) {
             /** @var ExpressionBasedNodeLabelGenerator $nodeLabelGenerator */
             $nodeLabelGenerator = $this->objectManager->get(ExpressionBasedNodeLabelGenerator::class);
             $nodeLabelGenerator->setExpression($nodeType->getConfiguration('label'));

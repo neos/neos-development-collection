@@ -390,6 +390,20 @@ Neos:
         ö: oe
         ü: ue
 
+    # Configures defaults for node label generation
+    labelGenerator:
+      eel:
+        defaultContext:
+          String: Neos\Eel\Helper\StringHelper
+          Array: Neos\Eel\Helper\ArrayHelper
+          Date: Neos\Eel\Helper\DateHelper
+          Configuration: Neos\Eel\Helper\ConfigurationHelper
+          Math: Neos\Eel\Helper\MathHelper
+          Json: Neos\Eel\Helper\JsonHelper
+          I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
+          q: Neos\Eel\FlowQuery\FlowQuery::q
+          Neos.Node: Neos\Neos\Fusion\Helper\NodeHelper
+
   Flow:
     aop:
       globalObjects:
@@ -470,20 +484,6 @@ Neos:
       packagesPathByType:
         neos-site: Sites
         neos-plugin: Plugins
-
-    # Configures defaults for node label generation
-    labelGenerator:
-      eel:
-        defaultContext:
-          String: Neos\Eel\Helper\StringHelper
-          Array: Neos\Eel\Helper\ArrayHelper
-          Date: Neos\Eel\Helper\DateHelper
-          Configuration: Neos\Eel\Helper\ConfigurationHelper
-          Math: Neos\Eel\Helper\MathHelper
-          Json: Neos\Eel\Helper\JsonHelper
-          I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
-          q: Neos\Eel\FlowQuery\FlowQuery::q
-          Neos.Node: Neos\Neos\Fusion\Helper\NodeHelper
 
   Fusion:
     rendering:

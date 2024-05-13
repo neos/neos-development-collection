@@ -37,7 +37,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
      * @var string
      */
     protected $expression = <<<'EEL'
-    ${(node.nodeType.label ? node.nodeType.label : node.nodeType.name) + (node.nodeName ? ' (' + node.nodeName.value + ')' : '')}
+    ${(node.nodeType.label ? node.nodeType.label : node.nodeTypeName.value) + (node.nodeName ? ' (' + node.nodeName.value + ')' : '')}
     EEL;
 
     /**

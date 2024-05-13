@@ -413,7 +413,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     {
         "property": "Node a1",
         "identifier": "a1",
-        "label": "Neos.Neos:Test.DocumentType1",
+        "label": "Neos.Neos:Test.DocumentType1 (a1)",
         "nodeTypeName": "Neos.Neos:Test.DocumentType1"
     }
     """
@@ -436,7 +436,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     {
         "property": "Node a1",
         "identifier": "a1",
-        "label": "Neos.Neos:Test.DocumentType1",
+        "label": "Neos.Neos:Test.DocumentType1 (a1)",
         "nodeTypeName": "Neos.Neos:Test.DocumentType1"
     }
     """
