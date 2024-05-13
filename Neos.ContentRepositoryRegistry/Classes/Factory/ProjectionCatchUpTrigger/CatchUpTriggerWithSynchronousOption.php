@@ -23,6 +23,7 @@ use Neos\Flow\Annotations as Flow;
  * We will hopefully get rid of this class at some point; by introducing a NodeAggregate
  * which will take care of constraint enforcement then.
  *
+ * @deprecated remove me https://github.com/neos/neos-development-collection/pull/4988
  * @internal
  */
 class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInterface
@@ -33,7 +34,10 @@ class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInt
      */
     protected $contentRepositoryRegistry;
 
-    private static bool $synchronousEnabled = false;
+    /**
+     * Hack by setting to true to be always sync mode: https://github.com/neos/neos-development-collection/pull/4988
+     */
+    private static bool $synchronousEnabled = true;
 
     /**
      * INTERNAL
