@@ -10,7 +10,6 @@ use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RouterInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
 
 #[Flow\Scope('singleton')]
 final class NodeUriBuilderFactory
@@ -22,17 +21,10 @@ final class NodeUriBuilderFactory
 
     public function forRequest(ServerRequestInterface $request): NodeUriBuilder
     {
+        // TODO Flows base uri configuration is currently ignored
         $baseUri = RequestInformationHelper::generateBaseUri($request);
         $routeParameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS)
             ?? RouteParameters::createEmpty();
         return new NodeUriBuilder($this->router, $baseUri, $routeParameters);
-    }
-
-    public function forBaseUri(UriInterface $baseUri): NodeUriBuilder
-    {
-        // todo???
-        // $siteDetectionResult = SiteDetectionResult::fromRequest(new ServerRequest(method: 'GET', uri: $baseUri));
-        // $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
-        return new NodeUriBuilder($this->router, $baseUri, RouteParameters::createEmpty());
     }
 }

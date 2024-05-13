@@ -31,8 +31,6 @@ final class NodeUriBuilder
      * Wich will be used for when generating host absolute uris.
      * If the base uri does not contain a host, absolute uris which would contain the host of the current request
      * like from `absoluteUriFor`, will be generated without host.
-     *
-     * TODO Flows base uri configuration is ignored if not specifically added via `mergeBaseUri`
      */
     public function __construct(
         private readonly RouterInterface $router,

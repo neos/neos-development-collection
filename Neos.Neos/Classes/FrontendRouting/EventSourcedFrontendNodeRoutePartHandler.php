@@ -16,6 +16,7 @@ namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -240,12 +241,13 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $uriPath,
             $dimensionSpacePoint->hash
         );
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
-            $documentUriPathFinder->getLiveContentStreamId(),
+        $nodeAddress = NodeAddress::create(
+            $contentRepository->id,
+            WorkspaceName::forLive(),
             $dimensionSpacePoint,
             $nodeInfo->getNodeAggregateId(),
         );
-        return new MatchResult($nodeAddress->serializeForUri(), $nodeInfo->getRouteTags());
+        return new MatchResult($nodeAddress->toJson(), $nodeInfo->getRouteTags());
     }
 
     /**
@@ -261,7 +263,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         $currentRequestSiteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
 
         $nodeAddress = $routeValues[$this->name];
-        // TODO: for cross-CR links: NodeAddressInContentRepository as a new value object
         if (!$nodeAddress instanceof NodeAddress) {
             return false;
         }
@@ -284,9 +285,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      *       To disallow showing a node actually disabled/hidden itself has to be ensured in matching a request path,
      *       not in building one.
      *
-     * @param NodeAddress $nodeAddress
-     * @param SiteDetectionResult $currentRequestSiteDetectionResult
-     * @return ResolveResult
      * @throws InvalidShortcutException
      * @throws NodeNotFoundException
      */
@@ -294,13 +292,12 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         NodeAddress $nodeAddress,
         SiteDetectionResult $currentRequestSiteDetectionResult
     ): ResolveResult {
-        // TODO: SOMEHOW FIND OTHER CONTENT REPOSITORY HERE FOR CROSS-CR LINKS!!
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $currentRequestSiteDetectionResult->contentRepositoryId
+            $nodeAddress->contentRepositoryId
         );
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $nodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $nodeAddress->nodeAggregateId,
+            $nodeAddress->aggregateId,
             $nodeAddress->dimensionSpacePoint->hash
         );
 

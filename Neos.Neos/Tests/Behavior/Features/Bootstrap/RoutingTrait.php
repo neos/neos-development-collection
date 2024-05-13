@@ -19,16 +19,15 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\ServerRequestAttributes;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RouterInterface;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
@@ -43,9 +42,8 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\NodeUriSpecification;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
@@ -183,17 +181,19 @@ trait RoutingTrait
      */
     public function theMatchedNodeShouldBeInContentStreamAndOriginDimension(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): void
     {
-        $nodeAddress = $this->match($this->requestUrl);
-        Assert::assertNotNull($nodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
-        Assert::assertTrue($nodeAddress->isInLiveWorkspace());
-        Assert::assertSame($nodeAggregateId, $nodeAddress->nodeAggregateId->value);
-        Assert::assertSame($contentStreamId, $nodeAddress->contentStreamId->value);
+        $matchedNodeAddress = $this->match($this->requestUrl);
+        Assert::assertNotNull($matchedNodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
+        Assert::assertTrue($matchedNodeAddress->workspaceName->isLive());
+        Assert::assertSame($nodeAggregateId, $matchedNodeAddress->aggregateId->value);
+        // todo useless check?
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(ContentStreamId::fromString($contentStreamId));
+        Assert::assertSame($contentStreamId, $workspace?->currentContentStreamId->value);
         Assert::assertSame(
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            $nodeAddress->dimensionSpacePoint,
+            $matchedNodeAddress->dimensionSpacePoint,
             sprintf(
                 'Dimension space point "%s" did not match the expected "%s"',
-                $nodeAddress->dimensionSpacePoint->toJson(),
+                $matchedNodeAddress->dimensionSpacePoint->toJson(),
                 $dimensionSpacePoint
             )
         );
@@ -205,7 +205,7 @@ trait RoutingTrait
     public function noNodeShouldMatchUrl(string $url): void
     {
         $matchedNodeAddress = $this->match(new Uri($url));
-        Assert::assertNull($matchedNodeAddress, 'Expected no node to be found, but instead the following node address was matched: ' . $matchedNodeAddress ?? '- none -');
+        Assert::assertNull($matchedNodeAddress, 'Expected no node to be found, but instead the following node address was matched: ' . $matchedNodeAddress?->toJson() ?? '- none -');
     }
 
     /**
@@ -216,8 +216,11 @@ trait RoutingTrait
         $matchedNodeAddress = $this->match(new Uri($url));
 
         Assert::assertNotNull($matchedNodeAddress, 'Expected node to be found, but instead nothing was found.');
-        Assert::assertEquals(NodeAggregateId::fromString($nodeAggregateId), $matchedNodeAddress->nodeAggregateId, 'Expected nodeAggregateId doesn\'t match.');
-        Assert::assertEquals(ContentStreamId::fromString($contentStreamId), $matchedNodeAddress->contentStreamId, 'Expected contentStreamId doesn\'t match.');
+        Assert::assertEquals(NodeAggregateId::fromString($nodeAggregateId), $matchedNodeAddress->aggregateId, 'Expected nodeAggregateId doesn\'t match.');
+
+        // todo use workspace name instead here:
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(ContentStreamId::fromString($contentStreamId));
+        Assert::assertEquals($workspace->workspaceName, $matchedNodeAddress->workspaceName, 'Expected workspace doesn\'t match.');
         Assert::assertTrue($matchedNodeAddress->dimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), 'Expected dimensionSpacePoint doesn\'t match.');
     }
 
@@ -241,8 +244,7 @@ trait RoutingTrait
             return null;
         }
 
-        $nodeAddressFactory = NodeAddressFactory::create($this->currentContentRepository);
-        return $nodeAddressFactory->createFromUriString($routeValues['node']);
+        return NodeAddress::fromJsonString($routeValues['node']);
     }
 
 
@@ -261,6 +263,13 @@ trait RoutingTrait
      */
     public function theNodeShouldNotResolve(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): void
     {
+        if (
+            ($this->getObject(ConfigurationManager::class)
+                ->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.mvc.routes')['Neos.Flow'] ?? false) !== false
+        ) {
+            Assert::fail('In this distribution the Flow routes are included into the global configuration and thus any route arguments will always resolve. Please set in Neos.Flow.mvc.routes "Neos.Flow": false.');
+        }
+
         $resolvedUrl = null;
         $exception = false;
         try {
@@ -296,18 +305,22 @@ trait RoutingTrait
         if ($this->requestUrl === null) {
             $this->iAmOnUrl('/');
         }
-        $nodeAddress = new NodeAddress(
-            ContentStreamId::fromString($contentStreamId),
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(ContentStreamId::fromString($contentStreamId));
+
+        $nodeAddress = NodeAddress::create(
+            $this->currentContentRepository->id,
+            $workspace->workspaceName, // todo always live?
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
             \str_starts_with($nodeAggregateId, '$')
                 ? $this->rememberedNodeAggregateIds[\mb_substr($nodeAggregateId, 1)]
-                : NodeAggregateId::fromString($nodeAggregateId),
-            WorkspaceName::forLive()
+                : NodeAggregateId::fromString($nodeAggregateId)
         );
         $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);
         $httpRequest = $this->addRoutingParameters($httpRequest);
-        $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
-        return NodeUriBuilder::fromRequest($actionRequest)->uriFor($nodeAddress);
+
+        return $this->getObject(NodeUriBuilderFactory::class)
+            ->forRequest($httpRequest)
+            ->uriFor(NodeUriSpecification::create($nodeAddress));
     }
 
     private function addRoutingParameters(ServerRequestInterface $httpRequest): ServerRequestInterface
