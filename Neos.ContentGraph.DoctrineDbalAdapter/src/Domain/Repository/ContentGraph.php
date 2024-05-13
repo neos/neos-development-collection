@@ -84,6 +84,16 @@ final class ContentGraph implements ContentGraphInterface
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $this->tableNames);
     }
 
+    public function getContentRepositoryId(): ContentRepositoryId
+    {
+        return $this->contentRepositoryId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
     public function getSubgraph(
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
@@ -171,6 +181,7 @@ final class ContentGraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
+            $this->workspaceName,
             $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -236,6 +247,7 @@ final class ContentGraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
+            $this->workspaceName,
             $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -304,7 +316,7 @@ final class ContentGraph implements ContentGraphInterface
         try {
             return (int)$result->fetchOne();
         } catch (DriverException | DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444590, $e);
+            throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
         }
     }
 
@@ -325,6 +337,7 @@ final class ContentGraph implements ContentGraphInterface
     {
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
+            $this->workspaceName,
             $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -338,6 +351,7 @@ final class ContentGraph implements ContentGraphInterface
     {
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $this->fetchRows($queryBuilder),
+            $this->workspaceName,
             $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -359,13 +373,6 @@ final class ContentGraph implements ContentGraphInterface
         }
     }
 
-    /** The workspace this content graph is operating on */
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
-    /** @internal The content stream id where the workspace name points to for this instance */
     public function getContentStreamId(): ContentStreamId
     {
         return $this->contentStreamId;

@@ -52,6 +52,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The content subgraph application repository
@@ -76,6 +77,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
     public function __construct(
         private ContentRepositoryId $contentRepositoryId,
         private ContentStreamId $contentStreamId,
+        private WorkspaceName $workspaceName,
         private DimensionSpacePoint $dimensionSpacePoint,
         private VisibilityConstraints $visibilityConstraints,
         private PostgresDbalClientInterface $databaseClient,
@@ -85,14 +87,24 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
     ) {
     }
 
-    public function getIdentity(): ContentSubgraphIdentity
+    public function getContentRepositoryId(): ContentRepositoryId
     {
-        return ContentSubgraphIdentity::create(
-            $this->contentRepositoryId,
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $this->visibilityConstraints
-        );
+        return $this->contentRepositoryId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
+
+    public function getVisibilityConstraints(): VisibilityConstraints
+    {
+        return $this->visibilityConstraints;
     }
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
@@ -534,8 +546,14 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->databaseClient->getConnection();
     }
 
-    public function jsonSerialize(): ContentSubgraphIdentity
+    /**
+     * @return array<string,mixed>
+     */
+    public function jsonSerialize(): array
     {
-        return $this->getIdentity();
+        return [
+            'workspaceName' => $this->workspaceName,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint,
+        ];
     }
 }

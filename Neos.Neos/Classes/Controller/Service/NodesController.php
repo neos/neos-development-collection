@@ -131,15 +131,6 @@ class NodesController extends ActionController
 
         unset($contextNode);
         if (is_null($nodeAddress)) {
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-                WorkspaceName::fromString($workspaceName)
-            );
-            if (is_null($workspace)) {
-                throw new \InvalidArgumentException(
-                    'Could not resolve a node address for the given parameters.',
-                    1645631728
-                );
-            }
             $subgraph = $contentRepository->getContentGraph(WorkspaceName::fromString($workspaceName))->getSubgraph(
                 DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
                 VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
@@ -204,12 +195,10 @@ class NodesController extends ActionController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspace = $contentRepository->getWorkspaceFinder()
-            ->findOneByName(WorkspaceName::fromString($workspaceName));
-        assert($workspace instanceof Workspace);
+        $workspaceName = WorkspaceName::fromString($workspaceName);
 
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
-        $subgraph = $contentRepository->getContentGraph(WorkspaceName::fromString($workspaceName))
+        $subgraph = $contentRepository->getContentGraph($workspaceName)
             ->getSubgraph(
                 $dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
@@ -220,7 +209,7 @@ class NodesController extends ActionController
         if ($node === null) {
             $this->addExistingNodeVariantInformationToResponse(
                 $nodeAggregateId,
-                $workspace->workspaceName,
+                $workspaceName,
                 $dimensionSpacePoint,
                 $contentRepository
             );
@@ -273,11 +262,9 @@ class NodesController extends ActionController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspace = $contentRepository->getWorkspaceFinder()
-            ->findOneByName(WorkspaceName::fromString($workspaceName));
-        assert($workspace instanceof Workspace);
+        $workspaceName = WorkspaceName::fromString($workspaceName);
 
-        $contentGraph = $contentRepository->getContentGraph(WorkspaceName::fromString($workspaceName));
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
         $sourceSubgraph = $contentGraph
             ->getSubgraph(
                 DimensionSpacePoint::fromLegacyDimensionArray($sourceDimensions),
@@ -294,7 +281,7 @@ class NodesController extends ActionController
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
             CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
                 $this->adoptNodeAndParents(
-                    $workspace->workspaceName,
+                    $workspaceName,
                     $nodeAggregateId,
                     $sourceSubgraph,
                     $targetSubgraph,
@@ -305,7 +292,7 @@ class NodesController extends ActionController
 
             $this->redirect('show', null, null, [
                 'identifier' => $nodeAggregateId->value,
-                'workspaceName' => $workspaceName,
+                'workspaceName' => $workspaceName->value,
                 'dimensions' => $dimensions
             ]);
         } else {

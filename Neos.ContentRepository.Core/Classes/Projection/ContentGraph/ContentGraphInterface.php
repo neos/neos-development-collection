@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -37,6 +38,17 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 interface ContentGraphInterface extends ProjectionStateInterface
 {
+    /**
+     * @api
+     */
+    public function getContentRepositoryId(): ContentRepositoryId;
+
+    /**
+     * The workspace this content graph is operating on
+     * @api
+     */
+    public function getWorkspaceName(): WorkspaceName;
+
     /**
      * @api main API method of ContentGraph
      */
@@ -148,9 +160,6 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @internal only for consumption in testcases
      */
     public function countNodes(): int;
-
-    /** The workspace this content graph is operating on */
-    public function getWorkspaceName(): WorkspaceName;
 
     /** @internal The content stream id where the workspace name points to for this instance */
     public function getContentStreamId(): ContentStreamId;
