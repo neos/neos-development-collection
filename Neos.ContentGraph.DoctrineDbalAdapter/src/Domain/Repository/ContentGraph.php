@@ -84,6 +84,16 @@ final class ContentGraph implements ContentGraphInterface
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $this->tableNames);
     }
 
+    public function getContentRepositoryId(): ContentRepositoryId
+    {
+        return $this->contentRepositoryId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
     public function getSubgraph(
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
@@ -362,13 +372,6 @@ final class ContentGraph implements ContentGraphInterface
         }
     }
 
-    /** The workspace this content graph is operating on */
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
-    /** @internal The content stream id where the workspace name points to for this instance */
     public function getContentStreamId(): ContentStreamId
     {
         return $this->contentStreamId;

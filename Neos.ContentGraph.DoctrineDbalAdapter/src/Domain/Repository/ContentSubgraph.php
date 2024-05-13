@@ -104,14 +104,24 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $tableNames);
     }
 
-    public function getIdentity(): ContentSubgraphIdentity
+    public function getContentRepositoryId(): ContentRepositoryId
     {
-        return ContentSubgraphIdentity::create(
-            $this->contentRepositoryId,
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $this->visibilityConstraints
-        );
+        return $this->contentRepositoryId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
+
+    public function getVisibilityConstraints(): VisibilityConstraints
+    {
+        return $this->visibilityConstraints;
     }
 
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
@@ -429,9 +439,15 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $result;
     }
 
-    public function jsonSerialize(): ContentSubgraphIdentity
+    /**
+     * @return array<string,mixed>
+     */
+    public function jsonSerialize(): array
     {
-        return $this->getIdentity();
+        return [
+            'workspaceName' => $this->workspaceName,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint,
+        ];
     }
 
     /** ------------------------------------------- */
