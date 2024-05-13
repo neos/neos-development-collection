@@ -247,16 +247,16 @@ Feature: Tethered Nodes integrity violations
     When I adjust the node structure for node type "Neos.ContentRepository:Root"
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 8 is of type "NodePeerVariantWasCreated" with payload:
-      | Key             | Expected                                                            |
-      | contentStreamId | "cs-identifier"                                                     |
-      | nodeAggregateId | "originode-tetherton"                                               |
-      | sourceOrigin    | {"market":"DE","language":"en"}                                     |
-      | peerOrigin      | {"market":"DE","language":"new"}                                    |
-      | peerCoverage    | [{"market":"DE","language":"new"},{"market":"CH","language":"new"}] |
+      | Key                    | Expected                                                                                                                                                          |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                   |
+      | nodeAggregateId        | "originode-tetherton"                                                                                                                                             |
+      | sourceOrigin           | {"market":"DE","language":"en"}                                                                                                                                   |
+      | peerOrigin             | {"market":"DE","language":"new"}                                                                                                                                  |
+      | peerSucceedingSiblings | [{"dimensionSpacePoint":{"market":"DE","language":"new"},"nodeAggregateId":null},{"dimensionSpacePoint":{"market":"CH","language":"new"},"nodeAggregateId":null}] |
     And event at index 9 is of type "NodePeerVariantWasCreated" with payload:
-      | Key             | Expected                                                            |
-      | contentStreamId | "cs-identifier"                                                     |
-      | nodeAggregateId | "originode-tetherton-leaf"                                          |
-      | sourceOrigin    | {"market":"DE","language":"en"}                                     |
-      | peerOrigin      | {"market":"DE","language":"new"}                                    |
-      | peerCoverage    | [{"market":"DE","language":"new"},{"market":"CH","language":"new"}] |
+      | Key                    | Expected                                                                                                                                                          |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                   |
+      | nodeAggregateId        | "originode-tetherton-leaf"                                                                                                                                        |
+      | sourceOrigin           | {"market":"DE","language":"en"}                                                                                                                                   |
+      | peerOrigin             | {"market":"DE","language":"new"}                                                                                                                                  |
+      | peerSucceedingSiblings | [{"dimensionSpacePoint":{"market":"DE","language":"new"},"nodeAggregateId":null},{"dimensionSpacePoint":{"market":"CH","language":"new"},"nodeAggregateId":null}] |
