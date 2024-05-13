@@ -47,7 +47,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api
  */
-interface ContentSubgraphInterface
+interface ContentSubgraphInterface extends \JsonSerializable
 {
     public function getContentRepositoryId(): ContentRepositoryId;
 
