@@ -90,6 +90,17 @@ final readonly class Node
     public NodeAggregateId $nodeAggregateId;
 
     /**
+     * In PHP please use {@see $name} instead.
+     *
+     * For Fusion use:
+     * ```
+     * ${node.name.value}
+     * ```
+     * @deprecated will be removed before the final 9.0 release
+     */
+    public ?NodeName $nodeName;
+
+    /**
      * In PHP please fetch the NodeType via the NodeTypeManager or the NodeTypeWithFallbackProvider trait instead.
      * {@see $nodeTypeName}
      *
@@ -111,7 +122,7 @@ final readonly class Node
      * @param NodeTypeName $nodeTypeName The node's node type name; always set, even if unknown to the NodeTypeManager
      * @param NodeType|null $nodeType The node's node type, null if unknown to the NodeTypeManager - @deprecated Don't rely on this too much, as the capabilities of the NodeType here will probably change a lot; Ask the {@see NodeTypeManager} instead
      * @param PropertyCollection $properties All properties of this node. References are NOT part of this API; To access references, {@see ContentSubgraphInterface::findReferences()} can be used; To read the serialized properties use {@see PropertyCollection::serialized()}.
-     * @param NodeName|null $nodeName The optional name of the node, describing its relation to its parent
+     * @param NodeName|null $name The optional name of the node, describing its relation to its parent
      * @param NodeTags $tags explicit and inherited SubtreeTags of this node
      * @param Timestamps $timestamps Creation and modification timestamps of this node
      * @param VisibilityConstraints $visibilityConstraints Information which subgraph filter was used to access this node
@@ -125,18 +136,19 @@ final readonly class Node
         public NodeAggregateClassification $classification,
         public NodeTypeName $nodeTypeName,
         public PropertyCollection $properties,
-        public ?NodeName $nodeName,
+        public ?NodeName $name,
         public NodeTags $tags,
         public Timestamps $timestamps,
         public VisibilityConstraints $visibilityConstraints,
         ?NodeType $nodeType,
         ContentStreamId $contentStreamId
     ) {
-        if ($this->classification->isTethered() && $this->nodeName === null) {
+        if ($this->classification->isTethered() && $this->name === null) {
             throw new \InvalidArgumentException('The NodeName must be set if the Node is tethered.', 1695118377);
         }
         // legacy to be removed before Neos9
         $this->nodeAggregateId = $this->aggregateId;
+        $this->nodeName = $this->name;
         $this->nodeType = $nodeType;
         $this->subgraphIdentity = ContentSubgraphIdentity::create(
             $contentRepositoryId,
