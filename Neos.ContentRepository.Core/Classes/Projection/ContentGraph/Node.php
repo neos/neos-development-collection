@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -169,13 +170,13 @@ final readonly class Node
     /**
      * Returns the specified property, or null if it does not exist (or was set to null -> unset)
      *
-     * @param string $propertyName Name of the property
+     * @param PropertyName|string $propertyName Name of the property
      * @return mixed value of the property
      * @api
      */
-    public function getProperty(string $propertyName): mixed
+    public function getProperty(PropertyName|string $propertyName): mixed
     {
-        return $this->properties->offsetGet($propertyName);
+        return $this->properties->offsetGet($propertyName instanceof PropertyName ? $propertyName->value : $propertyName);
     }
 
     /**
@@ -183,13 +184,13 @@ final readonly class Node
      *
      * That means that {@see self::getProperty()} will not be null, except for the rare case the property deserializing returns null.
      *
-     * @param string $propertyName Name of the property
+     * @param PropertyName|string $propertyName Name of the property
      * @return boolean
      * @api
      */
-    public function hasProperty(string $propertyName): bool
+    public function hasProperty(PropertyName|string $propertyName): bool
     {
-        return $this->properties->offsetExists($propertyName);
+        return $this->properties->offsetExists($propertyName instanceof PropertyName ? $propertyName->value : $propertyName);
     }
 
     /**
