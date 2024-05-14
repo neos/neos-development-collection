@@ -15,7 +15,6 @@ namespace Neos\ContentRepository\Core\NodeType;
  */
 
 use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
@@ -45,7 +44,6 @@ final class NodeType
         public NodeTypeConstraints $childNodeTypeConstraints,
         public array $metadata,
         public NodeTypeLabel|null $label,
-        private NodeLabelGeneratorInterface|null $nodeLabelGenerator,
     ) {
     }
 
@@ -137,14 +135,6 @@ final class NodeType
     public function getOptions(): array
     {
         return $this->metadata['options'] ?? [];
-    }
-
-    /**
-     * Return the node label generator class for the given node
-     */
-    public function renderNodeLabel(Node $node): string
-    {
-        return $this->nodeLabelGenerator !== null ? $this->nodeLabelGenerator->getLabel($node) : \mb_substr($node->nodeTypeName->value, \mb_strrpos($node->nodeTypeName->value, '.') + 1);
     }
 
     /**

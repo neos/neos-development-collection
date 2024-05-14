@@ -92,8 +92,7 @@ final class ClosureNodeTypeProvider implements NodeTypeProviderInterface
         $nodeType = new NodeType(
             NodeTypeName::fromString($nodeTypeName),
             $superTypes,
-            $nodeTypeConfiguration,
-            $this->nodeLabelGeneratorFactory
+            $nodeTypeConfiguration
         );
 
         $this->cachedNodeTypes = $this->cachedNodeTypes->with($nodeType);

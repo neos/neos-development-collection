@@ -16,7 +16,6 @@ namespace Neos\ContentRepositoryRegistry\Configuration;
 
 use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
-use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -54,7 +53,6 @@ final class NodeTypeProvider implements NodeTypeProviderInterface
 
     public function __construct(
         private readonly ConfigurationManager $configurationManager,
-        private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
     ) {
     }
 
@@ -341,8 +339,7 @@ final class NodeTypeProvider implements NodeTypeProviderInterface
         $nodeType = new NodeType(
             NodeTypeName::fromString($nodeTypeName),
             $superTypes,
-            $nodeTypeConfiguration,
-            $this->nodeLabelGeneratorFactory
+            $nodeTypeConfiguration
         );
 
         $this->cachedNodeTypes[$nodeTypeName] = $nodeType;

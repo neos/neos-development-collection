@@ -21,13 +21,6 @@ namespace Neos\ContentRepository\Core\NodeType;
  */
 final class NodeTypeLabel implements \JsonSerializable
 {
-    public const ROOT_NODE_TYPE_NAME = 'Neos.ContentRepository:Root';
-
-    /**
-     * @var array<string,self>
-     */
-    private static array $instances = [];
-
     private function __construct(
         public readonly string $value
     ) {
@@ -36,19 +29,9 @@ final class NodeTypeLabel implements \JsonSerializable
         }
     }
 
-    private static function instance(string $value): self
-    {
-        return self::$instances[$value] ??= new self($value);
-    }
-
     public static function fromString(string $value): self
     {
-        return self::instance($value);
-    }
-
-    public function equals(self $other): bool
-    {
-        return $this === $other;
+        return new self($value);
     }
 
     public function jsonSerialize(): string
