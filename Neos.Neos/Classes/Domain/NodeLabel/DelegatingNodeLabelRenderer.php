@@ -23,7 +23,7 @@ final readonly class DelegatingNodeLabelRenderer implements NodeLabelGeneratorIn
     ) {
     }
 
-    public function getLabel(Node $node): NodeLabel
+    public function getLabel(Node $node): string
     {
         $nodeTypeManager = $this->contentRepositoryRegistry->get($node->contentRepositoryId)->getNodeTypeManager();
         $nodeType = $nodeTypeManager->getNodeType($node->nodeTypeName)
@@ -55,16 +55,14 @@ final readonly class DelegatingNodeLabelRenderer implements NodeLabelGeneratorIn
             $nodeLabelGenerator->setExpression($nodeType->getConfiguration('label'));
         } else {
             $nodeLabelGenerator = new class implements NodeLabelGeneratorInterface {
-                public function getLabel(Node $node): NodeLabel
+                public function getLabel(Node $node): string
                 {
-                    return NodeLabel::fromString(
-                        sprintf(
-                            '%s %s',
-                            $node->nodeTypeName->value,
-                            $node->name
-                                ? sprintf('(%s)', $node->name->value)
-                                : ''
-                        )
+                    return sprintf(
+                        '%s %s',
+                        $node->nodeTypeName->value,
+                        $node->name
+                            ? sprintf('(%s)', $node->name->value)
+                            : ''
                     );
                 }
             };

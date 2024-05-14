@@ -211,7 +211,7 @@ final readonly class Node
         }
         // highly illegal
         /** @phpstan-ignore-next-line */
-        return (new \Neos\Neos\Domain\NodeLabel\DelegatingNodeLabelRenderer())->getLabel($this)->value;
+        return (new \Neos\Neos\Domain\NodeLabel\DelegatingNodeLabelRenderer())->getLabel($this);
     }
 
     /**

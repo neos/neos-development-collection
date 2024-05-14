@@ -220,7 +220,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return new MenuItem(
             $node,
             $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
-            $this->nodeLabelGenerator->getLabel($node)->value,
+            $this->nodeLabelGenerator->getLabel($node),
             0,
             [],
             $this->buildUri($node)
@@ -244,7 +244,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return new MenuItem(
             $node,
             $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
-            $this->nodeLabelGenerator->getLabel($node)->value,
+            $this->nodeLabelGenerator->getLabel($node),
             $subtree->level + $startLevel,
             $children,
             $this->buildUri($node)

@@ -347,7 +347,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $this->templateVariableContainer->remove($this->arguments['nodeVariableName']);
 
         if ($content === null && $resolvedNode !== null) {
-            $content = $this->nodeLabelGenerator->getLabel($resolvedNode)->value;
+            $content = $this->nodeLabelGenerator->getLabel($resolvedNode);
         }
 
         $this->tag->setContent($content);

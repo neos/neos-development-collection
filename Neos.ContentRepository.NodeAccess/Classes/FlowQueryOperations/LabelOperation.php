@@ -79,6 +79,6 @@ class LabelOperation extends AbstractOperation
         if (!$node instanceof Node) {
             return null;
         }
-        return $this->nodeLabelGenerator->getLabel($node)->value;
+        return $this->nodeLabelGenerator->getLabel($node);
     }
 }
