@@ -166,7 +166,8 @@ class PublishingService implements PublishingServiceInterface
      */
     protected function doDiscardNode(NodeInterface $node, array &$alreadyDiscardedNodeIdentifiers = [])
     {
-        if ($node->getWorkspace()->getBaseWorkspace() === null) {
+        $baseWorkspace = $node->getWorkspace()->getBaseWorkspace();
+        if ($baseWorkspace === null) {
             throw new WorkspaceException('Nodes in a workspace without a base workspace cannot be discarded.', 1395841899);
         }
         if ($node->getPath() === '/') {
@@ -197,7 +198,7 @@ class PublishingService implements PublishingServiceInterface
         }
 
         $this->nodeDataRepository->remove($node);
-        $this->emitNodeDiscarded($node);
+        $this->emitNodeDiscarded($node, $baseWorkspace);
     }
 
     /**
@@ -274,11 +275,12 @@ class PublishingService implements PublishingServiceInterface
      * The signal emits the node that has been discarded.
      *
      * @param NodeInterface $node
+     * @param Workspace|null $baseWorkspace
      * @return void
      * @Flow\Signal
      * @api
      */
-    public function emitNodeDiscarded(NodeInterface $node)
+    public function emitNodeDiscarded(NodeInterface $node, ?Workspace $baseWorkspace = null)
     {
     }
 
