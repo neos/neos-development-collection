@@ -16,7 +16,7 @@
       </trans-unit>
       <trans-unit id="properties.hiddenInMenu" xml:space="preserve">
         <source>Hide in menus</source>
-        <target state="translated">Menülerde gizle</target></trans-unit>
+        <target state="translated">Menülerde gizle</target>
       </trans-unit>
     </body>
   </file>
