@@ -12,7 +12,6 @@ readonly class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryIn
 {
     public function __construct(
         private ConfigurationManager $configurationManager,
-        private ObjectManagerBasedNodeLabelGeneratorFactory $nodeLabelGeneratorFactory,
         private NodeTypeEnrichmentService $nodeTypeEnrichmentService,
     ) {
     }
@@ -25,8 +24,7 @@ readonly class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryIn
                 function () {
                     $configuration = $this->configurationManager->getConfiguration('NodeTypes');
                     return $this->nodeTypeEnrichmentService->enrichNodeTypeLabelsConfiguration($configuration);
-                },
-                $this->nodeLabelGeneratorFactory
+                }
             )
         );
     }

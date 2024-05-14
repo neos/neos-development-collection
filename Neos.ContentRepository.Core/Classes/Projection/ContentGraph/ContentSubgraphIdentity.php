@@ -4,6 +4,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -31,7 +32,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * usually need this method instead of the Origin DimensionSpacePoint inside the read model; and you'll
  * need the OriginDimensionSpacePoint when constructing commands on the write side.
  *
- * @api
+ * @deprecated please use the {@see NodeAddress} instead {@see Node::$subgraphIdentity}. Will be removed before the Final Neos 9 release.
+ * @internal
  */
 final readonly class ContentSubgraphIdentity implements \JsonSerializable
 {
@@ -46,9 +48,6 @@ final readonly class ContentSubgraphIdentity implements \JsonSerializable
     ) {
     }
 
-    /**
-     * @api
-     */
     public static function create(
         ContentRepositoryId $contentRepositoryId,
         ContentStreamId $contentStreamId,

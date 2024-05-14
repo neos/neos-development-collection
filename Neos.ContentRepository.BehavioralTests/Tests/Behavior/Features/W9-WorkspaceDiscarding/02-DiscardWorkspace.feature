@@ -23,7 +23,7 @@ Feature: Workspace discarding - basic functionality
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -58,7 +58,7 @@ Feature: Workspace discarding - basic functionality
       | propertyValues            | {"text": "Modified"} |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
@@ -71,7 +71,7 @@ Feature: Workspace discarding - basic functionality
       | newContentStreamId | "user-cs-identifier-modified" |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
@@ -101,7 +101,7 @@ Feature: Workspace discarding - basic functionality
       | newContentStreamId | "user-cs-identifier-modified" |
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value                        |

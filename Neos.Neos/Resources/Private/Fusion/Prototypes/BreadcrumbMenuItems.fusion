@@ -6,8 +6,8 @@ prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Fusion:Component) {
   # (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
   maximumLevels = 0
 
-  # (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
-  renderHiddenInIndex = true
+  # (boolean) Whether nodes with the property ``hiddenInMenu`` should be rendered (the current documentNode is always included), defaults to ``false``.
+  renderHiddenInMenu = true
 
   # (boolean) activate the *expensive* calculation of item states defaults to ``false``
   calculateItemStates = false
@@ -16,7 +16,7 @@ prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Fusion:Component) {
     parentItems = Neos.Neos:MenuItems {
       node = ${props.node}
       calculateItemStates = ${props.calculateItemStates}
-      renderHiddenInIndex = ${props.renderHiddenInIndex}
+      renderHiddenInMenu = ${props.renderHiddenInMenu}
       maximumLevels = ${props.maximumLevels}
       itemCollection = ${Array.reverse(q(documentNode).parents('[instanceof Neos.Neos:Document]').get())}
     }
@@ -24,7 +24,7 @@ prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Fusion:Component) {
     currentItem = Neos.Neos:MenuItems {
       node = ${props.node}
       calculateItemStates = ${props.calculateItemStates}
-      renderHiddenInIndex = true
+      renderHiddenInMenu = true
       maximumLevels = ${props.maximumLevels}
       itemCollection = ${[documentNode]}
     }

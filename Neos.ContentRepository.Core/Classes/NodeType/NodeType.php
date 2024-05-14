@@ -16,13 +16,8 @@ namespace Neos\ContentRepository\Core\NodeType;
 
 use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\Utility\Arrays;
-use Neos\Utility\ObjectAccess;
-use Neos\Utility\PositionalArraySorter;
 
 /**
  * A Node Type

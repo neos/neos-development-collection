@@ -57,8 +57,6 @@ class PropertyOperation extends AbstractOperation
      */
     protected $contentRepositoryRegistry;
 
-    use NodeTypeWithFallbackProvider;
-
     /**
      * {@inheritdoc}
      *
@@ -113,7 +111,10 @@ class PropertyOperation extends AbstractOperation
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
-        $referenceDefinition = $this->getNodeType($element)->referenceDefinitions->get($propertyName);
+        $contentRepository = $this->contentRepositoryRegistry->get($element->subgraphIdentity->contentRepositoryId);
+        $nodeTypeManager = $contentRepository->getNodeTypeManager();
+
+        $referenceDefinition = $nodeTypeManager->getNodeType($element->nodeTypeName)?->referenceDefinitions->get($propertyName);
         if ($referenceDefinition !== null) {
             // legacy access layer for references
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);

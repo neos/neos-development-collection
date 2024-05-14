@@ -343,7 +343,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         $mockNodeType = new NodeType(
             NodeTypeName::fromString('Some.NodeType:Name'),
             [],
-            [],
+            []
         );
         $postprocessor->process($mockNodeType, $configuration, []);
         return $configuration;

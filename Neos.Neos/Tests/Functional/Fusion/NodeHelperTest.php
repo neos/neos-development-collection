@@ -15,9 +15,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -30,6 +28,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Unit\NodeSubjectProvider;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
+use Neos\Fusion\Tests\Functional\FusionObjects\TestingViewForFusionRuntime;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -107,7 +106,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
         self::assertEquals('Some -', (string)$view->render());
     }
 
-    protected function buildView()
+    protected function buildView(): TestingViewForFusionRuntime
     {
         $view = parent::buildView();
 
@@ -133,12 +132,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
                 'ui' => [
                     'label' => 'Content.Text'
                 ]
-            ],
-            new NodeTypeManager(
-                new ClosureNodeTypeProvider(
-                    fn () => [],
-                )
-            ),
+            ]
         );
 
         $textNodeProperties = new PropertyCollection(

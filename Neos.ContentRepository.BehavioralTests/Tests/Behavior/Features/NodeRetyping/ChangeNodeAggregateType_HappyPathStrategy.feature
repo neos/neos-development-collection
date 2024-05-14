@@ -59,7 +59,7 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -147,11 +147,11 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
     And the graph projection is fully up to date
 
     # the type has changed
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    When I am in workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"gsw"}
+    When I am in workspace "live" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"gsw"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 
