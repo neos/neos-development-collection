@@ -31,7 +31,8 @@ final readonly class DelegatingNodeLabelRenderer implements NodeLabelGeneratorIn
         $generator = $this->getDelegatedGenerator($nodeType);
         if ($generator instanceof DelegatingNodeLabelRenderer) {
             throw new \RuntimeException(
-                'Recursion detected, cannot specify DelegatingNodeLabelRenderer as generatorClass for NodeLabel as this is the default.', 1715622960
+                'Recursion detected, cannot specify DelegatingNodeLabelRenderer as generatorClass for NodeLabel as this is the default.',
+                1715622960
             );
         }
         return $generator->getLabel($node);
