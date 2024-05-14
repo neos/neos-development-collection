@@ -501,13 +501,13 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     """html
     <ul>
         <li class="active">
-            <a href="/a1" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
+            <a href="/a1" title="Neos.Neos:Test.DocumentType1 (a1)">Neos.Neos:Test.DocumentType1 (a1)</a>
             <ul>
                 <li class="current">
-                    <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a">Neos.Neos:Test.DocumentType2a</a>
+                    <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a (a1a)">Neos.Neos:Test.DocumentType2a (a1a)</a>
                 </li>
                 <li class="normal">
-                    <a href="/a1/a1b" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
+                    <a href="/a1/a1b" title="Neos.Neos:Test.DocumentType1 (a1b)">Neos.Neos:Test.DocumentType1 (a1b)</a>
                 </li>
             </ul>
         </li>
