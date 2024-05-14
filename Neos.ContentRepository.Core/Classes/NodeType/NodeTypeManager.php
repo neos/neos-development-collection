@@ -225,48 +225,49 @@ final class NodeTypeManager
     }
 
     /**
-     * Checks if the given $nodeType is allowed as a childNode of the given $tetheredNodeName
-     * (which must be tethered in $parentNodeType).
+     * Checks if the given $nodeTypeNameToCheck is allowed as a childNode of the given $tetheredNodeName.
      *
-     * Only allowed to be called if $tetheredNodeName is actually tethered.
+     * Returns false if $tetheredNodeName is not tethered to $parentNodeTypeName, or if any of the $nodeTypeNameToCheck does not exist.
      *
      * @param NodeTypeName $parentNodeTypeName The NodeType to check constraints based on.
      * @param NodeName $tetheredNodeName The name of a configured tethered node of this NodeType
-     * @param NodeTypeName $nodeTypeName The NodeType to check constraints for.
-     * @return bool true if the $nodeType is allowed as grandchild node, false otherwise.
-     * @throws \InvalidArgumentException if the requested tethered node is not configured in the parent NodeType. Check via {@see NodeType::hasTetheredNode()}.
+     * @param NodeTypeName $nodeTypeNameToCheck The NodeType to check constraints for.
+     * @return bool true if the $nodeTypeNameToCheck is allowed as grandchild node, false otherwise.
      */
-    public function isNodeTypeAllowedAsChildToTetheredNode(NodeTypeName $parentNodeTypeName, NodeName $tetheredNodeName, NodeTypeName $nodeTypeName): bool
+    public function isNodeTypeAllowedAsChildToTetheredNode(NodeTypeName $parentNodeTypeName, NodeName $tetheredNodeName, NodeTypeName $nodeTypeNameToCheck): bool
     {
-        try {
-            $typeOfTetheredNode = $this->getNodeTypeOfTetheredNode($parentNodeTypeName, $tetheredNodeName);
-        } catch (TetheredNodeNotConfigured $exception) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Cannot determine if grandchild is allowed in %s. Because the given child node name "%s" is not auto-created.',
-                    $parentNodeTypeName->value,
-                    $tetheredNodeName->value
-                ),
-                1403858395,
-                $exception
-            );
+        $parentNodeType = $this->getNodeType($parentNodeTypeName);
+        $nodeTypeNameOfTetheredNode = $parentNodeType?->getNodeTypeNameOfTetheredNode($tetheredNodeName);
+        if (!$parentNodeType || !$nodeTypeNameOfTetheredNode) {
+            // Cannot determine if grandchild is allowed, because the given child node name is not auto-created.
+            return false;
+        }
+
+        $nodeTypeOfTetheredNode = $this->getNodeType($nodeTypeNameOfTetheredNode);
+        if (!$nodeTypeOfTetheredNode) {
+            return false;
         }
 
         // Constraints configured on the NodeType for the child node
-        $constraints = $typeOfTetheredNode->getConfiguration('constraints.nodeTypes') ?: [];
+        $constraints = $nodeTypeOfTetheredNode->getConfiguration('constraints.nodeTypes') ?: [];
 
         // Constraints configured at the childNode configuration of the parent.
         try {
-            $childNodeConstraintConfiguration = $this->requireNodeType($parentNodeTypeName)->getConfiguration('childNodes.' . $tetheredNodeName->value . '.constraints.nodeTypes') ?? [];
+            $childNodeConstraintConfiguration = $parentNodeType->getConfiguration('childNodes.' . $tetheredNodeName->value . '.constraints.nodeTypes') ?? [];
         } catch (PropertyNotAccessibleException $exception) {
-            // We ignore this because the configuration might just not have any constraints, if the childNode was not configured the exception above would have been thrown.
+            // We ignore this because the configuration might just not have any constraints, if the childNode was not configured null would have been returned.
             $childNodeConstraintConfiguration = [];
         }
 
         $constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
 
+        $nodeTypeToCheck = $this->getNodeType($nodeTypeNameToCheck);
+        if (!$nodeTypeToCheck) {
+            return false;
+        }
+
         return ConstraintCheck::create($constraints)->isNodeTypeAllowed(
-            $this->requireNodeType($nodeTypeName)
+            $nodeTypeToCheck
         );
     }
 

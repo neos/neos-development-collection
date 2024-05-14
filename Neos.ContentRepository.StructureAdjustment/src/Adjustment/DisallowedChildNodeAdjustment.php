@@ -75,15 +75,13 @@ class DisallowedChildNodeAdjustment
                     $parentNode !== null
                     && $grandparentNode !== null
                     && $parentNode->classification->isTethered()
-                    && !is_null($parentNode->nodeName)
+                    && !is_null($parentNode->name)
                 ) {
-                    if ($this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName)) {
-                        $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
-                            $grandparentNode->nodeTypeName,
-                            $parentNode->nodeName,
-                            $nodeAggregate->nodeTypeName
-                        );
-                    }
+                    $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
+                        $grandparentNode->nodeTypeName,
+                        $parentNode->name,
+                        $nodeAggregate->nodeTypeName
+                    );
                 }
 
                 if (!$allowedByParent && !$allowedByGrandparent) {
