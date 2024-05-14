@@ -218,7 +218,7 @@ class ContentCacheFlusher
         }
         */
 
-        $nodeTypeNamesToFlush = $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName)?->superTypes->toArray() ?? [];
+        $nodeTypeNamesToFlush = $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName)?->superTypeNames->toArray() ?? [];
         $nodeTypeNamesToFlush[] = $nodeTypeName;
         foreach ($nodeTypeNamesToFlush as $nodeTypeNameToFlush) {
             $nodeTypeNameCacheIdentifier = CacheTag::forNodeTypeName($contentRepositoryId, $contentStreamId, $nodeTypeNameToFlush);

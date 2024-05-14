@@ -28,6 +28,7 @@ final class NodeTypeNames implements \IteratorAggregate
 
     private function __construct(NodeTypeName ...$nodeTypeNames)
     {
+        /** @var array<string, NodeTypeName> $nodeTypeNames */
         $this->nodeTypeNames = $nodeTypeNames;
     }
 

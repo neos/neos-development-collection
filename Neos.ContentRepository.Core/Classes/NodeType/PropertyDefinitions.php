@@ -33,6 +33,7 @@ final class PropertyDefinitions implements IteratorAggregate
 
     private function __construct(PropertyDefinition ...$propertyDefinitions)
     {
+        /** @var array<string, PropertyDefinition> $propertyDefinitions */
         $this->propertyDefinitions = $propertyDefinitions;
     }
 

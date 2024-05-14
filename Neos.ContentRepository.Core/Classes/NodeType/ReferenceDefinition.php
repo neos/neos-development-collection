@@ -21,6 +21,9 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
  */
 final readonly class ReferenceDefinition
 {
+    /**
+     * @param array<string,mixed> $metadata
+     */
     public function __construct(
         public ReferenceName $name,
         public NodeTypeConstraints $nodeTypeConstraints,

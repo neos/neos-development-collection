@@ -33,6 +33,7 @@ final class ReferenceDefinitions implements IteratorAggregate
 
     private function __construct(ReferenceDefinition ...$referenceDefinitions)
     {
+        /** @var array<string, ReferenceDefinition> $referenceDefinitions */
         $this->referenceDefinitions = $referenceDefinitions;
     }
 

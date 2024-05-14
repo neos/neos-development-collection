@@ -403,12 +403,12 @@ final class NodeTypeProvider implements NodeTypeProviderInterface
     /**
      * @internal helper to throw if the NodeType doesn't exit
      */
-    public function requireNodeType(string|NodeTypeName $nodeTypeName): NodeType
+    private function requireNodeType(NodeTypeName $nodeTypeName): NodeType
     {
         return $this->getNodeType($nodeTypeName) ?? throw new NodeTypeNotFoundException(
             sprintf(
                 'The node type "%s" is not available',
-                $nodeTypeName instanceof NodeTypeName ? $nodeTypeName->value : $nodeTypeName
+                $nodeTypeName->value
             ),
             1316598370
         );

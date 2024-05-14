@@ -24,6 +24,7 @@ final readonly class PropertyDefinition
 {
     /**
      * @param int|float|string|bool|array<int|string,mixed>|null $defaultValue
+     * @param array<string,mixed> $metadata
      */
     public function __construct(
         public PropertyName $name,

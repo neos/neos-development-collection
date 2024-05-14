@@ -239,11 +239,13 @@ final class NodeType
     {
     }
 
-    /**
-     * @param array<string,mixed> $fullConfiguration
-     */
-    private function setFullConfiguration(array $fullConfiguration): void
+    // TODO remove (check usages first)
+    public function isAbstract(): bool
     {
-        $this->fullConfiguration = $fullConfiguration;
+    }
+
+    // TODO remove (check usages first)
+    public function isFinal(): bool
+    {
     }
 }

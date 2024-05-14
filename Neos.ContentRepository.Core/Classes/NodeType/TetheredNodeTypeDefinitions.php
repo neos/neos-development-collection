@@ -34,6 +34,7 @@ final class TetheredNodeTypeDefinitions implements IteratorAggregate
 
     private function __construct(TetheredNodeTypeDefinition ...$tetheredNodeTypeDefinitions)
     {
+        /** @var array<string, TetheredNodeTypeDefinition> $tetheredNodeTypeDefinitions */
         $this->tetheredNodeTypeDefinitions = $tetheredNodeTypeDefinitions;
     }
 
