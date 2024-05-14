@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\NodeType;
 
-use Neos\ContentRepository\Core\SharedModel\Exception\TetheredNodeNotConfigured;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
@@ -188,22 +187,6 @@ final class NodeTypeManager
             /** @var string $nodeTypeName */
             $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
         }
-    }
-
-    /**
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeName $tetheredNodeName
-     * @return NodeType
-     * @throws TetheredNodeNotConfigured if the requested tethered node is not configured. Check via {@see NodeType::hasTetheredNode()}.
-     */
-    public function getNodeTypeOfTetheredNode(NodeTypeName $nodeTypeName, NodeName $tetheredNodeName): NodeType
-    {
-        $nodeType = $this->requireNodeType($nodeTypeName);
-        $nameOfTetheredNode = $nodeType->getNodeTypeNameOfTetheredNode($tetheredNodeName);
-        if ($nameOfTetheredNode === null) {
-            throw new TetheredNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $tetheredNodeName->value, $nodeTypeName->value), 1694786811);
-        }
-        return $this->requireNodeType($nameOfTetheredNode);
     }
 
     /**
