@@ -73,6 +73,8 @@ final class NodeType
      */
     protected bool $initialized = false;
 
+    private ?TetheredNodeTypeDefinitions $tetheredNodeTypeDefinitions = null;
+
     /**
      * @param NodeTypeName $name Name of the node type
      * @param array<string,NodeType|null> $declaredSuperTypes Parent types instances of this node type, if null it should be unset
@@ -491,21 +493,27 @@ final class NodeType
      */
     public function hasTetheredNode(NodeName $nodeName): bool
     {
-        $this->initialize();
-        return (bool)$this->getNodeTypeNameOfTetheredNode($nodeName);
+        return $this->getTetheredNodeTypeDefinitions()->contain($nodeName);
     }
 
-    public function getNodeTypeNameOfTetheredNode(NodeName $nodeName): ?NodeTypeName
+    public function getTetheredNodeTypeDefinitions(): TetheredNodeTypeDefinitions
     {
+        if ($this->tetheredNodeTypeDefinitions) {
+            return $this->tetheredNodeTypeDefinitions;
+        }
         $this->initialize();
-        foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
+
+        $childNodeConfiguration = $this->getConfiguration('childNodes') ?? [];
+        $tetheredNodeTypeDefinitions = [];
+        foreach ($childNodeConfiguration as $childNodeName => $configurationForChildNode) {
             if (isset($configurationForChildNode['type'])) {
-                if (NodeName::transliterateFromString($rawChildNodeName)->equals($nodeName)) {
-                    return NodeTypeName::fromString($configurationForChildNode['type']);
-                }
+                $tetheredNodeTypeDefinitions[] = new TetheredNodeTypeDefinition(
+                    NodeName::transliterateFromString($childNodeName),
+                    NodeTypeName::fromString($configurationForChildNode['type'])
+                );
             }
         }
-        return null;
+        return $this->tetheredNodeTypeDefinitions = TetheredNodeTypeDefinitions::fromArray($tetheredNodeTypeDefinitions);
     }
 
     /**
