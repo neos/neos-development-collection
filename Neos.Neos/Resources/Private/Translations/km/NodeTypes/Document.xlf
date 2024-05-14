@@ -14,9 +14,9 @@
         <source>URL path segment</source>
         <target state="final">បំណែកផ្លូវនៃតំណ</target>
       </trans-unit>
-      <trans-unit id="properties._hiddenInIndex" xml:space="preserve" approved="yes">
-        <source>Hide in menus</source>
-        <target state="final">មិនបង្ហាុញក្នុងមីនុយ</target>
+      <trans-unit id="properties.hiddenInMenu" xml:space="preserve" approved="yes">
+				<source>Hide in menus</source>
+			<target state="final">មិនបង្ហាុញក្នុងមីនុយ</target></trans-unit>
       </trans-unit>
     </body>
   </file>

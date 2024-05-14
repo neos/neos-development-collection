@@ -4,8 +4,8 @@ prototype(Neos.Neos:DimensionsMenuItems) {
   # (Node) The current node. Defaults to ``node`` from the fusion context
   node = ${documentNode}
 
-  # (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
-  renderHiddenInIndex = true
+  # (boolean, default **true**) Whether nodes with the property ``hiddenInMenu`` should be rendered
+  renderHiddenInMenu = true
 
   # (optional, string): name of the dimension which this menu should be based on. Example: "language".
   dimension = null
