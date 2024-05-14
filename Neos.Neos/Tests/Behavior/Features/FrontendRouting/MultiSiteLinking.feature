@@ -39,7 +39,7 @@ Feature: Linking between multiple websites
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                    |
       | nodeAggregateId             | "lady-eleonode-rootford" |
@@ -65,8 +65,15 @@ Feature: Linking between multiple websites
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'site-1':
+            preset: default
+            uriPathSuffix: ''
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+          'site-2':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory

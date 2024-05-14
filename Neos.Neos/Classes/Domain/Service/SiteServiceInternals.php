@@ -39,7 +39,7 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
     public function __construct(
         private ContentRepository $contentRepository,
         private InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        private NodeTypeManager $nodeTypeManager
+        private NodeTypeManager $nodeTypeManager,
     ) {
     }
 
@@ -54,21 +54,17 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
                 1651921482
             );
         }
-        $contentGraph = $this->contentRepository->getContentGraph();
 
         foreach ($this->contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+            $contentGraph = $this->contentRepository->getContentGraph($workspace->workspaceName);
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
-                $workspace->currentContentStreamId,
                 NodeTypeNameFactory::forSites()
             );
-            $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
-                $workspace->currentContentStreamId,
+            $siteNodeAggregate = $contentGraph->findChildNodeAggregateByName(
                 $sitesNodeAggregate->nodeAggregateId,
                 $siteNodeName->toNodeName()
             );
-
-            foreach ($siteNodeAggregates as $siteNodeAggregate) {
-                assert($siteNodeAggregate instanceof NodeAggregate);
+            if ($siteNodeAggregate instanceof NodeAggregate) {
                 $this->contentRepository->handle(RemoveNodeAggregate::create(
                     $workspace->workspaceName,
                     $siteNodeAggregate->nodeAggregateId,
@@ -99,12 +95,12 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             throw SiteNodeTypeIsInvalid::becauseItIsNotOfTypeSite(NodeTypeName::fromString($nodeTypeName));
         }
 
-        $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $liveWorkspace->currentContentStreamId,
-            $sitesNodeIdentifier,
-            $site->getNodeName()->toNodeName(),
-        );
-        foreach ($siteNodeAggregate as $_) {
+        $siteNodeAggregate = $this->contentRepository->getContentGraph($liveWorkspace->workspaceName)
+            ->findChildNodeAggregateByName(
+                $sitesNodeIdentifier,
+                $site->getNodeName()->toNodeName(),
+            );
+        if ($siteNodeAggregate instanceof NodeAggregate) {
             // Site node already exists
             return;
         }

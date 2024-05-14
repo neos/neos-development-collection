@@ -314,8 +314,7 @@ class LinkingService
                 $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
                 $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
-                $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                    $nodeAddress->contentStreamId,
+                $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
                     $nodeAddress->dimensionSpacePoint,
                     $workspace && !$workspace->isPublicWorkspace()
                         ? VisibilityConstraints::withoutRestrictions()
@@ -351,10 +350,10 @@ class LinkingService
         $this->lastLinkedNode = $node;
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->contentRepositoryId
         );
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $node->subgraphIdentity->contentStreamId
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+            $node->workspaceName
         );
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();

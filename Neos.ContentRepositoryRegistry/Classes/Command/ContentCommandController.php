@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -60,8 +61,7 @@ final class ContentCommandController extends CommandController
         $this->outputLine('Refreshing root node dimensions in workspace <b>%s</b> (content repository <b>%s</b>)', [$workspaceInstance->workspaceName->value, $contentRepositoryId->value]);
         $this->outputLine('Resolved content stream <b>%s</b>', [$workspaceInstance->currentContentStreamId->value]);
 
-        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph()->findRootNodeAggregates(
-            $workspaceInstance->currentContentStreamId,
+        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph($workspaceInstance->workspaceName)->findRootNodeAggregates(
             FindRootNodeAggregatesFilter::create()
         );
 
@@ -142,25 +142,24 @@ final class ContentCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $sourceSpacePoint = DimensionSpacePoint::fromJsonString($source);
         $targetSpacePoint = OriginDimensionSpacePoint::fromJsonString($target);
+        $workspaceName = WorkspaceName::fromString($workspace);
 
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspaceInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
-        if ($workspaceInstance === null) {
-            $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
+
+        try {
+            $sourceSubgraph = $contentRepositoryInstance->getContentGraph($workspaceName)->getSubgraph(
+                $sourceSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            );
+        } catch (WorkspaceDoesNotExist) {
+            $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspaceName->value]);
             $this->quit(1);
         }
 
-        $this->outputLine('Creating <b>%s</b> to <b>%s</b> in workspace <b>%s</b> (content repository <b>%s</b>)', [$sourceSpacePoint->toJson(), $targetSpacePoint->toJson(), $workspaceInstance->workspaceName->value, $contentRepositoryId->value]);
-        $this->outputLine('Resolved content stream <b>%s</b>', [$workspaceInstance->currentContentStreamId->value]);
+        $this->outputLine('Creating <b>%s</b> to <b>%s</b> in workspace <b>%s</b> (content repository <b>%s</b>)', [$sourceSpacePoint->toJson(), $targetSpacePoint->toJson(), $workspaceName->value, $contentRepositoryId->value]);
 
-        $sourceSubgraph = $contentRepositoryInstance->getContentGraph()->getSubgraph(
-            $workspaceInstance->currentContentStreamId,
-            $sourceSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        );
-
-        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph()
-            ->findRootNodeAggregates($workspaceInstance->currentContentStreamId, FindRootNodeAggregatesFilter::create());
+        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph($workspaceName)
+            ->findRootNodeAggregates(FindRootNodeAggregatesFilter::create());
 
 
         foreach ($rootNodeAggregates as $rootNodeAggregate) {
@@ -170,7 +169,7 @@ final class ContentCommandController extends CommandController
                     $rootNodeAggregate->nodeAggregateId,
                     $sourceSubgraph,
                     $targetSpacePoint,
-                    $workspaceInstance->workspaceName,
+                    $workspaceName,
                     $contentRepositoryInstance,
                 )
             );

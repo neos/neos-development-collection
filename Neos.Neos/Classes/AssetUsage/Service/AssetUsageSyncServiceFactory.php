@@ -26,8 +26,8 @@ class AssetUsageSyncServiceFactory implements ContentRepositoryServiceFactoryInt
         ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies,
     ): AssetUsageSyncService {
         return new AssetUsageSyncService(
+            $serviceFactoryDependencies->contentRepository,
             $serviceFactoryDependencies->contentRepository->projectionState(AssetUsageFinder::class),
-            $serviceFactoryDependencies->contentRepository->getContentGraph(),
             $this->assetRepository,
             $this->assetUsageRepositoryFactory->build($serviceFactoryDependencies->contentRepositoryId),
         );

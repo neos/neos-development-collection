@@ -140,13 +140,17 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             // cleared, leading to presumably duplicate nodes in the UI.
             || $eventInstance instanceof NodeAggregateWasMoved
         ) {
-            $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateById(
-                $eventInstance->getContentStreamId(),
+            $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId());
+            if ($workspace === null) {
+                return;
+            }
+            // FIXME: EventInterface->workspaceName
+            $contentGraph = $this->contentRepository->getContentGraph($workspace->workspaceName);
+            $nodeAggregate = $contentGraph->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
             if ($nodeAggregate) {
-                $parentNodeAggregates = $this->contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $nodeAggregate->contentStreamId,
+                $parentNodeAggregates = $contentGraph->findParentNodeAggregates(
                     $nodeAggregate->nodeAggregateId
                 );
                 foreach ($parentNodeAggregates as $parentNodeAggregate) {
@@ -173,8 +177,12 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             !($eventInstance instanceof NodeAggregateWasRemoved)
             && $eventInstance instanceof EmbedsContentStreamAndNodeAggregateId
         ) {
-            $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateById(
-                $eventInstance->getContentStreamId(),
+            $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId());
+            if ($workspace === null) {
+                return;
+            }
+            // FIXME: EventInterface->workspaceName
+            $nodeAggregate = $this->contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
 

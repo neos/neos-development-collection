@@ -46,7 +46,7 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "root"            |
@@ -71,8 +71,9 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'a':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory

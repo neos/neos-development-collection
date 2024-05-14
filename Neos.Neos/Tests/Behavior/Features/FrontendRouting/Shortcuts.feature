@@ -47,7 +47,7 @@ Feature: Routing behavior of shortcut nodes
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                    |
       | nodeAggregateId             | "lady-eleonode-rootford" |
@@ -87,8 +87,9 @@ Feature: Routing behavior of shortcut nodes
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
@@ -243,7 +244,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "http://www.neos.io/"
 
   Scenario: Change shortcut targetMode from "parentNode" to "firstChildNode"
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                                       | initialPropertyValues           | nodeName |
       | new-child-node  | shortcut-parent-node  | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "new-child"} | new      |
@@ -332,7 +333,7 @@ Feature: Routing behavior of shortcut nodes
     Then The node "invalid-shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
   Scenario: Recursive shortcuts
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName       | initialPropertyValues                                                                                      | nodeName |
       | level-1         | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "level1", "targetMode": "selectedTarget", "target": "node://level-2"}                   | level1   |
@@ -343,7 +344,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "level-2" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Unlimited recursive shortcuts
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName       | initialPropertyValues                                                              | nodeName |
       | node-a          | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "a", "targetMode": "selectedTarget", "target": "node://node-b"} | node-a   |

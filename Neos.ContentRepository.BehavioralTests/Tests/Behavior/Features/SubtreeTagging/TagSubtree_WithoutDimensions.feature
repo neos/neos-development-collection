@@ -21,7 +21,7 @@ Feature: Tag subtree without dimensions
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "root"                        |
@@ -108,10 +108,10 @@ Feature: Tag subtree without dimensions
       | tag                          | "tag1"          |
 
     When the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 12 nodes
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect the node with aggregate identifier "a1" to be explicitly tagged "tag1"
     Then I expect the node with aggregate identifier "a1a" to inherit the tag "tag1"
     Then I expect the node with aggregate identifier "a1a1" to inherit the tag "tag1"
@@ -173,11 +173,11 @@ Feature: Tag subtree without dimensions
     """
     b (tag2*)
      b1 (tag3*,tag2)
-      a1a (tag4*,tag3,tag2)
-       a1a1 (tag4*,tag1*,tag3,tag2)
-        a1a1a (tag4*,tag3,tag2)
-        a1a1b (tag4*,tag3,tag2)
-       a1a2 (tag4*,tag3,tag2)
+      a1a (tag4*,tag2,tag3)
+       a1a1 (tag1*,tag2,tag3,tag4)
+        a1a1a (tag1,tag2,tag3,tag4)
+        a1a1b (tag1,tag2,tag3,tag4)
+       a1a2 (tag2,tag3,tag4)
     """
 
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -189,12 +189,12 @@ Feature: Tag subtree without dimensions
     """
     b (tag2*)
      b1 (tag3*,tag2)
-      a1a (tag4*,tag3,tag2)
-       a1a1 (tag4*,tag1*,tag3,tag2)
-        a1a1a (tag4*,tag3,tag2)
-        a1a1b (tag4*,tag3,tag2)
-       a1a2 (tag4*,tag3,tag2)
-       a1a3 (tag4,tag3,tag2)
+      a1a (tag4*,tag2,tag3)
+       a1a1 (tag1*,tag2,tag3,tag4)
+        a1a1a (tag1,tag2,tag3,tag4)
+        a1a1b (tag1,tag2,tag3,tag4)
+       a1a2 (tag2,tag3,tag4)
+       a1a3 (tag2,tag3,tag4)
     """
 
     When the command UntagSubtree is executed with payload:
@@ -206,10 +206,10 @@ Feature: Tag subtree without dimensions
     """
     b (tag2*)
      b1 (tag3*,tag2)
-      a1a (tag3,tag2)
-       a1a1 (tag4*,tag1*,tag3,tag2)
-        a1a1a (tag4*,tag3,tag2)
-        a1a1b (tag4*,tag3,tag2)
-       a1a2 (tag4*,tag3,tag2)
-       a1a3 (tag3,tag2)
+      a1a (tag2,tag3)
+       a1a1 (tag1*,tag2,tag3)
+        a1a1a (tag1,tag2,tag3)
+        a1a1b (tag1,tag2,tag3)
+       a1a2 (tag2,tag3)
+       a1a3 (tag2,tag3)
     """

@@ -38,7 +38,9 @@ use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventEnvelope;
@@ -63,6 +65,8 @@ final class ContentRepository
      */
     private array $projectionStateCache;
 
+    private CommandHandlingDependencies $commandHandlingDependencies;
+
 
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
@@ -80,6 +84,7 @@ final class ContentRepository
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
+        $this->commandHandlingDependencies = new CommandHandlingDependencies($this);
     }
 
     /**
@@ -96,7 +101,7 @@ final class ContentRepository
     {
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
-        $eventsToPublish = $this->commandBus->handle($command, $this);
+        $eventsToPublish = $this->commandBus->handle($command, $this->commandHandlingDependencies);
 
         // TODO meaningful exception message
         $initiatingUserId = $this->userIdProvider->getUserId();
@@ -234,9 +239,12 @@ final class ContentRepository
         return $this->nodeTypeManager;
     }
 
-    public function getContentGraph(): ContentGraphInterface
+    /**
+     * @throws WorkspaceDoesNotExist if the workspace does not exist
+     */
+    public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        return $this->projectionState(ContentGraphInterface::class);
+        return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);
     }
 
     public function getWorkspaceFinder(): WorkspaceFinder

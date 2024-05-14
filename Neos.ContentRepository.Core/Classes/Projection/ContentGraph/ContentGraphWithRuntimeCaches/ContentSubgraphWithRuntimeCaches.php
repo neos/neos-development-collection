@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches;
 
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
@@ -34,8 +34,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Wrapper for a concrete implementation of the {@see ContentSubgraphInterface} that
@@ -53,9 +56,24 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         $this->inMemoryCache = new InMemoryCache();
     }
 
-    public function getIdentity(): ContentSubgraphIdentity
+    public function getContentRepositoryId(): ContentRepositoryId
     {
-        return $this->wrappedContentSubgraph->getIdentity();
+        return $this->wrappedContentSubgraph->getContentRepositoryId();
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->wrappedContentSubgraph->getWorkspaceName();
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->wrappedContentSubgraph->getDimensionSpacePoint();
+    }
+
+    public function getVisibilityConstraints(): VisibilityConstraints
+    {
+        return $this->wrappedContentSubgraph->getVisibilityConstraints();
     }
 
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
@@ -247,7 +265,10 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         return array_filter(get_object_vars($filter), static fn ($value) => $value !== null) === [];
     }
 
-    public function jsonSerialize(): ContentSubgraphIdentity
+    /**
+     * @return array<string,mixed>
+     */
+    public function jsonSerialize(): array
     {
         return $this->wrappedContentSubgraph->jsonSerialize();
     }
