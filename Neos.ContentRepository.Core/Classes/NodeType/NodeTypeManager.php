@@ -190,24 +190,6 @@ final class NodeTypeManager
     }
 
     /**
-     * Return an array with child nodes which should be automatically created
-     * Return an array with child nodes which should be automatically created
-     *
-     * @return array<string,NodeType> the key of this array is the name of the child, and the value its NodeType.
-     */
-    public function getTetheredNodesConfigurationForNodeType(NodeTypeName $nodeTypeName): array
-    {
-        $childNodeConfiguration = $this->requireNodeType($nodeTypeName)->getConfiguration('childNodes');
-        $autoCreatedChildNodes = [];
-        foreach ($childNodeConfiguration ?? [] as $childNodeName => $configurationForChildNode) {
-            if (isset($configurationForChildNode['type'])) {
-                $autoCreatedChildNodes[NodeName::transliterateFromString($childNodeName)->value] = $this->requireNodeType($configurationForChildNode['type']);
-            }
-        }
-        return $autoCreatedChildNodes;
-    }
-
-    /**
      * Checks if the given $nodeTypeNameToCheck is allowed as a childNode of the given $tetheredNodeName.
      *
      * Returns false if $tetheredNodeName is not tethered to $parentNodeTypeName, or if any of the $nodeTypeNameToCheck does not exist.
@@ -368,19 +350,5 @@ final class NodeTypeManager
         }
 
         return $superType;
-    }
-
-    /**
-     * Helper to throw if the NodeType doesn't exit
-     */
-    private function requireNodeType(string|NodeTypeName $nodeTypeName): NodeType
-    {
-        return $this->getNodeType($nodeTypeName) ?? throw new NodeTypeNotFoundException(
-            sprintf(
-                'The node type "%s" is not available',
-                $nodeTypeName instanceof NodeTypeName ? $nodeTypeName->value : $nodeTypeName
-            ),
-            1316598370
-        );
     }
 }

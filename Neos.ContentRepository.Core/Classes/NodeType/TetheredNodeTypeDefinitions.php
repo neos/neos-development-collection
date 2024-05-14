@@ -65,7 +65,7 @@ final class TetheredNodeTypeDefinitions implements \IteratorAggregate
 
     public function getIterator(): \Traversable
     {
-        return yield from $this->tetheredNodeTypeDefinitions;
+        yield from $this->tetheredNodeTypeDefinitions;
     }
 
     /**

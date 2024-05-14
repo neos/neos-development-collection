@@ -105,7 +105,7 @@ trait RootNodeHandling
         foreach ($this->getInterDimensionalVariationGraph()->getRootGeneralizations() as $rootGeneralization) {
             array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
                 $contentGraph->getContentStreamId(),
-                $command->nodeTypeName,
+                $nodeType,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootGeneralization),
                 $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization, true),
                 $command->nodeAggregateId,
@@ -184,7 +184,7 @@ trait RootNodeHandling
      */
     private function handleTetheredRootChildNodes(
         ContentStreamId $contentStreamId,
-        NodeTypeName $nodeTypeName,
+        NodeType $nodeType,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateId $parentNodeAggregateId,
@@ -192,11 +192,11 @@ trait RootNodeHandling
         ?NodePath $nodePath
     ): Events {
         $events = [];
-        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeTypeName) as $nodeNameString => $childNodeType) {
-            $nodeName = NodeName::fromString($nodeNameString);
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $childNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
             $childNodePath = $nodePath
-                ? $nodePath->appendPathSegment($nodeName)
-                : NodePath::fromString($nodeName->value);
+                ? $nodePath->appendPathSegment($tetheredNodeTypeDefinition->name)
+                : NodePath::fromNodeNames($tetheredNodeTypeDefinition->name);
             $childNodeAggregateId = $nodeAggregateIdsByNodePath->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
             $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
@@ -204,17 +204,17 @@ trait RootNodeHandling
             $events[] = $this->createTetheredWithNodeForRoot(
                 $contentStreamId,
                 $childNodeAggregateId,
-                $childNodeType->name,
+                $tetheredNodeTypeDefinition->nodeTypeName,
                 $originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
                 $parentNodeAggregateId,
-                $nodeName,
+                $tetheredNodeTypeDefinition->name,
                 $initialPropertyValues
             );
 
             array_push($events, ...iterator_to_array($this->handleTetheredRootChildNodes(
                 $contentStreamId,
-                $childNodeType->name,
+                $childNodeType,
                 $originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
                 $childNodeAggregateId,

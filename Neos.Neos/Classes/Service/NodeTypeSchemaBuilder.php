@@ -109,10 +109,10 @@ class NodeTypeSchemaBuilder
                 }
             }
 
-            foreach ($this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeType->name) as $key => $_x) {
-                foreach ($nodeTypes as $innerNodeTypeName => $_y) {
-                    if ($this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode($nodeType->name, NodeName::fromString($key), NodeTypeName::fromString($innerNodeTypeName))) {
-                        $constraints[$nodeTypeName]['childNodes'][$key]['nodeTypes'][$innerNodeTypeName] = true;
+            foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+                foreach ($nodeTypes as $innerNodeTypeName => $_x) {
+                    if ($this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode($nodeType->name, $tetheredNodeTypeDefinition->name, NodeTypeName::fromString($innerNodeTypeName))) {
+                        $constraints[$nodeTypeName]['childNodes'][$tetheredNodeTypeDefinition->name->value]['nodeTypes'][$innerNodeTypeName] = true;
                     }
                 }
             }

@@ -51,8 +51,6 @@ class TetheredNodeAdjustments
             // In case we cannot find the expected tethered nodes, this fix cannot do anything.
             return;
         }
-        $expectedTetheredNodes = $this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeTypeName);
-
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             // find missing tethered nodes
             $foundMissingOrDisallowedTetheredNodes = false;
@@ -63,14 +61,12 @@ class TetheredNodeAdjustments
                 : $nodeAggregate->occupiedDimensionSpacePoints;
 
             foreach ($originDimensionSpacePoints as $originDimensionSpacePoint) {
-                foreach ($expectedTetheredNodes as $tetheredNodeName => $expectedTetheredNodeType) {
-                    $tetheredNodeName = NodeName::fromString($tetheredNodeName);
-
+                foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
                     $tetheredNode = $this->projectedNodeIterator->contentGraph->getSubgraph(
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     )->findNodeByPath(
-                        $tetheredNodeName,
+                        $tetheredNodeTypeDefinition->name,
                         $nodeAggregate->nodeAggregateId
                     );
                     if ($tetheredNode === null) {
@@ -82,15 +78,14 @@ class TetheredNodeAdjustments
                             $originDimensionSpacePoint,
                             $nodeAggregate->nodeAggregateId,
                             StructureAdjustment::TETHERED_NODE_MISSING,
-                            'The tethered child node "' . $tetheredNodeName->value . '" is missing.',
-                            function () use ($nodeAggregate, $originDimensionSpacePoint, $tetheredNodeName, $expectedTetheredNodeType) {
+                            'The tethered child node "' . $tetheredNodeTypeDefinition->name->value . '" is missing.',
+                            function () use ($nodeAggregate, $originDimensionSpacePoint, $tetheredNodeTypeDefinition) {
                                 $events = $this->createEventsForMissingTetheredNode(
                                     $this->projectedNodeIterator->contentGraph,
                                     $nodeAggregate,
                                     $originDimensionSpacePoint,
-                                    $tetheredNodeName,
-                                    null,
-                                    $expectedTetheredNodeType
+                                    $tetheredNodeTypeDefinition,
+                                    null
                                 );
 
                                 $streamName = ContentStreamEventStreamName::fromContentStreamId($nodeAggregate->contentStreamId);
@@ -103,7 +98,7 @@ class TetheredNodeAdjustments
                         );
                     } else {
                         yield from $this->ensureNodeIsTethered($tetheredNode);
-                        yield from $this->ensureNodeIsOfType($tetheredNode, $expectedTetheredNodeType);
+                        yield from $this->ensureNodeIsOfType($tetheredNode, $tetheredNodeTypeDefinition->nodeTypeName);
                     }
                 }
             }
@@ -114,7 +109,7 @@ class TetheredNodeAdjustments
             );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
                 assert($tetheredNodeAggregate->nodeName !== null); // it's tethered!
-                if (!isset($expectedTetheredNodes[$tetheredNodeAggregate->nodeName->value])) {
+                if (!$nodeType->tetheredNodeTypeDefinitions->contain($tetheredNodeAggregate->nodeName)) {
                     $foundMissingOrDisallowedTetheredNodes = true;
                     yield StructureAdjustment::createForNodeAggregate(
                         $tetheredNodeAggregate,
@@ -142,7 +137,7 @@ class TetheredNodeAdjustments
                         }
                     }
 
-                    if (array_keys($actualTetheredChildNodes) !== array_keys($expectedTetheredNodes)) {
+                    if (array_keys($actualTetheredChildNodes) !== array_keys($nodeType->tetheredNodeTypeDefinitions->toArray())) {
                         // we need to re-order: We go from the last to the first
                         yield StructureAdjustment::createForNodeIdentity(
                             $nodeAggregate->contentStreamId,
@@ -150,14 +145,14 @@ class TetheredNodeAdjustments
                             $nodeAggregate->nodeAggregateId,
                             StructureAdjustment::TETHERED_NODE_WRONGLY_ORDERED,
                             'Tethered nodes wrongly ordered, expected: '
-                                . implode(', ', array_keys($expectedTetheredNodes))
+                                . implode(', ', array_keys($nodeType->tetheredNodeTypeDefinitions->toArray()))
                                 . ' - actual: '
                                 . implode(', ', array_keys($actualTetheredChildNodes)),
                             fn () => $this->reorderNodes(
                                 $nodeAggregate->contentStreamId,
                                 $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
                                 $actualTetheredChildNodes,
-                                array_keys($expectedTetheredNodes)
+                                array_keys($nodeType->tetheredNodeTypeDefinitions->toArray())
                             )
                         );
                     }
@@ -183,13 +178,13 @@ class TetheredNodeAdjustments
     /**
      * @return \Generator<int,StructureAdjustment>
      */
-    private function ensureNodeIsOfType(Node $node, NodeType $expectedNodeType): \Generator
+    private function ensureNodeIsOfType(Node $node, NodeTypeName $expectedNodeTypeName): \Generator
     {
-        if ($node->nodeTypeName->value !== $expectedNodeType->name->value) {
+        if ($node->nodeTypeName->value !== $expectedNodeTypeName->value) {
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::TETHERED_NODE_TYPE_WRONG,
-                'should be of type "' . $expectedNodeType->name->value . '", but was "' . $node->nodeTypeName->value . '".'
+                'should be of type "' . $expectedNodeTypeName->value . '", but was "' . $node->nodeTypeName->value . '".'
             );
         }
     }

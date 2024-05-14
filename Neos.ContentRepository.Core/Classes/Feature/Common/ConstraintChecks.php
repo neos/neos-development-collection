@@ -172,14 +172,13 @@ trait ConstraintChecks
 
     /**
      * @param NodeType $nodeType
-     * @throws NodeTypeNotFoundException the configured child nodeType doesnt exist
+     * @throws NodeTypeNotFound the configured child nodeType doesnt exist
      */
     protected function requireTetheredDescendantNodeTypesToExist(NodeType $nodeType): void
     {
-        // this getter throws if any of the child nodeTypes doesnt exist!
-        $tetheredNodeTypes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType->name);
-        foreach ($tetheredNodeTypes as $tetheredNodeType) {
-            $this->requireTetheredDescendantNodeTypesToExist($tetheredNodeType);
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $nodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
+            $this->requireTetheredDescendantNodeTypesToExist($nodeType);
         }
     }
 
@@ -189,7 +188,8 @@ trait ConstraintChecks
      */
     protected function requireTetheredDescendantNodeTypesToNotBeOfTypeRoot(NodeType $nodeType): void
     {
-        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType->name) as $tetheredChildNodeType) {
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $tetheredChildNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
             if ($tetheredChildNodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 throw new NodeTypeIsOfTypeRoot(
                     'Node type "' . $nodeType->name->value . '" for tethered descendant is of type root.',

@@ -209,7 +209,7 @@ trait NodeCreation
         array_push($events, ...iterator_to_array($this->handleTetheredChildNodes(
             $command,
             $contentGraph,
-            $command->nodeTypeName,
+            $nodeType,
             $coveredDimensionSpacePoints,
             $command->nodeAggregateId,
             $descendantNodeAggregateIds,
@@ -257,30 +257,33 @@ trait NodeCreation
     private function handleTetheredChildNodes(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
         ContentGraphInterface $contentGraph,
-        NodeTypeName $nodeTypeName,
+        NodeType $nodeType,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateId $parentNodeAggregateId,
         NodeAggregateIdsByNodePaths $nodeAggregateIds,
         ?NodePath $nodePath
     ): Events {
         $events = [];
-        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeTypeName) as $nodeNameString => $childNodeType) {
-            $nodeName = NodeName::fromString($nodeNameString);
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $childNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
             $childNodePath = $nodePath
-                ? $nodePath->appendPathSegment($nodeName)
-                : NodePath::fromString($nodeName->value);
+                ? $nodePath->appendPathSegment($tetheredNodeTypeDefinition->name)
+                : NodePath::fromString($tetheredNodeTypeDefinition->name->value);
             $childNodeAggregateId = $nodeAggregateIds->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
+            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType(
+                $childNodeType,
+                $this->getPropertyConverter()
+            );
 
             $events[] = new NodeAggregateWithNodeWasCreated(
                 $contentGraph->getContentStreamId(),
                 $childNodeAggregateId,
-                $childNodeType->name,
+                $tetheredNodeTypeDefinition->nodeTypeName,
                 $command->originDimensionSpacePoint,
                 InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings($coveredDimensionSpacePoints),
                 $parentNodeAggregateId,
-                $nodeName,
+                $tetheredNodeTypeDefinition->name,
                 $initialPropertyValues,
                 NodeAggregateClassification::CLASSIFICATION_TETHERED,
             );
@@ -288,7 +291,7 @@ trait NodeCreation
             array_push($events, ...iterator_to_array($this->handleTetheredChildNodes(
                 $command,
                 $contentGraph,
-                $childNodeType->name,
+                $childNodeType,
                 $coveredDimensionSpacePoints,
                 $childNodeAggregateId,
                 $nodeAggregateIds,
