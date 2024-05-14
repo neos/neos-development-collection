@@ -529,13 +529,13 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     """html
     <ul>
       <li class="active">
-        <a href="/" title="Neos.Neos:Site">Neos.Neos:Site</a>
+        <a href="/" title="Neos.Neos:Site (a)">Neos.Neos:Site (a)</a>
       </li>
       <li class="active">
-        <a href="/a1" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
+        <a href="/a1" title="Neos.Neos:Test.DocumentType1 (a1)">Neos.Neos:Test.DocumentType1 (a1)</a>
       </li>
       <li class="current">
-        <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a">Neos.Neos:Test.DocumentType2a</a>
+        <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a (a1a)">Neos.Neos:Test.DocumentType2a (a1a)</a>
       </li>
     </ul>
     """
