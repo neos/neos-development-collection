@@ -96,7 +96,11 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
+     * Generate a label for a node with a chaining mechanism. To be used in NodeType definition:
+     *
+     *     'Vendor.Site:MyContent':
+     *       label: "${Neos.Node.labelForNode(node).prefix('foo')}"
+     *
      */
     public function labelForNode(Node $node): NodeLabelToken
     {

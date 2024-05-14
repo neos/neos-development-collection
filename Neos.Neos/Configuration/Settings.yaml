@@ -390,6 +390,20 @@ Neos:
         ö: oe
         ü: ue
 
+    # Configures defaults for node label generation
+    labelGenerator:
+      eel:
+        defaultContext:
+          String: Neos\Eel\Helper\StringHelper
+          Array: Neos\Eel\Helper\ArrayHelper
+          Date: Neos\Eel\Helper\DateHelper
+          Configuration: Neos\Eel\Helper\ConfigurationHelper
+          Math: Neos\Eel\Helper\MathHelper
+          Json: Neos\Eel\Helper\JsonHelper
+          I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
+          q: Neos\Eel\FlowQuery\FlowQuery::q
+          Neos.Node: Neos\Neos\Fusion\Helper\NodeHelper
+
   Flow:
     aop:
       globalObjects:
@@ -470,42 +484,6 @@ Neos:
       packagesPathByType:
         neos-site: Sites
         neos-plugin: Plugins
-
-  ContentRepository:
-    # Definition of available content dimensions. Additional content dimensions may be defined in third-party packages
-    # or via global settings.
-    #
-    #contentDimensions:
-    #
-    #  # Content dimension "language" serves for translation of content into different languages. Its value specifies
-    #  # the language or language variant by means of a locale.
-    #  'language':
-    #    # The default dimension that is applied when creating nodes without specifying a dimension
-    #    default: 'mul_ZZ'
-    #    # The default preset to use if no URI segment was given when resolving languages in the router
-    #    defaultPreset: 'all'
-    #    label: 'Language'
-    #    icon: 'icon-language'
-    #    presets:
-    #      'all':
-    #        label: 'All languages'
-    #        values: ['mul_ZZ']
-    #        uriSegment: 'all'
-    #      # Example for additional languages:
-    #
-    #      'en_GB':
-    #        label: 'English (Great Britain)'
-    #        values: ['en_GB', 'en_ZZ', 'mul_ZZ']
-    #        uriSegment: 'gb'
-    #      'de':
-    #        label: 'German (Germany)'
-    #        values: ['de_DE', 'de_ZZ', 'mul_ZZ']
-    #        uriSegment: 'de'
-
-    labelGenerator:
-      eel:
-        defaultContext:
-          Neos.Node: Neos\Neos\Fusion\Helper\NodeHelper
 
   Fusion:
     rendering:

@@ -1,5 +1,6 @@
 <?php
-namespace Neos\ContentRepositoryRegistry\NodeLabel;
+
+namespace Neos\Neos\Domain\NodeLabel;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,7 +12,6 @@ namespace Neos\ContentRepositoryRegistry\NodeLabel;
  * source code.
  */
 
-use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\Utility;
@@ -20,6 +20,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The expression based node label generator that is used as default if a label expression is configured.
  *
+ * @internal please reference the interface {@see NodeLabelGeneratorInterface} instead.
  */
 class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
 {
@@ -29,7 +30,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
     protected EelEvaluatorInterface $eelEvaluator;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.ContentRepository", path="labelGenerator.eel.defaultContext")
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="labelGenerator.eel.defaultContext")
      * @var array<string, string>
      */
     protected $defaultContextConfiguration;
@@ -38,7 +39,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
      * @var string
      */
     protected $expression = <<<'EEL'
-    ${(node.nodeType.label ? node.nodeType.label : node.nodeType.name) + (node.nodeName ? ' (' + node.nodeName.value + ')' : '')}
+    ${(node.nodeType.label ? node.nodeType.label : node.nodeTypeName.value) + (node.nodeName ? ' (' + node.nodeName.value + ')' : '')}
     EEL;
 
     /**
@@ -63,6 +64,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
         if (Utility::parseEelExpression($this->getExpression()) === null) {
             return $this->getExpression();
         }
-        return (string)Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, ['node' => $node], $this->defaultContextConfiguration);
+        $value = Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, ['node' => $node], $this->defaultContextConfiguration);
+        return (string)$value;
     }
 }

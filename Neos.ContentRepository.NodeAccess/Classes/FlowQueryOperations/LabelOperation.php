@@ -15,6 +15,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 
 /**
  * Used to access the Node's label of a ContentRepository Node.
@@ -41,6 +43,9 @@ class LabelOperation extends AbstractOperation
      * @var boolean
      */
     protected static $final = true;
+
+    #[Flow\Inject()]
+    protected NodeLabelGeneratorInterface $nodeLabelGenerator;
 
     /**
      * {@inheritdoc}
@@ -74,6 +79,6 @@ class LabelOperation extends AbstractOperation
         if (!$node instanceof Node) {
             return null;
         }
-        return $node->getLabel();
+        return $this->nodeLabelGenerator->getLabel($node);
     }
 }
