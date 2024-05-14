@@ -223,7 +223,7 @@ trait ConstraintChecks
     protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void
     {
         $nodeType = $this->requireNodeType($nodeTypeName);
-        if ($nodeType->hasTetheredNode($nodeName)) {
+        if ($nodeType->tetheredNodeTypeDefinitions->contain($nodeName)) {
             throw new NodeNameIsAlreadyCovered(
                 'Node name "' . $nodeName->value . '" is reserved for a tethered child of parent node aggregate of type "'
                 . $nodeTypeName->value . '".'
@@ -369,7 +369,7 @@ trait ConstraintChecks
         NodeType $nodeType
     ): bool {
         return !($parentNodeName
-            && $grandParentsNodeType->hasTetheredNode($parentNodeName)
+            && $grandParentsNodeType->tetheredNodeTypeDefinitions->contain($parentNodeName)
             && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType->name, $parentNodeName, $nodeType->name));
     }
 

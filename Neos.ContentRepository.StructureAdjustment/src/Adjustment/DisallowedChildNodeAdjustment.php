@@ -66,7 +66,7 @@ class DisallowedChildNodeAdjustment
                     $parentNodeType = $this->nodeTypeManager->getNodeType($parentNode->nodeTypeName);
                     if ($parentNodeType) {
                         $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType)
-                            || ($nodeAggregate->nodeName && $parentNodeType->hasTetheredNode($nodeAggregate->nodeName));
+                            || ($nodeAggregate->nodeName && $parentNodeType->tetheredNodeTypeDefinitions->contain($nodeAggregate->nodeName));
                     }
                 }
 

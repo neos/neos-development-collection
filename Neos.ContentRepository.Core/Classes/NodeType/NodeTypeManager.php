@@ -220,7 +220,7 @@ final class NodeTypeManager
     public function isNodeTypeAllowedAsChildToTetheredNode(NodeTypeName $parentNodeTypeName, NodeName $tetheredNodeName, NodeTypeName $nodeTypeNameToCheck): bool
     {
         $parentNodeType = $this->getNodeType($parentNodeTypeName);
-        $nodeTypeNameOfTetheredNode = $parentNodeType?->getTetheredNodeTypeDefinitions()->get($tetheredNodeName)?->nodeTypeName;
+        $nodeTypeNameOfTetheredNode = $parentNodeType?->tetheredNodeTypeDefinitions->get($tetheredNodeName)?->nodeTypeName;
         if (!$parentNodeType || !$nodeTypeNameOfTetheredNode) {
             // Cannot determine if grandchild is allowed, because the given child node name is not auto-created.
             return false;

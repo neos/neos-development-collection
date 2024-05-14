@@ -37,6 +37,9 @@ final class NodeType
      */
     public readonly NodeTypeName $name;
 
+    /** @phpstan-ignore-next-line */
+    public readonly TetheredNodeTypeDefinitions $tetheredNodeTypeDefinitions;
+
     /**
      * Configuration for this node type, can be an arbitrarily nested array. Does not include inherited configuration.
      *
@@ -73,8 +76,6 @@ final class NodeType
      */
     protected bool $initialized = false;
 
-    private ?TetheredNodeTypeDefinitions $tetheredNodeTypeDefinitions = null;
-
     /**
      * @param NodeTypeName $name Name of the node type
      * @param array<string,NodeType|null> $declaredSuperTypes Parent types instances of this node type, if null it should be unset
@@ -102,6 +103,23 @@ final class NodeType
         }
 
         $this->localConfiguration = $configuration;
+        /** lazy properties {@see __get()} */
+        /** @phpstan-ignore-next-line */
+        unset($this->tetheredNodeTypeDefinitions);
+    }
+
+    /**
+     * We unset the readonly properties in the constructor, so that this magic getter is invoked, which initializes the properties.
+     * {@see https://peakd.com/hive-168588/@crell/php-tricks-lazy-public-readonly-properties}
+     * This is a temporary hack until https://github.com/neos/neos-development-collection/pull/4999 is merged.
+     */
+    public function __get(string $key): mixed
+    {
+        if ($key === 'tetheredNodeTypeDefinitions') {
+            /** @phpstan-ignore-next-line */
+            return $this->tetheredNodeTypeDefinitions = $this->getTetheredNodeTypeDefinitions();
+        }
+        throw new \BadMethodCallException(sprintf('NodeType::%s does not exist.', $key), 1715710576);
     }
 
     /**
@@ -488,21 +506,8 @@ final class NodeType
         return $defaultValues;
     }
 
-    /**
-     * @return bool true if $nodeName is an autocreated child node, false otherwise
-     */
-    public function hasTetheredNode(NodeName $nodeName): bool
+    private function getTetheredNodeTypeDefinitions(): TetheredNodeTypeDefinitions
     {
-        return $this->getTetheredNodeTypeDefinitions()->contain($nodeName);
-    }
-
-    public function getTetheredNodeTypeDefinitions(): TetheredNodeTypeDefinitions
-    {
-        if ($this->tetheredNodeTypeDefinitions) {
-            return $this->tetheredNodeTypeDefinitions;
-        }
-        $this->initialize();
-
         $childNodeConfiguration = $this->getConfiguration('childNodes') ?? [];
         $tetheredNodeTypeDefinitions = [];
         foreach ($childNodeConfiguration as $childNodeName => $configurationForChildNode) {
@@ -513,7 +518,7 @@ final class NodeType
                 );
             }
         }
-        return $this->tetheredNodeTypeDefinitions = TetheredNodeTypeDefinitions::fromArray($tetheredNodeTypeDefinitions);
+        return TetheredNodeTypeDefinitions::fromArray($tetheredNodeTypeDefinitions);
     }
 
     /**
