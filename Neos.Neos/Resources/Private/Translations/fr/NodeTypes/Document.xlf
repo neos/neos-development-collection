@@ -16,7 +16,7 @@
       </trans-unit>
       <trans-unit id="properties.hiddenInMenu" xml:space="preserve" approved="yes">
 				<source>Hide in menus</source>
-			<target state="final">Cacher dans les menus</target></trans-unit>
+			<target state="final">Cacher dans les menus</target>
       </trans-unit>
     </body>
   </file>
