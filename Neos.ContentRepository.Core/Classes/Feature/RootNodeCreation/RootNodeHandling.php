@@ -38,7 +38,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNotRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -180,7 +179,7 @@ trait RootNodeHandling
 
     /**
      * @throws ContentStreamDoesNotExistYet
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     private function handleTetheredRootChildNodes(
         ContentStreamId $contentStreamId,

@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -276,7 +276,7 @@ class ContentCacheFlusher
     /**
      * Fetches possible usages of the asset and registers nodes that use the asset as changed.
      *
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function registerAssetChange(AssetInterface $asset): void
     {

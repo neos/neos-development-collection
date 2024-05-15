@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -36,8 +35,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -159,7 +157,7 @@ final class NodeFactory
 
     /**
      * @param array<int,array<string,string>> $nodeRows
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function mapNodeRowsToNodeAggregate(
         array $nodeRows,
@@ -243,7 +241,7 @@ final class NodeFactory
     /**
      * @param iterable<int,array<string,string>> $nodeRows
      * @return iterable<int,NodeAggregate>
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function mapNodeRowsToNodeAggregates(
         iterable $nodeRows,
