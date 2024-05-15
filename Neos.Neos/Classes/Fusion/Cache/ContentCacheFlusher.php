@@ -304,7 +304,7 @@ class ContentCacheFlusher
                 $tagsToFlush = array_merge(
                     $this->collectTagsForChangeOnNodeAggregate(
                         $contentRepository,
-                        $workspace->workspaceName,
+                        $workspaceName,
                         $usage->nodeAggregateId
                     ),
                     $tagsToFlush
