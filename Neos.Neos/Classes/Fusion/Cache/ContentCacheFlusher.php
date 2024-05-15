@@ -287,7 +287,6 @@ class ContentCacheFlusher
         $workspaceNamesByContentStreamId = [];
         foreach ($this->globalAssetUsageService->findByFilter($filter) as $contentRepositoryId => $usages) {
             foreach ($usages as $usage) {
-
                 // TODO: Remove when WorkspaceName is part of the AssetUsageProjection
                 $workspaceName = $workspaceNamesByContentStreamId[$contentRepositoryId][$usage->contentStreamId->value] ?? null;
                 if ($workspaceName === null) {
