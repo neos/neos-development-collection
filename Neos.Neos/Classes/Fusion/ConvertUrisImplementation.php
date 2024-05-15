@@ -134,7 +134,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->contentRepositoryId
         );
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
@@ -169,7 +169,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                         $this->systemLogger->info(sprintf('Could not resolve "%s" to a live node uri. Arguments: %s', $matches[0], json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
                     }
                     $this->runtime->addCacheTag(
-                        CacheTag::forDynamicNodeAggregate($contentRepository->id, $nodeAddress->contentStreamId, NodeAggregateId::fromString($matches[2]))->value
+                        CacheTag::forDynamicNodeAggregate($contentRepository->id, $nodeAddress->workspaceName, NodeAggregateId::fromString($matches[2]))->value
                     );
                     break;
                 case 'asset':
