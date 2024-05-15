@@ -16,7 +16,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use PHPUnit\Framework\TestCase;
 
 /**

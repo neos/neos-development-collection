@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -389,7 +389,7 @@ class SitesController extends AbstractModuleController
     {
         try {
             $site = $this->siteService->createSite($packageKey, $siteName, $nodeType);
-        } catch (NodeTypeNotFoundException $exception) {
+        } catch (NodeTypeNotFound $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.body', [$nodeType]),
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.title'),
