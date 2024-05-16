@@ -62,8 +62,7 @@ class CachingHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Generate a `@cache` entry tag for a single node identifier. If a Node $contextNode is given the
-     * entry tag will respect the workspace hash.
+     * Generate a `@cache` entry tag for a single node identifier.
      *
      * @param string $identifier
      * @param Node $contextNode
@@ -72,8 +71,8 @@ class CachingHelper implements ProtectedContextAwareInterface
     public function nodeTagForIdentifier(string $identifier, Node $contextNode): string
     {
         return CacheTag::forNodeAggregate(
-            $contextNode->subgraphIdentity->contentRepositoryId,
-            $contextNode->subgraphIdentity->contentStreamId,
+            $contextNode->contentRepositoryId,
+            $contextNode->workspaceName,
             NodeAggregateId::fromString($identifier)
         )->value;
     }
@@ -96,8 +95,8 @@ class CachingHelper implements ProtectedContextAwareInterface
         }
 
         return CacheTagSet::forNodeTypeNames(
-            $contextNode->subgraphIdentity->contentRepositoryId,
-            $contextNode->subgraphIdentity->contentStreamId,
+            $contextNode->contentRepositoryId,
+            $contextNode->workspaceName,
             NodeTypeNames::fromStringArray($nodeTypes)
         )->toStringArray();
     }
