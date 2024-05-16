@@ -181,6 +181,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
     cacheVerifier=first execution, title=Node a1
     """
 
+  # See Neos.Caching.nodeTagForIdentifier('a3',node) in setup and now we will update it
   Scenario: ContentCache gets flushed when a property of another node has changed that is added as nodeTagForIdentifier
     Given I have Fusion content cache enabled
     And the Fusion context node is a1
