@@ -336,12 +336,12 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
         foreach ($this->eventStore->load(VirtualStreamName::all()) as $eventEnvelope) {
             $eventType = $eventEnvelope->event->type->value;
-            if (in_array($eventType, ['RootWorkspaceWasCreated', 'WorkspaceBaseWorkspaceWasChanged', 'WorkspaceWasCreated', 'WorkspaceWasDiscarded', 'WorkspaceWasRebased'], true)) {
+            if (in_array($eventType, ['RootWorkspaceWasCreated', 'WorkspaceBaseWorkspaceWasChanged', 'WorkspaceWasCreated', 'WorkspaceWasDiscarded', 'WorkspaceWasPartiallyDiscarded', 'WorkspaceWasRebased'], true)) {
                 $eventData = self::decodeEventPayload($eventEnvelope);
                 $workspaceNamesByContentStreamId[$eventData['newContentStreamId']] = $eventData['workspaceName'];
                 continue;
             }
-            if (in_array($eventType, ['WorkspaceWasPartiallyPublished', 'WorkspaceWasPartiallyPublished', 'WorkspaceWasPublished'], true)) {
+            if (in_array($eventType, ['WorkspaceWasPartiallyPublished', 'WorkspaceWasPublished'], true)) {
                 $eventData = self::decodeEventPayload($eventEnvelope);
                 $workspaceNamesByContentStreamId[$eventData['newSourceContentStreamId']] = $eventData['sourceWorkspaceName'];
                 continue;
