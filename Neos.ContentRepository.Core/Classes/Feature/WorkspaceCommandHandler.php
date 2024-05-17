@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\Common\PublishableInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Command\CloseContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Command\ReopenContentStream;
@@ -309,9 +309,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     );
                 }
                 $contentStreamWasForkedEvent = $event;
-            } elseif ($event instanceof PublishableInterface) {
+            } elseif ($event instanceof PublishableToWorkspaceInterface) {
                 /** @var EventInterface $copiedEvent */
-                $copiedEvent = $event->createCopyForContentStream($baseWorkspaceName, $baseContentStreamId);
+                $copiedEvent = $event->withWorkspaceNameAndContentStreamId($baseWorkspaceName, $baseContentStreamId);
                 // We need to add the event metadata here for rebasing in nested workspace situations
                 // (and for exporting)
                 $events[] = DecoratedEvent::create($copiedEvent, metadata: $eventEnvelope->event->metadata, causationId: $eventEnvelope->event->causationId, correlationId: $eventEnvelope->event->correlationId);

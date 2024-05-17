@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeTypeChange\Event;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final readonly class NodeAggregateTypeWasChanged implements
     EventInterface,
-    PublishableInterface,
+    PublishableToWorkspaceInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
@@ -48,11 +48,11 @@ final readonly class NodeAggregateTypeWasChanged implements
         return $this->nodeAggregateId;
     }
 
-    public function createCopyForContentStream(WorkspaceName $targetWorkspaceName, ContentStreamId $targetContentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
             $targetWorkspaceName,
-            $targetContentStreamId,
+            $contentStreamId,
             $this->nodeAggregateId,
             $this->newNodeTypeName
         );

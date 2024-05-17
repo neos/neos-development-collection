@@ -24,9 +24,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *           on the target content stream, and no events have been committed to the target content stream in
  *           the meantime. This is because event's effects have to be fully deterministic.
  *
- * @internal used internally for the publishing mechanism of content streams
+ * @internal used internally for the publishing mechanism of workspaces
  */
-interface PublishableInterface
+interface PublishableToWorkspaceInterface
 {
-    public function createCopyForContentStream(WorkspaceName $targetWorkspaceName, ContentStreamId $targetContentStreamId): self;
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self;
 }

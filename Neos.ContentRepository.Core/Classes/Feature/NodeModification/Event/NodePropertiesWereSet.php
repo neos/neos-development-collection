@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
@@ -38,7 +38,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final readonly class NodePropertiesWereSet implements
     EventInterface,
-    PublishableInterface,
+    PublishableToWorkspaceInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
@@ -68,11 +68,11 @@ final readonly class NodePropertiesWereSet implements
         return $this->originDimensionSpacePoint;
     }
 
-    public function createCopyForContentStream(WorkspaceName $targetWorkspaceName, ContentStreamId $targetContentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
             $targetWorkspaceName,
-            $targetContentStreamId,
+            $contentStreamId,
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
             $this->affectedDimensionSpacePoints,
