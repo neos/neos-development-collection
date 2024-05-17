@@ -188,13 +188,6 @@ we use the right versions etc).
        cd Packages/Neos
        composer test:behavioral
 
-Running all tests can take a long time, depending on the hardware.
-To speed up the process, Behat tests can be executed in a "synchronous" mode:
-
-   .. code-block:: bash
-
-       composer test:behavioral:sync
-
 Alternatively, if you want to reproduce errors as they happen inside the CI system, but you
 develop on Mac OS, you might want to run the Behat tests in a Docker container (= a linux environment)
 as well. We have seen cases where they behave differently, i.e. where they run without race
