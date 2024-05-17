@@ -81,7 +81,7 @@ trait GenericCommandExecutionAndEventPublication
 
         $command = $commandClassName::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**
@@ -140,7 +140,7 @@ trait GenericCommandExecutionAndEventPublication
             ->getValue($eventPersister);
         $event = $eventNormalizer->denormalize($artificiallyConstructedEvent);
 
-        $this->lastCommandOrEventResult = $eventPersister->publishEvents(new EventsToPublish(
+        $eventPersister->publishEvents(new EventsToPublish(
             $streamName,
             Events::with($event),
             ExpectedVersion::ANY()

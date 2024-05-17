@@ -23,7 +23,6 @@ Feature: Move a node without content dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -59,7 +58,6 @@ Feature: Move a node without content dimensions
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
       | nodeName                    | "esquire"                                 |
       | nodeAggregateClassification | "regular"                                 |
-    And the graph projection is fully up to date
 
   Scenario: Move a node to the end of its siblings
     When the command MoveNodeAggregate is executed with payload:
@@ -69,7 +67,6 @@ Feature: Move a node without content dimensions
       | newParentNodeAggregateId            | null                     |
       | newSucceedingSiblingNodeAggregateId | null                     |
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -104,7 +101,6 @@ Feature: Move a node without content dimensions
       | newParentNodeAggregateId            | null                         |
       | newSucceedingSiblingNodeAggregateId | "sir-david-nodenborough"     |
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -142,7 +138,6 @@ Feature: Move a node without content dimensions
       | parentNodeAggregateId       | "sir-nodeward-nodington-iii"              |
       | nodeName                    | "other-document"                          |
       | nodeAggregateClassification | "regular"                                 |
-    And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload:
       | Key                      | Value                        |
       | nodeAggregateId          | "sir-david-nodenborough"     |
@@ -157,7 +152,6 @@ Feature: Move a node without content dimensions
       | newParentNodeAggregateId      | "sir-nodeward-nodington-iii"                         |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint": [],"nodeAggregateId":null}] |
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -204,7 +198,6 @@ Feature: Move a node without content dimensions
       | newParentNodeAggregateId      | "lady-eleonode-rootford"                                                     |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint": [],"nodeAggregateId":"sir-nodeward-nodington-iii"}] |
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph

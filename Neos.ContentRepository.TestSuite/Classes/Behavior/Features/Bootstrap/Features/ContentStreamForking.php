@@ -41,7 +41,7 @@ trait ContentStreamForking
             ContentStreamId::fromString($commandArguments['sourceContentStreamId']),
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

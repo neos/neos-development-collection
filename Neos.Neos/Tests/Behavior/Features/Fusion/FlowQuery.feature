@@ -51,7 +51,6 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  | initialPropertyValues                                                  | nodeName |

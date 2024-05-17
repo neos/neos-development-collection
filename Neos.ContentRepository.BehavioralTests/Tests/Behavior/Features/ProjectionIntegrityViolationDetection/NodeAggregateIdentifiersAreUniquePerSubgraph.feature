@@ -19,13 +19,11 @@ Feature: Create two nodes with the same node aggregate identifier in the same su
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | newContentStreamId | "cs-identifier"                        |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | nodeAggregateId     | "lady-eleonode-rootford"                  |
       | nodeTypeName                | "Neos.ContentRepository:Root"             |
-    And the graph projection is fully up to date
 
   Scenario: Create two node variants in the same subgraph
     When the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -48,7 +46,6 @@ Feature: Create two nodes with the same node aggregate identifier in the same su
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |
-    And the graph projection is fully up to date
     And I run integrity violation detection
     # one error per covered dimension space point
     Then I expect the integrity violation detection result to contain exactly 2 errors

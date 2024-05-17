@@ -44,7 +44,6 @@ Feature: Linking between multiple websites
       | Key                         | Value                    |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
 
     # lady-eleonode-rootford
     #   shernode-homes
@@ -78,7 +77,6 @@ Feature: Linking between multiple websites
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
-    And The documenturipath projection is up to date
 
   Scenario: Resolve foreign website homepage node
     When I am on URL "http://domain1.tld/"

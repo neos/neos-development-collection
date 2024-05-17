@@ -37,7 +37,7 @@ trait ContentStreamClosing
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = CloseContentStream::create(ContentStreamId::fromString($commandArguments['contentStreamId']));
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

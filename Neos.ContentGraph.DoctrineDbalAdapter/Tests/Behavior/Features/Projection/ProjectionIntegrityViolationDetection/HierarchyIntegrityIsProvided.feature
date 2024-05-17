@@ -19,7 +19,6 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
@@ -35,7 +34,6 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
       | nodeName                    | "child-document"                                         |
       | nodeAggregateClassification | "regular"                                                |
-    And the graph projection is fully up to date
 
   Scenario: Detach a hierarchy relation from its parent
     When I add the following hierarchy relation:

@@ -75,7 +75,7 @@ trait NodeReferencing
             $references,
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

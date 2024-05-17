@@ -54,14 +54,12 @@ Feature: Create a node aggregate with complex default values
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live"
     And I am in dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
   Scenario: Create a node aggregate with complex default values
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -69,7 +67,6 @@ Feature: Create a node aggregate with complex default values
       | nodeAggregateId       | "nody-mc-nodeface"                    |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
-    And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
 
     And I expect this node to have the following serialized properties:
@@ -102,7 +99,6 @@ Feature: Create a node aggregate with complex default values
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node"                                                                                                                                                                                 |
       | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                                                                                                                              |
       | initialPropertyValues | {"dayOfWeek":"DayOfWeek:https://schema.org/Friday","postalAddress":"PostalAddress:anotherDummy", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io", "price":"PriceSpecification:anotherDummy"} |
-    And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key           | Value                                           |

@@ -59,7 +59,7 @@ final class PerformanceMeasurementCommandController extends CommandController
     public function testPerformanceCommand(): void
     {
         $time = microtime(true);
-        $this->performanceMeasurementService->forkContentStream()
+        $this->performanceMeasurementService->forkContentStream();
 
         $timeElapsed = microtime(true) - $time;
         $this->outputLine('Time: ' . $timeElapsed);

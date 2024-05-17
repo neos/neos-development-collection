@@ -28,7 +28,6 @@ Feature: Create an intact content graph and run integrity violation detection
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
       | nodeAggregateClassification | "root"                                 |
-    And the graph projection is fully up to date
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
       | contentStreamId       | "cs-identifier"                           |
@@ -66,6 +65,5 @@ Feature: Create an intact content graph and run integrity violation detection
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                             |
       | referenceName                            | "referenceProperty"                                                             |
       | references                               | [{"targetNodeAggregateId":"sir-david-nodenborough", "properties":null}] |
-    And the graph projection is fully up to date
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors

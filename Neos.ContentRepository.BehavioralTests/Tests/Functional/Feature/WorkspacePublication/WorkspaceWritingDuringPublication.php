@@ -42,7 +42,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use PHPUnit\Framework\Assert;
@@ -66,7 +65,6 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
     public function setUp(): void
     {
         parent::setUp();
-        CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
         GherkinTableNodeBasedContentDimensionSourceFactory::$contentDimensionsToUse = new class implements ContentDimensionSourceInterface
         {
             public function getDimension(ContentDimensionId $dimensionId): ?ContentDimension
