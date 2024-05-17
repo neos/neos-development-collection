@@ -364,6 +364,9 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
     /** ------------------------ */
 
+    /**
+     * @return array<string, mixed>
+     */
     private static function decodeEventPayload(EventEnvelope $eventEnvelope): array
     {
         try {
