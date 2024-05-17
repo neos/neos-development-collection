@@ -66,26 +66,22 @@ class DisallowedChildNodeAdjustment
                     $parentNodeType = $this->nodeTypeManager->getNodeType($parentNode->nodeTypeName);
                     if ($parentNodeType) {
                         $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType)
-                            || ($nodeAggregate->nodeName && $parentNodeType->hasTetheredNode($nodeAggregate->nodeName));
+                            || ($nodeAggregate->nodeName && $parentNodeType->tetheredNodeTypeDefinitions->contain($nodeAggregate->nodeName));
                     }
                 }
 
                 $allowedByGrandparent = false;
-                $grandparentNodeType = null;
                 if (
                     $parentNode !== null
                     && $grandparentNode !== null
                     && $parentNode->classification->isTethered()
-                    && !is_null($parentNode->nodeName)
+                    && !is_null($parentNode->name)
                 ) {
-                    $grandparentNodeType = $this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName) ? $this->nodeTypeManager->getNodeType($grandparentNode->nodeTypeName) : null;
-                    if ($grandparentNodeType !== null) {
-                        $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
-                            $grandparentNodeType,
-                            $parentNode->nodeName,
-                            $nodeType
-                        );
-                    }
+                    $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
+                        $grandparentNode->nodeTypeName,
+                        $parentNode->name,
+                        $nodeAggregate->nodeTypeName
+                    );
                 }
 
                 if (!$allowedByParent && !$allowedByGrandparent) {
@@ -100,9 +96,9 @@ class DisallowedChildNodeAdjustment
                     and the grandparent node type "%s" is not allowing grandchildren of type "%s".
                     Thus, the node is invalid at this location and should be removed.
                 ',
-                        $parentNodeType !== null ? $parentNodeType->name->value : '',
+                        $parentNode?->nodeTypeName->value ?? '',
                         $node->nodeTypeName->value,
-                        $grandparentNodeType !== null ? $grandparentNodeType->name->value : '',
+                        $grandparentNode?->nodeTypeName->value ?? '',
                         $node->nodeTypeName->value,
                     );
 

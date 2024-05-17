@@ -21,7 +21,6 @@ Feature: Sibling positions are properly resolved
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example": "general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -50,49 +49,41 @@ Feature: Sibling positions are properly resolved
       | Key                                 | Value                       |
       | nodeAggregateId                     | "lady-nodette-nodington-ii" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"  |
-    And the graph projection is fully up to date
     # distance iii to x: 32
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                        |
       | nodeAggregateId                     | "lady-nodette-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"   |
-    And the graph projection is fully up to date
     # distance iv to x: 16
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                       |
       | nodeAggregateId                     | "lady-nodette-nodington-iv" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"  |
-    And the graph projection is fully up to date
     # distance v to x: 8
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                      |
       | nodeAggregateId                     | "lady-nodette-nodington-v" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x" |
-    And the graph projection is fully up to date
     # distance vi to x: 4
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                       |
       | nodeAggregateId                     | "lady-nodette-nodington-vi" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"  |
-    And the graph projection is fully up to date
     # distance vii to x: 2
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                        |
       | nodeAggregateId                     | "lady-nodette-nodington-vii" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"   |
-    And the graph projection is fully up to date
     # distance viii to x: 1 -> reorder -> 128
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                         |
       | nodeAggregateId                     | "lady-nodette-nodington-viii" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"    |
-    And the graph projection is fully up to date
     # distance ix to x: 64 after reorder
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                       |
       | nodeAggregateId                     | "lady-nodette-nodington-ix" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"  |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:

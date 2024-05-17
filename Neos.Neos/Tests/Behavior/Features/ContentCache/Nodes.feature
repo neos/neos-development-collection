@@ -38,13 +38,13 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                            | nodeName |
       | a               | root                  | Neos.Neos:Site               | {}                                               | site     |
       | a1              | a                     | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1", "title": "Node a1"}     | a1       |
       | a1-1            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-1", "title": "Node a1-1"} | a1-1     |
       | a2              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2"}     | a2       |
+      | a3              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a3", "title": "Node a3"}     | a3       |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
     """yaml
@@ -82,6 +82,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
         entryTags {
           1 = ${Neos.Caching.nodeTag(node)}
           2 = ${Neos.Caching.descendantOfTag(node)}
+          3 = ${Neos.Caching.nodeTagForIdentifier('a3',node)}
         }
       }
     }
@@ -131,7 +132,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "a1"                     |
       | propertyValues  | {"title": "Node a1 new"} |
-    And the graph projection is fully up to date
 
     And the Fusion context node is a1
     And I execute the following Fusion code:
@@ -165,7 +165,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "a2"                     |
       | propertyValues  | {"title": "Node a2 new"} |
-    And the graph projection is fully up to date
 
     And the Fusion context node is a1
     And I execute the following Fusion code:
@@ -178,6 +177,41 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
     """
     cacheVerifier=first execution, title=Node a1
     """
+
+  # See Neos.Caching.nodeTagForIdentifier('a3',node) in setup and now we will update it
+  Scenario: ContentCache gets flushed when a property of another node has changed that is added as nodeTagForIdentifier
+    Given I have Fusion content cache enabled
+    And the Fusion context node is a1
+
+    And I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.DocumentType1 {
+      cacheVerifier = ${"first execution"}
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    cacheVerifier=first execution, title=Node a1
+    """
+
+    When the command SetNodeProperties is executed with payload:
+      | Key             | Value                    |
+      | contentStreamId | "cs-identifier"          |
+      | nodeAggregateId | "a3"                     |
+      | propertyValues  | {"title": "Node a3 new"} |
+
+    And the Fusion context node is a1
+    And I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.DocumentType1 {
+      cacheVerifier = ${"second execution"}
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    cacheVerifier=second execution, title=Node a1
+    """
+
 
   Scenario: ContentCache gets flushed when a property of a node has changed by NodeType name
     Given I have Fusion content cache enabled
@@ -198,7 +232,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "a1"                     |
       | propertyValues  | {"title": "Node a1 new"} |
-    And the graph projection is fully up to date
 
     And the Fusion context node is a2
     And I execute the following Fusion code:
@@ -231,7 +264,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | contentStreamId | "cs-identifier"            |
       | nodeAggregateId | "a1-1"                     |
       | propertyValues  | {"title": "Node a1-1 new"} |
-    And the graph projection is fully up to date
 
     And the Fusion context node is "a1"
     And I execute the following Fusion code:

@@ -51,7 +51,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsAbstract;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
@@ -165,14 +164,13 @@ trait ConstraintChecks
 
     /**
      * @param NodeType $nodeType
-     * @throws NodeTypeNotFoundException the configured child nodeType doesnt exist
+     * @throws NodeTypeNotFound the configured child nodeType doesnt exist
      */
     protected function requireTetheredDescendantNodeTypesToExist(NodeType $nodeType): void
     {
-        // this getter throws if any of the child nodeTypes doesnt exist!
-        $tetheredNodeTypes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType);
-        foreach ($tetheredNodeTypes as $tetheredNodeType) {
-            $this->requireTetheredDescendantNodeTypesToExist($tetheredNodeType);
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $nodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
+            $this->requireTetheredDescendantNodeTypesToExist($nodeType);
         }
     }
 
@@ -182,7 +180,8 @@ trait ConstraintChecks
      */
     protected function requireTetheredDescendantNodeTypesToNotBeOfTypeRoot(NodeType $nodeType): void
     {
-        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $tetheredChildNodeType) {
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $tetheredChildNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
             if ($tetheredChildNodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 throw new NodeTypeIsOfTypeRoot(
                     'Node type "' . $nodeType->name->value . '" for tethered descendant is of type root.',
@@ -215,7 +214,7 @@ trait ConstraintChecks
     protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void
     {
         $nodeType = $this->requireNodeType($nodeTypeName);
-        if ($nodeType->hasTetheredNode($nodeName)) {
+        if ($nodeType->tetheredNodeTypeDefinitions->contain($nodeName)) {
             throw new NodeNameIsAlreadyCovered(
                 'Node name "' . $nodeName->value . '" is reserved for a tethered child of parent node aggregate of type "'
                 . $nodeTypeName->value . '".'
@@ -316,7 +315,7 @@ trait ConstraintChecks
     }
 
     /**
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      * @throws NodeConstraintException
      */
     protected function requireNodeTypeConstraintsImposedByParentToBeMet(
@@ -373,8 +372,8 @@ trait ConstraintChecks
         NodeType $nodeType
     ): bool {
         return !($parentNodeName
-            && $grandParentsNodeType->hasTetheredNode($parentNodeName)
-            && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType, $parentNodeName, $nodeType));
+            && $grandParentsNodeType->tetheredNodeTypeDefinitions->contain($parentNodeName)
+            && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType->name, $parentNodeName, $nodeType->name));
     }
 
     /**

@@ -489,7 +489,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         if (!$nodeTypeOfParent) {
             return false;
         }
-        return $nodeTypeOfParent->hasTetheredNode($nodeName);
+        return $nodeTypeOfParent->tetheredNodeTypeDefinitions->contain($nodeName);
     }
 
     private function dispatch(Severity $severity, string $message, mixed ...$args): void

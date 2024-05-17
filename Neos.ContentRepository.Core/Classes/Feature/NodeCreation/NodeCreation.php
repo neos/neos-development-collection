@@ -37,7 +37,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -120,7 +120,7 @@ trait NodeCreation
 
     /**
      * @throws ContentStreamDoesNotExistYet
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
@@ -249,7 +249,7 @@ trait NodeCreation
 
     /**
      * @throws ContentStreamDoesNotExistYet
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     private function handleTetheredChildNodes(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
@@ -261,24 +261,26 @@ trait NodeCreation
         ?NodePath $nodePath
     ): Events {
         $events = [];
-        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $rawNodeName => $childNodeType) {
-            assert($childNodeType instanceof NodeType);
-            $nodeName = NodeName::fromString($rawNodeName);
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $childNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
             $childNodePath = $nodePath
-                ? $nodePath->appendPathSegment($nodeName)
-                : NodePath::fromString($nodeName->value);
+                ? $nodePath->appendPathSegment($tetheredNodeTypeDefinition->name)
+                : NodePath::fromString($tetheredNodeTypeDefinition->name->value);
             $childNodeAggregateId = $nodeAggregateIds->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
+            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType(
+                $childNodeType,
+                $this->getPropertyConverter()
+            );
 
             $events[] = new NodeAggregateWithNodeWasCreated(
                 $contentGraph->getContentStreamId(),
                 $childNodeAggregateId,
-                $childNodeType->name,
+                $tetheredNodeTypeDefinition->nodeTypeName,
                 $command->originDimensionSpacePoint,
                 InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings($coveredDimensionSpacePoints),
                 $parentNodeAggregateId,
-                $nodeName,
+                $tetheredNodeTypeDefinition->name,
                 $initialPropertyValues,
                 NodeAggregateClassification::CLASSIFICATION_TETHERED,
             );

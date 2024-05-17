@@ -38,7 +38,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNotRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -177,7 +176,7 @@ trait RootNodeHandling
 
     /**
      * @throws ContentStreamDoesNotExistYet
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     private function handleTetheredRootChildNodes(
         ContentStreamId $contentStreamId,
@@ -189,12 +188,11 @@ trait RootNodeHandling
         ?NodePath $nodePath
     ): Events {
         $events = [];
-        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $rawNodeName => $childNodeType) {
-            assert($childNodeType instanceof NodeType);
-            $nodeName = NodeName::fromString($rawNodeName);
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $childNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
             $childNodePath = $nodePath
-                ? $nodePath->appendPathSegment($nodeName)
-                : NodePath::fromString($nodeName->value);
+                ? $nodePath->appendPathSegment($tetheredNodeTypeDefinition->name)
+                : NodePath::fromNodeNames($tetheredNodeTypeDefinition->name);
             $childNodeAggregateId = $nodeAggregateIdsByNodePath->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
             $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
@@ -202,11 +200,11 @@ trait RootNodeHandling
             $events[] = $this->createTetheredWithNodeForRoot(
                 $contentStreamId,
                 $childNodeAggregateId,
-                $childNodeType->name,
+                $tetheredNodeTypeDefinition->nodeTypeName,
                 $originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
                 $parentNodeAggregateId,
-                $nodeName,
+                $tetheredNodeTypeDefinition->name,
                 $initialPropertyValues
             );
 

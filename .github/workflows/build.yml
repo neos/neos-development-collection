@@ -249,7 +249,7 @@ jobs:
           # DEBUG MODE: ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
           set +e
-          composer test:behavioral:stop-on-failure:sync
+          composer test:behavioral:stop-on-failure
           retVal=$?
 
           # automatically search for race conditions

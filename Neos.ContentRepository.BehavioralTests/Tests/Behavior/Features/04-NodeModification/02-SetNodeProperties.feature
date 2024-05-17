@@ -63,13 +63,11 @@ Feature: Set properties
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the following CreateNodeAggregateWithNode commands are executed:
@@ -80,13 +78,11 @@ Feature: Set properties
       | nodeAggregateId | "nody-mc-nodeface" |
       | sourceOrigin    | {"language":"mul"} |
       | targetOrigin    | {"language":"de"}  |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value              |
       | nodeAggregateId | "nody-mc-nodeface" |
       | sourceOrigin    | {"language":"mul"} |
       | targetOrigin    | {"language":"gsw"} |
-    And the graph projection is fully up to date
 
   Scenario: Set node properties
     And the command SetNodeProperties is executed with payload:
@@ -94,7 +90,6 @@ Feature: Set properties
       | nodeAggregateId           | "nody-mc-nodeface"                                                                                                                                                                                                                                                                                                                                            |
       | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                                                                                                                                                                                                            |
       | propertyValues            | {"string":"My new string", "int":8472, "float":72.84, "bool":true, "array":{"givenName":"David", "familyName":"Nodenborough","age":84}, "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io", "postalAddress":"PostalAddress:anotherDummy", "price":"PriceSpecification:anotherDummy"} |
-    And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph
     And I expect this node to have the following properties:
       | Key           | Value                                                         |
@@ -115,7 +110,6 @@ Feature: Set properties
       | nodeAggregateId           | "nody-mc-nodeface"         |
       | originDimensionSpacePoint | {"language": "de"}         |
       | propertyValues            | {"string":"My new string"} |
-    And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph
     And I expect this node to have the following properties:
       | Key           | Value                                                      |

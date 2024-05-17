@@ -17,6 +17,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -436,9 +437,8 @@ class NodeTypeManagerTest extends TestCase
     public function getAutoCreatedChildNodesReturnsLowercaseNames()
     {
         $parentNodeType = $this->nodeTypeManager->getNodeType(NodeTypeName::fromString('Neos.ContentRepository.Testing:Page2'));
-        $autoCreatedChildNodes = $this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($parentNodeType);
         // This is configured as "nodeName" above, but should be normalized to "nodename"
-        self::assertArrayHasKey('nodename', $autoCreatedChildNodes);
+        self::assertNotNull($parentNodeType->tetheredNodeTypeDefinitions->contain('nodename'));
     }
 
     /**

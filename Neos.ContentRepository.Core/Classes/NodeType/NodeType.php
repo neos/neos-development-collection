@@ -14,7 +14,8 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
-use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
+use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
@@ -195,26 +196,6 @@ final class NodeType
     }
 
     /**
-     * @return bool true if $nodeName is an auto-created child node, false otherwise
-     */
-    public function hasTetheredNode(NodeName $nodeName): bool
-    {
-        return $this->tetheredNodeTypeDefinitions->contain($nodeName);
-    }
-
-    /**
-     * @throws TetheredNodeNotConfigured if the requested tethred node is not configured. Check via {@see NodeType::hasTetheredNode()}.
-     */
-    public function getNodeTypeNameOfTetheredNode(NodeName $nodeName): NodeTypeName
-    {
-        $tetheredNodeDefinition = $this->tetheredNodeTypeDefinitions->get($nodeName);
-        if ($tetheredNodeDefinition === null) {
-            throw new TetheredNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $nodeName->value, $this->name->value), 1694786811);
-        }
-        return $tetheredNodeDefinition->nodeTypeName;
-    }
-
-    /**
      * Checks if the given NodeType is acceptable as sub-node with the configured constraints,
      * not taking constraints of auto-created nodes into account. Thus, this method only returns
      * the correct result if called on NON-AUTO-CREATED nodes!
@@ -227,6 +208,27 @@ final class NodeType
     public function allowsChildNodeType(NodeType $nodeType): bool
     {
         return $this->childNodeTypeConstraints->isNodeTypeAllowed($nodeType->name);
+    }
+
+    /**
+     * @param NodeName $nodeName
+     * @return bool true if $nodeName is an autocreated child node, false otherwise
+     * @deprecated with Neos 9.0 – {@see tetheredNodeTypeDefinitions} should be used instead
+     */
+    public function hasAutoCreatedChildNode(NodeName $nodeName): bool
+    {
+        return $this->tetheredNodeTypeDefinitions->contain($nodeName);
+    }
+
+    /**
+     * @param NodeName $nodeName
+     * @return NodeType|null
+     * @deprecated with Neos 9.0 – {@see tetheredNodeTypeDefinitions} should be used instead
+     */
+    public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeType
+    {
+        $tetheredNodeDefinition = $this->tetheredNodeTypeDefinitions->get($nodeName);
+        return $tetheredNodeDefinition->nodeTypeName;
     }
 
     // TODO remove (check usages first)

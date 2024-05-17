@@ -38,7 +38,6 @@ Feature: Tests for the "Neos.Neos:ContentCase" Fusion prototype
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  |
       | a               | root                  | Neos.Neos:Site                |

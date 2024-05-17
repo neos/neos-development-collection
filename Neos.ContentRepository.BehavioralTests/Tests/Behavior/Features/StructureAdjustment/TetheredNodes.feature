@@ -36,7 +36,6 @@ Feature: Tethered Nodes integrity violations
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                                | Value                                               |
@@ -79,7 +78,6 @@ Feature: Tethered Nodes integrity violations
       | parentNodeAggregateId       | "nodewyn-tetherton"                           |
       | nodeName                    | "tethered-leaf"                               |
       | nodeAggregateClassification | "tethered"                                    |
-    And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: Adjusting the schema adding a new tethered node leads to a MissingTetheredNode integrity violation

@@ -41,7 +41,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                        | nodeName |
       | a               | root                  | Neos.Neos:Site               | {}                                           | a        |
@@ -118,8 +117,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
       | contentStreamId | "cs-identifier"              |
       | nodeAggregateId | "a1"                         |
       | propertyValues  | {"uriPathSegment": "a1-new"} |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
 
     And the Fusion context node is a2
     And I execute the following Fusion code:
@@ -155,8 +152,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on DynamicNodeTag 
       | contentStreamId | "cs-identifier"              |
       | nodeAggregateId | "a1"                         |
       | propertyValues  | {"uriPathSegment": "a1-new"} |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
 
     And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a2

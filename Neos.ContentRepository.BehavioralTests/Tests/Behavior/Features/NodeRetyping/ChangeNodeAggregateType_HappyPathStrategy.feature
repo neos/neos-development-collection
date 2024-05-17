@@ -58,13 +58,11 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                           |
@@ -75,7 +73,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | nodeName                  | "parent"                                        |
       | initialPropertyValues     | {}                                              |
 
-    And the graph projection is fully up to date
 
   Scenario: Try to change to a node type that disallows already present children with the HAPPYPATH conflict resolution strategy
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
@@ -84,7 +81,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | nodeTypeName              | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint | {"language":"de"}                          |
       | parentNodeAggregateId     | "sir-david-nodenborough"                   |
-    And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key             | Value                                            |
@@ -102,7 +98,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | parentNodeAggregateId              | "lady-eleonode-rootford"                        |
       | nodeName                           | "parent2"                                       |
       | tetheredDescendantNodeAggregateIds | {"autocreated": "autocreated-child"}            |
-    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                      |
@@ -111,7 +106,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | originDimensionSpacePoint | {"language":"de"}                          |
       | parentNodeAggregateId     | "autocreated-child"                        |
       | initialPropertyValues     | {}                                         |
-    And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key             | Value                                            |
@@ -129,14 +123,12 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | parentNodeAggregateId              | "lady-eleonode-rootford"                   |
       | initialPropertyValues              | {}                                         |
       | tetheredDescendantNodeAggregateIds | { "child-of-type-a": "child-of-type-a-id"} |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
       | nodeAggregateId | "nodea-identifier-de" |
       | sourceOrigin    | {"language":"de"}     |
       | targetOrigin    | {"language":"gsw"}    |
-    And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload:
       | Key                                | Value                                      |
@@ -144,7 +136,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy                           | "happypath"                                |
       | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "child-of-type-b-id"} |
-    And the graph projection is fully up to date
 
     # the type has changed
     When I am in workspace "live" and dimension space point {"language":"de"}

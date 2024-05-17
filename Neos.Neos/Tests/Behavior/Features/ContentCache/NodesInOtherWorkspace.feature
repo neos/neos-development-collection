@@ -43,7 +43,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                            | nodeName |
       | a               | root                  | Neos.Neos:Site               | {}                                               | site     |
@@ -141,7 +140,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "a1"                     |
       | propertyValues  | {"title": "Node a1 new"} |
-    And the graph projection is fully up to date
 
     And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a1
@@ -177,7 +175,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "a2"                     |
       | propertyValues  | {"title": "Node a2 new"} |
-    And the graph projection is fully up to date
 
     And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a1
@@ -213,7 +210,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "a1"                     |
       | propertyValues  | {"title": "Node a1 new"} |
-    And the graph projection is fully up to date
 
     And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a2
@@ -249,7 +245,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "a1-1"                     |
       | propertyValues  | {"title": "Node a1-1 new"} |
-    And the graph projection is fully up to date
 
     And I am in workspace "live" and dimension space point {}
     And the Fusion context node is "a1"

@@ -52,7 +52,6 @@ Feature: Routing behavior of shortcut nodes
       | Key                         | Value                    |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
 
     # lady-eleonode-rootford
     #   shernode-homes
@@ -94,7 +93,6 @@ Feature: Routing behavior of shortcut nodes
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
-    And The documenturipath projection is up to date
 
   Scenario: Shortcut parent node
     When I am on URL "/"
@@ -119,7 +117,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId           | "shortcut-external-url"          |
       | originDimensionSpacePoint | {}                               |
       | propertyValues            | {"target": "/some/relative/url"} |
-    And The documenturipath projection is up to date
     When I am on URL "https://current.host/"
     Then the node "shortcut-external-url" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/some/relative/url"
 
@@ -129,7 +126,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId           | "shortcut-external-url"                                                               |
       | originDimensionSpacePoint | {}                                                                                    |
       | propertyValues            | {"target": "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"} |
-    And The documenturipath projection is up to date
     When I am on URL "http://current.host/"
     Then the node "shortcut-external-url" in content stream "cs-identifier" and dimension "{}" should resolve to URL "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"
 
@@ -146,7 +142,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId            | "shortcut-first-child-node"                          |
       | initialPropertyValues            | {"uriPathSegment": "new-child-node"}                 |
       | succeedingSiblingNodeAggregateId | "first-child-node"                                   |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/new-child-node"
 
@@ -157,7 +152,6 @@ Feature: Routing behavior of shortcut nodes
       | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | "shortcut-first-child-node"  |
       | newSucceedingSiblingNodeAggregateId | "first-child-node"           |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/nodeward-3"
 
@@ -168,7 +162,6 @@ Feature: Routing behavior of shortcut nodes
       | dimensionSpacePoint                 | {}                  |
       | newParentNodeAggregateId            | null                |
       | newSucceedingSiblingNodeAggregateId | "first-child-node"  |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/second-child-node"
 
@@ -179,7 +172,6 @@ Feature: Routing behavior of shortcut nodes
       | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | "shortcut-first-child-node"  |
       | newSucceedingSiblingNodeAggregateId | "second-child-node"          |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
@@ -192,14 +184,12 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId            | "shortcut-first-child-node"                          |
       | initialPropertyValues            | {"uriPathSegment": "new-child-node"}                 |
       | succeedingSiblingNodeAggregateId | "second-child-node"                                  |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value             |
       | nodeAggregateId                     | "nody-mc-newface" |
       | dimensionSpacePoint                 | {}                |
       | newParentNodeAggregateId            | null              |
       | newSucceedingSiblingNodeAggregateId | null              |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
@@ -209,7 +199,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId | "sir-david-nodenborough-ii" |
       | newNodeTypeName | "Neos.Neos:Shortcut"        |
       | strategy        | "happypath"                 |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "sir-david-nodenborough-ii" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-2/nodeward-3"
 
@@ -219,7 +208,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId | "shortcut-first-child-node"                          |
       | newNodeTypeName | "Neos.Neos:Test.Routing.Page" |
       | strategy        | "happypath"                                          |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child"
 
@@ -229,7 +217,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId           | "shortcut-first-child-node"  |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"targetMode": "parentNode"} |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts"
 
@@ -239,7 +226,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId           | "shortcut-first-child-node"                                      |
       | originDimensionSpacePoint | {}                                                               |
       | propertyValues            | {"targetMode": "selectedTarget", "target": "http://www.neos.io"} |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "http://www.neos.io/"
 
@@ -253,7 +239,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId           | "shortcut-parent-node"           |
       | originDimensionSpacePoint | {}                               |
       | propertyValues            | {"targetMode": "firstChildNode"} |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "shortcut-parent-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-parent-node/new-child"
 
@@ -263,7 +248,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId           | "shortcut-parent-node"                                         |
       | originDimensionSpacePoint | {}                                                             |
       | propertyValues            | {"targetMode": "selectedTarget", "target": "https://neos.io/"} |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "shortcut-parent-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "https://neos.io/"
 
@@ -276,7 +260,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId     | "shortcuts"                                                            |
       | initialPropertyValues     | {"uriPathSegment": "invalid-target-mode", "targetMode": "invalidMode"} |
       | nodeName                  | "some-node-name"                                                       |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then The node "invalid-target-mode" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
@@ -289,7 +272,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId     | "shortcuts"                                                                  |
       | initialPropertyValues     | {"uriPathSegment": "invalid-missing-target", "targetMode": "selectedTarget"} |
       | nodeName                  | "some-node-name"                                                             |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then The node "invalid-missing-target" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
@@ -302,7 +284,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId     | "shortcuts"                                                                        |
       | initialPropertyValues     | {"uriPathSegment": "invalid-shortcut-first-child", "targetMode": "firstChildNode"} |
       | nodeName                  | "some-node-name"                                                                   |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then The node "invalid-shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
@@ -315,7 +296,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId     | "shortcuts"                                                                                                                |
       | initialPropertyValues     | {"uriPathSegment": "invalid-shortcut-selected-node", "targetMode": "selectedTarget", "target": "node://non-existing-node"} |
       | nodeName                  | "some-node-name"                                                                                                           |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then The node "invalid-shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
@@ -328,7 +308,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId     | "shortcuts"                                                                                               |
       | initialPropertyValues     | {"uriPathSegment": "invalid-shortcut-selected-node", "targetMode": "selectedTarget", "target": "node://"} |
       | nodeName                  | "some-node-name"                                                                                          |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then The node "invalid-shortcut-selected-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
 
@@ -338,7 +317,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName       | initialPropertyValues                                                                                      | nodeName |
       | level-1         | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "level1", "targetMode": "selectedTarget", "target": "node://level-2"}                   | level1   |
       | level-2         | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "level2", "targetMode": "selectedTarget", "target": "node://shortcut-first-child-node"} | level2   |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then the node "level-1" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
     Then the node "level-2" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
@@ -349,6 +327,5 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName       | initialPropertyValues                                                              | nodeName |
       | node-a          | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "a", "targetMode": "selectedTarget", "target": "node://node-b"} | node-a   |
       | node-b          | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "b", "targetMode": "selectedTarget", "target": "node://node-a"} | node-b   |
-    And The documenturipath projection is up to date
     When I am on URL "/"
     Then The node "node-a" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL

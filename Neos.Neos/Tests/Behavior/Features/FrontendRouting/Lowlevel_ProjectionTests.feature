@@ -44,7 +44,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | Key                         | Value                    |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
 
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues           | nodeName |
@@ -53,7 +52,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | b               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b"}         | b        |
       | c               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "c"}         | c        |
     And A site exists for node name "site"
-    And The documenturipath projection is up to date
 
   Scenario: initial state
     Then I expect the documenturipath table to contain exactly:
@@ -71,7 +69,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
       | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -87,7 +84,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
       | newSucceedingSiblingNodeAggregateId | "b"             |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -103,7 +99,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
       | newSucceedingSiblingNodeAggregateId | "a"             |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -119,7 +114,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
       | newSucceedingSiblingNodeAggregateId | "c"             |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -135,7 +129,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
       | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -151,14 +144,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
       | newSucceedingSiblingNodeAggregateId | "a"             |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
       | nodeAggregateId                     | "c"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
       | newSucceedingSiblingNodeAggregateId | "a"             |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -174,7 +165,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | "a"             |
       | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                         | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                    | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -192,14 +182,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | parentNodeAggregateId            | "b"                           |
       | initialPropertyValues            | {"uriPathSegment": "b1"}      |
       | succeedingSiblingNodeAggregateId | null                          |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
       | nodeAggregateId                     | "b"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | "a"             |
       | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath  | nodeaggregateidpath                            | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""       | "lady-eleonode-rootford"                       | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -218,14 +206,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | parentNodeAggregateId            | "b"                           |
       | initialPropertyValues            | {"uriPathSegment": "b1"}      |
       | succeedingSiblingNodeAggregateId | null                          |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
       | nodeAggregateId                     | "b1"            |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | "a"             |
       | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                          | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                     | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -248,7 +234,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | "a"             |
       | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath    | nodeaggregateidpath                              | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""         | "lady-eleonode-rootford"                         | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -273,7 +258,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | "b"             |
       | newSucceedingSiblingNodeAggregateId | "b2"            |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath    | nodeaggregateidpath                              | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""         | "lady-eleonode-rootford"                         | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -291,7 +275,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | nodeAggregateId | "c"                                    |
       | newNodeTypeName | "Neos.Neos:Test.Routing.SomeOtherPage" |
       | strategy        | "happypath"                            |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                           |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"                      |
