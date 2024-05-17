@@ -52,7 +52,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsAbstract;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
@@ -312,7 +311,7 @@ trait ConstraintChecks
     }
 
     /**
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      * @throws NodeConstraintException
      */
     protected function requireNodeTypeConstraintsImposedByParentToBeMet(

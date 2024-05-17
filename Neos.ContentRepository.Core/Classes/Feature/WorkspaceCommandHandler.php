@@ -618,7 +618,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
      * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException
-     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException
+     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     private function handleDiscardIndividualNodesFromWorkspace(

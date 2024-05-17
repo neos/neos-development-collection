@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\NodeType;
 
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Utility\Arrays;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
@@ -107,7 +107,7 @@ final class NodeTypeManager
     /**
      * Returns the specified node type (which could be abstract)
      *
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function getNodeType(string|NodeTypeName $nodeTypeName): ?NodeType
     {
@@ -242,7 +242,7 @@ final class NodeTypeManager
      * @param array<string,mixed> $completeNodeTypeConfiguration the full node type configuration for all node types
      * @throws NodeConfigurationException
      * @throws NodeTypeIsFinalException
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     private function loadNodeType(string $nodeTypeName, array &$completeNodeTypeConfiguration): NodeType
     {
@@ -251,7 +251,7 @@ final class NodeTypeManager
         }
 
         if (!isset($completeNodeTypeConfiguration[$nodeTypeName])) {
-            throw new NodeTypeNotFoundException('Node type "' . $nodeTypeName . '" does not exist', 1316451800);
+            throw new NodeTypeNotFound('Node type "' . $nodeTypeName . '" does not exist', 1316451800);
         }
 
         $nodeTypeConfiguration = $completeNodeTypeConfiguration[$nodeTypeName];

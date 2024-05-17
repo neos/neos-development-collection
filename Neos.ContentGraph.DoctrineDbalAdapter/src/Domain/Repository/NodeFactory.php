@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -36,8 +35,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -159,7 +157,7 @@ final class NodeFactory
 
     /**
      * @param array<int,array<string,string>> $nodeRows
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function mapNodeRowsToNodeAggregate(
         array $nodeRows,
@@ -176,7 +174,7 @@ final class NodeFactory
         $rawNodeName = '';
         $rawNodeAggregateClassification = '';
         $occupiedDimensionSpacePoints = [];
-        $nodesByOccupiedDimensionSpacePoints = [];
+        $nodesByOccupiedDimensionSpacePoint = [];
         $coveredDimensionSpacePoints = [];
         $nodesByCoveredDimensionSpacePoints = [];
         $coverageByOccupants = [];
@@ -186,9 +184,9 @@ final class NodeFactory
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
             $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
-            if (!isset($nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash])) {
+            if (!isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])) {
                 // ... so we handle occupation exactly once ...
-                $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
+                $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
                     $workspaceName,
                     $contentStreamId,
@@ -211,7 +209,7 @@ final class NodeFactory
                 = $coveredDimensionSpacePoint;
             $occupationByCovering[$coveredDimensionSpacePoint->hash] = $occupiedDimensionSpacePoint;
             $nodesByCoveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash]
-                = $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash];
+                = $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash];
             // ... as we do for explicit subtree tags
             foreach (self::extractNodeTagsFromJson($nodeRow['subtreetags'])->withoutInherited() as $explicitTag) {
                 $dimensionSpacePointsBySubtreeTags = $dimensionSpacePointsBySubtreeTags->withSubtreeTagAndDimensionSpacePoint($explicitTag, $coveredDimensionSpacePoint);
@@ -220,8 +218,9 @@ final class NodeFactory
         ksort($occupiedDimensionSpacePoints);
         ksort($coveredDimensionSpacePoints);
 
-        /** @var Node $primaryNode  a nodeAggregate only exists if it at least contains one node. */
-        $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
+        // a nodeAggregate only exists if it at least contains one node
+        assert($nodesByOccupiedDimensionSpacePoint !== []);
+        $primaryNode = current($nodesByOccupiedDimensionSpacePoint);
 
         return new NodeAggregate(
             $primaryNode->subgraphIdentity->contentStreamId,
@@ -230,7 +229,7 @@ final class NodeFactory
             NodeTypeName::fromString($rawNodeTypeName),
             $rawNodeName ? NodeName::fromString($rawNodeName) : null,
             new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints),
-            $nodesByOccupiedDimensionSpacePoints,
+            $nodesByOccupiedDimensionSpacePoint,
             CoverageByOrigin::fromArray($coverageByOccupants),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoints,
@@ -242,7 +241,7 @@ final class NodeFactory
     /**
      * @param iterable<int,array<string,string>> $nodeRows
      * @return iterable<int,NodeAggregate>
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function mapNodeRowsToNodeAggregates(
         iterable $nodeRows,

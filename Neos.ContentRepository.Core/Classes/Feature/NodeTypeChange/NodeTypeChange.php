@@ -37,7 +37,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
@@ -97,7 +96,7 @@ trait NodeTypeChange
     /**
      * @throws NodeTypeNotFound
      * @throws NodeConstraintException
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws \Exception
      */
@@ -221,7 +220,7 @@ trait NodeTypeChange
     /**
      * NOTE: when changing this method, {@see NodeTypeChange::deleteDisallowedNodesWhenChangingNodeType}
      * needs to be modified as well (as they are structurally the same)
-     * @throws NodeConstraintException|NodeTypeNotFoundException
+     * @throws NodeConstraintException|NodeTypeNotFound
      */
     private function requireConstraintsImposedByHappyPathStrategyAreMet(
         ContentGraphInterface $contentGraph,

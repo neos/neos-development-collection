@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
@@ -85,7 +85,7 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
         );
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         if (!$siteNodeType) {
-            throw new NodeTypeNotFoundException(
+            throw new NodeTypeNotFound(
                 'Cannot create a site using a non-existing node type.',
                 1412372375
             );
@@ -106,12 +106,6 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
         }
 
         $rootDimensionSpacePoints = $this->interDimensionalVariationGraph->getRootGeneralizations();
-        if (empty($rootDimensionSpacePoints)) {
-            throw new \InvalidArgumentException(
-                'The dimension space is empty, please check your configuration.',
-                1651957153
-            );
-        }
         $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
 
         $siteNodeAggregateId = NodeAggregateId::create();
