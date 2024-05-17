@@ -95,7 +95,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     ) {
         $this->sitesNodeTypeName = NodeTypeNameFactory::forSites();
         $this->contentStreamId = ContentStreamId::create();
-        $this->workspaceName = WorkspaceName::forLive(); // TODO should this be configurable?
+        $this->workspaceName = WorkspaceName::forLive();
         $this->visitedNodes = new VisitedNodeAggregates();
     }
 
