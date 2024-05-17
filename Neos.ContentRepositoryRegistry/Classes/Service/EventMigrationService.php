@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\EventStoreInterface;
@@ -350,7 +351,11 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 continue;
             }
             $eventData = self::decodeEventPayload($eventEnvelope);
-            $this->updateEventPayload($eventEnvelope->sequenceNumber, [...$eventData, 'workspaceName' => $workspaceNamesByContentStreamId[$eventData['contentStreamId']]]);
+            $workspaceName = $workspaceNamesByContentStreamId[$eventData['contentStreamId']] ?? null;
+            if ($workspaceName === null) {
+                $workspaceName = WorkspaceName::fromString('missing');
+            }
+            $this->updateEventPayload($eventEnvelope->sequenceNumber, [...$eventData, 'workspaceName' => $workspaceName]);
             $numberOfMigratedEvents++;
         }
         if ($numberOfMigratedEvents === 0) {
