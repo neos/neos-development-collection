@@ -244,7 +244,8 @@ final class NodeFactory
         }
 
         return new NodeAggregate(
-            $contentStreamId,
+            $this->contentRepositoryId,
+            WorkspaceName::fromString('missing'), // todo
             $nodeAggregateId,
             $nodeAggregateClassification,
             $nodeTypeName,
@@ -257,6 +258,7 @@ final class NodeFactory
             OriginByCoverage::fromArray($occupationByCovered),
             // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregate())
             DimensionSpacePointsBySubtreeTags::create(),
+            $contentStreamId,
         );
     }
 
@@ -341,7 +343,8 @@ final class NodeFactory
 
         foreach ($nodeAggregateIds as $key => $nodeAggregateId) {
             yield new NodeAggregate(
-                $contentStreamId,
+                $this->contentRepositoryId,
+                WorkspaceName::fromString('missing'), // todo
                 $nodeAggregateId,
                 $nodeAggregateClassifications[$key],
                 $nodeTypeNames[$key],
@@ -354,6 +357,7 @@ final class NodeFactory
                 OriginByCoverage::fromArray($occupationByCovered[$key]),
                 // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregates())
                 DimensionSpacePointsBySubtreeTags::create(),
+                $contentStreamId,
             );
         }
     }
