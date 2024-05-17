@@ -163,6 +163,7 @@ trait NodeVariationInternals
         array $events
     ): array {
         $events[] = new NodeGeneralizationVariantWasCreated(
+            $contentGraph->getWorkspaceName(),
             $contentGraph->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
@@ -225,6 +226,7 @@ trait NodeVariationInternals
         array $events
     ): array {
         $events[] = new NodePeerVariantWasCreated(
+            $contentGraph->getWorkspaceName(),
             $contentGraph->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
