@@ -165,18 +165,6 @@ trait RoutingTrait
     }
 
     /**
-     * @When The documenturipath projection is up to date
-     */
-    public function theDocumenturipathProjectionIsUpToDate(): void
-    {
-        if ($this->lastCommandOrEventResult === null) {
-            // we just blocked in "The graph projection is up to date"
-            return;
-        }
-        $this->lastCommandOrEventResult->block();
-    }
-
-    /**
      * @When I am on URL :url
      */
     public function iAmOnUrl(string $url): void

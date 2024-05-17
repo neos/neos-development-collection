@@ -19,13 +19,11 @@ Feature: Run integrity violation detection regarding subtree tag inheritance
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
       | nodeAggregateId             | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
-    And the graph projection is fully up to date
 
   Scenario: Create nodes, disable the topmost and remove some restriction edges manually
     When the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -64,7 +62,6 @@ Feature: Run integrity violation detection regarding subtree tag inheritance
       | nodeAggregateId              | "sir-david-nodenborough"                                 |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | tag                          | "disabled"                                               |
-    And the graph projection is fully up to date
     And I remove the following subtree tag:
       | Key                   | Value                        |
       | contentStreamId       | "cs-identifier"              |

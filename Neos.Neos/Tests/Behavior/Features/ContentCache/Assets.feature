@@ -58,7 +58,6 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on asset changes
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                                                                       | nodeName |
       | a               | root                  | Neos.Neos:Site               | {}                                                                                          | site     |

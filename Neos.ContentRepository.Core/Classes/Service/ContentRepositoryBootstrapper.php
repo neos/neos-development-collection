@@ -52,7 +52,7 @@ final readonly class ContentRepositoryBootstrapper
                 WorkspaceDescription::fromString('Public live workspace'),
                 ContentStreamId::create()
             )
-        )->block();
+        );
         $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($liveWorkspaceName);
         if (!$liveWorkspace) {
             throw new \Exception('Live workspace creation failed', 1699002435);
@@ -81,7 +81,7 @@ final readonly class ContentRepositoryBootstrapper
                 $workspace->workspaceName,
                 $rootNodeAggregateId,
                 $rootNodeTypeName,
-            ))->block();
+            ));
             return $rootNodeAggregateId;
         }
     }

@@ -30,7 +30,6 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
@@ -59,7 +58,6 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | nodeName                      | "sub"                                        |
       | nodeAggregateClassification   | "regular"                                    |
 
-    And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:SubDocument"
@@ -120,7 +118,6 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
@@ -149,7 +146,6 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | nodeName                      | "sub"                                        |
       | nodeAggregateClassification   | "regular"                                    |
 
-    And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:SubDocument"

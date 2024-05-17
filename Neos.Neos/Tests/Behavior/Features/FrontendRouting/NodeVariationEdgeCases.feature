@@ -27,26 +27,22 @@ Feature: Test cases for node variation edge cases
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                    |
       | nodeAggregateId           | "shernode-homes"         |
       | nodeTypeName              | "Neos.Neos:Site"         |
       | parentNodeAggregateId     | "lady-eleonode-rootford" |
       | originDimensionSpacePoint | {"example":"source"}     |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
       | nodeAggregateId | "shernode-homes"     |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | originDimensionSpacePoint | nodeName          | parentNodeAggregateId | succeedingSiblingNodeAggregateId | nodeTypeName       | initialPropertyValues          |
     # Set up our test subject document
@@ -61,13 +57,11 @@ Feature: Test cases for node variation edge cases
       | nodeAggregateId | "nody-mc-nodeface"   |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
       | nodeAggregateId | "elder-mc-nodeface"  |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
-    And the graph projection is fully up to date
     # Complete the sibling set with a node in the target DSP between the middle and last node
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                         |
@@ -77,13 +71,11 @@ Feature: Test cases for node variation edge cases
       | originDimensionSpacePoint | {"example":"peer"}            |
       | nodeName                  | "younger-document"            |
       | initialPropertyValues     | {"uriPathSegment": "younger"} |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                  |
       | nodeAggregateId | "youngest-mc-nodeface" |
       | sourceOrigin    | {"example":"source"}   |
       | targetOrigin    | {"example":"peer"}     |
-    And the graph projection is fully up to date
 
     Then I expect the documenturipath table to contain exactly:
       # source: 65901ded4f068dac14ad0dce4f459b29
@@ -136,20 +128,17 @@ Feature: Test cases for node variation edge cases
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                     |
       | nodeAggregateId           | "shernode-homes"          |
       | nodeTypeName              | "Neos.Neos:Site"          |
       | parentNodeAggregateId     | "lady-eleonode-rootford"  |
       | originDimensionSpacePoint | {"example":"rootGeneral"} |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | originDimensionSpacePoint | nodeName          | parentNodeAggregateId | succeedingSiblingNodeAggregateId | nodeTypeName       | initialPropertyValues          |
     # Let's create some siblings, both in source and target, to check ordering
@@ -164,19 +153,16 @@ Feature: Test cases for node variation edge cases
       | nodeAggregateId | "nody-mc-nodeface"    |
       | sourceOrigin    | {"example":"source"}  |
       | targetOrigin    | {"example":"general"} |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
       | nodeAggregateId | "elder-mc-nodeface"   |
       | sourceOrigin    | {"example":"source"}  |
       | targetOrigin    | {"example":"general"} |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                  |
       | nodeAggregateId | "youngest-mc-nodeface" |
       | sourceOrigin    | {"example":"source"}   |
       | targetOrigin    | {"example":"general"}  |
-    And the graph projection is fully up to date
 
     Then I expect the documenturipath table to contain exactly:
       # general: 033e5de7b423f45bb4f5a09f73af839e
@@ -234,20 +220,17 @@ Feature: Test cases for node variation edge cases
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                    |
       | nodeAggregateId           | "shernode-homes"         |
       | nodeTypeName              | "Neos.Neos:Site"         |
       | parentNodeAggregateId     | "lady-eleonode-rootford" |
       | originDimensionSpacePoint | {"example":"source"}     |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | nodeName          | parentNodeAggregateId | succeedingSiblingNodeAggregateId | nodeTypeName       | initialPropertyValues          |
     # Let's create our test subject...
@@ -262,7 +245,6 @@ Feature: Test cases for node variation edge cases
       | nodeAggregateId              | "nody-mc-nodeface"   |
       | coveredDimensionSpacePoint   | {"example":"spec"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
@@ -270,7 +252,6 @@ Feature: Test cases for node variation edge cases
       | nodeAggregateId | "nody-mc-nodeface"   |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"spec"}   |
-    And the graph projection is fully up to date
 
     Then I expect the documenturipath table to contain exactly:
       # source: 65901ded4f068dac14ad0dce4f459b29

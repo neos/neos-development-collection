@@ -29,7 +29,6 @@ Feature: Remove Nodes from Aggregate
       | workspaceTitle           | "Live"                                 |
       | workspaceDescription     | "The live workspace"                   |
       | newContentStreamId  | "live-cs-identifier"                   |
-    And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
       | contentStreamId  | "live-cs-identifier"                   |
@@ -65,7 +64,6 @@ Feature: Remove Nodes from Aggregate
       | originDimensionSpacePoint     | {"language":"de"}                         |
       | parentNodeAggregateId | "nodimus-prime"                           |
       | nodeName                      | "grandchild-document"                     |
-    And the graph projection is fully up to date
 
   ########################
   # Section: EXTRA testcases
@@ -96,7 +94,6 @@ Feature: Remove Nodes from Aggregate
       | contentStreamId | "live-cs-identifier"                   |
       | nodeAggregateId | "nodasaurus-rex"                       |
       | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] |
-    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 3 nodes
     And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
@@ -121,7 +118,6 @@ Feature: Remove Nodes from Aggregate
       | contentStreamId | "live-cs-identifier" |
       | nodeAggregateId | "nodasaurus-rex"     |
       | dimensionSpacePointSet  | [{"language":"gsw"}] |
-    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
@@ -152,7 +148,6 @@ Feature: Remove Nodes from Aggregate
       | contentStreamId | "live-cs-identifier" |
       | nodeAggregateId | "nody-mc-nodeface"   |
       | dimensionSpacePointSet  | [{"language":"de"}]  |
-    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 1 nodes
     And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
@@ -172,7 +167,6 @@ Feature: Remove Nodes from Aggregate
       | contentStreamId | "live-cs-identifier" |
       | nodeAggregateId | "nody-mc-nodeface"   |
       | dimensionSpacePointSet  | [{"language":"gsw"}] |
-    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
@@ -200,13 +194,11 @@ Feature: Remove Nodes from Aggregate
       | Key                           | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "live-cs-identifier" |
-    And the graph projection is fully up to date
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                                  |
       | contentStreamId | "user-cs-identifier"                   |
       | nodeAggregateId | "nodasaurus-rex"                        |
       | dimensionSpacePointSet  | [{"language":"de"}] |
-    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
@@ -255,14 +247,12 @@ Feature: Remove Nodes from Aggregate
       | Key                           | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "live-cs-identifier" |
-    And the graph projection is fully up to date
 
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                |
       | contentStreamId | "user-cs-identifier" |
       | nodeAggregateId | "nodimus-prime"      |
       | dimensionSpacePointSet  | [{"language":"gsw"}] |
-    And the graph projection is fully up to date
 
     When I am in content stream "user-cs-identifier" and dimension space point {"language":"de"}
     Then I expect a node "doc-identifier-de" to exist in the graph projection
@@ -297,14 +287,12 @@ Feature: Remove Nodes from Aggregate
       | Key                           | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "live-cs-identifier" |
-    And the graph projection is fully up to date
 
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                                  |
       | contentStreamId | "user-cs-identifier"                   |
       | nodeAggregateId | "nody-mc-nodeface"                     |
       | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] |
-    And the graph projection is fully up to date
 
     When I am in content stream "user-cs-identifier" and dimension space point {"language":"de"}
     Then I expect a node "doc-identifier-de" not to exist in the graph projection
@@ -339,14 +327,12 @@ Feature: Remove Nodes from Aggregate
       | Key                           | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "live-cs-identifier" |
-    And the graph projection is fully up to date
 
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                |
       | contentStreamId | "user-cs-identifier" |
       | nodeAggregateId | "nody-mc-nodeface"   |
       | dimensionSpacePointSet  | [{"language":"gsw"}] |
-    And the graph projection is fully up to date
 
     When I am in content stream "user-cs-identifier" and dimension space point {"language":"de"}
     Then I expect a node "doc-identifier-de" to exist in the graph projection

@@ -23,14 +23,12 @@ Feature: Change node aggregate name
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example":"source"}
 
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeTypeName                                            | originDimensionSpacePoint | parentNodeAggregateId  | nodeName            | tetheredDescendantNodeAggregateIds |
       | sir-david-nodenborough | Neos.ContentRepository.Testing:Node                     | {"example":"general"}     | lady-eleonode-rootford | parent-document     | {}                                 |
@@ -41,14 +39,12 @@ Feature: Change node aggregate name
       | nodeAggregateId | "nody-mc-nodeface"    |
       | sourceOrigin    | {"example":"source"}  |
       | targetOrigin    | {"example":"general"} |
-    And the graph projection is fully up to date
     # leave spec as a virtual variant
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
       | nodeAggregateId | "nody-mc-nodeface"    |
       | sourceOrigin    | {"example":"source"}  |
       | targetOrigin    | {"example":"peer"}    |
-    And the graph projection is fully up to date
 
   Scenario: Rename a child node aggregate with descendants
     When the command ChangeNodeAggregateName is executed with payload:
@@ -95,7 +91,6 @@ Feature: Change node aggregate name
       | dimensionSpacePoint                 | {"example": "peer"}       |
       | newParentNodeAggregateId            | "lady-eleonode-rootford"  |
       | relationDistributionStrategy        | "scatter"                 |
-    And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateName is executed with payload:
       | Key             | Value              |

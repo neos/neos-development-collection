@@ -69,7 +69,7 @@ trait NodeCreation
             $command = $command->withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds']));
         }
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
         $this->currentRootNodeAggregateId = $nodeAggregateId;
     }
 
@@ -124,7 +124,7 @@ trait NodeCreation
             $nodeAggregateId,
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
         $this->currentRootNodeAggregateId = $nodeAggregateId;
     }
 
@@ -161,7 +161,7 @@ trait NodeCreation
         if (isset($commandArguments['tetheredDescendantNodeAggregateIds'])) {
             $command = $command->withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds']));
         }
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**
@@ -211,8 +211,7 @@ trait NodeCreation
             if (isset($row['tetheredDescendantNodeAggregateIds'])) {
                 $command = $command->withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths::fromJsonString($row['tetheredDescendantNodeAggregateIds']));
             }
-            $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
-            $this->theGraphProjectionIsFullyUpToDate();
+            $this->currentContentRepository->handle($command);
         }
     }
 
@@ -257,7 +256,7 @@ trait NodeCreation
         if (isset($commandArguments['tetheredDescendantNodeAggregateIds'])) {
             $command = $command->withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds']));
         }
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

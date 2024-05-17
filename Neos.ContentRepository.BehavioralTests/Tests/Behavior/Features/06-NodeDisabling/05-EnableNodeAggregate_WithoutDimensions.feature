@@ -23,13 +23,11 @@ Feature: Enable a node aggregate
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName            |
       | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | preceding-document  |
@@ -41,14 +39,12 @@ Feature: Enable a node aggregate
       | sourceNodeAggregateId | "preceding-nodenborough"               |
       | referenceName                 | "references"                           |
       | references                    | [{"target": "sir-david-nodenborough"}] |
-    And the graph projection is fully up to date
 
   Scenario: Enable a previously disabled node with arbitrary strategy since dimensions are not involved
     Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"       |
-    And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
@@ -63,7 +59,6 @@ Feature: Enable a node aggregate
       | affectedDimensionSpacePoints | [[]]                     |
       | tag                  | "disabled"               |
 
-    When the graph projection is fully up to date
     And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -126,12 +121,10 @@ Feature: Enable a node aggregate
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"       |
-    And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants" |
-    And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
@@ -145,7 +138,6 @@ Feature: Enable a node aggregate
       | affectedDimensionSpacePoints | [[]]                     |
       | tag                  | "disabled"               |
 
-    When the graph projection is fully up to date
     And I am in workspace "live"
 
     Then I expect the node aggregate "sir-david-nodenborough" to exist
@@ -204,12 +196,10 @@ Feature: Enable a node aggregate
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"       |
-    And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants" |
-    And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
@@ -223,7 +213,6 @@ Feature: Enable a node aggregate
       | affectedDimensionSpacePoints | [[]]               |
       | tag                  | "disabled"         |
 
-    When the graph projection is fully up to date
     And I am in workspace "live"
 
     Then I expect the node aggregate "sir-david-nodenborough" to exist

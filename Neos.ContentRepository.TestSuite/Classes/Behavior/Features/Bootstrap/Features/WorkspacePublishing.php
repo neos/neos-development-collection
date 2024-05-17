@@ -53,7 +53,7 @@ trait WorkspacePublishing
             $command = $command->withContentStreamIdForRemainingPart(ContentStreamId::fromString($commandArguments['contentStreamIdForRemainingPart']));
         }
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**
@@ -85,7 +85,7 @@ trait WorkspacePublishing
             );
         }
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

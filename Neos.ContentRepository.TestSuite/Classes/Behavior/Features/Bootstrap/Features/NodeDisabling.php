@@ -57,7 +57,7 @@ trait NodeDisabling
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**
@@ -95,7 +95,7 @@ trait NodeDisabling
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

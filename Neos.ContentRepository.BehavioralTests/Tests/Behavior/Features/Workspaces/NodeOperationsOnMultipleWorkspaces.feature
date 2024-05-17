@@ -16,7 +16,6 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
@@ -42,19 +41,16 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | parentNodeAggregateId | "nody-mc-nodeface"                       |
       | nodeName                      | "pet"                                    |
       | nodeAggregateClassification   | "regular"                                |
-    And the graph projection is fully up to date
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
       | nodeAggregateId   | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Original"}         |
-    And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And the graph projection is fully up to date
 
   Scenario: Set property of a node
     Given the command SetNodeProperties is executed with payload:
@@ -72,7 +68,6 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | originDimensionSpacePoint | []                           |
       | propertyValues.text.value | "Changed"                    |
 
-    When the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:

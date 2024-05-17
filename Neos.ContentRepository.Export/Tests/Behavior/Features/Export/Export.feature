@@ -17,7 +17,6 @@ Feature: As a user of the CR I want to export the event stream
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -34,7 +33,6 @@ Feature: As a user of the CR I want to export the event stream
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
       | nodeName                    | "child-document"                                         |
       | nodeAggregateClassification | "regular"                                                |
-    And the graph projection is fully up to date
 
   Scenario: Export the event stream
     Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-identifier"

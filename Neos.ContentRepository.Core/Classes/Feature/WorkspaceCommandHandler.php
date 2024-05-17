@@ -144,7 +144,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->newContentStreamId,
                 $baseWorkspaceContentGraph->getContentStreamId(),
             )
-        )->block();
+        );
 
         $events = Events::with(
             new WorkspaceWasCreated(
@@ -205,7 +205,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             CreateContentStream::create(
                 $newContentStreamId,
             )
-        )->block();
+        );
 
         $events = Events::with(
             new RootWorkspaceWasCreated(
@@ -243,7 +243,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $workspace->currentContentStreamId,
             $baseWorkspace->workspaceName,
             $baseWorkspace->currentContentStreamId
-        )?->block();
+        );
 
         // After publishing a workspace, we need to again fork from Base.
         $commandHandlingDependencies->handle(
@@ -251,7 +251,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
             )
-        )->block();
+        );
 
         $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
         $events = Events::with(
@@ -365,7 +365,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         // 0) close old content stream
         $commandHandlingDependencies->handle(
             CloseContentStream::create($oldWorkspaceContentStreamId)
-        )->block();
+        );
 
         // 1) fork a new content stream
         $rebasedContentStreamId = $command->rebasedContentStreamId;
@@ -374,7 +374,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->rebasedContentStreamId,
                 $baseWorkspace->currentContentStreamId,
             )
-        )->block();
+        );
 
         $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
@@ -391,7 +391,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 foreach ($originalCommands as $sequenceNumber => $originalCommand) {
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
-                        $commandHandlingDependencies->handle($originalCommand)->block();
+                        $commandHandlingDependencies->handle($originalCommand);
                         // if we came this far, we know the command was applied successfully.
                     } catch (\Exception $e) {
                         $commandsThatFailed = $commandsThatFailed->add(
@@ -429,12 +429,12 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $oldWorkspaceContentStreamId,
                 $oldWorkspaceContentStreamIdState,
             )
-        )->block();
+        );
 
         // ... remove the newly created one...
         $commandHandlingDependencies->handle(RemoveContentStream::create(
             $rebasedContentStreamId
-        ))->block();
+        ));
 
         // ...and throw an exception that contains all the information about what exactly failed
         throw new WorkspaceRebaseFailed($commandsThatFailed, 'Rebase failed', 1711713880);
@@ -515,7 +515,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->contentStreamIdForMatchingPart,
                 $baseWorkspace->currentContentStreamId,
             )
-        )->block();
+        );
 
         try {
             // 4) using the new content stream, apply the matching commands
@@ -533,7 +533,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
                         $commandHandlingDependencies->handle($matchingCommand->createCopyForWorkspace(
                             $baseWorkspace->workspaceName,
-                        ))->block();
+                        ));
                     }
                 }
             );
@@ -543,7 +543,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->contentStreamIdForMatchingPart,
                 $baseWorkspace->workspaceName,
                 $baseWorkspace->currentContentStreamId
-            )?->block();
+            );
 
             // 6) fork a new content stream, based on the base WS, and apply REST
             $commandHandlingDependencies->handle(
@@ -551,7 +551,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $command->contentStreamIdForRemainingPart,
                     $baseWorkspace->currentContentStreamId
                 )
-            )->block();
+            );
 
 
             // 7) apply REMAINING commands to the workspace's new content stream
@@ -560,7 +560,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->contentStreamIdForRemainingPart,
                 function () use ($commandHandlingDependencies, $remainingCommands) {
                     foreach ($remainingCommands as $remainingCommand) {
-                        $commandHandlingDependencies->handle($remainingCommand)->block();
+                        $commandHandlingDependencies->handle($remainingCommand);
                     }
                 }
             );
@@ -571,16 +571,16 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $oldWorkspaceContentStreamId,
                     $oldWorkspaceContentStreamIdState,
                 )
-            )->block();
+            );
 
             $commandHandlingDependencies->handle(RemoveContentStream::create(
                 $command->contentStreamIdForMatchingPart
-            ))->block();
+            ));
 
             try {
                 $commandHandlingDependencies->handle(RemoveContentStream::create(
                     $command->contentStreamIdForRemainingPart
-                ))->block();
+                ));
             } catch (ContentStreamDoesNotExistYet $contentStreamDoesNotExistYet) {
                 // in case the exception was thrown before 6), this does not exist
             }
@@ -640,7 +640,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         // 1) close old content stream
         $commandHandlingDependencies->handle(
             CloseContentStream::create($oldWorkspaceContentStreamId)
-        )->block();
+        );
 
         // 2) filter commands, only keeping the ones NOT MATCHING the nodes from the command
         // (i.e. the modifications we want to keep)
@@ -656,7 +656,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
             )
-        )->block();
+        );
 
         // 4) using the new content stream, apply the commands to keep
         try {
@@ -674,7 +674,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
                         $commandHandlingDependencies->handle($matchingCommand->createCopyForWorkspace(
                             $baseWorkspace->workspaceName,
-                        ))->block();
+                        ));
                     }
                 }
             );
@@ -685,11 +685,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $oldWorkspaceContentStreamId,
                     $oldWorkspaceContentStreamIdState,
                 )
-            )->block();
+            );
 
             $commandHandlingDependencies->handle(RemoveContentStream::create(
                 $command->newContentStreamId
-            ))->block();
+            ));
 
             throw $exception;
         }
@@ -697,7 +697,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         // 5) If everything worked, to avoid dangling content streams, we need to remove the old content stream
         $commandHandlingDependencies->handle(RemoveContentStream::create(
             $oldWorkspaceContentStreamId
-        ))->block();
+        ));
 
         $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
 
@@ -782,7 +782,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $newContentStream,
                 $baseWorkspace->currentContentStreamId,
             )
-        )->block();
+        );
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
@@ -827,7 +827,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
             )
-        )->block();
+        );
 
         $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
         $events = Events::with(
@@ -858,7 +858,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             RemoveContentStream::create(
                 $workspace->currentContentStreamId
             )
-        )->block();
+        );
 
         $events = Events::with(
             new WorkspaceWasRemoved(

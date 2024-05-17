@@ -265,25 +265,27 @@ trait NodeCreation
         ?NodePath $nodePath
     ): Events {
         $events = [];
-        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $rawNodeName => $childNodeType) {
-            assert($childNodeType instanceof NodeType);
-            $nodeName = NodeName::fromString($rawNodeName);
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $childNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
             $childNodePath = $nodePath
-                ? $nodePath->appendPathSegment($nodeName)
-                : NodePath::fromString($nodeName->value);
+                ? $nodePath->appendPathSegment($tetheredNodeTypeDefinition->name)
+                : NodePath::fromString($tetheredNodeTypeDefinition->name->value);
             $childNodeAggregateId = $nodeAggregateIds->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
+            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType(
+                $childNodeType,
+                $this->getPropertyConverter()
+            );
 
             $events[] = new NodeAggregateWithNodeWasCreated(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $childNodeAggregateId,
-                $childNodeType->name,
+                $tetheredNodeTypeDefinition->nodeTypeName,
                 $command->originDimensionSpacePoint,
                 InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings($coveredDimensionSpacePoints),
                 $parentNodeAggregateId,
-                $nodeName,
+                $tetheredNodeTypeDefinition->name,
                 $initialPropertyValues,
                 NodeAggregateClassification::CLASSIFICATION_TETHERED,
             );

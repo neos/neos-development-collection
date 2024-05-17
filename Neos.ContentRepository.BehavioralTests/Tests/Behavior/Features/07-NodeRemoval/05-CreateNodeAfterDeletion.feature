@@ -30,13 +30,11 @@ Feature: Create node specialization
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | nodeName          | parentNodeAggregateId  | succeedingSiblingNodeAggregateId | nodeTypeName                                | tetheredDescendantNodeAggregateIds |
@@ -52,7 +50,6 @@ Feature: Create node specialization
       | nodeAggregateId              | "younger-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example":"spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
-    And the graph projection is fully up to date
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeName            | parentNodeAggregateId  | succeedingSiblingNodeAggregateId | nodeTypeName                                | tetheredDescendantNodeAggregateIds                                                         |
       | nody-mc-nodeface       | document            | lady-eleonode-rootford | younger-mc-nodeface              | Neos.ContentRepository.Testing:Document     | {"tethered-node": "nodewyn-tetherton", "tethered-node/tethered-leaf": "nodimer-tetherton"} |
