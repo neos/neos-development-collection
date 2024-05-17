@@ -80,7 +80,7 @@ final class ContentGraph implements ContentGraphInterface
         public readonly WorkspaceName $workspaceName,
         public readonly ContentStreamId $contentStreamId
     ) {
-        $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $this->tableNames);
+        $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $this->tableNames);
     }
 
     public function getContentRepositoryId(): ContentRepositoryId

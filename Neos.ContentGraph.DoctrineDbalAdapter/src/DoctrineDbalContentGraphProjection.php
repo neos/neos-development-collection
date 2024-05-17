@@ -52,6 +52,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -88,7 +89,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->getTableNamePrefix());
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNames->tableNamePrefix);
     }
 
     /**
@@ -133,7 +134,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->getTableNamePrefix());
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNames->tableNamePrefix);
         $this->getState()->forgetInstances();
     }
 
@@ -161,13 +162,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             default => null,
         };
-        CheckpointHelper::updateCheckpoint($this->dbal, $this->getTableNamePrefix(), $eventEnvelope->sequenceNumber);
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNames->tableNamePrefix, $eventEnvelope->sequenceNumber);
         $this->dbal->commit();
     }
 
     public function getCheckpoint(): SequenceNumber
     {
-        return CheckpointHelper::getCheckpoint($this->dbal, $this->getTableNamePrefix());
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNames->tableNamePrefix);
     }
 
     public function getState(): ContentGraphFinder

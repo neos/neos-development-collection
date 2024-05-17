@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception as DbalDriverException;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\ForwardCompatibility\Result;
@@ -100,7 +101,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         private readonly NodeTypeManager $nodeTypeManager,
         ContentGraphTableNames $tableNames
     ) {
-        $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $tableNames);
+        $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $tableNames);
     }
 
     public function getContentRepositoryId(): ContentRepositoryId

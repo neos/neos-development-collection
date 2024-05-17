@@ -12,10 +12,10 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\ContentGraphFactoryInterface;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
 {
     public function __construct(
-        private DbalClientInterface $client,
+        private Connection $dbal,
         private NodeFactory $nodeFactory,
         private ContentRepositoryId $contentRepositoryId,
         private NodeTypeManager $nodeTypeManager,
@@ -46,7 +46,7 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
             'workspace'
         ));
 
-        $row = $this->client->getConnection()->executeQuery(
+        $row = $this->dbal->executeQuery(
             '
                 SELECT * FROM ' . $tableName . '
                 WHERE workspaceName = :workspaceName
@@ -66,6 +66,6 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
 
     public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraph
     {
-        return new ContentGraph($this->client, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $contentStreamId);
+        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $contentStreamId);
     }
 }
