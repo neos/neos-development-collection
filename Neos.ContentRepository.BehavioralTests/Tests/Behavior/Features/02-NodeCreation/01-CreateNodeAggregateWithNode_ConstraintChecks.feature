@@ -37,13 +37,11 @@ Feature: Create node aggregate with node
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
   Scenario: Try to create a node aggregate in a workspace that currently does not exist:
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
@@ -144,7 +142,6 @@ Feature: Create node aggregate with node
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
       | nodeName              | "document"                            |
-    And the graph projection is fully up to date
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                       | Value                                 |
       | nodeAggregateId           | "nody-mc-nodeface"                    |

@@ -37,12 +37,10 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"example": "source"}
-    And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId            | originDimensionSpacePoint | nodeTypeName                                                 | parentNodeAggregateId      | nodeName              | tetheredDescendantNodeAggregateIds |
       | sir-david-nodenborough     | {"example": "source"}     | Neos.ContentRepository.Testing:DocumentWithTetheredChildNode | lady-eleonode-rootford     | document              | {"tethered": "nodewyn-tetherton"}  |
@@ -137,7 +135,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId              | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
-    And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                        |
       | nodeAggregateId              | "sir-david-nodenborough"     |
@@ -153,7 +150,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"example": "source"}    |
       | targetOrigin    | {"example": "general"}   |
-    And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                        |
       | nodeAggregateId              | "sir-david-nodenborough"     |
@@ -168,7 +164,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId | "sir-nodeward-nodington-iii" |
       | sourceOrigin    | {"example": "source"}        |
       | targetOrigin    | {"example": "peer"}          |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId      | nodeName |
       | nody-mc-nodeface | {"example": "peer"}       | Neos.ContentRepository.Testing:Document | sir-nodeward-nodington-iii | document |
@@ -237,13 +232,11 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeAggregateId              | "rival-destinode"     |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
-    And the graph projection is fully up to date
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                |
       | coveredDimensionSpacePoint   | {"example": "peer"}  |
       | nodeAggregateId              | "rival-destinode"    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                 |

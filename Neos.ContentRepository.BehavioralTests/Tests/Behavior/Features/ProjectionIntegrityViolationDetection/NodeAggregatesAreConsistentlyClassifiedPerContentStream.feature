@@ -19,13 +19,11 @@ Feature: Run projection integrity violation detection regarding node aggregate c
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | newContentStreamId | "cs-identifier"                        |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                  |
       | nodeAggregateId     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
-    And the graph projection is fully up to date
 
   Scenario: Create node variants of different type
     When the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -48,7 +46,6 @@ Feature: Run projection integrity violation detection regarding node aggregate c
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "tethered"                                |
-    And the graph projection is fully up to date
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 errors
     And I expect integrity violation detection result error number 1 to have code 1597825384

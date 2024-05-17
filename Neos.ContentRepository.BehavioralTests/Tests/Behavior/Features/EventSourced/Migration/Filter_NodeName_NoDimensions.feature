@@ -24,12 +24,10 @@ Feature: Filter - Node Name
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live"
-    And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     # Node /name1
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -39,7 +37,6 @@ Feature: Filter - Node Name
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "Original name1"}                |
-    And the graph projection is fully up to date
 
     # Node /name2
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -50,7 +47,6 @@ Feature: Filter - Node Name
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "Original name2"}                |
-    And the graph projection is fully up to date
 
     # no node name
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -60,7 +56,6 @@ Feature: Filter - Node Name
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "no node name"}                  |
-    And the graph projection is fully up to date
 
 
   Scenario: Fixed newValue

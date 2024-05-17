@@ -25,14 +25,12 @@ Feature: Change node name
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example":"source"}
 
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeName | nodeTypeName                            | parentNodeAggregateId  | tetheredDescendantNodeAggregateIds |
       | sir-david-nodenborough | null     | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | {"tethered": "nodewyn-tetherton"}  |
@@ -91,7 +89,6 @@ Feature: Change node name
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"example": "source"}    |
       | targetOrigin    | {"example": "peer"}      |
-    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
       | nodeAggregateId           | "sir-nodeward-nodington-iii"              |
@@ -99,7 +96,6 @@ Feature: Change node name
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId     | "sir-david-nodenborough"                  |
       | nodeName                  | "esquire"                                 |
-    And the graph projection is fully up to date
     When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:
       | Key             | Value              |
       | nodeAggregateId | "nody-mc-nodeface" |
