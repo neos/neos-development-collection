@@ -16,14 +16,12 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -37,12 +35,13 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
@@ -64,6 +63,7 @@ final class NodeFactory
      */
     public function mapNodeRowToNode(
         array $nodeRow,
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
@@ -73,17 +73,13 @@ final class NodeFactory
             : null;
 
         return Node::create(
-            ContentSubgraphIdentity::create(
-                $this->contentRepositoryId,
-                $contentStreamId,
-                $dimensionSpacePoint,
-                $visibilityConstraints
-            ),
+            $this->contentRepositoryId,
+            $workspaceName,
+            $dimensionSpacePoint,
             NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
             $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
-            $nodeType,
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             self::extractNodeTagsFromJson($nodeRow['subtreetags']),
@@ -93,16 +89,30 @@ final class NodeFactory
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
+            $visibilityConstraints,
+            $nodeType,
+            $contentStreamId
         );
     }
 
     /**
      * @param array<int, array<string, mixed>> $nodeRows
      */
-    public function mapNodeRowsToNodes(array $nodeRows, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints): Nodes
-    {
+    public function mapNodeRowsToNodes(
+        array $nodeRows,
+        WorkspaceName $workspaceName,
+        ContentStreamId $contentStreamId,
+        DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints
+    ): Nodes {
         return Nodes::fromArray(
-            array_map(fn (array $nodeRow) => $this->mapNodeRowToNode($nodeRow, $contentStreamId, $dimensionSpacePoint, $visibilityConstraints), $nodeRows)
+            array_map(fn (array $nodeRow) => $this->mapNodeRowToNode(
+                $nodeRow,
+                $workspaceName,
+                $contentStreamId,
+                $dimensionSpacePoint,
+                $visibilityConstraints
+            ), $nodeRows)
         );
     }
 
@@ -119,6 +129,7 @@ final class NodeFactory
      */
     public function mapReferenceRowsToReferences(
         array $nodeRows,
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
@@ -127,6 +138,7 @@ final class NodeFactory
         foreach ($nodeRows as $nodeRow) {
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
+                $workspaceName,
                 $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
@@ -145,10 +157,11 @@ final class NodeFactory
 
     /**
      * @param array<int,array<string,string>> $nodeRows
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function mapNodeRowsToNodeAggregate(
         array $nodeRows,
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
     ): ?NodeAggregate {
@@ -161,7 +174,7 @@ final class NodeFactory
         $rawNodeName = '';
         $rawNodeAggregateClassification = '';
         $occupiedDimensionSpacePoints = [];
-        $nodesByOccupiedDimensionSpacePoints = [];
+        $nodesByOccupiedDimensionSpacePoint = [];
         $coveredDimensionSpacePoints = [];
         $nodesByCoveredDimensionSpacePoints = [];
         $coverageByOccupants = [];
@@ -171,10 +184,11 @@ final class NodeFactory
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
             $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
-            if (!isset($nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash])) {
+            if (!isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])) {
                 // ... so we handle occupation exactly once ...
-                $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
+                $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
+                    $workspaceName,
                     $contentStreamId,
                     $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                     $visibilityConstraints
@@ -195,7 +209,7 @@ final class NodeFactory
                 = $coveredDimensionSpacePoint;
             $occupationByCovering[$coveredDimensionSpacePoint->hash] = $occupiedDimensionSpacePoint;
             $nodesByCoveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash]
-                = $nodesByOccupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash];
+                = $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash];
             // ... as we do for explicit subtree tags
             foreach (self::extractNodeTagsFromJson($nodeRow['subtreetags'])->withoutInherited() as $explicitTag) {
                 $dimensionSpacePointsBySubtreeTags = $dimensionSpacePointsBySubtreeTags->withSubtreeTagAndDimensionSpacePoint($explicitTag, $coveredDimensionSpacePoint);
@@ -204,8 +218,9 @@ final class NodeFactory
         ksort($occupiedDimensionSpacePoints);
         ksort($coveredDimensionSpacePoints);
 
-        /** @var Node $primaryNode  a nodeAggregate only exists if it at least contains one node. */
-        $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
+        // a nodeAggregate only exists if it at least contains one node
+        assert($nodesByOccupiedDimensionSpacePoint !== []);
+        $primaryNode = current($nodesByOccupiedDimensionSpacePoint);
 
         return new NodeAggregate(
             $primaryNode->subgraphIdentity->contentStreamId,
@@ -214,7 +229,7 @@ final class NodeFactory
             NodeTypeName::fromString($rawNodeTypeName),
             $rawNodeName ? NodeName::fromString($rawNodeName) : null,
             new OriginDimensionSpacePointSet($occupiedDimensionSpacePoints),
-            $nodesByOccupiedDimensionSpacePoints,
+            $nodesByOccupiedDimensionSpacePoint,
             CoverageByOrigin::fromArray($coverageByOccupants),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoints,
@@ -226,10 +241,11 @@ final class NodeFactory
     /**
      * @param iterable<int,array<string,string>> $nodeRows
      * @return iterable<int,NodeAggregate>
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function mapNodeRowsToNodeAggregates(
         iterable $nodeRows,
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
     ): iterable {
@@ -256,6 +272,7 @@ final class NodeFactory
                 $nodesByOccupiedDimensionSpacePointsByNodeAggregate
                     [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                         $nodeRow,
+                        $workspaceName,
                         $contentStreamId,
                         $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                         $visibilityConstraints

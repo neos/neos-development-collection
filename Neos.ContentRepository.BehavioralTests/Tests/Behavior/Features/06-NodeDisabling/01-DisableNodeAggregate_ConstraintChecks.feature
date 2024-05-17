@@ -23,7 +23,7 @@ Feature: Constraint checks on node aggregate disabling
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -39,7 +39,7 @@ Feature: Constraint checks on node aggregate disabling
       | workspaceName      | "i-do-not-exist"                       |
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to disable a node aggregate in a workspace whose content stream is closed
     When the command CloseContentStream is executed with payload:

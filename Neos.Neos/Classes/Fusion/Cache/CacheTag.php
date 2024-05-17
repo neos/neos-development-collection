@@ -8,7 +8,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -32,12 +32,12 @@ class CacheTag
 
     final public static function forNodeAggregate(
         ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
         return new self(
             'Node_'
-            . self::getHashForContentStreamIdAndContentRepositoryId($contentStreamId, $contentRepositoryId)
+            . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
             . '_' . $nodeAggregateId->value
         );
     }
@@ -45,20 +45,20 @@ class CacheTag
     final public static function forNodeAggregateFromNode(Node $node): self
     {
         return self::forNodeAggregate(
-            $node->subgraphIdentity->contentRepositoryId,
-            $node->subgraphIdentity->contentStreamId,
+            $node->contentRepositoryId,
+            $node->workspaceName,
             $node->nodeAggregateId
         );
     }
 
     final public static function forDescendantOfNode(
         ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
         return new self(
             'DescendantOf_'
-            . self::getHashForContentStreamIdAndContentRepositoryId($contentStreamId, $contentRepositoryId)
+            . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
             . '_' . $nodeAggregateId->value
         );
     }
@@ -66,20 +66,20 @@ class CacheTag
     final public static function forDescendantOfNodeFromNode(Node $node): self
     {
         return self::forDescendantOfNode(
-            $node->subgraphIdentity->contentRepositoryId,
-            $node->subgraphIdentity->contentStreamId,
-            $node->nodeAggregateId
+            $node->contentRepositoryId,
+            $node->workspaceName,
+            $node->aggregateId
         );
     }
 
     final public static function forAncestorNode(
         ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
         return new self(
             'Ancestor_'
-            . self::getHashForContentStreamIdAndContentRepositoryId($contentStreamId, $contentRepositoryId)
+            . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
             . '_' . $nodeAggregateId->value
         );
     }
@@ -87,32 +87,32 @@ class CacheTag
     final public static function forAncestorNodeFromNode(Node $node): self
     {
         return self::forAncestorNode(
-            $node->subgraphIdentity->contentRepositoryId,
-            $node->subgraphIdentity->contentStreamId,
-            $node->nodeAggregateId
+            $node->contentRepositoryId,
+            $node->workspaceName,
+            $node->aggregateId
         );
     }
 
     final public static function forNodeTypeName(
         ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeTypeName $nodeTypeName,
     ): self {
         return new self(
             'NodeType_'
-            . self::getHashForContentStreamIdAndContentRepositoryId($contentStreamId, $contentRepositoryId)
+            . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
             . '_' . \strtr($nodeTypeName->value, '.:', '_-')
         );
     }
 
     final public static function forDynamicNodeAggregate(
         ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
         return new self(
             'DynamicNodeTag_'
-            . self::getHashForContentStreamIdAndContentRepositoryId($contentStreamId, $contentRepositoryId)
+            . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
             . '_' . $nodeAggregateId->value
         );
     }
@@ -122,10 +122,10 @@ class CacheTag
         return new self($string);
     }
 
-    protected static function getHashForContentStreamIdAndContentRepositoryId(
-        ContentStreamId $contentStreamId,
+    protected static function getHashForWorkspaceNameAndContentRepositoryId(
+        WorkspaceName $workspaceName,
         ContentRepositoryId $contentRepositoryId,
     ): string {
-        return sha1($contentStreamId->value . '@' . $contentRepositoryId->value);
+        return sha1($workspaceName->value . '@' . $contentRepositoryId->value);
     }
 }

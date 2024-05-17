@@ -86,9 +86,7 @@ trait SubtreeTagging
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            array_key_exists('contentStreamId', $eventPayload)
-                ? ContentStreamId::fromString($eventPayload['contentStreamId'])
-                : $this->currentContentStreamId
+            ContentStreamId::fromString($eventPayload['contentStreamId'])
         );
 
         $this->publishEvent('SubtreeWasTagged', $streamName->getEventStreamName(), $eventPayload);
@@ -104,9 +102,7 @@ trait SubtreeTagging
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            array_key_exists('contentStreamId', $eventPayload)
-                ? ContentStreamId::fromString($eventPayload['contentStreamId'])
-                : $this->currentContentStreamId
+            ContentStreamId::fromString($eventPayload['contentStreamId'])
         );
 
         $this->publishEvent('SubtreeWasUntagged', $streamName->getEventStreamName(), $eventPayload);

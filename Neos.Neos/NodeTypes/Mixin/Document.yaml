@@ -59,7 +59,7 @@
     _hidden:
       ui:
         reloadPageIfChanged: true
-    _hiddenInIndex:
+    hiddenInMenu:
       type: boolean
       ui:
         label: i18n

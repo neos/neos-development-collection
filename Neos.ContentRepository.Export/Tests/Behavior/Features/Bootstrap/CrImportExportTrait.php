@@ -18,7 +18,6 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -206,11 +205,4 @@ trait CrImportExportTrait
      * @return T
      */
     abstract private function getObject(string $className): object;
-
-    protected function getTableNamePrefix(): string
-    {
-        return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
-            $this->currentContentRepository->id
-        );
-    }
 }

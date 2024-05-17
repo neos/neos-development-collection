@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -24,7 +25,6 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\Common\ContentStreamIdOverride;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\PublishableInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
@@ -68,6 +68,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingS
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -97,21 +98,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
+    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
-            CreateWorkspace::class => $this->handleCreateWorkspace($command, $contentRepository),
-            RenameWorkspace::class => $this->handleRenameWorkspace($command, $contentRepository),
-            CreateRootWorkspace::class => $this->handleCreateRootWorkspace($command, $contentRepository),
-            PublishWorkspace::class => $this->handlePublishWorkspace($command, $contentRepository),
-            RebaseWorkspace::class => $this->handleRebaseWorkspace($command, $contentRepository),
-            PublishIndividualNodesFromWorkspace::class => $this->handlePublishIndividualNodesFromWorkspace($command, $contentRepository),
-            DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository),
-            DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $contentRepository),
-            DeleteWorkspace::class => $this->handleDeleteWorkspace($command, $contentRepository),
-            ChangeWorkspaceOwner::class => $this->handleChangeWorkspaceOwner($command, $contentRepository),
-            ChangeBaseWorkspace::class => $this->handleChangeBaseWorkspace($command, $contentRepository),
+            CreateWorkspace::class => $this->handleCreateWorkspace($command, $commandHandlingDependencies),
+            RenameWorkspace::class => $this->handleRenameWorkspace($command, $commandHandlingDependencies),
+            CreateRootWorkspace::class => $this->handleCreateRootWorkspace($command, $commandHandlingDependencies),
+            PublishWorkspace::class => $this->handlePublishWorkspace($command, $commandHandlingDependencies),
+            RebaseWorkspace::class => $this->handleRebaseWorkspace($command, $commandHandlingDependencies),
+            PublishIndividualNodesFromWorkspace::class => $this->handlePublishIndividualNodesFromWorkspace($command, $commandHandlingDependencies),
+            DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $commandHandlingDependencies),
+            DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $commandHandlingDependencies),
+            DeleteWorkspace::class => $this->handleDeleteWorkspace($command, $commandHandlingDependencies),
+            ChangeWorkspaceOwner::class => $this->handleChangeWorkspaceOwner($command, $commandHandlingDependencies),
+            ChangeBaseWorkspace::class => $this->handleChangeBaseWorkspace($command, $commandHandlingDependencies),
         };
     }
 
@@ -123,17 +124,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function handleCreateWorkspace(
         CreateWorkspace $command,
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $existingWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->workspaceName);
-        if ($existingWorkspace !== null) {
-            throw new WorkspaceAlreadyExists(sprintf(
-                'The workspace %s already exists',
-                $command->workspaceName->value
-            ), 1505830958921);
-        }
+        $this->requireWorkspaceToNotExist($command->workspaceName, $commandHandlingDependencies);
 
-        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->baseWorkspaceName);
+        $baseWorkspace = $commandHandlingDependencies->getWorkspaceFinder()->findOneByName($command->baseWorkspaceName);
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf(
                 'The workspace %s (base workspace of %s) does not exist',
@@ -142,11 +137,12 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ), 1513890708);
         }
 
+        $baseWorkspaceContentGraph = $commandHandlingDependencies->getContentGraph($command->baseWorkspaceName);
         // When the workspace is created, we first have to fork the content stream
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             ForkContentStream::create(
                 $command->newContentStreamId,
-                $baseWorkspace->currentContentStreamId,
+                $baseWorkspaceContentGraph->getContentStreamId(),
             )
         )->block();
 
@@ -171,9 +167,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     /**
      * @throws WorkspaceDoesNotExist
      */
-    private function handleRenameWorkspace(RenameWorkspace $command, ContentRepository $contentRepository): EventsToPublish
-    {
-        $this->requireWorkspace($command->workspaceName, $contentRepository);
+    private function handleRenameWorkspace(
+        RenameWorkspace $command,
+        CommandHandlingDependencies $commandHandlingDependencies
+    ): EventsToPublish {
+        $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
 
         $events = Events::with(
             new WorkspaceWasRenamed(
@@ -198,18 +196,12 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function handleCreateRootWorkspace(
         CreateRootWorkspace $command,
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $existingWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($command->workspaceName);
-        if ($existingWorkspace !== null) {
-            throw new WorkspaceAlreadyExists(sprintf(
-                'The workspace %s already exists',
-                $command->workspaceName->value
-            ), 1505848624450);
-        }
+        $this->requireWorkspaceToNotExist($command->workspaceName, $commandHandlingDependencies);
 
         $newContentStreamId = $command->newContentStreamId;
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             CreateContentStream::create(
                 $newContentStreamId,
             )
@@ -242,10 +234,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function handlePublishWorkspace(
         PublishWorkspace $command,
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies->getWorkspaceFinder());
 
         $this->publishContentStream(
             $workspace->currentContentStreamId,
@@ -254,7 +246,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         )?->block();
 
         // After publishing a workspace, we need to again fork from Base.
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             ForkContentStream::create(
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
@@ -270,6 +262,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $workspace->currentContentStreamId,
             )
         );
+
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         return new EventsToPublish(
             $streamName,
@@ -358,25 +351,25 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function handleRebaseWorkspace(
         RebaseWorkspace $command,
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies->getWorkspaceFinder());
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        $oldWorkspaceContentStreamIdState = $contentRepository->getContentStreamFinder()
+        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamFinder()
             ->findStateForContentStream($oldWorkspaceContentStreamId);
         if ($oldWorkspaceContentStreamIdState === null) {
             throw new \DomainException('Cannot rebase a workspace with a stateless content stream', 1711718314);
         }
 
         // 0) close old content stream
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             CloseContentStream::create($oldWorkspaceContentStreamId)
         )->block();
 
         // 1) fork a new content stream
         $rebasedContentStreamId = $command->rebasedContentStreamId;
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             ForkContentStream::create(
                 $command->rebasedContentStreamId,
                 $baseWorkspace->currentContentStreamId,
@@ -391,13 +384,15 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         // 2) extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
         $commandsThatFailed = new CommandsThatFailedDuringRebase();
-        ContentStreamIdOverride::applyContentStreamIdToClosure(
+        $commandHandlingDependencies->overrideContentStreamId(
+            $command->workspaceName,
             $command->rebasedContentStreamId,
-            function () use ($originalCommands, $contentRepository, &$commandsThatFailed): void {
+            function () use ($originalCommands, $commandHandlingDependencies, &$commandsThatFailed): void {
                 foreach ($originalCommands as $sequenceNumber => $originalCommand) {
                     // We no longer need to adjust commands as the workspace stays the same
                     try {
-                        $contentRepository->handle($originalCommand)->block();
+                        $commandHandlingDependencies->handle($originalCommand)->block();
+                        // if we came this far, we know the command was applied successfully.
                     } catch (\Exception $e) {
                         $commandsThatFailed = $commandsThatFailed->add(
                             new CommandThatFailedDuringRebase(
@@ -426,23 +421,23 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                 $events,
                 ExpectedVersion::ANY()
             );
-        } else {
-            // 3.E) In case of an exception, reopen the old content stream...
-            $contentRepository->handle(
-                ReopenContentStream::create(
-                    $oldWorkspaceContentStreamId,
-                    $oldWorkspaceContentStreamIdState,
-                )
-            )->block();
-
-            // ... remove the newly created one...
-            $contentRepository->handle(RemoveContentStream::create(
-                $rebasedContentStreamId
-            ))->block();
-
-            // ...and throw an exception that contains all the information about what exactly failed
-            throw new WorkspaceRebaseFailed($commandsThatFailed, 'Rebase failed', 1711713880);
         }
+
+        // 3.E) In case of an exception, reopen the old content stream...
+        $commandHandlingDependencies->handle(
+            ReopenContentStream::create(
+                $oldWorkspaceContentStreamId,
+                $oldWorkspaceContentStreamIdState,
+            )
+        )->block();
+
+        // ... remove the newly created one...
+        $commandHandlingDependencies->handle(RemoveContentStream::create(
+            $rebasedContentStreamId
+        ))->block();
+
+        // ...and throw an exception that contains all the information about what exactly failed
+        throw new WorkspaceRebaseFailed($commandsThatFailed, 'Rebase failed', 1711713880);
     }
 
     /**
@@ -490,19 +485,20 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function handlePublishIndividualNodesFromWorkspace(
         PublishIndividualNodesFromWorkspace $command,
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
         $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        $oldWorkspaceContentStreamIdState = $contentRepository->getContentStreamFinder()->findStateForContentStream($oldWorkspaceContentStreamId);
+        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamFinder()->findStateForContentStream($oldWorkspaceContentStreamId);
         if ($oldWorkspaceContentStreamIdState === null) {
             throw new \DomainException('Cannot publish nodes on a workspace with a stateless content stream', 1710410114);
         }
-        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies->getWorkspaceFinder());
 
         // 1) close old content stream
-        $contentRepository->handle(
-            CloseContentStream::create($oldWorkspaceContentStreamId)
+        $commandHandlingDependencies->handle(
+            CloseContentStream::create($contentGraph->getContentStreamId())
         );
 
         // 2) separate commands in two parts - the ones MATCHING the nodes from the command, and the REST
@@ -514,7 +510,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $remainingCommands */
 
         // 3) fork a new contentStream, based on the base WS, and apply MATCHING
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             ForkContentStream::create(
                 $command->contentStreamIdForMatchingPart,
                 $baseWorkspace->currentContentStreamId,
@@ -523,9 +519,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         try {
             // 4) using the new content stream, apply the matching commands
-            ContentStreamIdOverride::applyContentStreamIdToClosure(
+            $commandHandlingDependencies->overrideContentStreamId(
+                $baseWorkspace->workspaceName,
                 $command->contentStreamIdForMatchingPart,
-                function () use ($matchingCommands, $contentRepository, $baseWorkspace): void {
+                function () use ($matchingCommands, $commandHandlingDependencies, $baseWorkspace): void {
                     foreach ($matchingCommands as $matchingCommand) {
                         if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
                             throw new \RuntimeException(
@@ -534,7 +531,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                             );
                         }
 
-                        $contentRepository->handle($matchingCommand->createCopyForWorkspace(
+                        $commandHandlingDependencies->handle($matchingCommand->createCopyForWorkspace(
                             $baseWorkspace->workspaceName,
                         ))->block();
                     }
@@ -549,37 +546,39 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             )?->block();
 
             // 6) fork a new content stream, based on the base WS, and apply REST
-            $contentRepository->handle(
+            $commandHandlingDependencies->handle(
                 ForkContentStream::create(
                     $command->contentStreamIdForRemainingPart,
                     $baseWorkspace->currentContentStreamId
                 )
             )->block();
 
+
             // 7) apply REMAINING commands to the workspace's new content stream
-            ContentStreamIdOverride::applyContentStreamIdToClosure(
+            $commandHandlingDependencies->overrideContentStreamId(
+                $command->workspaceName,
                 $command->contentStreamIdForRemainingPart,
-                function () use ($contentRepository, $remainingCommands) {
+                function () use ($commandHandlingDependencies, $remainingCommands) {
                     foreach ($remainingCommands as $remainingCommand) {
-                        $contentRepository->handle($remainingCommand)->block();
+                        $commandHandlingDependencies->handle($remainingCommand)->block();
                     }
                 }
             );
         } catch (\Exception $exception) {
             // 4.E) In case of an exception, reopen the old content stream and remove the newly created
-            $contentRepository->handle(
+            $commandHandlingDependencies->handle(
                 ReopenContentStream::create(
                     $oldWorkspaceContentStreamId,
                     $oldWorkspaceContentStreamIdState,
                 )
             )->block();
 
-            $contentRepository->handle(RemoveContentStream::create(
+            $commandHandlingDependencies->handle(RemoveContentStream::create(
                 $command->contentStreamIdForMatchingPart
             ))->block();
 
             try {
-                $contentRepository->handle(RemoveContentStream::create(
+                $commandHandlingDependencies->handle(RemoveContentStream::create(
                     $command->contentStreamIdForRemainingPart
                 ))->block();
             } catch (ContentStreamDoesNotExistYet $contentStreamDoesNotExistYet) {
@@ -591,10 +590,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 8) to avoid dangling content streams, we need to remove our temporary content stream (whose events
         // have already been published) as well as the old one
-        $contentRepository->handle(RemoveContentStream::create(
+        $commandHandlingDependencies->handle(RemoveContentStream::create(
             $command->contentStreamIdForMatchingPart
         ));
-        $contentRepository->handle(RemoveContentStream::create(
+        $commandHandlingDependencies->handle(RemoveContentStream::create(
             $oldWorkspaceContentStreamId
         ));
 
@@ -622,23 +621,24 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
      * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException
-     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException
+     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     private function handleDiscardIndividualNodesFromWorkspace(
         DiscardIndividualNodesFromWorkspace $command,
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
-        $oldWorkspaceContentStreamId = $workspace->currentContentStreamId;
-        $oldWorkspaceContentStreamIdState = $contentRepository->getContentStreamFinder()->findStateForContentStream($oldWorkspaceContentStreamId);
+        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
+        $oldWorkspaceContentStreamId = $contentGraph->getContentStreamId();
+        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamFinder()->findStateForContentStream($contentGraph->getContentStreamId());
         if ($oldWorkspaceContentStreamIdState === null) {
             throw new \DomainException('Cannot discard nodes on a workspace with a stateless content stream', 1710408112);
         }
-        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies->getWorkspaceFinder());
 
         // 1) close old content stream
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             CloseContentStream::create($oldWorkspaceContentStreamId)
         )->block();
 
@@ -651,7 +651,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $this->separateMatchingAndRemainingCommands($command, $workspace, $commandsToDiscard, $commandsToKeep);
 
         // 3) fork a new contentStream, based on the base WS, and apply the commands to keep
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             ForkContentStream::create(
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
@@ -660,9 +660,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 4) using the new content stream, apply the commands to keep
         try {
-            ContentStreamIdOverride::applyContentStreamIdToClosure(
+            $commandHandlingDependencies->overrideContentStreamId(
+                $baseWorkspace->workspaceName,
                 $command->newContentStreamId,
-                function () use ($commandsToKeep, $contentRepository, $baseWorkspace): void {
+                function () use ($commandsToKeep, $commandHandlingDependencies, $baseWorkspace): void {
                     foreach ($commandsToKeep as $matchingCommand) {
                         if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
                             throw new \RuntimeException(
@@ -671,7 +672,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                             );
                         }
 
-                        $contentRepository->handle($matchingCommand->createCopyForWorkspace(
+                        $commandHandlingDependencies->handle($matchingCommand->createCopyForWorkspace(
                             $baseWorkspace->workspaceName,
                         ))->block();
                     }
@@ -679,14 +680,14 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             );
         } catch (\Exception $exception) {
             // 4.E) In case of an exception, reopen the old content stream and remove the newly created
-            $contentRepository->handle(
+            $commandHandlingDependencies->handle(
                 ReopenContentStream::create(
                     $oldWorkspaceContentStreamId,
                     $oldWorkspaceContentStreamIdState,
                 )
             )->block();
 
-            $contentRepository->handle(RemoveContentStream::create(
+            $commandHandlingDependencies->handle(RemoveContentStream::create(
                 $command->newContentStreamId
             ))->block();
 
@@ -694,7 +695,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         // 5) If everything worked, to avoid dangling content streams, we need to remove the old content stream
-        $contentRepository->handle(RemoveContentStream::create(
+        $commandHandlingDependencies->handle(RemoveContentStream::create(
             $oldWorkspaceContentStreamId
         ))->block();
 
@@ -770,13 +771,13 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function handleDiscardWorkspace(
         DiscardWorkspace $command,
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
-        $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies->getWorkspaceFinder());
 
         $newContentStream = $command->newContentStreamId;
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             ForkContentStream::create(
                 $newContentStream,
                 $baseWorkspace->currentContentStreamId,
@@ -812,17 +813,16 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function handleChangeBaseWorkspace(
         ChangeBaseWorkspace $command,
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
         $this->requireEmptyWorkspace($workspace);
-        $this->requireBaseWorkspace($workspace, $contentRepository);
+        $this->requireBaseWorkspace($workspace, $commandHandlingDependencies->getWorkspaceFinder());
+        $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies->getWorkspaceFinder());
 
-        $baseWorkspace = $this->requireWorkspace($command->baseWorkspaceName, $contentRepository);
+        $this->requireNonCircularRelationBetweenWorkspaces($workspace, $baseWorkspace, $commandHandlingDependencies->getWorkspaceFinder());
 
-        $this->requireNonCircularRelationBetweenWorkspaces($workspace, $baseWorkspace, $contentRepository);
-
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             ForkContentStream::create(
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
@@ -850,11 +850,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function handleDeleteWorkspace(
         DeleteWorkspace $command,
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $workspace = $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
 
-        $contentRepository->handle(
+        $commandHandlingDependencies->handle(
             RemoveContentStream::create(
                 $workspace->currentContentStreamId
             )
@@ -879,9 +879,9 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function handleChangeWorkspaceOwner(
         ChangeWorkspaceOwner $command,
-        ContentRepository $contentRepository,
+        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
 
         $events = Events::with(
             new WorkspaceOwnerWasChanged(
@@ -898,12 +898,27 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
     }
 
+    private function requireWorkspaceToNotExist(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): void
+    {
+        try {
+            $commandHandlingDependencies->getContentGraph($workspaceName);
+        } catch (WorkspaceDoesNotExist) {
+            // Desired outcome
+            return;
+        }
+
+        throw new WorkspaceAlreadyExists(sprintf(
+            'The workspace %s already exists',
+            $workspaceName->value
+        ), 1715341085);
+    }
+
     /**
      * @throws WorkspaceDoesNotExist
      */
-    private function requireWorkspace(WorkspaceName $workspaceName, ContentRepository $contentRepository): Workspace
+    private function requireWorkspace(WorkspaceName $workspaceName, WorkspaceFinder $workspaceFinder): Workspace
     {
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspace = $workspaceFinder->findOneByName($workspaceName);
         if (is_null($workspace)) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
@@ -915,14 +930,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceHasNoBaseWorkspaceName
      * @throws BaseWorkspaceDoesNotExist
      */
-    private function requireBaseWorkspace(Workspace $workspace, ContentRepository $contentRepository): Workspace
-    {
+    private function requireBaseWorkspace(
+        Workspace $workspace,
+        WorkspaceFinder $workspaceFinder
+    ): Workspace {
         if (is_null($workspace->baseWorkspaceName)) {
             throw WorkspaceHasNoBaseWorkspaceName::butWasSupposedTo($workspace->workspaceName);
         }
 
-        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace->baseWorkspaceName);
-        if ($baseWorkspace === null) {
+        try {
+            $baseWorkspace = $workspaceFinder->findOneByName($workspace->baseWorkspaceName);
+        } catch (WorkspaceDoesNotExist $_) {
+            $baseWorkspace = null;
+        }
+
+        if (is_null($baseWorkspace)) {
             throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->workspaceName);
         }
 
@@ -933,18 +955,18 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws BaseWorkspaceEqualsWorkspaceException
      * @throws CircularRelationBetweenWorkspacesException
      */
-    private function requireNonCircularRelationBetweenWorkspaces(Workspace $workspace, Workspace $baseWorkspace, ContentRepository $contentRepository): void
+    private function requireNonCircularRelationBetweenWorkspaces(Workspace $workspace, Workspace $baseWorkspace, WorkspaceFinder $workspaceFinder): void
     {
         if ($workspace->workspaceName->equals($baseWorkspace->workspaceName)) {
             throw new BaseWorkspaceEqualsWorkspaceException(sprintf('The base workspace of the target must be different from the given workspace "%s".', $workspace->workspaceName->value));
         }
 
         $nextBaseWorkspace = $baseWorkspace;
-        while ($nextBaseWorkspace?->baseWorkspaceName !== null) {
+        while ($nextBaseWorkspace->baseWorkspaceName !== null) {
             if ($workspace->workspaceName->equals($nextBaseWorkspace->baseWorkspaceName)) {
                 throw new CircularRelationBetweenWorkspacesException(sprintf('The workspace "%s" is already on the path of the target workspace "%s".', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value));
             }
-            $nextBaseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($nextBaseWorkspace->baseWorkspaceName);
+            $nextBaseWorkspace = $this->requireBaseWorkspace($workspace, $workspaceFinder);
         }
     }
 

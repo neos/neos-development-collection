@@ -25,7 +25,6 @@ class DisallowedChildNodeAdjustment
     use RemoveNodeAggregateTrait;
 
     public function __construct(
-        private readonly ContentRepository $contentRepository,
         private readonly ProjectedNodeIterator $projectedNodeIterator,
         private readonly NodeTypeManager $nodeTypeManager,
     ) {
@@ -52,8 +51,7 @@ class DisallowedChildNodeAdjustment
             // as it can happen that the constraint is only violated in e.g. "AT", but not in "DE".
             // Then, we only want to remove the single edge.
             foreach ($nodeAggregate->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
-                $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                    $nodeAggregate->contentStreamId,
+                $subgraph = $this->projectedNodeIterator->contentGraph->getSubgraph(
                     $coveredDimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()
                 );
@@ -69,7 +67,7 @@ class DisallowedChildNodeAdjustment
                     $parentNodeType = $this->nodeTypeManager->getNodeType($parentNode->nodeTypeName);
                     if ($parentNodeType) {
                         $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType)
-                            || $nodeAggregate->nodeName && $parentNodeType->hasTetheredNode($nodeAggregate->nodeName);
+                            || ($nodeAggregate->nodeName && $parentNodeType->hasTetheredNode($nodeAggregate->nodeName));
                     }
                 }
 

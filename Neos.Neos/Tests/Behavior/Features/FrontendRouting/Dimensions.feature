@@ -43,7 +43,7 @@ Feature: Routing functionality with multiple content dimensions
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
+    And I am in workspace "live" and dimension space point {"market":"DE", "language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                                                                                                                                                                     |
       | nodeAggregateId             | "lady-eleonode-rootford"                                                                                                                                                                                  |

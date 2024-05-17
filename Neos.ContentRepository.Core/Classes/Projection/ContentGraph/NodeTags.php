@@ -23,7 +23,7 @@ use Traversable;
  *
  * Internally, this consists of two collection:
  * - One for tags that are _explicitly_ set on the respective node.
- * - And one that contains tags that are _inherited_ by one of the ancestor nodes
+ * - And one that contains tags that are only _inherited_ by one of the ancestor nodes and _not_ explicitly set
  *
  * In most cases, it shouldn't matter whether a tag is inherited or set explicitly. But sometimes the behavior is slightly different (e.g. the "disabled" checkbox in the Neos UI inspector is only checked if the node has the `disabled` tag set explicitly)
  *

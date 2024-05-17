@@ -33,7 +33,7 @@ Feature: Rebasing auto-created nodes works
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
@@ -59,7 +59,7 @@ Feature: Rebasing auto-created nodes works
       | originDimensionSpacePoint     | {}                                       |
       | parentNodeAggregateId | "lady-eleonode-rootford"                 |
     And the graph projection is fully up to date
-    And I am in content stream "user-cs-identifier" and dimension space point {}
+    And I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     When I get the node at path "mcnodeface/foo"
     And I expect this node to be a child of node user-cs-identifier;nody-mc-nodeface;{}
