@@ -27,7 +27,7 @@ trait RemoveNodeAggregateTrait
         );
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            $tetheredNodeAggregate->contentStreamId
+            $contentGraph->getContentStreamId()
         );
         return new EventsToPublish(
             $streamName->getEventStreamName(),

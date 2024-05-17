@@ -138,7 +138,7 @@ class DisallowedChildNodeAdjustment
         );
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            $nodeAggregate->contentStreamId
+            $this->projectedNodeIterator->contentGraph->getContentStreamId()
         );
 
         return new EventsToPublish(

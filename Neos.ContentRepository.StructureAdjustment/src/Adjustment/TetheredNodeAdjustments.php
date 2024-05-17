@@ -88,7 +88,9 @@ class TetheredNodeAdjustments
                                     null
                                 );
 
-                                $streamName = ContentStreamEventStreamName::fromContentStreamId($nodeAggregate->contentStreamId);
+                                $streamName = ContentStreamEventStreamName::fromContentStreamId(
+                                    $this->projectedNodeIterator->contentGraph->getContentStreamId()
+                                );
                                 return new EventsToPublish(
                                     $streamName->getEventStreamName(),
                                     $events,
