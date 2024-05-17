@@ -25,13 +25,11 @@ Feature: Tethered Nodes Reordering Structure changes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     When I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                                                                                                                      |
       | nodeAggregateId                    | "sir-david-nodenborough"                                                                                                                   |
@@ -40,7 +38,6 @@ Feature: Tethered Nodes Reordering Structure changes
       | parentNodeAggregateId              | "lady-eleonode-rootford"                                                                                                                   |
       | nodeName                                   | "document"                                                                                                                                 |
       | tetheredDescendantNodeAggregateIds | {"tethered-node": "tethered-node-agg", "other-tethered-node": "other-tethered-node-agg", "third-tethered-node": "third-tethered-node-agg"} |
-    And the graph projection is fully up to date
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 

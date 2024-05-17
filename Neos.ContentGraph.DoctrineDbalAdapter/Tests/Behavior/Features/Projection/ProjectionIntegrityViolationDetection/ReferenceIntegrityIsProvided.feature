@@ -22,7 +22,6 @@ Feature: Run integrity violation detection regarding reference relations
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
@@ -46,7 +45,6 @@ Feature: Run integrity violation detection regarding reference relations
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
       | nodeAggregateClassification | "regular"                                                |
-    And the graph projection is fully up to date
 
   Scenario: Detach a reference relation from its source
     When the command SetNodeReferences is executed with payload:
@@ -55,7 +53,6 @@ Feature: Run integrity violation detection regarding reference relations
       | sourceNodeAggregateId           | "source-nodandaise"               |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
     And I detach the following reference relation from its source:
       | Key                        | Value               |
       | contentStreamId            | "cs-identifier"     |

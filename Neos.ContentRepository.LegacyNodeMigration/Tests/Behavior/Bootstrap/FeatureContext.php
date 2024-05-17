@@ -79,7 +79,6 @@ class FeatureContext implements Context
 
         $this->mockFilesystemAdapter = new InMemoryFilesystemAdapter();
         $this->mockFilesystem = new Filesystem($this->mockFilesystemAdapter);
-        $this->setupCRTestSuiteTrait();
     }
 
     /**

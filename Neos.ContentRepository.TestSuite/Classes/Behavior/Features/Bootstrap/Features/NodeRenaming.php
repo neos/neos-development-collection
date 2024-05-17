@@ -47,7 +47,7 @@ trait NodeRenaming
             NodeName::fromString($commandArguments['newNodeName']),
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

@@ -27,7 +27,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example": "general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -50,7 +49,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -58,7 +56,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -111,7 +108,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -119,7 +115,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -174,7 +169,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -182,7 +176,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -235,7 +228,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -243,7 +235,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -299,7 +290,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -307,7 +297,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -361,7 +350,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -369,7 +357,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -425,7 +412,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -433,7 +419,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -441,7 +426,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -495,7 +479,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -503,7 +486,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -511,7 +493,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -565,7 +546,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -573,7 +553,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -581,7 +560,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -635,7 +613,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -643,7 +620,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -651,7 +627,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -705,7 +680,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -713,7 +687,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -721,7 +694,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -775,7 +747,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -783,7 +754,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -791,7 +761,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -845,7 +814,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -853,7 +821,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -861,7 +828,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -915,7 +881,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -923,7 +888,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -931,7 +895,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -987,7 +950,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -995,7 +957,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1003,7 +964,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1057,7 +1017,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -1065,7 +1024,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1073,7 +1031,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1127,7 +1084,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -1135,7 +1091,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1143,7 +1098,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1197,7 +1151,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -1205,7 +1158,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1213,7 +1165,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1267,7 +1218,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -1275,7 +1225,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1283,7 +1232,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1337,7 +1285,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -1345,7 +1292,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1353,7 +1299,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1407,7 +1352,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -1415,7 +1359,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -1423,7 +1366,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1477,7 +1419,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -1485,7 +1426,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1493,7 +1433,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1549,7 +1488,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -1557,7 +1495,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1611,7 +1548,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}      |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
@@ -1619,7 +1555,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}        |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1675,7 +1610,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                 |
@@ -1683,7 +1617,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1691,7 +1624,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1745,7 +1677,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                |
@@ -1753,7 +1684,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1761,7 +1691,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1815,7 +1744,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                 |
@@ -1823,7 +1751,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1831,7 +1758,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1885,7 +1811,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                |
@@ -1893,7 +1818,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1901,7 +1825,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -1955,7 +1878,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                 |
@@ -1963,7 +1885,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag2"                |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -1971,7 +1892,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2025,7 +1945,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag1"                |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                |
@@ -2033,7 +1952,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag2"               |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2041,7 +1959,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2095,7 +2012,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                 |
@@ -2103,7 +2019,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"} |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
       | tag                          | "tag2"                |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2111,7 +2026,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2165,7 +2079,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag1"               |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                |
@@ -2173,7 +2086,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
       | tag                          | "tag2"               |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2181,7 +2093,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2237,7 +2148,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -2245,7 +2155,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2253,7 +2162,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2307,7 +2215,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -2315,7 +2222,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2323,7 +2229,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2377,7 +2282,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}      |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -2385,7 +2289,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2393,7 +2296,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2447,7 +2349,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}      |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -2455,7 +2356,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag1"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2463,7 +2363,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2517,7 +2416,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -2525,7 +2423,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2533,7 +2430,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2587,7 +2483,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -2595,7 +2490,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2603,7 +2497,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2657,7 +2550,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}      |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -2665,7 +2557,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "source"}        |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2673,7 +2564,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}
@@ -2727,7 +2617,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}      |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
       | tag                          | "tag1"                   |
-    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                        |
@@ -2735,7 +2624,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | coveredDimensionSpacePoint   | {"example": "spec"}          |
       | nodeVariantSelectionStrategy | "allSpecializations"         |
       | tag                          | "tag2"                       |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -2743,7 +2631,6 @@ Feature: Move a node aggregate into and out of a tagged parent
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "nodimus-prime"         |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"general"}

@@ -23,13 +23,11 @@ Feature: Remove NodeAggregate
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName |
       | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document |
@@ -54,7 +52,6 @@ Feature: Remove NodeAggregate
       | affectedOccupiedDimensionSpacePoints | [[]]            |
       | affectedCoveredDimensionSpacePoints  | [[]]            |
       | removalAttachmentPoint               | null            |
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 2 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -77,19 +74,16 @@ Feature: Remove NodeAggregate
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
-    And the graph projection is fully up to date
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
-    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                   | Value                                     |
       | nodeAggregateId       | "nodingers-cat"                           |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName              | "pet"                                     |
-    And the graph projection is fully up to date
 
     Then I expect the node aggregate "nodingers-cat" to exist
     And I expect this node aggregate to disable dimension space points []
@@ -117,14 +111,12 @@ Feature: Remove NodeAggregate
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
-    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                   | Value                                     |
       | nodeAggregateId       | "nodingers-cat"                           |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName              | "pet"                                     |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}

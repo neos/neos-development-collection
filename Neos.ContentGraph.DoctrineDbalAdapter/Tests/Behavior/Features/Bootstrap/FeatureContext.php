@@ -44,7 +44,6 @@ class FeatureContext implements BehatContext
         self::bootstrapFlow();
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
 
-        $this->setupCRTestSuiteTrait();
         $this->setupDbalGraphAdapterIntegrityViolationTrait();
     }
 

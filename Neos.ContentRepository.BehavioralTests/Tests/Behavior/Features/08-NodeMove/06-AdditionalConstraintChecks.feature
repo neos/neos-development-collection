@@ -17,7 +17,6 @@ Feature: Additional constraint checks after move node capabilities are introduce
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example": "general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -38,21 +37,18 @@ Feature: Additional constraint checks after move node capabilities are introduce
       | dimensionSpacePoint          | {"example": "spec"}          |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "scatter"                    |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                       |
       | nodeAggregateId              | "bustling-mc-nodeface"      |
       | dimensionSpacePoint          | {"example": "peer"}         |
       | newParentNodeAggregateId     | "lady-abigail-nodenborough" |
       | relationDistributionStrategy | "scatter"                   |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                  |
       | nodeAggregateId              | "bustling-mc-nodeface" |
       | dimensionSpacePoint          | {"example": "general"} |
       | newParentNodeAggregateId     | "general-nodesworth"   |
       | relationDistributionStrategy | "scatter"              |
-    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                     |

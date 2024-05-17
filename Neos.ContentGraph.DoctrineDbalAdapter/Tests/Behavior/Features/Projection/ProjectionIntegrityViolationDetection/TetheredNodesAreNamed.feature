@@ -19,7 +19,6 @@ Feature: Run projection integrity violation detection regarding naming of tether
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -35,7 +34,6 @@ Feature: Run projection integrity violation detection regarding naming of tether
       | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
       | nodeName                    | "document"                                |
       | nodeAggregateClassification | "regular"                                 |
-    And the graph projection is fully up to date
 
   Scenario: Remove tethered node's name
     When the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -48,7 +46,6 @@ Feature: Run projection integrity violation detection regarding naming of tether
       | parentNodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeName                    | "to-be-hacked-to-null"                    |
       | nodeAggregateClassification | "tethered"                                |
-    And the graph projection is fully up to date
     And I change the following node's name:
       | Key                       | Value               |
       | contentStreamId           | "cs-identifier"     |

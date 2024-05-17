@@ -136,6 +136,6 @@ final class EditorContentStreamZookeeper
                 $editorsNewContentStreamId,
                 UserId::fromString($this->persistenceManager->getIdentifierByObject($user))
             )
-        )->block();
+        );
     }
 }

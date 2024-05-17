@@ -240,7 +240,7 @@ class WorkspacesController extends AbstractModuleController
                     ContentStreamId::create(),
                     $visibility === 'private' ? $currentUserIdentifier : null
                 )
-            )->block();
+            );
         } catch (WorkspaceAlreadyExists $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.workspaceWithThisTitleAlreadyExists'),
@@ -319,7 +319,7 @@ class WorkspacesController extends AbstractModuleController
                     $title,
                     $description
                 )
-            )->block();
+            );
         }
 
         if ($workspace->workspaceOwner !== $workspaceOwner) {
@@ -328,7 +328,7 @@ class WorkspacesController extends AbstractModuleController
                     $workspaceName,
                     $workspaceOwner ?: null,
                 )
-            )->block();
+            );
         }
 
         $this->addFlashMessage($this->translator->translateById(
@@ -428,7 +428,7 @@ class WorkspacesController extends AbstractModuleController
             DeleteWorkspace::create(
                 $workspaceName,
             )
-        )->block();
+        );
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenRemoved',
@@ -531,7 +531,7 @@ class WorkspacesController extends AbstractModuleController
             ),
         );
         $contentRepository->handle($command)
-            ->block();
+            ;
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.selectedChangeHasBeenPublished',
@@ -568,7 +568,7 @@ class WorkspacesController extends AbstractModuleController
             ),
         );
         $contentRepository->handle($command)
-            ->block();
+            ;
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.selectedChangeHasBeenDiscarded',
@@ -611,7 +611,7 @@ class WorkspacesController extends AbstractModuleController
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
                 $contentRepository->handle($command)
-                    ->block();
+                    ;
                 $this->addFlashMessage($this->translator->translateById(
                     'workspaces.selectedChangesHaveBeenPublished',
                     [],
@@ -627,7 +627,7 @@ class WorkspacesController extends AbstractModuleController
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
                 $contentRepository->handle($command)
-                    ->block();
+                    ;
                 $this->addFlashMessage($this->translator->translateById(
                     'workspaces.selectedChangesHaveBeenDiscarded',
                     [],

@@ -61,7 +61,7 @@ trait SubtreeTagging
             SubtreeTag::fromString($commandArguments['tag']),
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**
@@ -132,7 +132,7 @@ trait SubtreeTagging
             SubtreeTag::fromString($commandArguments['tag']),
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**
