@@ -38,11 +38,6 @@ final readonly class NodeAggregateNameWasChanged implements
     ) {
     }
 
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
     public function getContentStreamId(): ContentStreamId
     {
         return $this->contentStreamId;

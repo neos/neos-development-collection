@@ -43,11 +43,6 @@ final readonly class DimensionShineThroughWasAdded implements EventInterface, Pu
     ) {
     }
 
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
     public function createCopyForContentStream(WorkspaceName $targetWorkspaceName, ContentStreamId $targetContentStreamId): self
     {
         return new self(

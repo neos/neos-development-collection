@@ -27,7 +27,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 interface EmbedsContentStreamAndNodeAggregateId
 {
-    public function getWorkspaceName(): WorkspaceName;
     public function getContentStreamId(): ContentStreamId;
     public function getNodeAggregateId(): NodeAggregateId;
 }

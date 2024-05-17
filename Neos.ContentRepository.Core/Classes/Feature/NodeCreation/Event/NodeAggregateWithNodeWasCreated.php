@@ -52,11 +52,6 @@ final readonly class NodeAggregateWithNodeWasCreated implements
     ) {
     }
 
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
     public function getContentStreamId(): ContentStreamId
     {
         return $this->contentStreamId;
