@@ -23,11 +23,13 @@ Feature: Creation of nodes underneath disabled nodes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
@@ -37,6 +39,7 @@ Feature: Creation of nodes underneath disabled nodes
       | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"mul"} |
       | targetOrigin            | {"language":"ltz"} |
+    And the graph projection is fully up to date
     And VisibilityConstraints are set to "frontend"
 
   Scenario: Create a new node with parent disabled with strategy allSpecializations
@@ -74,6 +77,7 @@ Feature: Creation of nodes underneath disabled nodes
       | nodeAggregateId      | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"de"}
     And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
@@ -120,6 +124,7 @@ Feature: Creation of nodes underneath disabled nodes
       | nodeAggregateId      | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"mul"}
     And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}

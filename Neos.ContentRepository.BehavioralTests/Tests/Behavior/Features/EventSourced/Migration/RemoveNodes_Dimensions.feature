@@ -26,11 +26,13 @@ Feature: Remove Nodes
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                                       |
       | nodeAggregateId             | "lady-eleonode-rootford"                                                    |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
+    And the graph projection is fully up to date
     # Node /document (in "de")
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -39,6 +41,7 @@ Feature: Remove Nodes
       | originDimensionSpacePoint | {"language": "de"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "Original text"}                 |
+    And the graph projection is fully up to date
 
     # Node /document (in "en")
     When the command CreateNodeVariant is executed with payload:
@@ -46,6 +49,7 @@ Feature: Remove Nodes
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"en"}        |
+    And the graph projection is fully up to date
 
 
   Scenario: Remove nodes in a given dimension space point removes the node with all virtual specializations
@@ -68,13 +72,13 @@ Feature: Remove Nodes
             type: 'RemoveNode'
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in de and gsw (virtual specialization)
@@ -114,13 +118,13 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in de and gsw, since it is a specialization
@@ -184,13 +188,13 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in gsw
@@ -225,13 +229,13 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in gsw
@@ -271,13 +275,13 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in gsw
@@ -309,13 +313,13 @@ Feature: Remove Nodes
     """
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
 
     # the node was removed inside the new content stream, but only in gsw

@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Core\Feature\Common;
  * source code.
  */
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -23,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -40,11 +40,10 @@ trait TetheredNodeInternals
     abstract protected function getPropertyConverter(): PropertyConverter;
 
     abstract protected function createEventsForVariations(
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        NodeAggregate $nodeAggregate,
-        ContentRepository $contentRepository
+        NodeAggregate $nodeAggregate
     ): Events;
 
     /**
@@ -56,27 +55,19 @@ trait TetheredNodeInternals
      * @throws \Exception
      */
     protected function createEventsForMissingTetheredNode(
+        ContentGraphInterface $contentGraph,
         NodeAggregate $parentNodeAggregate,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeName $tetheredNodeName,
         ?NodeAggregateId $tetheredNodeAggregateId,
-        NodeType $expectedTetheredNodeType,
-        ContentRepository $contentRepository
+        NodeType $expectedTetheredNodeType
     ): Events {
-        $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $parentNodeAggregate->contentStreamId,
+        $childNodeAggregate = $contentGraph->findChildNodeAggregateByName(
             $parentNodeAggregate->nodeAggregateId,
             $tetheredNodeName
         );
 
-        $tmp = [];
-        foreach ($childNodeAggregates as $childNodeAggregate) {
-            $tmp[] = $childNodeAggregate;
-        }
-        /** @var array<int,NodeAggregate> $childNodeAggregates */
-        $childNodeAggregates = $tmp;
-
-        if (count($childNodeAggregates) === 0) {
+        if ($childNodeAggregate === null) {
             // there is no tethered child node aggregate already; let's create it!
             $nodeType = $this->nodeTypeManager->requireNodeType($parentNodeAggregate->nodeTypeName);
             if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
@@ -131,9 +122,7 @@ trait TetheredNodeInternals
                     )
                 );
             }
-        } elseif (count($childNodeAggregates) === 1) {
-            /** @var NodeAggregate $childNodeAggregate */
-            $childNodeAggregate = current($childNodeAggregates);
+        } else {
             if (!$childNodeAggregate->classification->isTethered()) {
                 throw new \RuntimeException(
                     'We found a child node aggregate through the given node path; but it is not tethered.'
@@ -149,16 +138,10 @@ trait TetheredNodeInternals
             }
             /** @var Node $childNodeSource Node aggregates are never empty */
             return $this->createEventsForVariations(
-                $parentNodeAggregate->contentStreamId,
+                $contentGraph,
                 $childNodeSource->originDimensionSpacePoint,
                 $originDimensionSpacePoint,
-                $parentNodeAggregate,
-                $contentRepository
-            );
-        } else {
-            throw new \RuntimeException(
-                'There is >= 2 ChildNodeAggregates with the same name reachable from the parent' .
-                    '- this is ambiguous and we should analyze how this may happen. That is very likely a bug.'
+                $parentNodeAggregate
             );
         }
     }

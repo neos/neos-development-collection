@@ -28,11 +28,13 @@ Feature: On forking a content stream, node references should be copied as well.
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
       | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
@@ -44,11 +46,13 @@ Feature: On forking a content stream, node references should be copied as well.
       | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
+    And the graph projection is fully up to date
 
     When the command ForkContentStream is executed with payload:
       | Key                           | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "cs-identifier"      |
+    And the graph projection is fully up to date
 
     # after forking, the reference must still exist on the forked content stream (no surprises here).
     When I am in content stream "user-cs-identifier" and dimension space point {"language": "de"}
@@ -78,6 +82,7 @@ Feature: On forking a content stream, node references should be copied as well.
       | Key                     | Value                                  |
       | nodeAggregateId | "source-nodandaise"                    |
       | propertyValues          | {"text": "Modified in live workspace"} |
+    And the graph projection is fully up to date
     Then I expect node aggregate identifier "source-nodandaise" to lead to node user-cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                                    | Properties |

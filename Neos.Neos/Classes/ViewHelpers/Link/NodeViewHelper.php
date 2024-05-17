@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
@@ -150,6 +151,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     protected $throwableStorage;
 
     /**
+     * @Flow\Inject
+     * @var NodeLabelGeneratorInterface
+     */
+    protected $nodeLabelGenerator;
+
+    /**
      * Initialize arguments
      *
      * @return void
@@ -277,9 +284,8 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         }
 
 
-        $subgraph = $contentRepository->getContentGraph()
+        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)
             ->getSubgraph(
-                $nodeAddress->contentStreamId,
                 $nodeAddress->dimensionSpacePoint,
                 $node->subgraphIdentity->visibilityConstraints
             );
@@ -341,7 +347,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $this->templateVariableContainer->remove($this->arguments['nodeVariableName']);
 
         if ($content === null && $resolvedNode !== null) {
-            $content = $resolvedNode->getLabel();
+            $content = $this->nodeLabelGenerator->getLabel($resolvedNode);
         }
 
         $this->tag->setContent($content);
@@ -370,8 +376,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 NodeAggregateId::fromString(\mb_substr($path, 7))
             );
         }
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $documentNodeAddress->contentStreamId,
+        $subgraph = $contentRepository->getContentGraph($documentNodeAddress->workspaceName)->getSubgraph(
             $documentNodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );

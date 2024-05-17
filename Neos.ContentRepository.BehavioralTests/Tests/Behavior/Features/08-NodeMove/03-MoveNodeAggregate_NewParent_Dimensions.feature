@@ -24,11 +24,13 @@ Feature: Move a node with content dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"example": "general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId            | nodeTypeName                            | parentNodeAggregateId      | nodeName          |
       | sir-david-nodenborough     | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford     | parent-document   |
@@ -52,6 +54,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "eldest-mc-nodeface"     |
       | relationDistributionStrategy        | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -61,7 +64,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                           |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "eldest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -72,7 +75,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -83,7 +86,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -94,7 +97,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -111,6 +114,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "eldest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -119,6 +123,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "eldest-mc-nodeface"     |
       | relationDistributionStrategy        | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -128,7 +133,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                          |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "eldest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -139,7 +144,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -150,7 +155,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -160,7 +165,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -177,6 +182,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "eldest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -185,6 +191,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "elder-mc-nodeface"      |
       | relationDistributionStrategy        | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -194,7 +201,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                       |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -206,7 +213,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -218,7 +225,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -228,7 +235,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -248,6 +255,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "elder-mc-nodeface"      |
       | relationDistributionStrategy        | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -257,7 +265,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                       |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -269,7 +277,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -281,7 +289,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -293,7 +301,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -311,12 +319,14 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "elder-mc-nodeface"  |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "elder-mc-nodeface"      |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -326,7 +336,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                         |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "younger-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -338,7 +348,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -350,7 +360,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -361,7 +371,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -379,6 +389,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "youngest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"   |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -387,6 +398,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "youngest-mc-nodeface"   |
       | relationDistributionStrategy        | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -396,7 +408,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                 |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -408,7 +420,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -420,7 +432,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -430,7 +442,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}  |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -450,6 +462,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
       | relationDistributionStrategy        | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -459,7 +472,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                           |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -470,7 +483,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}   |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -481,7 +494,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}   |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -492,7 +505,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}   |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -509,6 +522,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "youngest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"   |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -517,6 +531,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
       | relationDistributionStrategy        | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -526,7 +541,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                           |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId": null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -537,7 +552,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}   |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -548,7 +563,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}   |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -558,7 +573,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}  |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -575,6 +590,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "youngest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"   |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                | Value                    |
@@ -583,6 +599,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "younger-mc-nodeface"    |
       | relationDistributionStrategy       | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -592,7 +609,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                             |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":"youngest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -604,7 +621,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -616,7 +633,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -626,7 +643,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}  |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -646,6 +663,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "younger-mc-nodeface"    |
       | relationDistributionStrategy       | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -655,7 +673,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":"youngest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -667,7 +685,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -679,7 +697,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -691,7 +709,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -709,6 +727,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "younger-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}   |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                | Value                    |
@@ -717,6 +736,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "younger-mc-nodeface"    |
       | relationDistributionStrategy       | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -726,7 +746,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":"youngest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -738,7 +758,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -750,7 +770,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -761,7 +781,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -779,6 +799,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "eldest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                | Value                    |
@@ -787,6 +808,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "eldest-mc-nodeface"     |
       | relationDistributionStrategy       | "gatherAll"              |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -796,7 +818,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                    |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId":"elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":"elder-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -808,7 +830,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -820,7 +842,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     # The given preceding sibling cannot be resolved and since elder-mc-nodeface isn't given as a succeeding sibling, the node is moved at the end
@@ -831,7 +853,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;elder-mc-nodeface;{"example": "general"}    |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -853,6 +875,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "eldest-mc-nodeface"     |
       | relationDistributionStrategy        | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -862,7 +885,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                  |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "eldest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -872,7 +895,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -883,7 +906,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -894,7 +917,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -910,6 +933,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "eldest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -918,6 +942,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "eldest-mc-nodeface"     |
       | relationDistributionStrategy        | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -927,7 +952,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                 |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -937,7 +962,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -948,7 +973,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -958,7 +983,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -974,6 +999,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "eldest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -982,6 +1008,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "elder-mc-nodeface"      |
       | relationDistributionStrategy        | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -991,7 +1018,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1001,7 +1028,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1013,7 +1040,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -1023,7 +1050,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1041,6 +1068,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "elder-mc-nodeface"      |
       | relationDistributionStrategy        | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -1050,7 +1078,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1060,7 +1088,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1072,7 +1100,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1084,7 +1112,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1100,6 +1128,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "elder-mc-nodeface"  |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -1108,6 +1137,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "elder-mc-nodeface"      |
       | relationDistributionStrategy        | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -1117,7 +1147,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                  |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "younger-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1127,7 +1157,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1139,7 +1169,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1150,7 +1180,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1166,6 +1196,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "youngest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"   |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -1174,6 +1205,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "youngest-mc-nodeface"   |
       | relationDistributionStrategy        | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -1183,7 +1215,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                  |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1193,7 +1225,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1205,7 +1237,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1215,7 +1247,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}  |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1233,6 +1265,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
       | relationDistributionStrategy        | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -1242,7 +1275,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1252,7 +1285,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1263,7 +1296,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}   |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1274,7 +1307,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}   |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1290,6 +1323,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "youngest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"   |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -1298,6 +1332,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
       | relationDistributionStrategy        | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -1307,7 +1342,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1317,7 +1352,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1328,7 +1363,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}   |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1338,7 +1373,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}  |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1354,6 +1389,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "youngest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"   |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                | Value                    |
@@ -1362,6 +1398,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "younger-mc-nodeface"    |
       | relationDistributionStrategy       | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -1371,7 +1408,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                  |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1381,7 +1418,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1393,7 +1430,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1403,7 +1440,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}  |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1421,6 +1458,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "younger-mc-nodeface"    |
       | relationDistributionStrategy       | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -1430,7 +1468,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                    |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"youngest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1440,7 +1478,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1452,7 +1490,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1464,7 +1502,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1480,6 +1518,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "younger-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}   |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                | Value                    |
@@ -1488,6 +1527,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "younger-mc-nodeface"    |
       | relationDistributionStrategy       | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -1497,7 +1537,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                                                    |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"youngest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1507,7 +1547,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1519,7 +1559,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1530,7 +1570,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1546,6 +1586,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "eldest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                | Value                    |
@@ -1554,6 +1595,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "eldest-mc-nodeface"     |
       | relationDistributionStrategy       | "gatherSpecializations"  |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -1563,7 +1605,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1573,7 +1615,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1585,7 +1627,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1596,7 +1638,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;elder-mc-nodeface;{"example": "general"}    |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1616,6 +1658,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "eldest-mc-nodeface"     |
       | relationDistributionStrategy        | "scatter"                |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -1625,7 +1668,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"eldest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1635,7 +1678,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -1646,7 +1689,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1656,7 +1699,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1676,6 +1719,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "eldest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -1684,6 +1728,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "elder-mc-nodeface"      |
       | relationDistributionStrategy        | "scatter"                |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -1693,7 +1738,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"elder-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1703,7 +1748,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1713,7 +1758,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have no preceding siblings
@@ -1723,7 +1768,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1741,6 +1786,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "elder-mc-nodeface"      |
       | relationDistributionStrategy        | "scatter"                |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -1750,7 +1796,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"elder-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1760,7 +1806,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1772,7 +1818,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1782,7 +1828,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1808,6 +1854,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
       | relationDistributionStrategy        | "scatter"                |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -1817,7 +1864,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1827,7 +1874,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1838,7 +1885,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}   |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1848,7 +1895,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1864,6 +1911,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "youngest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"   |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                    |
@@ -1872,6 +1920,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
       | relationDistributionStrategy        | "scatter"                |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -1881,7 +1930,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1891,7 +1940,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1901,7 +1950,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1911,7 +1960,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}   |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1927,6 +1976,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId              | "youngest-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example": "spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"   |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                | Value                    |
@@ -1935,6 +1985,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "younger-mc-nodeface"    |
       | relationDistributionStrategy       | "scatter"                |
+    And the graph projection is fully up to date
 
     Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateWasMoved" with payload:
@@ -1944,7 +1995,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1954,7 +2005,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1964,7 +2015,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1974,7 +2025,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;eldest-mc-nodeface;{"example": "general"}  |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -1992,6 +2043,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "younger-mc-nodeface"    |
       | relationDistributionStrategy       | "scatter"                |
+    And the graph projection is fully up to date
 
     Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateWasMoved" with payload:
@@ -2001,7 +2053,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-david-nodenborough"                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"youngest-mc-nodeface"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -2011,7 +2063,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -2021,7 +2073,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                               |
       | cs-identifier;source-younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -2033,7 +2085,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                         |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -2059,6 +2111,7 @@ Feature: Move a node with content dimensions
       | nodeAggregateId       | "nody-mc-nodeface-ii"                     |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "sir-david-nodenborough"                  |
+    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                    |
@@ -2074,5 +2127,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "lady-eleonode-rootford"                                                                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId":null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    And the graph projection is fully up to date
+    When I am in workspace "live" and dimension space point {"example": "general"}
     And I expect node aggregate identifier "nody-mc-nodeface-ii" to lead to node cs-identifier;nody-mc-nodeface-ii;{"example": "general"}

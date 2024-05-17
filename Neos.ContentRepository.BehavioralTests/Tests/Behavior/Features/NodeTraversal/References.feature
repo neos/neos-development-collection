@@ -73,11 +73,13 @@ Feature: Find and count references and their target nodes using the findReferenc
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                               | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds       |
       | home            | Neos.ContentRepository.Testing:Homepage    | lady-eleonode-rootford | {}                    | {"terms": "terms", "contact": "contact"} |
@@ -141,6 +143,7 @@ Feature: Find and count references and their target nodes using the findReferenc
       | Key                          | Value         |
       | nodeAggregateId              | "a2a3"        |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And the graph projection is fully up to date
 
   Scenario:
     # findReferences queries without results

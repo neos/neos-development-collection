@@ -26,8 +26,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeVariation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
+use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -44,17 +43,15 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\DbalTools\CheckpointHelper;
 use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
  *
- * @implements ProjectionInterface<ContentHypergraph>
+ * @implements ProjectionInterface<ContentGraphFinder>
  * @internal the parent Content Graph is public
  */
 final class HypergraphProjection implements ProjectionInterface
@@ -69,19 +66,12 @@ final class HypergraphProjection implements ProjectionInterface
     use NodeTypeChange;
     use NodeVariation;
 
-    /**
-     * @var ContentHypergraph|null Cache for the content graph returned by {@see getState()},
-     * so that always the same instance is returned
-     */
-    private ?ContentHypergraph $contentHypergraph = null;
     private ProjectionHypergraph $projectionHypergraph;
 
     public function __construct(
         private readonly Connection $dbal,
-        private readonly NodeFactory $nodeFactory,
-        private readonly ContentRepositoryId $contentRepositoryId,
-        private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix,
+        private readonly ContentGraphFinder $contentGraphFinder
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($this->dbal, $this->tableNamePrefix);
     }
@@ -146,11 +136,6 @@ final class HypergraphProjection implements ProjectionInterface
         $this->truncateDatabaseTables();
 
         CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix);
-
-        //$contentGraph = $this->getState();
-        //foreach ($contentGraph->getSubgraphs() as $subgraph) {
-        //    $subgraph->inMemoryCache->enable();
-        //}
     }
 
     private function truncateDatabaseTables(): void
@@ -198,18 +183,9 @@ final class HypergraphProjection implements ProjectionInterface
         return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix);
     }
 
-    public function getState(): ContentHypergraph
+    public function getState(): ContentGraphFinder
     {
-        if (!$this->contentHypergraph) {
-            $this->contentHypergraph = new ContentHypergraph(
-                $this->dbal,
-                $this->nodeFactory,
-                $this->contentRepositoryId,
-                $this->nodeTypeManager,
-                $this->tableNamePrefix
-            );
-        }
-        return $this->contentHypergraph;
+        return $this->contentGraphFinder;
     }
 
     protected function getProjectionHypergraph(): ProjectionHypergraph

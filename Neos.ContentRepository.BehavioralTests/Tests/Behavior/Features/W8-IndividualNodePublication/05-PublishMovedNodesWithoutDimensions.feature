@@ -22,7 +22,8 @@ Feature: Publishing moved nodes without dimensions
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live"
+    And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                  |
       | nodeAggregateId     | "lady-eleonode-rootford"               |
@@ -57,12 +58,14 @@ Feature: Publishing moved nodes without dimensions
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "esquire"                                 |
       | nodeAggregateClassification   | "regular"                                 |
+    And the graph projection is fully up to date
 
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user"               |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
+    And the graph projection is fully up to date
 
   Scenario: Publish the move of a node to the end of its siblings
     When the command MoveNodeAggregate is executed with payload:
@@ -76,6 +79,7 @@ Feature: Publishing moved nodes without dimensions
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user"                                                                                                                              |
       | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
+    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -85,7 +89,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -115,6 +119,7 @@ Feature: Publishing moved nodes without dimensions
       | Key                      | Value                                                                                                                                   |
       | workspaceName            | "user"                                                                                                                                  |
       | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -124,7 +129,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -153,6 +158,7 @@ Feature: Publishing moved nodes without dimensions
       | parentNodeAggregateId | "sir-nodeward-nodington-iii"              |
       | nodeName                      | "other-document"                          |
       | nodeAggregateClassification   | "regular"                                 |
+    And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload:
       | Key                              | Value                        |
       | workspaceName              | "user"               |
@@ -163,6 +169,7 @@ Feature: Publishing moved nodes without dimensions
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user"                                                                                                                              |
       | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
+    And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -173,7 +180,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -207,6 +214,8 @@ Feature: Publishing moved nodes without dimensions
       | Key                      | Value                                                                                                                         |
       | workspaceName            | "user"                                                                                                                        |
       | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}] |
+
+    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -215,7 +224,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings

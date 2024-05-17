@@ -17,7 +17,8 @@ Feature: Unknown node types
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
@@ -33,6 +34,7 @@ Feature: Unknown node types
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |
+    And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: When removing "Neos.ContentRepository.Testing:Document", we find a missing node type.
@@ -45,6 +47,6 @@ Feature: Unknown node types
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 

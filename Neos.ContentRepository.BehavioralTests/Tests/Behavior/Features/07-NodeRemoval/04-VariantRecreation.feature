@@ -31,7 +31,7 @@ Feature: Recreate a node variant
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
 
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"en"}
+    And I am in workspace "live" and dimension space point {"language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -85,7 +85,7 @@ Feature: Recreate a node variant
       | sourceOrigin    | {"language":"en"}  |
       | targetOrigin    | {"language":"de"}  |
 
-    When I am in the active content stream of workspace "user-ws" and dimension space point {"language": "de"}
+    When I am in workspace "user-ws" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node new-user-cs-id;sir-david-nodenborough;{"language": "de"}
     Then I expect node aggregate identifier "nodimus-prime" and node path "document/tethered-document" to lead to node new-user-cs-id;nodimus-prime;{"language": "de"}
     Then I expect node aggregate identifier "nodimus-mediocre" and node path "document/tethered-document/tethered" to lead to node new-user-cs-id;nodimus-mediocre;{"language": "de"}

@@ -69,7 +69,7 @@ Feature: Add Dimension Specialization
               to: { language: 'ch' }
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     And I am in dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
@@ -120,12 +120,12 @@ Feature: Add Dimension Specialization
       | text | "changed" |
 
     # the original content stream was untouched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
       | Key  | Value   |
       | text | "hello" |
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I run integrity violation detection
@@ -140,7 +140,7 @@ Feature: Add Dimension Specialization
       | nodeVariantSelectionStrategy | "allVariants"            |
 
     # ensure the node is disabled
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}

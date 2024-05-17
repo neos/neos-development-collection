@@ -25,7 +25,7 @@ class DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory implements 
         return new ProjectionIntegrityViolationDetectionRunner(
             new ProjectionIntegrityViolationDetector(
                 $this->dbal,
-                DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
+                ContentGraphTableNames::create(
                     $serviceFactoryDependencies->contentRepositoryId
                 )
             )

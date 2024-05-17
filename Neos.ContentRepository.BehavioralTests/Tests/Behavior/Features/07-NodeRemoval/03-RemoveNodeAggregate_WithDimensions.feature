@@ -25,11 +25,13 @@ Feature: Remove NodeAggregate
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"en"}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName |
       | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document |
@@ -55,6 +57,7 @@ Feature: Remove NodeAggregate
       | affectedOccupiedDimensionSpacePoints | [{"language":"en"}]                    |
       | affectedCoveredDimensionSpacePoints  | [{"language":"de"},{"language":"gsw"}] |
       | removalAttachmentPoint               | null                                   |
+    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"en"} to exist in the content graph
@@ -188,6 +191,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateId | "nodingers-cat"   |
       | sourceOrigin    | {"language":"en"} |
       | targetOrigin    | {"language":"de"} |
+    And the graph projection is fully up to date
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value             |
@@ -202,6 +206,7 @@ Feature: Remove NodeAggregate
       | affectedOccupiedDimensionSpacePoints | [{"language":"de"},{"language":"en"}]                                      |
       | affectedCoveredDimensionSpacePoints  | [{"language":"de"},{"language":"en"},{"language":"gsw"},{"language":"fr"}] |
       | removalAttachmentPoint               | null                                                                       |
+    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 2 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"en"} to exist in the content graph
@@ -291,10 +296,12 @@ Feature: Remove NodeAggregate
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
+    And the graph projection is fully up to date
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | nodeTypeName                            | parentNodeAggregateId  | nodeName |
       | nodingers-cat    | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | pet      |
@@ -344,16 +351,19 @@ Feature: Remove NodeAggregate
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
+    And the graph projection is fully up to date
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId              | "nodingers-cat"      |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "nodingers-cat"   |
       | sourceOrigin    | {"language":"en"} |
       | targetOrigin    | {"language":"de"} |
+    And the graph projection is fully up to date
 
     Then I expect the node aggregate "nodingers-cat" to exist
     And I expect this node aggregate to disable dimension space points [{"language":"en"},{"language":"fr"}]

@@ -22,11 +22,13 @@ Feature: Constraint checks on node aggregate disabling
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
       | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
@@ -37,7 +39,7 @@ Feature: Constraint checks on node aggregate disabling
       | workspaceName      | "i-do-not-exist"                       |
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to disable a node aggregate in a workspace whose content stream is closed
     When the command CloseContentStream is executed with payload:
@@ -62,6 +64,7 @@ Feature: Constraint checks on node aggregate disabling
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {"language": "de"}            |
       | nodeVariantSelectionStrategy | "allVariants"                          |
+    And the graph projection is fully up to date
 
       # Note: The behavior has been changed with https://github.com/neos/neos-development-collection/pull/4284 and the test was adjusted accordingly
     When the command DisableNodeAggregate is executed with payload:

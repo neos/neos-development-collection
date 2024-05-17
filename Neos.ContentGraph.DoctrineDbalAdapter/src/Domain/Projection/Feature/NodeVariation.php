@@ -18,7 +18,6 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -30,8 +29,6 @@ use Neos\EventStore\Model\EventEnvelope;
 trait NodeVariation
 {
     abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
-
-    abstract protected function getTableNamePrefix(): string;
 
     /**
      * @param NodeSpecializationVariantWasCreated $event
@@ -67,7 +64,7 @@ trait NodeVariation
             $hierarchyRelation->assignNewChildNode(
                 $specializedNode->relationAnchorPoint,
                 $this->getDatabaseConnection(),
-                $this->tableNamePrefix
+                $this->tableNames
             );
             unset($uncoveredDimensionSpacePoints[$hierarchyRelation->dimensionSpacePointHash]);
         }
@@ -106,7 +103,6 @@ trait NodeVariation
                 $hierarchyRelation = new HierarchyRelation(
                     $parentNode->relationAnchorPoint,
                     $specializedNode->relationAnchorPoint,
-                    $sourceNode->nodeName,
                     $event->contentStreamId,
                     $uncoveredDimensionSpacePoint,
                     $uncoveredDimensionSpacePoint->hash,
@@ -119,7 +115,7 @@ trait NodeVariation
                     ),
                     NodeTags::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all()),
                 );
-                $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->getTableNamePrefix());
+                $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNames);
             }
         }
 
@@ -134,7 +130,7 @@ trait NodeVariation
                 $specializedNode->relationAnchorPoint,
                 null,
                 $this->getDatabaseConnection(),
-                $this->getTableNamePrefix()
+                $this->tableNames
             );
         }
 
@@ -186,7 +182,7 @@ trait NodeVariation
             $existingIngoingHierarchyRelation->assignNewChildNode(
                 $generalizedNode->relationAnchorPoint,
                 $this->getDatabaseConnection(),
-                $this->tableNamePrefix
+                $this->tableNames
             );
             $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
                 new DimensionSpacePointSet([
@@ -206,7 +202,7 @@ trait NodeVariation
                 $generalizedNode->relationAnchorPoint,
                 null,
                 $this->getDatabaseConnection(),
-                $this->getTableNamePrefix()
+                $this->tableNames
             );
         }
 
@@ -296,7 +292,7 @@ trait NodeVariation
             $existingIngoingHierarchyRelation->assignNewChildNode(
                 $peerNode->relationAnchorPoint,
                 $this->getDatabaseConnection(),
-                $this->tableNamePrefix
+                $this->tableNames
             );
             $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
                 new DimensionSpacePointSet([
@@ -316,7 +312,7 @@ trait NodeVariation
                 $peerNode->relationAnchorPoint,
                 null,
                 $this->getDatabaseConnection(),
-                $this->getTableNamePrefix()
+                $this->tableNames
             );
         }
 
@@ -355,7 +351,7 @@ trait NodeVariation
                 $peerNode->relationAnchorPoint,
                 new DimensionSpacePointSet([$coveredDimensionSpacePoint]),
                 $peerSucceedingSiblingNode?->relationAnchorPoint,
-                $sourceNode->nodeName
+
             );
         }
 
@@ -387,7 +383,6 @@ trait NodeVariation
         NodeRelationAnchorPoint $childNodeAnchorPoint,
         DimensionSpacePointSet $dimensionSpacePointSet,
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
-        NodeName $relationName = null
     ): void;
 
     abstract protected function copyReferenceRelations(

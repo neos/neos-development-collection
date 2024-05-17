@@ -19,7 +19,7 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                    |
       | nodeAggregateId             | "lady-eleonode-rootford"                                 |

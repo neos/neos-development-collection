@@ -22,11 +22,13 @@ Feature: Tag subtree with dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "root"                        |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName | originDimensionSpacePoint |
       | a               | Neos.ContentRepository.Testing:Document | root                  | a        | {"language":"mul"}        |
@@ -41,6 +43,7 @@ Feature: Tag subtree with dimensions
       | nodeAggregateId | "a1"               |
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"mul"} |
+    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                |
@@ -59,6 +62,8 @@ Feature: Tag subtree with dimensions
       | nodeAggregateId | "a1a"              |
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"mul"} |
+
+    And the graph projection is fully up to date
 
     When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
     """
@@ -124,22 +129,26 @@ Feature: Tag subtree with dimensions
       | workspaceName      | "user-ws"    |
       | baseWorkspaceName  | "live"       |
       | newContentStreamId | "user-cs-id" |
+    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value              |
       | workspaceName   | "user-ws"          |
       | nodeAggregateId | "a1"               |
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
+    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value              |
       | workspaceName   | "user-ws"          |
       | nodeAggregateId | "a1a"              |
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
+    And the graph projection is fully up to date
     And the command PublishWorkspace is executed with payload:
       | Key                | Value            |
       | workspaceName      | "user-ws"        |
       | newContentStreamId | "new-user-cs-id" |
+    And the graph projection is fully up to date
 
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                |
@@ -147,6 +156,7 @@ Feature: Tag subtree with dimensions
       | nodeAggregateId              | "a1"                 |
       | coveredDimensionSpacePoint   | {"language":"gsw"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                |
@@ -162,13 +172,15 @@ Feature: Tag subtree with dimensions
       | nodeAggregateId | "a1"               |
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
+    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value              |
       | workspaceName   | "user-ws"          |
       | nodeAggregateId | "a1a"              |
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
-    And I am in the active content stream of workspace "user-ws" and dimension space point {"language":"gsw"}
+    And the graph projection is fully up to date
+    And I am in workspace "user-ws" and dimension space point {"language":"gsw"}
     And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
     """
     a (tag1*)

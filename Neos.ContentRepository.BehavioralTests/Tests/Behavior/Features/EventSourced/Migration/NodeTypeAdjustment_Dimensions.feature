@@ -29,11 +29,13 @@ Feature: Adjust node types with a node migration
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                                      |
       | nodeAggregateId     | "lady-eleonode-rootford"                                                   |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
+    And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
@@ -41,6 +43,7 @@ Feature: Adjust node types with a node migration
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language": "de"}                        |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
+    And the graph projection is fully up to date
 
     ########################
     # Actual Test
@@ -72,11 +75,11 @@ Feature: Adjust node types with a node migration
               newType: 'Neos.ContentRepository.Testing:OtherDocument'
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     # ... also in the fallback dimension
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 

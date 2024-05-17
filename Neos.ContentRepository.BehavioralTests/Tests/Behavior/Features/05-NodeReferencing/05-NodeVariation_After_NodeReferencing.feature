@@ -29,11 +29,13 @@ Feature: Node References with Dimensions
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
       | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
@@ -45,15 +47,17 @@ Feature: Node References with Dimensions
       | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
+    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
       | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"ch"}   |
+    And the graph projection is fully up to date
 
     # after specialization, the reference must still exist on the specialized node
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "ch"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -64,7 +68,7 @@ Feature: Node References with Dimensions
       | referenceProperty | cs-identifier;source-nodandaise;{"language": "ch"} | null       |
 
     # the reference must also exist on the non-touched nodes
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -82,9 +86,10 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "source-nodandaise"}] |
+    And the graph projection is fully up to date
 
     # reference to self (modified 2 lines above)
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "ch"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -94,7 +99,7 @@ Feature: Node References with Dimensions
       | referenceProperty | cs-identifier;source-nodandaise;{"language": "ch"} | null       |
 
     # unmodified on the untouched nodes
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -110,6 +115,7 @@ Feature: Node References with Dimensions
       | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"ch"}   |
+    And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
@@ -117,10 +123,11 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "anthony-destinode"}] |
+    And the graph projection is fully up to date
 
 
     # on the specialization, the reference exists.
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "ch"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -131,7 +138,7 @@ Feature: Node References with Dimensions
       | referenceProperty | cs-identifier;source-nodandaise;{"language": "ch"} | null       |
 
     # on the other nodes, the reference does not exist.
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have no references
@@ -146,21 +153,24 @@ Feature: Node References with Dimensions
       | nodeAggregateId | "anthony-destinode" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"en"}   |
+    And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
+    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
       | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"en"}   |
+    And the graph projection is fully up to date
 
     # after creating a peer, the reference must still exist on the peer node
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "en"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -171,7 +181,7 @@ Feature: Node References with Dimensions
       | referenceProperty | cs-identifier;source-nodandaise;{"language": "en"} | null       |
 
     # the reference must also exist on the non-touched nodes
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -181,7 +191,7 @@ Feature: Node References with Dimensions
       | Name              | Node                                               | Properties |
       | referenceProperty | cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -199,9 +209,10 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint | {"language": "en"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "source-nodandaise"}] |
+    And the graph projection is fully up to date
 
     # reference to self (modified 2 lines above)
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "en"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -211,7 +222,7 @@ Feature: Node References with Dimensions
       | referenceProperty | cs-identifier;source-nodandaise;{"language": "en"} | null       |
 
     # unmodified on the untouched nodes
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -221,7 +232,7 @@ Feature: Node References with Dimensions
       | Name              | Node                                               | Properties |
       | referenceProperty | cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -239,6 +250,7 @@ Feature: Node References with Dimensions
       | originDimensionSpacePoint     | {"language": "ch"}                                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                            |
+    And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
@@ -246,6 +258,7 @@ Feature: Node References with Dimensions
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "anthony-destinode"}] |
+    And the graph projection is fully up to date
 
     # here we generalize
     When the command CreateNodeVariant is executed with payload:
@@ -253,9 +266,10 @@ Feature: Node References with Dimensions
       | nodeAggregateId | "ch-only"         |
       | sourceOrigin            | {"language":"ch"} |
       | targetOrigin            | {"language":"de"} |
+    And the graph projection is fully up to date
 
     # after generalizing, the reference must still exist on the generalized node
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "ch-only" to lead to node cs-identifier;ch-only;{"language": "de"}
     Then I expect this node to have the following references:
       | Name              | Node                                               | Properties |
@@ -266,7 +280,7 @@ Feature: Node References with Dimensions
       | referenceProperty | cs-identifier;ch-only;{"language": "de"} | null       |
 
     # the reference must also exist on the non-touched node
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "ch-only" to lead to node cs-identifier;ch-only;{"language": "ch"}
     Then I expect this node to have the following references:
       | Name              | Node                                               | Properties |

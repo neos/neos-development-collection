@@ -45,11 +45,13 @@ Feature: Constraint checks on SetNodeReferences
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
       | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
@@ -75,7 +77,7 @@ Feature: Constraint checks on SetNodeReferences
       | sourceNodeAggregateId | "source-nodandaise"             |
       | referenceName                 | "referenceProperty"             |
       | references                    | [{"target":"anthony-destinode"}] |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet" with code 1710407870
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist" with code 1513924741
 
   # checks for sourceNodeAggregateId
   Scenario: Try to reference nodes in a non-existent node aggregate
@@ -161,6 +163,7 @@ Feature: Constraint checks on SetNodeReferences
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
       | originDimensionSpacePoint     | {"language":"en"}                                   |
       | parentNodeAggregateId | "lady-eleonode-rootford"                            |
+    And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload and exceptions are caught:
       | Key                             | Value                                 |

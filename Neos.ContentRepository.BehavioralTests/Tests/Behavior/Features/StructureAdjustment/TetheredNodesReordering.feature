@@ -25,11 +25,13 @@ Feature: Tethered Nodes Reordering Structure changes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    And the graph projection is fully up to date
+    When I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                                                                                                                      |
       | nodeAggregateId                    | "sir-david-nodenborough"                                                                                                                   |
@@ -38,6 +40,7 @@ Feature: Tethered Nodes Reordering Structure changes
       | parentNodeAggregateId              | "lady-eleonode-rootford"                                                                                                                   |
       | nodeName                                   | "document"                                                                                                                                 |
       | tetheredDescendantNodeAggregateIds | {"tethered-node": "tethered-node-agg", "other-tethered-node": "other-tethered-node-agg", "third-tethered-node": "third-tethered-node-agg"} |
+    And the graph projection is fully up to date
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
@@ -68,7 +71,7 @@ Feature: Tethered Nodes Reordering Structure changes
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I get the node at path "document/tethered-node"
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                        |

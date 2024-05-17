@@ -90,11 +90,11 @@ final class ContentRepositoryRegistry
 
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
-        $contentRepository = $this->get($node->subgraphIdentity->contentRepositoryId);
-        return $contentRepository->getContentGraph()->getSubgraph(
-            $node->subgraphIdentity->contentStreamId,
-            $node->subgraphIdentity->dimensionSpacePoint,
-            $node->subgraphIdentity->visibilityConstraints
+        $contentRepository = $this->get($node->contentRepositoryId);
+
+        return $contentRepository->getContentGraph($node->workspaceName)->getSubgraph(
+            $node->dimensionSpacePoint,
+            $node->visibilityConstraints
         );
     }
 
@@ -154,7 +154,7 @@ final class ContentRepositoryRegistry
                 $this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionsFactory($contentRepositoryId, $contentRepositorySettings),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
-                $clock,
+                $clock
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryId, $exception);

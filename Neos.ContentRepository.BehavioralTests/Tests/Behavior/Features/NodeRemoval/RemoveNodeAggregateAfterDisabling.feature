@@ -23,11 +23,13 @@ Feature: Disable a node aggregate
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName            |
       | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | preceding-document  |
@@ -39,6 +41,7 @@ Feature: Disable a node aggregate
       | sourceNodeAggregateId | "preceding-nodenborough"               |
       | referenceName                 | "references"                           |
       | references                    | [{"target": "sir-david-nodenborough"}] |
+    And the graph projection is fully up to date
 
   Scenario: Restore a hidden node by removing and recreating it
     Given the command DisableNodeAggregate is executed with payload:
@@ -51,6 +54,7 @@ Feature: Disable a node aggregate
       | nodeAggregateId              | "nody-mc-nodeface" |
       | affectedOccupiedDimensionSpacePoints | [{}]               |
       | affectedCoveredDimensionSpacePoints  | [{}]               |
+    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
@@ -59,7 +63,9 @@ Feature: Disable a node aggregate
       | originDimensionSpacePoint     | {}                                        |
       | parentNodeAggregateId | "sir-david-nodenborough"                  |
       | nodeName                      | "child-document"                          |
-    And I am in the active content stream of workspace "live"
+
+    When the graph projection is fully up to date
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{} to exist in the content graph
@@ -70,7 +76,7 @@ Feature: Disable a node aggregate
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points []
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
     Then the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
       | Level | nodeAggregateId |

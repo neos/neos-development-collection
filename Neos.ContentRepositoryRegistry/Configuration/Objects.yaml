@@ -3,9 +3,6 @@ Neos\ContentRepositoryRegistry\ContentRepositoryRegistry:
     1:
       setting: Neos.ContentRepositoryRegistry
 
-Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface:
-  className: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\ObjectManagerBasedNodeLabelGeneratorFactory
-
 # !!! UGLY WORKAROUNDS, because we cannot wire non-Flow class constructor arguments here.
 Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory:
   scope: singleton

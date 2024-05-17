@@ -22,7 +22,8 @@ Feature: Workspace discarding - basic functionality
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -37,12 +38,16 @@ Feature: Workspace discarding - basic functionality
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Original"} |
+    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
+    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
+    And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
       | workspaceOwner     | "owner-identifier"   |
+    And the graph projection is fully up to date
 
   Scenario: Discarding a full workspace works
     When the command SetNodeProperties is executed with payload:
@@ -51,8 +56,9 @@ Feature: Workspace discarding - basic functionality
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Modified"} |
+    And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
@@ -63,8 +69,9 @@ Feature: Workspace discarding - basic functionality
       | Key                | Value                         |
       | workspaceName      | "user-test"                   |
       | newContentStreamId | "user-cs-identifier-modified" |
+    And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
@@ -77,6 +84,7 @@ Feature: Workspace discarding - basic functionality
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Modified"} |
+    And the graph projection is fully up to date
 
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                  |
@@ -84,14 +92,16 @@ Feature: Workspace discarding - basic functionality
       | nodeAggregateId           | "nody-mc-nodeface"                     |
       | originDimensionSpacePoint | {}                                     |
       | propertyValues            | {"text": "Modified in live workspace"} |
+    And the graph projection is fully up to date
 
     # Discarding
     When the command DiscardWorkspace is executed with payload:
       | Key                | Value                         |
       | workspaceName      | "user-test"                   |
       | newContentStreamId | "user-cs-identifier-modified" |
+    And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value                        |
@@ -105,12 +115,14 @@ Feature: Workspace discarding - basic functionality
       | baseWorkspaceName  | "live"                       |
       | newContentStreamId | "user-cs-one"                |
       | workspaceOwner     | "owner-identifier"           |
+    And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                        |
       | workspaceName      | "user-ws-two"                |
       | baseWorkspaceName  | "live"                       |
       | newContentStreamId | "user-cs-two"                |
       | workspaceOwner     | "owner-identifier"           |
+    And the graph projection is fully up to date
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                    |
@@ -118,6 +130,7 @@ Feature: Workspace discarding - basic functionality
       | nodeAggregateId              | "nody-mc-nodeface"       |
       | nodeVariantSelectionStrategy | "allVariants"            |
       | coveredDimensionSpacePoint   | {}                       |
+    And the graph projection is fully up to date
 
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
@@ -125,10 +138,12 @@ Feature: Workspace discarding - basic functionality
       | nodeAggregateId           | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Modified"}         |
+    And the graph projection is fully up to date
 
     And the command PublishWorkspace is executed with payload:
       | Key              | Value            |
       | workspaceName    | "user-ws-one"    |
+    And the graph projection is fully up to date
 
     Then workspace user-ws-two has status OUTDATED
 
@@ -143,6 +158,7 @@ Feature: Workspace discarding - basic functionality
       | Key                | Value                     |
       | workspaceName      | "user-ws-two"             |
       | newContentStreamId | "user-cs-two-discarded"   |
+    And the graph projection is fully up to date
 
     Then workspace user-ws-two has status OUTDATED
 

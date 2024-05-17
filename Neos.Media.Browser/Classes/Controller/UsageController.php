@@ -14,7 +14,7 @@ namespace Neos\Media\Browser\Controller;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -98,16 +98,19 @@ class UsageController extends ActionController
 
             $contentRepository = $this->contentRepositoryRegistry->get($usage->getContentRepositoryId());
 
-            $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
+
+            // FIXME: AssetUsageReference->workspaceName ?
+            $nodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(
                 $usage->getContentStreamId(),
                 $usage->getNodeAggregateId()
             );
             try {
                 $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName);
-            } catch (NodeTypeNotFoundException $e) {
+            } catch (NodeTypeNotFound $e) {
                 $nodeType = null;
             }
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
+
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
             $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeAggregateId()->value;
@@ -121,7 +124,7 @@ class UsageController extends ActionController
                 continue;
             }
 
-            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $subgraph = $contentRepository->getContentGraph($workspace->workspaceName)->getSubgraph(
                 $usage->getContentStreamId(),
                 $usage->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
                 VisibilityConstraints::withoutRestrictions()

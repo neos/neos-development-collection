@@ -32,7 +32,6 @@ Feature: Create node aggregate with node
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
-    And I am in workspace "live"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -40,12 +39,13 @@ Feature: Create node aggregate with node
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in content stream "cs-identifier"
-    And I am in dimension space point {}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
 
   # Direct allowance via grandchild NodeType constraints overrule deny all on NodeType
   # issue https://github.com/neos/neos-development-collection/issues/4351
@@ -56,6 +56,7 @@ Feature: Create node aggregate with node
       | nodeTypeName          | "Neos.ContentRepository.Testing.TetheredCollection" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
       | tetheredDescendantNodeAggregateIds | { "collection": "collection-node-id"} |
+    And the graph projection is fully up to date
     Then I expect the node aggregate "sir-david-nodenborough" to exist
     Then I expect the node aggregate "collection-node-id" to exist
     # TetheredCollection
@@ -67,6 +68,7 @@ Feature: Create node aggregate with node
       | nodeAggregateId           | "nody-mc-nodeface"                    |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId     | "collection-node-id"                  |
+    And the graph projection is fully up to date
     Then I expect the node aggregate "nody-mc-nodeface" to exist
 
     # allowed via grant parent node constraints: PrettyNode
@@ -75,6 +77,7 @@ Feature: Create node aggregate with node
       | nodeAggregateId           | "pretty-node"                               |
       | nodeTypeName              | "Neos.ContentRepository.Testing:PrettyNode" |
       | parentNodeAggregateId     | "collection-node-id"                        |
+    And the graph projection is fully up to date
     Then I expect the node aggregate "pretty-node" to exist
 
     # disallowed via grant parent node constraints: UglyNode
@@ -91,11 +94,13 @@ Feature: Create node aggregate with node
       | nodeAggregateId       | "sir-david-nodenborough"              |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
+    And the graph projection is fully up to date
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                                 |
       | nodeAggregateId           | "collection-node-id"                                  |
       | nodeTypeName              | "Neos.ContentRepository.Testing:RestrictedCollection" |
       | parentNodeAggregateId     | "sir-david-nodenborough"                              |
+    And the graph projection is fully up to date
     Then I expect the node aggregate "sir-david-nodenborough" to exist
     Then I expect the node aggregate "collection-node-id" to exist
     # Node
@@ -107,6 +112,7 @@ Feature: Create node aggregate with node
       | nodeAggregateId           | "pretty-node"                               |
       | nodeTypeName              | "Neos.ContentRepository.Testing:PrettyNode" |
       | parentNodeAggregateId     | "collection-node-id"                        |
+    And the graph projection is fully up to date
     Then I expect the node aggregate "pretty-node" to exist
 
     # disallowed via grant parent node constraints: UglyNode

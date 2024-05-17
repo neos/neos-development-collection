@@ -29,13 +29,15 @@ Feature: Create node aggregate with node
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And the graph projection is fully up to date
+    And I am in workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
 
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId            | nodeName   | parentNodeAggregateId  | nodeTypeName                                                 | initialPropertyValues    |
@@ -147,7 +149,7 @@ Feature: Create node aggregate with node
       | Key         | Value        |
       | defaultText | "my default" |
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect the subgraph projection to consist of exactly 4 nodes
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no parent node
@@ -198,13 +200,15 @@ Feature: Create node aggregate with node
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And the graph projection is fully up to date
+    And I am in workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
 
     Given the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                                          |
@@ -213,6 +217,7 @@ Feature: Create node aggregate with node
       | originDimensionSpacePoint | {}                                                             |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                                       |
       | nodeName                  | "node"                                                         |
+    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                              | Value                                                          |
       | nodeAggregateId                  | "sir-nodeward-nodington-iii"                                   |
@@ -234,7 +239,9 @@ Feature: Create node aggregate with node
       | nodeName                    | "esquire"                                                      |
       | initialPropertyValues       | []                                                             |
       | nodeAggregateClassification | "regular"                                                      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+
+    When the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
@@ -277,13 +284,15 @@ Feature: Create node aggregate with node
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And the graph projection is fully up to date
+    And I am in workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                                                             |
@@ -293,6 +302,7 @@ Feature: Create node aggregate with node
       | parentNodeAggregateId              | "lady-eleonode-rootford"                                                          |
       | nodeName                           | "node"                                                                            |
       | tetheredDescendantNodeAggregateIds | {"child-node": "nody-mc-nodeface", "child-node/grandchild-node": "nodimus-prime"} |
+    And the graph projection is fully up to date
 
     Then I expect exactly 5 events to be published on stream "ContentStream:cs-identifier"
     And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
@@ -397,7 +407,7 @@ Feature: Create node aggregate with node
       | Key  | Value                |
       | text | "my sub sub default" |
 
-    When I am in the active content stream of workspace "live" and dimension space point []
+    When I am in workspace "live" and dimension space point []
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no parent node
     And I expect this node to have the following child nodes:
@@ -458,13 +468,15 @@ Feature: Create node aggregate with node
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And the graph projection is fully up to date
+    And I am in workspace "live"
     And I am in dimension space point {}
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                                                                   |
@@ -474,6 +486,7 @@ Feature: Create node aggregate with node
       | parentNodeAggregateId              | "lady-eleonode-rootford"                                                                |
       | nodeName                           | "node"                                                                                  |
       | tetheredDescendantNodeAggregateIds | {"invalidcasedname": "nody-mc-nodeface", "invalidcharactors": "lord-from-nodding-hill"} |
+    And the graph projection is fully up to date
 
     And I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"

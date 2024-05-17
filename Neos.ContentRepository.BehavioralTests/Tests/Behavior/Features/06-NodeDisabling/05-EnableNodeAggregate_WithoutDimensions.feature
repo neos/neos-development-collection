@@ -23,11 +23,13 @@ Feature: Enable a node aggregate
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName            |
       | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | preceding-document  |
@@ -39,12 +41,14 @@ Feature: Enable a node aggregate
       | sourceNodeAggregateId | "preceding-nodenborough"               |
       | referenceName                 | "references"                           |
       | references                    | [{"target": "sir-david-nodenborough"}] |
+    And the graph projection is fully up to date
 
   Scenario: Enable a previously disabled node with arbitrary strategy since dimensions are not involved
     Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"       |
+    And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
@@ -58,7 +62,9 @@ Feature: Enable a node aggregate
       | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [[]]                     |
       | tag                  | "disabled"               |
-    And I am in the active content stream of workspace "live"
+
+    When the graph projection is fully up to date
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{} to exist in the content graph
@@ -69,7 +75,7 @@ Feature: Enable a node aggregate
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points []
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -120,10 +126,12 @@ Feature: Enable a node aggregate
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"       |
+    And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
@@ -136,14 +144,16 @@ Feature: Enable a node aggregate
       | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [[]]                     |
       | tag                  | "disabled"               |
-    And I am in the active content stream of workspace "live"
+
+    When the graph projection is fully up to date
+    And I am in workspace "live"
 
     Then I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points []
     And I expect the node aggregate "nody-mc-nodeface" to exist
     And I expect this node aggregate to disable dimension space points [{}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -194,10 +204,12 @@ Feature: Enable a node aggregate
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"       |
+    And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
@@ -210,14 +222,16 @@ Feature: Enable a node aggregate
       | nodeAggregateId      | "nody-mc-nodeface" |
       | affectedDimensionSpacePoints | [[]]               |
       | tag                  | "disabled"         |
-    And I am in the active content stream of workspace "live"
+
+    When the graph projection is fully up to date
+    And I am in workspace "live"
 
     Then I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points [{}]
     And I expect the node aggregate "nody-mc-nodeface" to exist
     And I expect this node aggregate to disable dimension space points []
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:

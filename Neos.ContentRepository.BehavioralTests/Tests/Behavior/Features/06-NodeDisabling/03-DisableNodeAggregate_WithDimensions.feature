@@ -25,11 +25,13 @@ Feature: Disable a node aggregate
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"mul"}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId         | nodeTypeName                            | parentNodeAggregateId  | nodeName            |
       | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | preceding-document  |
@@ -47,6 +49,7 @@ Feature: Disable a node aggregate
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"mul"}       |
       | targetOrigin    | {"language":"ltz"}       |
+    And the graph projection is fully up to date
     # Set the DSP to the "central" variant having variants of all kind
     And I am in dimension space point {"language":"de"}
 
@@ -63,7 +66,9 @@ Feature: Disable a node aggregate
       | nodeAggregateId              | "sir-david-nodenborough"                                    |
       | affectedDimensionSpacePoints | [{"language":"de"}, {"language":"ltz"}, {"language":"gsw"}] |
       | tag                          | "disabled"                                                  |
-    And I am in the active content stream of workspace "live"
+
+    When the graph projection is fully up to date
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 6 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{"language":"mul"} to exist in the content graph
@@ -313,7 +318,9 @@ Feature: Disable a node aggregate
       | nodeAggregateId              | "sir-david-nodenborough"                                                                           |
       | affectedDimensionSpacePoints | [{"language":"ltz"}, {"language":"mul"}, {"language":"de"}, {"language":"en"}, {"language":"gsw"}] |
       | tag                          | "disabled"                                                                                         |
-    And I am in the active content stream of workspace "live"
+
+    When the graph projection is fully up to date
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 6 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{"language":"mul"} to exist in the content graph

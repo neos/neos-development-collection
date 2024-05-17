@@ -36,7 +36,8 @@ Feature: Tethered Nodes integrity violations
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                                | Value                                               |
       | nodeAggregateId                    | "lady-eleonode-rootford"                            |
@@ -78,6 +79,7 @@ Feature: Tethered Nodes integrity violations
       | parentNodeAggregateId       | "nodewyn-tetherton"                           |
       | nodeName                    | "tethered-leaf"                               |
       | nodeAggregateClassification | "tethered"                                    |
+    And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: Adjusting the schema adding a new tethered node leads to a MissingTetheredNode integrity violation
@@ -142,7 +144,7 @@ Feature: Tethered Nodes integrity violations
     When I adjust the node structure for node type "Neos.ContentRepository:Root"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     And I get the node at path "document/some-new-child"
     And I expect this node to have the following properties:
       | Key | Value                |
@@ -201,7 +203,7 @@ Feature: Tethered Nodes integrity violations
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
     When I adjust the node structure for node type "Neos.ContentRepository:Root"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
-    When I am in the active content stream of workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
+    When I am in workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "nodewyn-tetherton" to lead to no node
     Then I expect node aggregate identifier "nodimer-tetherton" to lead to no node
     And  I expect path "tethered-node" to lead to no node

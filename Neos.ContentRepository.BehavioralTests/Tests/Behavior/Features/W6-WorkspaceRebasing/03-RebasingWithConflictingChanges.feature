@@ -22,7 +22,8 @@ Feature: Workspace rebasing - conflicting changes
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -37,12 +38,16 @@ Feature: Workspace rebasing - conflicting changes
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Original"} |
+    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
+    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
+    And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
       | workspaceOwner     | "owner-identifier"   |
+    And the graph projection is fully up to date
 
   Scenario: Conflicting changes lead to OUTDATED_CONFLICT which can be recovered from via forced rebase
 
@@ -52,12 +57,14 @@ Feature: Workspace rebasing - conflicting changes
       | baseWorkspaceName  | "live"                       |
       | newContentStreamId | "user-cs-one"                |
       | workspaceOwner     | "owner-identifier"           |
+    And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                        |
       | workspaceName      | "user-ws-two"                |
       | baseWorkspaceName  | "live"                       |
       | newContentStreamId | "user-cs-two"                |
       | workspaceOwner     | "owner-identifier"           |
+    And the graph projection is fully up to date
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                    |
@@ -65,6 +72,7 @@ Feature: Workspace rebasing - conflicting changes
       | nodeVariantSelectionStrategy | "allVariants"            |
       | coveredDimensionSpacePoint   | {}                       |
       | workspaceName              | "user-ws-one"            |
+    And the graph projection is fully up to date
 
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
@@ -72,6 +80,7 @@ Feature: Workspace rebasing - conflicting changes
       | nodeAggregateId           | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Modified"}         |
+    And the graph projection is fully up to date
 
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                    |
@@ -80,6 +89,7 @@ Feature: Workspace rebasing - conflicting changes
       | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
       | originDimensionSpacePoint   | {}                                       |
       | workspaceName               | "user-ws-two"                            |
+    And the graph projection is fully up to date
 
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
@@ -87,10 +97,12 @@ Feature: Workspace rebasing - conflicting changes
       | nodeAggregateId           | "noderus-secundus"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "The other node"}   |
+    And the graph projection is fully up to date
 
     And the command PublishWorkspace is executed with payload:
       | Key              | Value            |
       | workspaceName    | "user-ws-one"    |
+    And the graph projection is fully up to date
 
     Then workspace user-ws-two has status OUTDATED
 
@@ -99,6 +111,7 @@ Feature: Workspace rebasing - conflicting changes
       | workspaceName                  | "user-ws-two"          |
       | rebasedContentStreamId         | "user-cs-two-rebased"  |
       | rebaseErrorHandlingStrategy    | "force"                |
+    And the graph projection is fully up to date
 
     Then workspace user-ws-two has status UP_TO_DATE
     And I expect a node identified by user-cs-two-rebased;noderus-secundus;{} to exist in the content graph

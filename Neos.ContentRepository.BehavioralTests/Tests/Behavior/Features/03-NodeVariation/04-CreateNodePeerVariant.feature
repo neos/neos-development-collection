@@ -29,11 +29,13 @@ Feature: Create node peer variant
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | originDimensionSpacePoint | nodeName            | parentNodeAggregateId  | succeedingSiblingNodeAggregateId | nodeTypeName                                                   | tetheredDescendantNodeAggregateIds                                                            |
     # We have to add another node since root nodes have no origin dimension space points and thus cannot be varied.
@@ -53,11 +55,13 @@ Feature: Create node peer variant
       | nodeAggregateId | "nody-mc-nodeface"   |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
+    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
       | nodeAggregateId | "elder-mc-nodeface"  |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
+    And the graph projection is fully up to date
     # Complete the sibling set with a node in the target DSP between the middle and last node
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                                            |
@@ -66,6 +70,7 @@ Feature: Create node peer variant
       | parentNodeAggregateId     | "lady-eleonode-rootford"                                         |
       | originDimensionSpacePoint | {"example":"peer"}                                               |
       | nodeName                  | "younger-document"                                               |
+    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                  |
       | nodeAggregateId | "youngest-mc-nodeface" |
@@ -109,6 +114,8 @@ Feature: Create node peer variant
       | sourceOrigin           | {"example":"source"}                                                                                                                      |
       | peerOrigin             | {"example":"peer"}                                                                                                                        |
       | peerSucceedingSiblings | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":null}] |
+
+    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
@@ -125,7 +132,7 @@ Feature: Create node peer variant
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"peer"} to exist in the content graph
     And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"peer"},{"example":"peerSpec"}]
@@ -162,7 +169,7 @@ Feature: Create node peer variant
     And I expect this node aggregate to occupy dimension space points [{"example":"source"},{"example":"peer"}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"peer"},{"example":"peerSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    When I am in workspace "live" and dimension space point {"example":"source"}
     Then I expect the subgraph projection to consist of exactly 7 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -199,7 +206,7 @@ Feature: Create node peer variant
       | cs-identifier;elder-mc-nodeface;{"example":"source"} |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"peer"}
+    When I am in workspace "live" and dimension space point {"example":"peer"}
     Then I expect the subgraph projection to consist of exactly 8 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -264,7 +271,7 @@ Feature: Create node peer variant
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"peerSpec"}
+    When I am in workspace "live" and dimension space point {"example":"peerSpec"}
     Then I expect the subgraph projection to consist of exactly 8 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -335,6 +342,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "nody-mc-nodeface"     |
       | sourceOrigin    | {"example":"source"}   |
       | targetOrigin    | {"example":"peerSpec"} |
+    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
@@ -384,6 +392,8 @@ Feature: Create node peer variant
       | sourceOrigin           | {"example":"source"}                                                |
       | peerOrigin             | {"example":"peer"}                                                  |
       | peerSucceedingSiblings | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":null}] |
+
+    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"peer"} to exist in the content graph
@@ -400,7 +410,7 @@ Feature: Create node peer variant
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"peer"},{"example":"peerSpec"}]
@@ -433,7 +443,7 @@ Feature: Create node peer variant
     And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"peer"}
+    When I am in workspace "live" and dimension space point {"example":"peer"}
     Then I expect the subgraph projection to consist of exactly 5 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -463,7 +473,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peerSpec"}
+    When I am in workspace "live" and dimension space point {"example": "peerSpec"}
     Then I expect the subgraph projection to consist of exactly 5 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -499,6 +509,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "nody-mc-nodeface"   |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
+    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                  |
@@ -548,6 +559,8 @@ Feature: Create node peer variant
       | sourceOrigin           | {"example":"source"}                                                    |
       | peerOrigin             | {"example":"peerSpec"}                                                  |
       | peerSucceedingSiblings | [{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":null}] |
+
+    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"peer"} to exist in the content graph
@@ -564,7 +577,7 @@ Feature: Create node peer variant
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"peer"},{"example":"peerSpec"}]
@@ -597,7 +610,7 @@ Feature: Create node peer variant
     And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"peer"}
+    When I am in workspace "live" and dimension space point {"example":"peer"}
     Then I expect the subgraph projection to consist of exactly 5 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -627,7 +640,7 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peerSpec"}
+    When I am in workspace "live" and dimension space point {"example": "peerSpec"}
     Then I expect the subgraph projection to consist of exactly 5 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -671,6 +684,7 @@ Feature: Create node peer variant
       | nodeAggregateId | "elder-mc-nodeface"  |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"peer"}   |
+    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                     |
       | nodeAggregateId | "elder-child-mc-nodeface" |
@@ -692,6 +706,8 @@ Feature: Create node peer variant
       | sourceOrigin           | {"example":"source"}                                                                                                                      |
       | peerOrigin             | {"example":"peer"}                                                                                                                        |
       | peerSucceedingSiblings | [{"dimensionSpacePoint":{"example":"peer"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"peerSpec"},"nodeAggregateId":null}] |
+
+    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 11 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"peer"} to exist in the content graph
@@ -705,7 +721,7 @@ Feature: Create node peer variant
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"peer"},{"example":"peerSpec"}]
@@ -738,7 +754,7 @@ Feature: Create node peer variant
     And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"peer"}
+    When I am in workspace "live" and dimension space point {"example":"peer"}
     Then I expect the subgraph projection to consist of exactly 4 nodes
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -756,7 +772,7 @@ Feature: Create node peer variant
       | elder-child-document | cs-identifier;elder-child-mc-nodeface;{"example":"peer"} |
     And I expect node aggregate identifier "elder-child-mc-nodeface" and node path "elder-document/elder-child-document" to lead to node cs-identifier;elder-child-mc-nodeface;{"example":"peer"}
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peerSpec"}
+    When I am in workspace "live" and dimension space point {"example": "peerSpec"}
     Then I expect the subgraph projection to consist of exactly 4 nodes
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
