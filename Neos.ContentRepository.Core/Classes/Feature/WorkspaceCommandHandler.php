@@ -279,7 +279,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         WorkspaceName $baseWorkspaceName,
         ContentStreamId $baseContentStreamId,
-    ): ?CommandResult {
+    ): void {
         $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
             $baseContentStreamId
         );
@@ -324,10 +324,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         if (count($events) === 0) {
-            return null;
+            return;
         }
         try {
-            return $this->eventPersister->publishEvents(
+            $this->eventPersister->publishEvents(
                 new EventsToPublish(
                     $baseWorkspaceContentStreamName->getEventStreamName(),
                     Events::fromArray($events),

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
@@ -61,11 +60,11 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 WorkspaceName $workspaceNameForWriting,
                 ContentStreamId $contentStreamForWriting
-            ): ?CommandResult
+            ): void
             {
                 $serializedPropertyValue = $node->properties->serialized()->getProperty($this->from);
                 if ($serializedPropertyValue !== null) {
-                    return $this->contentRepository->handle(
+                    $this->contentRepository->handle(
                         SetSerializedNodeProperties::create(
                             $workspaceNameForWriting,
                             $node->aggregateId,
@@ -77,8 +76,6 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                         )
                     );
                 }
-
-                return null;
             }
         };
     }
