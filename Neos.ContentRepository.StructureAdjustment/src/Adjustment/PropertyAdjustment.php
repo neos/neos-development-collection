@@ -115,7 +115,7 @@ class PropertyAdjustment
     ): EventsToPublish {
         $events = Events::with(
             new NodePropertiesWereSet(
-                WorkspaceName::fromString('todo'), // TODO read from $node
+                $node->workspaceName,
                 $node->subgraphIdentity->contentStreamId,
                 $node->nodeAggregateId,
                 $node->originDimensionSpacePoint,

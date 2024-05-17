@@ -122,7 +122,7 @@ class TetheredNodeAdjustments
                         'The tethered child node "'
                             . $tetheredNodeAggregate->nodeName->value . '" should be removed.',
                         function () use ($tetheredNodeAggregate) {
-                            return $this->removeNodeAggregate($tetheredNodeAggregate);
+                            return $this->removeNodeAggregate($this->projectedNodeIterator->contentGraph, $tetheredNodeAggregate);
                         }
                     );
                 }
@@ -154,8 +154,8 @@ class TetheredNodeAdjustments
                                 . ' - actual: '
                                 . implode(', ', array_keys($actualTetheredChildNodes)),
                             fn () => $this->reorderNodes(
-                                WorkspaceName::fromString('todo'), // TODO read from $nodeAggregate
-                                $nodeAggregate->contentStreamId,
+                                $this->projectedNodeIterator->contentGraph->getWorkspaceName(),
+                                $this->projectedNodeIterator->contentGraph->getContentStreamId(),
                                 $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
                                 $actualTetheredChildNodes,
                                 array_keys($expectedTetheredNodes)

@@ -79,8 +79,8 @@ trait TetheredNodeInternals
                     $rootGeneralizationOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($rootGeneralization);
                     if ($creationOriginDimensionSpacePoint) {
                         $events[] = new NodePeerVariantWasCreated(
-                            WorkspaceName::fromString('todo'), // TODO read from $parentNodeAggregate
-                            $parentNodeAggregate->contentStreamId,
+                            $contentGraph->getWorkspaceName(),
+                            $contentGraph->getContentStreamId(),
                             $tetheredNodeAggregateId,
                             $creationOriginDimensionSpacePoint,
                             $rootGeneralizationOrigin,
@@ -90,8 +90,8 @@ trait TetheredNodeInternals
                         );
                     } else {
                         $events[] = new NodeAggregateWithNodeWasCreated(
-                            WorkspaceName::fromString('todo'), // TODO read from $parentNodeAggregate
-                            $parentNodeAggregate->contentStreamId,
+                            $contentGraph->getWorkspaceName(),
+                            $contentGraph->getContentStreamId(),
                             $tetheredNodeAggregateId,
                             $expectedTetheredNodeType->name,
                             $rootGeneralizationOrigin,
@@ -110,8 +110,8 @@ trait TetheredNodeInternals
             }
             return Events::with(
                 new NodeAggregateWithNodeWasCreated(
-                    WorkspaceName::fromString('todo'), // TODO read from $parentNodeAggregate
-                    $parentNodeAggregate->contentStreamId,
+                    $contentGraph->getWorkspaceName(),
+                    $contentGraph->getContentStreamId(),
                     $tetheredNodeAggregateId ?: NodeAggregateId::create(),
                     $expectedTetheredNodeType->name,
                     $originDimensionSpacePoint,

@@ -304,6 +304,7 @@ trait NodeTypeChange
                 );
                 // AND REMOVE THEM
                 $events[] = $this->removeNodeInDimensionSpacePointSet(
+                    $contentGraph,
                     $childNodeAggregate,
                     $dimensionSpacePointsToBeRemoved,
                 );
@@ -336,6 +337,7 @@ trait NodeTypeChange
                     );
                     // AND REMOVE THEM
                     $events[] = $this->removeNodeInDimensionSpacePointSet(
+                        $contentGraph,
                         $grandchildNodeAggregate,
                         $dimensionSpacePointsToBeRemoved,
                     );
@@ -369,6 +371,7 @@ trait NodeTypeChange
                 );
                 // AND REMOVE THEM
                 $events[] = $this->removeNodeInDimensionSpacePointSet(
+                    $contentGraph,
                     $tetheredNodeAggregate,
                     $dimensionSpacePointsToBeRemoved,
                 );
@@ -423,12 +426,13 @@ trait NodeTypeChange
     }
 
     private function removeNodeInDimensionSpacePointSet(
+        ContentGraphInterface $contentGraph,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $coveredDimensionSpacePointsToBeRemoved,
     ): NodeAggregateWasRemoved {
         return new NodeAggregateWasRemoved(
-            WorkspaceName::fromString('todo'), // TODO read from $nodeAggregate
-            $nodeAggregate->contentStreamId,
+            $contentGraph->getWorkspaceName(),
+            $contentGraph->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             // TODO: we also use the covered dimension space points as OCCUPIED dimension space points
             // - however the OCCUPIED dimension space points are not really used by now

@@ -131,8 +131,8 @@ class DisallowedChildNodeAdjustment
         $referenceOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint);
         $events = Events::with(
             new NodeAggregateWasRemoved(
-                WorkspaceName::fromString('todo'), // TODO read from $nodeAggregate
-                $nodeAggregate->contentStreamId,
+                $this->projectedNodeIterator->contentGraph->getWorkspaceName(),
+                $this->projectedNodeIterator->contentGraph->getContentStreamId(),
                 $nodeAggregate->nodeAggregateId,
                 $nodeAggregate->occupiesDimensionSpacePoint($referenceOrigin)
                     ? new OriginDimensionSpacePointSet([$referenceOrigin])
