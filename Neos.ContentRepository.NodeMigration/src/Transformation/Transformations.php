@@ -94,7 +94,7 @@ final class Transformations
         WorkspaceName $workspaceNameForWriting,
     ): void {
         foreach ($this->globalTransformations as $globalTransformation) {
-            $globalTransformation->execute($workspaceNameForWriting)->block();
+            $globalTransformation->execute($workspaceNameForWriting);
         }
     }
 
@@ -104,7 +104,7 @@ final class Transformations
         ContentStreamId $contentStreamForWriting
     ): void {
         foreach ($this->nodeAggregateBasedTransformations as $nodeAggregateBasedTransformation) {
-            $nodeAggregateBasedTransformation->execute($nodeAggregate, $workspaceNameForWriting, $contentStreamForWriting)->block();
+            $nodeAggregateBasedTransformation->execute($nodeAggregate, $workspaceNameForWriting, $contentStreamForWriting);
         }
     }
 
@@ -115,7 +115,7 @@ final class Transformations
         ContentStreamId $contentStreamForWriting
     ): void {
         foreach ($this->nodeBasedTransformations as $nodeBasedTransformation) {
-            $nodeBasedTransformation->execute($node, $coveredDimensionSpacePoints, $workspaceNameForWriting, $contentStreamForWriting)?->block();
+            $nodeBasedTransformation->execute($node, $coveredDimensionSpacePoints, $workspaceNameForWriting, $contentStreamForWriting);
         }
     }
 }

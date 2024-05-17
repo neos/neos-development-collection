@@ -26,12 +26,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNod
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
@@ -279,16 +276,15 @@ class NodesController extends ActionController
             );
 
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
-            CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
-                $this->adoptNodeAndParents(
-                    $workspaceName,
-                    $nodeAggregateId,
-                    $sourceSubgraph,
-                    $targetSubgraph,
-                    $targetDimensionSpacePoint,
-                    $contentRepository,
-                    $mode === 'adoptFromAnotherDimensionAndCopyContent'
-                ));
+            $this->adoptNodeAndParents(
+                $workspaceName,
+                $nodeAggregateId,
+                $sourceSubgraph,
+                $targetSubgraph,
+                $targetDimensionSpacePoint,
+                $contentRepository,
+                $mode === 'adoptFromAnotherDimensionAndCopyContent'
+            );
 
             $this->redirect('show', null, null, [
                 'identifier' => $nodeAggregateId->value,
@@ -413,7 +409,7 @@ class NodesController extends ActionController
                     $sourceNode->originDimensionSpacePoint,
                     OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
                 )
-            )->block();
+            );
 
             if ($copyContent === true) {
                 $contentNodeConstraint = NodeTypeCriteria::fromFilterString('!' . NodeTypeNameFactory::NAME_DOCUMENT);
@@ -455,7 +451,7 @@ class NodesController extends ActionController
                         $childNode->originDimensionSpacePoint,
                         OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
                     )
-                )->block();
+                );
             }
 
             $this->createNodeVariantsForChildNodes(
