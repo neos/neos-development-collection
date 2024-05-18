@@ -99,6 +99,31 @@ final readonly class NodeAddress implements \JsonSerializable
         }
     }
 
+    public static function fromUriString(string $encoded): self
+    {
+        $parts = explode('__', $encoded);
+        if (count($parts) !== 4) {
+            throw new \RuntimeException(sprintf('Failed to decode NodeAddress from uri string: %s', $encoded), 1716051847);
+        }
+        return new self(
+            ContentRepositoryId::fromString($parts[0]),
+            WorkspaceName::fromString($parts[1]),
+            DimensionSpacePoint::fromUriRepresentation($parts[2]),
+            NodeAggregateId::fromString($parts[3])
+        );
+    }
+
+    public function toUriString(): string
+    {
+        return sprintf(
+            '%s__%s__%s__%s',
+            $this->contentRepositoryId->value,
+            $this->workspaceName->value,
+            $this->dimensionSpacePoint->toUriRepresentation(),
+            $this->aggregateId->value
+        );
+    }
+
     public function jsonSerialize(): mixed
     {
         return get_object_vars($this);
