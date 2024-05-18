@@ -243,7 +243,7 @@ final class NodeFactory
             }
         }
 
-        return new NodeAggregate(
+        return NodeAggregate::create(
             $this->contentRepositoryId,
             WorkspaceName::fromString('missing'), // todo
             $nodeAggregateId,
@@ -342,7 +342,7 @@ final class NodeFactory
         }
 
         foreach ($nodeAggregateIds as $key => $nodeAggregateId) {
-            yield new NodeAggregate(
+            yield NodeAggregate::create(
                 $this->contentRepositoryId,
                 WorkspaceName::fromString('missing'), // todo
                 $nodeAggregateId,

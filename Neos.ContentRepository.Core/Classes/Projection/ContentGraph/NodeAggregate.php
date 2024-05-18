@@ -74,7 +74,7 @@ final readonly class NodeAggregate
      * @param OriginByCoverage $occupationByCovered
      * @param DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags dimension space points for every subtree tag this node aggregate is *explicitly* tagged with (excluding inherited tags)
      */
-    public function __construct(
+    private function __construct(
         public ContentRepositoryId $contentRepositoryId,
         public WorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
@@ -94,9 +94,9 @@ final readonly class NodeAggregate
     }
 
     /**
-     * @internal The signature of this method can change in the future!
      * @param non-empty-array<string,Node> $nodesByOccupiedDimensionSpacePoint
      * @param non-empty-array<string,Node> $nodesByCoveredDimensionSpacePoint
+     * @internal The signature of this method can change in the future!
      */
     public static function create(
         ContentRepositoryId $contentRepositoryId,

@@ -221,7 +221,7 @@ final class NodeFactory
         // a nodeAggregate only exists if it at least contains one node
         assert($nodesByOccupiedDimensionSpacePoint !== []);
 
-        return new NodeAggregate(
+        return NodeAggregate::create(
             $this->contentRepositoryId,
             $workspaceName,
             NodeAggregateId::fromString($rawNodeAggregateId),
@@ -315,7 +315,7 @@ final class NodeFactory
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateId => $nodes) {
             /** @var string $rawNodeAggregateId */
-            yield new NodeAggregate(
+            yield NodeAggregate::create(
                 $this->contentRepositoryId,
                 $workspaceName,
                 NodeAggregateId::fromString($rawNodeAggregateId),
