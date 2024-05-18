@@ -70,7 +70,7 @@ class NodeHelper implements ProtectedContextAwareInterface
 
             $subNode = $nodePath instanceof AbsoluteNodePath
                 ? $subgraph->findNodeByAbsolutePath($nodePath)
-                : $subgraph->findNodeByPath($nodePath, $node->nodeAggregateId);
+                : $subgraph->findNodeByPath($nodePath, $node->aggregateId);
 
             if ($subNode !== null && $this->isOfType($subNode, $contentCollectionType)) {
                 return $subNode;
@@ -79,7 +79,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                     $node,
                     $this->contentRepositoryRegistry->subgraphForNode($node)
                         ->findAncestorNodes(
-                            $node->nodeAggregateId,
+                            $node->aggregateId,
                             FindAncestorNodesFilter::create()
                         )
                 );
@@ -116,7 +116,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function depth(Node $node): int
     {
         return $this->contentRepositoryRegistry->subgraphForNode($node)
-            ->countAncestorNodes($node->nodeAggregateId, CountAncestorNodesFilter::create());
+            ->countAncestorNodes($node->aggregateId, CountAncestorNodesFilter::create());
     }
 
     /**
@@ -126,7 +126,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         $ancestors = $subgraph->findAncestorNodes(
-            $node->nodeAggregateId,
+            $node->aggregateId,
             FindAncestorNodesFilter::create()
         )->reverse();
 

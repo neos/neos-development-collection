@@ -219,13 +219,13 @@ class TetheredNodeAdjustments
             foreach ($coverageByOrigin as $coveredDimensionSpacePoint) {
                 $succeedingSiblingsForCoverage[] = new InterdimensionalSibling(
                     $coveredDimensionSpacePoint,
-                    $succeedingNode->nodeAggregateId
+                    $succeedingNode->aggregateId
                 );
             }
 
             $events[] = new NodeAggregateWasMoved(
                 $contentStreamId,
-                $nodeToMove->nodeAggregateId,
+                $nodeToMove->aggregateId,
                 null,
                 new InterdimensionalSiblings(...$succeedingSiblingsForCoverage),
             );

@@ -96,7 +96,7 @@ class PropertyOperation extends AbstractOperation
         if ($propertyName === '_path') {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             $ancestors = $subgraph->findAncestorNodes(
-                $element->nodeAggregateId,
+                $element->aggregateId,
                 FindAncestorNodesFilter::create()
             )->reverse();
 
@@ -104,7 +104,7 @@ class PropertyOperation extends AbstractOperation
         }
         if ($propertyName === '_identifier') {
             // TODO: deprecated (Neos <9 case)
-            return $element->nodeAggregateId->value;
+            return $element->aggregateId->value;
         }
 
         if ($propertyName[0] === '_') {
@@ -118,7 +118,7 @@ class PropertyOperation extends AbstractOperation
             // legacy access layer for references
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             $references = $subgraph->findReferences(
-                $element->nodeAggregateId,
+                $element->aggregateId,
                 FindReferencesFilter::create(referenceName: $propertyName)
             )->getNodes();
 

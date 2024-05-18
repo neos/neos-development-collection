@@ -46,20 +46,20 @@ final readonly class NodeSubtreeSnapshot implements \JsonSerializable
     {
         $childNodes = [];
         foreach (
-            $subgraph->findChildNodes($sourceNode->nodeAggregateId, FindChildNodesFilter::create()) as $sourceChildNode
+            $subgraph->findChildNodes($sourceNode->aggregateId, FindChildNodesFilter::create()) as $sourceChildNode
         ) {
             $childNodes[] = self::fromSubgraphAndStartNode($subgraph, $sourceChildNode);
         }
         $properties = $sourceNode->properties;
 
         return new self(
-            $sourceNode->nodeAggregateId,
+            $sourceNode->aggregateId,
             $sourceNode->nodeTypeName,
             $sourceNode->nodeName,
             $sourceNode->classification,
             $properties->serialized(),
             NodeReferencesSnapshot::fromReferences(
-                $subgraph->findReferences($sourceNode->nodeAggregateId, FindReferencesFilter::create())
+                $subgraph->findReferences($sourceNode->aggregateId, FindReferencesFilter::create())
             ),
             $childNodes
         );

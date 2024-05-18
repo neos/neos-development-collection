@@ -291,13 +291,13 @@ class NodeViewHelper extends AbstractViewHelper
             } else {
                 $targetNode = $subgraph->findNodeByPath(
                     NodePath::fromString(substr($path, 1)),
-                    $siteNode->nodeAggregateId
+                    $siteNode->aggregateId
                 );
             }
         } else {
             $targetNode = $subgraph->findNodeByPath(
                 NodePath::fromString($path),
-                $documentNode->nodeAggregateId
+                $documentNode->aggregateId
             );
         }
         if ($targetNode === null) {
@@ -309,6 +309,6 @@ class NodeViewHelper extends AbstractViewHelper
             ), 1601311789));
             return null;
         }
-        return $documentNodeAddress->withNodeAggregateId($targetNode->nodeAggregateId);
+        return $documentNodeAddress->withNodeAggregateId($targetNode->aggregateId);
     }
 }

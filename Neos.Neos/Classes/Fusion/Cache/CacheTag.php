@@ -47,7 +47,7 @@ class CacheTag
         return self::forNodeAggregate(
             $node->contentRepositoryId,
             $node->workspaceName,
-            $node->nodeAggregateId
+            $node->aggregateId
         );
     }
 

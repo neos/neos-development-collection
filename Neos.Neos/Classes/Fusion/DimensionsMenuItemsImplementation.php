@@ -82,14 +82,14 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                             $dimensionSpacePoint,
                             $currentNode->visibilityConstraints,
                         )
-                        ->findNodeById($currentNode->nodeAggregateId);
+                        ->findNodeById($currentNode->aggregateId);
                 }
 
                 if (!$variant && $this->includeGeneralizations() && $contentDimensionIdentifierToLimitTo) {
                     $variant = $this->findClosestGeneralizationMatchingDimensionValue(
                         $dimensionSpacePoint,
                         $contentDimensionIdentifierToLimitTo,
-                        $currentNode->nodeAggregateId,
+                        $currentNode->aggregateId,
                         $dimensionMenuItemsImplementationInternals,
                         $contentGraph
                     );

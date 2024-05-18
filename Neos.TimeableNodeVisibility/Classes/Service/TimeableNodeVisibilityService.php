@@ -54,7 +54,7 @@ class TimeableNodeVisibilityService
                 $contentRepository->handle(
                     EnableNodeAggregate::create(
                         $workspaceName,
-                        $node->nodeAggregateId,
+                        $node->aggregateId,
                         $node->dimensionSpacePoint,
                         NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
                     )
@@ -68,7 +68,7 @@ class TimeableNodeVisibilityService
                 $contentRepository->handle(
                     DisableNodeAggregate::create(
                         $workspaceName,
-                        $node->nodeAggregateId,
+                        $node->aggregateId,
                         $node->dimensionSpacePoint,
                         NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
                     )
@@ -105,7 +105,7 @@ class TimeableNodeVisibilityService
             }
 
             $nodes = $subgraph->findDescendantNodes(
-                $rootNode->nodeAggregateId,
+                $rootNode->aggregateId,
                 FindDescendantNodesFilter::create(
                     nodeTypes: NodeTypeCriteria::createWithAllowedNodeTypeNames(NodeTypeNames::fromStringArray(['Neos.TimeableNodeVisibility:Timeable'])),
                     propertyValue: OrCriteria::create(
@@ -159,7 +159,7 @@ class TimeableNodeVisibilityService
         $this->logger->info(
             sprintf('Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]',
                 $result->type->value,
-                $result->node->nodeAggregateId->value,
+                $result->node->aggregateId->value,
                 implode(',', $result->node->originDimensionSpacePoint->coordinates)
             )
         );

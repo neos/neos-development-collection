@@ -115,7 +115,7 @@ class PropertyAdjustment
         $events = Events::with(
             new NodePropertiesWereSet(
                 $node->subgraphIdentity->contentStreamId,
-                $node->nodeAggregateId,
+                $node->aggregateId,
                 $node->originDimensionSpacePoint,
                 $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
                 $serializedPropertyValues,

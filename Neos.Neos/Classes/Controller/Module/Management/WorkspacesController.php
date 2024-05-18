@@ -482,7 +482,7 @@ class WorkspacesController extends AbstractModuleController
         $targetNodeAddressInPersonalWorkspace = new NodeAddress(
             $personalWorkspace->currentContentStreamId,
             $targetNode->dimensionSpacePoint,
-            $targetNode->nodeAggregateId,
+            $targetNode->aggregateId,
             $personalWorkspace->workspaceName
         );
 
@@ -770,7 +770,7 @@ class WorkspacesController extends AbstractModuleController
                 $documentNode = null;
                 $siteNode = null;
                 $ancestors = $subgraph->findAncestorNodes(
-                    $node->nodeAggregateId,
+                    $node->aggregateId,
                     FindAncestorNodesFilter::create()
                 );
                 $ancestors = Nodes::fromArray([$node])->merge($ancestors);
@@ -778,7 +778,7 @@ class WorkspacesController extends AbstractModuleController
                 $nodePathSegments = [];
                 $documentPathSegments = [];
                 foreach ($ancestors as $ancestor) {
-                    $pathSegment = $ancestor->nodeName ?: NodeName::fromString($ancestor->nodeAggregateId->value);
+                    $pathSegment = $ancestor->nodeName ?: NodeName::fromString($ancestor->aggregateId->value);
                     // Don't include `sites` path as they are not needed
                     // by the HTML/JS magic and won't be included as `$documentPathSegments`
                     if (!$this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_SITES)) {
@@ -877,7 +877,7 @@ class WorkspacesController extends AbstractModuleController
             $modifiedNode->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        return $baseSubgraph->findNodeById($modifiedNode->nodeAggregateId);
+        return $baseSubgraph->findNodeById($modifiedNode->aggregateId);
     }
 
     /**

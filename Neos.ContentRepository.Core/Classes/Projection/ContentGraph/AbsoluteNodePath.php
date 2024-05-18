@@ -88,8 +88,8 @@ final readonly class AbsoluteNodePath implements \JsonSerializable
             }
             if (!$ancestor->nodeName) {
                 throw new \InvalidArgumentException(
-                    'Could not resolve node path for node ' . $leafNode->nodeAggregateId->value
-                    . ', ancestor ' . $ancestor->nodeAggregateId->value . ' is unnamed.',
+                    'Could not resolve node path for node ' . $leafNode->aggregateId->value
+                    . ', ancestor ' . $ancestor->aggregateId->value . ' is unnamed.',
                     1687509348
                 );
             }

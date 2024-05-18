@@ -311,7 +311,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             } catch (NodeNotFoundException | InvalidShortcutException $e) {
                 $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                     'Failed to resolve shortcut node "%s" on subgraph "%s"',
-                    $resolvedNode->nodeAggregateId->value,
+                    $resolvedNode->aggregateId->value,
                     json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
                 ), 1601370239, $e));
             }
@@ -394,13 +394,13 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             } else {
                 $targetNode = $subgraph->findNodeByPath(
                     NodePath::fromString(substr($path, 1)),
-                    $siteNode->nodeAggregateId
+                    $siteNode->aggregateId
                 );
             }
         } else {
             $targetNode = $subgraph->findNodeByPath(
                 NodePath::fromString($path),
-                $documentNode->nodeAggregateId
+                $documentNode->aggregateId
             );
         }
         if ($targetNode === null) {
@@ -411,6 +411,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601311789);
         }
-        return $documentNodeAddress->withNodeAggregateId($targetNode->nodeAggregateId);
+        return $documentNodeAddress->withNodeAggregateId($targetNode->aggregateId);
     }
 }

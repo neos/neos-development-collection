@@ -74,8 +74,8 @@ class NextAllOperation extends AbstractOperation
                     FindSucceedingSiblingNodesFilter::create()
                 );
             foreach ($nextNodes as $nextNode) {
-                if ($nextNode !== null && !isset($outputNodePaths[$nextNode->nodeAggregateId->value])) {
-                    $outputNodePaths[$nextNode->nodeAggregateId->value] = true;
+                if ($nextNode !== null && !isset($outputNodePaths[$nextNode->aggregateId->value])) {
+                    $outputNodePaths[$nextNode->aggregateId->value] = true;
                     $output[] = $nextNode;
                 }
             }

@@ -34,7 +34,7 @@ final class NodeCacheEntryIdentifier implements CacheAwareInterface
     {
         return new self('Node_' . $node->subgraphIdentity->contentStreamId->value
             . '_' . $node->dimensionSpacePoint->hash
-            . '_' .  $node->nodeAggregateId->value);
+            . '_' .  $node->aggregateId->value);
     }
 
     public function getCacheEntryIdentifier(): string

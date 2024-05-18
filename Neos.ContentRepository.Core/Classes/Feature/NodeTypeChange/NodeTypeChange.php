@@ -188,7 +188,7 @@ trait NodeTypeChange
                     VisibilityConstraints::withoutRestrictions()
                 )->findNodeByPath(
                     $tetheredNodeTypeDefinition->name,
-                    $node->nodeAggregateId,
+                    $node->aggregateId,
                 );
 
                 if ($tetheredNode === null) {
@@ -404,7 +404,7 @@ trait NodeTypeChange
             );
             if (
                 $parentNode
-                && $parentNode->nodeAggregateId->equals($parentNodeAggregate->nodeAggregateId)
+                && $parentNode->aggregateId->equals($parentNodeAggregate->nodeAggregateId)
             ) {
                 $points[] = $coveredDimensionSpacePoint;
             }

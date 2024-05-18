@@ -55,7 +55,7 @@ final readonly class NodeAddress implements \JsonSerializable
             $node->contentRepositoryId,
             $node->workspaceName,
             $node->dimensionSpacePoint,
-            $node->nodeAggregateId
+            $node->aggregateId
         );
     }
 

@@ -29,7 +29,7 @@ class TimeableNodeVisibilityCommandController extends CommandController
             foreach ($handlingResult->getByType(ChangedVisibilityType::NODE_WAS_ENABLED) as $result) {
                 $this->output->outputLine(sprintf(
                         '- NodeAggregateId: %s, DimensionSpacePoint: %s',
-                        $result->node->nodeAggregateId->value,
+                        $result->node->aggregateId->value,
                         join(',', $result->node->originDimensionSpacePoint->coordinates)
                     )
                 );
@@ -39,7 +39,7 @@ class TimeableNodeVisibilityCommandController extends CommandController
             foreach ($handlingResult->getByType(ChangedVisibilityType::NODE_WAS_DISABLED) as $result) {
                 $this->output->outputLine(sprintf(
                         '- NodeAggregateId: %s, DimensionSpacePoint: %s',
-                        $result->node->nodeAggregateId->value,
+                        $result->node->aggregateId->value,
                         join(',', $result->node->originDimensionSpacePoint->coordinates)
                     )
                 );
