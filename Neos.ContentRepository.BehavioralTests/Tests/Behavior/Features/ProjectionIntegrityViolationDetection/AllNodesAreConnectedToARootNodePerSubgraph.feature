@@ -53,7 +53,7 @@ Feature: Run projection integrity violation detection regarding root connection
       | nodeName                    | "child-document"                          |
       | nodeAggregateClassification | "regular"                                 |
     And the event NodeAggregateWasMoved was published with payload:
-      | Key                           | Value
+      | Key                           | Value                                                                                                                                  |
       | workspaceName                 | "live"                                                                                                                                 |
       | contentStreamId               | "cs-identifier"                                                                                                                        |
       | nodeAggregateId               | "sir-david-nodenborough"                                                                                                               |
