@@ -19,16 +19,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -76,7 +66,7 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         return $this->wrappedContentSubgraph->getVisibilityConstraints();
     }
 
-    public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
+    public function findChildNodes(NodeAggregateId $parentNodeAggregateId, ?Filter\FindChildNodesFilter $filter = null): Nodes
     {
         if (!self::isFilterEmpty($filter)) {
             return $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter);
@@ -98,7 +88,7 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         return $childNodes;
     }
 
-    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, CountChildNodesFilter $filter): int
+    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, ?Filter\CountChildNodesFilter $filter = null): int
     {
         if (!self::isFilterEmpty($filter)) {
             return $this->wrappedContentSubgraph->countChildNodes($parentNodeAggregateId, $filter);
@@ -110,25 +100,25 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         return $this->wrappedContentSubgraph->countChildNodes($parentNodeAggregateId, $filter);
     }
 
-    public function findReferences(NodeAggregateId $nodeAggregateId, FindReferencesFilter $filter): References
+    public function findReferences(NodeAggregateId $nodeAggregateId, ?Filter\FindReferencesFilter $filter = null): References
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->findReferences($nodeAggregateId, $filter);
     }
 
-    public function countReferences(NodeAggregateId $nodeAggregateId, CountReferencesFilter $filter): int
+    public function countReferences(NodeAggregateId $nodeAggregateId, ?Filter\CountReferencesFilter $filter = null): int
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->countReferences($nodeAggregateId, $filter);
     }
 
-    public function findBackReferences(NodeAggregateId $nodeAggregateId, FindBackReferencesFilter $filter): References
+    public function findBackReferences(NodeAggregateId $nodeAggregateId, ?Filter\FindBackReferencesFilter $filter = null): References
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->findBackReferences($nodeAggregateId, $filter);
     }
 
-    public function countBackReferences(NodeAggregateId $nodeAggregateId, CountBackReferencesFilter $filter): int
+    public function countBackReferences(NodeAggregateId $nodeAggregateId, ?Filter\CountBackReferencesFilter $filter = null): int
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->countBackReferences($nodeAggregateId, $filter);
@@ -193,13 +183,13 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         return $this->wrappedContentSubgraph->findNodeByAbsolutePath($path);
     }
 
-    public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindSucceedingSiblingNodesFilter $filter): Nodes
+    public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, ?Filter\FindSucceedingSiblingNodesFilter $filter = null): Nodes
     {
         // TODO implement runtime caches
         return $this->wrappedContentSubgraph->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter);
     }
 
-    public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter $filter): Nodes
+    public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, ?Filter\FindPrecedingSiblingNodesFilter $filter = null): Nodes
     {
         // TODO implement runtime caches
         return $this->wrappedContentSubgraph->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter);
@@ -217,38 +207,38 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         return $nodePath;
     }
 
-    public function findSubtree(NodeAggregateId $entryNodeAggregateId, FindSubtreeFilter $filter): ?Subtree
+    public function findSubtree(NodeAggregateId $entryNodeAggregateId, ?Filter\FindSubtreeFilter $filter = null): ?Subtree
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->findSubtree($entryNodeAggregateId, $filter);
         // TODO populate NodeByNodeAggregateIdCache and ParentNodeIdByChildNodeIdCache from result
     }
 
-    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\FindAncestorNodesFilter $filter): Nodes
+    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\FindAncestorNodesFilter $filter = null): Nodes
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->findAncestorNodes($entryNodeAggregateId, $filter);
     }
 
-    public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountAncestorNodesFilter $filter): int
+    public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\CountAncestorNodesFilter $filter = null): int
     {
         // TODO: Implement countAncestorNodes() method.
         return $this->wrappedContentSubgraph->countAncestorNodes($entryNodeAggregateId, $filter);
     }
 
-    public function findClosestNode(NodeAggregateId $entryNodeAggregateId, Filter\FindClosestNodeFilter $filter): ?Node
+    public function findClosestNode(NodeAggregateId $entryNodeAggregateId, ?Filter\FindClosestNodeFilter $filter = null): ?Node
     {
         // TODO: Implement findClosestNode() method.
         return $this->wrappedContentSubgraph->findClosestNode($entryNodeAggregateId, $filter);
     }
 
-    public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes
+    public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\FindDescendantNodesFilter $filter = null): Nodes
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->findDescendantNodes($entryNodeAggregateId, $filter);
     }
 
-    public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int
+    public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\CountDescendantNodesFilter $filter = null): int
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->countDescendantNodes($entryNodeAggregateId, $filter);
@@ -260,8 +250,14 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         return $this->wrappedContentSubgraph->countNodes();
     }
 
-    private static function isFilterEmpty(object $filter): bool
+    /**
+     * @phpstan-assert-if-true !null $filter
+     */
+    private static function isFilterEmpty(?object $filter): bool
     {
+        if ($filter === null) {
+            return true;
+        }
         return array_filter(get_object_vars($filter), static fn ($value) => $value !== null) === [];
     }
 

@@ -75,13 +75,13 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Find direct child nodes of the specified parent node that match the given $filter
      */
-    public function findChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\FindChildNodesFilter $filter): Nodes;
+    public function findChildNodes(NodeAggregateId $parentNodeAggregateId, ?Filter\FindChildNodesFilter $filter = null): Nodes;
 
     /**
      * Count direct child nodes of the specified parent node that match the given $filter
      * @see findChildNodes
      */
-    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\CountChildNodesFilter $filter): int;
+    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, ?Filter\CountChildNodesFilter $filter = null): int;
 
     /**
      * Find the direct parent of a node specified by its aggregate id
@@ -93,23 +93,23 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Find all nodes that are positioned _behind_ the specified sibling and match the specified $filter
      */
-    public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, Filter\FindSucceedingSiblingNodesFilter $filter): Nodes;
+    public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, ?Filter\FindSucceedingSiblingNodesFilter $filter = null): Nodes;
 
     /**
      * Find all nodes that are positioned _before_ the specified sibling and match the specified $filter
      */
-    public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, Filter\FindPrecedingSiblingNodesFilter $filter): Nodes;
+    public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, ?Filter\FindPrecedingSiblingNodesFilter $filter = null): Nodes;
 
     /**
      * Recursively find all nodes above the $entryNodeAggregateId that match the specified $filter and return them as a flat list
      */
-    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\FindAncestorNodesFilter $filter): Nodes;
+    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\FindAncestorNodesFilter $filter = null): Nodes;
 
     /**
      * Count all nodes above the $entryNodeAggregateId that match the specified $filter
      * @see findAncestorNodes
      */
-    public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountAncestorNodesFilter $filter): int;
+    public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\CountAncestorNodesFilter $filter = null): int;
 
     /**
      * Find the closest matching node, the entry node itself or the first ancestors of the $entryNodeAggregateId, that match the specified $filter and return it
@@ -117,20 +117,20 @@ interface ContentSubgraphInterface extends \JsonSerializable
      *
      * @return Node|null the closest node that matches the given $filter, or NULL if no matching node was found
      */
-    public function findClosestNode(NodeAggregateId $entryNodeAggregateId, Filter\FindClosestNodeFilter $filter): ?Node;
+    public function findClosestNode(NodeAggregateId $entryNodeAggregateId, ?Filter\FindClosestNodeFilter $filter = null): ?Node;
 
     /**
      * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a flat list
      *
      * Note: This is basically a set-based view of descendant nodes; so the ordering should not be relied upon
      */
-    public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\FindDescendantNodesFilter $filter): Nodes;
+    public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\FindDescendantNodesFilter $filter = null): Nodes;
 
     /**
      * Count all nodes underneath the $entryNodeAggregateId that match the specified $filter
      * @see findDescendantNodes
      */
-    public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int;
+    public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\CountDescendantNodesFilter $filter = null): int;
 
     /**
      * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a tree
@@ -139,7 +139,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
      *
      * @return Subtree|null the recursive tree of all matching nodes, or NULL if the entry node is not accessible
      */
-    public function findSubtree(NodeAggregateId $entryNodeAggregateId, Filter\FindSubtreeFilter $filter): ?Subtree;
+    public function findSubtree(NodeAggregateId $entryNodeAggregateId, ?Filter\FindSubtreeFilter $filter = null): ?Subtree;
 
     /**
      * Find all "outgoing" references of a given node that match the specified $filter
@@ -148,13 +148,13 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * directly, but a collection of references {@see References}.
      * The corresponding nodes can be retrieved via {@see References::getNodes()}
      */
-    public function findReferences(NodeAggregateId $nodeAggregateId, Filter\FindReferencesFilter $filter): References;
+    public function findReferences(NodeAggregateId $nodeAggregateId, ?Filter\FindReferencesFilter $filter = null): References;
 
     /**
      * Count all "outgoing" references of a given node that match the specified $filter
      * @see findReferences
      */
-    public function countReferences(NodeAggregateId $nodeAggregateId, Filter\CountReferencesFilter $filter): int;
+    public function countReferences(NodeAggregateId $nodeAggregateId, ?Filter\CountReferencesFilter $filter = null): int;
 
     /**
      * Find all "incoming" references of a given node that match the specified $filter
@@ -162,13 +162,13 @@ interface ContentSubgraphInterface extends \JsonSerializable
      *
      * @see findReferences
      */
-    public function findBackReferences(NodeAggregateId $nodeAggregateId, Filter\FindBackReferencesFilter $filter): References;
+    public function findBackReferences(NodeAggregateId $nodeAggregateId, ?Filter\FindBackReferencesFilter $filter = null): References;
 
     /**
      * Count all "incoming" references of a given node that match the specified $filter
      * @see findBackReferences
      */
-    public function countBackReferences(NodeAggregateId $nodeAggregateId, Filter\CountBackReferencesFilter $filter): int;
+    public function countBackReferences(NodeAggregateId $nodeAggregateId, ?Filter\CountBackReferencesFilter $filter = null): int;
 
     /**
      * Find a single node underneath $startingNodeAggregateId that matches the specified $path

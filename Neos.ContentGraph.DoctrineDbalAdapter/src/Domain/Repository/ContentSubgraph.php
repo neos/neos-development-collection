@@ -25,22 +25,8 @@ use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountDescendantNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\OrderingDirection;
@@ -124,7 +110,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->visibilityConstraints;
     }
 
-    public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
+    public function findChildNodes(NodeAggregateId $parentNodeAggregateId, ?Filter\FindChildNodesFilter $filter = null): Nodes
     {
         $queryBuilder = $this->buildChildNodesQuery($parentNodeAggregateId, $filter);
         if ($filter->pagination !== null) {
@@ -137,30 +123,30 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->fetchNodes($queryBuilder);
     }
 
-    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, CountChildNodesFilter $filter): int
+    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, ?Filter\CountChildNodesFilter $filter = null): int
     {
         $queryBuilder = $this->buildChildNodesQuery($parentNodeAggregateId, $filter);
         return $this->fetchCount($queryBuilder);
     }
 
-    public function findReferences(NodeAggregateId $nodeAggregateId, FindReferencesFilter $filter): References
+    public function findReferences(NodeAggregateId $nodeAggregateId, ?Filter\FindReferencesFilter $filter = null): References
     {
         $queryBuilder = $this->buildReferencesQuery(false, $nodeAggregateId, $filter);
         return $this->fetchReferences($queryBuilder);
     }
 
-    public function countReferences(NodeAggregateId $nodeAggregateId, CountReferencesFilter $filter): int
+    public function countReferences(NodeAggregateId $nodeAggregateId, ?Filter\CountReferencesFilter $filter = null): int
     {
         return $this->fetchCount($this->buildReferencesQuery(false, $nodeAggregateId, $filter));
     }
 
-    public function findBackReferences(NodeAggregateId $nodeAggregateId, FindBackReferencesFilter $filter): References
+    public function findBackReferences(NodeAggregateId $nodeAggregateId, ?Filter\FindBackReferencesFilter $filter = null): References
     {
         $queryBuilder = $this->buildReferencesQuery(true, $nodeAggregateId, $filter);
         return $this->fetchReferences($queryBuilder);
     }
 
-    public function countBackReferences(NodeAggregateId $nodeAggregateId, CountBackReferencesFilter $filter): int
+    public function countBackReferences(NodeAggregateId $nodeAggregateId, ?Filter\CountBackReferencesFilter $filter = null): int
     {
         return $this->fetchCount($this->buildReferencesQuery(true, $nodeAggregateId, $filter));
     }
@@ -222,13 +208,13 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->fetchNode($queryBuilder);
     }
 
-    public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindSucceedingSiblingNodesFilter $filter): Nodes
+    public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, ?Filter\FindSucceedingSiblingNodesFilter $filter = null): Nodes
     {
         $queryBuilder = $this->buildSiblingsQuery(false, $siblingNodeAggregateId, $filter);
         return $this->fetchNodes($queryBuilder);
     }
 
-    public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter $filter): Nodes
+    public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, ?Filter\FindPrecedingSiblingNodesFilter $filter = null): Nodes
     {
         $queryBuilder = $this->buildSiblingsQuery(true, $siblingNodeAggregateId, $filter);
         return $this->fetchNodes($queryBuilder);
@@ -243,7 +229,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 1687513836
             );
         }
-        $ancestors = $this->findAncestorNodes($leafNode->nodeAggregateId, FindAncestorNodesFilter::create())
+        $ancestors = $this->findAncestorNodes($leafNode->nodeAggregateId, Filter\FindAncestorNodesFilter::create())
             ->reverse();
 
         try {
@@ -257,7 +243,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
     }
 
-    public function findSubtree(NodeAggregateId $entryNodeAggregateId, FindSubtreeFilter $filter): ?Subtree
+    public function findSubtree(NodeAggregateId $entryNodeAggregateId, ?Filter\FindSubtreeFilter $filter = null): ?Subtree
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
@@ -276,10 +262,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('p', $this->nodeQueryBuilder->tableNames->node(), 'c', 'c.relationanchorpoint = h.childnodeanchor')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
-        if ($filter->maximumLevels !== null) {
+        if ($filter?->maximumLevels !== null) {
             $queryBuilderRecursive->andWhere('p.level < :maximumLevels')->setParameter('maximumLevels', $filter->maximumLevels);
         }
-        if ($filter->nodeTypes !== null) {
+        if ($filter?->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderRecursive, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'c');
         }
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
@@ -318,7 +304,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return null;
     }
 
-    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter $filter): Nodes
+    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\FindAncestorNodesFilter $filter = null): Nodes
     {
         [
             'queryBuilderInitial' => $queryBuilderInitial,
@@ -341,7 +327,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         );
     }
 
-    public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, CountAncestorNodesFilter $filter): int
+    public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\CountAncestorNodesFilter $filter = null): int
     {
         [
             'queryBuilderInitial' => $queryBuilderInitial,
@@ -357,7 +343,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         );
     }
 
-    public function findClosestNode(NodeAggregateId $entryNodeAggregateId, FindClosestNodeFilter $filter): ?Node
+    public function findClosestNode(NodeAggregateId $entryNodeAggregateId, ?Filter\FindClosestNodeFilter $filter = null): ?Node
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             ->select('n.*, ph.subtreetags, ph.parentnodeanchor')
@@ -397,7 +383,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         )->first();
     }
 
-    public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes
+    public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\FindDescendantNodesFilter $filter = null): Nodes
     {
         ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
         if ($filter->ordering !== null) {
@@ -417,7 +403,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         );
     }
 
-    public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, CountDescendantNodesFilter $filter): int
+    public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, ?Filter\CountDescendantNodesFilter $filter = null): int
     {
         ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
         return $this->fetchCteCountResult($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
@@ -480,7 +466,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
     }
 
-    private function buildChildNodesQuery(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter|CountChildNodesFilter $filter): QueryBuilder
+    private function buildChildNodesQuery(NodeAggregateId $parentNodeAggregateId, Filter\FindChildNodesFilter|Filter\CountChildNodesFilter $filter): QueryBuilder
     {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($parentNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint);
         if ($filter->nodeTypes !== null) {
@@ -496,7 +482,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $queryBuilder;
     }
 
-    private function buildReferencesQuery(bool $backReferences, NodeAggregateId $nodeAggregateId, FindReferencesFilter|FindBackReferencesFilter|CountReferencesFilter|CountBackReferencesFilter $filter): QueryBuilder
+    private function buildReferencesQuery(bool $backReferences, NodeAggregateId $nodeAggregateId, Filter\FindReferencesFilter|Filter\FindBackReferencesFilter|Filter\CountReferencesFilter|Filter\CountBackReferencesFilter $filter): QueryBuilder
     {
         $sourceTablePrefix = $backReferences ? 'd' : 's';
         $destinationTablePrefix = $backReferences ? 's' : 'd';
@@ -532,7 +518,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->referenceName !== null) {
             $queryBuilder->andWhere('r.name = :referenceName')->setParameter('referenceName', $filter->referenceName->value);
         }
-        if ($filter instanceof FindReferencesFilter || $filter instanceof FindBackReferencesFilter) {
+        if ($filter instanceof Filter\FindReferencesFilter || $filter instanceof Filter\FindBackReferencesFilter) {
             if ($filter->ordering !== null) {
                 $this->applyOrdering($queryBuilder, $filter->ordering, "{$destinationTablePrefix}n");
             } elseif ($filter->referenceName === null) {
@@ -547,7 +533,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $queryBuilder;
     }
 
-    private function buildSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter|FindSucceedingSiblingNodesFilter $filter): QueryBuilder
+    private function buildSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, Filter\FindPrecedingSiblingNodesFilter|Filter\FindSucceedingSiblingNodesFilter $filter): QueryBuilder
     {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeSiblingsQuery($preceding, $siblingNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint);
 
@@ -570,7 +556,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     /**
      * @return array{queryBuilderInitial: QueryBuilder, queryBuilderRecursive: QueryBuilder, queryBuilderCte: QueryBuilder}
      */
-    private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter|FindClosestNodeFilter $filter): array
+    private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, Filter\FindAncestorNodesFilter|Filter\CountAncestorNodesFilter|Filter\FindClosestNodeFilter|null $filter): array
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             ->select('n.*, ph.subtreetags, ph.parentnodeanchor')
@@ -597,7 +583,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addSubtreeTagConstraints($queryBuilderRecursive);
 
         $queryBuilderCte = $this->nodeQueryBuilder->buildBasicNodesCteQuery($entryNodeAggregateId, $this->contentStreamId, $this->dimensionSpacePoint);
-        if ($filter->nodeTypes !== null) {
+        if ($filter?->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
         }
         return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
@@ -606,7 +592,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     /**
      * @return array{queryBuilderInitial: QueryBuilder, queryBuilderRecursive: QueryBuilder, queryBuilderCte: QueryBuilder}
      */
-    private function buildDescendantNodesQueries(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter|CountDescendantNodesFilter $filter): array
+    private function buildDescendantNodesQueries(NodeAggregateId $entryNodeAggregateId, Filter\FindDescendantNodesFilter|Filter\CountDescendantNodesFilter $filter): array
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
