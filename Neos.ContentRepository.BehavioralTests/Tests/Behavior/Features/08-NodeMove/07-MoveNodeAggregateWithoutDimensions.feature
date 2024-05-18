@@ -30,6 +30,7 @@ Feature: Move a node without content dimensions
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-david-nodenborough"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
