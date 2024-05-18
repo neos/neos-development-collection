@@ -208,7 +208,7 @@ class NodeViewHelper extends AbstractViewHelper
 
         if ($node instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->subgraphIdentity->contentRepositoryId
+                $node->contentRepositoryId
             );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);
@@ -264,7 +264,7 @@ class NodeViewHelper extends AbstractViewHelper
         /* @var Node $documentNode */
         $documentNode = $this->getContextVariable('documentNode');
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $documentNode->subgraphIdentity->contentRepositoryId
+            $documentNode->contentRepositoryId
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);

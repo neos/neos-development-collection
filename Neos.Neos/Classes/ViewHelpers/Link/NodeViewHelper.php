@@ -263,7 +263,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
         if ($node instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->subgraphIdentity->contentRepositoryId
+                $node->contentRepositoryId
             );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);
@@ -271,7 +271,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             $documentNode = $this->getContextVariable('documentNode');
             assert($documentNode instanceof Node);
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $documentNode->subgraphIdentity->contentRepositoryId
+                $documentNode->contentRepositoryId
             );
             $nodeAddress = $this->resolveNodeAddressFromString($node, $documentNode, $contentRepository);
             $node = $documentNode;
@@ -287,7 +287,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)
             ->getSubgraph(
                 $nodeAddress->dimensionSpacePoint,
-                $node->subgraphIdentity->visibilityConstraints
+                $node->visibilityConstraints
             );
 
         $resolvedNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);

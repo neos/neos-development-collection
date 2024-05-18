@@ -106,7 +106,7 @@ class LinkHelper implements ProtectedContextAwareInterface
             return null;
         }
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $targetNode->subgraphIdentity->contentRepositoryId
+            $targetNode->contentRepositoryId
         );
         $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($targetNode);
         try {

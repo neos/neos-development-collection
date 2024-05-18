@@ -55,7 +55,7 @@ class TimeableNodeVisibilityService
                     EnableNodeAggregate::create(
                         $workspaceName,
                         $node->nodeAggregateId,
-                        $node->subgraphIdentity->dimensionSpacePoint,
+                        $node->dimensionSpacePoint,
                         NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
                     )
                 );
@@ -69,7 +69,7 @@ class TimeableNodeVisibilityService
                     DisableNodeAggregate::create(
                         $workspaceName,
                         $node->nodeAggregateId,
-                        $node->subgraphIdentity->dimensionSpacePoint,
+                        $node->dimensionSpacePoint,
                         NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
                     )
                 );

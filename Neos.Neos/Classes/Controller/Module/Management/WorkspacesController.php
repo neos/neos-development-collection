@@ -481,7 +481,7 @@ class WorkspacesController extends AbstractModuleController
 
         $targetNodeAddressInPersonalWorkspace = new NodeAddress(
             $personalWorkspace->currentContentStreamId,
-            $targetNode->subgraphIdentity->dimensionSpacePoint,
+            $targetNode->dimensionSpacePoint,
             $targetNode->nodeAggregateId,
             $personalWorkspace->workspaceName
         );
@@ -874,7 +874,7 @@ class WorkspacesController extends AbstractModuleController
         ContentRepository $contentRepository,
     ): ?Node {
         $baseSubgraph = $contentRepository->getContentGraph($baseWorkspaceName)->getSubgraph(
-            $modifiedNode->subgraphIdentity->dimensionSpacePoint,
+            $modifiedNode->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
         return $baseSubgraph->findNodeById($modifiedNode->nodeAggregateId);

@@ -63,7 +63,7 @@ class NodeAddressFactory
     {
         return $this->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
             $node->subgraphIdentity->contentStreamId,
-            $node->subgraphIdentity->dimensionSpacePoint,
+            $node->dimensionSpacePoint,
             $node->nodeAggregateId,
         );
     }

@@ -111,7 +111,7 @@ class PropertyOperation extends AbstractOperation
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
-        $contentRepository = $this->contentRepositoryRegistry->get($element->subgraphIdentity->contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($element->contentRepositoryId);
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
 
         if ($nodeTypeManager->getNodeType($element->nodeTypeName)?->hasReference($propertyName)) {

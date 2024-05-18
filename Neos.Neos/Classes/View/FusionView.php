@@ -81,7 +81,7 @@ class FusionView extends AbstractView
 
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
-        $this->setFallbackRuleFromDimension($currentNode->subgraphIdentity->dimensionSpacePoint);
+        $this->setFallbackRuleFromDimension($currentNode->dimensionSpacePoint);
 
         return $fusionRuntime->renderEntryPathWithContext($this->fusionPath, [
             'node' => $currentNode,
