@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
@@ -15,16 +14,12 @@ use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class TetheredNodeAdjustments
@@ -74,7 +69,7 @@ class TetheredNodeAdjustments
                         // $nestedNode not found
                         // - so a tethered node is missing in the OriginDimensionSpacePoint of the $node
                         yield StructureAdjustment::createForNodeIdentity(
-                            $nodeAggregate->contentStreamId,
+                            $nodeAggregate->workspaceName,
                             $originDimensionSpacePoint,
                             $nodeAggregate->nodeAggregateId,
                             StructureAdjustment::TETHERED_NODE_MISSING,
@@ -142,7 +137,7 @@ class TetheredNodeAdjustments
                     if (array_keys($actualTetheredChildNodes) !== array_keys($nodeType->tetheredNodeTypeDefinitions->toArray())) {
                         // we need to re-order: We go from the last to the first
                         yield StructureAdjustment::createForNodeIdentity(
-                            $nodeAggregate->contentStreamId,
+                            $nodeAggregate->workspaceName,
                             $originDimensionSpacePoint,
                             $nodeAggregate->nodeAggregateId,
                             StructureAdjustment::TETHERED_NODE_WRONGLY_ORDERED,
