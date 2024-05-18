@@ -8,7 +8,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Error\Messages\Message;
 
 final class StructureAdjustment extends Message
@@ -45,7 +45,7 @@ final class StructureAdjustment extends Message
     }
 
     public static function createForNodeIdentity(
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeAggregateId $nodeAggregateId,
         string $type,
@@ -57,7 +57,7 @@ final class StructureAdjustment extends Message
                 . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
-                'contentStream' => $contentStreamId->value,
+                'workspaceName' => $workspaceName->value,
                 'dimensionSpacePoint' => $originDimensionSpacePoint->toJson(),
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'isAutoFixable' => ($remediation !== null)
@@ -74,9 +74,9 @@ final class StructureAdjustment extends Message
         ?\Closure $remediation = null
     ): self {
         return self::createForNodeIdentity(
-            $node->subgraphIdentity->contentStreamId,
+            $node->workspaceName,
             $node->originDimensionSpacePoint,
-            $node->nodeAggregateId,
+            $node->aggregateId,
             $type,
             $errorMessage,
             $remediation
@@ -90,11 +90,11 @@ final class StructureAdjustment extends Message
         ?\Closure $remediation = null
     ): self {
         return new self(
-            'Content Stream: %s; Dimension Space Point: %s, Node Aggregate: %s --- '
+            'Workspace: %s; Dimension Space Point: %s, Node Aggregate: %s --- '
                 . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
-                'contentStream' => $nodeAggregate->contentStreamId->value,
+                'workspaceName' => $nodeAggregate->workspaceName->value,
                 'nodeAggregateId' => $nodeAggregate->nodeAggregateId->value,
                 'isAutoFixable' => ($remediation !== null)
             ],
