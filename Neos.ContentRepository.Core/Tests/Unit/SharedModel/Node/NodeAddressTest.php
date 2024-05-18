@@ -42,7 +42,7 @@ class NodeAddressTest extends TestCase
                 DimensionSpacePoint::fromArray(['language' => 'de']),
                 NodeAggregateId::fromString('79e69d1c-b079-4535-8c8a-37e76736c445')
             ),
-            'serialized' => 'default/user-mh/bGFuZ3VhZ2U9ZGU=/79e69d1c-b079-4535-8c8a-37e76736c445'
+            'serialized' => 'default/user-mh/bGFuZ3VhZ2U9ZGU~/79e69d1c-b079-4535-8c8a-37e76736c445'
         ];
 
         yield 'two dimensions' => [
@@ -52,7 +52,7 @@ class NodeAddressTest extends TestCase
                 DimensionSpacePoint::fromArray(['language' => 'en_US', 'audience' => 'nice people']),
                 NodeAggregateId::fromString('my-node-id')
             ),
-            'serialized' => 'second/user-mh/bGFuZ3VhZ2U9ZW5fVVMmYXVkaWVuY2U9bmljZStwZW9wbGU=/my-node-id'
+            'serialized' => 'second/user-mh/bGFuZ3VhZ2U9ZW5fVVMmYXVkaWVuY2U9bmljZStwZW9wbGU~/my-node-id'
         ];
     }
 

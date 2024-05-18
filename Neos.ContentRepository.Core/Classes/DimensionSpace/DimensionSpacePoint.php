@@ -90,13 +90,13 @@ final class DimensionSpacePoint extends AbstractDimensionSpacePoint
 
     final public static function fromUriRepresentation(string $encoded): self
     {
-        parse_str(base64_decode($encoded), $parsed);
+        parse_str(base64_decode(str_replace( '~', '=', $encoded)), $parsed);
         return self::instance($parsed);
     }
 
     final public function toUriRepresentation(): string
     {
-        return base64_encode(http_build_query($this->coordinates));
+        return str_replace('=', '~', base64_encode(http_build_query($this->coordinates)));
     }
 
     /**
