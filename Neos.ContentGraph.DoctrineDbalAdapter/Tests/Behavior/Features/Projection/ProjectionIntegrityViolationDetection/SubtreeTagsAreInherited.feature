@@ -58,6 +58,7 @@ Feature: Run integrity violation detection regarding subtree tag inheritance
       | nodeAggregateClassification | "regular"                                                |
     And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                                                    |
+      | workspaceName                | "live"                                                   |
       | contentStreamId              | "cs-identifier"                                          |
       | nodeAggregateId              | "sir-david-nodenborough"                                 |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |

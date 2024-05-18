@@ -97,9 +97,6 @@ trait NodeMove
     public function theEventNodeAggregateWasMovedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['workspaceName'])) {
-            $eventPayload['workspaceName'] = 'some-workspace';
-        }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
 

@@ -94,9 +94,6 @@ trait NodeCreation
     public function theEventRootNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['workspaceName'])) {
-            $eventPayload['workspaceName'] = 'some-workspace';
-        }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $nodeAggregateId = NodeAggregateId::fromString($eventPayload['nodeAggregateId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
@@ -280,9 +277,6 @@ trait NodeCreation
     public function theEventNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['workspaceName'])) {
-            $eventPayload['workspaceName'] = 'some-workspace';
-        }
         if (!isset($eventPayload['initialPropertyValues'])) {
             $eventPayload['initialPropertyValues'] = [];
         }

@@ -26,6 +26,7 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "nody-mc-nodeface"                                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |

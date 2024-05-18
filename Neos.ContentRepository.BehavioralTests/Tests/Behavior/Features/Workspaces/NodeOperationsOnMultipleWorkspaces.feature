@@ -23,6 +23,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
+      | workspaceName                 | "live"                                   |
       | contentStreamId       | "cs-identifier"                          |
       | nodeAggregateId       | "nody-mc-nodeface"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
@@ -33,6 +34,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | nodeAggregateClassification   | "regular"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
+      | workspaceName                 | "live"                                   |
       | contentStreamId       | "cs-identifier"                          |
       | nodeAggregateId       | "nodingers-cat"                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |

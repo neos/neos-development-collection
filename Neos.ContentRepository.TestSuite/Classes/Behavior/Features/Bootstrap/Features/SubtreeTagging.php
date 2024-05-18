@@ -85,9 +85,6 @@ trait SubtreeTagging
     public function theEventSubtreeWasTaggedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['workspaceName'])) {
-            $eventPayload['workspaceName'] = 'some-workspace';
-        }
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
             ContentStreamId::fromString($eventPayload['contentStreamId'])
         );
@@ -104,9 +101,6 @@ trait SubtreeTagging
     public function theEventSubtreeWasUntaggedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['workspaceName'])) {
-            $eventPayload['workspaceName'] = 'some-workspace';
-        }
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
             ContentStreamId::fromString($eventPayload['contentStreamId'])
         );
