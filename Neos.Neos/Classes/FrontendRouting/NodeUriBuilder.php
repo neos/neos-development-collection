@@ -121,18 +121,8 @@ final class NodeUriBuilder
      */
     private function toPreviewActionRouteValues(NodeUriSpecification $specification): array
     {
-        // todo fully migrate me to NodeUriSpecification
-        $reg = \Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\ContentRepositoryRegistry\ContentRepositoryRegistry::class);
-        $ws = $reg->get($specification->node->contentRepositoryId)->getWorkspaceFinder()->findOneByName($specification->node->workspaceName);
-        $nodeAddress = new NodeAddress(
-            $ws->currentContentStreamId ?? throw new \Exception(),
-            $specification->node->dimensionSpacePoint,
-            $specification->node->aggregateId,
-            $specification->node->workspaceName,
-        );
-
         $routeValues = $specification->routingArguments;
-        $routeValues['node'] = $nodeAddress->serializeForUri();
+        $routeValues['node'] = $specification->node->toUriString();
         $routeValues['@action'] = strtolower('preview');
         $routeValues['@controller'] = strtolower('Frontend\Node');
         $routeValues['@package'] = strtolower('Neos.Neos');
