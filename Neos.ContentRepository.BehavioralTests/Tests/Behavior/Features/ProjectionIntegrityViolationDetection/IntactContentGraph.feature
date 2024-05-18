@@ -23,6 +23,7 @@ Feature: Create an intact content graph and run integrity violation detection
   Scenario: Create an intact content graph
     When the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                  |
+      | workspaceName               | "live"                                    |
       | contentStreamId     | "cs-identifier"                        |
       | nodeAggregateId     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
@@ -30,6 +31,7 @@ Feature: Create an intact content graph and run integrity violation detection
       | nodeAggregateClassification | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
@@ -40,6 +42,7 @@ Feature: Create an intact content graph and run integrity violation detection
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
@@ -50,6 +53,7 @@ Feature: Create an intact content graph and run integrity violation detection
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-nodeward-nodington-iii"              |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
@@ -60,6 +64,7 @@ Feature: Create an intact content graph and run integrity violation detection
       | nodeAggregateClassification   | "tethered"                                |
     And the event NodeReferencesWereSet was published with payload:
       | Key                                      | Value                                                                           |
+      | workspaceName                            | "live"                                                                          |
       | contentStreamId                  | "cs-identifier"                                                                 |
       | sourceNodeAggregateId            | "nody-mc-nodeface"                                                              |
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                             |

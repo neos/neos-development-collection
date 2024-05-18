@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -28,7 +27,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSib
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal implementation details of command handlers
@@ -102,6 +100,7 @@ trait NodeVariationInternals
         array $events
     ): array {
         $events[] = new NodeSpecializationVariantWasCreated(
+            $contentGraph->getWorkspaceName(),
             $contentGraph->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
@@ -164,6 +163,7 @@ trait NodeVariationInternals
         array $events
     ): array {
         $events[] = new NodeGeneralizationVariantWasCreated(
+            $contentGraph->getWorkspaceName(),
             $contentGraph->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,
@@ -226,6 +226,7 @@ trait NodeVariationInternals
         array $events
     ): array {
         $events[] = new NodePeerVariantWasCreated(
+            $contentGraph->getWorkspaceName(),
             $contentGraph->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             $sourceOrigin,

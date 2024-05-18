@@ -33,6 +33,7 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
   Scenario:
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
+      | workspaceName               | "live"                        |
       | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "shernode-homes"              |
       | nodeTypeName                | "Neos.Neos:Test.Routing.Page" |
@@ -40,6 +41,7 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | nodeAggregateClassification | "regular"                     |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                 |
+      | workspaceName               | "live"                                                                |
       | contentStreamId             | "cs-identifier"                                                       |
       | nodeAggregateId             | "sir-david-nodenborough"                                              |
       | nodeTypeName                | "Neos.Neos:Test.Routing.Page"                                         |
@@ -48,6 +50,7 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | initialPropertyValues       | {"uriPathSegment": {"type": "string", "value": "david-nodenborough"}} |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                           |
+      | workspaceName               | "live"                                                          |
       | contentStreamId             | "cs-identifier"                                                 |
       | nodeAggregateId             | "unknown-nodetype"                                              |
       | nodeTypeName                | "Neos.Neos:Test.Routing.NonExisting"                            |

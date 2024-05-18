@@ -48,4 +48,20 @@ final class MigrateEventsCommandController extends CommandController
         $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
         $eventMigrationService->migrateMetaDataToWorkspaceName($this->outputLine(...));
     }
+
+    /**
+     * Adds the "workspaceName" to the data of all content stream related events
+     *
+     * Needed for feature "Add workspaceName to relevant events": https://github.com/neos/neos-development-collection/issues/4996
+     *
+     * Included in May 2024 - before final Neos 9.0 release
+     *
+     * @param string $contentRepository Identifier of the Content Repository to migrate
+     */
+    public function migratePayloadToWorkspaceNameCommand(string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
+        $eventMigrationService->migratePayloadToWorkspaceName($this->outputLine(...));
+    }
 }

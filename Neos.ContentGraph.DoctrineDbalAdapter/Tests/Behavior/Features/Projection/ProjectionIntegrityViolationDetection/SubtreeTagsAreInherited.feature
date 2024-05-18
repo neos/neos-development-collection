@@ -28,6 +28,7 @@ Feature: Run integrity violation detection regarding subtree tag inheritance
   Scenario: Create nodes, disable the topmost and remove some restriction edges manually
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "sir-david-nodenborough"                                 |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
@@ -38,6 +39,7 @@ Feature: Run integrity violation detection regarding subtree tag inheritance
       | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "sir-nodeward-nodington-iii"                             |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
@@ -48,6 +50,7 @@ Feature: Run integrity violation detection regarding subtree tag inheritance
       | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "nody-mc-nodeface"                                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
@@ -58,6 +61,7 @@ Feature: Run integrity violation detection regarding subtree tag inheritance
       | nodeAggregateClassification | "regular"                                                |
     And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                                                    |
+      | workspaceName                | "live"                                                   |
       | contentStreamId              | "cs-identifier"                                          |
       | nodeAggregateId              | "sir-david-nodenborough"                                 |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |

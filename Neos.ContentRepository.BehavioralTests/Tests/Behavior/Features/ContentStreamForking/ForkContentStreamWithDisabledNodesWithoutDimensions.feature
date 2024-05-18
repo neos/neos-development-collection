@@ -29,6 +29,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                    |
+      | workspaceName               | "live"                                   |
       | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "the-great-nodini"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
@@ -39,6 +40,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeAggregateClassification | "regular"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                    |
+      | workspaceName               | "live"                                   |
       | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "nodingers-cat"                          |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |

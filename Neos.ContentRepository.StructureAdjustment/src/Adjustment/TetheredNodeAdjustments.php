@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class TetheredNodeAdjustments
@@ -83,7 +84,9 @@ class TetheredNodeAdjustments
                                     null
                                 );
 
-                                $streamName = ContentStreamEventStreamName::fromContentStreamId($nodeAggregate->contentStreamId);
+                                $streamName = ContentStreamEventStreamName::fromContentStreamId(
+                                    $this->projectedNodeIterator->contentGraph->getContentStreamId()
+                                );
                                 return new EventsToPublish(
                                     $streamName->getEventStreamName(),
                                     $events,
@@ -112,7 +115,7 @@ class TetheredNodeAdjustments
                         'The tethered child node "'
                             . $tetheredNodeAggregate->nodeName->value . '" should be removed.',
                         function () use ($tetheredNodeAggregate) {
-                            return $this->removeNodeAggregate($tetheredNodeAggregate);
+                            return $this->removeNodeAggregate($this->projectedNodeIterator->contentGraph, $tetheredNodeAggregate);
                         }
                     );
                 }
@@ -144,7 +147,8 @@ class TetheredNodeAdjustments
                                 . ' - actual: '
                                 . implode(', ', array_keys($actualTetheredChildNodes)),
                             fn () => $this->reorderNodes(
-                                $nodeAggregate->contentStreamId,
+                                $this->projectedNodeIterator->contentGraph->getWorkspaceName(),
+                                $this->projectedNodeIterator->contentGraph->getContentStreamId(),
                                 $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
                                 $actualTetheredChildNodes,
                                 array_keys($nodeType->tetheredNodeTypeDefinitions->toArray())
@@ -201,6 +205,7 @@ class TetheredNodeAdjustments
      * @param array<int,string> $expectedNodeOrdering
      */
     private function reorderNodes(
+        WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         DimensionSpace\DimensionSpacePointSet $coverageByOrigin,
         array $actualTetheredChildNodes,
@@ -224,6 +229,7 @@ class TetheredNodeAdjustments
             }
 
             $events[] = new NodeAggregateWasMoved(
+                $workspaceName,
                 $contentStreamId,
                 $nodeToMove->nodeAggregateId,
                 null,

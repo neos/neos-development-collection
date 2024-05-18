@@ -26,6 +26,7 @@ Feature: Run projection integrity violation detection regarding naming of tether
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-david-nodenborough"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
@@ -38,6 +39,7 @@ Feature: Run projection integrity violation detection regarding naming of tether
   Scenario: Remove tethered node's name
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "nodewyn-tetherton"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |

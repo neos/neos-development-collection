@@ -81,7 +81,8 @@ trait TetheredNodeInternals
                     $rootGeneralizationOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($rootGeneralization);
                     if ($creationOriginDimensionSpacePoint) {
                         $events[] = new NodePeerVariantWasCreated(
-                            $parentNodeAggregate->contentStreamId,
+                            $contentGraph->getWorkspaceName(),
+                            $contentGraph->getContentStreamId(),
                             $tetheredNodeAggregateId,
                             $creationOriginDimensionSpacePoint,
                             $rootGeneralizationOrigin,
@@ -91,7 +92,8 @@ trait TetheredNodeInternals
                         );
                     } else {
                         $events[] = new NodeAggregateWithNodeWasCreated(
-                            $parentNodeAggregate->contentStreamId,
+                            $contentGraph->getWorkspaceName(),
+                            $contentGraph->getContentStreamId(),
                             $tetheredNodeAggregateId,
                             $tetheredNodeTypeDefinition->nodeTypeName,
                             $rootGeneralizationOrigin,
@@ -107,44 +109,43 @@ trait TetheredNodeInternals
                     }
                 }
                 return Events::fromArray($events);
-            } else {
-                return Events::with(
-                    new NodeAggregateWithNodeWasCreated(
-                        $parentNodeAggregate->contentStreamId,
-                        $tetheredNodeAggregateId ?: NodeAggregateId::create(),
-                        $tetheredNodeTypeDefinition->nodeTypeName,
-                        $originDimensionSpacePoint,
-                        InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
-                            $parentNodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
-                        ),
-                        $parentNodeAggregate->nodeAggregateId,
-                        $tetheredNodeTypeDefinition->name,
-                        $defaultProperties,
-                        NodeAggregateClassification::CLASSIFICATION_TETHERED,
-                    )
-                );
             }
-        } else {
-            if (!$childNodeAggregate->classification->isTethered()) {
-                throw new \RuntimeException(
-                    'We found a child node aggregate through the given node path; but it is not tethered.'
-                        . ' We do not support re-tethering yet'
-                        . ' (as this case should happen very rarely as far as we think).'
-                );
-            }
-
-            $childNodeSource = null;
-            foreach ($childNodeAggregate->getNodes() as $node) {
-                $childNodeSource = $node;
-                break;
-            }
-            /** @var Node $childNodeSource Node aggregates are never empty */
-            return $this->createEventsForVariations(
-                $contentGraph,
-                $childNodeSource->originDimensionSpacePoint,
-                $originDimensionSpacePoint,
-                $parentNodeAggregate
+            return Events::with(
+                new NodeAggregateWithNodeWasCreated(
+                    $contentGraph->getWorkspaceName(),
+                    $contentGraph->getContentStreamId(),
+                    $tetheredNodeAggregateId ?: NodeAggregateId::create(),
+                    $tetheredNodeTypeDefinition->nodeTypeName,
+                    $originDimensionSpacePoint,
+                    InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                        $parentNodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)
+                    ),
+                    $parentNodeAggregate->nodeAggregateId,
+                    $tetheredNodeTypeDefinition->name,
+                    $defaultProperties,
+                    NodeAggregateClassification::CLASSIFICATION_TETHERED,
+                )
             );
         }
+        if (!$childNodeAggregate->classification->isTethered()) {
+            throw new \RuntimeException(
+                'We found a child node aggregate through the given node path; but it is not tethered.'
+                    . ' We do not support re-tethering yet'
+                    . ' (as this case should happen very rarely as far as we think).'
+            );
+        }
+
+        $childNodeSource = null;
+        foreach ($childNodeAggregate->getNodes() as $node) {
+            $childNodeSource = $node;
+            break;
+        }
+        /** @var Node $childNodeSource Node aggregates are never empty */
+        return $this->createEventsForVariations(
+            $contentGraph,
+            $childNodeSource->originDimensionSpacePoint,
+            $originDimensionSpacePoint,
+            $parentNodeAggregate
+        );
     }
 }

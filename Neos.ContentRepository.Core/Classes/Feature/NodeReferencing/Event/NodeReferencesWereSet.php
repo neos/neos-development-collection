@@ -7,11 +7,12 @@ namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Event;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Named references with optional properties were created from source node to destination node(s)
@@ -22,10 +23,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final readonly class NodeReferencesWereSet implements
     EventInterface,
-    PublishableToOtherContentStreamsInterface,
+    PublishableToWorkspaceInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
+        public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $sourceNodeAggregateId,
         /**
@@ -38,17 +40,6 @@ final readonly class NodeReferencesWereSet implements
         public ReferenceName $referenceName,
         public SerializedNodeReferences $references,
     ) {
-    }
-
-    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
-    {
-        return new self(
-            $targetContentStreamId,
-            $this->sourceNodeAggregateId,
-            $this->affectedSourceOriginDimensionSpacePoints,
-            $this->referenceName,
-            $this->references,
-        );
     }
 
     public function getContentStreamId(): ContentStreamId
@@ -67,9 +58,22 @@ final readonly class NodeReferencesWereSet implements
         return $this->sourceNodeAggregateId;
     }
 
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
+    {
+        return new self(
+            $targetWorkspaceName,
+            $contentStreamId,
+            $this->sourceNodeAggregateId,
+            $this->affectedSourceOriginDimensionSpacePoints,
+            $this->referenceName,
+            $this->references,
+        );
+    }
+
     public static function fromArray(array $values): self
     {
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['sourceNodeAggregateId']),
             OriginDimensionSpacePointSet::fromArray($values['affectedSourceOriginDimensionSpacePoints']),

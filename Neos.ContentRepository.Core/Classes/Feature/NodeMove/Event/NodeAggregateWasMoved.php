@@ -9,9 +9,10 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * A node aggregate was moved in a content stream
@@ -50,10 +51,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final readonly class NodeAggregateWasMoved implements
     EventInterface,
-    PublishableToOtherContentStreamsInterface,
+    PublishableToWorkspaceInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
+        public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public ?NodeAggregateId $newParentNodeAggregateId,
@@ -71,10 +73,11 @@ final readonly class NodeAggregateWasMoved implements
         return $this->nodeAggregateId;
     }
 
-    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
-            $targetContentStreamId,
+            $targetWorkspaceName,
+            $contentStreamId,
             $this->nodeAggregateId,
             $this->newParentNodeAggregateId,
             $this->succeedingSiblingsForCoverage,
@@ -109,6 +112,7 @@ final readonly class NodeAggregateWasMoved implements
         }
 
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             $newParentNodeAggregateId,

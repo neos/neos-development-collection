@@ -26,6 +26,7 @@ Feature: Run integrity violation detection regarding reference relations
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "source-nodandaise"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
@@ -37,6 +38,7 @@ Feature: Run integrity violation detection regarding reference relations
   Scenario: Reference a non-existing node aggregate
     When the event NodeReferencesWereSet was published with payload:
       | Key                                      | Value                                                                      |
+      | workspaceName                            | "live"                                                                     |
       | contentStreamId                  | "cs-identifier"                                                            |
       | sourceNodeAggregateId            | "source-nodandaise"                                                        |
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                        |
@@ -49,6 +51,7 @@ Feature: Run integrity violation detection regarding reference relations
   Scenario: Reference a node aggregate not covering any of the DSPs the source does
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "anthony-destinode"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
@@ -58,6 +61,7 @@ Feature: Run integrity violation detection regarding reference relations
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeReferencesWereSet was published with payload:
       | Key                                      | Value                                                                      |
+      | workspaceName                            | "live"                                                                     |
       | contentStreamId                  | "cs-identifier"                                                            |
       | sourceNodeAggregateId            | "source-nodandaise"                                                        |
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                        |

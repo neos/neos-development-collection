@@ -114,6 +114,7 @@ Feature: Properties
 
     And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                                       |
+      | workspaceName                | "live"                                                                      |
       | contentStreamId              | "cs-identifier"                                                             |
       | nodeAggregateId              | "sir-david-nodenborough"                                                    |
       | originDimensionSpacePoint    | {}                                                                          |

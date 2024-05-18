@@ -45,6 +45,7 @@ Feature: Publishing hide/show scenario of nodes
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                               |
+      | workspaceName                 | "live"                                              |
       | contentStreamId       | "cs-identifier"                                     |
       | nodeAggregateId       | "sir-david-nodenborough"                            |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"            |
@@ -55,6 +56,7 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateClassification   | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                               |
+      | workspaceName                 | "live"                                              |
       | contentStreamId       | "cs-identifier"                                     |
       | nodeAggregateId       | "nody-mc-nodeface"                                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"            |
@@ -65,6 +67,7 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateClassification   | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                  |
+      | workspaceName                 | "live"                                                 |
       | contentStreamId       | "cs-identifier"                                        |
       | nodeAggregateId       | "sir-nodeward-nodington-iii"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Image"                 |

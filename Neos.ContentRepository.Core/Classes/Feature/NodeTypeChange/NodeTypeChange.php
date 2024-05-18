@@ -39,6 +39,8 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /** @codingStandardsIgnoreStart */
 /** @codingStandardsIgnoreEnd  */
@@ -159,6 +161,7 @@ trait NodeTypeChange
          **************/
         $events = [
             new NodeAggregateTypeWasChanged(
+                $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->newNodeTypeName
@@ -297,6 +300,7 @@ trait NodeTypeChange
                 );
                 // AND REMOVE THEM
                 $events[] = $this->removeNodeInDimensionSpacePointSet(
+                    $contentGraph,
                     $childNodeAggregate,
                     $dimensionSpacePointsToBeRemoved,
                 );
@@ -329,6 +333,7 @@ trait NodeTypeChange
                     );
                     // AND REMOVE THEM
                     $events[] = $this->removeNodeInDimensionSpacePointSet(
+                        $contentGraph,
                         $grandchildNodeAggregate,
                         $dimensionSpacePointsToBeRemoved,
                     );
@@ -360,6 +365,7 @@ trait NodeTypeChange
                 );
                 // AND REMOVE THEM
                 $events[] = $this->removeNodeInDimensionSpacePointSet(
+                    $contentGraph,
                     $tetheredNodeAggregate,
                     $dimensionSpacePointsToBeRemoved,
                 );
@@ -414,11 +420,13 @@ trait NodeTypeChange
     }
 
     private function removeNodeInDimensionSpacePointSet(
+        ContentGraphInterface $contentGraph,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $coveredDimensionSpacePointsToBeRemoved,
     ): NodeAggregateWasRemoved {
         return new NodeAggregateWasRemoved(
-            $nodeAggregate->contentStreamId,
+            $contentGraph->getWorkspaceName(),
+            $contentGraph->getContentStreamId(),
             $nodeAggregate->nodeAggregateId,
             // TODO: we also use the covered dimension space points as OCCUPIED dimension space points
             // - however the OCCUPIED dimension space points are not really used by now

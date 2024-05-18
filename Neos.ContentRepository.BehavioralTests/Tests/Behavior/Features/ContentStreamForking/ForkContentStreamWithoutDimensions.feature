@@ -30,6 +30,7 @@ Feature: ForkContentStream Without Dimensions
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                    |
+      | workspaceName               | "live"                                   |
       | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "nody-mc-nodeface"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
@@ -40,6 +41,7 @@ Feature: ForkContentStream Without Dimensions
       | nodeAggregateClassification | "regular"                                |
     And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
+      | workspaceName                | "live"                                                  |
       | contentStreamId              | "cs-identifier"                                         |
       | nodeAggregateId              | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint    | {}                                                      |
@@ -63,6 +65,7 @@ Feature: ForkContentStream Without Dimensions
       | sourceContentStreamId | "cs-identifier"      |
     And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
+      | workspaceName                | "user"                                                  |
       | contentStreamId              | "user-cs-identifier"                                    |
       | nodeAggregateId              | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint    | {}                                                      |
@@ -92,6 +95,7 @@ Feature: ForkContentStream Without Dimensions
       | sourceContentStreamId | "cs-identifier"      |
     And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
+      | workspaceName                | "live"                                                  |
       | contentStreamId              | "cs-identifier"                                         |
       | nodeAggregateId              | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint    | {}                                                      |

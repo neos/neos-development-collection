@@ -231,6 +231,7 @@ trait NodeCreation
         SerializedPropertyValues $initialPropertyValues,
     ): NodeAggregateWithNodeWasCreated {
         return new NodeAggregateWithNodeWasCreated(
+            $contentGraph->getWorkspaceName(),
             $contentGraph->getContentStreamId(),
             $command->nodeAggregateId,
             $command->nodeTypeName,
@@ -277,6 +278,7 @@ trait NodeCreation
             );
 
             $events[] = new NodeAggregateWithNodeWasCreated(
+                $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $childNodeAggregateId,
                 $tetheredNodeTypeDefinition->nodeTypeName,
