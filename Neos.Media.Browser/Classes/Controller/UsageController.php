@@ -152,7 +152,7 @@ class UsageController extends ActionController
             }
             foreach ($existingSites as $existingSite) {
                 /** @var Site $existingSite * */
-                if ($siteNode->nodeName->equals($existingSite->getNodeName()->toNodeName())) {
+                if ($siteNode->name->equals($existingSite->getNodeName()->toNodeName())) {
                     $site = $existingSite;
                 }
             }

@@ -127,8 +127,8 @@ class TetheredNodeAdjustments
                     $actualTetheredChildNodes = [];
                     foreach ($childNodes as $childNode) {
                         if ($childNode->classification->isTethered()) {
-                            assert($childNode->nodeName !== null); // it's tethered!
-                            $actualTetheredChildNodes[$childNode->nodeName->value] = $childNode;
+                            assert($childNode->name !== null); // it's tethered!
+                            $actualTetheredChildNodes[$childNode->name->value] = $childNode;
                         }
                     }
 

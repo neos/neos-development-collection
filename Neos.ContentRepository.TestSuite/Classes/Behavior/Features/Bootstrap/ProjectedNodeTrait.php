@@ -315,7 +315,7 @@ trait ProjectedNodeTrait
     {
         $expectedNodeName = NodeName::fromString($serializedExpectedNodeName);
         $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedNodeName) {
-            $actualNodeName = $currentNode->nodeName;
+            $actualNodeName = $currentNode->name;
             Assert::assertSame($expectedNodeName->value, $actualNodeName->value, 'Actual node name "' . $actualNodeName->value . '" does not match expected "' . $expectedNodeName->value . '"');
         });
     }
@@ -326,7 +326,7 @@ trait ProjectedNodeTrait
     public function iExpectThisNodeToBeUnnamed(): void
     {
         $this->assertOnCurrentNode(function (Node $currentNode) {
-            Assert::assertNull($currentNode->nodeName, 'Node was not expected to be named');
+            Assert::assertNull($currentNode->name, 'Node was not expected to be named');
         });
     }
 
@@ -558,7 +558,7 @@ trait ProjectedNodeTrait
             Assert::assertTrue($expectedParentDiscriminator->equals($actualParentDiscriminator), 'Parent discriminator does not match. Expected was ' . json_encode($expectedParentDiscriminator) . ', given was ' . json_encode($actualParentDiscriminator));
 
             $expectedChildDiscriminator = NodeDiscriminator::fromNode($currentNode);
-            $child = $subgraph->findNodeByPath($currentNode->nodeName, $parent->aggregateId);
+            $child = $subgraph->findNodeByPath($currentNode->name, $parent->aggregateId);
             $actualChildDiscriminator = NodeDiscriminator::fromNode($child);
             Assert::assertTrue($expectedChildDiscriminator->equals($actualChildDiscriminator), 'Child discriminator does not match. Expected was ' . json_encode($expectedChildDiscriminator) . ', given was ' . json_encode($actualChildDiscriminator));
         });
@@ -593,7 +593,7 @@ trait ProjectedNodeTrait
 
             foreach ($expectedChildNodesTable->getHash() as $index => $row) {
                 $expectedNodeName = NodeName::fromString($row['Name']);
-                $actualNodeName = $actualChildNodes[$index]->nodeName;
+                $actualNodeName = $actualChildNodes[$index]->name;
                 Assert::assertTrue($expectedNodeName->equals($actualNodeName), 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Expected: "' . $expectedNodeName->value . '" Actual: "' . $actualNodeName->value . '"');
                 if (isset($row['NodeDiscriminator'])) {
                     $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);

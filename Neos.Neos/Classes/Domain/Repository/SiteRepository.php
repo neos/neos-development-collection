@@ -124,11 +124,11 @@ class SiteRepository extends Repository
         if (!$this->getNodeType($siteNode)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
             throw new \Neos\Neos\Domain\Exception(sprintf('Node %s is not a site node. Site nodes must be of type "%s".', $siteNode->aggregateId->value, NodeTypeNameFactory::NAME_SITE), 1697108987);
         }
-        if ($siteNode->nodeName === null) {
+        if ($siteNode->name === null) {
             throw new \Neos\Neos\Domain\Exception(sprintf('Site node "%s" is unnamed', $siteNode->aggregateId->value), 1681286146);
         }
-        return $this->findOneByNodeName(SiteNodeName::fromNodeName($siteNode->nodeName))
-            ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->nodeName->value), 1677245517);
+        return $this->findOneByNodeName(SiteNodeName::fromNodeName($siteNode->name))
+            ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->name->value), 1677245517);
     }
 
     /**

@@ -128,10 +128,10 @@ class SiteService
             // should not happen
             return;
         }
-        if ($siteNode->nodeName === null) {
+        if ($siteNode->name === null) {
             return;
         }
-        $site = $this->siteRepository->findOneByNodeName($siteNode->nodeName->value);
+        $site = $this->siteRepository->findOneByNodeName($siteNode->name->value);
         if ($site === null) {
             return;
         }

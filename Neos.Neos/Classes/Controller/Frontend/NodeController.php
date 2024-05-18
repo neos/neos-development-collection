@@ -341,10 +341,10 @@ class NodeController extends ActionController
             = $inMemoryCache->getParentNodeIdByChildNodeIdCache();
         $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdCache();
         $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdCache();
-        if ($node->nodeName !== null) {
+        if ($node->name !== null) {
             $namedChildNodeByNodeIdentifierCache->add(
                 $parentNode->aggregateId,
-                $node->nodeName,
+                $node->name,
                 $node
             );
         } else {

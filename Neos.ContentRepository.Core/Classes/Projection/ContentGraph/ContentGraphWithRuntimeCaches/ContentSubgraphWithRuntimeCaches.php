@@ -90,7 +90,7 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         }
         $childNodes = $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter);
         foreach ($childNodes as $node) {
-            $namedChildNodeCache->add($parentNodeAggregateId, $node->nodeName, $node);
+            $namedChildNodeCache->add($parentNodeAggregateId, $node->name, $node);
             $parentNodeIdCache->add($node->aggregateId, $parentNodeAggregateId);
             $nodeByIdCache->add($node->aggregateId, $node);
         }

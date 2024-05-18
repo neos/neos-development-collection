@@ -55,7 +55,7 @@ final readonly class NodeSubtreeSnapshot implements \JsonSerializable
         return new self(
             $sourceNode->aggregateId,
             $sourceNode->nodeTypeName,
-            $sourceNode->nodeName,
+            $sourceNode->name,
             $sourceNode->classification,
             $properties->serialized(),
             NodeReferencesSnapshot::fromReferences(

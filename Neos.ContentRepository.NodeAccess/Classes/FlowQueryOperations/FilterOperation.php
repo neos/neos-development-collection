@@ -95,7 +95,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     protected function matchesPropertyNameFilter($element, $propertyNameFilter)
     {
         assert($element instanceof Node);
-        return $element->nodeName?->value === $propertyNameFilter;
+        return $element->name?->value === $propertyNameFilter;
     }
 
     /**

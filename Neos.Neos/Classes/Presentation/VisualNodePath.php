@@ -31,7 +31,7 @@ final readonly class VisualNodePath
     {
         $pathSegments = [];
         foreach ($ancestors->reverse() as $ancestor) {
-            $pathSegments[] = $ancestor->nodeName?->value ?: '[' . $ancestor->aggregateId->value . ']';
+            $pathSegments[] = $ancestor->name?->value ?: '[' . $ancestor->aggregateId->value . ']';
         }
 
         return new self('/' . implode('/', $pathSegments));
