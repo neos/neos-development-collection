@@ -32,7 +32,7 @@ class NodeAddressTest extends TestCase
                 DimensionSpacePoint::createWithoutDimensions(),
                 NodeAggregateId::fromString('marcus-heinrichus')
             ),
-            'serialized' => 'default__live__W10=__marcus-heinrichus'
+            'serialized' => 'default/live//marcus-heinrichus'
         ];
 
         yield 'one dimension' => [
@@ -42,7 +42,7 @@ class NodeAddressTest extends TestCase
                 DimensionSpacePoint::fromArray(['language' => 'de']),
                 NodeAggregateId::fromString('79e69d1c-b079-4535-8c8a-37e76736c445')
             ),
-            'serialized' => 'default__user-mh__eyJsYW5ndWFnZSI6ImRlIn0=__79e69d1c-b079-4535-8c8a-37e76736c445'
+            'serialized' => 'default/user-mh/bGFuZ3VhZ2U9ZGU=/79e69d1c-b079-4535-8c8a-37e76736c445'
         ];
 
         yield 'two dimensions' => [
@@ -52,7 +52,7 @@ class NodeAddressTest extends TestCase
                 DimensionSpacePoint::fromArray(['language' => 'en_US', 'audience' => 'nice people']),
                 NodeAggregateId::fromString('my-node-id')
             ),
-            'serialized' => 'second__user-mh__eyJsYW5ndWFnZSI6ImVuX1VTIiwiYXVkaWVuY2UiOiJuaWNlIHBlb3BsZSJ9__my-node-id'
+            'serialized' => 'second/user-mh/bGFuZ3VhZ2U9ZW5fVVMmYXVkaWVuY2U9bmljZStwZW9wbGU=/my-node-id'
         ];
     }
 

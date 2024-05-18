@@ -101,7 +101,7 @@ final readonly class NodeAddress implements \JsonSerializable
 
     public static function fromUriString(string $encoded): self
     {
-        $parts = explode('__', $encoded);
+        $parts = explode('/', $encoded);
         if (count($parts) !== 4) {
             throw new \RuntimeException(sprintf('Failed to decode NodeAddress from uri string: %s', $encoded), 1716051847);
         }
@@ -116,7 +116,7 @@ final readonly class NodeAddress implements \JsonSerializable
     public function toUriString(): string
     {
         return sprintf(
-            '%s__%s__%s__%s',
+            '%s/%s/%s/%s',
             $this->contentRepositoryId->value,
             $this->workspaceName->value,
             $this->dimensionSpacePoint->toUriRepresentation(),
