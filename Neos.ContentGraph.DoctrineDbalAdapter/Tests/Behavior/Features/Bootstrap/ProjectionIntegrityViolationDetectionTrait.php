@@ -132,7 +132,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
-        $relationAnchorPoint = $this->dbalClient->getConnection()->executeQuery(
+        $relationAnchorPoint = $this->dbal->executeQuery(
             'SELECT n.relationanchorpoint FROM ' . $this->tableNames()->node() . ' n
                 JOIN ' . $this->tableNames()->hierarchyRelation() . ' h ON h.childnodeanchor = n.relationanchorpoint
                 WHERE h.contentstreamid = :contentStreamId

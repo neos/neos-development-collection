@@ -40,7 +40,7 @@ class ProjectionContentGraph
 {
     public function __construct(
         private readonly Connection $dbal,
-        private readonly ContentGraphTableNames $tableNames
+        private readonly ContentGraphTableNames $tableNames,
     ) {
     }
 
@@ -560,13 +560,5 @@ class ProjectionContentGraph
             (int)$rawData['position'],
             NodeFactory::extractNodeTagsFromJson($rawData['subtreetags']),
         );
-    }
-
-    /**
-     * @return Connection
-     */
-    protected function getDatabaseConnection(): Connection
-    {
-        return $this->dbal;
     }
 }

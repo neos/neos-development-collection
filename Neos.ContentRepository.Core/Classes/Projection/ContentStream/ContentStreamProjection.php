@@ -71,10 +71,14 @@ class ContentStreamProjection implements ProjectionInterface
     public function setUp(): void
     {
         $statements = $this->determineRequiredSqlStatements();
+        // MIGRATIONS
+        if ($this->dbal->getSchemaManager()->tablesExist([$this->tableName])) {
+            // added 2023-04-01
+            $statements[] = sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName);
+        }
         foreach ($statements as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableName);
     }
 
     public function status(): ProjectionStatus

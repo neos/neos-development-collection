@@ -71,7 +71,6 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableName);
     }
 
     public function status(): ProjectionStatus

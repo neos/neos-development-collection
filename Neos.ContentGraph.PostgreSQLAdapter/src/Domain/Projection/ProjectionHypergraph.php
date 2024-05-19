@@ -32,7 +32,7 @@ final class ProjectionHypergraph
 {
     public function __construct(
         private readonly Connection $dbal,
-        private readonly string $tableNamePrefix
+        private readonly string $tableNamePrefix,
     ) {
     }
 

@@ -34,7 +34,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 {
     public function __construct(
         private readonly Connection $dbal,
-        private readonly ContentGraphTableNames $tableNames
+        private readonly ContentGraphTableNames $tableNames,
     ) {
     }
 

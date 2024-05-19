@@ -25,7 +25,7 @@ final class ContentGraphIntegrityCommandController extends CommandController
     private const OUTPUT_MODE_LOG = 'log';
 
     #[Flow\Inject()]
-    protected Connection $connection;
+    protected Connection $dbal;
 
     #[Flow\Inject()]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -34,7 +34,7 @@ final class ContentGraphIntegrityCommandController extends CommandController
     {
         $detectionRunner = $this->contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString($contentRepository),
-            new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->connection)
+            new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbal)
         );
 
         $outputMode = $this->resolveOutputMode($outputMode);
