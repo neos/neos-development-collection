@@ -44,9 +44,9 @@ class NodeIdentityConverterAspect
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof Node) {
-            return ['__contextNodePath' => NodeAddress::fromNode($objectArgument)->toJson()];
+            return ['__contextNodePath' => NodeAddress::fromNode($objectArgument)->toUriString()];
         } elseif ($objectArgument instanceof NodeAddress) {
-            return ['__contextNodePath' => $objectArgument->toJson()];
+            return ['__contextNodePath' => $objectArgument->toUriString()];
         } elseif ($objectArgument instanceof LegacyNodeAddress) {
             return ['__contextNodePath' => $objectArgument->serializeForUri()];
         }

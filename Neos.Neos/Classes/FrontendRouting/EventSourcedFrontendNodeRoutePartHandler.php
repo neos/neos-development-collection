@@ -28,6 +28,7 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
@@ -202,7 +203,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
         // if incomplete -> no match + log
 
-        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($resolvedSite->getConfiguration()->contentRepositoryId);
 
         try {
             $matchResult = $this->matchUriPath(
@@ -247,7 +248,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $dimensionSpacePoint,
             $nodeInfo->getNodeAggregateId(),
         );
-        return new MatchResult($nodeAddress->toJson(), $nodeInfo->getRouteTags());
+        return new MatchResult($nodeAddress->toUriString(), $nodeInfo->getRouteTags());
     }
 
     /**
@@ -268,7 +269,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
 
         try {
-            $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult);
+            $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult->siteNodeName);
         } catch (NodeNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception
             return false;
@@ -290,7 +291,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      */
     private function resolveNodeAddress(
         NodeAddress $nodeAddress,
-        SiteDetectionResult $currentRequestSiteDetectionResult
+        SiteNodeName $currentRequestSiteNodeName
     ): ResolveResult {
         $contentRepository = $this->contentRepositoryRegistry->get(
             $nodeAddress->contentRepositoryId
@@ -315,7 +316,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
 
         $uriConstraints = UriConstraints::create();
-        if (!$targetSite->getNodeName()->equals($currentRequestSiteDetectionResult->siteNodeName)) {
+        if (!$targetSite->getNodeName()->equals($currentRequestSiteNodeName)) {
             $uriConstraints = $this->crossSiteLinker->applyCrossSiteUriConstraints(
                 $targetSite,
                 $uriConstraints

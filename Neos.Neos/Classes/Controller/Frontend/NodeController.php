@@ -195,7 +195,7 @@ class NodeController extends ActionController
      */
     public function showAction(string $node): void
     {
-        $nodeAddress = NodeAddress::fromJsonString($node);
+        $nodeAddress = NodeAddress::fromUriString($node);
         unset($node);
 
         if (!$nodeAddress->workspaceName->isLive()) {
