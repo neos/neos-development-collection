@@ -26,7 +26,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeTypeChange
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeVariation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\HypergraphSchemaBuilder;
-use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
@@ -72,13 +71,13 @@ final class HypergraphProjection implements ProjectionInterface
     private ProjectionHypergraph $projectionHypergraph;
 
     public function __construct(
-        private readonly PostgresDbalClientInterface $databaseClient,
+        private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
         private readonly ContentGraphFinder $contentGraphFinder
     ) {
-        $this->projectionHypergraph = new ProjectionHypergraph($this->databaseClient, $this->tableNamePrefix);
+        $this->projectionHypergraph = new ProjectionHypergraph($this->dbal, $this->tableNamePrefix);
         $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->databaseClient->getConnection(),
+            $this->dbal,
             $this->tableNamePrefix . '_checkpoint',
             self::class
         );
@@ -88,9 +87,9 @@ final class HypergraphProjection implements ProjectionInterface
     public function setUp(): void
     {
         foreach ($this->determineRequiredSqlStatements() as $statement) {
-            $this->getDatabaseConnection()->executeStatement($statement);
+            $this->dbal->executeStatement($statement);
         }
-        $this->getDatabaseConnection()->executeStatement('
+        $this->dbal->executeStatement('
             CREATE INDEX IF NOT EXISTS node_properties ON ' . $this->tableNamePrefix . '_node USING GIN(properties);
 
             create index if not exists hierarchy_children
@@ -132,15 +131,14 @@ final class HypergraphProjection implements ProjectionInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $connection = $this->databaseClient->getConnection();
-        HypergraphSchemaBuilder::registerTypes($connection->getDatabasePlatform());
-        $schemaManager = $connection->getSchemaManager();
+        HypergraphSchemaBuilder::registerTypes($this->dbal->getDatabasePlatform());
+        $schemaManager = $this->dbal->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
         $schema = (new HypergraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
-        return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
+        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 
     public function reset(): void
@@ -153,11 +151,10 @@ final class HypergraphProjection implements ProjectionInterface
 
     private function truncateDatabaseTables(): void
     {
-        $connection = $this->databaseClient->getConnection();
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_node');
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_hierarchyhyperrelation');
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_referencerelation');
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_restrictionhyperrelation');
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_node');
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_hierarchyhyperrelation');
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_referencerelation');
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_restrictionhyperrelation');
     }
 
     public function canHandle(EventInterface $event): bool
@@ -247,6 +244,6 @@ final class HypergraphProjection implements ProjectionInterface
 
     protected function getDatabaseConnection(): Connection
     {
-        return $this->databaseClient->getConnection();
+        return $this->dbal;
     }
 }

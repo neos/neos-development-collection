@@ -11,8 +11,8 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Error\Messages\Result;
@@ -25,7 +25,7 @@ final class ContentGraphIntegrityCommandController extends CommandController
     private const OUTPUT_MODE_LOG = 'log';
 
     #[Flow\Inject()]
-    protected DbalClientInterface $dbalClient;
+    protected Connection $dbal;
 
     #[Flow\Inject()]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -34,7 +34,7 @@ final class ContentGraphIntegrityCommandController extends CommandController
     {
         $detectionRunner = $this->contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString($contentRepository),
-            new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbalClient)
+            new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbal)
         );
 
         $outputMode = $this->resolveOutputMode($outputMode);

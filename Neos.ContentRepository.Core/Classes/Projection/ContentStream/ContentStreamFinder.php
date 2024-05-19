@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentStream;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -47,7 +46,7 @@ use Neos\EventStore\Model\EventStream\MaybeVersion;
 final readonly class ContentStreamFinder implements ProjectionStateInterface
 {
     public function __construct(
-        private DbalClientInterface $client,
+        private Connection $dbal,
         private string $tableName,
     ) {
     }
@@ -57,8 +56,7 @@ final readonly class ContentStreamFinder implements ProjectionStateInterface
      */
     public function findAllIds(): iterable
     {
-        $connection = $this->client->getConnection();
-        $contentStreamIds = $connection->executeQuery('SELECT contentstreamid FROM ' . $this->tableName)->fetchFirstColumn();
+        $contentStreamIds = $this->dbal->executeQuery('SELECT contentstreamid FROM ' . $this->tableName)->fetchFirstColumn();
         return array_map(ContentStreamId::fromString(...), $contentStreamIds);
     }
 
@@ -78,8 +76,7 @@ final readonly class ContentStreamFinder implements ProjectionStateInterface
             $states[] = ContentStreamState::STATE_FORKED;
         }
 
-        $connection = $this->client->getConnection();
-        $contentStreamIds = $connection->executeQuery(
+        $contentStreamIds = $this->dbal->executeQuery(
             '
             SELECT contentstreamid FROM ' . $this->tableName . '
                 WHERE removed = FALSE
@@ -101,9 +98,8 @@ final readonly class ContentStreamFinder implements ProjectionStateInterface
 
     public function findStateForContentStream(ContentStreamId $contentStreamId): ?ContentStreamState
     {
-        $connection = $this->client->getConnection();
         /* @var $state string|false */
-        $state = $connection->executeQuery(
+        $state = $this->dbal->executeQuery(
             '
             SELECT state FROM ' . $this->tableName . '
                 WHERE contentstreamid = :contentStreamId
@@ -122,8 +118,7 @@ final readonly class ContentStreamFinder implements ProjectionStateInterface
      */
     public function findUnusedAndRemovedContentStreams(): iterable
     {
-        $connection = $this->client->getConnection();
-        $contentStreamIds = $connection->executeQuery(
+        $contentStreamIds = $this->dbal->executeQuery(
             '
             WITH RECURSIVE transitiveUsedContentStreams (contentstreamid) AS (
                     -- initial case: find all content streams currently in direct use by a workspace
@@ -161,9 +156,8 @@ final readonly class ContentStreamFinder implements ProjectionStateInterface
 
     public function findVersionForContentStream(ContentStreamId $contentStreamId): MaybeVersion
     {
-        $connection = $this->client->getConnection();
         /* @var $state string|false */
-        $version = $connection->executeQuery(
+        $version = $this->dbal->executeQuery(
             '
             SELECT version FROM ' . $this->tableName . '
                 WHERE contentStreamId = :contentStreamId
@@ -182,9 +176,8 @@ final readonly class ContentStreamFinder implements ProjectionStateInterface
 
     public function hasContentStream(ContentStreamId $contentStreamId): bool
     {
-        $connection = $this->client->getConnection();
         /* @var $state string|false */
-        $version = $connection->executeQuery(
+        $version = $this->dbal->executeQuery(
             '
             SELECT version FROM ' . $this->tableName . '
                 WHERE contentStreamId = :contentStreamId

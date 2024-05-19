@@ -29,7 +29,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
@@ -60,7 +59,7 @@ class FeatureContext implements BehatContext
     {
         self::bootstrapFlow();
 
-        $this->dbalClient = $this->getObject(DbalClientInterface::class);
+        $this->dbal = $this->getObject(Connection::class);
         $this->setUpInterleavingLogger();
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
     }

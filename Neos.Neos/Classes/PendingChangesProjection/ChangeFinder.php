@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\PendingChangesProjection;
 
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
@@ -28,12 +28,9 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ChangeFinder implements ProjectionStateInterface
 {
-    /**
-     * @param DbalClientInterface $client
-     */
     public function __construct(
-        private readonly DbalClientInterface $client,
-        private readonly string $tableName
+        private readonly Connection $dbal,
+        private readonly string $tableName,
     ) {
     }
 
@@ -43,8 +40,7 @@ final class ChangeFinder implements ProjectionStateInterface
      */
     public function findByContentStreamId(ContentStreamId $contentStreamId): array
     {
-        $connection = $this->client->getConnection();
-        $changeRows = $connection->executeQuery(
+        $changeRows = $this->dbal->executeQuery(
             '
                 SELECT * FROM ' . $this->tableName . '
                 WHERE contentStreamId = :contentStreamId
@@ -62,8 +58,7 @@ final class ChangeFinder implements ProjectionStateInterface
 
     public function countByContentStreamId(ContentStreamId $contentStreamId): int
     {
-        $connection = $this->client->getConnection();
-        return (int)$connection->executeQuery(
+        return (int)$this->dbal->executeQuery(
             '
                 SELECT * FROM ' . $this->tableName . '
                 WHERE contentStreamId = :contentStreamId

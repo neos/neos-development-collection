@@ -1,5 +1,0 @@
-Neos_ContentGraph_DoctrineDbalAdapter_ProcessedEvents:
-  frontend: Neos\Cache\Frontend\VariableFrontend
-  backend: Neos\Cache\Backend\FileBackend
-  backendOptions:
-    defaultLifetime: 400

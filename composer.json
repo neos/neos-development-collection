@@ -64,8 +64,6 @@
         "neos/contentrepository-nodemigration": "self.version",
         "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepository-testsuite": "self.version",
-        "neos/contentrepositoryregistry-doctrinedbalclient": "self.version",
-        "neos/contentrepositoryregistry-postgresdbalclient": "self.version",
         "neos/contentrepositoryregistry-testsuite": "self.version",
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
@@ -178,12 +176,6 @@
             ],
             "Neos\\ContentRepository\\TestSuite\\": [
                 "Neos.ContentRepository.TestSuite/Classes"
-            ],
-            "Neos\\ContentRepositoryRegistry\\DoctrineDbalClient\\": [
-                "Neos.ContentRepositoryRegistry.DoctrineDbalClient/Classes"
-            ],
-            "Neos\\ContentRepositoryRegistry\\PostgresDbalClient\\": [
-                "Neos.ContentRepositoryRegistry.PostgresDbalClient/Classes"
             ],
             "Neos\\ContentRepositoryRegistry\\TestSuite\\": [
                 "Neos.ContentRepositoryRegistry.TestSuite/Classes"
