@@ -29,40 +29,33 @@ trait ContentStreamForking
      */
     private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
-        $this->transactional(function () use ($event) {
-            $parameters = [
-                'sourceContentStreamId' => $event->sourceContentStreamId->value,
-                'targetContentStreamId' => $event->newContentStreamId->value
-            ];
+        $parameters = [
+            'sourceContentStreamId' => $event->sourceContentStreamId->value,
+            'targetContentStreamId' => $event->newContentStreamId->value
+        ];
 
-            $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
-                'INSERT INTO ' . $this->tableNamePrefix . '_hierarchyhyperrelation
-                    (contentstreamid, parentnodeanchor,
-                     dimensionspacepoint, dimensionspacepointhash, childnodeanchors)
-                SELECT :targetContentStreamId, parentnodeanchor,
-                    dimensionspacepoint, dimensionspacepointhash, childnodeanchors
-                FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation source
-                WHERE source.contentstreamid = :sourceContentStreamId',
-                $parameters
-            );
+        $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
+            'INSERT INTO ' . $this->tableNamePrefix . '_hierarchyhyperrelation
+                (contentstreamid, parentnodeanchor,
+                 dimensionspacepoint, dimensionspacepointhash, childnodeanchors)
+            SELECT :targetContentStreamId, parentnodeanchor,
+                dimensionspacepoint, dimensionspacepointhash, childnodeanchors
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation source
+            WHERE source.contentstreamid = :sourceContentStreamId',
+            $parameters
+        );
 
-            $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
-                'INSERT INTO ' . $this->tableNamePrefix . '_restrictionhyperrelation
-                    (contentstreamid, dimensionspacepointhash,
-                     originnodeaggregateid, affectednodeaggregateids)
-                SELECT :targetContentStreamId, dimensionspacepointhash,
-                    originnodeaggregateid, affectednodeaggregateids
-                FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation source
-                WHERE source.contentstreamid = :sourceContentStreamId',
-                $parameters
-            );
-        });
+        $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
+            'INSERT INTO ' . $this->tableNamePrefix . '_restrictionhyperrelation
+                (contentstreamid, dimensionspacepointhash,
+                 originnodeaggregateid, affectednodeaggregateids)
+            SELECT :targetContentStreamId, dimensionspacepointhash,
+                originnodeaggregateid, affectednodeaggregateids
+            FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation source
+            WHERE source.contentstreamid = :sourceContentStreamId',
+            $parameters
+        );
     }
-
-    /**
-     * @throws \Throwable
-     */
-    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

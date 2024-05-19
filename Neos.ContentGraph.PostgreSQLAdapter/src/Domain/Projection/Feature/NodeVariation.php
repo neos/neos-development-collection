@@ -38,8 +38,6 @@ trait NodeVariation
 {
     abstract protected function getProjectionHyperGraph(): ProjectionHypergraph;
 
-    abstract protected function transactional(\Closure $operations): void;
-
     abstract protected function getDatabaseConnection(): Connection;
 
     /**
@@ -47,161 +45,155 @@ trait NodeVariation
      */
     private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
-        $this->transactional(function () use ($event) {
-            $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
+        $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
+            $event->contentStreamId,
+            $event->sourceOrigin,
+            $event->nodeAggregateId
+        );
+        if (is_null($sourceNode)) {
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing((get_class($event)));
+        }
+        $specializedNode = $this->copyNodeToOriginDimensionSpacePoint(
+            $sourceNode,
+            $event->specializationOrigin
+        );
+
+        $oldCoveringNode = $this->projectionHypergraph->findNodeRecordByCoverage(
+            $event->contentStreamId,
+            $event->specializationOrigin->toDimensionSpacePoint(),
+            $event->nodeAggregateId
+        );
+        if ($oldCoveringNode instanceof NodeRecord) {
+            $this->assignNewChildNodeToAffectedHierarchyRelations(
+                $event->contentStreamId,
+                $oldCoveringNode->relationAnchorPoint,
+                $specializedNode->relationAnchorPoint,
+                $event->specializationSiblings->toDimensionSpacePointSet()
+            );
+            $this->assignNewParentNodeToAffectedHierarchyRelations(
+                $event->contentStreamId,
+                $oldCoveringNode->relationAnchorPoint,
+                $specializedNode->relationAnchorPoint,
+                $event->specializationSiblings->toDimensionSpacePointSet()
+            );
+        } else {
+            // the dimension space point is not yet covered by the node aggregate,
+            // but it is known that the source's parent node aggregate does
+            $sourceParent = $this->projectionHypergraph->findParentNodeRecordByOrigin(
                 $event->contentStreamId,
                 $event->sourceOrigin,
                 $event->nodeAggregateId
             );
-            if (is_null($sourceNode)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing((get_class($event)));
+            if (is_null($sourceParent)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(
+                    (get_class($event))
+                );
             }
-            $specializedNode = $this->copyNodeToOriginDimensionSpacePoint(
-                $sourceNode,
-                $event->specializationOrigin
-            );
-
-            $oldCoveringNode = $this->projectionHypergraph->findNodeRecordByCoverage(
-                $event->contentStreamId,
-                $event->specializationOrigin->toDimensionSpacePoint(),
-                $event->nodeAggregateId
-            );
-            if ($oldCoveringNode instanceof NodeRecord) {
-                $this->assignNewChildNodeToAffectedHierarchyRelations(
+            foreach ($event->specializationSiblings->toDimensionSpacePointSet() as $specializedDimensionSpacePoint) {
+                $parentNode = $this->projectionHypergraph->findNodeRecordByCoverage(
                     $event->contentStreamId,
-                    $oldCoveringNode->relationAnchorPoint,
-                    $specializedNode->relationAnchorPoint,
-                    $event->specializationSiblings->toDimensionSpacePointSet()
+                    $specializedDimensionSpacePoint,
+                    $sourceParent->nodeAggregateId
                 );
-                $this->assignNewParentNodeToAffectedHierarchyRelations(
-                    $event->contentStreamId,
-                    $oldCoveringNode->relationAnchorPoint,
-                    $specializedNode->relationAnchorPoint,
-                    $event->specializationSiblings->toDimensionSpacePointSet()
-                );
-            } else {
-                // the dimension space point is not yet covered by the node aggregate,
-                // but it is known that the source's parent node aggregate does
-                $sourceParent = $this->projectionHypergraph->findParentNodeRecordByOrigin(
-                    $event->contentStreamId,
-                    $event->sourceOrigin,
-                    $event->nodeAggregateId
-                );
-                if (is_null($sourceParent)) {
-                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(
+                if (is_null($parentNode)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
                         (get_class($event))
                     );
                 }
-                foreach ($event->specializationSiblings->toDimensionSpacePointSet() as $specializedDimensionSpacePoint) {
-                    $parentNode = $this->projectionHypergraph->findNodeRecordByCoverage(
-                        $event->contentStreamId,
-                        $specializedDimensionSpacePoint,
-                        $sourceParent->nodeAggregateId
-                    );
-                    if (is_null($parentNode)) {
-                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
-                            (get_class($event))
-                        );
-                    }
-                    $parentRelation = $this->projectionHypergraph->findHierarchyHyperrelationRecordByParentNodeAnchor(
-                        $event->contentStreamId,
-                        $specializedDimensionSpacePoint,
-                        $parentNode->relationAnchorPoint
-                    );
-                    if (is_null($parentRelation)) {
-                        throw EventCouldNotBeAppliedToContentGraph::becauseTheIngoingSourceHierarchyRelationIsMissing(
-                            (get_class($event))
-                        );
-                    }
-
-                    $parentRelation->addChildNodeAnchor(
-                        $specializedNode->relationAnchorPoint,
-                        null,
-                        $this->getDatabaseConnection(),
-                        $this->tableNamePrefix
+                $parentRelation = $this->projectionHypergraph->findHierarchyHyperrelationRecordByParentNodeAnchor(
+                    $event->contentStreamId,
+                    $specializedDimensionSpacePoint,
+                    $parentNode->relationAnchorPoint
+                );
+                if (is_null($parentRelation)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheIngoingSourceHierarchyRelationIsMissing(
+                        (get_class($event))
                     );
                 }
-            }
 
-            $this->copyReferenceRelations(
-                $sourceNode->relationAnchorPoint,
-                $specializedNode->relationAnchorPoint
-            );
-        });
+                $parentRelation->addChildNodeAnchor(
+                    $specializedNode->relationAnchorPoint,
+                    null,
+                    $this->getDatabaseConnection(),
+                    $this->tableNamePrefix
+                );
+            }
+        }
+
+        $this->copyReferenceRelations(
+            $sourceNode->relationAnchorPoint,
+            $specializedNode->relationAnchorPoint
+        );
     }
 
     private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
-        $this->transactional(function () use ($event) {
-            $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
-                $event->contentStreamId,
-                $event->sourceOrigin,
-                $event->nodeAggregateId
-            );
-            if (!$sourceNode) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
-            }
-            $generalizedNode = $this->copyNodeToOriginDimensionSpacePoint(
-                $sourceNode,
-                $event->generalizationOrigin
-            );
+        $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
+            $event->contentStreamId,
+            $event->sourceOrigin,
+            $event->nodeAggregateId
+        );
+        if (!$sourceNode) {
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+        }
+        $generalizedNode = $this->copyNodeToOriginDimensionSpacePoint(
+            $sourceNode,
+            $event->generalizationOrigin
+        );
 
-            $this->replaceNodeRelationAnchorPoint(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->variantSucceedingSiblings->toDimensionSpacePointSet(),
-                $generalizedNode->relationAnchorPoint
-            );
-            $this->addMissingHierarchyRelations(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->sourceOrigin,
-                $generalizedNode->relationAnchorPoint,
-                $event->variantSucceedingSiblings->toDimensionSpacePointSet(),
-                get_class($event)
-            );
-            $this->copyReferenceRelations(
-                $sourceNode->relationAnchorPoint,
-                $generalizedNode->relationAnchorPoint
-            );
-        });
+        $this->replaceNodeRelationAnchorPoint(
+            $event->contentStreamId,
+            $event->nodeAggregateId,
+            $event->variantSucceedingSiblings->toDimensionSpacePointSet(),
+            $generalizedNode->relationAnchorPoint
+        );
+        $this->addMissingHierarchyRelations(
+            $event->contentStreamId,
+            $event->nodeAggregateId,
+            $event->sourceOrigin,
+            $generalizedNode->relationAnchorPoint,
+            $event->variantSucceedingSiblings->toDimensionSpacePointSet(),
+            get_class($event)
+        );
+        $this->copyReferenceRelations(
+            $sourceNode->relationAnchorPoint,
+            $generalizedNode->relationAnchorPoint
+        );
     }
 
     private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
-        $this->transactional(function () use ($event) {
-            $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
-                $event->contentStreamId,
-                $event->sourceOrigin,
-                $event->nodeAggregateId
-            );
-            if (!$sourceNode) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
-            }
-            $peerNode = $this->copyNodeToOriginDimensionSpacePoint(
-                $sourceNode,
-                $event->peerOrigin
-            );
+        $sourceNode = $this->getProjectionHyperGraph()->findNodeRecordByOrigin(
+            $event->contentStreamId,
+            $event->sourceOrigin,
+            $event->nodeAggregateId
+        );
+        if (!$sourceNode) {
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+        }
+        $peerNode = $this->copyNodeToOriginDimensionSpacePoint(
+            $sourceNode,
+            $event->peerOrigin
+        );
 
-            $this->replaceNodeRelationAnchorPoint(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->peerSucceedingSiblings->toDimensionSpacePointSet(),
-                $peerNode->relationAnchorPoint
-            );
-            $this->addMissingHierarchyRelations(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->sourceOrigin,
-                $peerNode->relationAnchorPoint,
-                $event->peerSucceedingSiblings->toDimensionSpacePointSet(),
-                get_class($event)
-            );
-            $this->copyReferenceRelations(
-                $sourceNode->relationAnchorPoint,
-                $peerNode->relationAnchorPoint
-            );
-        });
+        $this->replaceNodeRelationAnchorPoint(
+            $event->contentStreamId,
+            $event->nodeAggregateId,
+            $event->peerSucceedingSiblings->toDimensionSpacePointSet(),
+            $peerNode->relationAnchorPoint
+        );
+        $this->addMissingHierarchyRelations(
+            $event->contentStreamId,
+            $event->nodeAggregateId,
+            $event->sourceOrigin,
+            $peerNode->relationAnchorPoint,
+            $event->peerSucceedingSiblings->toDimensionSpacePointSet(),
+            get_class($event)
+        );
+        $this->copyReferenceRelations(
+            $sourceNode->relationAnchorPoint,
+            $peerNode->relationAnchorPoint
+        );
     }
 
     /**
