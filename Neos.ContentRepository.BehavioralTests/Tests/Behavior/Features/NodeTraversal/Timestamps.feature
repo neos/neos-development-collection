@@ -198,7 +198,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
 
   Scenario: NodeAggregateTypeWasChanged events update last modified timestamps
     When the current date and time is "2023-03-16T13:00:00+01:00"
-    And the command ChangeNodeAggregateType was published with payload:
+    And the command ChangeNodeAggregateType is executed with payload:
       | Key             | Value                                        |
       | workspaceName   | "user-test"                                  |
       | nodeAggregateId | "a"                                          |

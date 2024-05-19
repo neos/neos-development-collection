@@ -194,7 +194,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Regular document node gets turned into a shortcut node
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key             | Value                       |
       | nodeAggregateId | "sir-david-nodenborough-ii" |
       | newNodeTypeName | "Neos.Neos:Shortcut"        |
@@ -203,7 +203,7 @@ Feature: Routing behavior of shortcut nodes
     Then the node "sir-david-nodenborough-ii" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-2/nodeward-3"
 
   Scenario: Shortcut node gets turned into a regular document node
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "shortcut-first-child-node"   |
       | newNodeTypeName | "Neos.Neos:Test.Routing.Page" |

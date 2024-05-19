@@ -89,7 +89,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | originDimensionSpacePoint | {"language":"de"}                          |
       | parentNodeAggregateId     | "sir-david-nodenborough"                   |
 
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key             | Value                                            |
       | nodeAggregateId | "sir-david-nodenborough"                         |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
@@ -123,7 +123,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | parentNodeAggregateId     | "autocreated-child"                        |
       | initialPropertyValues     | {}                                         |
 
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key             | Value                                            |
       | nodeAggregateId | "parent2-na"                                     |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
@@ -162,7 +162,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | sourceOrigin    | {"language":"de"}     |
       | targetOrigin    | {"language":"gsw"}    |
 
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key                                | Value                                      |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB" |
@@ -198,7 +198,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | sourceOrigin    | {"language":"de"}     |
       | targetOrigin    | {"language":"gsw"}    |
 
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key                                | Value                                      |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB" |
