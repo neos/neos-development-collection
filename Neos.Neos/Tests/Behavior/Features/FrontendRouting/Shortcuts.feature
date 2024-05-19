@@ -49,9 +49,9 @@ Feature: Routing behavior of shortcut nodes
       | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                    |
-      | nodeAggregateId             | "lady-eleonode-rootford" |
-      | nodeTypeName                | "Neos.Neos:Sites"        |
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
 
     # lady-eleonode-rootford
     #   shernode-homes
@@ -67,17 +67,17 @@ Feature: Routing behavior of shortcut nodes
     #        sir-nodeward-nodington-iii
     #
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId            | parentNodeAggregateId     | nodeTypeName                                       | initialPropertyValues                                                                                                       | nodeName |
+      | nodeAggregateId            | parentNodeAggregateId     | nodeTypeName                | initialPropertyValues                                                                                                       | nodeName |
       | shernode-homes             | lady-eleonode-rootford    | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"}                                                                                             | node1    |
       | sir-david-nodenborough     | shernode-homes            | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"}                                                                                    | node2    |
       | shortcuts                  | sir-david-nodenborough    | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "shortcuts"}                                                                                             | node3    |
-      | shortcut-first-child-node  | shortcuts                 | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-first-child", "targetMode": "firstChildNode"}                                                  | node4    |
+      | shortcut-first-child-node  | shortcuts                 | Neos.Neos:Shortcut          | {"uriPathSegment": "shortcut-first-child", "targetMode": "firstChildNode"}                                                  | node4    |
       | first-child-node           | shortcut-first-child-node | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "first-child-node"}                                                                                      | node5    |
       | second-child-node          | shortcut-first-child-node | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "second-child-node"}                                                                                     | node6    |
-      | shortcut-parent-node       | shortcuts                 | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-parent-node", "targetMode": "parentNode"}                                                      | node7    |
-      | shortcut-selected-node     | shortcuts                 | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-selected-node", "targetMode": "selectedTarget", "target": "node://sir-nodeward-nodington-iii"} | node8    |
-      | shortcut-selected-asset    | shortcuts                 | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-selected-asset", "targetMode": "selectedTarget", "target": "asset://some-asset"}               | node9    |
-      | shortcut-external-url      | shortcuts                 | Neos.Neos:Shortcut                                 | {"uriPathSegment": "shortcut-external-url", "targetMode": "selectedTarget", "target": "https://neos.io"}                    | node10   |
+      | shortcut-parent-node       | shortcuts                 | Neos.Neos:Shortcut          | {"uriPathSegment": "shortcut-parent-node", "targetMode": "parentNode"}                                                      | node7    |
+      | shortcut-selected-node     | shortcuts                 | Neos.Neos:Shortcut          | {"uriPathSegment": "shortcut-selected-node", "targetMode": "selectedTarget", "target": "node://sir-nodeward-nodington-iii"} | node8    |
+      | shortcut-selected-asset    | shortcuts                 | Neos.Neos:Shortcut          | {"uriPathSegment": "shortcut-selected-asset", "targetMode": "selectedTarget", "target": "asset://some-asset"}               | node9    |
+      | shortcut-external-url      | shortcuts                 | Neos.Neos:Shortcut          | {"uriPathSegment": "shortcut-external-url", "targetMode": "selectedTarget", "target": "https://neos.io"}                    | node10   |
       | sir-david-nodenborough-ii  | shernode-homes            | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "david-nodenborough-2"}                                                                                  | node11   |
       | sir-nodeward-nodington-iii | sir-david-nodenborough-ii | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "nodeward-3"}                                                                                            | node12   |
     And A site exists for node name "node1"
@@ -135,13 +135,13 @@ Feature: Routing behavior of shortcut nodes
 
   Scenario: Shortcut first child node is updated when a new first child node aggregate is created
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                              | Value                                                |
-      | nodeAggregateId                  | "nody-mc-newface"                                    |
-      | nodeTypeName                     | "Neos.Neos:Test.Routing.Page" |
-      | originDimensionSpacePoint        | {}                                                   |
-      | parentNodeAggregateId            | "shortcut-first-child-node"                          |
-      | initialPropertyValues            | {"uriPathSegment": "new-child-node"}                 |
-      | succeedingSiblingNodeAggregateId | "first-child-node"                                   |
+      | Key                              | Value                                |
+      | nodeAggregateId                  | "nody-mc-newface"                    |
+      | nodeTypeName                     | "Neos.Neos:Test.Routing.Page"        |
+      | originDimensionSpacePoint        | {}                                   |
+      | parentNodeAggregateId            | "shortcut-first-child-node"          |
+      | initialPropertyValues            | {"uriPathSegment": "new-child-node"} |
+      | succeedingSiblingNodeAggregateId | "first-child-node"                   |
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/new-child-node"
 
@@ -177,13 +177,13 @@ Feature: Routing behavior of shortcut nodes
 
   Scenario: Shortcut first child node is not updated when a node aggregate gets moved behind an existing first child node on the same leve
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                              | Value                                                |
-      | nodeAggregateId                  | "nody-mc-newface"                                    |
-      | nodeTypeName                     | "Neos.Neos:Test.Routing.Page" |
-      | originDimensionSpacePoint        | {}                                                   |
-      | parentNodeAggregateId            | "shortcut-first-child-node"                          |
-      | initialPropertyValues            | {"uriPathSegment": "new-child-node"}                 |
-      | succeedingSiblingNodeAggregateId | "second-child-node"                                  |
+      | Key                              | Value                                |
+      | nodeAggregateId                  | "nody-mc-newface"                    |
+      | nodeTypeName                     | "Neos.Neos:Test.Routing.Page"        |
+      | originDimensionSpacePoint        | {}                                   |
+      | parentNodeAggregateId            | "shortcut-first-child-node"          |
+      | initialPropertyValues            | {"uriPathSegment": "new-child-node"} |
+      | succeedingSiblingNodeAggregateId | "second-child-node"                  |
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value             |
       | nodeAggregateId                     | "nody-mc-newface" |
@@ -204,10 +204,10 @@ Feature: Routing behavior of shortcut nodes
 
   Scenario: Shortcut node gets turned into a regular document node
     When the command ChangeNodeAggregateType was published with payload:
-      | Key             | Value                                                |
-      | nodeAggregateId | "shortcut-first-child-node"                          |
+      | Key             | Value                         |
+      | nodeAggregateId | "shortcut-first-child-node"   |
       | newNodeTypeName | "Neos.Neos:Test.Routing.Page" |
-      | strategy        | "happypath"                                          |
+      | strategy        | "happypath"                   |
     When I am on URL "/"
     Then the node "shortcut-first-child-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child"
 
@@ -232,7 +232,7 @@ Feature: Routing behavior of shortcut nodes
   Scenario: Change shortcut targetMode from "parentNode" to "firstChildNode"
     And I am in workspace "live" and dimension space point {}
     When the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                                       | initialPropertyValues           | nodeName |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                | initialPropertyValues           | nodeName |
       | new-child-node  | shortcut-parent-node  | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "new-child"} | new      |
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |

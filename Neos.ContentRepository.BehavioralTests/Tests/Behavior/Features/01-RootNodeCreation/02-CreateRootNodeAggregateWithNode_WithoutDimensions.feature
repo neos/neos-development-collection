@@ -75,18 +75,18 @@ Feature: Create a root node aggregate
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
     When the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key             | Value                         |
-      | nodeAggregateId | "nody-mc-nodeface"            |
+      | Key             | Value                                |
+      | nodeAggregateId | "nody-mc-nodeface"                   |
       | nodeTypeName    | "Neos.ContentRepository:AnotherRoot" |
 
     Then I expect exactly 3 events to be published on stream "ContentStream:cs-identifier"
     And event at index 2 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-identifier"               |
-      | nodeAggregateId             | "nody-mc-nodeface"            |
+      | Key                         | Expected                             |
+      | contentStreamId             | "cs-identifier"                      |
+      | nodeAggregateId             | "nody-mc-nodeface"                   |
       | nodeTypeName                | "Neos.ContentRepository:AnotherRoot" |
-      | coveredDimensionSpacePoints | [[]]                          |
-      | nodeAggregateClassification | "root"                        |
+      | coveredDimensionSpacePoints | [[]]                                 |
+      | nodeAggregateClassification | "root"                               |
 
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to have no parent node aggregates

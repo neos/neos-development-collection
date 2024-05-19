@@ -33,9 +33,9 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                    |
-      | nodeAggregateId             | "lady-eleonode-rootford" |
-      | nodeTypeName                | "Neos.Neos:Sites"        |
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
 
     # lady-eleonode-rootford
     #   shernode-homes

@@ -171,7 +171,7 @@ Feature: Create node specialization
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                                       |
+      | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -235,7 +235,7 @@ Feature: Create node specialization
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                                       |
+      | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -387,7 +387,7 @@ Feature: Create node specialization
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                                       |
+      | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -451,7 +451,7 @@ Feature: Create node specialization
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                                       |
+      | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |

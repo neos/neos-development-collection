@@ -37,9 +37,9 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
       | nodeTypeName    | "Neos.Neos:Sites" |
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                |initialPropertyValues                              | nodeName |
-      | a               | root                  | Neos.Neos:Site              |{"title": "Node a"}                                | a        |
-      | a1              | a                     | Neos.Neos:Test.DocumentType |{"uriPathSegment": "a1", "title": "Node a1"}       | a1       |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                | initialPropertyValues                        | nodeName |
+      | a               | root                  | Neos.Neos:Site              | {"title": "Node a"}                          | a        |
+      | a1              | a                     | Neos.Neos:Test.DocumentType | {"uriPathSegment": "a1", "title": "Node a1"} | a1       |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
     """yaml
@@ -56,6 +56,7 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     And the Fusion context node is "a"
     And the Fusion context request URI is "http://localhost"
     And the Fusion renderingMode is "frontend"
+
   Scenario: Default output
     When I execute the following Fusion code:
     """fusion

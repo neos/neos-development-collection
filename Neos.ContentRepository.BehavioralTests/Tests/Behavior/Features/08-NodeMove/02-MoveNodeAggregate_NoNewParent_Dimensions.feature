@@ -922,10 +922,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                                                                                                                 |
+      | contentStreamId               | "cs-identifier"                                                                                                                                                          |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                       |
+      | newParentNodeAggregateId      | null                                                                                                                                                                     |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -990,10 +990,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                                                                                                                |
+      | contentStreamId               | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                      |
+      | newParentNodeAggregateId      | null                                                                                                                                                                    |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1053,10 +1053,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                                                                                                                |
+      | contentStreamId               | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                      |
+      | newParentNodeAggregateId      | null                                                                                                                                                                    |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1194,10 +1194,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                                 |
+      | contentStreamId               | "cs-identifier"                                                                          |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                       |
+      | newParentNodeAggregateId      | null                                                                                     |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1229,9 +1229,9 @@ Feature: Move a node with content dimensions
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
     # The given succeeding sibling cannot be resolved and since elder-mc-nodeface isn't given as a preceding sibling, nothing is done
-      | NodeDiscriminator                                        |
-      | cs-identifier;elder-mc-nodeface;{"example": "general"}   |
-      | cs-identifier;eldest-mc-nodeface;{"example": "general"}  |
+      | NodeDiscriminator                                       |
+      | cs-identifier;elder-mc-nodeface;{"example": "general"}  |
+      | cs-identifier;eldest-mc-nodeface;{"example": "general"} |
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example": "general"} |
@@ -1259,10 +1259,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                                                                                  |
+      | contentStreamId               | "cs-identifier"                                                                                                                           |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                        |
+      | newParentNodeAggregateId      | null                                                                                                                                      |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1328,10 +1328,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                                                                                  |
+      | contentStreamId               | "cs-identifier"                                                                                                                           |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                        |
+      | newParentNodeAggregateId      | null                                                                                                                                      |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1396,10 +1396,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                                                                                                    |
+      | contentStreamId               | "cs-identifier"                                                                                                                                             |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                          |
+      | newParentNodeAggregateId      | null                                                                                                                                                        |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1459,10 +1459,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                                                                                                                      |
+      | contentStreamId               | "cs-identifier"                                                                                                                                                               |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                            |
+      | newParentNodeAggregateId      | null                                                                                                                                                                          |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1530,10 +1530,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                                                                                                                      |
+      | contentStreamId               | "cs-identifier"                                                                                                                                                               |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                            |
+      | newParentNodeAggregateId      | null                                                                                                                                                                          |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1600,10 +1600,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                              |
+      | contentStreamId               | "cs-identifier"                                                                       |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                    |
+      | newParentNodeAggregateId      | null                                                                                  |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1635,11 +1635,11 @@ Feature: Move a node with content dimensions
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
     # The given preceding sibling cannot be resolved and since elder-mc-nodeface isn't given as a succeeding sibling, nothing is done
-      | NodeDiscriminator                                         |
-      | cs-identifier;elder-mc-nodeface;{"example": "general"}    |
+      | NodeDiscriminator                                      |
+      | cs-identifier;elder-mc-nodeface;{"example": "general"} |
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                         |
-      | cs-identifier;younger-mc-nodeface;{"example": "general"} |
+      | cs-identifier;younger-mc-nodeface;{"example": "general"}  |
       | cs-identifier;youngest-mc-nodeface;{"example": "general"} |
 
     When I am in workspace "live" and dimension space point {"example": "peer"}
@@ -1667,10 +1667,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                               |
+      | contentStreamId               | "cs-identifier"                                                                        |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                     |
+      | newParentNodeAggregateId      | null                                                                                   |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "eldest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1739,10 +1739,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                              |
+      | contentStreamId               | "cs-identifier"                                                                       |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                    |
+      | newParentNodeAggregateId      | null                                                                                  |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1801,10 +1801,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                              |
+      | contentStreamId               | "cs-identifier"                                                                       |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                    |
+      | newParentNodeAggregateId      | null                                                                                  |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "elder-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1874,10 +1874,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                               |
+      | contentStreamId               | "cs-identifier"                                                        |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                     |
+      | newParentNodeAggregateId      | null                                                                   |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -1944,10 +1944,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                               |
+      | contentStreamId               | "cs-identifier"                                                        |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                     |
+      | newParentNodeAggregateId      | null                                                                   |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -2012,10 +2012,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                               |
+      | contentStreamId               | "cs-identifier"                                                        |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                     |
+      | newParentNodeAggregateId      | null                                                                   |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": null}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}
@@ -2074,10 +2074,10 @@ Feature: Move a node with content dimensions
 
     Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasMoved" with payload:
-      | Key                           | Expected                                                                                                                                                                  |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                           |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                        |
-      | newParentNodeAggregateId      | null                                                                                                                                                                      |
+      | Key                           | Expected                                                                                 |
+      | contentStreamId               | "cs-identifier"                                                                          |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                       |
+      | newParentNodeAggregateId      | null                                                                                     |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId": "youngest-mc-nodeface"}] |
 
     When I am in workspace "live" and dimension space point {"example": "general"}

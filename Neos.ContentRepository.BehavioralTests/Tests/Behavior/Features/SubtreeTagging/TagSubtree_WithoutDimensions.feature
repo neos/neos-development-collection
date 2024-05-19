@@ -152,9 +152,9 @@ Feature: Tag subtree without dimensions
     """
 
     When the command MoveNodeAggregate is executed with payload:
-      | Key                      | Value           |
-      | nodeAggregateId          | "a1a"           |
-      | newParentNodeAggregateId | "b1"            |
+      | Key                      | Value |
+      | nodeAggregateId          | "a1a" |
+      | newParentNodeAggregateId | "b1"  |
     When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
     """
     a

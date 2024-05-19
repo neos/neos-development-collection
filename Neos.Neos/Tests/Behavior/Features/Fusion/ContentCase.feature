@@ -39,9 +39,9 @@ Feature: Tests for the "Neos.Neos:ContentCase" Fusion prototype
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  |
-      | a               | root                  | Neos.Neos:Site                |
-      | a1              | a                     | Neos.Neos:Test.DocumentType2  |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 |
+      | a               | root                  | Neos.Neos:Site               |
+      | a1              | a                     | Neos.Neos:Test.DocumentType2 |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
     """yaml

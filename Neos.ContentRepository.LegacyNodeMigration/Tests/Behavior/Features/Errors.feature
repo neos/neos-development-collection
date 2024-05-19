@@ -31,7 +31,7 @@ Feature: Exceptional cases during migrations
     When I have the following node data rows:
       | Identifier    | Path             | Node Type                      | Dimension Values     |
       | sites-node-id | /sites           | unstructured                   |                      |
-      | site-node-id  | /sites/test-site | Some.Package:Homepage         | {"language": ["de"]} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage          | {"language": ["de"]} |
       | site-node-id  | /sites/test-site | Some.Package:SomeOtherHomepage | {"language": ["en"]} |
     And I run the event migration
     Then I expect a MigrationError with the message
@@ -42,15 +42,15 @@ Feature: Exceptional cases during migrations
     # Note: The behavior was changed with https://github.com/neos/neos-development-collection/pull/4201
   Scenario: Node with missing parent
     When I have the following node data rows:
-      | Identifier | Path       | Node Type                 |
-      | sites      | /sites     | unstructured              |
-      | a          | /sites/a   | Some.Package:Homepage     |
-      | c          | /sites/b/c | unstructured              |
+      | Identifier | Path       | Node Type             |
+      | sites      | /sites     | unstructured          |
+      | a          | /sites/a   | Some.Package:Homepage |
+      | c          | /sites/b/c | unstructured          |
     And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                |
       | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"} |
-      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "a", "nodeTypeName": "Some.Package:Homepage", "parentNodeAggregateId": "sites"}                                             |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "a", "nodeTypeName": "Some.Package:Homepage", "parentNodeAggregateId": "sites"}    |
     And I expect the following errors to be logged
       | Failed to find parent node for node with id "c" and dimensions: []. Please ensure that the new content repository has a valid content dimension configuration. Also note that the old CR can sometimes have orphaned nodes. |
 
@@ -58,17 +58,17 @@ Feature: Exceptional cases during migrations
     # Note: The behavior was changed with https://github.com/neos/neos-development-collection/pull/4201
   Scenario: Nodes out of order
     When I have the following node data rows:
-      | Identifier | Path       | Node Type                 |
-      | sites      | /sites     | unstructured              |
-      | a          | /sites/a   | Some.Package:Homepage     |
-      | c          | /sites/b/c | unstructured              |
-      | b          | /sites/b   | Some.Package:Homepage     |
+      | Identifier | Path       | Node Type             |
+      | sites      | /sites     | unstructured          |
+      | a          | /sites/a   | Some.Package:Homepage |
+      | c          | /sites/b/c | unstructured          |
+      | b          | /sites/b   | Some.Package:Homepage |
     And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                |
       | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites", "nodeTypeName": "Neos.Neos:Sites", "nodeAggregateClassification": "root"} |
-      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "a", "nodeTypeName": "Some.Package:Homepage", "parentNodeAggregateId": "sites"}                                             |
-      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "b", "nodeTypeName": "Some.Package:Homepage", "parentNodeAggregateId": "sites"}                                             |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "a", "nodeTypeName": "Some.Package:Homepage", "parentNodeAggregateId": "sites"}    |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "b", "nodeTypeName": "Some.Package:Homepage", "parentNodeAggregateId": "sites"}    |
     And I expect the following errors to be logged
       | Failed to find parent node for node with id "c" and dimensions: []. Please ensure that the new content repository has a valid content dimension configuration. Also note that the old CR can sometimes have orphaned nodes. |
 
@@ -98,9 +98,9 @@ Feature: Exceptional cases during migrations
 
   Scenario: Invalid node properties (no JSON)
     When I have the following node data rows:
-      | Identifier | Path     | Properties | Node Type                 |
-      | sites      | /sites   |            |                           |
-      | a          | /sites/a | not json   | Some.Package:Homepage     |
+      | Identifier | Path     | Properties | Node Type             |
+      | sites      | /sites   |            |                       |
+      | a          | /sites/a | not json   | Some.Package:Homepage |
     And I run the event migration
     Then I expect a MigrationError with the message
     """
@@ -112,11 +112,11 @@ Feature: Exceptional cases during migrations
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:
-      | Identifier    | Path             | Node Type                 | Dimension Values     |
-      | sites-node-id | /sites           | unstructured              |                      |
-      | site-node-id  | /sites/test-site | Some.Package:Homepage     | {"language": ["de"]} |
-      | site-node-id  | /sites/test-site | Some.Package:Homepage     | {"language": ["ch"]} |
-      | site-node-id  | /sites/test-site | Some.Package:Homepage     | {"language": ["ch"]} |
+      | Identifier    | Path             | Node Type             | Dimension Values     |
+      | sites-node-id | /sites           | unstructured          |                      |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["ch"]} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["ch"]} |
     And I run the event migration
     Then I expect a MigrationError with the message
     """
@@ -128,10 +128,10 @@ Feature: Exceptional cases during migrations
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:
-      | Identifier    | Path             | Node Type                 | Dimension Values     |
-      | sites-node-id | /sites           | unstructured              |                      |
-      | site-node-id  | /sites/test-site | Some.Package:Homepage     | {"language": ["de"]} |
-      | site-node-id  | /sites/test-site | Some.Package:Homepage     | {"language": ["de"]} |
+      | Identifier    | Path             | Node Type             | Dimension Values     |
+      | sites-node-id | /sites           | unstructured          |                      |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} |
+      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"language": ["de"]} |
     And I run the event migration
     Then I expect a MigrationError with the message
     """

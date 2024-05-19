@@ -41,10 +41,10 @@ Feature: Change node aggregate name
       | targetOrigin    | {"example":"general"} |
     # leave spec as a virtual variant
     And the command CreateNodeVariant is executed with payload:
-      | Key             | Value                 |
-      | nodeAggregateId | "nody-mc-nodeface"    |
-      | sourceOrigin    | {"example":"source"}  |
-      | targetOrigin    | {"example":"peer"}    |
+      | Key             | Value                |
+      | nodeAggregateId | "nody-mc-nodeface"   |
+      | sourceOrigin    | {"example":"source"} |
+      | targetOrigin    | {"example":"peer"}   |
 
   Scenario: Rename a child node aggregate with descendants
     When the command ChangeNodeAggregateName is executed with payload:
@@ -86,11 +86,11 @@ Feature: Change node aggregate name
 
   Scenario: Rename a scattered node aggregate
     Given the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value                     |
-      | nodeAggregateId                     | "nody-mc-nodeface"        |
-      | dimensionSpacePoint                 | {"example": "peer"}       |
-      | newParentNodeAggregateId            | "lady-eleonode-rootford"  |
-      | relationDistributionStrategy        | "scatter"                 |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "nody-mc-nodeface"       |
+      | dimensionSpacePoint          | {"example": "peer"}      |
+      | newParentNodeAggregateId     | "lady-eleonode-rootford" |
+      | relationDistributionStrategy | "scatter"                |
 
     When the command ChangeNodeAggregateName is executed with payload:
       | Key             | Value              |

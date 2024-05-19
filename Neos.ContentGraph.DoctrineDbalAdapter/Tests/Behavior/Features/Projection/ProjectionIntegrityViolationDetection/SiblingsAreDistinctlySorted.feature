@@ -21,9 +21,9 @@ Feature: Run integrity violation detection regarding sibling sorting
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
 
   Scenario: Create two siblings and set the sorting to the same value
     When the event NodeAggregateWithNodeWasCreated was published with payload:

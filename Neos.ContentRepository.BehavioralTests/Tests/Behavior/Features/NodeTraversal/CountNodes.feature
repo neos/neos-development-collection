@@ -76,7 +76,7 @@ Feature: Find nodes using the countNodes query
     # count all nodes with disabled nodes
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
-      | nodeAggregateId              | "a2a1"       |
+      | nodeAggregateId              | "a2a1"        |
       | nodeVariantSelectionStrategy | "allVariants" |
     # NOTE: countNodes() counts _all_ nodes, even disabled ones
     And I execute the countNodes query I expect the result to be 12

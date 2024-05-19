@@ -197,7 +197,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
           type: 'Neos.ContentRepository.Testing:Content'
     """
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId      | nodeName |
+      | nodeAggregateId  | originDimensionSpacePoint | nodeTypeName                            | parentNodeAggregateId      | nodeName         |
       | nody-mc-nodeface | {"example": "source"}     | Neos.ContentRepository.Testing:Document | sir-nodeward-nodington-iii | another-tethered |
 
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
