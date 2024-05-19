@@ -23,8 +23,8 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
-use Neos\Neos\FrontendRouting\NodeUriSpecification;
+use Neos\Neos\FrontendRouting\NodeUri\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\NodeUri\Options;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -150,14 +150,15 @@ class NodeUriImplementation extends AbstractFusionObject
             // https://github.com/neos/flow-development-collection/pull/2744
             $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest(ServerRequest::fromGlobals());
         }
-        $specification = NodeUriSpecification::create(NodeAddress::fromNode($node))
-            ->withFormat($this->getFormat() ?: '')
-            ->withRoutingArguments($this->getAdditionalParams());
+
+        $options = Options::create(
+            forceAbsolute: $this->isAbsolute(),
+            format: $this->getFormat(),
+            routingArguments: $this->getAdditionalParams()
+        );
 
         try {
-            $resolvedUri = $this->isAbsolute()
-                ? $nodeUriBuilder->absoluteUriFor($specification)
-                : $nodeUriBuilder->uriFor($specification);
+            $resolvedUri = $nodeUriBuilder->uriFor(NodeAddress::fromNode($node), $options);
         } catch (NoMatchingRouteException) {
             // todo log arguments?
             $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri.', $node->aggregateId->value), LogEnvironment::fromMethodName(__METHOD__));

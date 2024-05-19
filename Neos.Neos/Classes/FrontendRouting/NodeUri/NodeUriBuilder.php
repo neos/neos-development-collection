@@ -12,8 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\FrontendRouting;
+namespace Neos\Neos\FrontendRouting\NodeUri;
 
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -43,25 +44,7 @@ final class NodeUriBuilder
      * Return human readable host relative uris if the cr of the current request matches the one of the specified node.
      * For cross-links to another cr the resulting uri be absolute and contain the host of the other site's domain.
      *
-     * As the human readable uris are only routed for nodes of the live workspace (see DocumentUriProjection)
-     * This method requires the node to be passed to be in the live workspace and will throw otherwise.
-     *
-     * @throws NoMatchingRouteException
-     */
-    public function uriFor(NodeUriSpecification $specification): UriInterface
-    {
-        return $this->router->resolve(
-            new ResolveContext(
-                $this->baseUri,
-                $this->toShowActionRouteValues($specification),
-                false,
-                ltrim($this->baseUri->getPath(), '\/'),
-                $this->routeParameters
-            )
-        );
-    }
-
-    /**
+     * absolute true:
      * Return human readable absolute uris with host, independent if the node is cross linked or of the current request.
      * For nodes of the current cr the passed base uri will be used as host. For cross-linked nodes the host will be derived by the site's domain.
      *
@@ -70,13 +53,27 @@ final class NodeUriBuilder
      *
      * @throws NoMatchingRouteException
      */
-    public function absoluteUriFor(NodeUriSpecification $specification): UriInterface
+    public function uriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
+        if (!$nodeAddress->workspaceName->isLive()) {
+            return $this->previewUriFor($nodeAddress, $options);
+        }
+
+        $routeValues = $options?->routingArguments ?? [];
+        $routeValues['node'] = $nodeAddress;
+        $routeValues['@action'] = strtolower('show');
+        $routeValues['@controller'] = strtolower('Frontend\Node');
+        $routeValues['@package'] = strtolower('Neos.Neos');
+
+        if ($options?->format !== null && $options->format !== '') {
+            $routeValues['@format'] = $options->format;
+        }
+
         return $this->router->resolve(
             new ResolveContext(
                 $this->baseUri,
-                $this->toShowActionRouteValues($specification),
-                true,
+                $routeValues,
+                $options?->forceAbsolute ?? false,
                 ltrim($this->baseUri->getPath(), '\/'),
                 $this->routeParameters
             )
@@ -86,50 +83,26 @@ final class NodeUriBuilder
     /**
      * Returns a host relative uri with fully qualified node as query parameter encoded.
      */
-    public function previewUriFor(NodeUriSpecification $specification): UriInterface
+    public function previewUriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
-        return $this->router->resolve(
-            new ResolveContext(
-                $this->baseUri,
-                $this->toPreviewActionRouteValues($specification),
-                false,
-                ltrim($this->baseUri->getPath(), '\/'),
-                $this->routeParameters
-            )
-        );
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function toShowActionRouteValues(NodeUriSpecification $specification): array
-    {
-        $routeValues = $specification->routingArguments;
-        $routeValues['node'] = $specification->node;
-        $routeValues['@action'] = strtolower('show');
-        $routeValues['@controller'] = strtolower('Frontend\Node');
-        $routeValues['@package'] = strtolower('Neos.Neos');
-
-        if ($specification->format !== '') {
-            $routeValues['@format'] = $specification->format;
-        }
-        return $routeValues;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function toPreviewActionRouteValues(NodeUriSpecification $specification): array
-    {
-        $routeValues = $specification->routingArguments;
-        $routeValues['node'] = $specification->node->toUriString();
+        $routeValues = $options?->routingArguments ?? [];
+        $routeValues['node'] = $nodeAddress->toUriString();
         $routeValues['@action'] = strtolower('preview');
         $routeValues['@controller'] = strtolower('Frontend\Node');
         $routeValues['@package'] = strtolower('Neos.Neos');
 
-        if ($specification->format !== '') {
-            $routeValues['@format'] = $specification->format;
+        if ($options?->format !== null && $options->format !== '') {
+            $routeValues['@format'] = $options->format;
         }
-        return $routeValues;
+
+        return $this->router->resolve(
+            new ResolveContext(
+                $this->baseUri,
+                $routeValues,
+                $options?->forceAbsolute ?? false,
+                ltrim($this->baseUri->getPath(), '\/'),
+                $this->routeParameters
+            )
+        );
     }
 }

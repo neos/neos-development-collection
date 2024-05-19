@@ -28,8 +28,8 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
-use Neos\Neos\FrontendRouting\NodeUriSpecification;
+use Neos\Neos\FrontendRouting\NodeUri\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\NodeUri\Options;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -214,14 +214,15 @@ class NodeViewHelper extends AbstractViewHelper
         $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest($this->controllerContext->getRequest()->getHttpRequest());
 
         $uri = '';
-        $specification = NodeUriSpecification::create($nodeAddress)
-            ->withFormat($this->arguments['format'] ?: '')
-            ->withRoutingArguments($this->arguments['arguments']);
-
         try {
-            $uri = $this->arguments['absolute']
-                ? $nodeUriBuilder->absoluteUriFor($specification)
-                : $nodeUriBuilder->uriFor($specification);
+            $uri = $nodeUriBuilder->uriFor(
+                $nodeAddress,
+                Options::create(
+                    forceAbsolute: $this->arguments['absolute'],
+                    format: $this->arguments['format'],
+                    routingArguments: $this->arguments['arguments']
+                )
+            );
 
             if ($this->arguments['section'] !== '') {
                 $uri = $uri->withFragment($this->arguments['section']);

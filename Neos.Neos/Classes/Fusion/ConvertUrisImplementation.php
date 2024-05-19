@@ -29,8 +29,8 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
 use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
-use Neos\Neos\FrontendRouting\NodeUriSpecification;
+use Neos\Neos\FrontendRouting\NodeUri\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\NodeUri\Options;
 use Neos\Neos\Fusion\Cache\CacheTag;
 use Psr\Log\LoggerInterface;
 
@@ -142,9 +142,11 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $nodeAddress = NodeAddress::fromNode($node);
 
         $unresolvedUris = [];
-        $absolute = $this->fusionValue('absolute');
+        $options = Options::create(
+            forceAbsolute: $this->fusionValue('absolute'),
+        );
 
-        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $absolute) {
+        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $options) {
             $resolvedUri = null;
             switch ($matches[1]) {
                 case 'node':
@@ -162,9 +164,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                         $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest(ServerRequest::fromGlobals());
                     }
                     try {
-                        $resolvedUri = $absolute
-                            ? (string)$nodeUriBuilder->absoluteUriFor(NodeUriSpecification::create($nodeAddress))
-                            : (string)$nodeUriBuilder->uriFor(NodeUriSpecification::create($nodeAddress));
+                        $resolvedUri = (string)$nodeUriBuilder->uriFor($nodeAddress, $options);
                     } catch (NoMatchingRouteException) {
                         // todo log also arguments?
                         $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri.', $matches[0]), LogEnvironment::fromMethodName(__METHOD__));

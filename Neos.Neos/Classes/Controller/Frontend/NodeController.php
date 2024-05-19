@@ -39,10 +39,8 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
-use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
-use Neos\Neos\FrontendRouting\NodeUriSpecification;
+use Neos\Neos\FrontendRouting\NodeUri\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\View\FusionView;
@@ -289,7 +287,7 @@ class NodeController extends ActionController
             }
             try {
                 $resolvedUri = $this->nodeUriBuilderFactory->forRequest($this->request->getHttpRequest())
-                    ->uriFor(NodeUriSpecification::create($nodeAddress));
+                    ->uriFor($nodeAddress);
             } catch (NoMatchingRouteException $e) {
                 throw new NodeNotFoundException(sprintf(
                     'The shortcut node target of node %s could not be resolved: %s',
