@@ -274,13 +274,13 @@ trait NodeMove
             );
             if ($succeedingSiblingId) {
                 $variantSucceedingSibling = $variantSubgraph->findNodeById($succeedingSiblingId);
-                $variantParentId = $parentNodeAggregateId ?: $variantSubgraph->findParentNode($nodeAggregateId)?->nodeAggregateId;
+                $variantParentId = $parentNodeAggregateId ?: $variantSubgraph->findParentNode($nodeAggregateId)?->aggregateId;
                 $siblingParent = $variantSubgraph->findParentNode($succeedingSiblingId);
-                if ($variantSucceedingSibling && $siblingParent && $variantParentId?->equals($siblingParent->nodeAggregateId)) {
+                if ($variantSucceedingSibling && $siblingParent && $variantParentId?->equals($siblingParent->aggregateId)) {
                     // a) happy path, the explicitly requested succeeding sibling also exists in this dimension space point
                     $interdimensionalSiblings[] = new InterdimensionalSibling(
                         $dimensionSpacePoint,
-                        $variantSucceedingSibling->nodeAggregateId,
+                        $variantSucceedingSibling->aggregateId,
                     );
                     continue;
                 }
@@ -296,13 +296,13 @@ trait NodeMove
                         continue;
                     }
                     $siblingParent = $variantSubgraph->findParentNode($alternativeSucceedingSiblingId);
-                    if (!$siblingParent || !$variantParentId?->equals($siblingParent->nodeAggregateId)) {
+                    if (!$siblingParent || !$variantParentId?->equals($siblingParent->aggregateId)) {
                         continue;
                     }
                     // b) one of the further succeeding sibling exists in this dimension space point
                     $interdimensionalSiblings[] = new InterdimensionalSibling(
                         $dimensionSpacePoint,
-                        $alternativeVariantSucceedingSibling->nodeAggregateId,
+                        $alternativeVariantSucceedingSibling->aggregateId,
                     );
                     continue 2;
                 }
@@ -311,9 +311,9 @@ trait NodeMove
             if ($precedingSiblingId) {
                 $variantPrecedingSiblingId = null;
                 $variantPrecedingSibling = $variantSubgraph->findNodeById($precedingSiblingId);
-                $variantParentId = $parentNodeAggregateId ?: $variantSubgraph->findParentNode($nodeAggregateId)?->nodeAggregateId;
+                $variantParentId = $parentNodeAggregateId ?: $variantSubgraph->findParentNode($nodeAggregateId)?->aggregateId;
                 $siblingParent = $variantSubgraph->findParentNode($precedingSiblingId);
-                if ($variantPrecedingSibling && $siblingParent && $variantParentId?->equals($siblingParent->nodeAggregateId)) {
+                if ($variantPrecedingSibling && $siblingParent && $variantParentId?->equals($siblingParent->aggregateId)) {
                     // c) happy path, the explicitly requested preceding sibling also exists in this dimension space point
                     $variantPrecedingSiblingId = $precedingSiblingId;
                 } elseif ($alternativePrecedingSiblingIds) {
@@ -324,7 +324,7 @@ trait NodeMove
                             continue;
                         }
                         $siblingParent = $variantSubgraph->findParentNode($alternativePrecedingSiblingId);
-                        if (!$siblingParent || !$variantParentId?->equals($siblingParent->nodeAggregateId)) {
+                        if (!$siblingParent || !$variantParentId?->equals($siblingParent->aggregateId)) {
                             continue;
                         }
                         $alternativeVariantSucceedingSibling = $variantSubgraph->findNodeById($alternativePrecedingSiblingId);

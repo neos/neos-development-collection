@@ -90,9 +90,9 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
         }
         $childNodes = $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter);
         foreach ($childNodes as $node) {
-            $namedChildNodeCache->add($parentNodeAggregateId, $node->nodeName, $node);
-            $parentNodeIdCache->add($node->nodeAggregateId, $parentNodeAggregateId);
-            $nodeByIdCache->add($node->nodeAggregateId, $node);
+            $namedChildNodeCache->add($parentNodeAggregateId, $node->name, $node);
+            $parentNodeIdCache->add($node->aggregateId, $parentNodeAggregateId);
+            $nodeByIdCache->add($node->aggregateId, $node);
         }
         $childNodesCache->add($parentNodeAggregateId, $filter->nodeTypes, $childNodes);
         return $childNodes;
@@ -174,10 +174,10 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
             $parentNodeIdCache->rememberNonExistingParentNode($childNodeAggregateId);
             return null;
         }
-        $parentNodeIdCache->add($childNodeAggregateId, $parentNode->nodeAggregateId);
+        $parentNodeIdCache->add($childNodeAggregateId, $parentNode->aggregateId);
         // we also add the parent node to the NodeAggregateId => Node cache;
         // as this might improve cache hit rates as well.
-        $this->inMemoryCache->getNodeByNodeAggregateIdCache()->add($parentNode->nodeAggregateId, $parentNode);
+        $this->inMemoryCache->getNodeByNodeAggregateIdCache()->add($parentNode->aggregateId, $parentNode);
         return $parentNode;
     }
 

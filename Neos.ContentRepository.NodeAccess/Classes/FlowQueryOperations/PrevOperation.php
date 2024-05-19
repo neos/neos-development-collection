@@ -73,8 +73,8 @@ class PrevOperation extends AbstractOperation
                     $contextNode->nodeAggregateId,
                     FindPrecedingSiblingNodesFilter::create()
                 )->first();
-            if ($previousNode !== null && !isset($outputNodePaths[$previousNode->nodeAggregateId->value])) {
-                $outputNodePaths[$previousNode->nodeAggregateId->value] = true;
+            if ($previousNode !== null && !isset($outputNodePaths[$previousNode->aggregateId->value])) {
+                $outputNodePaths[$previousNode->aggregateId->value] = true;
                 $output[] = $previousNode;
             }
         }

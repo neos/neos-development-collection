@@ -117,7 +117,7 @@ class PropertyAdjustment
             new NodePropertiesWereSet(
                 $node->workspaceName,
                 $node->subgraphIdentity->contentStreamId,
-                $node->nodeAggregateId,
+                $node->aggregateId,
                 $node->originDimensionSpacePoint,
                 $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
                 $serializedPropertyValues,

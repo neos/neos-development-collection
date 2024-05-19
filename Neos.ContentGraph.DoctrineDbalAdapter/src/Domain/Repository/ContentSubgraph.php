@@ -243,7 +243,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 1687513836
             );
         }
-        $ancestors = $this->findAncestorNodes($leafNode->nodeAggregateId, FindAncestorNodesFilter::create())
+        $ancestors = $this->findAncestorNodes($leafNode->aggregateId, FindAncestorNodesFilter::create())
             ->reverse();
 
         try {
@@ -457,7 +457,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $currentNode = $startingNode;
 
         foreach ($path->getParts() as $edgeName) {
-            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->aggregateId, $edgeName);
             if ($currentNode === null) {
                 return null;
             }

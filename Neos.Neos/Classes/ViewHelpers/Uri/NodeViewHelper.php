@@ -208,7 +208,7 @@ class NodeViewHelper extends AbstractViewHelper
 
         if ($node instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->subgraphIdentity->contentRepositoryId
+                $node->contentRepositoryId
             );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);
@@ -264,7 +264,7 @@ class NodeViewHelper extends AbstractViewHelper
         /* @var Node $documentNode */
         $documentNode = $this->getContextVariable('documentNode');
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $documentNode->subgraphIdentity->contentRepositoryId
+            $documentNode->contentRepositoryId
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);
@@ -291,13 +291,13 @@ class NodeViewHelper extends AbstractViewHelper
             } else {
                 $targetNode = $subgraph->findNodeByPath(
                     NodePath::fromString(substr($path, 1)),
-                    $siteNode->nodeAggregateId
+                    $siteNode->aggregateId
                 );
             }
         } else {
             $targetNode = $subgraph->findNodeByPath(
                 NodePath::fromString($path),
-                $documentNode->nodeAggregateId
+                $documentNode->aggregateId
             );
         }
         if ($targetNode === null) {
@@ -309,6 +309,6 @@ class NodeViewHelper extends AbstractViewHelper
             ), 1601311789));
             return null;
         }
-        return $documentNodeAddress->withNodeAggregateId($targetNode->nodeAggregateId);
+        return $documentNodeAddress->withNodeAggregateId($targetNode->aggregateId);
     }
 }

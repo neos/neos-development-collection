@@ -74,6 +74,6 @@ class IdOperation extends AbstractOperation
         if (!$node instanceof Node) {
             return null;
         }
-        return $node->nodeAggregateId->value;
+        return $node->aggregateId->value;
     }
 }

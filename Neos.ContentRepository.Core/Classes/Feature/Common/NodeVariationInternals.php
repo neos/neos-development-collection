@@ -283,14 +283,14 @@ trait NodeVariationInternals
         foreach ($variantCoverage as $variantDimensionSpacePoint) {
             // check the siblings succeeding in the origin dimension space point
             foreach ($originSiblings as $originSibling) {
-                $variantSibling = $contentGraph->getSubgraph($variantDimensionSpacePoint, VisibilityConstraints::withoutRestrictions())->findNodeById($originSibling->nodeAggregateId);
+                $variantSibling = $contentGraph->getSubgraph($variantDimensionSpacePoint, VisibilityConstraints::withoutRestrictions())->findNodeById($originSibling->aggregateId);
                 if (!$variantSibling) {
                     continue;
                 }
                 // a) one of the further succeeding sibling exists in this dimension space point
                 $interdimensionalSiblings[] = new InterdimensionalSibling(
                     $variantDimensionSpacePoint,
-                    $variantSibling->nodeAggregateId,
+                    $variantSibling->aggregateId,
                 );
                 continue 2;
             }

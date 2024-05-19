@@ -410,7 +410,7 @@ final class Workspace
             FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
         );
 
-        return $actualAncestorNode?->nodeAggregateId->equals($ancestorId) ?? false;
+        return $actualAncestorNode?->aggregateId->equals($ancestorId) ?? false;
     }
 
     /**

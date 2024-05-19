@@ -15,7 +15,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * - {@see visibilityConstraints}
  *
  * In addition to the above subgraph identity, a Node's read model identity is further described
- * by {@see Node::$nodeAggregateId}.
+ * by {@see Node::$aggregateId}.
  *
  * With the above information, you can fetch a Subgraph directly by using
  * {@see \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry::subgraphForNode()}.

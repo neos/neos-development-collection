@@ -329,7 +329,7 @@ class LinkingService
                     );
                 }
                 $node = $this->contentRepositoryRegistry->subgraphForNode($baseNode)
-                    ->findNodeByPath(NodePath::fromString($nodeString), $baseNode->nodeAggregateId);
+                    ->findNodeByPath(NodePath::fromString($nodeString), $baseNode->aggregateId);
             }
             if (!$node instanceof Node) {
                 throw new NeosException(sprintf(

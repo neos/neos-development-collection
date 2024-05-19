@@ -72,6 +72,6 @@ trait NodeRenaming
     public function iExpectTheNodeToHaveTheName(string $nodeAggregateId, string $nodeName)
     {
         $node = $this->getCurrentSubgraph()->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
-        Assert::assertEquals($nodeName, $node->nodeName->value, 'Node Names do not match');
+        Assert::assertEquals($nodeName, $node->name->value, 'Node Names do not match');
     }
 }

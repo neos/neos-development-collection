@@ -148,7 +148,7 @@ class NodesController extends ActionController
             }
 
             $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
-                $entryNode->nodeAggregateId,
+                $entryNode->aggregateId,
                 FindDescendantNodesFilter::create(
                     nodeTypes: NodeTypeCriteria::create(
                         NodeTypeNames::fromStringArray($nodeTypes),
@@ -386,7 +386,7 @@ class NodesController extends ActionController
         ) {
             $identifiersFromRootlineToTranslate[] = $nodeAggregateId;
             $nodeAggregateId = $sourceSubgraph->findParentNode($nodeAggregateId)
-                ?->nodeAggregateId;
+                ?->aggregateId;
         }
         // $identifiersFromRootlineToTranslate is now bottom-to-top; so we need to reverse
         // them to know what we need to create.
@@ -447,7 +447,7 @@ class NodesController extends ActionController
                 $contentRepository->handle(
                     CreateNodeVariant::create(
                         $workspaceName,
-                        $childNode->nodeAggregateId,
+                        $childNode->aggregateId,
                         $childNode->originDimensionSpacePoint,
                         OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
                     )
@@ -456,7 +456,7 @@ class NodesController extends ActionController
 
             $this->createNodeVariantsForChildNodes(
                 $workspaceName,
-                $childNode->nodeAggregateId,
+                $childNode->aggregateId,
                 $constraints,
                 $sourceSubgraph,
                 $targetSubgraph,

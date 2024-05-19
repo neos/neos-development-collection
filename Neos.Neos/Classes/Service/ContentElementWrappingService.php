@@ -81,7 +81,7 @@ class ContentElementWrappingService
         array $additionalAttributes = []
     ): ?string {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->contentRepositoryId
         );
 
         // TODO: reenable permissions
@@ -121,7 +121,7 @@ class ContentElementWrappingService
     protected function addCssClasses(array $attributes, Node $node, array $initialClasses = []): array
     {
         $classNames = $initialClasses;
-        if (!$node->subgraphIdentity->dimensionSpacePoint->equals($node->originDimensionSpacePoint)) {
+        if (!$node->dimensionSpacePoint->equals($node->originDimensionSpacePoint)) {
             $classNames[] = 'neos-contentelement-shine-through';
         }
 

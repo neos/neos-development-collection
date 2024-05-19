@@ -130,8 +130,8 @@ class TetheredNodeAdjustments
                     $actualTetheredChildNodes = [];
                     foreach ($childNodes as $childNode) {
                         if ($childNode->classification->isTethered()) {
-                            assert($childNode->nodeName !== null); // it's tethered!
-                            $actualTetheredChildNodes[$childNode->nodeName->value] = $childNode;
+                            assert($childNode->name !== null); // it's tethered!
+                            $actualTetheredChildNodes[$childNode->name->value] = $childNode;
                         }
                     }
 
@@ -224,14 +224,14 @@ class TetheredNodeAdjustments
             foreach ($coverageByOrigin as $coveredDimensionSpacePoint) {
                 $succeedingSiblingsForCoverage[] = new InterdimensionalSibling(
                     $coveredDimensionSpacePoint,
-                    $succeedingNode->nodeAggregateId
+                    $succeedingNode->aggregateId
                 );
             }
 
             $events[] = new NodeAggregateWasMoved(
                 $workspaceName,
                 $contentStreamId,
-                $nodeToMove->nodeAggregateId,
+                $nodeToMove->aggregateId,
                 null,
                 new InterdimensionalSiblings(...$succeedingSiblingsForCoverage),
             );
