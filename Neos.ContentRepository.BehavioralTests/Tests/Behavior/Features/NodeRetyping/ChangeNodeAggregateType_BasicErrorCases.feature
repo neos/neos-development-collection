@@ -65,7 +65,7 @@ Feature: Change node aggregate type - basic error cases
 
 
   Scenario: Try to change the node aggregate type on a non-existing content stream
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                             |
       | workspaceName   | "non-existing"                                    |
       | nodeAggregateId | "sir-david-nodenborough"                          |
@@ -74,7 +74,7 @@ Feature: Change node aggregate type - basic error cases
     Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to change the type on a non-existing node aggregate
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                             |
       | nodeAggregateId | "nody-mc-nodeface"                                |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ChildOfNodeTypeA" |
@@ -82,7 +82,7 @@ Feature: Change node aggregate type - basic error cases
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to change a node aggregate to a non existing type
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                      |
       | nodeAggregateId | "sir-david-nodenborough"                   |
       | newNodeTypeName | "Neos.ContentRepository.Testing:Undefined" |
@@ -97,7 +97,7 @@ Feature: Change node aggregate type - basic error cases
       | parentNodeAggregateId | "sir-david-nodenborough"                   |
       | nodeName              | "parent"                                   |
       | initialPropertyValues | {}                                         |
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                      |
       | nodeAggregateId | "nody-mc-nodeface"                         |
       | newNodeTypeName | "Neos.ContentRepository.Testing:NodeTypeB" |
@@ -122,7 +122,7 @@ Feature: Change node aggregate type - basic error cases
       | parentNodeAggregateId     | "autocreated-child"                        |
       | initialPropertyValues     | {}                                         |
 
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                      |
       | nodeAggregateId | "nody-mc-nodeface"                         |
       | newNodeTypeName | "Neos.ContentRepository.Testing:NodeTypeB" |
@@ -140,7 +140,7 @@ Feature: Change node aggregate type - basic error cases
       | initialPropertyValues              | {}                                              |
       | tetheredDescendantNodeAggregateIds | {"autocreated": "nody-mc-nodeface"}             |
 
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                           |
       | nodeAggregateId | "nody-mc-nodeface"                              |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeType" |

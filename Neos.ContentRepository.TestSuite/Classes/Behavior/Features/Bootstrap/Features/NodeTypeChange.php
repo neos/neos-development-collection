@@ -33,7 +33,7 @@ trait NodeTypeChange
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     /**
-     * @Given /^the command ChangeNodeAggregateType was published with payload:$/
+     * @Given /^the command ChangeNodeAggregateType is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
@@ -57,7 +57,7 @@ trait NodeTypeChange
     }
 
     /**
-     * @Given /^the command ChangeNodeAggregateType was published with payload and exceptions are caught:$/
+     * @Given /^the command ChangeNodeAggregateType is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */

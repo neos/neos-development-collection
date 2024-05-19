@@ -270,7 +270,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"        | "lady-eleonode-rootford/shernode-homes/c"        | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: Changing the NodeTypeName of a NodeAggregate
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key             | Value                                  |
       | nodeAggregateId | "c"                                    |
       | newNodeTypeName | "Neos.Neos:Test.Routing.SomeOtherPage" |
