@@ -92,15 +92,22 @@ final readonly class NodeAggregateWasMoved implements
             foreach ($values['nodeMoveMappings'] as $nodeMoveMapping) {
                 // we don't care about origins anymore
                 foreach ($nodeMoveMapping['newLocations'] as $newLocation) {
-                    if (array_key_exists('newParent', $newLocation)) {
-                        $newParentNodeAggregateId = NodeAggregateId::fromString($newLocation['newParent']);
+                    $dimensionSpacePoint = DimensionSpacePoint::fromArray($newLocation['coveredDimensionSpacePoint']);
+                    if (array_key_exists('newSucceedingSibling', $newLocation)) {
+                        $succeedingSiblings[] = new InterdimensionalSibling(
+                            $dimensionSpacePoint,
+                            NodeAggregateId::fromString($newLocation['newSucceedingSibling']['nodeAggregateId'])
+                        );
+                        if (array_key_exists('parentNodeAggregateId', $newLocation['newSucceedingSibling'])) {
+                            $newParentNodeAggregateId = NodeAggregateId::fromString($newLocation['newSucceedingSibling']['parentNodeAggregateId']);
+                        }
+                    } elseif (array_key_exists('newParent', $newLocation)) {
+                        $newParentNodeAggregateId = NodeAggregateId::fromString($newLocation['newParent']['nodeAggregateId']);
+                        $succeedingSiblings[] = new InterdimensionalSibling(
+                            $dimensionSpacePoint,
+                            null
+                        );
                     }
-                    $succeedingSiblings[] = new InterdimensionalSibling(
-                        DimensionSpacePoint::fromArray($newLocation['coveredDimensionSpacePoint']),
-                        ($newLocation['newSucceedingSibling'] ?? null)
-                            ? NodeAggregateId::fromString($newLocation['newSucceedingSibling'])
-                            : null
-                    );
                 }
             }
             $succeedingSiblingsForCoverage = new InterdimensionalSiblings(...$succeedingSiblings);
