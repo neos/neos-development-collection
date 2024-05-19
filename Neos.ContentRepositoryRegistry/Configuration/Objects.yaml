@@ -21,3 +21,13 @@ Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
       value: Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory
     2:
       object: 'Doctrine\DBAL\Connection'
+
+# This adds a soft-dependency to the neos/contentgraph-doctrinedbaladapter package
+Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
+  scope: singleton
+  factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
+  arguments:
+    1:
+      value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory'
+    2:
+      object: 'Doctrine\DBAL\Connection'
