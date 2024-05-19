@@ -67,7 +67,7 @@ Feature: Find nodes using the findClosestNode query
       | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {}                    | {}                                       |
       | a2a2b           | a2a2b    | Neos.ContentRepository.Testing:Page        | a2a2                   | {}                    | {}                                       |
       | a2b             | a2b      | Neos.ContentRepository.Testing:Page        | a2                     | {}                    | {}                                       |
-      | a2b1            | a2b1     | Neos.ContentRepository.Testing:Page        | a2b                     | {}                    | {}                                       |
+      | a2b1            | a2b1     | Neos.ContentRepository.Testing:Page        | a2b                    | {}                    | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {}                    | {}                                       |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
@@ -75,7 +75,7 @@ Feature: Find nodes using the findClosestNode query
       | nodeVariantSelectionStrategy | "allVariants" |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
-      | nodeAggregateId              | "a2b"        |
+      | nodeAggregateId              | "a2b"         |
       | nodeVariantSelectionStrategy | "allVariants" |
 
   Scenario:

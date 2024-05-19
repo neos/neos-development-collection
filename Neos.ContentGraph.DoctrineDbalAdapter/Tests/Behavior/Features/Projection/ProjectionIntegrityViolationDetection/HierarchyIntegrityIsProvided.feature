@@ -21,9 +21,9 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
       | workspaceName               | "live"                                                   |

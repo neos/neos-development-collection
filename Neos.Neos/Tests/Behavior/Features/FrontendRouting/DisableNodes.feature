@@ -68,10 +68,10 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
 
   Scenario: Disable leaf node
     When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value           |
-      | nodeAggregateId              | "leaf-mc-node"  |
-      | coveredDimensionSpacePoint   | {}              |
-      | nodeVariantSelectionStrategy | "allVariants"   |
+      | Key                          | Value          |
+      | nodeAggregateId              | "leaf-mc-node" |
+      | coveredDimensionSpacePoint   | {}             |
+      | nodeVariantSelectionStrategy | "allVariants"  |
     Then No node should match URL "/david-nodenborough/earl-document/leaf"
     And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
 
@@ -146,7 +146,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | workspaceName                | "live"                   |
-      | contentStreamId              | "cs-identifier"         |
+      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                          | "disabled"               |

@@ -18,24 +18,24 @@ Feature: Rename Property
     And I am in content repository "default"
 
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId     | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | initialPropertyValues         | {"text": "Original text"}                 |
+      | Key                       | Value                                     |
+      | nodeAggregateId           | "sir-david-nodenborough"                  |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint | {}                                        |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
+      | initialPropertyValues     | {"text": "Original text"}                 |
 
 
   Scenario: Fixed newValue

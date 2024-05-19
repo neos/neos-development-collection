@@ -80,9 +80,9 @@ Feature: Find nodes using the findNodeById query
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateId              | "a2a1"             |
-      | nodeVariantSelectionStrategy | "allVariants"      |
+      | Key                          | Value         |
+      | nodeAggregateId              | "a2a1"        |
+      | nodeVariantSelectionStrategy | "allVariants" |
 
   Scenario:
     # findNodeById queries without result

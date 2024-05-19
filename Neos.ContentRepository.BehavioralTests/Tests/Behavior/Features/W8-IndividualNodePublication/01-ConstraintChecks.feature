@@ -61,15 +61,15 @@ Feature: Workspace publication - complex chained functionality
       | targetOrigin    | {"language": "en"} |
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload and exceptions are caught:
-      | Key                | Value                                                                                                                                                                                                                                                                                                                                                   |
-      | workspaceName      | "user-ws"                                                                                                                                                                                                                                                                                                                                             |
+      | Key                | Value                                                                                                            |
+      | workspaceName      | "user-ws"                                                                                                        |
       | nodesToPublish     | [{"workspaceName": "user-ws", "dimensionSpacePoint": {"language": "en"}, "nodeAggregateId": "nody-mc-nodeface"}] |
-      | newContentStreamId | "user-cs-id-rebased"                                                                                                                                                                                                                                                                                                                                |
+      | newContentStreamId | "user-cs-id-rebased"                                                                                             |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
 
     When the command PublishWorkspace is executed with payload:
-      | Key                | Value                                                                                                                                                                                                                                                                                                                                                   |
-      | workspaceName      | "user-ws"                                                                                                                                                                                                                                                                                                                                             |
-      | newContentStreamId | "user-cs-id-yet-again-rebased"                                                                                                                                                                                                                                                                                                                                |
+      | Key                | Value                          |
+      | workspaceName      | "user-ws"                      |
+      | newContentStreamId | "user-cs-id-yet-again-rebased" |
     When I am in workspace "user-ws" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-id-yet-again-rebased;nody-mc-nodeface;{"language": "de"}

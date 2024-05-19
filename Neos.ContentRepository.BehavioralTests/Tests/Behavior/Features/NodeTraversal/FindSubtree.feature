@@ -72,7 +72,7 @@ Feature: Find nodes using the findSubtree query
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
-      | nodeAggregateId              | "a2a2a"        |
+      | nodeAggregateId              | "a2a2a"       |
       | nodeVariantSelectionStrategy | "allVariants" |
 
   Scenario:

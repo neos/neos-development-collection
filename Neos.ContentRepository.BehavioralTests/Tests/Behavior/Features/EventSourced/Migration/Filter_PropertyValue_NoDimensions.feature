@@ -25,9 +25,9 @@ Feature: Filter - Property Value
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId             | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /name1 (has text value set)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |

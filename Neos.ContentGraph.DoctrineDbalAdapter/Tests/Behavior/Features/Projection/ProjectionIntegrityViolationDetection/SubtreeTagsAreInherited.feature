@@ -21,9 +21,9 @@ Feature: Run integrity violation detection regarding subtree tag inheritance
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
 
   Scenario: Create nodes, disable the topmost and remove some restriction edges manually
     When the event NodeAggregateWithNodeWasCreated was published with payload:

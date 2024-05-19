@@ -132,7 +132,7 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | Key           | Value       |
       | workspaceName | "user-test" |
     And the command PublishWorkspace is executed with payload:
-      | Key           | Value       |
+      | Key           | Value    |
       | workspaceName | "review" |
     And the current date and time is "2023-03-16T14:00:00+01:00"
     And the command "ChangeNodeAggregateName" is executed with payload:

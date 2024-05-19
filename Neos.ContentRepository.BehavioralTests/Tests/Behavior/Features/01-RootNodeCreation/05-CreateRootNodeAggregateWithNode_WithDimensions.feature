@@ -42,7 +42,7 @@ Feature: Create a root node aggregate
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}] |
       | nodeAggregateClassification | "root"                                                                      |
     And event metadata at index 1 is:
-      | Key              | Expected                     |
+      | Key | Expected |
 
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
@@ -89,8 +89,8 @@ Feature: Create a root node aggregate
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
     When the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key             | Value                         |
-      | nodeAggregateId | "nody-mc-nodeface"            |
+      | Key             | Value                                |
+      | nodeAggregateId | "nody-mc-nodeface"                   |
       | nodeTypeName    | "Neos.ContentRepository:AnotherRoot" |
 
     Then I expect exactly 3 events to be published on stream "ContentStream:cs-identifier"
@@ -98,7 +98,7 @@ Feature: Create a root node aggregate
       | Key                         | Expected                                                                    |
       | contentStreamId             | "cs-identifier"                                                             |
       | nodeAggregateId             | "nody-mc-nodeface"                                                          |
-      | nodeTypeName                | "Neos.ContentRepository:AnotherRoot"                                               |
+      | nodeTypeName                | "Neos.ContentRepository:AnotherRoot"                                        |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}] |
       | nodeAggregateClassification | "root"                                                                      |
 

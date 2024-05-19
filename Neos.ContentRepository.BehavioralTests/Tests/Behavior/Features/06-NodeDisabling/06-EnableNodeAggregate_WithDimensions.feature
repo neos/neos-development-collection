@@ -369,7 +369,7 @@ Feature: Enable a node aggregate
       | contentStreamId              | "cs-identifier"                                                                                |
       | nodeAggregateId              | "sir-david-nodenborough"                                                                       |
       | affectedDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"},{"language":"ltz"}] |
-      | tag                          | "disabled"                          |
+      | tag                          | "disabled"                                                                                     |
 
     And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 7 nodes

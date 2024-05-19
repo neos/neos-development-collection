@@ -1739,11 +1739,11 @@ Feature: Move a node aggregate into and out of a tagged parent
   Scenario: Move a partially tagged node to a new parent that tags the same
 
     Given the command TagSubtree is executed with payload:
-      | Key                          | Value                |
-      | nodeAggregateId              | "sir-david-nodenborough"   |
-      | coveredDimensionSpacePoint   | {"example": "spec"}  |
-      | nodeVariantSelectionStrategy | "allSpecializations" |
-      | tag                          | "tag1"               |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"example": "spec"}      |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "tag1"                   |
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                 |
@@ -1806,11 +1806,11 @@ Feature: Move a node aggregate into and out of a tagged parent
   Scenario: Move a partially tagged node to a new parent that tags the same, partially
 
     Given the command TagSubtree is executed with payload:
-      | Key                          | Value                |
-      | nodeAggregateId              | "sir-david-nodenborough"   |
-      | coveredDimensionSpacePoint   | {"example": "spec"}  |
-      | nodeVariantSelectionStrategy | "allSpecializations" |
-      | tag                          | "tag1"               |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"example": "spec"}      |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "tag1"                   |
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                |
@@ -1873,11 +1873,11 @@ Feature: Move a node aggregate into and out of a tagged parent
   Scenario: Move a tagged node to a new parent that tags differently
 
     Given the command TagSubtree is executed with payload:
-      | Key                          | Value                 |
-      | nodeAggregateId              | "sir-david-nodenborough"    |
-      | coveredDimensionSpacePoint   | {"example": "source"} |
-      | nodeVariantSelectionStrategy | "allSpecializations"  |
-      | tag                          | "tag1"                |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"example": "source"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "tag1"                   |
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                 |
@@ -1940,11 +1940,11 @@ Feature: Move a node aggregate into and out of a tagged parent
   Scenario: Move a tagged node to a new parent that tags differently, partially
 
     Given the command TagSubtree is executed with payload:
-      | Key                          | Value                 |
-      | nodeAggregateId              | "sir-david-nodenborough"    |
-      | coveredDimensionSpacePoint   | {"example": "source"} |
-      | nodeVariantSelectionStrategy | "allSpecializations"  |
-      | tag                          | "tag1"                |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"example": "source"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "tag1"                   |
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                |
@@ -2007,11 +2007,11 @@ Feature: Move a node aggregate into and out of a tagged parent
   Scenario: Move a partially tagged node to a new parent that tags differently
 
     Given the command TagSubtree is executed with payload:
-      | Key                          | Value                |
-      | nodeAggregateId              | "sir-david-nodenborough"   |
-      | coveredDimensionSpacePoint   | {"example": "spec"}  |
-      | nodeVariantSelectionStrategy | "allSpecializations" |
-      | tag                          | "tag1"               |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"example": "spec"}      |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "tag1"                   |
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                 |
@@ -2074,11 +2074,11 @@ Feature: Move a node aggregate into and out of a tagged parent
   Scenario: Move a partially tagged node to a new parent that tags differently, partially
 
     Given the command TagSubtree is executed with payload:
-      | Key                          | Value                |
-      | nodeAggregateId              | "sir-david-nodenborough"   |
-      | coveredDimensionSpacePoint   | {"example": "spec"}  |
-      | nodeVariantSelectionStrategy | "allSpecializations" |
-      | tag                          | "tag1"               |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"example": "spec"}      |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "tag1"                   |
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                |

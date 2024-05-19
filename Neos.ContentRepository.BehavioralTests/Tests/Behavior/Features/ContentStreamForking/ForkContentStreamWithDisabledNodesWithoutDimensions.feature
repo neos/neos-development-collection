@@ -24,9 +24,9 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId             | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                    |
       | workspaceName               | "live"                                   |
