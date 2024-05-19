@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception as DbalDriverException;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\ForwardCompatibility\Result;
@@ -21,7 +22,6 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
@@ -96,12 +96,12 @@ final class ContentSubgraph implements ContentSubgraphInterface
         private readonly ContentStreamId $contentStreamId,
         private readonly DimensionSpacePoint $dimensionSpacePoint,
         private readonly VisibilityConstraints $visibilityConstraints,
-        private readonly DbalClientInterface $client,
+        private readonly Connection $dbal,
         private readonly NodeFactory $nodeFactory,
         private readonly NodeTypeManager $nodeTypeManager,
         ContentGraphTableNames $tableNames
     ) {
-        $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $tableNames);
+        $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $tableNames);
     }
 
     public function getContentRepositoryId(): ContentRepositoryId
@@ -467,7 +467,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     private function createQueryBuilder(): QueryBuilder
     {
-        return $this->client->getConnection()->createQueryBuilder();
+        return $this->dbal->createQueryBuilder();
     }
 
     private function addSubtreeTagConstraints(QueryBuilder $queryBuilder, string $hierarchyRelationTableAlias = 'h'): void
@@ -748,7 +748,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $parameters = array_merge($queryBuilderInitial->getParameters(), $queryBuilderRecursive->getParameters(), $queryBuilderCte->getParameters());
         $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());
         try {
-            return $this->client->getConnection()->fetchAllAssociative($query, $parameters, $parameterTypes);
+            return $this->dbal->fetchAllAssociative($query, $parameters, $parameterTypes);
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch CTE result: %s', $e->getMessage()), 1678358108, $e);
         }
@@ -760,7 +760,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $parameters = array_merge($queryBuilderInitial->getParameters(), $queryBuilderRecursive->getParameters(), $queryBuilderCte->getParameters());
         $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());
         try {
-            return (int)$this->client->getConnection()->fetchOne($query, $parameters, $parameterTypes);
+            return (int)$this->dbal->fetchOne($query, $parameters, $parameterTypes);
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch CTE count result: %s', $e->getMessage()), 1679047841, $e);
         }

@@ -44,7 +44,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
@@ -76,14 +75,14 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
     private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
-        private readonly DbalClientInterface $dbalClient,
+        private readonly Connection $dbal,
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
         private readonly ContentGraphFinder $contentGraphFinder
     ) {
         $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbalClient->getConnection(),
+            $this->dbal,
             $this->tableNames->checkpoint(),
             self::class
         );
@@ -107,13 +106,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $connection = $this->dbalClient->getConnection();
-        $schemaManager = $connection->getSchemaManager();
+        $schemaManager = $this->dbal->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
         $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNames))->buildSchema($schemaManager);
-        return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
+        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 
     public function status(): ProjectionStatus
@@ -152,11 +150,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 
     private function truncateDatabaseTables(): void
     {
-        $connection = $this->dbalClient->getConnection();
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNames->node());
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->node());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
     }
 
     public function canHandle(EventInterface $event): bool
@@ -988,7 +985,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
 
     private function getDatabaseConnection(): Connection
     {
-        return $this->dbalClient->getConnection();
+        return $this->dbal;
     }
 
     private static function initiatingDateTime(EventEnvelope $eventEnvelope): \DateTimeImmutable

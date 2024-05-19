@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\PendingChangesProjection;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 
 /**
@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 class ChangeProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
-        private readonly DbalClientInterface $dbalClient
+        private readonly Connection $dbal,
     ) {
     }
 
@@ -33,7 +33,7 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
         array $options,
     ): ChangeProjection {
         return new ChangeProjection(
-            $this->dbalClient,
+            $this->dbal,
             sprintf(
                 'cr_%s_p_neos_change',
                 $projectionFactoryDependencies->contentRepositoryId->value,

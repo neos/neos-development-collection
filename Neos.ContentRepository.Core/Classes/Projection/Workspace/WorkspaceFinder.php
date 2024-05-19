@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\Workspace;
 
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 final class WorkspaceFinder implements ProjectionStateInterface
 {
     public function __construct(
-        private readonly DbalClientInterface $client,
+        private readonly Connection $dbal,
         private readonly WorkspaceRuntimeCache $workspaceRuntimeCache,
         private readonly string $tableName
     ) {
@@ -43,8 +43,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
             return $workspace;
         }
 
-        $connection = $this->client->getConnection();
-        $workspaceRow = $connection->executeQuery(
+        $workspaceRow = $this->dbal->executeQuery(
             '
                 SELECT * FROM ' . $this->tableName . '
                 WHERE workspaceName = :workspaceName
@@ -71,8 +70,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
             return $workspace;
         }
 
-        $connection = $this->client->getConnection();
-        $workspaceRow = $connection->executeQuery(
+        $workspaceRow = $this->dbal->executeQuery(
             '
             SELECT * FROM ' . $this->tableName . '
             WHERE currentContentStreamId = :currentContentStreamId
@@ -99,8 +97,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
     {
         $result = [];
 
-        $connection = $this->client->getConnection();
-        $workspaceRows = $connection->executeQuery(
+        $workspaceRows = $this->dbal->executeQuery(
             '
                 SELECT * FROM ' . $this->tableName . '
                 WHERE baseWorkspaceName = :workspaceName
@@ -120,8 +117,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
 
     public function findOneByWorkspaceOwner(string $owner): ?Workspace
     {
-        $connection = $this->client->getConnection();
-        $workspaceRow = $connection->executeQuery(
+        $workspaceRow = $this->dbal->executeQuery(
             '
                 SELECT * FROM ' . $this->tableName . '
                 WHERE workspaceOwner = :workspaceOwner
@@ -142,8 +138,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
     {
         $result = [];
 
-        $connection = $this->client->getConnection();
-        $workspaceRows = $connection->executeQuery(
+        $workspaceRows = $this->dbal->executeQuery(
             '
                 SELECT * FROM ' . $this->tableName . '
             '
@@ -166,8 +161,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
     {
         $result = [];
 
-        $connection = $this->client->getConnection();
-        $workspaceRows = $connection->executeQuery(
+        $workspaceRows = $this->dbal->executeQuery(
             '
                 SELECT * FROM ' . $this->tableName . ' WHERE status = :outdated
             ',
