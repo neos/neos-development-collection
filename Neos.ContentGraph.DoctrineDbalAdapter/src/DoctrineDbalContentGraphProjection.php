@@ -135,7 +135,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNames->tableNamePrefix);
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNames->checkpoint());
         $this->getState()->forgetInstances();
     }
 
@@ -163,13 +163,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             default => null,
         };
-        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNames->tableNamePrefix, $eventEnvelope->sequenceNumber);
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNames->checkpoint(), $eventEnvelope->sequenceNumber);
         $this->dbal->commit();
     }
 
     public function getCheckpoint(): SequenceNumber
     {
-        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNames->tableNamePrefix);
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNames->checkpoint());
     }
 
     public function getState(): ContentGraphFinder

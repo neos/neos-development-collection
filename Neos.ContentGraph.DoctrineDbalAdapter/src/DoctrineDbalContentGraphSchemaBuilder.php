@@ -30,7 +30,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             $this->createHierarchyRelationTable(),
             $this->createReferenceRelationTable(),
             $this->createDimensionSpacePointsTable(),
-            CheckpointHelper::checkpointTableSchema($this->contentGraphTableNames->tableNamePrefix),
+            CheckpointHelper::checkpointTableSchema($this->contentGraphTableNames->checkpoint()),
         ]);
     }
 

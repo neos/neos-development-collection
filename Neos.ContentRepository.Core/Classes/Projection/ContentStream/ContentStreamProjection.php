@@ -123,7 +123,7 @@ class ContentStreamProjection implements ProjectionInterface
                 (new Column('state', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
                 (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
             ])),
-            CheckpointHelper::checkpointTableSchema($this->tableName)
+            CheckpointHelper::checkpointTableSchema($this->tableName . '_checkpoint')
         ]);
 
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
@@ -132,7 +132,7 @@ class ContentStreamProjection implements ProjectionInterface
     public function reset(): void
     {
         $this->dbal->executeStatement('TRUNCATE table ' . $this->tableName);
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableName);
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableName . '_checkpoint');
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
@@ -140,7 +140,7 @@ class ContentStreamProjection implements ProjectionInterface
         $this->dbal->beginTransaction();
         if ($event instanceof EmbedsContentStreamAndNodeAggregateId) {
             $this->updateContentStreamVersion($event, $eventEnvelope);
-            CheckpointHelper::updateCheckpoint($this->dbal, $this->tableName, $eventEnvelope->sequenceNumber);
+            CheckpointHelper::updateCheckpoint($this->dbal, $this->tableName . '_checkpoint', $eventEnvelope->sequenceNumber);
             $this->dbal->commit();
             return;
         }
@@ -161,13 +161,13 @@ class ContentStreamProjection implements ProjectionInterface
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
             default => null,
         };
-        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableName, $eventEnvelope->sequenceNumber);
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableName . '_checkpoint', $eventEnvelope->sequenceNumber);
         $this->dbal->commit();
     }
 
     public function getCheckpoint(): SequenceNumber
     {
-        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableName);
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableName . '_checkpoint');
     }
 
     public function getState(): ProjectionStateInterface

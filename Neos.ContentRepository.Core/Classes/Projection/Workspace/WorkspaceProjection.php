@@ -116,7 +116,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             (new Column('status', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(false)
         ]);
         $workspaceTable->setPrimaryKey(['workspacename']);
-        $checkpointTable = CheckpointHelper::checkpointTableSchema($this->tableName);
+        $checkpointTable = CheckpointHelper::checkpointTableSchema($this->tableName . '_checkpoint');
 
         $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$workspaceTable, $checkpointTable]);
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
@@ -125,7 +125,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     public function reset(): void
     {
         $this->dbal->exec('TRUNCATE ' . $this->tableName);
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableName);
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableName . '_checkpoint');
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
@@ -146,13 +146,13 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
             default => null,
         };
-        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableName, $eventEnvelope->sequenceNumber);
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableName . '_checkpoint', $eventEnvelope->sequenceNumber);
         $this->dbal->commit();
     }
 
     public function getCheckpoint(): SequenceNumber
     {
-        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableName);
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableName . '_checkpoint');
     }
 
     public function getState(): WorkspaceFinder

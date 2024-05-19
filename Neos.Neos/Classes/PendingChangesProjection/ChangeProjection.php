@@ -78,7 +78,6 @@ class ChangeProjection implements ProjectionInterface
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix);
     }
 
     public function status(): ProjectionStatus
@@ -139,7 +138,7 @@ class ChangeProjection implements ProjectionInterface
         ]);
         $liveContentStreamsTable->setPrimaryKey(['contentstreamid']);
 
-        $checkpointTable = CheckpointHelper::checkpointTableSchema($this->tableNamePrefix);
+        $checkpointTable = CheckpointHelper::checkpointTableSchema($this->tableNamePrefix . '_checkpoint');
 
         $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $liveContentStreamsTable, $checkpointTable]);
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
@@ -149,7 +148,7 @@ class ChangeProjection implements ProjectionInterface
     {
         $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix);
         $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix);
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint');
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
@@ -170,13 +169,13 @@ class ChangeProjection implements ProjectionInterface
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             default => null,
         };
-        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNamePrefix, $eventEnvelope->sequenceNumber);
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint', $eventEnvelope->sequenceNumber);
         $this->dbal->commit();
     }
 
     public function getCheckpoint(): SequenceNumber
     {
-        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix);
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint');
     }
 
     public function getState(): ChangeFinder

@@ -135,7 +135,7 @@ final class HypergraphProjection implements ProjectionInterface
     {
         $this->truncateDatabaseTables();
 
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix);
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint');
     }
 
     private function truncateDatabaseTables(): void
@@ -174,13 +174,13 @@ final class HypergraphProjection implements ProjectionInterface
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             default => null,
         };
-        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNamePrefix, $eventEnvelope->sequenceNumber);
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint', $eventEnvelope->sequenceNumber);
         $this->dbal->commit();
     }
 
     public function getCheckpoint(): SequenceNumber
     {
-        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix);
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint');
     }
 
     public function getState(): ContentGraphFinder

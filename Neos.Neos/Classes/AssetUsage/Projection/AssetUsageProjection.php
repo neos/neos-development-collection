@@ -61,7 +61,7 @@ final class AssetUsageProjection implements ProjectionInterface
     public function reset(): void
     {
         $this->repository->reset();
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->repository->getTableNamePrefix());
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->repository->getTableNamePrefix() . '_checkpoint');
     }
 
     public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
@@ -228,7 +228,6 @@ final class AssetUsageProjection implements ProjectionInterface
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->repository->getTableNamePrefix());
     }
 
     public function status(): ProjectionStatus
@@ -274,13 +273,13 @@ final class AssetUsageProjection implements ProjectionInterface
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
             default => null,
         };
-        CheckpointHelper::updateCheckpoint($this->dbal, $this->repository->getTableNamePrefix(), $eventEnvelope->sequenceNumber);
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->repository->getTableNamePrefix() . '_checkpoint', $eventEnvelope->sequenceNumber);
         $this->dbal->commit();
     }
 
     public function getCheckpoint(): SequenceNumber
     {
-        return CheckpointHelper::getCheckpoint($this->dbal, $this->repository->getTableNamePrefix());
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->repository->getTableNamePrefix() . '_checkpoint');
     }
 
     public function getState(): AssetUsageFinder
@@ -300,7 +299,7 @@ final class AssetUsageProjection implements ProjectionInterface
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-        $checkpointTable = CheckpointHelper::checkpointTableSchema($this->repository->getTableNamePrefix());
+        $checkpointTable = CheckpointHelper::checkpointTableSchema($this->repository->getTableNamePrefix() . '_checkpoint');
 
         $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$checkpointTable]);
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);

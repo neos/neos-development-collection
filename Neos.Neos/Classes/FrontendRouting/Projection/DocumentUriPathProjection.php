@@ -68,7 +68,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix);
     }
 
     public function status(): ProjectionStatus
@@ -111,7 +110,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     public function reset(): void
     {
         $this->truncateDatabaseTables();
-        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix);
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint');
         $this->stateAccessor = null;
     }
 
@@ -146,13 +145,13 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
             default => null,
         };
-        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNamePrefix, $eventEnvelope->sequenceNumber);
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint', $eventEnvelope->sequenceNumber);
         $this->dbal->commit();
     }
 
     public function getCheckpoint(): SequenceNumber
     {
-        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix);
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint');
     }
 
     public function getState(): DocumentUriPathFinder
