@@ -58,7 +58,7 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
                     $this->contentRepository->handle(
                         SetSerializedNodeProperties::create(
                             $workspaceNameForWriting,
-                            $node->nodeAggregateId,
+                            $node->aggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::createEmpty(),
                             PropertyNames::fromArray([$this->propertyName])

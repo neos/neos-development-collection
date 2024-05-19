@@ -28,6 +28,7 @@ Feature: Run projection integrity violation detection regarding node aggregate c
   Scenario: Create node variants of different type
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
@@ -38,6 +39,7 @@ Feature: Run projection integrity violation detection regarding node aggregate c
       | nodeAggregateClassification   | "regular"                                 |
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |

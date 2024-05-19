@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;

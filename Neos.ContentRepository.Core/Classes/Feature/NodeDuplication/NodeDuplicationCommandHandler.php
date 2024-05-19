@@ -195,6 +195,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         array &$events,
     ): void {
         $events[] = new NodeAggregateWithNodeWasCreated(
+            $contentGraph->getWorkspaceName(),
             $contentGraph->getContentStreamId(),
             $nodeAggregateIdMapping->getNewNodeAggregateId(
                 $nodeToInsert->nodeAggregateId

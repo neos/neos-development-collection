@@ -52,6 +52,7 @@ trait NodeRenaming
 
         $events = Events::with(
             new NodeAggregateNameWasChanged(
+                $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->newNodeName,

@@ -28,6 +28,7 @@ Feature: Run integrity violation detection regarding sibling sorting
   Scenario: Create two siblings and set the sorting to the same value
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "nody-mc-nodeface"                                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
@@ -37,6 +38,7 @@ Feature: Run integrity violation detection regarding sibling sorting
       | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "noderella-mc-nodeface"                                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |

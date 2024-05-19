@@ -51,7 +51,7 @@ class ContentElementEditableService
     public function wrapContentProperty(Node $node, string $property, string $content): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->contentRepositoryId
         );
 
         // TODO: permissions

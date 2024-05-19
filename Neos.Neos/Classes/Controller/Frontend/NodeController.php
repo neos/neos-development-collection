@@ -341,10 +341,10 @@ class NodeController extends ActionController
             = $inMemoryCache->getParentNodeIdByChildNodeIdCache();
         $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdCache();
         $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdCache();
-        if ($node->nodeName !== null) {
+        if ($node->name !== null) {
             $namedChildNodeByNodeIdentifierCache->add(
-                $parentNode->nodeAggregateId,
-                $node->nodeName,
+                $parentNode->aggregateId,
+                $node->name,
                 $node
             );
         } else {
@@ -352,8 +352,8 @@ class NodeController extends ActionController
         }
 
         $parentNodeIdentifierByChildNodeIdentifierCache->add(
-            $node->nodeAggregateId,
-            $parentNode->nodeAggregateId
+            $node->aggregateId,
+            $parentNode->aggregateId
         );
 
         $allChildNodes = [];
@@ -364,7 +364,7 @@ class NodeController extends ActionController
         }
         // TODO Explain why this is safe (Content can not contain other documents)
         $allChildNodesByNodeIdentifierCache->add(
-            $node->nodeAggregateId,
+            $node->aggregateId,
             null,
             Nodes::fromArray($allChildNodes)
         );

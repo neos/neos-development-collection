@@ -106,7 +106,7 @@ class LinkHelper implements ProtectedContextAwareInterface
             return null;
         }
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $targetNode->subgraphIdentity->contentRepositoryId
+            $targetNode->contentRepositoryId
         );
         $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($targetNode);
         try {
@@ -119,7 +119,7 @@ class LinkHelper implements ProtectedContextAwareInterface
         ) {
             $this->systemLogger->info(sprintf(
                 'Failed to build URI for node "%s": %e',
-                $targetNode->nodeAggregateId->value,
+                $targetNode->aggregateId->value,
                 $e->getMessage()
             ), LogEnvironment::fromMethodName(__METHOD__));
             return null;

@@ -145,6 +145,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
+      | workspaceName                | "live"                   |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
@@ -171,6 +172,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                   |
+      | workspaceName                | "live"                  |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | affectedDimensionSpacePoints | [{}]                    |
@@ -186,6 +188,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event SubtreeWasUntagged was published with payload:
       | Key                          | Value                    |
+      | workspaceName                | "live"                   |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |

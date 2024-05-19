@@ -38,6 +38,7 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
@@ -49,6 +50,7 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     # Node /document/sub
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                        |
+      | workspaceName                 | "live"                                       |
       | contentStreamId       | "cs-identifier"                              |
       | nodeAggregateId       | "subdoc"                                     |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:SubDocument" |
@@ -126,6 +128,7 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
@@ -137,6 +140,7 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     # Node /document/sub
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                        |
+      | workspaceName                 | "live"                                       |
       | contentStreamId       | "cs-identifier"                              |
       | nodeAggregateId       | "subdoc"                                     |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:SubDocument" |

@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
-use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -37,6 +36,9 @@ final class NodeType
      * Name of this node type. Example: "ContentRepository:Folder"
      */
     public readonly NodeTypeName $name;
+
+    /** @phpstan-ignore-next-line */
+    public readonly TetheredNodeTypeDefinitions $tetheredNodeTypeDefinitions;
 
     /**
      * Configuration for this node type, can be an arbitrarily nested array. Does not include inherited configuration.
@@ -101,6 +103,23 @@ final class NodeType
         }
 
         $this->localConfiguration = $configuration;
+        /** lazy properties {@see __get()} */
+        /** @phpstan-ignore-next-line */
+        unset($this->tetheredNodeTypeDefinitions);
+    }
+
+    /**
+     * We unset the readonly properties in the constructor, so that this magic getter is invoked, which initializes the properties.
+     * {@see https://peakd.com/hive-168588/@crell/php-tricks-lazy-public-readonly-properties}
+     * This is a temporary hack until https://github.com/neos/neos-development-collection/pull/4999 is merged.
+     */
+    public function __get(string $key): mixed
+    {
+        if ($key === 'tetheredNodeTypeDefinitions') {
+            /** @phpstan-ignore-next-line */
+            return $this->tetheredNodeTypeDefinitions = $this->getTetheredNodeTypeDefinitions();
+        }
+        throw new \BadMethodCallException(sprintf('NodeType::%s does not exist.', $key), 1715710576);
     }
 
     /**
@@ -487,36 +506,19 @@ final class NodeType
         return $defaultValues;
     }
 
-    /**
-     * @return bool true if $nodeName is an autocreated child node, false otherwise
-     */
-    public function hasTetheredNode(NodeName $nodeName): bool
+    private function getTetheredNodeTypeDefinitions(): TetheredNodeTypeDefinitions
     {
-        $this->initialize();
-        foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
+        $childNodeConfiguration = $this->getConfiguration('childNodes') ?? [];
+        $tetheredNodeTypeDefinitions = [];
+        foreach ($childNodeConfiguration as $childNodeName => $configurationForChildNode) {
             if (isset($configurationForChildNode['type'])) {
-                if (NodeName::transliterateFromString($rawChildNodeName)->equals($nodeName)) {
-                    return true;
-                }
+                $tetheredNodeTypeDefinitions[] = new TetheredNodeTypeDefinition(
+                    NodeName::transliterateFromString($childNodeName),
+                    NodeTypeName::fromString($configurationForChildNode['type'])
+                );
             }
         }
-        return false;
-    }
-
-    /**
-     * @throws TetheredNodeNotConfigured if the requested tethred node is not configured. Check via {@see NodeType::hasTetheredNode()}.
-     */
-    public function getNodeTypeNameOfTetheredNode(NodeName $nodeName): NodeTypeName
-    {
-        $this->initialize();
-        foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
-            if (isset($configurationForChildNode['type'])) {
-                if (NodeName::transliterateFromString($rawChildNodeName)->equals($nodeName)) {
-                    return NodeTypeName::fromString($configurationForChildNode['type']);
-                }
-            }
-        }
-        throw new TetheredNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $nodeName->value, $this->name->value), 1694786811);
+        return TetheredNodeTypeDefinitions::fromArray($tetheredNodeTypeDefinitions);
     }
 
     /**

@@ -95,7 +95,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     protected function matchesPropertyNameFilter($element, $propertyNameFilter)
     {
         assert($element instanceof Node);
-        return $element->nodeName?->value === $propertyNameFilter;
+        return $element->name?->value === $propertyNameFilter;
     }
 
     /**
@@ -107,7 +107,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function matchesIdentifierFilter($element, $identifier)
     {
-        return (strtolower($element->nodeAggregateId->value) === strtolower($identifier));
+        return (strtolower($element->aggregateId->value) === strtolower($identifier));
     }
 
     /**
@@ -121,7 +121,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     {
         if ($propertyPath === '_identifier') {
             // TODO: deprecated (Neos <9 case)
-            return $element->nodeAggregateId->value;
+            return $element->aggregateId->value;
         } elseif ($propertyPath[0] === '_') {
             return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
         } else {

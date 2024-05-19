@@ -208,7 +208,7 @@ trait CRTestSuiteTrait
             $actualLevel = $flattenedSubtree[$i]->level;
             Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel);
             $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
-            $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
+            $actualNodeAggregateId = $flattenedSubtree[$i]->node->aggregateId;
             Assert::assertTrue(
                 $expectedNodeAggregateId->equals($actualNodeAggregateId),
                 'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId->value . '", actual: "' . $actualNodeAggregateId->value . '"'

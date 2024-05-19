@@ -144,7 +144,7 @@ trait BrowserTrait
         $this->currentNodeAddresses[$alias] = new NodeAddress(
             $this->currentContentStreamId,
             $this->currentDimensionSpacePoint,
-            $node->nodeAggregateId,
+            $node->aggregateId,
             $this->currentWorkspaceName,
         );
     }

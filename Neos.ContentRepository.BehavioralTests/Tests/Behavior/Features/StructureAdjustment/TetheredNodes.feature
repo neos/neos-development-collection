@@ -46,6 +46,7 @@ Feature: Tethered Nodes integrity violations
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-david-nodenborough"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
@@ -58,6 +59,7 @@ Feature: Tethered Nodes integrity violations
     # Node /document/tethered-node
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "nodewyn-tetherton"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Tethered" |
@@ -70,6 +72,7 @@ Feature: Tethered Nodes integrity violations
     # Node /document/tethered-node/tethered-leaf
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                         |
+      | workspaceName               | "live"                                        |
       | contentStreamId             | "cs-identifier"                               |
       | nodeAggregateId             | "nodimer-tetherton"                           |
       | nodeTypeName                | "Neos.ContentRepository.Testing:TetheredLeaf" |

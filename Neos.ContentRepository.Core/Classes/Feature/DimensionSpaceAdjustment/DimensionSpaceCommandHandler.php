@@ -79,6 +79,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             $streamName,
             Events::with(
                 new DimensionSpacePointWasMoved(
+                    $contentGraph->getWorkspaceName(),
                     $contentGraph->getContentStreamId(),
                     $command->source,
                     $command->target
@@ -108,6 +109,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             $streamName,
             Events::with(
                 new DimensionShineThroughWasAdded(
+                    $contentGraph->getWorkspaceName(),
                     $contentGraph->getContentStreamId(),
                     $command->source,
                     $command->target

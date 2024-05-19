@@ -47,6 +47,7 @@ Feature: Disable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"      |
     And the event NodeAggregateWasRemoved was published with payload:
       | Key                                  | Value              |
+      | workspaceName                        | "live"             |
       | contentStreamId              | "cs-identifier"    |
       | nodeAggregateId              | "nody-mc-nodeface" |
       | affectedOccupiedDimensionSpacePoints | [{}]               |

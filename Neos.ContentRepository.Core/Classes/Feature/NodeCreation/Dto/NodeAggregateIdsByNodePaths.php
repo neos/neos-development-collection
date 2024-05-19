@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregate
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
@@ -128,12 +129,16 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
         ?string $pathPrefix = null
     ): array {
         $nodeAggregateIds = [];
-        foreach ($nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeTypeManager->requireNodeType($nodeTypeName)) as $nodeName => $childNodeType) {
-            $path = $pathPrefix ? $pathPrefix . '/' . $nodeName : $nodeName;
+        $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType) {
+            throw new NodeTypeNotFound(sprintf('Cannot build NodeAggregateIdsByNodePaths because NodeType %s does not exist.', $nodeTypeName->value), 1715711379);
+        }
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $path = $pathPrefix ? $pathPrefix . '/' . $tetheredNodeTypeDefinition->name->value : $tetheredNodeTypeDefinition->name->value;
             $nodeAggregateIds[$path] = NodeAggregateId::create();
             $nodeAggregateIds = array_merge(
                 $nodeAggregateIds,
-                self::createNodeAggregateIdsForNodeType($childNodeType->name, $nodeTypeManager, $path)
+                self::createNodeAggregateIdsForNodeType($tetheredNodeTypeDefinition->nodeTypeName, $nodeTypeManager, $path)
             );
         }
 

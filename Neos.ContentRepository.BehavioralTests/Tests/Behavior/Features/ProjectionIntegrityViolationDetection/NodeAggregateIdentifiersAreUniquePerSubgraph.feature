@@ -28,6 +28,7 @@ Feature: Create two nodes with the same node aggregate identifier in the same su
   Scenario: Create two node variants in the same subgraph
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
@@ -38,6 +39,7 @@ Feature: Create two nodes with the same node aggregate identifier in the same su
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |

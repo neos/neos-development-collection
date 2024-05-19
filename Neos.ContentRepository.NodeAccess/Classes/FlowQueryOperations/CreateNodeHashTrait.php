@@ -20,7 +20,7 @@ trait CreateNodeHashTrait
             implode(
                 ':',
                 [
-                    $node->nodeAggregateId->value,
+                    $node->aggregateId->value,
                     $node->contentRepositoryId->value,
                     $node->workspaceName->value,
                     $node->dimensionSpacePoint->hash,

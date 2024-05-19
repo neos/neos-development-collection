@@ -164,8 +164,8 @@ final class EventNormalizer
         $eventInstance = $eventClassName::fromArray($eventDataAsArray);
         return match ($eventInstance::class) {
             // upcast disabled / enabled events to the corresponding SubtreeTag events
-            NodeAggregateWasDisabled::class => new SubtreeWasTagged($eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::disabled()),
-            NodeAggregateWasEnabled::class => new SubtreeWasUntagged($eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::disabled()),
+            NodeAggregateWasDisabled::class => new SubtreeWasTagged($eventInstance->workspaceName, $eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::disabled()),
+            NodeAggregateWasEnabled::class => new SubtreeWasUntagged($eventInstance->workspaceName, $eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::disabled()),
             default => $eventInstance,
         };
     }

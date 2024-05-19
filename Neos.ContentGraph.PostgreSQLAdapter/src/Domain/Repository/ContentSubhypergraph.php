@@ -533,7 +533,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         $currentNode = $startingNode;
         foreach ($path->getParts() as $edgeName) {
             // id exists here :)
-            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->aggregateId, $edgeName);
             if ($currentNode === null) {
                 return null;
             }

@@ -170,12 +170,12 @@ trait CRTestSuiteRuntimeVariables
         $this->rememberedNodeAggregateIds[$indexName] = $this->getCurrentSubgraph()->findNodeByPath(
             NodePath::fromString($childNodeName),
             NodeAggregateId::fromString($parentNodeAggregateId),
-        )->nodeAggregateId;
+        )->aggregateId;
     }
 
     protected function getCurrentNodeAggregateId(): NodeAggregateId
     {
         assert($this->currentNode instanceof Node);
-        return $this->currentNode->nodeAggregateId;
+        return $this->currentNode->aggregateId;
     }
 }

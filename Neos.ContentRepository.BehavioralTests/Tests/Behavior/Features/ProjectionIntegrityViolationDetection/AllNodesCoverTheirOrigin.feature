@@ -28,6 +28,7 @@ Feature: Run projection integrity violation detection to find nodes that do not 
   Scenario: Create a node not covering its origin
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
@@ -38,6 +39,7 @@ Feature: Run projection integrity violation detection to find nodes that do not 
       | nodeAggregateClassification   | "regular"                                 |
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
+      | workspaceName                 | "live"                                    |
       | contentStreamId       | "cs-identifier"                           |
       | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
