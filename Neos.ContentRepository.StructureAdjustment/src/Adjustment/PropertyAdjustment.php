@@ -116,8 +116,8 @@ class PropertyAdjustment
     ): EventsToPublish {
         $events = Events::with(
             new NodePropertiesWereSet(
-                $node->workspaceName,
-                $node->subgraphIdentity->contentStreamId,
+                $this->contentGraph->getWorkspaceName(),
+                $this->contentGraph->getContentStreamId(),
                 $node->aggregateId,
                 $node->originDimensionSpacePoint,
                 $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
@@ -126,7 +126,7 @@ class PropertyAdjustment
             )
         );
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($node->subgraphIdentity->contentStreamId);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($this->contentGraph->getContentStreamId());
         return new EventsToPublish(
             $streamName->getEventStreamName(),
             $events,
