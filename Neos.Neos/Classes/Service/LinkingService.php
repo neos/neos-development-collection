@@ -34,7 +34,6 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -87,12 +86,6 @@ class LinkingService
      * @var ResourceManager
      */
     protected $resourceManager;
-
-    /**
-     * @Flow\Inject
-     * @var NodeShortcutResolver
-     */
-    protected $nodeShortcutResolver;
 
     /**
      * @Flow\Inject
