@@ -998,7 +998,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                     succeedingnodeaggregateid,
                     shortcuttarget,
                     nodetypename,
-                    isplaceholder
+                    isplaceholder,
                 FROM
                     ' . $this->tableNamePrefix . '_uri
                 WHERE
