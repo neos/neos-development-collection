@@ -439,17 +439,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $result;
     }
 
-    /**
-     * @return array<string,mixed>
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'workspaceName' => $this->workspaceName,
-            'dimensionSpacePoint' => $this->dimensionSpacePoint,
-        ];
-    }
-
     /** ------------------------------------------- */
 
     private function findNodeByPathFromStartingNode(NodePath $path, Node $startingNode): ?Node

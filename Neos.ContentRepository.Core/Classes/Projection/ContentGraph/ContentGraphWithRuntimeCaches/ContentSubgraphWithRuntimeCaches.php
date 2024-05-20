@@ -264,12 +264,4 @@ final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraph
     {
         return array_filter(get_object_vars($filter), static fn ($value) => $value !== null) === [];
     }
-
-    /**
-     * @return array<string,mixed>
-     */
-    public function jsonSerialize(): array
-    {
-        return $this->wrappedContentSubgraph->jsonSerialize();
-    }
 }
