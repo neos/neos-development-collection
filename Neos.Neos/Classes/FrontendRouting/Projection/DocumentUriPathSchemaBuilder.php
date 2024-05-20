@@ -43,7 +43,8 @@ class DocumentUriPathSchemaBuilder
             DbalSchemaFactory::columnForNodeAggregateId('precedingnodeaggregateid')->setNotNull(false),
             DbalSchemaFactory::columnForNodeAggregateId('succeedingnodeaggregateid')->setNotNull(false),
             (new Column('shortcuttarget', Type::getType(Types::STRING)))->setLength(1000)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
-            DbalSchemaFactory::columnForNodeTypeName('nodetypename')
+            DbalSchemaFactory::columnForNodeTypeName('nodetypename'),
+            (new Column('isplaceholder', Type::getType(Types::INTEGER)))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
         ]);
 
         return $table
