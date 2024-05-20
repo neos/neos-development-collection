@@ -33,40 +33,38 @@ trait NodeMove
      */
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
-        $this->transactional(function () use ($event) {
-            foreach ($event->succeedingSiblingsForCoverage as $succeedingSiblingForCoverage) {
-                $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeInAggregate(
+        foreach ($event->succeedingSiblingsForCoverage as $succeedingSiblingForCoverage) {
+            $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeInAggregate(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
+                $succeedingSiblingForCoverage->dimensionSpacePoint
+            );
+
+            if (is_null($nodeToBeMoved)) {
+                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+            }
+
+            if ($event->newParentNodeAggregateId) {
+                $this->moveNodeBeneathParent(
                     $event->contentStreamId,
-                    $event->nodeAggregateId,
+                    $nodeToBeMoved,
+                    $event->newParentNodeAggregateId,
+                    $succeedingSiblingForCoverage
+                );
+                $this->moveSubtreeTags(
+                    $event->contentStreamId,
+                    $event->newParentNodeAggregateId,
                     $succeedingSiblingForCoverage->dimensionSpacePoint
                 );
-
-                if (is_null($nodeToBeMoved)) {
-                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
-                }
-
-                if ($event->newParentNodeAggregateId) {
-                    $this->moveNodeBeneathParent(
-                        $event->contentStreamId,
-                        $nodeToBeMoved,
-                        $event->newParentNodeAggregateId,
-                        $succeedingSiblingForCoverage
-                    );
-                    $this->moveSubtreeTags(
-                        $event->contentStreamId,
-                        $event->newParentNodeAggregateId,
-                        $succeedingSiblingForCoverage->dimensionSpacePoint
-                    );
-                } else {
-                    $this->moveNodeBeforeSucceedingSibling(
-                        $event->contentStreamId,
-                        $nodeToBeMoved,
-                        $succeedingSiblingForCoverage,
-                    );
-                    // subtree tags stay the same if the parent doesn't change
-                }
+            } else {
+                $this->moveNodeBeforeSucceedingSibling(
+                    $event->contentStreamId,
+                    $nodeToBeMoved,
+                    $succeedingSiblingForCoverage,
+                );
+                // subtree tags stay the same if the parent doesn't change
             }
-        });
+        }
     }
 
     /**
@@ -223,6 +221,4 @@ trait NodeMove
 
 
     abstract protected function getDatabaseConnection(): Connection;
-
-    abstract protected function transactional(\Closure $operations): void;
 }
