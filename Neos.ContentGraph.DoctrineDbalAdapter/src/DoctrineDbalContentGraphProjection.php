@@ -511,7 +511,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         usort(
             $hierarchyRelations,
             fn (HierarchyRelation $relationA, HierarchyRelation $relationB): int
-            => $relationA->position <=> $relationB->position
+                => $relationA->position <=> $relationB->position
         );
 
         foreach ($hierarchyRelations as $relation) {
