@@ -47,7 +47,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api
  */
-interface ContentSubgraphInterface extends \JsonSerializable
+interface ContentSubgraphInterface
 {
     public function getContentRepositoryId(): ContentRepositoryId;
 
@@ -203,10 +203,4 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @internal this method might change without further notice.
      */
     public function countNodes(): int;
-
-    /**
-     * @deprecated will be removed before Neos 9 release
-     * @return array<string,mixed>
-     */
-    public function jsonSerialize(): array;
 }
