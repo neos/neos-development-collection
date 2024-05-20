@@ -983,7 +983,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                     succeedingnodeaggregateid,
                     shortcuttarget,
                     nodetypename,
-                    isplaceholder
+                    isplaceholder,
                 )
                 SELECT
                     nodeaggregateid,
