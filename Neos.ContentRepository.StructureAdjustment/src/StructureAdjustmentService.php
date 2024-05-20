@@ -12,10 +12,10 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\DimensionAdjustment;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\DisallowedChildNodeAdjustment;
-use Neos\ContentRepository\StructureAdjustment\Adjustment\ProjectedNodeIterator;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\PropertyAdjustment;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\TetheredNodeAdjustments;
@@ -29,38 +29,45 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
     protected PropertyAdjustment $propertyAdjustment;
     protected DimensionAdjustment $dimensionAdjustment;
 
+    /**
+     * Content graph bound to the live workspace to iterate over the "real" Nodes; that is, the nodes,
+     * which have an entry in the Graph Projection's "node" table.
+     *
+     * @var ContentGraphInterface
+     */
+    private readonly ContentGraphInterface $liveContentGraph;
+
     public function __construct(
-        private readonly ContentRepository $contentRepository,
+        ContentRepository $contentRepository,
         private readonly EventPersister $eventPersister,
         NodeTypeManager $nodeTypeManager,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
         PropertyConverter $propertyConverter,
     ) {
-        $projectedNodeIterator = new ProjectedNodeIterator(
-            $contentRepository->getContentGraph(WorkspaceName::forLive()),
-        );
+
+        $this->liveContentGraph = $contentRepository->getContentGraph(WorkspaceName::forLive());
 
         $this->tetheredNodeAdjustments = new TetheredNodeAdjustments(
-            $projectedNodeIterator,
+            $this->liveContentGraph,
             $nodeTypeManager,
             $interDimensionalVariationGraph,
             $propertyConverter
         );
 
         $this->unknownNodeTypeAdjustment = new UnknownNodeTypeAdjustment(
-            $projectedNodeIterator,
+            $this->liveContentGraph,
             $nodeTypeManager
         );
         $this->disallowedChildNodeAdjustment = new DisallowedChildNodeAdjustment(
-            $projectedNodeIterator,
+            $this->liveContentGraph,
             $nodeTypeManager
         );
         $this->propertyAdjustment = new PropertyAdjustment(
-            $projectedNodeIterator,
+            $this->liveContentGraph,
             $nodeTypeManager
         );
         $this->dimensionAdjustment = new DimensionAdjustment(
-            $projectedNodeIterator,
+            $this->liveContentGraph,
             $interDimensionalVariationGraph,
             $nodeTypeManager
         );
@@ -71,7 +78,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
      */
     public function findAllAdjustments(): \Generator
     {
-        foreach ($this->contentRepository->getContentGraph(WorkspaceName::forLive())->findUsedNodeTypeNames() as $nodeTypeName) {
+        foreach ($this->liveContentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
             yield from $this->findAdjustmentsForNodeType($nodeTypeName);
         }
     }
