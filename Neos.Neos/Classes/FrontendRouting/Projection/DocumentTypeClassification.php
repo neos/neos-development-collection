@@ -62,5 +62,4 @@ enum DocumentTypeClassification: string
 
         return self::CLASSIFICATION_NONE;
     }
-
 }
