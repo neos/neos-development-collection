@@ -6,10 +6,10 @@ namespace Neos\ContentRepositoryRegistry\Command;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\Core\Service\ProjectionServiceFactory;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Cli\CommandController;
@@ -22,7 +22,7 @@ final class CrCommandController extends CommandController
 
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly ProjectionReplayServiceFactory $projectionServiceFactory,
+        private readonly ProjectionServiceFactory $projectionServiceFactory,
     ) {
         parent::__construct();
     }
@@ -92,6 +92,7 @@ final class CrCommandController extends CommandController
                 ProjectionStatusType::OK => '<success>OK</success>',
                 ProjectionStatusType::SETUP_REQUIRED => '<comment>Setup required!</comment>',
                 ProjectionStatusType::REPLAY_REQUIRED => '<comment>Replay required!</comment>',
+                ProjectionStatusType::CATCHUP_REQUIRED => '<comment>Catchup required!</comment>',
                 ProjectionStatusType::ERROR => '<error>ERROR</error>',
             });
             if ($verbose && ($projectionStatus->type !== ProjectionStatusType::OK || $projectionStatus->details)) {
@@ -105,6 +106,74 @@ final class CrCommandController extends CommandController
         if (!$status->isOk()) {
             $this->quit(1);
         }
+    }
+
+    /**
+     * Applies events to specified projection of a Content Repository that it hasn't processed yet
+     *
+     * @param string $projection Full Qualified Class Name or alias of the projection to replay (e.g. "contentStream")
+     * @param string $contentRepository Identifier of the Content Repository instance to operate on
+     * @param int $until Until which sequence number should projections be caught up to? useful for debugging
+     */
+    public function projectionCatchUpCommand(string $projection, string $contentRepository = 'default', int $until = 0): void
+    {
+        $progressBar = new ProgressBar($this->output->getOutput());
+        $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:16s%/%estimated:-16s% %memory:6s%');
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
+
+        $options = CatchUpOptions::create();
+        $progressBar->start(max($until > 0 ? $until : $projectionService->highestSequenceNumber()->value, 1));
+        $options->with(progressCallback: fn () => $progressBar->advance());
+        if ($until > 0) {
+            $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));
+        }
+        $projectionService->catchUpProjection($projection, $options);
+        $progressBar->finish();
+        $this->outputLine();
+        $this->outputLine('<success>Done.</success>');
+    }
+
+    /**
+     * Applies un-applied events to all projections of the specified Content Repository by performing a catchup
+     *
+     * @param string $contentRepository Identifier of the Content Repository instance to operate on
+     * @param int $until Until which sequence number should projections be caught up to? useful for debugging
+     */
+    public function projectionCatchUpAllCommand(string $contentRepository = 'default', int $until = 0): void
+    {
+        $mainSection = ($this->output->getOutput() instanceof ConsoleOutput) ? $this->output->getOutput()->section() : $this->output->getOutput();
+        $mainProgressBar = new ProgressBar($mainSection);
+        $mainProgressBar->setBarCharacter('<success>█</success>');
+        $mainProgressBar->setEmptyBarCharacter('░');
+        $mainProgressBar->setProgressCharacter('<success>█</success>');
+        $mainProgressBar->setFormat('debug');
+
+        $subSection = ($this->output->getOutput() instanceof ConsoleOutput) ? $this->output->getOutput()->section() : $this->output->getOutput();
+        $progressBar = new ProgressBar($subSection);
+        $progressBar->setFormat(' %message% - %current%/%max% [%bar%] %percent:3s%% %elapsed:16s%/%estimated:-16s% %memory:6s%');
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
+        $this->outputLine('Replaying events for all projections of Content Repository "%s" ...', [$contentRepositoryId->value]);
+        $options = CatchUpOptions::create();
+        $options = $options->with(progressCallback: fn () => $progressBar->advance());
+        if ($until > 0) {
+            $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));
+        }
+        $highestSequenceNumber = max($until > 0 ? $until : $projectionService->highestSequenceNumber()->value, 1);
+        $mainProgressBar->start($projectionService->numberOfProjections());
+        $mainProgressCallback = static function (string $projectionAlias) use ($mainProgressBar, $progressBar, $highestSequenceNumber) {
+                $mainProgressBar->advance();
+                $progressBar->setMessage($projectionAlias);
+                $progressBar->start($highestSequenceNumber);
+                $progressBar->setProgress(0);
+            };
+        $projectionService->replayAllProjections($options, $mainProgressCallback);
+        $mainProgressBar->finish();
+        $progressBar->finish();
+        $this->outputLine('<success>Done.</success>');
     }
 
     /**

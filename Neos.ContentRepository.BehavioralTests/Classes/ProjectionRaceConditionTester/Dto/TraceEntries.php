@@ -19,7 +19,7 @@ namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\D
 /**
  * Value object for a list of {@see TraceEntry} objects, as stored in-order in the Redis stream
  *
- * For full docs and context, see {@see RaceTrackerCatchUpHook}
+ * For full docs and context, see {@see RaceTrackerContentRepositoryHook}
  *
  * @internal
  * @implements \ArrayAccess<int,TraceEntry>

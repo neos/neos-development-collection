@@ -21,7 +21,7 @@ use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\Tra
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 
 /**
- * For full docs and context, see {@see RaceTrackerCatchUpHook}
+ * For full docs and context, see {@see RaceTrackerContentRepositoryHook}
  *
  * @internal
  */

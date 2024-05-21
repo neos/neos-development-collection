@@ -13,18 +13,18 @@ namespace Neos\Neos\Fusion\Cache;
  */
 
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryHookFactoryInterface;
 
-class GraphProjectorCatchUpHookForCacheFlushingFactory implements CatchUpHookFactoryInterface
+class ContentRepositoryHookForCacheFlushingFactory implements ContentRepositoryHookFactoryInterface
 {
     public function __construct(
         private readonly ContentCacheFlusher $contentCacheFlusher
     ) {
     }
 
-    public function build(ContentRepository $contentRepository): GraphProjectorCatchUpHookForCacheFlushing
+    public function build(ContentRepository $contentRepository, array $options): ContentRepositoryHookForCacheFlushing
     {
-        return new GraphProjectorCatchUpHookForCacheFlushing(
+        return new ContentRepositoryHookForCacheFlushing(
             $contentRepository,
             $this->contentCacheFlusher
         );

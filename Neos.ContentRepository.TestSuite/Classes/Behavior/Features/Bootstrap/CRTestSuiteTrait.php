@@ -28,6 +28,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\Core\Service\ProjectionService;
+use Neos\ContentRepository\Core\Service\ProjectionServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -303,8 +305,9 @@ trait CRTestSuiteTrait
      */
     public function iReplayTheProjection(string $projectionName): void
     {
-        $this->currentContentRepository->resetProjectionState($projectionName);
-        $this->currentContentRepository->catchUpProjection($projectionName, CatchUpOptions::create());
+        /** @var ProjectionService $projectionService */
+        $projectionService = $this->contentRepositoryRegistry->buildService($this->currentContentRepository->id, $this->getObject(ProjectionServiceFactory::class));
+        $projectionService->replayProjection($projectionName, CatchUpOptions::create());
     }
 
     protected function deserializeProperties(array $properties): PropertyValuesToWrite

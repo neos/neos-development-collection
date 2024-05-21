@@ -28,11 +28,13 @@ use Neos\ContentRepository\Core\Feature\NodeDuplication\NodeDuplicationCommandHa
 use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
+use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\Store\SemaphoreStore;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -43,7 +45,12 @@ use Symfony\Component\Serializer\Serializer;
 final class ContentRepositoryFactory
 {
     private ProjectionFactoryDependencies $projectionFactoryDependencies;
-    private ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks;
+    private Projections $projections;
+
+    // The following properties store "singleton" references of objects for this content repository
+    private ?ContentRepository $contentRepository = null;
+    private ?CommandBus $commandBus = null;
+    private ?EventPersister $eventPersister = null;
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
@@ -51,7 +58,8 @@ final class ContentRepositoryFactory
         NodeTypeManager $nodeTypeManager,
         ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
-        ProjectionsAndCatchUpHooksFactory $projectionsAndCatchUpHooksFactory,
+        ProjectionsFactory $projectionsFactory,
+        private readonly ContentRepositoryHooksFactory $hooksFactory,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
     ) {
@@ -70,13 +78,8 @@ final class ContentRepositoryFactory
             $interDimensionalVariationGraph,
             new PropertyConverter($propertySerializer)
         );
-        $this->projectionsAndCatchUpHooks = $projectionsAndCatchUpHooksFactory->build($this->projectionFactoryDependencies);
+        $this->projections = $projectionsFactory->build($this->projectionFactoryDependencies);
     }
-
-    // The following properties store "singleton" references of objects for this content repository
-    private ?ContentRepository $contentRepository = null;
-    private ?CommandBus $commandBus = null;
-    private ?EventPersister $eventPersister = null;
 
     /**
      * Builds and returns the content repository. If it is already built, returns the same instance.
@@ -91,8 +94,7 @@ final class ContentRepositoryFactory
                 $this->contentRepositoryId,
                 $this->buildCommandBus(),
                 $this->projectionFactoryDependencies->eventStore,
-                $this->projectionsAndCatchUpHooks,
-                $this->projectionFactoryDependencies->eventNormalizer,
+                $this->projections,
                 $this->buildEventPersister(),
                 $this->projectionFactoryDependencies->nodeTypeManager,
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
@@ -123,7 +125,7 @@ final class ContentRepositoryFactory
             $this->projectionFactoryDependencies,
             $this->getOrBuild(),
             $this->buildEventPersister(),
-            $this->projectionsAndCatchUpHooks->projections,
+            $this->projections,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }
@@ -165,7 +167,9 @@ final class ContentRepositoryFactory
             $this->eventPersister = new EventPersister(
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projectionFactoryDependencies->eventNormalizer,
-                $this->projectionsAndCatchUpHooks->projections,
+                $this->projections,
+                $this->hooksFactory,
+                new LockFactory(new SemaphoreStore()), // TODO make configurable
             );
         }
         return $this->eventPersister;

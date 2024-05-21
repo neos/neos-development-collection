@@ -7,14 +7,16 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryHooksFactory;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Factory\ProjectionsAndCatchUpHooksFactory;
+use Neos\ContentRepository\Core\Factory\ProjectionsFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryHookFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryHooks;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
@@ -128,7 +130,8 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
-    private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory {
+    private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory
+    {
         if (!is_array($this->settings['contentRepositories'] ?? null)) {
             throw InvalidConfigurationException::fromMessage('No Content Repositories are configured');
         }
@@ -154,6 +157,7 @@ final class ContentRepositoryRegistry
                 $this->buildContentDimensionSource($contentRepositoryId, $contentRepositorySettings),
                 $this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionsFactory($contentRepositoryId, $contentRepositorySettings),
+                $this->buildHooksFactory($contentRepositoryId, $contentRepositorySettings),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
                 $clock
             );
@@ -220,10 +224,10 @@ final class ContentRepositoryRegistry
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */
-    private function buildProjectionsFactory(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ProjectionsAndCatchUpHooksFactory
+    private function buildProjectionsFactory(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ProjectionsFactory
     {
         (isset($contentRepositorySettings['projections']) && is_array($contentRepositorySettings['projections'])) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have projections configured, or the value is no array.', $contentRepositoryId->value);
-        $projectionsFactory = new ProjectionsAndCatchUpHooksFactory();
+        $projectionsFactory = new ProjectionsFactory();
         foreach ($contentRepositorySettings['projections'] as $projectionName => $projectionOptions) {
             if ($projectionOptions === null) {
                 continue;
@@ -233,18 +237,24 @@ final class ContentRepositoryRegistry
                 throw InvalidConfigurationException::fromMessage('Projection factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s.', $projectionName, $contentRepositoryId->value, ProjectionFactoryInterface::class, get_debug_type($projectionFactory));
             }
             $projectionsFactory->registerFactory($projectionFactory, $projectionOptions['options'] ?? []);
-            foreach (($projectionOptions['catchUpHooks'] ?? []) as $catchUpHookOptions) {
-                if ($catchUpHookOptions === null) {
-                    continue;
-                }
-                $catchUpHookFactory = $this->objectManager->get($catchUpHookOptions['factoryObjectName']);
-                if (!$catchUpHookFactory instanceof CatchUpHookFactoryInterface) {
-                    throw InvalidConfigurationException::fromMessage('CatchUpHook factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s', $projectionName, $contentRepositoryId->value, CatchUpHookFactoryInterface::class, get_debug_type($catchUpHookFactory));
-                }
-                $projectionsFactory->registerCatchUpHookFactory($projectionFactory, $catchUpHookFactory);
-            }
         }
         return $projectionsFactory;
+    }
+
+    /** @param array<string, mixed> $contentRepositorySettings */
+    private function buildHooksFactory(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ContentRepositoryHooksFactory
+    {
+        (isset($contentRepositorySettings['hooks']) && is_array($contentRepositorySettings['hooks'])) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have hooks configured, or the value is no array.', $contentRepositoryId->value);
+        $hooksFactory = new ContentRepositoryHooksFactory();
+        foreach (($contentRepositorySettings['hooks']) as $hookOptions) {
+            if ($hookOptions === null) {
+                continue;
+            }
+            $hookFactory = $this->objectManager->get($hookOptions['factoryObjectName']);
+            $hookFactory instanceof ContentRepositoryHookFactoryInterface || throw InvalidConfigurationException::fromMessage('ContentRepositoryHook factory object name for content repository "%s" is not an instance of %s but %s', $contentRepositoryId->value, ContentRepositoryHookFactoryInterface::class, get_debug_type($hookFactory));
+            $hooksFactory->registerFactory($hookFactory, $hookOptions['options'] ?? []);
+        }
+        return $hooksFactory;
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */

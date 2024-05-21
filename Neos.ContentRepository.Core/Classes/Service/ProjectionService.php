@@ -1,38 +1,58 @@
 <?php
+
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\Service;
+namespace Neos\ContentRepository\Core\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
+use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 
 /**
- * Content Repository service to perform Projection replays
- *
- * @internal this is currently only used by the {@see CrCommandController}
+ * @api
  */
-final class ProjectionReplayService implements ContentRepositoryServiceInterface
+class ProjectionService implements ContentRepositoryServiceInterface
 {
-
     public function __construct(
         private readonly Projections $projections,
-        private readonly ContentRepository $contentRepository,
         private readonly EventStoreInterface $eventStore,
+        private readonly EventNormalizer $eventNormalizer,
     ) {
+    }
+
+    public function catchUpProjection(string $projectionAliasOrClassName, CatchUpOptions $options): void
+    {
+        $projection = $this->resolveProjection($projectionAliasOrClassName);
+        $this->catchUpProjectionInternal($projection, $options);
+    }
+
+    public function catchUpAllProjections(CatchUpOptions $options, ?\Closure $progressCallback = null): void
+    {
+        foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
+            if ($progressCallback) {
+                $progressCallback($classNamesAndAlias['alias']);
+            }
+            $projection = $this->projections->get($classNamesAndAlias['className']);
+            $this->catchUpProjectionInternal($projection, $options);
+        }
     }
 
     public function replayProjection(string $projectionAliasOrClassName, CatchUpOptions $options): void
     {
-        $projectionClassName = $this->resolveProjectionClassName($projectionAliasOrClassName);
-        $this->contentRepository->resetProjectionState($projectionClassName);
-        $this->contentRepository->catchUpProjection($projectionClassName, $options);
+        $projection = $this->resolveProjection($projectionAliasOrClassName);
+        $projection->reset();
+        $this->catchUpProjectionInternal($projection, $options);
     }
 
     public function replayAllProjections(CatchUpOptions $options, ?\Closure $progressCallback = null): void
@@ -41,20 +61,20 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
             if ($progressCallback) {
                 $progressCallback($classNamesAndAlias['alias']);
             }
-            $this->contentRepository->resetProjectionState($classNamesAndAlias['className']);
-            $this->contentRepository->catchUpProjection($classNamesAndAlias['className'], $options);
+            $projection = $this->projections->get($classNamesAndAlias['className']);
+            $projection->reset();
+            $this->catchUpProjectionInternal($projection, $options);
         }
     }
 
     public function resetAllProjections(): void
     {
-        foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
-            $this->contentRepository->resetProjectionState($classNamesAndAlias['className']);
-        }
+        $this->projections->resetAll();
     }
 
     public function highestSequenceNumber(): SequenceNumber
     {
+        /** @noinspection LoopWhichDoesNotLoopInspection */
         foreach ($this->eventStore->load(VirtualStreamName::all())->backwards()->limit(1) as $eventEnvelope) {
             return $eventEnvelope->sequenceNumber;
         }
@@ -67,15 +87,15 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
     }
 
     /**
-     * @return class-string<ProjectionInterface<ProjectionStateInterface>>
+     * @return ProjectionInterface<ProjectionStateInterface>
      */
-    private function resolveProjectionClassName(string $projectionAliasOrClassName): string
+    private function resolveProjection(string $projectionAliasOrClassName): ProjectionInterface
     {
         $lowerCaseProjectionName = strtolower($projectionAliasOrClassName);
         $projectionClassNamesAndAliases = $this->projectionClassNamesAndAliases();
         foreach ($projectionClassNamesAndAliases as $classNamesAndAlias) {
             if (strtolower($classNamesAndAlias['className']) === $lowerCaseProjectionName || strtolower($classNamesAndAlias['alias']) === $lowerCaseProjectionName) {
-                return $classNamesAndAlias['className'];
+                return $this->projections->get($classNamesAndAlias['className']);
             }
         }
         throw new \InvalidArgumentException(sprintf(
@@ -97,6 +117,27 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
             ],
             $this->projections->getClassNames()
         );
+    }
+
+    /**
+     * NOTE: This will NOT trigger hooks!
+     *
+     * @param ProjectionInterface<ProjectionStateInterface> $projection
+     */
+    private function catchUpProjectionInternal(ProjectionInterface $projection, CatchUpOptions $options): void
+    {
+        $streamName = VirtualStreamName::all();
+        $eventStream = $this->eventStore->load($streamName);
+        if ($options->maximumSequenceNumber !== null) {
+            $eventStream = $eventStream->withMaximumSequenceNumber($options->maximumSequenceNumber);
+        }
+        foreach ($eventStream as $eventEnvelope) {
+            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+            if ($options->progressCallback !== null) {
+                ($options->progressCallback)($event, $eventEnvelope);
+            }
+            $projection->apply($event, $eventEnvelope);
+        }
     }
 
     private static function projectionAlias(string $className): string

@@ -17,6 +17,8 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Service\ProjectionService;
+use Neos\ContentRepository\Core\Service\ProjectionServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
@@ -66,7 +68,9 @@ trait CRRegistrySubjectProvider
             $contentRepository->setUp();
             self::$alreadySetUpContentRepositories[] = $contentRepository->id;
         }
-        $contentRepository->resetProjectionStates();
+        /** @var ProjectionService $projectionService */
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepository->id, $this->getObject(ProjectionServiceFactory::class));
+        $projectionService->resetAllProjections();
     }
 
     /**

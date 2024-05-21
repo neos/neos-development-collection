@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection;
 
 use Closure;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Service\ProjectionService;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
- * Options for {@see ContentRepository::catchUpProjection()}
+ * Options for {@see ProjectionService::catchUpProjection()}
  *
  * @api *NOTE:** The signature of the {@see create()} and {@see with()} methods might be extended in the future, so they should only ever be used with named arguments
  */

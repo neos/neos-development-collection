@@ -13,7 +13,7 @@
 #     FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:analyzeTrace
 # docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml down -v
 #
-# For details on how the race condition tracker works, see RaceTrackerCatchUpHook.php
+# For details on how the race condition tracker works, see RaceTrackerContentRepositoryHook.php
 #
 # Note: the context of this dockerfile is the ROOT directory of the Flow Distribution (FLOW_PATH_ROOT)
 version: '3.5'
@@ -66,7 +66,7 @@ services:
       - 15432:5432
 
   # for running race-condition tests, we use Redis as a single-threaded time store.
-  # For details on how this works, see RaceTrackerCatchUpHook.php
+  # For details on how this works, see RaceTrackerContentRepositoryHook.php
   redis:
     image: redis:7.0.4
     ports:

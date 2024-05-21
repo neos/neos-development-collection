@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto;
 
 /**
- * For full docs and context, see {@see RaceTrackerCatchUpHook}
+ * For full docs and context, see {@see RaceTrackerContentRepositoryHook}
  *
  * @internal
  */

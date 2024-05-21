@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntries;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryHookInterface;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Annotations as Flow;
 
@@ -68,7 +68,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * ## Implementation Idea: Race Detector with Redis
  *
- * We implement a custom CatchUpHook (this class {@see RaceTrackerCatchUpHook}) which is notified during
+ * We implement a custom ContentRepositoryHook (this class {@see RaceTrackerContentRepositoryHook}) which is notified during
  * the projection run.
  *
  * When {@see onBeforeEvent} is called, we know that we are inside applyEvent() in the diagram above,
@@ -98,7 +98,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @internal
  */
-final class RaceTrackerCatchUpHook implements CatchUpHookInterface
+final class RaceTrackerContentRepositoryHook implements ContentRepositoryHookInterface
 {
     /**
      * @Flow\InjectConfiguration("raceConditionTracker")
@@ -107,12 +107,12 @@ final class RaceTrackerCatchUpHook implements CatchUpHookInterface
     protected $configuration;
     private bool $inCriticalSection = false;
 
-    public function onBeforeCatchUp(): void
+    public function onBeforeEvents(): void
     {
         RedisInterleavingLogger::connect($this->configuration['redis']['host'], $this->configuration['redis']['port']);
     }
 
-    public function onBeforeEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
+    public function onBeforeEvent(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         $this->inCriticalSection = true;
         RedisInterleavingLogger::trace(TraceEntryType::InCriticalSection, [
@@ -122,20 +122,16 @@ final class RaceTrackerCatchUpHook implements CatchUpHookInterface
         ]);
     }
 
-    public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
+    public function onAfterEvent(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
     }
 
-    public function onBeforeBatchCompleted(): void
+    public function onAfterEvents(): void
     {
         // we only want to track relevant lock release calls (i.e. if we were in the event processing loop before)
         if ($this->inCriticalSection) {
             $this->inCriticalSection = false;
             RedisInterleavingLogger::trace(TraceEntryType::LockWillBeReleasedIfItWasAcquiredBefore);
         }
-    }
-
-    public function onAfterCatchUp(): void
-    {
     }
 }

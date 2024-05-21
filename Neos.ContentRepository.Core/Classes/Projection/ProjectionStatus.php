@@ -45,6 +45,14 @@ final readonly class ProjectionStatus
     /**
      * @param non-empty-string $details
      */
+    public static function catchupRequired(string $details): self
+    {
+        return new self(ProjectionStatusType::CATCHUP_REQUIRED, $details);
+    }
+
+    /**
+     * @param non-empty-string $details
+     */
     public function withDetails(string $details): self
     {
         return new self($this->type, $details);

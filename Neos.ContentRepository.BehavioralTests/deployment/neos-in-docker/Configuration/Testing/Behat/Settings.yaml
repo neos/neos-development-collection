@@ -25,14 +25,12 @@ Neos:
           password: 'db'
           charset: 'UTF8'
 
-    # We enable the race condition tracker. For details on how this works, see RaceTrackerCatchUpHook.php
+    # We enable the race condition tracker. For details on how this works, see RaceTrackerContentRepositoryHook.php
     presets:
       'default':
-        projections:
-          'Neos.ContentRepository:ContentGraph':
-            catchUpHooks:
-              'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
-                factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+        hooks:
+          'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+            factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerContentRepositoryHookFactory
   ContentRepository:
     BehavioralTests:
       raceConditionTracker:
