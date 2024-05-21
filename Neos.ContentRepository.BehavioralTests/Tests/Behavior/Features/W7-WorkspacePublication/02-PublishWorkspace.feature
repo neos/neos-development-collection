@@ -134,8 +134,8 @@ Feature: Workspace based content publishing
 
     # REBASING + Publishing: works now (TODO soft constraint check for old value)
     When the command RebaseWorkspace is executed with payload:
-      | Key                    | Value          |
-      | workspaceName          | "user-test"    |
+      | Key                    | Value           |
+      | workspaceName          | "user-test"     |
       | rebasedContentStreamId | "rebased-cs-id" |
 
     And the command PublishWorkspace is executed with payload:

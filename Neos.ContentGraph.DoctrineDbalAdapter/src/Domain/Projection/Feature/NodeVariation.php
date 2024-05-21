@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -351,7 +352,6 @@ trait NodeVariation
                 $peerNode->relationAnchorPoint,
                 new DimensionSpacePointSet([$coveredDimensionSpacePoint]),
                 $peerSucceedingSiblingNode?->relationAnchorPoint,
-
             );
         }
 

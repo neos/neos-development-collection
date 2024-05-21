@@ -281,9 +281,10 @@ class NodeViewHelper extends AbstractViewHelper
             $siteNode = $subgraph->findClosestNode($documentNodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
-                    'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
+                    'Failed to determine site node for aggregate node "%s" in workspace "%s" and dimension %s',
                     $documentNodeAddress->nodeAggregateId->value,
-                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                    $subgraph->getWorkspaceName()->value,
+                    $subgraph->getDimensionSpacePoint()->toJson()
                 ), 1601366598);
             }
             if ($path === '~') {
@@ -302,10 +303,11 @@ class NodeViewHelper extends AbstractViewHelper
         }
         if ($targetNode === null) {
             $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
-                'Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"',
+                'Node on path "%s" could not be found for aggregate node "%s" in workspace "%s" and dimension %s',
                 $path,
                 $documentNodeAddress->nodeAggregateId->value,
-                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                $subgraph->getWorkspaceName()->value,
+                $subgraph->getDimensionSpacePoint()->toJson()
             ), 1601311789));
             return null;
         }

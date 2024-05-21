@@ -77,19 +77,19 @@ Feature: Publishing individual nodes (basics)
     # modify nodes in user WS
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                    |
-      | workspaceName      | "user-test"          |
+      | workspaceName             | "user-test"              |
       | nodeAggregateId           | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {}                       |
       | propertyValues            | {"text": "Modified t1"}  |
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                   |
-      | workspaceName      | "user-test"          |
+      | workspaceName             | "user-test"             |
       | nodeAggregateId           | "nody-mc-nodeface"      |
       | originDimensionSpacePoint | {}                      |
       | propertyValues            | {"text": "Modified t2"} |
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | workspaceName      | "user-test"          |
+      | workspaceName             | "user-test"                  |
       | nodeAggregateId           | "sir-nodeward-nodington-iii" |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"image": "Modified image"}  |
@@ -100,11 +100,11 @@ Feature: Publishing individual nodes (basics)
   Scenario: It is possible to publish a single node; and only this one is live.
     # publish "sir-nodeward-nodington-iii" only
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                             | Value                                                                                                                   |
-      | workspaceName                   | "user-test"                                                                                                             |
+      | Key                             | Value                                                                                                        |
+      | workspaceName                   | "user-test"                                                                                                  |
       | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                          |
-      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                          |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                               |
+      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
@@ -171,10 +171,10 @@ Feature: Publishing individual nodes (basics)
 
   Scenario: It is possible to publish all nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                             | Value                                                                                                                                                                                                                                                                                                                                                   |
-      | workspaceName                   | "user-test"                                                                                                                                                                                                                                                                                                                                             |
+      | Key                             | Value                                                                                                                                                                                                                                                                                                                  |
+      | workspaceName                   | "user-test"                                                                                                                                                                                                                                                                                                            |
       | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}, {"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}, {"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                                                                                                                                                                                                                                                          |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                                                                                                                                                                                                                         |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}

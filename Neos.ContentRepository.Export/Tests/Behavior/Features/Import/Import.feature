@@ -32,7 +32,7 @@ Feature: As a user of the CR I want to export the event stream
       | nodeTypeName    | "Neos.Neos:Sites" |
     And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
       | Key             | Expected               |
-      | workspaceName   | "workspace-name"         |
+      | workspaceName   | "workspace-name"       |
       | contentStreamId | "cs-identifier"        |
       | nodeAggregateId | "acme-site"            |
       | nodeTypeName    | "Vendor.Site:HomePage" |

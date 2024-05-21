@@ -102,49 +102,49 @@ Feature: Workspace discarding - basic functionality
   Scenario: Conflicting changes lead to OUTDATED which can be recovered from via discard
 
     When the command CreateWorkspace is executed with payload:
-      | Key                | Value                        |
-      | workspaceName      | "user-ws-one"                |
-      | baseWorkspaceName  | "live"                       |
-      | newContentStreamId | "user-cs-one"                |
-      | workspaceOwner     | "owner-identifier"           |
+      | Key                | Value              |
+      | workspaceName      | "user-ws-one"      |
+      | baseWorkspaceName  | "live"             |
+      | newContentStreamId | "user-cs-one"      |
+      | workspaceOwner     | "owner-identifier" |
     And the command CreateWorkspace is executed with payload:
-      | Key                | Value                        |
-      | workspaceName      | "user-ws-two"                |
-      | baseWorkspaceName  | "live"                       |
-      | newContentStreamId | "user-cs-two"                |
-      | workspaceOwner     | "owner-identifier"           |
+      | Key                | Value              |
+      | workspaceName      | "user-ws-two"      |
+      | baseWorkspaceName  | "live"             |
+      | newContentStreamId | "user-cs-two"      |
+      | workspaceOwner     | "owner-identifier" |
 
     When the command RemoveNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | workspaceName                | "user-ws-one"            |
-      | nodeAggregateId              | "nody-mc-nodeface"       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
-      | coveredDimensionSpacePoint   | {}                       |
+      | Key                          | Value              |
+      | workspaceName                | "user-ws-one"      |
+      | nodeAggregateId              | "nody-mc-nodeface" |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+      | coveredDimensionSpacePoint   | {}                 |
 
     When the command SetNodeProperties is executed with payload:
-      | Key                       | Value                        |
-      | workspaceName             | "user-ws-two"                |
-      | nodeAggregateId           | "nody-mc-nodeface"           |
-      | originDimensionSpacePoint | {}                           |
-      | propertyValues            | {"text": "Modified"}         |
+      | Key                       | Value                |
+      | workspaceName             | "user-ws-two"        |
+      | nodeAggregateId           | "nody-mc-nodeface"   |
+      | originDimensionSpacePoint | {}                   |
+      | propertyValues            | {"text": "Modified"} |
 
     And the command PublishWorkspace is executed with payload:
-      | Key              | Value            |
-      | workspaceName    | "user-ws-one"    |
+      | Key           | Value         |
+      | workspaceName | "user-ws-one" |
 
     Then workspace user-ws-two has status OUTDATED
 
     When the command RebaseWorkspace is executed with payload and exceptions are caught:
-      | Key                            | Value                  |
-      | workspaceName                  | "user-ws-two"          |
-      | rebasedContentStreamId         | "user-cs-two-rebased"  |
+      | Key                    | Value                 |
+      | workspaceName          | "user-ws-two"         |
+      | rebasedContentStreamId | "user-cs-two-rebased" |
 
     Then workspace user-ws-two has status OUTDATED
 
     When the command DiscardWorkspace is executed with payload:
-      | Key                | Value                     |
-      | workspaceName      | "user-ws-two"             |
-      | newContentStreamId | "user-cs-two-discarded"   |
+      | Key                | Value                   |
+      | workspaceName      | "user-ws-two"           |
+      | newContentStreamId | "user-cs-two-discarded" |
 
     Then workspace user-ws-two has status OUTDATED
 

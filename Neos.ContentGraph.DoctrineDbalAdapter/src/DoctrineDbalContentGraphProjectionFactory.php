@@ -10,13 +10,12 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 
 /**
  * Use this class as ProjectionFactory in your configuration to construct a content graph
  *
- * @implements ProjectionFactoryInterface<ContentGraphProjection>
+ * @implements ProjectionFactoryInterface<DoctrineDbalContentGraphProjection>
  *
  * @api
  */
@@ -30,7 +29,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-    ): ContentGraphProjection {
+    ): DoctrineDbalContentGraphProjection {
         $tableNames = ContentGraphTableNames::create(
             $projectionFactoryDependencies->contentRepositoryId
         );
@@ -52,17 +51,15 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
             $tableNames
         );
 
-        return new ContentGraphProjection(
-            new DoctrineDbalContentGraphProjection(
+        return new DoctrineDbalContentGraphProjection(
+            $this->dbal,
+            new ProjectionContentGraph(
                 $this->dbal,
-                new ProjectionContentGraph(
-                    $this->dbal,
-                    $tableNames
-                ),
-                $tableNames,
-                $dimensionSpacePointsRepository,
-                new ContentGraphFinder($contentGraphFactory)
-            )
+                $tableNames
+            ),
+            $tableNames,
+            $dimensionSpacePointsRepository,
+            new ContentGraphFinder($contentGraphFactory)
         );
     }
 }

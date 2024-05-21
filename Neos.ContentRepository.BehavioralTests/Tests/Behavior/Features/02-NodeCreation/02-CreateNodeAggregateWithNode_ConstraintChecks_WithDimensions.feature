@@ -129,10 +129,10 @@ Feature: Create node aggregate with node
     """
     # We don't run structure adjustments here on purpose
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                       | Value                                 |
-      | nodeAggregateId           | "nody-mc-nodeface"                    |
+      | Key                       | Value                                     |
+      | nodeAggregateId           | "nody-mc-nodeface"                        |
       | nodeTypeName              | "Neos.ContentRepository.Testing:LeafNode" |
-      | parentNodeAggregateId     | "sir-david-nodenborough"              |
-      | originDimensionSpacePoint | {"example":"source"}                  |
-      | nodeName                  | "tethered"                            |
+      | parentNodeAggregateId     | "sir-david-nodenborough"                  |
+      | originDimensionSpacePoint | {"example":"source"}                      |
+      | nodeName                  | "tethered"                                |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"

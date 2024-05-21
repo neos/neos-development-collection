@@ -14,40 +14,40 @@ Feature: Create two nodes with the same node aggregate identifier in the same su
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                                  |
-      | workspaceName              | "live"                                 |
-      | workspaceTitle             | "Live"                                 |
-      | workspaceDescription       | "The live workspace"                   |
-      | newContentStreamId | "cs-identifier"                        |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                     |
-      | nodeAggregateId     | "lady-eleonode-rootford"                  |
-      | nodeTypeName                | "Neos.ContentRepository:Root"             |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
 
   Scenario: Create two node variants in the same subgraph
     When the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | workspaceName                 | "live"                                    |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language":"de"}                         |
-      | coveredDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}]    |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | nodeName                      | "document"                                |
-      | nodeAggregateClassification   | "regular"                                 |
+      | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
+      | contentStreamId             | "cs-identifier"                           |
+      | nodeAggregateId             | "sir-david-nodenborough"                  |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint   | {"language":"de"}                         |
+      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}]    |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
+      | nodeName                    | "document"                                |
+      | nodeAggregateClassification | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | workspaceName                 | "live"                                    |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language":"gsw"}                        |
-      | coveredDimensionSpacePoints   | [{"language":"gsw"}]                      |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | nodeName                      | "document"                                |
-      | nodeAggregateClassification   | "regular"                                 |
+      | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
+      | contentStreamId             | "cs-identifier"                           |
+      | nodeAggregateId             | "sir-david-nodenborough"                  |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint   | {"language":"gsw"}                        |
+      | coveredDimensionSpacePoints | [{"language":"gsw"}]                      |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
+      | nodeName                    | "document"                                |
+      | nodeAggregateClassification | "regular"                                 |
     And I run integrity violation detection
     # one error per covered dimension space point
     Then I expect the integrity violation detection result to contain exactly 2 errors

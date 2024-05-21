@@ -50,7 +50,6 @@ final readonly class HierarchyRelation
         $databaseConnection->insert($tableNames->hierarchyRelation(), [
             'parentnodeanchor' => $this->parentNodeAnchor->value,
             'childnodeanchor' => $this->childNodeAnchor->value,
-
             'contentstreamid' => $this->contentStreamId->value,
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
             'position' => $this->position,

@@ -124,7 +124,7 @@ final class NodeRecord
             'origindimensionspacepointhash' => $originDimensionSpacePointHash,
             'properties' => json_encode($properties),
             'nodetypename' => $nodeTypeName->value,
-                'name' => $nodeName?->value,
+            'name' => $nodeName?->value,
             'classification' => $classification->value,
             'created' => $timestamps->created,
             'originalcreated' => $timestamps->originalCreated,
@@ -136,6 +136,7 @@ final class NodeRecord
             'lastmodified' => Types::DATETIME_IMMUTABLE,
             'originallastmodified' => Types::DATETIME_IMMUTABLE,
         ]);
+
         $relationAnchorPoint = NodeRelationAnchorPoint::fromInteger((int)$databaseConnection->lastInsertId());
 
         return new self(

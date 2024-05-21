@@ -41,9 +41,9 @@ Feature: Linking between multiple websites
       | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                    |
-      | nodeAggregateId             | "lady-eleonode-rootford" |
-      | nodeTypeName                | "Neos.Neos:Sites"        |
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
 
     # lady-eleonode-rootford
     #   shernode-homes
@@ -52,7 +52,7 @@ Feature: Linking between multiple websites
     #        earl-o-documentbourgh
     #
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId         | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues                    | nodeName |
+      | nodeAggregateId         | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues                    | nodeName |
       | homepage1               | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-1   |
       | sir-david-nodenborough  | homepage1              | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node2    |
       | homepage2               | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-2   |

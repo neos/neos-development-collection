@@ -35,74 +35,74 @@ Feature: Publishing hide/show scenario of nodes
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value           |
-      | workspaceName              | "live"          |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId     | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                               |
-      | workspaceName                 | "live"                                              |
-      | contentStreamId       | "cs-identifier"                                     |
-      | nodeAggregateId       | "sir-david-nodenborough"                            |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"            |
-      | originDimensionSpacePoint     | {}                                                  |
-      | coveredDimensionSpacePoints   | [{}]                                                |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                            |
-      | initialPropertyValues         | {"text": {"type": "string", "value": "Initial t1"}} |
-      | nodeAggregateClassification   | "regular"                                           |
+      | Key                         | Value                                               |
+      | workspaceName               | "live"                                              |
+      | contentStreamId             | "cs-identifier"                                     |
+      | nodeAggregateId             | "sir-david-nodenborough"                            |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
+      | originDimensionSpacePoint   | {}                                                  |
+      | coveredDimensionSpacePoints | [{}]                                                |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                            |
+      | initialPropertyValues       | {"text": {"type": "string", "value": "Initial t1"}} |
+      | nodeAggregateClassification | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                               |
-      | workspaceName                 | "live"                                              |
-      | contentStreamId       | "cs-identifier"                                     |
-      | nodeAggregateId       | "nody-mc-nodeface"                                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"            |
-      | originDimensionSpacePoint     | {}                                                  |
-      | coveredDimensionSpacePoints   | [{}]                                                |
-      | parentNodeAggregateId | "sir-david-nodenborough"                            |
-      | initialPropertyValues         | {"text": {"type": "string", "value": "Initial t2"}} |
-      | nodeAggregateClassification   | "regular"                                           |
+      | Key                         | Value                                               |
+      | workspaceName               | "live"                                              |
+      | contentStreamId             | "cs-identifier"                                     |
+      | nodeAggregateId             | "nody-mc-nodeface"                                  |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
+      | originDimensionSpacePoint   | {}                                                  |
+      | coveredDimensionSpacePoints | [{}]                                                |
+      | parentNodeAggregateId       | "sir-david-nodenborough"                            |
+      | initialPropertyValues       | {"text": {"type": "string", "value": "Initial t2"}} |
+      | nodeAggregateClassification | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                  |
-      | workspaceName                 | "live"                                                 |
-      | contentStreamId       | "cs-identifier"                                        |
-      | nodeAggregateId       | "sir-nodeward-nodington-iii"                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Image"                 |
-      | originDimensionSpacePoint     | {}                                                     |
-      | coveredDimensionSpacePoints   | [{}]                                                   |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                               |
-      | initialPropertyValues         | {"image": {"type": "image", "value": "Initial image"}} |
-      | nodeAggregateClassification   | "regular"                                              |
+      | Key                         | Value                                                  |
+      | workspaceName               | "live"                                                 |
+      | contentStreamId             | "cs-identifier"                                        |
+      | nodeAggregateId             | "sir-nodeward-nodington-iii"                           |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Image"                 |
+      | originDimensionSpacePoint   | {}                                                     |
+      | coveredDimensionSpacePoints | [{}]                                                   |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                               |
+      | initialPropertyValues       | {"image": {"type": "image", "value": "Initial image"}} |
+      | nodeAggregateClassification | "regular"                                              |
 
   Scenario: (DisableNode) It is possible to publish hiding of a node.
     Given the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user-test"          |
-      | baseWorkspaceName          | "live"               |
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
     And I am in workspace "user-test"
 
     # SETUP: hide two nodes in USER workspace
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                                  |
-      | nodeAggregateId      | "sir-david-nodenborough"               |
-      | coveredDimensionSpacePoint   | {}                                     |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                                  |
-      | nodeAggregateId      | "sir-nodeward-nodington-iii"           |
-      | coveredDimensionSpacePoint   | {}                                     |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | Key                          | Value                        |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {}                           |
+      | nodeVariantSelectionStrategy | "allVariants"                |
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                      | Value                                                                                                                               |
-      | workspaceName            | "user-test"                                                                                                                         |
-      | nodesToPublish           | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
-      | contentStreamIdForRemainingPart | "remaining-cs-id"                                                                                 |
-      | contentStreamIdForMatchingPart  | "matching-cs-id"                                                                                  |
+      | Key                             | Value                                                                                                    |
+      | workspaceName                   | "user-test"                                                                                              |
+      | nodesToPublish                  | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
+      | contentStreamIdForRemainingPart | "remaining-cs-id"                                                                                        |
+      | contentStreamIdForMatchingPart  | "matching-cs-id"                                                                                         |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
@@ -117,42 +117,42 @@ Feature: Publishing hide/show scenario of nodes
   Scenario: (ShowNode) It is possible to publish showing of a node.
     # BEFORE: ensure two nodes are hidden in live (and user WS)
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                                  |
-      | nodeAggregateId      | "sir-david-nodenborough"               |
-      | coveredDimensionSpacePoint   | {}                                     |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                                  |
-      | nodeAggregateId      | "sir-nodeward-nodington-iii"           |
-      | coveredDimensionSpacePoint   | {}                                     |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | Key                          | Value                        |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {}                           |
+      | nodeVariantSelectionStrategy | "allVariants"                |
     # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
     # of-date base version. This means the content stream can never be merged back, but must always be rebased.
     Given the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user-test"          |
-      | baseWorkspaceName          | "live"               |
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
 
     # SETUP: enable two nodes in USER workspace
     Given the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | workspaceName      | "user-test"     |
-      | nodeAggregateId      | "sir-david-nodenborough" |
+      | workspaceName                | "user-test"              |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     Given the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                        |
-      | workspaceName      | "user-test"         |
-      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
+      | workspaceName                | "user-test"                  |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                                     | Value                                                                                                                               |
-      | workspaceName                           | "user-test"                                                                                                                         |
-      | nodesToPublish                          | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
+      | Key                             | Value                                                                                                    |
+      | workspaceName                   | "user-test"                                                                                              |
+      | nodesToPublish                  | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                            |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
@@ -209,31 +209,31 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
     Given the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user-test"          |
-      | baseWorkspaceName          | "live"               |
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
 
     # SETUP: remove two nodes in USER workspace
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | workspaceName              | "user-test"          |
-      | nodeAggregateId      | "sir-david-nodenborough" |
+      | workspaceName                | "user-test"              |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
-      | workspaceName              | "user-test"          |
-      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
+      | workspaceName                | "user-test"                  |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                      | Value                                                                                                                               |
-      | workspaceName            | "user-test"                                                                                                                         |
-      | nodesToPublish           | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
+      | Key                             | Value                                                                                                    |
+      | workspaceName                   | "user-test"                                                                                              |
+      | nodesToPublish                  | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                            |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
@@ -248,29 +248,29 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
     Given the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user-test"          |
-      | baseWorkspaceName          | "live"               |
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
 
     # SETUP: remove two nodes in USER workspace
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | workspaceName              | "user-test"          |
-      | nodeAggregateId      | "sir-david-nodenborough" |
+      | workspaceName                | "user-test"              |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                        |
-      | workspaceName              | "user-test"          |
-      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
+      | workspaceName                | "user-test"                  |
+      | nodeAggregateId              | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                      | Value                                                                                                                               |
-      | workspaceName            | "user-test"                                                                                                                         |
-      | nodesToPublish           | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
+      | Key            | Value                                                                                                    |
+      | workspaceName  | "user-test"                                                                                              |
+      | nodesToPublish | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
@@ -285,32 +285,32 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (SetNodeReferences) It is possible to publish setting node references
     Given the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user-test"          |
-      | baseWorkspaceName          | "live"               |
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
 
     # SETUP: set two node references in USER workspace
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                                     |
-      | workspaceName              | "user-test"          |
-      | sourceNodeAggregateId   | "sir-david-nodenborough"                  |
+      | workspaceName                   | "user-test"                               |
+      | sourceNodeAggregateId           | "sir-david-nodenborough"                  |
       | sourceOriginDimensionSpacePoint | {}                                        |
       | referenceName                   | "referenceProperty"                       |
       | references                      | [{"target":"sir-nodeward-nodington-iii"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                                     |
-      | workspaceName              | "user-test"          |
-      | sourceNodeAggregateId   | "nody-mc-nodeface"                        |
+      | workspaceName                   | "user-test"                               |
+      | sourceNodeAggregateId           | "nody-mc-nodeface"                        |
       | sourceOriginDimensionSpacePoint | {}                                        |
       | referenceName                   | "referenceProperty"                       |
       | references                      | [{"target":"sir-nodeward-nodington-iii"}] |
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                                     | Value                                                                                                                               |
-      | workspaceName                           | "user-test"                                                                                                                         |
-      | nodesToPublish                          | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
+      | Key                             | Value                                                                                                    |
+      | workspaceName                   | "user-test"                                                                                              |
+      | nodesToPublish                  | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                            |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
@@ -342,34 +342,34 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (CreateNodeAggregateWithNode) It is possible to publish new nodes
     Given the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user-test"          |
-      | baseWorkspaceName          | "live"               |
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
 
     # SETUP: set two new nodes in USER workspace
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                    |
-      | workspaceName              | "user-test"          |
-      | nodeAggregateId       | "new1-agg"                               |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
-      | originDimensionSpacePoint     | {}                                       |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                 |
-      | nodeName                      | "foo"                                    |
+      | Key                       | Value                                    |
+      | workspaceName             | "user-test"                              |
+      | nodeAggregateId           | "new1-agg"                               |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
+      | nodeName                  | "foo"                                    |
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                    |
-      | workspaceName              | "user-test"          |
-      | nodeAggregateId       | "new2-agg"                               |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
-      | originDimensionSpacePoint     | {}                                       |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                 |
-      | nodeName                      | "foo2"                                   |
+      | Key                       | Value                                    |
+      | workspaceName             | "user-test"                              |
+      | nodeAggregateId           | "new2-agg"                               |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
+      | nodeName                  | "foo2"                                   |
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                                     | Value                                                                                                                 |
-      | workspaceName                           | "user-test"                                                                                                           |
-      | nodesToPublish                          | [{"nodeAggregateId": "new1-agg", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                                         |
+      | Key                             | Value                                                                                      |
+      | workspaceName                   | "user-test"                                                                                |
+      | nodesToPublish                  | [{"nodeAggregateId": "new1-agg", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                              |
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "new1-agg" to lead to node cs-identifier;new1-agg;{}

@@ -34,9 +34,9 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user-test"          |
-      | baseWorkspaceName          | "live"               |
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -50,8 +50,8 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | a1-1            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-1", "title": "Node a1-1"} | a1-1     |
       | a2              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2"}     | a2       |
     When the command RebaseWorkspace is executed with payload:
-      | Key                      | Value                        |
-      | workspaceName            | "user-test"                  |
+      | Key           | Value       |
+      | workspaceName | "user-test" |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
     """yaml
@@ -241,8 +241,8 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
 
     And I am in workspace "user-test" and dimension space point {}
     When the command SetNodeProperties is executed with payload:
-      | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
+      | Key             | Value                      |
+      | contentStreamId | "cs-identifier"            |
       | nodeAggregateId | "a1-1"                     |
       | propertyValues  | {"title": "Node a1-1 new"} |
 
