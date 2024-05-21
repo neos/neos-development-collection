@@ -69,12 +69,11 @@ final readonly class CopyNodesRecursively implements
      * @param OriginDimensionSpacePoint $targetDimensionSpacePoint the dimension space point which is the target of the copy
      * @param NodeAggregateId $targetParentNodeAggregateId Node aggregate id of the target node's parent. If not given, the node will be added as the parent's first child
      * @param NodeAggregateId|null $targetSucceedingSiblingNodeAggregateId Node aggregate id of the target node's succeeding sibling (optional)
-     * @param NodeName|null $targetNodeName the root node name of the root-inserted-node
      * @param NodeAggregateIdMapping $nodeAggregateIdMapping An assignment of "old" to "new" NodeAggregateIds ({@see NodeAggregateIdMapping})
      */
-    public static function create(WorkspaceName $workspaceName, NodeSubtreeSnapshot $nodeTreeToInsert, OriginDimensionSpacePoint $targetDimensionSpacePoint, NodeAggregateId $targetParentNodeAggregateId, ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId, ?NodeName $targetNodeName, NodeAggregateIdMapping $nodeAggregateIdMapping): self
+    public static function create(WorkspaceName $workspaceName, NodeSubtreeSnapshot $nodeTreeToInsert, OriginDimensionSpacePoint $targetDimensionSpacePoint, NodeAggregateId $targetParentNodeAggregateId, ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId, NodeAggregateIdMapping $nodeAggregateIdMapping): self
     {
-        return new self($workspaceName, $nodeTreeToInsert, $targetDimensionSpacePoint, $targetParentNodeAggregateId, $targetSucceedingSiblingNodeAggregateId, $targetNodeName, $nodeAggregateIdMapping);
+        return new self($workspaceName, $nodeTreeToInsert, $targetDimensionSpacePoint, $targetParentNodeAggregateId, $targetSucceedingSiblingNodeAggregateId, null, $nodeAggregateIdMapping);
     }
 
     /**
@@ -164,6 +163,24 @@ final readonly class CopyNodesRecursively implements
             $this->targetParentNodeAggregateId,
             $this->targetSucceedingSiblingNodeAggregateId,
             $this->targetNodeName,
+            $this->nodeAggregateIdMapping
+        );
+    }
+
+    /**
+     * The target node's optional name.
+     *
+     * @deprecated the concept regarding node-names for non-tethered nodes is outdated.
+     */
+    public function withNodeName(NodeName $nodeName): self
+    {
+        return new self(
+            $this->workspaceName,
+            $this->nodeTreeToInsert,
+            $this->targetDimensionSpacePoint,
+            $this->targetParentNodeAggregateId,
+            $this->targetSucceedingSiblingNodeAggregateId,
+            $nodeName,
             $this->nodeAggregateIdMapping
         );
     }
