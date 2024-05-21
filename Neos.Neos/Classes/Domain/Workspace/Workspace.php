@@ -262,8 +262,7 @@ final class Workspace
         NodeAggregateId $nodeAggregateId,
         NodeTypeName $nodeTypeName,
     ): void {
-        $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateById(
-            $this->currentContentStreamId,
+        $nodeAggregate = $this->contentRepository->getContentGraph($this->name)->findNodeAggregateById(
             $nodeAggregateId,
         );
         if (!$nodeAggregate instanceof NodeAggregate) {
@@ -398,8 +397,7 @@ final class Workspace
             }
         }
 
-        $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-            $this->currentContentStreamId,
+        $subgraph = $this->contentRepository->getContentGraph($this->name)->getSubgraph(
             $change->originDimensionSpacePoint->toDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -412,7 +410,7 @@ final class Workspace
             FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
         );
 
-        return $actualAncestorNode?->nodeAggregateId->equals($ancestorId) ?? false;
+        return $actualAncestorNode?->aggregateId->equals($ancestorId) ?? false;
     }
 
     /**

@@ -68,7 +68,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                     $this->contentRepository->handle(
                         SetSerializedNodeProperties::create(
                             $workspaceNameForWriting,
-                            $node->nodeAggregateId,
+                            $node->aggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
                                 $this->propertyName => SerializedPropertyValue::create(

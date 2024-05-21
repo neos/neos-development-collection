@@ -19,7 +19,7 @@ Feature: Update Root Node aggregate dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -37,6 +37,7 @@ Feature: Update Root Node aggregate dimensions
       | nodeAggregateClassification | "root"                                 |
     And event metadata at index 1 is:
       | Key | Expected |
+
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
     And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
@@ -93,6 +94,7 @@ Feature: Update Root Node aggregate dimensions
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"}] |
     And event metadata at index 1 is:
       | Key | Expected |
+
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
     And I expect this node aggregate to be of type "Neos.ContentRepository:Root"

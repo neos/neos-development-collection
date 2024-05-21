@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Service;
@@ -20,10 +21,12 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\Command\MigrateEventsCommandController;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 
 /**
@@ -83,7 +86,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
      * @param \Closure $outputFn
      * @return void
      */
-    public function migratePropertiesToUnset(\Closure $outputFn)
+    public function migratePropertiesToUnset(\Closure $outputFn): void
     {
         $this->eventsModified = [];
         $warnings = 0;
@@ -101,7 +104,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
             // migrate payload
             if ($eventEnvelope->event->type->value === 'NodePropertiesWereSet') {
-                $eventData = json_decode($eventEnvelope->event->data->value, true);
+                $eventData = self::decodeEventPayload($eventEnvelope);
                 if (isset($eventData['propertiesToUnset'])) {
                     // is already new event type with field
                     continue;
@@ -155,7 +158,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
             }
 
             if ($eventEnvelope->event->type->value === 'NodeAggregateWithNodeWasCreated') {
-                $eventData = json_decode($eventEnvelope->event->data->value, true);
+                $eventData = self::decodeEventPayload($eventEnvelope);
                 // omit null setters
                 $propertiesWithNullValues = 0;
                 foreach ($eventData['initialPropertyValues'] as $key => $value) {
@@ -245,7 +248,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
      * @param \Closure $outputFn
      * @return void
      */
-    public function migrateMetaDataToWorkspaceName(\Closure $outputFn)
+    public function migrateMetaDataToWorkspaceName(\Closure $outputFn): void
     {
         $this->eventsModified = [];
 
@@ -310,6 +313,72 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
         $outputFn();
         $outputFn(sprintf('Migration applied to %s events.', count($this->eventsModified)));
+    }
+
+    /**
+     *  Adds the "workspaceName" to the data of all content stream related events
+     *
+     *  Needed for feature "Add workspaceName to relevant events": https://github.com/neos/neos-development-collection/issues/4996
+     *
+     *  Included in May 2024 - before final Neos 9.0 release
+     *
+     * @param \Closure $outputFn
+     * @return void
+     */
+    public function migratePayloadToWorkspaceName(\Closure $outputFn): void
+    {
+
+        $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId) . '_bkp_' . date('Y_m_d_H_i_s');
+        $outputFn('Backup: copying events table to %s', [$backupEventTableName]);
+        $this->copyEventTable($backupEventTableName);
+
+        $numberOfMigratedEvents = 0;
+        $workspaceNamesByContentStreamId = [];
+
+        foreach ($this->eventStore->load(VirtualStreamName::all()) as $eventEnvelope) {
+            $eventType = $eventEnvelope->event->type->value;
+            if (in_array($eventType, ['RootWorkspaceWasCreated', 'WorkspaceBaseWorkspaceWasChanged', 'WorkspaceWasCreated', 'WorkspaceWasDiscarded', 'WorkspaceWasPartiallyDiscarded', 'WorkspaceWasRebased'], true)) {
+                $eventData = self::decodeEventPayload($eventEnvelope);
+                $workspaceNamesByContentStreamId[$eventData['newContentStreamId']] = $eventData['workspaceName'];
+                continue;
+            }
+            if (in_array($eventType, ['WorkspaceWasPartiallyPublished', 'WorkspaceWasPublished'], true)) {
+                $eventData = self::decodeEventPayload($eventEnvelope);
+                $workspaceNamesByContentStreamId[$eventData['newSourceContentStreamId']] = $eventData['sourceWorkspaceName'];
+                continue;
+            }
+            if (!in_array($eventType, ['DimensionShineThroughWasAdded', 'DimensionSpacePointWasMoved', 'NodeAggregateWithNodeWasCreated', 'NodeAggregateWasDisabled', 'NodeAggregateWasEnabled', 'NodePropertiesWereSet', 'NodeAggregateWasMoved', 'NodeReferencesWereSet', 'NodeAggregateWasRemoved', 'NodeAggregateNameWasChanged', 'NodeAggregateTypeWasChanged', 'NodeGeneralizationVariantWasCreated', 'NodePeerVariantWasCreated', 'NodeSpecializationVariantWasCreated', 'RootNodeAggregateDimensionsWereUpdated', 'RootNodeAggregateWithNodeWasCreated', 'SubtreeWasTagged', 'SubtreeWasUntagged'], true)) {
+                continue;
+            }
+            $eventData = self::decodeEventPayload($eventEnvelope);
+            $workspaceName = $workspaceNamesByContentStreamId[$eventData['contentStreamId']] ?? null;
+            if ($workspaceName === null) {
+                $workspaceName = WorkspaceName::fromString('missing');
+            }
+            $this->updateEventPayload($eventEnvelope->sequenceNumber, [...$eventData, 'workspaceName' => $workspaceName]);
+            $numberOfMigratedEvents++;
+        }
+        if ($numberOfMigratedEvents === 0) {
+            $outputFn('Migration was not necessary.');
+            return;
+        }
+
+        $outputFn();
+        $outputFn(sprintf('Migration applied to %s events.', $numberOfMigratedEvents));
+    }
+
+    /** ------------------------ */
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function decodeEventPayload(EventEnvelope $eventEnvelope): array
+    {
+        try {
+            return json_decode($eventEnvelope->event->data->value, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-decode event payload of event #%d: %s', $eventEnvelope->sequenceNumber->value, $e->getMessage()), 1715951538, $e);
+        }
     }
 
     /**

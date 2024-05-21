@@ -57,8 +57,6 @@ class PropertyOperation extends AbstractOperation
      */
     protected $contentRepositoryRegistry;
 
-    use NodeTypeWithFallbackProvider;
-
     /**
      * {@inheritdoc}
      *
@@ -98,7 +96,7 @@ class PropertyOperation extends AbstractOperation
         if ($propertyName === '_path') {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             $ancestors = $subgraph->findAncestorNodes(
-                $element->nodeAggregateId,
+                $element->aggregateId,
                 FindAncestorNodesFilter::create()
             )->reverse();
 
@@ -106,22 +104,25 @@ class PropertyOperation extends AbstractOperation
         }
         if ($propertyName === '_identifier') {
             // TODO: deprecated (Neos <9 case)
-            return $element->nodeAggregateId->value;
+            return $element->aggregateId->value;
         }
 
         if ($propertyName[0] === '_') {
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
-        if ($this->getNodeType($element)->hasReference($propertyName)) {
+        $contentRepository = $this->contentRepositoryRegistry->get($element->contentRepositoryId);
+        $nodeTypeManager = $contentRepository->getNodeTypeManager();
+
+        if ($nodeTypeManager->getNodeType($element->nodeTypeName)?->hasReference($propertyName)) {
             // legacy access layer for references
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             $references = $subgraph->findReferences(
-                $element->nodeAggregateId,
+                $element->aggregateId,
                 FindReferencesFilter::create(referenceName: $propertyName)
             )->getNodes();
 
-            $maxItems = $this->getNodeType($element)->getReferences()[$propertyName]['constraints']['maxItems'] ?? null;
+            $maxItems = $nodeTypeManager->getNodeType($element->nodeTypeName)->getReferences()[$propertyName]['constraints']['maxItems'] ?? null;
             if ($maxItems === 1) {
                 // legacy layer references with only one item like the previous `type: reference`
                 // (the node type transforms that to constraints.maxItems = 1)

@@ -27,7 +27,7 @@ Feature: Test cases for node variation edge cases
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
@@ -128,7 +128,7 @@ Feature: Test cases for node variation edge cases
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
@@ -220,7 +220,7 @@ Feature: Test cases for node variation edge cases
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |

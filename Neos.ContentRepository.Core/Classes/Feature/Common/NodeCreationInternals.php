@@ -14,13 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal implementation details of command handlers
@@ -41,49 +40,40 @@ trait NodeCreationInternals
      * operates on the explicitly set succeeding sibling instead of the node itself.
      */
     private function resolveInterdimensionalSiblingsForCreation(
-        ContentRepository $contentRepository,
-        ContentStreamId $contentStreamId,
+        ContentGraphInterface $contentGraph,
         NodeAggregateId $requestedSucceedingSiblingNodeAggregateId,
         OriginDimensionSpacePoint $sourceOrigin,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
     ): InterdimensionalSiblings {
-        $originSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $contentStreamId,
-            $sourceOrigin->toDimensionSpacePoint(),
-            VisibilityConstraints::withoutRestrictions()
-        );
-        $originAlternativeSucceedingSiblings = $originSubgraph->findSucceedingSiblingNodes(
+        $subGraph = $contentGraph->getSubgraph($sourceOrigin->toDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $originAlternativeSucceedingSiblings = $subGraph->findSucceedingSiblingNodes(
             $requestedSucceedingSiblingNodeAggregateId,
             FindSucceedingSiblingNodesFilter::create()
         );
 
         $interdimensionalSiblings = [];
         foreach ($coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
-            $variantSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $contentStreamId,
-                $coveredDimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            );
-            $variantSucceedingSibling = $variantSubgraph->findNodeById($requestedSucceedingSiblingNodeAggregateId);
+            $subGraph = $contentGraph->getSubgraph($coveredDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+            $variantSucceedingSibling = $subGraph->findNodeById($requestedSucceedingSiblingNodeAggregateId);
             if ($variantSucceedingSibling) {
                 // a) happy path, the explicitly requested succeeding sibling also exists in this dimension space point
                 $interdimensionalSiblings[] = new InterdimensionalSibling(
                     $coveredDimensionSpacePoint,
-                    $variantSucceedingSibling->nodeAggregateId,
+                    $variantSucceedingSibling->aggregateId,
                 );
                 continue;
             }
 
             // check the other siblings succeeding in the origin dimension space point
             foreach ($originAlternativeSucceedingSiblings as $originSibling) {
-                $alternativeVariantSucceedingSibling = $variantSubgraph->findNodeById($originSibling->nodeAggregateId);
+                $alternativeVariantSucceedingSibling = $subGraph->findNodeById($originSibling->aggregateId);
                 if (!$alternativeVariantSucceedingSibling) {
                     continue;
                 }
                 // b) one of the further succeeding sibling exists in this dimension space point
                 $interdimensionalSiblings[] = new InterdimensionalSibling(
                     $coveredDimensionSpacePoint,
-                    $alternativeVariantSucceedingSibling->nodeAggregateId,
+                    $alternativeVariantSucceedingSibling->aggregateId,
                 );
                 continue 2;
             }

@@ -132,8 +132,7 @@ class NodeController extends ActionController
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamId,
+        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
             $nodeAddress->dimensionSpacePoint,
             $visibilityConstraints
         );
@@ -201,8 +200,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
-        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamId,
+        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
             $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::frontend()
         );
@@ -343,10 +341,10 @@ class NodeController extends ActionController
             = $inMemoryCache->getParentNodeIdByChildNodeIdCache();
         $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdCache();
         $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdCache();
-        if ($node->nodeName !== null) {
+        if ($node->name !== null) {
             $namedChildNodeByNodeIdentifierCache->add(
-                $parentNode->nodeAggregateId,
-                $node->nodeName,
+                $parentNode->aggregateId,
+                $node->name,
                 $node
             );
         } else {
@@ -354,8 +352,8 @@ class NodeController extends ActionController
         }
 
         $parentNodeIdentifierByChildNodeIdentifierCache->add(
-            $node->nodeAggregateId,
-            $parentNode->nodeAggregateId
+            $node->aggregateId,
+            $parentNode->aggregateId
         );
 
         $allChildNodes = [];
@@ -366,7 +364,7 @@ class NodeController extends ActionController
         }
         // TODO Explain why this is safe (Content can not contain other documents)
         $allChildNodesByNodeIdentifierCache->add(
-            $node->nodeAggregateId,
+            $node->aggregateId,
             null,
             Nodes::fromArray($allChildNodes)
         );

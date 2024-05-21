@@ -21,7 +21,7 @@ Feature: Sibling positions are properly resolved
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    And I am in workspace "live" and dimension space point {"example": "general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -42,7 +42,7 @@ Feature: Sibling positions are properly resolved
 
 
   Scenario: Trigger position update in DBAL graph
-    Given I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    Given I am in workspace "live" and dimension space point {"example": "general"}
     # distance i to x: 128
     # distance ii to x: 64
     When the command MoveNodeAggregate is executed with payload:

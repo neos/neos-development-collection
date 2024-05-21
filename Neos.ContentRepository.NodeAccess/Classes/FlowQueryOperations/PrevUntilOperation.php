@@ -87,8 +87,8 @@ class PrevUntilOperation extends AbstractOperation
             }
             foreach ($prevNodes as $prevNode) {
                 if ($prevNode !== null &&
-                    !isset($outputNodeIdentifiers[$prevNode->nodeAggregateId->value])) {
-                    $outputNodeIdentifiers[$prevNode->nodeAggregateId->value] = true;
+                    !isset($outputNodeIdentifiers[$prevNode->aggregateId->value])) {
+                    $outputNodeIdentifiers[$prevNode->aggregateId->value] = true;
                     $output[] = $prevNode;
                 }
             }

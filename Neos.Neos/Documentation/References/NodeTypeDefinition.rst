@@ -93,7 +93,7 @@ The following options are allowed for defining a NodeType:
 
   ``generatorClass``
     Alternatively the class of a node label generator implementing
-    ``Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface`` can be specified as a nested option.
+    ``Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface`` can be specified as a nested option.
 
 ``options``
   Options for third party-code, the Content-Repository ignores those options but Neos or Packages may use this to adjust

@@ -120,6 +120,7 @@ final class ContentRepositoryFactory
     public function buildService(
         ContentRepositoryServiceFactoryInterface $serviceFactory
     ): ContentRepositoryServiceInterface {
+
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
             $this->getOrBuild(),
@@ -144,16 +145,16 @@ final class ContentRepositoryFactory
                     $this->projectionFactoryDependencies->nodeTypeManager,
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
                     $this->projectionFactoryDependencies->interDimensionalVariationGraph,
-                    $this->projectionFactoryDependencies->propertyConverter
+                    $this->projectionFactoryDependencies->propertyConverter,
                 ),
                 new DimensionSpaceCommandHandler(
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
-                    $this->projectionFactoryDependencies->interDimensionalVariationGraph
+                    $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 ),
                 new NodeDuplicationCommandHandler(
                     $this->projectionFactoryDependencies->nodeTypeManager,
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
-                    $this->projectionFactoryDependencies->interDimensionalVariationGraph
+                    $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 )
             );
         }

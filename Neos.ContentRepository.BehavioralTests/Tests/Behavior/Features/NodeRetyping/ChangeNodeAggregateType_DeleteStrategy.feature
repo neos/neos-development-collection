@@ -65,7 +65,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -80,6 +80,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | nodeName                  | "parent"                                        |
       | initialPropertyValues     | {}                                              |
 
+
   Scenario: Try to change to a node type that disallows already present children with the delete conflict resolution strategy
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                      |
@@ -88,20 +89,20 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | originDimensionSpacePoint | {"language":"de"}                          |
       | parentNodeAggregateId     | "sir-david-nodenborough"                   |
 
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key             | Value                                            |
       | nodeAggregateId | "sir-david-nodenborough"                         |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
       | strategy        | "delete"                                         |
 
     # the type has changed
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    When I am in workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:ParentNodeTypeB"
 
     # the child nodes have been removed
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"gsw"}
+    When I am in workspace "live" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
   Scenario: Try to change to a node type that disallows already present grandchildren with the delete conflict resolution strategy
@@ -122,26 +123,26 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | parentNodeAggregateId     | "autocreated-child"                        |
       | initialPropertyValues     | {}                                         |
 
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key             | Value                                            |
       | nodeAggregateId | "parent2-na"                                     |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
       | strategy        | "delete"                                         |
 
     # the type has changed
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    When I am in workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "parent2-na" to lead to node cs-identifier;parent2-na;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:ParentNodeTypeB"
 
     # the child nodes still exist
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    When I am in workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "autocreated-child" to lead to node cs-identifier;autocreated-child;{"language":"de"}
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"gsw"}
+    When I am in workspace "live" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "autocreated-child" to lead to node cs-identifier;autocreated-child;{"language":"de"}
 
     # the grandchild nodes have been removed
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"gsw"}
+    When I am in workspace "live" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
 
 
@@ -161,7 +162,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | sourceOrigin    | {"language":"de"}     |
       | targetOrigin    | {"language":"gsw"}    |
 
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key                                | Value                                      |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB" |
@@ -169,11 +170,11 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "child-of-type-b-id"} |
 
     # the type has changed
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    When I am in workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"gsw"}
+    When I am in workspace "live" and dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"gsw"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
     And I expect this node to have the following child nodes:
@@ -197,7 +198,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | sourceOrigin    | {"language":"de"}     |
       | targetOrigin    | {"language":"gsw"}    |
 
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key                                | Value                                      |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB" |
@@ -205,7 +206,7 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "child-of-type-b-id"} |
 
     # the type has changed
-    When I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    When I am in workspace "live" and dimension space point {"language":"de"}
     Then I expect node aggregate identifier "nodea-identifier-de" to lead to node cs-identifier;nodea-identifier-de;{"language":"de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:NodeTypeB"
 

@@ -22,13 +22,14 @@ Feature: Run integrity violation detection regarding reference relations
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "source-nodandaise"                                      |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
@@ -38,6 +39,7 @@ Feature: Run integrity violation detection regarding reference relations
       | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "anthony-destinode"                                      |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |

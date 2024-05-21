@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNode
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
@@ -69,7 +70,7 @@ class NodeHelper implements ProtectedContextAwareInterface
 
             $subNode = $nodePath instanceof AbsoluteNodePath
                 ? $subgraph->findNodeByAbsolutePath($nodePath)
-                : $subgraph->findNodeByPath($nodePath, $node->nodeAggregateId);
+                : $subgraph->findNodeByPath($nodePath, $node->aggregateId);
 
             if ($subNode !== null && $this->isOfType($subNode, $contentCollectionType)) {
                 return $subNode;
@@ -78,7 +79,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                     $node,
                     $this->contentRepositoryRegistry->subgraphForNode($node)
                         ->findAncestorNodes(
-                            $node->nodeAggregateId,
+                            $node->aggregateId,
                             FindAncestorNodesFilter::create()
                         )
                 );
@@ -96,7 +97,11 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
+     * Generate a label for a node with a chaining mechanism. To be used in NodeType definition:
+     *
+     *     'Vendor.Site:MyContent':
+     *       label: "${Neos.Node.labelForNode(node).prefix('foo')}"
+     *
      */
     public function labelForNode(Node $node): NodeLabelToken
     {
@@ -111,7 +116,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function depth(Node $node): int
     {
         return $this->contentRepositoryRegistry->subgraphForNode($node)
-            ->countAncestorNodes($node->nodeAggregateId, CountAncestorNodesFilter::create());
+            ->countAncestorNodes($node->aggregateId, CountAncestorNodesFilter::create());
     }
 
     /**
@@ -121,7 +126,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         $ancestors = $subgraph->findAncestorNodes(
-            $node->nodeAggregateId,
+            $node->aggregateId,
             FindAncestorNodesFilter::create()
         )->reverse();
 
@@ -142,10 +147,16 @@ class NodeHelper implements ProtectedContextAwareInterface
         return $this->getNodeTypeInternal($node);
     }
 
+    public function isNodeTypeExistent(Node $node): bool
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
+        return $contentRepository->getNodeTypeManager()->hasNodeType($node->nodeTypeName);
+    }
+
     public function serializedNodeAddress(Node $node): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->contentRepositoryId
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         return $nodeAddressFactory->createFromNode($node)->serializeForUri();

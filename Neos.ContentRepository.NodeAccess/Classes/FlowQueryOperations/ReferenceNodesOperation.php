@@ -72,7 +72,7 @@ final class ReferenceNodesOperation implements OperationInterface
         /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-            $output[] = iterator_to_array($subgraph->findReferences($contextNode->nodeAggregateId, $filter));
+            $output[] = iterator_to_array($subgraph->findReferences($contextNode->aggregateId, $filter));
         }
         $flowQuery->setContext(array_map(fn(Reference $reference) => $reference->node, array_merge(...$output)));
     }

@@ -22,13 +22,14 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId             | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                    |
+      | workspaceName               | "live"                                   |
       | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "the-great-nodini"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
@@ -39,6 +40,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeAggregateClassification | "regular"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                    |
+      | workspaceName               | "live"                                   |
       | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "nodingers-cat"                          |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
@@ -58,6 +60,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | Key                   | Value                |
       | sourceContentStreamId | "cs-identifier"      |
       | contentStreamId       | "user-cs-identifier" |
+
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 

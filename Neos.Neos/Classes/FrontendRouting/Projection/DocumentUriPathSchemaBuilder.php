@@ -25,7 +25,7 @@ class DocumentUriPathSchemaBuilder
         $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [
             $this->createUriTable(),
             $this->createLiveContentStreamsTable(),
-            CheckpointHelper::checkpointTableSchema($this->tableNamePrefix),
+            CheckpointHelper::checkpointTableSchema($this->tableNamePrefix . '_checkpoint'),
         ]);
 
         return $schema;

@@ -43,11 +43,11 @@ Feature: Routing functionality with multiple content dimensions
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"en"}
+    And I am in workspace "live" and dimension space point {"market":"DE", "language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                                                                                                                                                                     |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                                                                                                                                                                  |
-      | nodeTypeName                | "Neos.Neos:Sites"                                                                                                                                                                                         |
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues           | nodeName |
       | sir-david-nodenborough | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |

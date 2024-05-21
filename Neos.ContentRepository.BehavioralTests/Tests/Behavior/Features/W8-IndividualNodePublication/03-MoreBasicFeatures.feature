@@ -29,13 +29,14 @@ Feature: Publishing individual nodes (basics)
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                               |
+      | workspaceName               | "live"                                              |
       | contentStreamId             | "cs-identifier"                                     |
       | nodeAggregateId             | "sir-david-nodenborough"                            |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
@@ -46,6 +47,7 @@ Feature: Publishing individual nodes (basics)
       | nodeAggregateClassification | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                               |
+      | workspaceName               | "live"                                              |
       | contentStreamId             | "cs-identifier"                                     |
       | nodeAggregateId             | "nody-mc-nodeface"                                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
@@ -56,6 +58,7 @@ Feature: Publishing individual nodes (basics)
       | nodeAggregateClassification | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                   |
+      | workspaceName               | "live"                                                  |
       | contentStreamId             | "cs-identifier"                                         |
       | nodeAggregateId             | "sir-nodeward-nodington-iii"                            |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Image"                  |
@@ -74,19 +77,19 @@ Feature: Publishing individual nodes (basics)
     # modify nodes in user WS
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                    |
-      | workspaceName      | "user-test"          |
+      | workspaceName             | "user-test"              |
       | nodeAggregateId           | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {}                       |
       | propertyValues            | {"text": "Modified t1"}  |
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                   |
-      | workspaceName      | "user-test"          |
+      | workspaceName             | "user-test"             |
       | nodeAggregateId           | "nody-mc-nodeface"      |
       | originDimensionSpacePoint | {}                      |
       | propertyValues            | {"text": "Modified t2"} |
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | workspaceName      | "user-test"          |
+      | workspaceName             | "user-test"                  |
       | nodeAggregateId           | "sir-nodeward-nodington-iii" |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"image": "Modified image"}  |
@@ -97,13 +100,13 @@ Feature: Publishing individual nodes (basics)
   Scenario: It is possible to publish a single node; and only this one is live.
     # publish "sir-nodeward-nodington-iii" only
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                             | Value                                                                                                                   |
-      | workspaceName                   | "user-test"                                                                                                             |
+      | Key                             | Value                                                                                                        |
+      | workspaceName                   | "user-test"                                                                                                  |
       | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                          |
-      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                          |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                               |
+      | contentStreamIdForMatchingPart  | "user-cs-identifier-matching"                                                                                |
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key  | Value        |
@@ -117,7 +120,7 @@ Feature: Publishing individual nodes (basics)
       | Key   | Value            |
       | image | "Modified image" |
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-remaining;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key  | Value         |
@@ -138,7 +141,7 @@ Feature: Publishing individual nodes (basics)
       | nodesToPublish                  | []                             |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining" |
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key  | Value        |
@@ -152,7 +155,7 @@ Feature: Publishing individual nodes (basics)
       | Key   | Value           |
       | image | "Initial image" |
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-remaining;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key  | Value         |
@@ -168,12 +171,12 @@ Feature: Publishing individual nodes (basics)
 
   Scenario: It is possible to publish all nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                             | Value                                                                                                                                                                                                                                                                                                                                                   |
-      | workspaceName                   | "user-test"                                                                                                                                                                                                                                                                                                                                             |
+      | Key                             | Value                                                                                                                                                                                                                                                                                                                  |
+      | workspaceName                   | "user-test"                                                                                                                                                                                                                                                                                                            |
       | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}, {"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}, {"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
-      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                                                                                                                                                                                                                                                          |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                                                                                                                                                                                                                         |
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key  | Value         |
@@ -187,7 +190,7 @@ Feature: Publishing individual nodes (basics)
       | Key   | Value            |
       | image | "Modified image" |
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-remaining;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key  | Value         |

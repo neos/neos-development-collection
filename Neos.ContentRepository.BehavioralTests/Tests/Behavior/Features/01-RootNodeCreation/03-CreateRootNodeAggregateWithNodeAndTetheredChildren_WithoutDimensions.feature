@@ -37,7 +37,7 @@ Feature: Create a root node aggregate with tethered children
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And I am user identified by "initiating-user-identifier"
 
   Scenario: Create root node with tethered children
@@ -131,7 +131,7 @@ Feature: Create a root node aggregate with tethered children
       | Key  | Value                |
       | text | "my sub sub default" |
 
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no parent node
     And I expect this node to have the following child nodes:

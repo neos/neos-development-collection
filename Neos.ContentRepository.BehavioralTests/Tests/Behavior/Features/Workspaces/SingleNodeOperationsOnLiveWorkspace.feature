@@ -15,39 +15,41 @@ Feature: Single Node operations on live workspace
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value           |
-      | workspaceName              | "live"          |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId     | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                    |
-      | contentStreamId       | "cs-identifier"                          |
-      | nodeAggregateId       | "nody-mc-nodeface"                       |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
-      | originDimensionSpacePoint     | {}                                       |
-      | coveredDimensionSpacePoints   | [{}]                                     |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                 |
-      | nodeName                      | "child"                                  |
-      | nodeAggregateClassification   | "regular"                                |
+      | Key                         | Value                                    |
+      | workspaceName               | "live"                                   |
+      | contentStreamId             | "cs-identifier"                          |
+      | nodeAggregateId             | "nody-mc-nodeface"                       |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint   | {}                                       |
+      | coveredDimensionSpacePoints | [{}]                                     |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
+      | nodeName                    | "child"                                  |
+      | nodeAggregateClassification | "regular"                                |
 
   Scenario: Set property of a node
     Given the command SetNodeProperties is executed with payload:
-      | Key                       | Value                        |
-      | nodeAggregateId   | "nody-mc-nodeface"           |
-      | originDimensionSpacePoint | {}                           |
-      | propertyValues            | {"text": "Hello"}            |
+      | Key                       | Value              |
+      | nodeAggregateId           | "nody-mc-nodeface" |
+      | originDimensionSpacePoint | {}                 |
+      | propertyValues            | {"text": "Hello"}  |
 
     Then I expect exactly 4 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 3 is of type "NodePropertiesWereSet" with payload:
-      | Key                       | Expected                     |
-      | nodeAggregateId   | "nody-mc-nodeface"           |
-      | originDimensionSpacePoint | []                           |
-      | propertyValues.text.value | "Hello"                      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+      | Key                       | Expected           |
+      | nodeAggregateId           | "nody-mc-nodeface" |
+      | originDimensionSpacePoint | []                 |
+      | propertyValues.text.value | "Hello"            |
+
+    And I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value   |
@@ -56,7 +58,7 @@ Feature: Single Node operations on live workspace
   Scenario: Error on invalid dimension space point
     Given the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value               |
-      | nodeAggregateId   | "nody-mc-nodeface"  |
+      | nodeAggregateId           | "nody-mc-nodeface"  |
       | originDimensionSpacePoint | {"not": "existing"} |
       | propertyValues            | {"text": "Hello"}   |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"

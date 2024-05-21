@@ -35,11 +35,7 @@ trait ContentStreamClosing
     public function theCommandCloseContentStreamIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamId = isset($commandArguments['contentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->currentContentStreamId;
-
-        $command = CloseContentStream::create($contentStreamId);
+        $command = CloseContentStream::create(ContentStreamId::fromString($commandArguments['contentStreamId']));
 
         $this->currentContentRepository->handle($command);
     }

@@ -20,7 +20,7 @@ Feature: Tag subtree without dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "root"                        |
@@ -102,10 +102,11 @@ Feature: Tag subtree without dimensions
       | nodeAggregateId              | "a1"            |
       | affectedDimensionSpacePoints | [[]]            |
       | tag                          | "tag1"          |
-    And I am in content stream "cs-identifier"
+
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 12 nodes
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect the node with aggregate identifier "a1" to be explicitly tagged "tag1"
     Then I expect the node with aggregate identifier "a1a" to inherit the tag "tag1"
     Then I expect the node with aggregate identifier "a1a1" to inherit the tag "tag1"
@@ -151,9 +152,9 @@ Feature: Tag subtree without dimensions
     """
 
     When the command MoveNodeAggregate is executed with payload:
-      | Key                      | Value           |
-      | nodeAggregateId          | "a1a"           |
-      | newParentNodeAggregateId | "b1"            |
+      | Key                      | Value |
+      | nodeAggregateId          | "a1a" |
+      | newParentNodeAggregateId | "b1"  |
     When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
     """
     a

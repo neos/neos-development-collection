@@ -12,7 +12,6 @@ namespace Neos\Neos\Tests\Unit\NodeTypePostprocessor;
  * source code.
  */
 
-use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Flow\Tests\UnitTestCase;
@@ -344,8 +343,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         $mockNodeType = new NodeType(
             NodeTypeName::fromString('Some.NodeType:Name'),
             [],
-            [],
-            new DefaultNodeLabelGeneratorFactory()
+            []
         );
         $postprocessor->process($mockNodeType, $configuration, []);
         return $configuration;

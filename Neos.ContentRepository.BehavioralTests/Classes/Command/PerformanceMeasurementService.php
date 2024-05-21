@@ -46,6 +46,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 class PerformanceMeasurementService implements ContentRepositoryServiceInterface
 {
     private ContentStreamId $contentStreamId;
+    private WorkspaceName $workspaceName;
     private DimensionSpacePointSet $dimensionSpacePoints;
     private ContentStreamEventStreamName $contentStreamEventStream;
 
@@ -57,6 +58,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
         private readonly Projections $projections,
     ) {
         $this->contentStreamId = contentStreamId::fromString('cs-identifier');
+        $this->workspaceName = WorkspaceName::fromString('some-workspace');
         $this->dimensionSpacePoints = new DimensionSpacePointSet([
             DimensionSpacePoint::fromArray(['language' => 'mul']),
             DimensionSpacePoint::fromArray(['language' => 'de']),
@@ -88,6 +90,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
 
         $rootNodeAggregateId = nodeAggregateId::fromString('lady-eleonode-rootford');
         $rootNodeAggregateWasCreated = new RootNodeAggregateWithNodeWasCreated(
+            $this->workspaceName,
             $this->contentStreamId,
             $rootNodeAggregateId,
             NodeTypeName::fromString('Neos.ContentRepository:Root'),
@@ -131,6 +134,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
             for ($i = 0; $i < $numberOfNodes; $i++) {
                 $nodeAggregateId = nodeAggregateId::create();
                 $events[] = new NodeAggregateWithNodeWasCreated(
+                    $this->workspaceName,
                     $this->contentStreamId,
                     $nodeAggregateId,
                     NodeTypeName::fromString('Neos.ContentRepository:Testing'),

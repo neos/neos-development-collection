@@ -24,7 +24,7 @@ Feature: Create a root node aggregate
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
 
   Scenario: Create the initial root node aggregate using valid payload without dimensions
     When the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -40,6 +40,7 @@ Feature: Create a root node aggregate
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [[]]                          |
       | nodeAggregateClassification | "root"                        |
+
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
     And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
@@ -74,18 +75,19 @@ Feature: Create a root node aggregate
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
     When the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key             | Value                         |
-      | nodeAggregateId | "nody-mc-nodeface"            |
+      | Key             | Value                                |
+      | nodeAggregateId | "nody-mc-nodeface"                   |
       | nodeTypeName    | "Neos.ContentRepository:AnotherRoot" |
 
     Then I expect exactly 3 events to be published on stream "ContentStream:cs-identifier"
     And event at index 2 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
-      | Key                         | Expected                      |
-      | contentStreamId             | "cs-identifier"               |
-      | nodeAggregateId             | "nody-mc-nodeface"            |
+      | Key                         | Expected                             |
+      | contentStreamId             | "cs-identifier"                      |
+      | nodeAggregateId             | "nody-mc-nodeface"                   |
       | nodeTypeName                | "Neos.ContentRepository:AnotherRoot" |
-      | coveredDimensionSpacePoints | [[]]                          |
-      | nodeAggregateClassification | "root"                        |
+      | coveredDimensionSpacePoints | [[]]                                 |
+      | nodeAggregateClassification | "root"                               |
+
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to have no parent node aggregates
     And I expect this node aggregate to have no child node aggregates

@@ -22,7 +22,7 @@ Feature: Workspace based content publishing
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -37,6 +37,8 @@ Feature: Workspace based content publishing
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Original"} |
+    # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
+    # of-date base version. This means the content stream can never be merged back, but must always be rebased.
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
@@ -85,13 +87,13 @@ Feature: Workspace based content publishing
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Modified"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
       | text | "Original" |
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
@@ -102,7 +104,7 @@ Feature: Workspace based content publishing
       | Key           | Value       |
       | workspaceName | "user-test" |
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
@@ -132,15 +134,15 @@ Feature: Workspace based content publishing
 
     # REBASING + Publishing: works now (TODO soft constraint check for old value)
     When the command RebaseWorkspace is executed with payload:
-      | Key                    | Value          |
-      | workspaceName          | "user-test"    |
+      | Key                    | Value           |
+      | workspaceName          | "user-test"     |
       | rebasedContentStreamId | "rebased-cs-id" |
 
     And the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
 
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
@@ -156,11 +158,12 @@ Feature: Workspace based content publishing
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Modified"} |
 
+
     # PUBLISHING
     And the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
 
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                     |
@@ -169,12 +172,13 @@ Feature: Workspace based content publishing
       | originDimensionSpacePoint | {}                        |
       | propertyValues            | {"text": "Modified anew"} |
 
+
     # PUBLISHING
     And the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value           |

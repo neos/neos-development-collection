@@ -27,7 +27,7 @@ class SiteServiceInternalsFactory implements ContentRepositoryServiceFactoryInte
         return new SiteServiceInternals(
             $serviceFactoryDependencies->contentRepository,
             $serviceFactoryDependencies->interDimensionalVariationGraph,
-            $serviceFactoryDependencies->nodeTypeManager
+            $serviceFactoryDependencies->nodeTypeManager,
         );
     }
 }

@@ -33,15 +33,15 @@ Feature: Tests for the "Neos.Neos:ContentCase" Fusion prototype
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  |
-      | a               | root                  | Neos.Neos:Site                |
-      | a1              | a                     | Neos.Neos:Test.DocumentType2  |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 |
+      | a               | root                  | Neos.Neos:Site               |
+      | a1              | a                     | Neos.Neos:Test.DocumentType2 |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
     """yaml

@@ -19,63 +19,66 @@ Feature: Publishing moved nodes without dimensions
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value           |
-      | workspaceName              | "live"          |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                  |
-      | nodeAggregateId     | "lady-eleonode-rootford"               |
-      | nodeTypeName                | "Neos.ContentRepository:Root"          |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | nodeName                      | "document"                                |
-      | nodeAggregateClassification   | "regular"                                 |
+      | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
+      | contentStreamId             | "cs-identifier"                           |
+      | nodeAggregateId             | "sir-david-nodenborough"                  |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint   | {}                                        |
+      | coveredDimensionSpacePoints | [{}]                                      |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
+      | nodeName                    | "document"                                |
+      | nodeAggregateClassification | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "nody-mc-nodeface"                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateId | "sir-david-nodenborough"                  |
-      | nodeName                      | "child-document"                          |
-      | nodeAggregateClassification   | "regular"                                 |
+      | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
+      | contentStreamId             | "cs-identifier"                           |
+      | nodeAggregateId             | "nody-mc-nodeface"                        |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint   | {}                                        |
+      | coveredDimensionSpacePoints | [{}]                                      |
+      | parentNodeAggregateId       | "sir-david-nodenborough"                  |
+      | nodeName                    | "child-document"                          |
+      | nodeAggregateClassification | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "sir-nodeward-nodington-iii"              |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | nodeName                      | "esquire"                                 |
-      | nodeAggregateClassification   | "regular"                                 |
+      | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
+      | contentStreamId             | "cs-identifier"                           |
+      | nodeAggregateId             | "sir-nodeward-nodington-iii"              |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint   | {}                                        |
+      | coveredDimensionSpacePoints | [{}]                                      |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
+      | nodeName                    | "esquire"                                 |
+      | nodeAggregateClassification | "regular"                                 |
 
     And the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user"               |
-      | baseWorkspaceName          | "live"               |
+      | Key                | Value                |
+      | workspaceName      | "user"               |
+      | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
 
   Scenario: Publish the move of a node to the end of its siblings
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                    |
-      | workspaceName              | "user"               |
-      | dimensionSpacePoint                         | {}                       |
+      | Key                                 | Value                    |
+      | workspaceName                       | "user"                   |
+      | dimensionSpacePoint                 | {}                       |
       | nodeAggregateId                     | "sir-david-nodenborough" |
       | newParentNodeAggregateId            | null                     |
       | newSucceedingSiblingNodeAggregateId | null                     |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                      | Value                                                                                                                               |
-      | workspaceName            | "user"                                                                                                                              |
-      | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
+      | Key            | Value                                                                                               |
+      | workspaceName  | "user"                                                                                              |
+      | nodesToPublish | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -85,7 +88,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -105,16 +108,16 @@ Feature: Publishing moved nodes without dimensions
 
   Scenario: Publish the move of a node before one of its siblings
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                        |
-      | workspaceName              | "user"               |
+      | Key                                 | Value                        |
+      | workspaceName                       | "user"                       |
       | nodeAggregateId                     | "sir-nodeward-nodington-iii" |
-      | dimensionSpacePoint                         | {}                           |
+      | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | null                         |
       | newSucceedingSiblingNodeAggregateId | "sir-david-nodenborough"     |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                      | Value                                                                                                                                   |
-      | workspaceName            | "user"                                                                                                                                  |
-      | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+      | Key            | Value                                                                                                   |
+      | workspaceName  | "user"                                                                                                  |
+      | nodesToPublish | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -124,7 +127,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -144,25 +147,26 @@ Feature: Publishing moved nodes without dimensions
 
   Scenario: Publish the move of a node to a new parent and the end of its children
     Given the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "lady-abigail-nodenborough"               |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateId | "sir-nodeward-nodington-iii"              |
-      | nodeName                      | "other-document"                          |
-      | nodeAggregateClassification   | "regular"                                 |
+      | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
+      | contentStreamId             | "cs-identifier"                           |
+      | nodeAggregateId             | "lady-abigail-nodenborough"               |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint   | {}                                        |
+      | coveredDimensionSpacePoints | [{}]                                      |
+      | parentNodeAggregateId       | "sir-nodeward-nodington-iii"              |
+      | nodeName                    | "other-document"                          |
+      | nodeAggregateClassification | "regular"                                 |
     When the command MoveNodeAggregate is executed with payload:
-      | Key                              | Value                        |
-      | workspaceName              | "user"               |
+      | Key                      | Value                        |
+      | workspaceName            | "user"                       |
       | nodeAggregateId          | "sir-david-nodenborough"     |
-      | dimensionSpacePoint              | {}                           |
+      | dimensionSpacePoint      | {}                           |
       | newParentNodeAggregateId | "sir-nodeward-nodington-iii" |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                      | Value                                                                                                                               |
-      | workspaceName            | "user"                                                                                                                              |
-      | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
+      | Key            | Value                                                                                               |
+      | workspaceName  | "user"                                                                                              |
+      | nodesToPublish | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
 
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -173,7 +177,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings
@@ -197,16 +201,17 @@ Feature: Publishing moved nodes without dimensions
 
   Scenario: Publish the move of a node to a new parent and before one of its children
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                        |
-      | workspaceName              | "user"               |
+      | Key                                 | Value                        |
+      | workspaceName                       | "user"                       |
       | nodeAggregateId                     | "nody-mc-nodeface"           |
-      | dimensionSpacePoint                         | {}                           |
+      | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | "lady-eleonode-rootford"     |
       | newSucceedingSiblingNodeAggregateId | "sir-nodeward-nodington-iii" |
     And the command PublishIndividualNodesFromWorkspace is executed with payload:
-      | Key                      | Value                                                                                                                         |
-      | workspaceName            | "user"                                                                                                                        |
-      | nodesToPublish           | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}] |
+      | Key            | Value                                                                                         |
+      | workspaceName  | "user"                                                                                        |
+      | nodesToPublish | [{"workspaceName": "user", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}] |
+
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -215,7 +220,7 @@ Feature: Publishing moved nodes without dimensions
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no preceding siblings

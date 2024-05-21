@@ -23,35 +23,33 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 */
 final class CheckpointHelper
 {
-    private const CHECKPOINT_TABLE_NAME_SUFFIX = '_checkpoint';
-
     // This class only contains static members and should not be constructed
     private function __construct()
     {
     }
 
-    public static function checkpointTableSchema(string $tableNamePrefix): Table
+    public static function checkpointTableSchema(string $tableName): Table
     {
-        return (new Table($tableNamePrefix . self::CHECKPOINT_TABLE_NAME_SUFFIX, [
+        return (new Table($tableName, [
             (new Column('id', Type::getType(Types::INTEGER)))->setPlatformOption('check', 'CHECK (id = 0)'),
             (new Column('appliedsequencenumber', Type::getType(Types::INTEGER))),
         ]))
             ->setPrimaryKey(['id']);
     }
 
-    public static function resetCheckpoint(Connection $connection, string $tableNamePrefix): void
+    public static function resetCheckpoint(Connection $connection, string $tableName): void
     {
-        $connection->executeStatement('INSERT INTO ' . $connection->quoteIdentifier($tableNamePrefix . self::CHECKPOINT_TABLE_NAME_SUFFIX) . ' (id, appliedsequencenumber) VALUES (0, 0) ON DUPLICATE KEY UPDATE appliedsequencenumber = 0');
+        $connection->executeStatement('INSERT INTO ' . $connection->quoteIdentifier($tableName) . ' (id, appliedsequencenumber) VALUES (0, 0) ON DUPLICATE KEY UPDATE appliedsequencenumber = 0');
     }
 
-    public static function updateCheckpoint(Connection $connection, string $tableNamePrefix, SequenceNumber $sequenceNumber): void
+    public static function updateCheckpoint(Connection $connection, string $tableName, SequenceNumber $sequenceNumber): void
     {
-        $connection->executeStatement('UPDATE ' . $connection->quoteIdentifier($tableNamePrefix . self::CHECKPOINT_TABLE_NAME_SUFFIX) . ' SET appliedsequencenumber = :sequenceNumber WHERE id = 0', ['sequenceNumber' => $sequenceNumber->value]);
+        $connection->executeStatement('UPDATE ' . $connection->quoteIdentifier($tableName) . ' SET appliedsequencenumber = :sequenceNumber WHERE id = 0', ['sequenceNumber' => $sequenceNumber->value]);
     }
 
-    public static function getCheckpoint(Connection $connection, string $tableNamePrefix): SequenceNumber
+    public static function getCheckpoint(Connection $connection, string $tableName): SequenceNumber
     {
-        $highestAppliedSequenceNumber = $connection->fetchOne('SELECT appliedsequencenumber FROM ' . $connection->quoteIdentifier($tableNamePrefix . self::CHECKPOINT_TABLE_NAME_SUFFIX) . ' LIMIT 1 ');
+        $highestAppliedSequenceNumber = $connection->fetchOne('SELECT appliedsequencenumber FROM ' . $connection->quoteIdentifier($tableName) . ' LIMIT 1 ');
         if (!is_numeric($highestAppliedSequenceNumber)) {
             throw new \RuntimeException('Failed to fetch highest applied sequence number', 1712942681);
         }

@@ -15,6 +15,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class PropertyAdjustment
@@ -114,8 +115,9 @@ class PropertyAdjustment
     ): EventsToPublish {
         $events = Events::with(
             new NodePropertiesWereSet(
+                $node->workspaceName,
                 $node->subgraphIdentity->contentStreamId,
-                $node->nodeAggregateId,
+                $node->aggregateId,
                 $node->originDimensionSpacePoint,
                 $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
                 $serializedPropertyValues,

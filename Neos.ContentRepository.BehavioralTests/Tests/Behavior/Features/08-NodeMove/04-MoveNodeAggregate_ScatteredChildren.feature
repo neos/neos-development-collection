@@ -21,7 +21,7 @@ Feature: Move a node with content dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    And I am in workspace "live" and dimension space point {"example": "general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -65,7 +65,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "sir-nodeward-nodington-iii"                                                                                                                                           |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"bustling-destinode"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"younger-destinode"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -75,7 +75,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -87,7 +87,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;bustling-destinode;{"example": "general"} |
       | cs-identifier;younger-destinode;{"example": "general"}  |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -98,7 +98,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                      |
       | cs-identifier;younger-destinode;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -132,7 +132,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | "bustling-destinode"                                                                                                                    |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -142,19 +142,19 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                        |
       | cs-identifier;younger-mc-nodeface;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/bustling-target-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;bustling-destinode;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/bustling-target-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;bustling-destinode;{"example": "general"}
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "parent-document/document" to lead to node cs-identifier;nody-mc-nodeface;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -188,7 +188,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | null                                                                               |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"elder-destinode"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "bustling-destinode" and node path "esquire/bustling-target-document" to lead to node cs-identifier;bustling-destinode;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -199,7 +199,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                      |
       | cs-identifier;younger-destinode;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "bustling-destinode" and node path "esquire/bustling-target-document" to lead to node cs-identifier;bustling-destinode;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -210,7 +210,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;elder-destinode;{"example": "general"}   |
       | cs-identifier;younger-destinode;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "bustling-destinode" and node path "esquire/esquire-child/bustling-target-document" to lead to node cs-identifier;bustling-destinode;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;nodimus-mediocre;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -220,7 +220,7 @@ Feature: Move a node with content dimensions
       | NodeDiscriminator                                            |
       | cs-identifier;younger-child-destinode;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "bustling-destinode" and node path "esquire/bustling-target-document" to lead to node cs-identifier;bustling-destinode;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -263,7 +263,7 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId      | null                                                                                                                                                                    |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"example":"source"},"nodeAggregateId":"bustling-destinode"},{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":"bustling-destinode"}] |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect node aggregate identifier "elder-destinode" and node path "esquire/elder-target-document" to lead to node cs-identifier;elder-destinode;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -274,7 +274,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;bustling-destinode;{"example": "general"} |
       | cs-identifier;younger-destinode;{"example": "general"}  |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "source"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
     Then I expect node aggregate identifier "elder-destinode" and node path "esquire/elder-target-document" to lead to node cs-identifier;elder-destinode;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -285,7 +285,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;bustling-destinode;{"example": "general"} |
       | cs-identifier;younger-destinode;{"example": "general"}  |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "spec"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
     Then I expect node aggregate identifier "elder-destinode" and node path "esquire/esquire-child/elder-target-document" to lead to node cs-identifier;elder-destinode;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;nodimus-mediocre;{"example": "general"}
     And I expect this node to have the following preceding siblings:
@@ -296,7 +296,7 @@ Feature: Move a node with content dimensions
       | cs-identifier;bustling-destinode;{"example": "general"}      |
       | cs-identifier;younger-child-destinode;{"example": "general"} |
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "peer"}
+    When I am in workspace "live" and dimension space point {"example": "peer"}
     Then I expect node aggregate identifier "elder-destinode" and node path "esquire/elder-target-document" to lead to node cs-identifier;elder-destinode;{"example": "general"}
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"example": "general"}
     And I expect this node to have the following preceding siblings:

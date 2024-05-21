@@ -22,7 +22,7 @@ Feature: Tag subtree with dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "root"                        |
@@ -59,6 +59,7 @@ Feature: Tag subtree with dimensions
       | nodeAggregateId | "a1a"              |
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"mul"} |
+
 
     When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
     """
@@ -168,7 +169,7 @@ Feature: Tag subtree with dimensions
       | nodeAggregateId | "a1a"              |
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
-    And I am in the active content stream of workspace "user-ws" and dimension space point {"language":"gsw"}
+    And I am in workspace "user-ws" and dimension space point {"language":"gsw"}
     And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
     """
     a (tag1*)

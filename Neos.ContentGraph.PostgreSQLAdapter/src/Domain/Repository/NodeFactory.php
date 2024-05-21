@@ -37,11 +37,13 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The node factory for mapping database rows to nodes and node aggregates
@@ -77,17 +79,14 @@ final class NodeFactory
             : null;
 
         return Node::create(
-            ContentSubgraphIdentity::create(
-                $this->contentRepositoryId,
-                $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
-                $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
-                $visibilityConstraints
-            ),
+            $this->contentRepositoryId,
+            // todo use actual workspace name
+            WorkspaceName::fromString('missing'),
+            $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
             NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
-            $nodeType,
             new PropertyCollection(
                 SerializedPropertyValues::fromJsonString($nodeRow['properties']),
                 $this->propertyConverter
@@ -102,6 +101,9 @@ final class NodeFactory
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
+            $visibilityConstraints,
+            $nodeType,
+            $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
         );
     }
 
@@ -241,8 +243,9 @@ final class NodeFactory
             }
         }
 
-        return new NodeAggregate(
-            $contentStreamId,
+        return NodeAggregate::create(
+            $this->contentRepositoryId,
+            WorkspaceName::fromString('missing'), // todo
             $nodeAggregateId,
             $nodeAggregateClassification,
             $nodeTypeName,
@@ -255,6 +258,7 @@ final class NodeFactory
             OriginByCoverage::fromArray($occupationByCovered),
             // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregate())
             DimensionSpacePointsBySubtreeTags::create(),
+            $contentStreamId,
         );
     }
 
@@ -338,8 +342,9 @@ final class NodeFactory
         }
 
         foreach ($nodeAggregateIds as $key => $nodeAggregateId) {
-            yield new NodeAggregate(
-                $contentStreamId,
+            yield NodeAggregate::create(
+                $this->contentRepositoryId,
+                WorkspaceName::fromString('missing'), // todo
                 $nodeAggregateId,
                 $nodeAggregateClassifications[$key],
                 $nodeTypeNames[$key],
@@ -352,6 +357,7 @@ final class NodeFactory
                 OriginByCoverage::fromArray($occupationByCovered[$key]),
                 // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregates())
                 DimensionSpacePointsBySubtreeTags::create(),
+                $contentStreamId,
             );
         }
     }

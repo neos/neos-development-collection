@@ -100,9 +100,6 @@ trait NodeReferencing
     public function theEventNodeReferencesWereSetWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = $this->currentContentStreamId;
-        }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
             $contentStreamId

@@ -17,10 +17,11 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Event;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * A {@see SubtreeTag} was added to a node aggregate and effectively to its descendants
@@ -29,7 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final readonly class SubtreeWasTagged implements
     EventInterface,
-    PublishableToOtherContentStreamsInterface,
+    PublishableToWorkspaceInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     /**
@@ -39,6 +40,7 @@ final readonly class SubtreeWasTagged implements
      * @param SubtreeTag $tag The tag that was added
      */
     public function __construct(
+        public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public DimensionSpacePointSet $affectedDimensionSpacePoints,
@@ -56,10 +58,11 @@ final readonly class SubtreeWasTagged implements
         return $this->nodeAggregateId;
     }
 
-    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
-            $targetContentStreamId,
+            $targetWorkspaceName,
+            $contentStreamId,
             $this->nodeAggregateId,
             $this->affectedDimensionSpacePoints,
             $this->tag,
@@ -69,6 +72,7 @@ final readonly class SubtreeWasTagged implements
     public static function fromArray(array $values): EventInterface
     {
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),

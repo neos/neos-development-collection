@@ -19,9 +19,9 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -63,20 +63,16 @@ class ContentCacheFlusher
 
     /**
      * Main entry point to *directly* flush the caches of a given NodeAggregate
-     *
-     * @param ContentRepository $contentRepository
-     * @param ContentStreamId $contentStreamId
-     * @param NodeAggregateId $nodeAggregateId
      */
     public function flushNodeAggregate(
         ContentRepository $contentRepository,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId
     ): void {
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
         $tagsToFlush = array_merge(
-            $this->collectTagsForChangeOnNodeAggregate($contentRepository, $contentStreamId, $nodeAggregateId),
+            $this->collectTagsForChangeOnNodeAggregate($contentRepository, $workspaceName, $nodeAggregateId),
             $tagsToFlush
         );
 
@@ -88,38 +84,38 @@ class ContentCacheFlusher
      */
     private function collectTagsForChangeOnNodeAggregate(
         ContentRepository $contentRepository,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId
     ): array {
-        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
-            $contentStreamId,
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
+
+        $nodeAggregate = $contentGraph->findNodeAggregateById(
             $nodeAggregateId
         );
         if (!$nodeAggregate) {
             // Node Aggregate was removed in the meantime, so no need to clear caches on this one anymore.
             return [];
         }
-        $tagsToFlush = $this->collectTagsForChangeOnNodeIdentifier($contentRepository->id, $contentStreamId, $nodeAggregateId);
+        $tagsToFlush = $this->collectTagsForChangeOnNodeIdentifier($contentRepository->id, $workspaceName, $nodeAggregateId);
 
         $tagsToFlush = array_merge($this->collectTagsForChangeOnNodeType(
             $nodeAggregate->nodeTypeName,
             $contentRepository->id,
-            $contentStreamId,
+            $workspaceName,
             $nodeAggregateId,
             $contentRepository
         ), $tagsToFlush);
 
         $parentNodeAggregates = [];
         foreach (
-            $contentRepository->getContentGraph()->findParentNodeAggregates(
-                $contentStreamId,
+            $contentGraph->findParentNodeAggregates(
                 $nodeAggregateId
             ) as $parentNodeAggregate
         ) {
             $parentNodeAggregates[] = $parentNodeAggregate;
         }
         // we do not need these variables anymore here
-        unset($contentStreamId, $nodeAggregateId);
+        unset($nodeAggregateId);
 
 
         // NOTE: Normally, the content graph cannot contain cycles. However, during the
@@ -138,7 +134,7 @@ class ContentCacheFlusher
             }
             $processedNodeAggregateIds[$nodeAggregate->nodeAggregateId->value] = true;
 
-            $tagName = CacheTag::forDescendantOfNode($contentRepository->id, $nodeAggregate->contentStreamId, $nodeAggregate->nodeAggregateId);
+            $tagName = CacheTag::forDescendantOfNode($contentRepository->id, $workspaceName, $nodeAggregate->nodeAggregateId);
             $tagsToFlush[$tagName->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',
                 $tagName->value,
@@ -146,8 +142,7 @@ class ContentCacheFlusher
             );
 
             foreach (
-                $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $nodeAggregate->contentStreamId,
+                $contentGraph->findParentNodeAggregates(
                     $nodeAggregate->nodeAggregateId
                 ) as $parentNodeAggregate
             ) {
@@ -164,24 +159,24 @@ class ContentCacheFlusher
      */
     private function collectTagsForChangeOnNodeIdentifier(
         ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): array {
         $tagsToFlush = [];
 
-        $nodeCacheIdentifier = CacheTag::forNodeAggregate($contentRepositoryId, $contentStreamId, $nodeAggregateId);
+        $nodeCacheIdentifier = CacheTag::forNodeAggregate($contentRepositoryId, $workspaceName, $nodeAggregateId);
         $tagsToFlush[$nodeCacheIdentifier->value] = sprintf(
             'which were tagged with "%s" because that identifier has changed.',
             $nodeCacheIdentifier->value
         );
 
-        $dynamicNodeCacheIdentifier = CacheTag::forDynamicNodeAggregate($contentRepositoryId, $contentStreamId, $nodeAggregateId);
+        $dynamicNodeCacheIdentifier = CacheTag::forDynamicNodeAggregate($contentRepositoryId, $workspaceName, $nodeAggregateId);
         $tagsToFlush[$dynamicNodeCacheIdentifier->value] = sprintf(
             'which were tagged with "%s" because that identifier has changed.',
             $dynamicNodeCacheIdentifier->value
         );
 
-        $descendantOfNodeCacheIdentifier = CacheTag::forDescendantOfNode($contentRepositoryId, $contentStreamId, $nodeAggregateId);
+        $descendantOfNodeCacheIdentifier = CacheTag::forDescendantOfNode($contentRepositoryId, $workspaceName, $nodeAggregateId);
         $tagsToFlush[$descendantOfNodeCacheIdentifier->value] = sprintf(
             'which were tagged with "%s" because node "%s" has changed.',
             $descendantOfNodeCacheIdentifier->value,
@@ -197,7 +192,7 @@ class ContentCacheFlusher
     private function collectTagsForChangeOnNodeType(
         NodeTypeName $nodeTypeName,
         ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         ?NodeAggregateId $referenceNodeIdentifier,
         ContentRepository $contentRepository
     ): array {
@@ -212,7 +207,7 @@ class ContentCacheFlusher
         }
 
         foreach ($nodeTypesNamesToFlush as $nodeTypeNameToFlush) {
-            $nodeTypeNameCacheIdentifier = CacheTag::forNodeTypeName($contentRepositoryId, $contentStreamId, NodeTypeName::fromString($nodeTypeNameToFlush));
+            $nodeTypeNameCacheIdentifier = CacheTag::forNodeTypeName($contentRepositoryId, $workspaceName, NodeTypeName::fromString($nodeTypeNameToFlush));
             $tagsToFlush[$nodeTypeNameCacheIdentifier->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed and was of type "%s".',
                 $nodeTypeNameCacheIdentifier->value,
@@ -271,7 +266,7 @@ class ContentCacheFlusher
     /**
      * Fetches possible usages of the asset and registers nodes that use the asset as changed.
      *
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      */
     public function registerAssetChange(AssetInterface $asset): void
     {
@@ -288,13 +283,28 @@ class ContentCacheFlusher
             ->withAsset($this->persistenceManager->getIdentifierByObject($asset))
             ->includeVariantsOfAsset();
 
+
+        $workspaceNamesByContentStreamId = [];
         foreach ($this->globalAssetUsageService->findByFilter($filter) as $contentRepositoryId => $usages) {
             foreach ($usages as $usage) {
+                // TODO: Remove when WorkspaceName is part of the AssetUsageProjection
+                $workspaceName = $workspaceNamesByContentStreamId[$contentRepositoryId][$usage->contentStreamId->value] ?? null;
+                if ($workspaceName === null) {
+                    $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryId));
+                    $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->contentStreamId);
+                    if ($workspace === null) {
+                        continue;
+                    }
+                    $workspaceName = $workspace->workspaceName;
+                    $workspaceNamesByContentStreamId[$contentRepositoryId][$usage->contentStreamId->value] = $workspaceName;
+                }
+                //
+
                 $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryId));
                 $tagsToFlush = array_merge(
                     $this->collectTagsForChangeOnNodeAggregate(
                         $contentRepository,
-                        $usage->contentStreamId,
+                        $workspaceName,
                         $usage->nodeAggregateId
                     ),
                     $tagsToFlush

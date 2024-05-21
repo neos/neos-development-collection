@@ -25,38 +25,41 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId     | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | nodeName                      | "document"                                |
-      | nodeAggregateClassification   | "regular"                                 |
+      | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
+      | contentStreamId             | "cs-identifier"                           |
+      | nodeAggregateId             | "sir-david-nodenborough"                  |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint   | {}                                        |
+      | coveredDimensionSpacePoints | [{}]                                      |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
+      | nodeName                    | "document"                                |
+      | nodeAggregateClassification | "regular"                                 |
     # Node /document/sub
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                        |
-      | contentStreamId       | "cs-identifier"                              |
-      | nodeAggregateId       | "subdoc"                                     |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:SubDocument" |
-      | originDimensionSpacePoint     | {}                                           |
-      | coveredDimensionSpacePoints   | [{}]                                         |
-      | parentNodeAggregateId | "sir-david-nodenborough"                     |
-      | nodeName                      | "sub"                                        |
-      | nodeAggregateClassification   | "regular"                                    |
+      | Key                         | Value                                        |
+      | workspaceName               | "live"                                       |
+      | contentStreamId             | "cs-identifier"                              |
+      | nodeAggregateId             | "subdoc"                                     |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:SubDocument" |
+      | originDimensionSpacePoint   | {}                                           |
+      | coveredDimensionSpacePoints | [{}]                                         |
+      | parentNodeAggregateId       | "sir-david-nodenborough"                     |
+      | nodeName                    | "sub"                                        |
+      | nodeAggregateClassification | "regular"                                    |
+
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:SubDocument"
@@ -77,12 +80,12 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:SubDocument"
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type                  | nodeAggregateId |
-      | DISALLOWED_CHILD_NODE | sir-david-nodenborough  |
+      | Type                  | nodeAggregateId        |
+      | DISALLOWED_CHILD_NODE | sir-david-nodenborough |
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
 
@@ -112,38 +115,41 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId     | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | nodeName                      | "document"                                |
-      | nodeAggregateClassification   | "tethered"                                |
+      | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
+      | contentStreamId             | "cs-identifier"                           |
+      | nodeAggregateId             | "sir-david-nodenborough"                  |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint   | {}                                        |
+      | coveredDimensionSpacePoints | [{}]                                      |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
+      | nodeName                    | "document"                                |
+      | nodeAggregateClassification | "tethered"                                |
     # Node /document/sub
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                        |
-      | contentStreamId       | "cs-identifier"                              |
-      | nodeAggregateId       | "subdoc"                                     |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:SubDocument" |
-      | originDimensionSpacePoint     | {}                                           |
-      | coveredDimensionSpacePoints   | [{}]                                         |
-      | parentNodeAggregateId | "sir-david-nodenborough"                     |
-      | nodeName                      | "sub"                                        |
-      | nodeAggregateClassification   | "regular"                                    |
+      | Key                         | Value                                        |
+      | workspaceName               | "live"                                       |
+      | contentStreamId             | "cs-identifier"                              |
+      | nodeAggregateId             | "subdoc"                                     |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:SubDocument" |
+      | originDimensionSpacePoint   | {}                                           |
+      | coveredDimensionSpacePoints | [{}]                                         |
+      | parentNodeAggregateId       | "sir-david-nodenborough"                     |
+      | nodeName                    | "sub"                                        |
+      | nodeAggregateClassification | "regular"                                    |
+
     Then I expect no needed structure adjustments for type "Neos.ContentRepository:Root"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:SubDocument"
@@ -174,10 +180,10 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:SubDocument":
       | Type                  | nodeAggregateId |
-      | DISALLOWED_CHILD_NODE | subdoc                  |
+      | DISALLOWED_CHILD_NODE | subdoc          |
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:SubDocument"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:SubDocument"
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And I expect node aggregate identifier "subdoc" to lead to no node
 

@@ -31,7 +31,6 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeA
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -88,8 +87,7 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
                         ]
                     ]
                 ]
-            ],
-            new DefaultNodeLabelGeneratorFactory()
+            ]
         );
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
 

@@ -37,7 +37,7 @@ Feature: Create node aggregate with node
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -52,7 +52,7 @@ Feature: Create node aggregate with node
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
       | nodeName              | "document"                            |
 
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to create a node aggregate in a workspace whose content stream is closed:
     When the command CloseContentStream is executed with payload:
@@ -143,13 +143,13 @@ Feature: Create node aggregate with node
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
       | nodeName              | "document"                            |
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                       | Value                                 |
-      | nodeAggregateId           | "nody-mc-nodeface"                    |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
-      | parentNodeAggregateId     | "lady-eleonode-rootford"              |
-      | nodeName                  | "document"                            |
+      | Key                   | Value                                 |
+      | nodeAggregateId       | "nody-mc-nodeface"                    |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"              |
+      | nodeName              | "document"                            |
 
-    Then the last command should have thrown an exception of type "NodeNameIsAlreadyOccupied"
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
   Scenario: Try to create a node aggregate with a property the node type does not declare
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:

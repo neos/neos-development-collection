@@ -79,7 +79,7 @@ class ImageVariantGarbageCollector
                     $usageItem instanceof AssetUsageReference
                     && $usageItem->getContentStreamId()->equals($node->subgraphIdentity->contentStreamId)
                     && $usageItem->getOriginDimensionSpacePoint()->equals($node->originDimensionSpacePoint)
-                    && $usageItem->getNodeAggregateId()->equals($node->nodeAggregateId)
+                    && $usageItem->getNodeAggregateId()->equals($node->aggregateId)
                 ) {
                     $this->assetRepository->remove($oldValue);
                 }

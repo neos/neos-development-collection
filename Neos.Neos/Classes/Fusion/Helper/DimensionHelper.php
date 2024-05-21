@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
@@ -51,7 +52,7 @@ final class DimensionHelper implements ProtectedContextAwareInterface
     public function currentValue(Node $node, ContentDimensionId|string $dimensionName): ?ContentDimensionValue
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
-        $currentDimensionValueAsString = $node->subgraphIdentity->dimensionSpacePoint->getCoordinate($contentDimensionId);
+        $currentDimensionValueAsString = $node->dimensionSpacePoint->getCoordinate($contentDimensionId);
 
         if (is_string($currentDimensionValueAsString)) {
             return $this->allDimensionValues($node, $contentDimensionId)?->getValue($currentDimensionValueAsString);
@@ -96,7 +97,7 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      */
     public function all(ContentRepositoryId|Node $subject): array
     {
-        $contentRepositoryId = $subject instanceof Node ? $subject->subgraphIdentity->contentRepositoryId : $subject;
+        $contentRepositoryId = $subject instanceof Node ? $subject->contentRepositoryId : $subject;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         return $contentRepository->getContentDimensionSource()->getContentDimensionsOrderedByPriority();
@@ -117,7 +118,7 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      */
     public function allDimensionValues(ContentRepositoryId|Node $subject, ContentDimensionId|string $dimensionName): ?ContentDimensionValues
     {
-        $contentRepositoryId = $subject instanceof Node ? $subject->subgraphIdentity->contentRepositoryId : $subject;
+        $contentRepositoryId = $subject instanceof Node ? $subject->contentRepositoryId : $subject;
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
 
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -142,15 +143,18 @@ final class DimensionHelper implements ProtectedContextAwareInterface
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
         $contentDimensionValue = is_string($dimensionValue) ? new ContentDimensionValue($dimensionValue) : $dimensionValue;
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
-        return $contentRepository
-            ->getContentGraph()
-            ->getSubgraph(
-                $node->subgraphIdentity->contentStreamId,
-                $node->subgraphIdentity->dimensionSpacePoint->vary($contentDimensionId, $contentDimensionValue->value),
-                $node->subgraphIdentity->visibilityConstraints
-            )->findNodeById($node->nodeAggregateId);
+        try {
+            return $contentRepository
+                ->getContentGraph($node->workspaceName)
+                ->getSubgraph(
+                    $node->dimensionSpacePoint->vary($contentDimensionId, $contentDimensionValue->value),
+                    $node->visibilityConstraints
+                )->findNodeById($node->aggregateId);
+        } catch (WorkspaceDoesNotExist) {
+            return null;
+        }
     }
 
     public function allowsCallOfMethod($methodName): bool

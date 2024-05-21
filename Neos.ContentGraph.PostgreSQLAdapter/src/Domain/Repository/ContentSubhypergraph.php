@@ -27,7 +27,6 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
@@ -52,6 +51,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The content subgraph application repository
@@ -76,6 +76,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
     public function __construct(
         private ContentRepositoryId $contentRepositoryId,
         private ContentStreamId $contentStreamId,
+        private WorkspaceName $workspaceName,
         private DimensionSpacePoint $dimensionSpacePoint,
         private VisibilityConstraints $visibilityConstraints,
         private Connection $dbal,
@@ -85,14 +86,24 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
     ) {
     }
 
-    public function getIdentity(): ContentSubgraphIdentity
+    public function getContentRepositoryId(): ContentRepositoryId
     {
-        return ContentSubgraphIdentity::create(
-            $this->contentRepositoryId,
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $this->visibilityConstraints
-        );
+        return $this->contentRepositoryId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
+
+    public function getVisibilityConstraints(): VisibilityConstraints
+    {
+        return $this->visibilityConstraints;
     }
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
@@ -521,16 +532,11 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         $currentNode = $startingNode;
         foreach ($path->getParts() as $edgeName) {
             // id exists here :)
-            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->aggregateId, $edgeName);
             if ($currentNode === null) {
                 return null;
             }
         }
         return $currentNode;
-    }
-
-    public function jsonSerialize(): ContentSubgraphIdentity
-    {
-        return $this->getIdentity();
     }
 }

@@ -9,9 +9,10 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * A node aggregate was moved in a content stream
@@ -50,10 +51,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final readonly class NodeAggregateWasMoved implements
     EventInterface,
-    PublishableToOtherContentStreamsInterface,
+    PublishableToWorkspaceInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
+        public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public ?NodeAggregateId $newParentNodeAggregateId,
@@ -71,10 +73,11 @@ final readonly class NodeAggregateWasMoved implements
         return $this->nodeAggregateId;
     }
 
-    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
-            $targetContentStreamId,
+            $targetWorkspaceName,
+            $contentStreamId,
             $this->nodeAggregateId,
             $this->newParentNodeAggregateId,
             $this->succeedingSiblingsForCoverage,
@@ -89,15 +92,22 @@ final readonly class NodeAggregateWasMoved implements
             foreach ($values['nodeMoveMappings'] as $nodeMoveMapping) {
                 // we don't care about origins anymore
                 foreach ($nodeMoveMapping['newLocations'] as $newLocation) {
-                    if (array_key_exists('newParent', $newLocation)) {
-                        $newParentNodeAggregateId = NodeAggregateId::fromString($newLocation['newParent']);
+                    $dimensionSpacePoint = DimensionSpacePoint::fromArray($newLocation['coveredDimensionSpacePoint']);
+                    if (array_key_exists('newSucceedingSibling', $newLocation)) {
+                        $succeedingSiblings[] = new InterdimensionalSibling(
+                            $dimensionSpacePoint,
+                            NodeAggregateId::fromString($newLocation['newSucceedingSibling']['nodeAggregateId'])
+                        );
+                        if (array_key_exists('parentNodeAggregateId', $newLocation['newSucceedingSibling'])) {
+                            $newParentNodeAggregateId = NodeAggregateId::fromString($newLocation['newSucceedingSibling']['parentNodeAggregateId']);
+                        }
+                    } elseif (array_key_exists('newParent', $newLocation)) {
+                        $newParentNodeAggregateId = NodeAggregateId::fromString($newLocation['newParent']['nodeAggregateId']);
+                        $succeedingSiblings[] = new InterdimensionalSibling(
+                            $dimensionSpacePoint,
+                            null
+                        );
                     }
-                    $succeedingSiblings[] = new InterdimensionalSibling(
-                        DimensionSpacePoint::fromArray($newLocation['coveredDimensionSpacePoint']),
-                        ($newLocation['newSucceedingSibling'] ?? null)
-                            ? NodeAggregateId::fromString($newLocation['newSucceedingSibling'])
-                            : null
-                    );
                 }
             }
             $succeedingSiblingsForCoverage = new InterdimensionalSiblings(...$succeedingSiblings);
@@ -109,6 +119,7 @@ final readonly class NodeAggregateWasMoved implements
         }
 
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             $newParentNodeAggregateId,
