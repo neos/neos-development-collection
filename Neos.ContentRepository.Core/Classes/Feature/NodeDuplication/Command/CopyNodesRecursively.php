@@ -85,8 +85,7 @@ final readonly class CopyNodesRecursively implements
         Node $startNode,
         OriginDimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $targetParentNodeAggregateId,
-        ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId,
-        ?NodeName $targetNodeName
+        ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId
     ): self {
         $nodeSubtreeSnapshot = NodeSubtreeSnapshot::fromSubgraphAndStartNode($subgraph, $startNode);
 
@@ -96,7 +95,7 @@ final readonly class CopyNodesRecursively implements
             $dimensionSpacePoint,
             $targetParentNodeAggregateId,
             $targetSucceedingSiblingNodeAggregateId,
-            $targetNodeName,
+            null,
             NodeAggregateIdMapping::generateForNodeSubtreeSnapshot($nodeSubtreeSnapshot)
         );
     }
@@ -153,6 +152,24 @@ final readonly class CopyNodesRecursively implements
         );
     }
 
+    /**
+     * The target node's optional name.
+     *
+     * @deprecated the concept regarding node-names for non-tethered nodes is outdated.
+     */
+    public function withTargetNodeName(NodeName $targetNodeName): self
+    {
+        return new self(
+            $this->workspaceName,
+            $this->nodeTreeToInsert,
+            $this->targetDimensionSpacePoint,
+            $this->targetParentNodeAggregateId,
+            $this->targetSucceedingSiblingNodeAggregateId,
+            $targetNodeName,
+            $this->nodeAggregateIdMapping
+        );
+    }
+
     public function createCopyForWorkspace(
         WorkspaceName $targetWorkspaceName,
     ): self {
@@ -163,24 +180,6 @@ final readonly class CopyNodesRecursively implements
             $this->targetParentNodeAggregateId,
             $this->targetSucceedingSiblingNodeAggregateId,
             $this->targetNodeName,
-            $this->nodeAggregateIdMapping
-        );
-    }
-
-    /**
-     * The target node's optional name.
-     *
-     * @deprecated the concept regarding node-names for non-tethered nodes is outdated.
-     */
-    public function withNodeName(NodeName $nodeName): self
-    {
-        return new self(
-            $this->workspaceName,
-            $this->nodeTreeToInsert,
-            $this->targetDimensionSpacePoint,
-            $this->targetParentNodeAggregateId,
-            $this->targetSucceedingSiblingNodeAggregateId,
-            $nodeName,
             $this->nodeAggregateIdMapping
         );
     }
