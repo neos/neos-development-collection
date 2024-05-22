@@ -28,9 +28,9 @@ Feature: Remove Nodes
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                                       |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                                    |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document (in "de")
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |

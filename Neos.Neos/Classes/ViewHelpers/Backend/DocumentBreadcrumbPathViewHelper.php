@@ -54,7 +54,7 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
             if ($this->getNodeType($currentNode)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                 $documentNodes[] = $currentNode;
             }
-            $currentNode = $subgraph->findParentNode($currentNode->nodeAggregateId);
+            $currentNode = $subgraph->findParentNode($currentNode->aggregateId);
         }
         $documentNodes = array_reverse($documentNodes);
         $this->templateVariableContainer->add('documentNodes', $documentNodes);

@@ -143,11 +143,11 @@ Feature: Create node aggregate with node
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
       | nodeName              | "document"                            |
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                       | Value                                 |
-      | nodeAggregateId           | "nody-mc-nodeface"                    |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
-      | parentNodeAggregateId     | "lady-eleonode-rootford"              |
-      | nodeName                  | "document"                            |
+      | Key                   | Value                                 |
+      | nodeAggregateId       | "nody-mc-nodeface"                    |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"              |
+      | nodeName              | "document"                            |
 
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 

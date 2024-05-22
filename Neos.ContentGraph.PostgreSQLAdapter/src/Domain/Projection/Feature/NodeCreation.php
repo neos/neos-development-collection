@@ -57,16 +57,14 @@ trait NodeCreation
             null
         );
 
-        $this->transactional(function () use ($node, $event) {
-            $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-            $this->connectToHierarchy(
-                $event->contentStreamId,
-                NodeRelationAnchorPoint::forRootHierarchyRelation(),
-                $node->relationAnchorPoint,
-                $event->coveredDimensionSpacePoints,
-                null
-            );
-        });
+        $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+        $this->connectToHierarchy(
+            $event->contentStreamId,
+            NodeRelationAnchorPoint::forRootHierarchyRelation(),
+            $node->relationAnchorPoint,
+            $event->coveredDimensionSpacePoints,
+            null
+        );
     }
 
     /**
@@ -87,58 +85,56 @@ trait NodeCreation
             $event->nodeName
         );
 
-        $this->transactional(function () use ($node, $event) {
-            $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-            foreach ($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet() as $dimensionSpacePoint) {
-                $hierarchyRelation = $this->getProjectionHypergraph()->findChildHierarchyHyperrelationRecord(
+        $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+        foreach ($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet() as $dimensionSpacePoint) {
+            $hierarchyRelation = $this->getProjectionHypergraph()->findChildHierarchyHyperrelationRecord(
+                $event->contentStreamId,
+                $dimensionSpacePoint,
+                $event->parentNodeAggregateId
+            );
+            if ($hierarchyRelation) {
+                $succeedingSiblingNodeAnchor = null;
+                $succeedingSiblingNodeAggregateId = $event->succeedingSiblingsForCoverage->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
+                if ($succeedingSiblingNodeAggregateId) {
+                    $succeedingSiblingNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
+                        $event->contentStreamId,
+                        $dimensionSpacePoint,
+                        $succeedingSiblingNodeAggregateId
+                    );
+                    $succeedingSiblingNodeAnchor = $succeedingSiblingNode?->relationAnchorPoint;
+                }
+                $hierarchyRelation->addChildNodeAnchor(
+                    $node->relationAnchorPoint,
+                    $succeedingSiblingNodeAnchor,
+                    $this->getDatabaseConnection(),
+                    $this->tableNamePrefix
+                );
+            } else {
+                $parentNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
                     $event->contentStreamId,
                     $dimensionSpacePoint,
                     $event->parentNodeAggregateId
                 );
-                if ($hierarchyRelation) {
-                    $succeedingSiblingNodeAnchor = null;
-                    $succeedingSiblingNodeAggregateId = $event->succeedingSiblingsForCoverage->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
-                    if ($succeedingSiblingNodeAggregateId) {
-                        $succeedingSiblingNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
-                            $event->contentStreamId,
-                            $dimensionSpacePoint,
-                            $succeedingSiblingNodeAggregateId
-                        );
-                        $succeedingSiblingNodeAnchor = $succeedingSiblingNode?->relationAnchorPoint;
-                    }
-                    $hierarchyRelation->addChildNodeAnchor(
-                        $node->relationAnchorPoint,
-                        $succeedingSiblingNodeAnchor,
-                        $this->getDatabaseConnection(),
-                        $this->tableNamePrefix
+                if (is_null($parentNode)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                        get_class($event)
                     );
-                } else {
-                    $parentNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
-                        $event->contentStreamId,
-                        $dimensionSpacePoint,
-                        $event->parentNodeAggregateId
-                    );
-                    if (is_null($parentNode)) {
-                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
-                            get_class($event)
-                        );
-                    }
-                    $hierarchyRelation = new HierarchyHyperrelationRecord(
-                        $event->contentStreamId,
-                        $parentNode->relationAnchorPoint,
-                        $dimensionSpacePoint,
-                        NodeRelationAnchorPoints::fromArray([$node->relationAnchorPoint])
-                    );
-                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
                 }
-                $this->connectToRestrictionRelations(
+                $hierarchyRelation = new HierarchyHyperrelationRecord(
                     $event->contentStreamId,
+                    $parentNode->relationAnchorPoint,
                     $dimensionSpacePoint,
-                    $event->parentNodeAggregateId,
-                    $event->nodeAggregateId
+                    NodeRelationAnchorPoints::fromArray([$node->relationAnchorPoint])
                 );
+                $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             }
-        });
+            $this->connectToRestrictionRelations(
+                $event->contentStreamId,
+                $dimensionSpacePoint,
+                $event->parentNodeAggregateId,
+                $event->nodeAggregateId
+            );
+        }
     }
 
     /**
@@ -203,11 +199,6 @@ trait NodeCreation
     }
 
     abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
-
-    /**
-     * @throws \Throwable
-     */
-    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

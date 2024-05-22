@@ -188,14 +188,14 @@ final class ContentCommandController extends CommandController
                 if ($childNodeType?->isOfType('Neos.Neos:Document')) {
                     $this->output("%s- %s\n", [
                         str_repeat('  ', $level),
-                        $childNode->getProperty('uriPathSegment') ?? $childNode->nodeAggregateId->value
+                        $childNode->getProperty('uriPathSegment') ?? $childNode->aggregateId->value
                     ]);
                 }
                 try {
                     // Tethered nodes' variants are automatically created when the parent is translated.
                     $contentRepository->handle(CreateNodeVariant::create(
                         $workspaceName,
-                        $childNode->nodeAggregateId,
+                        $childNode->aggregateId,
                         $childNode->originDimensionSpacePoint,
                         $target
                     ));
@@ -210,7 +210,7 @@ final class ContentCommandController extends CommandController
 
             $this->createVariantRecursivelyInternal(
                 $level + 1,
-                $childNode->nodeAggregateId,
+                $childNode->aggregateId,
                 $sourceSubgraph,
                 $target,
                 $workspaceName,

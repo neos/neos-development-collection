@@ -87,8 +87,8 @@ class NextUntilOperation extends AbstractOperation
             }
             foreach ($nextNodes as $nextNode) {
                 if ($nextNode !== null
-                    && !isset($outputNodeIdentifiers[$nextNode->nodeAggregateId->value])) {
-                    $outputNodeIdentifiers[$nextNode->nodeAggregateId->value] = true;
+                    && !isset($outputNodeIdentifiers[$nextNode->aggregateId->value])) {
+                    $outputNodeIdentifiers[$nextNode->aggregateId->value] = true;
                     $output[] = $nextNode;
                 }
             }

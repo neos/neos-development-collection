@@ -18,36 +18,36 @@ Feature: Creation of nodes underneath disabled nodes
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
-      | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
+      | nodeAggregateId  | nodeTypeName                            | parentNodeAggregateId  | nodeName |
+      | the-great-nodini | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document |
     # We need both a real and a virtual specialization to test the different selection strategies
     And the command CreateNodeVariant is executed with payload:
-      | Key                     | Value              |
+      | Key             | Value              |
       | nodeAggregateId | "the-great-nodini" |
-      | sourceOrigin            | {"language":"mul"} |
-      | targetOrigin            | {"language":"ltz"} |
+      | sourceOrigin    | {"language":"mul"} |
+      | targetOrigin    | {"language":"ltz"} |
     And VisibilityConstraints are set to "frontend"
 
   Scenario: Create a new node with parent disabled with strategy allSpecializations
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateId      | "the-great-nodini" |
-      | coveredDimensionSpacePoint   | {"language":"de"}  |
+      | Key                          | Value                |
+      | nodeAggregateId              | "the-great-nodini"   |
+      | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName     |
-      | nodingers-cat           | Neos.ContentRepository.Testing:Document | the-great-nodini              | pet-document |
+      | nodingers-cat   | Neos.ContentRepository.Testing:Document | the-great-nodini      | pet-document |
 
     Then I expect the node aggregate "nodingers-cat" to exist
     And I expect this node aggregate to disable dimension space points []
@@ -70,9 +70,9 @@ Feature: Creation of nodes underneath disabled nodes
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}
 
     And the command EnableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateId      | "the-great-nodini" |
-      | coveredDimensionSpacePoint   | {"language":"de"}  |
+      | Key                          | Value                |
+      | nodeAggregateId              | "the-great-nodini"   |
+      | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
     When I am in dimension space point {"language":"de"}
@@ -90,12 +90,12 @@ Feature: Creation of nodes underneath disabled nodes
   Scenario: Create a new node with parent disabled with strategy allVariants
     Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | nodeAggregateId      | "the-great-nodini" |
+      | nodeAggregateId              | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
-      | nodeVariantSelectionStrategy | "allVariants" |
+      | nodeVariantSelectionStrategy | "allVariants"      |
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName     |
-      | nodingers-cat           | Neos.ContentRepository.Testing:Document | the-great-nodini              | pet-document |
+      | nodingers-cat   | Neos.ContentRepository.Testing:Document | the-great-nodini      | pet-document |
 
     Then I expect the node aggregate "nodingers-cat" to exist
     And I expect this node aggregate to disable dimension space points []
@@ -117,9 +117,9 @@ Feature: Creation of nodes underneath disabled nodes
 
     And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | nodeAggregateId      | "the-great-nodini" |
+      | nodeAggregateId              | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
-      | nodeVariantSelectionStrategy | "allVariants" |
+      | nodeVariantSelectionStrategy | "allVariants"      |
 
     When I am in dimension space point {"language":"mul"}
     And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}

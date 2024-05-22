@@ -60,6 +60,7 @@ trait SubtreeTagging
 
         $events = Events::with(
             new SubtreeWasTagged(
+                $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
@@ -105,6 +106,7 @@ trait SubtreeTagging
 
         $events = Events::with(
             new SubtreeWasUntagged(
+                $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,

@@ -158,7 +158,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             foreach ($this->getItemCollection() as $node) {
                 if ($this->getMaximumLevels() > 0) {
                     $childSubtree = $subgraph->findSubtree(
-                        $node->nodeAggregateId,
+                        $node->aggregateId,
                         FindSubtreeFilter::create(nodeTypes: $this->getNodeTypeCriteria(), maximumLevels: $this->getMaximumLevels() - 1)
                     );
                     if ($childSubtree === null) {
@@ -273,7 +273,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         }
 
         if ($this->getEntryLevel() === 0) {
-            return $traversalStartingPoint->nodeAggregateId;
+            return $traversalStartingPoint->aggregateId;
         } elseif ($this->getEntryLevel() < 0) {
             $ancestorNodeAggregateIds = $this->getCurrentNodeRootlineAggregateIds();
             $ancestorNodeAggregateIdArray = array_values(iterator_to_array($ancestorNodeAggregateIds));
@@ -300,7 +300,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         }
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->getCurrentNode());
         $currentNodeAncestors = $subgraph->findAncestorNodes(
-            $this->currentNode->nodeAggregateId,
+            $this->currentNode->aggregateId,
             FindAncestorNodesFilter::create(
                 NodeTypeCriteria::createWithAllowedNodeTypeNames(
                     NodeTypeNames::with(
@@ -310,7 +310,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             )
         );
 
-        $this->currentNodeRootlineAggregateIds = NodeAggregateIds::create($this->currentNode->nodeAggregateId)
+        $this->currentNodeRootlineAggregateIds = NodeAggregateIds::create($this->currentNode->aggregateId)
             ->merge(NodeAggregateIds::fromNodes($currentNodeAncestors));
 
         return $this->currentNodeRootlineAggregateIds;
@@ -318,10 +318,10 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
     protected function calculateItemState(Node $node): MenuItemState
     {
-        if ($node->nodeAggregateId->equals($this->getCurrentNode()->nodeAggregateId)) {
+        if ($node->aggregateId->equals($this->getCurrentNode()->aggregateId)) {
             return MenuItemState::CURRENT;
         }
-        if ($this->getCurrentNodeRootlineAggregateIds()->contain($node->nodeAggregateId)) {
+        if ($this->getCurrentNodeRootlineAggregateIds()->contain($node->aggregateId)) {
             return MenuItemState::ACTIVE;
         }
         return MenuItemState::NORMAL;

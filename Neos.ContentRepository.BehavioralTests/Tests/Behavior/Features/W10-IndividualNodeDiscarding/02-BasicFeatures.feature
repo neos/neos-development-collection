@@ -36,6 +36,7 @@ Feature: Discard individual nodes (basics)
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                               |
+      | workspaceName               | "live"                                              |
       | contentStreamId             | "cs-identifier"                                     |
       | nodeAggregateId             | "sir-david-nodenborough"                            |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
@@ -46,6 +47,7 @@ Feature: Discard individual nodes (basics)
       | nodeAggregateClassification | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                               |
+      | workspaceName               | "live"                                              |
       | contentStreamId             | "cs-identifier"                                     |
       | nodeAggregateId             | "nody-mc-nodeface"                                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content"            |
@@ -56,6 +58,7 @@ Feature: Discard individual nodes (basics)
       | nodeAggregateClassification | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                   |
+      | workspaceName               | "live"                                                  |
       | contentStreamId             | "cs-identifier"                                         |
       | nodeAggregateId             | "sir-nodeward-nodington-iii"                            |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Image"                  |
@@ -74,19 +77,19 @@ Feature: Discard individual nodes (basics)
     # modify nodes in user WS
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                    |
-      | workspaceName      | "user-test"          |
+      | workspaceName             | "user-test"              |
       | nodeAggregateId           | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {}                       |
       | propertyValues            | {"text": "Modified t1"}  |
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                   |
-      | workspaceName      | "user-test"          |
+      | workspaceName             | "user-test"             |
       | nodeAggregateId           | "nody-mc-nodeface"      |
       | originDimensionSpacePoint | {}                      |
       | propertyValues            | {"text": "Modified t2"} |
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | workspaceName      | "user-test"          |
+      | workspaceName             | "user-test"                  |
       | nodeAggregateId           | "sir-nodeward-nodington-iii" |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"image": "Modified image"}  |
@@ -97,10 +100,10 @@ Feature: Discard individual nodes (basics)
   Scenario: It is possible to discard a single node; and only the others are live.
     # discard "sir-nodeward-nodington-iii" only
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
-      | Key                | Value                                                                                                                   |
-      | workspaceName      | "user-test"                                                                                                             |
+      | Key                | Value                                                                                                        |
+      | workspaceName      | "user-test"                                                                                                  |
       | nodesToDiscard     | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
-      | newContentStreamId | "user-cs-identifier-new"                                                                                                |
+      | newContentStreamId | "user-cs-identifier-new"                                                                                     |
 
 
     When I am in workspace "user-test" and dimension space point {}
@@ -140,10 +143,10 @@ Feature: Discard individual nodes (basics)
 
   Scenario: It is possible to discard all nodes
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
-      | Key                | Value                                                                                                                                                                                                                                                                                                                                                   |
-      | workspaceName      | "user-test"                                                                                                                                                                                                                                                                                                                                             |
+      | Key                | Value                                                                                                                                                                                                                                                                                                                  |
+      | workspaceName      | "user-test"                                                                                                                                                                                                                                                                                                            |
       | nodesToDiscard     | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}, {"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}, {"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
-      | newContentStreamId | "user-cs-identifier-new"                                                                                                                                                                                                                                                                                                                                |
+      | newContentStreamId | "user-cs-identifier-new"                                                                                                                                                                                                                                                                                               |
 
     When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-new;sir-david-nodenborough;{}
@@ -162,8 +165,8 @@ Feature: Discard individual nodes (basics)
   Scenario: When discarding a node, the live workspace does not change.
     # discard "sir-nodeward-nodington-iii"
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
-      | Key            | Value                                                                                                                   |
-      | workspaceName  | "user-test"                                                                                                             |
+      | Key            | Value                                                                                                        |
+      | workspaceName  | "user-test"                                                                                                  |
       | nodesToDiscard | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
 
     # live WS does not change because of a discard

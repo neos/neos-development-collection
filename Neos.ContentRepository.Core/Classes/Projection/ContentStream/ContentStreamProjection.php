@@ -38,7 +38,6 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\CheckpointStorageInterface;
@@ -67,11 +66,11 @@ class ContentStreamProjection implements ProjectionInterface
     private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
-        private readonly DbalClientInterface $dbalClient,
+        private readonly Connection $dbal,
         private readonly string $tableName
     ) {
         $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbalClient->getConnection(),
+            $this->dbal,
             $this->tableName . '_checkpoint',
             self::class
         );
@@ -81,12 +80,12 @@ class ContentStreamProjection implements ProjectionInterface
     {
         $statements = $this->determineRequiredSqlStatements();
         // MIGRATIONS
-        if ($this->getDatabaseConnection()->getSchemaManager()->tablesExist([$this->tableName])) {
+        if ($this->dbal->getSchemaManager()->tablesExist([$this->tableName])) {
             // added 2023-04-01
             $statements[] = sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName);
         }
         foreach ($statements as $statement) {
-            $this->getDatabaseConnection()->executeStatement($statement);
+            $this->dbal->executeStatement($statement);
         }
         $this->checkpointStorage->setUp();
     }
@@ -101,7 +100,7 @@ class ContentStreamProjection implements ProjectionInterface
             return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
         }
         try {
-            $this->getDatabaseConnection()->connect();
+            $this->dbal->connect();
         } catch (\Throwable $e) {
             return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
         }
@@ -121,8 +120,7 @@ class ContentStreamProjection implements ProjectionInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $connection = $this->dbalClient->getConnection();
-        $schemaManager = $connection->getSchemaManager();
+        $schemaManager = $this->dbal->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
@@ -138,12 +136,12 @@ class ContentStreamProjection implements ProjectionInterface
             ]))
         ]);
 
-        return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
+        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 
     public function reset(): void
     {
-        $this->getDatabaseConnection()->executeStatement('TRUNCATE table ' . $this->tableName);
+        $this->dbal->executeStatement('TRUNCATE table ' . $this->tableName);
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
@@ -203,7 +201,7 @@ class ContentStreamProjection implements ProjectionInterface
     {
         if (!$this->contentStreamFinder) {
             $this->contentStreamFinder = new ContentStreamFinder(
-                $this->dbalClient,
+                $this->dbal,
                 $this->tableName
             );
         }
@@ -212,7 +210,7 @@ class ContentStreamProjection implements ProjectionInterface
 
     private function whenContentStreamWasCreated(ContentStreamWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->getDatabaseConnection()->insert($this->tableName, [
+        $this->dbal->insert($this->tableName, [
             'contentStreamId' => $event->contentStreamId->value,
             'version' => self::extractVersion($eventEnvelope),
             'state' => ContentStreamState::STATE_CREATED->value,
@@ -239,7 +237,7 @@ class ContentStreamProjection implements ProjectionInterface
 
     private function whenContentStreamWasForked(ContentStreamWasForked $event, EventEnvelope $eventEnvelope): void
     {
-        $this->getDatabaseConnection()->insert($this->tableName, [
+        $this->dbal->insert($this->tableName, [
             'contentStreamId' => $event->newContentStreamId->value,
             'version' => self::extractVersion($eventEnvelope),
             'sourceContentStreamId' => $event->sourceContentStreamId->value,
@@ -336,7 +334,7 @@ class ContentStreamProjection implements ProjectionInterface
             $event->contentStreamId,
             ContentStreamState::STATE_CLOSED,
         );
-        $this->getDatabaseConnection()->update($this->tableName, [
+        $this->dbal->update($this->tableName, [
             'version' => self::extractVersion($eventEnvelope),
         ], [
             'contentStreamId' => $event->contentStreamId->value
@@ -349,7 +347,7 @@ class ContentStreamProjection implements ProjectionInterface
             $event->contentStreamId,
             $event->previousState,
         );
-        $this->getDatabaseConnection()->update($this->tableName, [
+        $this->dbal->update($this->tableName, [
             'version' => self::extractVersion($eventEnvelope),
         ], [
             'contentStreamId' => $event->contentStreamId->value
@@ -358,7 +356,7 @@ class ContentStreamProjection implements ProjectionInterface
 
     private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event, EventEnvelope $eventEnvelope): void
     {
-        $this->getDatabaseConnection()->update($this->tableName, [
+        $this->dbal->update($this->tableName, [
             'removed' => true,
             'version' => self::extractVersion($eventEnvelope),
         ], [
@@ -368,7 +366,7 @@ class ContentStreamProjection implements ProjectionInterface
 
     private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event, EventEnvelope $eventEnvelope): void
     {
-        $this->getDatabaseConnection()->update($this->tableName, [
+        $this->dbal->update($this->tableName, [
             'version' => self::extractVersion($eventEnvelope),
         ], [
             'contentStreamId' => $event->contentStreamId->value
@@ -377,23 +375,18 @@ class ContentStreamProjection implements ProjectionInterface
 
     private function updateStateForContentStream(ContentStreamId $contentStreamId, ContentStreamState $state): void
     {
-        $this->getDatabaseConnection()->update($this->tableName, [
+        $this->dbal->update($this->tableName, [
             'state' => $state->value,
         ], [
             'contentStreamId' => $contentStreamId->value
         ]);
     }
 
-    private function getDatabaseConnection(): Connection
-    {
-        return $this->dbalClient->getConnection();
-    }
-
     private function updateContentStreamVersion(
         EmbedsContentStreamAndNodeAggregateId $eventInstance,
         EventEnvelope $eventEnvelope
     ): void {
-        $this->getDatabaseConnection()->update($this->tableName, [
+        $this->dbal->update($this->tableName, [
             'version' => self::extractVersion($eventEnvelope),
         ], [
             'contentStreamId' => $eventInstance->getContentStreamId()->value

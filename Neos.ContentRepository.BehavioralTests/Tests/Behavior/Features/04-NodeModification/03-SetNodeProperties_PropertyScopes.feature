@@ -31,36 +31,36 @@ Feature: Set node properties with different scopes
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeName | parentNodeAggregateId | nodeTypeName                            |
-      | nody-mc-nodeface        | document | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document |
+      | nodeAggregateId  | nodeName | parentNodeAggregateId  | nodeTypeName                            |
+      | nody-mc-nodeface | document | lady-eleonode-rootford | Neos.ContentRepository.Testing:Document |
     And the command CreateNodeVariant is executed with payload:
-      | Key                     | Value              |
+      | Key             | Value              |
       | nodeAggregateId | "nody-mc-nodeface" |
-      | sourceOrigin            | {"language":"mul"} |
-      | targetOrigin            | {"language":"de"}  |
+      | sourceOrigin    | {"language":"mul"} |
+      | targetOrigin    | {"language":"de"}  |
     And the command CreateNodeVariant is executed with payload:
-      | Key                     | Value              |
+      | Key             | Value              |
       | nodeAggregateId | "nody-mc-nodeface" |
-      | sourceOrigin            | {"language":"mul"} |
-      | targetOrigin            | {"language":"gsw"} |
+      | sourceOrigin    | {"language":"mul"} |
+      | targetOrigin    | {"language":"gsw"} |
 
   Scenario: Set node properties
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                                                                                                                                                      |
-      | nodeAggregateId   | "nody-mc-nodeface"                                                                                                                                                         |
+      | nodeAggregateId           | "nody-mc-nodeface"                                                                                                                                                         |
       | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                         |
       | propertyValues            | {"unscopedProperty":"My new string", "nodeScopedProperty":"My new string", "specializationsScopedProperty":"My new string", "nodeAggregateScopedProperty":"My new string"} |
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"mul"} to exist in the content graph

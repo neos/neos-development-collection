@@ -74,8 +74,8 @@ class NextOperation extends AbstractOperation
                     $contextNode->nodeAggregateId,
                     FindSucceedingSiblingNodesFilter::create()
                 )->first();
-            if ($nextNode !== null && !isset($outputNodePaths[$nextNode->nodeAggregateId->value])) {
-                $outputNodePaths[$nextNode->nodeAggregateId->value] = true;
+            if ($nextNode !== null && !isset($outputNodePaths[$nextNode->aggregateId->value])) {
+                $outputNodePaths[$nextNode->aggregateId->value] = true;
                 $output[] = $nextNode;
             }
         }

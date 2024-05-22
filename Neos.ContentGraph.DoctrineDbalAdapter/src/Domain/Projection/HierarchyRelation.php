@@ -44,21 +44,17 @@ final readonly class HierarchyRelation
      */
     public function addToDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
-        $databaseConnection->transactional(function ($databaseConnection) use (
-            $tableNames
-        ) {
-            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNames);
-            $dimensionSpacePoints->insertDimensionSpacePoint($this->dimensionSpacePoint);
+        $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNames);
+        $dimensionSpacePoints->insertDimensionSpacePoint($this->dimensionSpacePoint);
 
-            $databaseConnection->insert($tableNames->hierarchyRelation(), [
-                'parentnodeanchor' => $this->parentNodeAnchor->value,
-                'childnodeanchor' => $this->childNodeAnchor->value,
-                'contentstreamid' => $this->contentStreamId->value,
-                'dimensionspacepointhash' => $this->dimensionSpacePointHash,
-                'position' => $this->position,
-                'subtreetags' => json_encode($this->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
-            ]);
-        });
+        $databaseConnection->insert($tableNames->hierarchyRelation(), [
+            'parentnodeanchor' => $this->parentNodeAnchor->value,
+            'childnodeanchor' => $this->childNodeAnchor->value,
+            'contentstreamid' => $this->contentStreamId->value,
+            'dimensionspacepointhash' => $this->dimensionSpacePointHash,
+            'position' => $this->position,
+            'subtreetags' => json_encode($this->subtreeTags, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
+        ]);
     }
 
     /**

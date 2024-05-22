@@ -14,47 +14,47 @@ Feature: Remove NodeAggregate
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                                  |
-      | workspaceName              | "live"                                 |
-      | workspaceTitle             | "Live"                                 |
-      | workspaceDescription       | "The live workspace"                   |
-      | newContentStreamId | "live-cs-identifier"                   |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "live-cs-identifier" |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                      | Value                                  |
-      | nodeAggregateId  | "lady-eleonode-nodesworth"             |
-      | nodeTypeName             | "Neos.ContentRepository:Root"          |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-nodesworth"    |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # We have to add another node since root nodes are in all dimension space points and thus cannot be varied
     # Node /document
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                     |
+      | Key                   | Value                                     |
       | nodeAggregateId       | "nody-mc-nodeface"                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "lady-eleonode-nodesworth"                |
-      | nodeName                      | "document"                                |
+      | nodeName              | "document"                                |
     # We also want to add a child node to make sure it is correctly removed when the parent is removed
     # Node /document/child-document
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                     |
+      | Key                   | Value                                     |
       | nodeAggregateId       | "nodimus-prime"                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "nody-mc-nodeface"                        |
-      | nodeName                      | "child-document"                          |
+      | nodeName              | "child-document"                          |
     And the command CreateNodeVariant is executed with payload:
-      | Key                      | Value                |
-      | nodeAggregateId  | "nody-mc-nodeface"   |
-      | sourceOrigin             | {"language":"de"}    |
-      | targetOrigin             | {"language":"gsw"}   |
+      | Key             | Value              |
+      | nodeAggregateId | "nody-mc-nodeface" |
+      | sourceOrigin    | {"language":"de"}  |
+      | targetOrigin    | {"language":"gsw"} |
 
   ########################
   # Section: EXTRA testcases
   ########################
   Scenario: In LIVE workspace, removing a NodeAggregate removes all nodes completely
     When the command RemoveNodeAggregate is executed with payload:
-      | Key                          | Value                |
-      | nodeAggregateId      | "nody-mc-nodeface"   |
-      | nodeVariantSelectionStrategy | "allVariants"        |
-      | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | Key                          | Value              |
+      | nodeAggregateId              | "nody-mc-nodeface" |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+      | coveredDimensionSpacePoint   | {"language":"de"}  |
 
     Then I expect the graph projection to consist of exactly 1 node
     And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph
@@ -78,10 +78,10 @@ Feature: Remove NodeAggregate
     And I am in workspace "user-test"
 
     When the command RemoveNodeAggregate is executed with payload:
-      | Key                          | Value                |
-      | nodeAggregateId      | "nody-mc-nodeface"   |
-      | nodeVariantSelectionStrategy | "allVariants"        |
-      | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | Key                          | Value              |
+      | nodeAggregateId              | "nody-mc-nodeface" |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+      | coveredDimensionSpacePoint   | {"language":"de"}  |
 
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by live-cs-identifier;lady-eleonode-nodesworth;{} to exist in the content graph

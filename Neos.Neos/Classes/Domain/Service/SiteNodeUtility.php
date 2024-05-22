@@ -72,7 +72,7 @@ final class SiteNodeUtility
 
         $siteNode = $subgraph->findNodeByPath(
             $site->getNodeName()->toNodeName(),
-            $rootNode->nodeAggregateId
+            $rootNode->aggregateId
         );
 
         if (!$siteNode) {
@@ -82,7 +82,7 @@ final class SiteNodeUtility
         if (!$this->getNodeType($siteNode)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
             throw new \RuntimeException(sprintf(
                 'The site node "%s" (type: "%s") must be of type "%s"',
-                $siteNode->nodeAggregateId->value,
+                $siteNode->aggregateId->value,
                 $siteNode->nodeTypeName->value,
                 NodeTypeNameFactory::NAME_SITE
             ), 1697140367);

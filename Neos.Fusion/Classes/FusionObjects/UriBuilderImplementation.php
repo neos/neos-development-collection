@@ -27,8 +27,6 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
  *  * format
  *  * section
  *  * additionalParams
- *  * addQueryString
- *  * argumentsToBeExcludedFromQueryString
  *  * absolute
  *
  * See respective getters for descriptions
@@ -119,26 +117,6 @@ class UriBuilderImplementation extends AbstractFusionObject
     }
 
     /**
-     * Arguments to be removed from the URI. Only active if addQueryString = true
-     *
-     * @return array
-     */
-    public function getArgumentsToBeExcludedFromQueryString()
-    {
-        return $this->fusionValue('argumentsToBeExcludedFromQueryString');
-    }
-
-    /**
-     * If true, the current query parameters will be kept in the URI
-     *
-     * @return boolean
-     */
-    public function isAddQueryString()
-    {
-        return (boolean)$this->fusionValue('addQueryString');
-    }
-
-    /**
      * If true, an absolute URI is rendered
      *
      * @return boolean
@@ -177,11 +155,6 @@ class UriBuilderImplementation extends AbstractFusionObject
             $uriBuilder->setArguments($additionalParams);
         }
 
-        $argumentsToBeExcludedFromQueryString = $this->getArgumentsToBeExcludedFromQueryString();
-        if ($argumentsToBeExcludedFromQueryString !== null) {
-            $uriBuilder->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString);
-        }
-
         $absolute = $this->isAbsolute();
         if ($absolute === true) {
             $uriBuilder->setCreateAbsoluteUri(true);
@@ -190,11 +163,6 @@ class UriBuilderImplementation extends AbstractFusionObject
         $section = $this->getSection();
         if ($section !== null) {
             $uriBuilder->setSection($section);
-        }
-
-        $addQueryString = $this->isAddQueryString();
-        if ($addQueryString === true) {
-            $uriBuilder->setAddQueryString(true);
         }
 
         try {

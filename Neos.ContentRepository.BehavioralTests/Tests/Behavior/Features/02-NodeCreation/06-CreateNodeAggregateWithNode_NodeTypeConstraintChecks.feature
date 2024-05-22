@@ -49,11 +49,11 @@ Feature: Create node aggregate with node
   # issue https://github.com/neos/neos-development-collection/issues/4351
   Scenario: Tethered restricted collection
     Given the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                   | Value                                 |
-      | nodeAggregateId       | "sir-david-nodenborough"              |
-      | nodeTypeName          | "Neos.ContentRepository.Testing.TetheredCollection" |
-      | parentNodeAggregateId | "lady-eleonode-rootford"              |
-      | tetheredDescendantNodeAggregateIds | { "collection": "collection-node-id"} |
+      | Key                                | Value                                               |
+      | nodeAggregateId                    | "sir-david-nodenborough"                            |
+      | nodeTypeName                       | "Neos.ContentRepository.Testing.TetheredCollection" |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                            |
+      | tetheredDescendantNodeAggregateIds | { "collection": "collection-node-id"}               |
     Then I expect the node aggregate "sir-david-nodenborough" to exist
     Then I expect the node aggregate "collection-node-id" to exist
     # TetheredCollection
@@ -61,26 +61,26 @@ Feature: Create node aggregate with node
 
     # allowed via parent node constraints: Node
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                       | Value                                 |
-      | nodeAggregateId           | "nody-mc-nodeface"                    |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
-      | parentNodeAggregateId     | "collection-node-id"                  |
+      | Key                   | Value                                 |
+      | nodeAggregateId       | "nody-mc-nodeface"                    |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId | "collection-node-id"                  |
     Then I expect the node aggregate "nody-mc-nodeface" to exist
 
     # allowed via grant parent node constraints: PrettyNode
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                       | Value                                       |
-      | nodeAggregateId           | "pretty-node"                               |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:PrettyNode" |
-      | parentNodeAggregateId     | "collection-node-id"                        |
+      | Key                   | Value                                       |
+      | nodeAggregateId       | "pretty-node"                               |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:PrettyNode" |
+      | parentNodeAggregateId | "collection-node-id"                        |
     Then I expect the node aggregate "pretty-node" to exist
 
     # disallowed via grant parent node constraints: UglyNode
     And the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                       | Value                                     |
-      | nodeAggregateId           | "nordisch-nodel"                          |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:UglyNode" |
-      | parentNodeAggregateId     | "collection-node-id"                      |
+      | Key                   | Value                                     |
+      | nodeAggregateId       | "nordisch-nodel"                          |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:UglyNode" |
+      | parentNodeAggregateId | "collection-node-id"                      |
     Then the last command should have thrown an exception of type "NodeConstraintException" with code 1520011791
 
   Scenario: Non-tethered restricted collection
@@ -90,10 +90,10 @@ Feature: Create node aggregate with node
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                       | Value                                                 |
-      | nodeAggregateId           | "collection-node-id"                                  |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:RestrictedCollection" |
-      | parentNodeAggregateId     | "sir-david-nodenborough"                              |
+      | Key                   | Value                                                 |
+      | nodeAggregateId       | "collection-node-id"                                  |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:RestrictedCollection" |
+      | parentNodeAggregateId | "sir-david-nodenborough"                              |
     Then I expect the node aggregate "sir-david-nodenborough" to exist
     Then I expect the node aggregate "collection-node-id" to exist
     # Node
@@ -101,16 +101,16 @@ Feature: Create node aggregate with node
 
     # allowed via grant parent node constraints: PrettyNode
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                       | Value                                       |
-      | nodeAggregateId           | "pretty-node"                               |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:PrettyNode" |
-      | parentNodeAggregateId     | "collection-node-id"                        |
+      | Key                   | Value                                       |
+      | nodeAggregateId       | "pretty-node"                               |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:PrettyNode" |
+      | parentNodeAggregateId | "collection-node-id"                        |
     Then I expect the node aggregate "pretty-node" to exist
 
     # disallowed via grant parent node constraints: UglyNode
     And the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                       | Value                                     |
-      | nodeAggregateId           | "nordisch-nodel"                          |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:UglyNode" |
-      | parentNodeAggregateId     | "collection-node-id"                      |
+      | Key                   | Value                                     |
+      | nodeAggregateId       | "nordisch-nodel"                          |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:UglyNode" |
+      | parentNodeAggregateId | "collection-node-id"                      |
     Then the last command should have thrown an exception of type "NodeConstraintException" with code 1707561400

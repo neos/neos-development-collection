@@ -16,8 +16,9 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Add a Dimension Space Point Shine-Through;
@@ -32,19 +33,21 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api events are the persistence-API of the content repository
  */
-final readonly class DimensionShineThroughWasAdded implements EventInterface, PublishableToOtherContentStreamsInterface
+final readonly class DimensionShineThroughWasAdded implements EventInterface, PublishableToWorkspaceInterface
 {
     public function __construct(
+        public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public DimensionSpacePoint $source,
         public DimensionSpacePoint $target
     ) {
     }
 
-    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
-            $targetContentStreamId,
+            $targetWorkspaceName,
+            $contentStreamId,
             $this->source,
             $this->target
         );
@@ -53,6 +56,7 @@ final readonly class DimensionShineThroughWasAdded implements EventInterface, Pu
     public static function fromArray(array $values): self
     {
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             DimensionSpacePoint::fromArray($values['source']),
             DimensionSpacePoint::fromArray($values['target'])

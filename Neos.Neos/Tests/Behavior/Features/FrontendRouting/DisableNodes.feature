@@ -68,10 +68,10 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
 
   Scenario: Disable leaf node
     When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value           |
-      | nodeAggregateId              | "leaf-mc-node"  |
-      | coveredDimensionSpacePoint   | {}              |
-      | nodeVariantSelectionStrategy | "allVariants"   |
+      | Key                          | Value          |
+      | nodeAggregateId              | "leaf-mc-node" |
+      | coveredDimensionSpacePoint   | {}             |
+      | nodeVariantSelectionStrategy | "allVariants"  |
     Then No node should match URL "/david-nodenborough/earl-document/leaf"
     And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
 
@@ -145,7 +145,8 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"         |
+      | workspaceName                | "live"                   |
+      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                          | "disabled"               |
@@ -171,6 +172,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                   |
+      | workspaceName                | "live"                  |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | affectedDimensionSpacePoints | [{}]                    |
@@ -186,6 +188,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event SubtreeWasUntagged was published with payload:
       | Key                          | Value                    |
+      | workspaceName                | "live"                   |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |

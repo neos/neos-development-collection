@@ -155,7 +155,7 @@ Neos:
               placeholder: Choose
             defaultValue: {  }
           Neos\Media\Domain\Model\ImageInterface:
-            typeConverter: Neos\Media\TypeConverter\ImageInterfaceJsonSerializer
+            typeConverter: Neos\Media\TypeConverter\ImageInterfaceArrayPresenter
             editor: Neos.Neos/Inspector/Editors/ImageEditor
             editorOptions:
               # With this option you can limit the maximum file size to the specified number of bytes.

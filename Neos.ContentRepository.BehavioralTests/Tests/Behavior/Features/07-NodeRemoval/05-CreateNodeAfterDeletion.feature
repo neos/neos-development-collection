@@ -130,8 +130,8 @@ Feature: Create node specialization
 
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document" to lead to node cs-identifier;nody-mc-nodeface;{"example":"source"}
     And I expect this node to have the following child nodes:
-      | Name          | NodeDiscriminator                                    |
-      | tethered-node | cs-identifier;nodewyn-tetherton;{"example":"source"} |
+      | Name                | NodeDiscriminator                                         |
+      | tethered-node       | cs-identifier;nodewyn-tetherton;{"example":"source"}      |
       | invariable-document | cs-identifier;invariable-mc-nodeface;{"example":"source"} |
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                     |

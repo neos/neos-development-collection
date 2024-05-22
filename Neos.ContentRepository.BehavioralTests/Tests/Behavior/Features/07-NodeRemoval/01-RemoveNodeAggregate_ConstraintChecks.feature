@@ -38,7 +38,7 @@ Feature: Remove NodeAggregate
   Scenario: Try to remove a node aggregate in a non-existing content stream
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
-      | workspaceName              | "i-do-not-exist"         |
+      | workspaceName                | "i-do-not-exist"         |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language":"de"}        |
       | nodeVariantSelectionStrategy | "allVariants"            |

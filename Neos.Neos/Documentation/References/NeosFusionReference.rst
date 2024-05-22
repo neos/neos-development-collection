@@ -570,8 +570,6 @@ Built a URI to a controller action
 :format: (string) An optional request format (e.g. ``'html'``)
 :section: (string) An optional fragment (hash) for the URI
 :additionalParams: (array) Additional URI query parameters by named key
-:addQueryString: (boolean) Whether to keep the query parameters of the current URI
-:argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :absolute: (boolean) Whether to create an absolute URI
 
 Example::
@@ -1181,8 +1179,6 @@ Build a URI to a node. Accepts the same arguments as the node link/uri view help
 :format: (string) An optional request format (e.g. ``'html'``)
 :section: (string) An optional fragment (hash) for the URI
 :additionalParams: (array) Additional URI query parameters.
-:argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
-:addQueryString: (boolean) Whether to keep current query parameters, defaults to ``FALSE``
 :absolute: (boolean) Whether to create an absolute URI, defaults to ``FALSE``
 :baseNodeName: (string) Base node context variable name (for relative paths), defaults to ``'documentNode'``
 
@@ -1355,8 +1351,6 @@ Built a URI to a controller action
 :format: (string) An optional request format (e.g. ``'html'``)
 :section: (string) An optional fragment (hash) for the URI
 :additionalParams: (array) Additional URI query parameters by named key
-:addQueryString: (boolean) Whether to keep the query parameters of the current URI
-:argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :absolute: (boolean) Whether to create an absolute URI
 
 .. note:: The use of ``Neos.Fusion:UriBuilder`` is deprecated. Use :ref:`Neos_Fusion__ActionUri` instead.

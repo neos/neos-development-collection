@@ -96,6 +96,7 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
+                    $contentGraph->getWorkspaceName(),
                     $contentGraph->getContentStreamId(),
                     $command->nodeAggregateId,
                     $affectedOrigin,
@@ -115,6 +116,7 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
+                    $contentGraph->getWorkspaceName(),
                     $contentGraph->getContentStreamId(),
                     $command->nodeAggregateId,
                     $affectedOrigin,

@@ -26,9 +26,9 @@ Feature: Properties
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId             | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                     |
@@ -114,12 +114,13 @@ Feature: Properties
 
     And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                                       |
+      | workspaceName                | "live"                                                                      |
       | contentStreamId              | "cs-identifier"                                                             |
       | nodeAggregateId              | "sir-david-nodenborough"                                                    |
       | originDimensionSpacePoint    | {}                                                                          |
       | affectedDimensionSpacePoints | [{}]                                                                        |
       | propertyValues               | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
-      | propertiesToUnset            | {}                                                      |
+      | propertiesToUnset            | {}                                                                          |
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                        | nodeAggregateId        |
       | NON_DESERIALIZABLE_PROPERTY | sir-david-nodenborough |

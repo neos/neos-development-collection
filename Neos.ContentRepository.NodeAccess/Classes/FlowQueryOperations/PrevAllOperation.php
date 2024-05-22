@@ -75,9 +75,9 @@ class PrevAllOperation extends AbstractOperation
                 )->reverse();
             foreach ($prevNodes as $prevNode) {
                 if ($prevNode !== null
-                    && !isset($outputNodeAggregateIds[$prevNode->nodeAggregateId->value])
+                    && !isset($outputNodeAggregateIds[$prevNode->aggregateId->value])
                 ) {
-                    $outputNodeAggregateIds[$prevNode->nodeAggregateId->value] = true;
+                    $outputNodeAggregateIds[$prevNode->aggregateId->value] = true;
                     $output[] = $prevNode;
                 }
             }

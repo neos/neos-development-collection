@@ -14,33 +14,35 @@ Feature: Run integrity violation detection regarding reference relations
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                                  |
-      | workspaceName              | "live"                                 |
-      | workspaceTitle             | "Live"                                 |
-      | workspaceDescription       | "The live workspace"                   |
-      | newContentStreamId | "cs-identifier"                        |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | nodeAggregateId     | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "source-nodandaise"                       |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language":"de"}                         |
-      | coveredDimensionSpacePoints   | [{"language":"de"}]                       |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | nodeAggregateClassification   | "regular"                                 |
+      | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
+      | contentStreamId             | "cs-identifier"                           |
+      | nodeAggregateId             | "source-nodandaise"                       |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint   | {"language":"de"}                         |
+      | coveredDimensionSpacePoints | [{"language":"de"}]                       |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
+      | nodeAggregateClassification | "regular"                                 |
 
   Scenario: Reference a non-existing node aggregate
     When the event NodeReferencesWereSet was published with payload:
-      | Key                                      | Value                                                                      |
-      | contentStreamId                  | "cs-identifier"                                                            |
-      | sourceNodeAggregateId            | "source-nodandaise"                                                        |
-      | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                        |
-      | referenceName                            | "referenceProperty"                                                        |
+      | Key                                      | Value                                                              |
+      | workspaceName                            | "live"                                                             |
+      | contentStreamId                          | "cs-identifier"                                                    |
+      | sourceNodeAggregateId                    | "source-nodandaise"                                                |
+      | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                |
+      | referenceName                            | "referenceProperty"                                                |
       | references                               | [{"targetNodeAggregateId":"anthony-destinode", "properties":null}] |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
@@ -48,20 +50,22 @@ Feature: Run integrity violation detection regarding reference relations
 
   Scenario: Reference a node aggregate not covering any of the DSPs the source does
     When the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "anthony-destinode"                       |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language":"fr"}                         |
-      | coveredDimensionSpacePoints   | [{"language":"fr"}]                       |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | nodeAggregateClassification   | "regular"                                 |
+      | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
+      | contentStreamId             | "cs-identifier"                           |
+      | nodeAggregateId             | "anthony-destinode"                       |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint   | {"language":"fr"}                         |
+      | coveredDimensionSpacePoints | [{"language":"fr"}]                       |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
+      | nodeAggregateClassification | "regular"                                 |
     And the event NodeReferencesWereSet was published with payload:
-      | Key                                      | Value                                                                      |
-      | contentStreamId                  | "cs-identifier"                                                            |
-      | sourceNodeAggregateId            | "source-nodandaise"                                                        |
-      | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                        |
-      | referenceName                            | "referenceProperty"                                                        |
+      | Key                                      | Value                                                              |
+      | workspaceName                            | "live"                                                             |
+      | contentStreamId                          | "cs-identifier"                                                    |
+      | sourceNodeAggregateId                    | "source-nodandaise"                                                |
+      | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                |
+      | referenceName                            | "referenceProperty"                                                |
       | references                               | [{"targetNodeAggregateId":"anthony-destinode", "properties":null}] |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error

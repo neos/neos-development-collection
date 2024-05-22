@@ -220,10 +220,10 @@ final class NodeFactory
 
         // a nodeAggregate only exists if it at least contains one node
         assert($nodesByOccupiedDimensionSpacePoint !== []);
-        $primaryNode = current($nodesByOccupiedDimensionSpacePoint);
 
-        return new NodeAggregate(
-            $primaryNode->subgraphIdentity->contentStreamId,
+        return NodeAggregate::create(
+            $this->contentRepositoryId,
+            $workspaceName,
             NodeAggregateId::fromString($rawNodeAggregateId),
             NodeAggregateClassification::from($rawNodeAggregateClassification),
             NodeTypeName::fromString($rawNodeTypeName),
@@ -235,6 +235,7 @@ final class NodeFactory
             $nodesByCoveredDimensionSpacePoints,
             OriginByCoverage::fromArray($occupationByCovering),
             $dimensionSpacePointsBySubtreeTags,
+            $contentStreamId,
         );
     }
 
@@ -314,9 +315,9 @@ final class NodeFactory
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateId => $nodes) {
             /** @var string $rawNodeAggregateId */
-            yield new NodeAggregate(
-                // this line is safe because a nodeAggregate only exists if it at least contains one node.
-                current($nodes)->subgraphIdentity->contentStreamId,
+            yield NodeAggregate::create(
+                $this->contentRepositoryId,
+                $workspaceName,
                 NodeAggregateId::fromString($rawNodeAggregateId),
                 $classificationByNodeAggregate[$rawNodeAggregateId],
                 $nodeTypeNames[$rawNodeAggregateId],
@@ -337,6 +338,7 @@ final class NodeFactory
                     $occupationByCoveringByNodeAggregate[$rawNodeAggregateId]
                 ),
                 $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId],
+                $contentStreamId,
             );
         }
     }

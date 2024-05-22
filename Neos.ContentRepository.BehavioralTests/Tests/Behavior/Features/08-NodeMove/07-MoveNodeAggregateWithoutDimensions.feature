@@ -30,6 +30,7 @@ Feature: Move a node without content dimensions
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-david-nodenborough"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
@@ -40,6 +41,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateClassification | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "nody-mc-nodeface"                        |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
@@ -50,6 +52,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateClassification | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-nodeward-nodington-iii"              |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
@@ -130,6 +133,7 @@ Feature: Move a node without content dimensions
   Scenario: Move a node to a new parent and the end of its children
     Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "lady-abigail-nodenborough"               |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |

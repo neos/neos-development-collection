@@ -52,7 +52,7 @@ final class DimensionHelper implements ProtectedContextAwareInterface
     public function currentValue(Node $node, ContentDimensionId|string $dimensionName): ?ContentDimensionValue
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
-        $currentDimensionValueAsString = $node->subgraphIdentity->dimensionSpacePoint->getCoordinate($contentDimensionId);
+        $currentDimensionValueAsString = $node->dimensionSpacePoint->getCoordinate($contentDimensionId);
 
         if (is_string($currentDimensionValueAsString)) {
             return $this->allDimensionValues($node, $contentDimensionId)?->getValue($currentDimensionValueAsString);
@@ -97,7 +97,7 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      */
     public function all(ContentRepositoryId|Node $subject): array
     {
-        $contentRepositoryId = $subject instanceof Node ? $subject->subgraphIdentity->contentRepositoryId : $subject;
+        $contentRepositoryId = $subject instanceof Node ? $subject->contentRepositoryId : $subject;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         return $contentRepository->getContentDimensionSource()->getContentDimensionsOrderedByPriority();
@@ -118,7 +118,7 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      */
     public function allDimensionValues(ContentRepositoryId|Node $subject, ContentDimensionId|string $dimensionName): ?ContentDimensionValues
     {
-        $contentRepositoryId = $subject instanceof Node ? $subject->subgraphIdentity->contentRepositoryId : $subject;
+        $contentRepositoryId = $subject instanceof Node ? $subject->contentRepositoryId : $subject;
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
 
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);

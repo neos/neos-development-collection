@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentStream;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 
 /**
@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 class ContentStreamProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
-        private readonly DbalClientInterface $dbalClient
+        private readonly Connection $dbal,
     ) {
     }
 
@@ -39,7 +39,7 @@ class ContentStreamProjectionFactory implements ProjectionFactoryInterface
             (new \ReflectionClass(ContentStreamProjection::class))->getShortName()
         ));
         return new ContentStreamProjection(
-            $this->dbalClient,
+            $this->dbal,
             sprintf(
                 'cr_%s_p_%s',
                 $projectionFactoryDependencies->contentRepositoryId->value,

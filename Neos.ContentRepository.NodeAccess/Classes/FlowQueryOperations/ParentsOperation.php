@@ -80,7 +80,7 @@ class ParentsOperation extends AbstractOperation
             $ancestorNodes = $this->contentRepositoryRegistry
                 ->subgraphForNode($contextNode)
                 ->findAncestorNodes(
-                    $contextNode->nodeAggregateId,
+                    $contextNode->aggregateId,
                     $findAncestorNodesFilter
                 );
             $parents = $parents->merge($ancestorNodes);

@@ -89,7 +89,7 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface
 
                 return $this->contentRepository->handle(RemoveNodeAggregate::create(
                     $workspaceNameForWriting,
-                    $node->nodeAggregateId,
+                    $node->aggregateId,
                     $coveredDimensionSpacePoint,
                     $this->strategy,
                 ));

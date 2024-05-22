@@ -24,7 +24,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -73,7 +72,7 @@ final class ContentGraph implements ContentGraphInterface
     private array $subgraphs = [];
 
     public function __construct(
-        private readonly DbalClientInterface $client,
+        private readonly Connection $dbal,
         private readonly NodeFactory $nodeFactory,
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
@@ -81,7 +80,7 @@ final class ContentGraph implements ContentGraphInterface
         public readonly WorkspaceName $workspaceName,
         public readonly ContentStreamId $contentStreamId
     ) {
-        $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $this->tableNames);
+        $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $this->tableNames);
     }
 
     public function getContentRepositoryId(): ContentRepositoryId
@@ -107,7 +106,7 @@ final class ContentGraph implements ContentGraphInterface
                     $this->contentStreamId,
                     $dimensionSpacePoint,
                     $visibilityConstraints,
-                    $this->client,
+                    $this->dbal,
                     $this->nodeFactory,
                     $this->nodeTypeManager,
                     $this->tableNames
@@ -330,7 +329,7 @@ final class ContentGraph implements ContentGraphInterface
 
     private function createQueryBuilder(): QueryBuilder
     {
-        return $this->client->getConnection()->createQueryBuilder();
+        return $this->dbal->createQueryBuilder();
     }
 
     private function mapQueryBuilderToNodeAggregate(QueryBuilder $queryBuilder): ?NodeAggregate

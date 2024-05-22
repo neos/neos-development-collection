@@ -252,7 +252,7 @@ class FindOperation extends AbstractOperation
                 if ($nodePath instanceof AbsoluteNodePath) {
                     $nodeByPath = $subgraph->findNodeByAbsolutePath($nodePath);
                 } else {
-                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->nodeAggregateId);
+                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->aggregateId);
                 }
                 if (isset($nodeByPath)) {
                     $result[] = $nodeByPath;
@@ -277,7 +277,7 @@ class FindOperation extends AbstractOperation
 
             /** @var Node $node */
             foreach ($entryPoint['nodes'] as $node) {
-                foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::create(nodeTypes: $nodeTypeFilter)) as $descendant) {
+                foreach ($subgraph->findDescendantNodes($node->aggregateId, FindDescendantNodesFilter::create(nodeTypes: $nodeTypeFilter)) as $descendant) {
                     $result[] = $descendant;
                 }
             }
