@@ -12,6 +12,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
@@ -21,7 +22,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 class PropertyAdjustment
 {
     public function __construct(
-        private readonly ProjectedNodeIterator $projectedNodeIterator,
+        private readonly ContentGraphInterface $contentGraph,
         private readonly NodeTypeManager $nodeTypeManager
     ) {
     }
@@ -39,7 +40,7 @@ class PropertyAdjustment
 
         $expectedPropertiesFromNodeType = array_filter($nodeType->getProperties(), fn ($value) => $value !== null);
 
-        foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
+        foreach ($this->contentGraph->findNodeAggregatesByType($nodeTypeName) as $nodeAggregate) {
             foreach ($nodeAggregate->getNodes() as $node) {
                 $propertyKeysInNode = [];
 
@@ -115,8 +116,8 @@ class PropertyAdjustment
     ): EventsToPublish {
         $events = Events::with(
             new NodePropertiesWereSet(
-                $node->workspaceName,
-                $node->subgraphIdentity->contentStreamId,
+                $this->contentGraph->getWorkspaceName(),
+                $this->contentGraph->getContentStreamId(),
                 $node->aggregateId,
                 $node->originDimensionSpacePoint,
                 $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
@@ -125,7 +126,7 @@ class PropertyAdjustment
             )
         );
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($node->subgraphIdentity->contentStreamId);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($this->contentGraph->getContentStreamId());
         return new EventsToPublish(
             $streamName->getEventStreamName(),
             $events,
