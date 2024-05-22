@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\NodeType;
 
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 
 /**
  * @internal
@@ -56,7 +55,6 @@ final class ClosureNodeTypeProvider implements NodeTypeProviderInterface
      * @param array<string,mixed> $completeNodeTypeConfiguration the full node type configuration for all node types
      * @throws NodeConfigurationException
      * @throws NodeTypeIsFinalException
-     * @throws NodeTypeNotFoundException
      */
     private function loadNodeType(string $nodeTypeName, array &$completeNodeTypeConfiguration): NodeType
     {
@@ -66,7 +64,8 @@ final class ClosureNodeTypeProvider implements NodeTypeProviderInterface
         }
 
         if (!isset($completeNodeTypeConfiguration[$nodeTypeName])) {
-            throw new NodeTypeNotFoundException('Node type "' . $nodeTypeName . '" does not exist', 1316451800);
+            // only thrown if a programming error occurred.
+            throw new \RuntimeException('Must not happen, logic error: Node type "' . $nodeTypeName . '" does not exist', 1316451800);
         }
 
         $nodeTypeConfiguration = $completeNodeTypeConfiguration[$nodeTypeName];

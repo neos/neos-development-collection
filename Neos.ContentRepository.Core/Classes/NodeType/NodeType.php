@@ -222,10 +222,10 @@ final class NodeType
 
     /**
      * @param NodeName $nodeName
-     * @return NodeType|null
+     * @return NodeTypeName|null
      * @deprecated with Neos 9.0 – {@see tetheredNodeTypeDefinitions} should be used instead
      */
-    public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeType
+    public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeTypeName
     {
         $tetheredNodeDefinition = $this->tetheredNodeTypeDefinitions->get($nodeName);
         return $tetheredNodeDefinition->nodeTypeName;
