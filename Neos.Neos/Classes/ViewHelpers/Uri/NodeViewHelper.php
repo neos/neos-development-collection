@@ -158,20 +158,6 @@ class NodeViewHelper extends AbstractViewHelper
             ''
         );
         $this->registerArgument(
-            'addQueryString',
-            'boolean',
-            'If set, the current query parameters will be kept in the URI',
-            false,
-            false
-        );
-        $this->registerArgument(
-            'argumentsToBeExcludedFromQueryString',
-            'array',
-            'arguments to be removed from the URI. Only active if $addQueryString = true',
-            false,
-            []
-        );
-        $this->registerArgument(
             'baseNodeName',
             'string',
             'The name of the base node inside the Fusion context to use for the ContentContext'
@@ -227,9 +213,7 @@ class NodeViewHelper extends AbstractViewHelper
         $uriBuilder->setFormat($this->arguments['format'])
             ->setCreateAbsoluteUri($this->arguments['absolute'])
             ->setArguments($this->arguments['arguments'])
-            ->setSection($this->arguments['section'])
-            ->setAddQueryString($this->arguments['addQueryString'])
-            ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
+            ->setSection($this->arguments['section']);
 
         $uri = '';
         if (!$nodeAddress) {
