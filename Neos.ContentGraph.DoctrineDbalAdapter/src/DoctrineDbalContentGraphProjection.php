@@ -984,7 +984,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $this->createNodeGeneralizationVariant($event->contentStreamId, $event->nodeAggregateId, $event->sourceOrigin, $event->generalizationOrigin, $event->variantSucceedingSiblings, $eventEnvelope);
     }
 
-    public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event, EventEnvelope $eventEnvelope): void
+    private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $this->createNodePeerVariant($event->contentStreamId, $event->nodeAggregateId, $event->sourceOrigin, $event->peerOrigin, $event->peerSucceedingSiblings, $eventEnvelope);
     }
