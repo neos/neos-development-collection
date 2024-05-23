@@ -47,17 +47,19 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
             'workspace'
         ));
 
+        $currentContentStreamIdStatement = <<<SQL
+            SELECT
+                *
+            FROM
+                {$tableName}
+            WHERE
+                workspaceName = :workspaceName
+            LIMIT 1
+        SQL;
         try {
-            $currentContentStreamId = $this->dbal->fetchOne(
-                '
-                    SELECT * FROM ' . $tableName . '
-                    WHERE workspaceName = :workspaceName
-                    LIMIT 1
-                ',
-                [
-                    'workspaceName' => $workspaceName->value,
-                ]
-            );
+            $currentContentStreamId = $this->dbal->fetchOne($currentContentStreamIdStatement, [
+                'workspaceName' => $workspaceName->value,
+            ]);
         } catch (Exception $e) {
             throw new \RuntimeException(sprintf('Failed to load workspace content stream id from database: %s', $e->getMessage()), 1716486077, $e);
         }
