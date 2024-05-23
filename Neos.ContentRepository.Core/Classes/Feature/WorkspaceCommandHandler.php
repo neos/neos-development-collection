@@ -41,13 +41,9 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCrea
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWorkspaceOwner;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\BaseWorkspaceEqualsWorkspaceException;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\CircularRelationBetweenWorkspacesException;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\WorkspaceIsNotEmptyException;
@@ -103,7 +99,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
             CreateWorkspace::class => $this->handleCreateWorkspace($command, $commandHandlingDependencies),
-            RenameWorkspace::class => $this->handleRenameWorkspace($command, $commandHandlingDependencies),
             CreateRootWorkspace::class => $this->handleCreateRootWorkspace($command, $commandHandlingDependencies),
             PublishWorkspace::class => $this->handlePublishWorkspace($command, $commandHandlingDependencies),
             RebaseWorkspace::class => $this->handleRebaseWorkspace($command, $commandHandlingDependencies),
@@ -111,7 +106,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $commandHandlingDependencies),
             DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $commandHandlingDependencies),
             DeleteWorkspace::class => $this->handleDeleteWorkspace($command, $commandHandlingDependencies),
-            ChangeWorkspaceOwner::class => $this->handleChangeWorkspaceOwner($command, $commandHandlingDependencies),
             ChangeBaseWorkspace::class => $this->handleChangeBaseWorkspace($command, $commandHandlingDependencies),
         };
     }
@@ -161,30 +155,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
             $events,
             ExpectedVersion::ANY()
-        );
-    }
-
-    /**
-     * @throws WorkspaceDoesNotExist
-     */
-    private function handleRenameWorkspace(
-        RenameWorkspace $command,
-        CommandHandlingDependencies $commandHandlingDependencies
-    ): EventsToPublish {
-        $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
-
-        $events = Events::with(
-            new WorkspaceWasRenamed(
-                $command->workspaceName,
-                $command->workspaceTitle,
-                $command->workspaceDescription,
-            )
-        );
-
-        return new EventsToPublish(
-            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-            $events,
-            ExpectedVersion::STREAM_EXISTS()
         );
     }
 
@@ -871,30 +841,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $streamName,
             $events,
             ExpectedVersion::ANY()
-        );
-    }
-
-    /**
-     * @throws WorkspaceDoesNotExist
-     */
-    private function handleChangeWorkspaceOwner(
-        ChangeWorkspaceOwner $command,
-        CommandHandlingDependencies $commandHandlingDependencies
-    ): EventsToPublish {
-        $this->requireWorkspace($command->workspaceName, $commandHandlingDependencies->getWorkspaceFinder());
-
-        $events = Events::with(
-            new WorkspaceOwnerWasChanged(
-                $command->workspaceName,
-                $command->newWorkspaceOwner
-            )
-        );
-
-        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
-        return new EventsToPublish(
-            $streamName,
-            $events,
-            ExpectedVersion::STREAM_EXISTS()
         );
     }
 

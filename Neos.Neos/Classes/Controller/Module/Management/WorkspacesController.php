@@ -18,9 +18,7 @@ use Doctrine\DBAL\DBALException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWorkspaceOwner;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
@@ -310,25 +308,6 @@ class WorkspacesController extends AbstractModuleController
                 Message::SEVERITY_ERROR
             );
             $this->redirect('index');
-        }
-
-        if (!$workspace->workspaceTitle->equals($title) || !$workspace->workspaceDescription->equals($description)) {
-            $contentRepository->handle(
-                RenameWorkspace::create(
-                    $workspaceName,
-                    $title,
-                    $description
-                )
-            );
-        }
-
-        if ($workspace->workspaceOwner !== $workspaceOwner) {
-            $contentRepository->handle(
-                ChangeWorkspaceOwner::create(
-                    $workspaceName,
-                    $workspaceOwner ?: null,
-                )
-            );
         }
 
         $this->addFlashMessage($this->translator->translateById(

@@ -25,6 +25,8 @@ final class WorkspaceName implements \JsonSerializable
 {
     public const WORKSPACE_NAME_LIVE = 'live';
 
+    public const MAX_LENGTH = 200;
+
     /**
      * @var array<string,self>
      */
@@ -33,7 +35,7 @@ final class WorkspaceName implements \JsonSerializable
     private function __construct(
         public readonly string $value
     ) {
-        if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $value) !== 1) {
+        if (preg_match('/^[\p{L}\p{P}\d .]{1,' . self::MAX_LENGTH . '}$/u', $value) !== 1) {
             throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610318);
         }
     }

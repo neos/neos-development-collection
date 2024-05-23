@@ -39,29 +39,22 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
 
     public function buildForWorkspace(WorkspaceName $workspaceName): ContentGraph
     {
-        // FIXME: Should be part of this projection, this is forbidden
-        $tableName = strtolower(sprintf(
-            'cr_%s_p_%s',
-            $this->contentRepositoryId->value,
-            'workspace'
-        ));
-
-        $row = $this->dbal->executeQuery(
+        $contentStreamId = $this->dbal->executeQuery(
             '
-                SELECT * FROM ' . $tableName . '
+                SELECT currentcontentstreamid FROM ' . $this->tableNames->workspace() . '
                 WHERE workspaceName = :workspaceName
                 LIMIT 1
             ',
             [
                 'workspaceName' => $workspaceName->value,
             ]
-        )->fetchAssociative();
+        )->fetchOne();
 
-        if ($row === false) {
+        if ($contentStreamId === false) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
 
-        return $this->buildForWorkspaceAndContentStream($workspaceName, ContentStreamId::fromString($row['currentcontentstreamid']));
+        return $this->buildForWorkspaceAndContentStream($workspaceName, ContentStreamId::fromString($contentStreamId));
     }
 
     public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraph
