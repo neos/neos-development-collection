@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 
 class NodeAddressTest extends TestCase
 {
-    public static function urlCompatibleSerialization(): iterable
+    public static function jsonSerialization(): iterable
     {
         yield 'no dimensions' => [
             'nodeAddress' => NodeAddress::create(
@@ -32,7 +32,7 @@ class NodeAddressTest extends TestCase
                 DimensionSpacePoint::createWithoutDimensions(),
                 NodeAggregateId::fromString('marcus-heinrichus')
             ),
-            'serialized' => 'default__live__W10=__marcus-heinrichus'
+            'serialized' => '{"contentRepositoryId":"default","workspaceName":"live","dimensionSpacePoint":[],"aggregateId":"marcus-heinrichus"}'
         ];
 
         yield 'one dimension' => [
@@ -42,7 +42,7 @@ class NodeAddressTest extends TestCase
                 DimensionSpacePoint::fromArray(['language' => 'de']),
                 NodeAggregateId::fromString('79e69d1c-b079-4535-8c8a-37e76736c445')
             ),
-            'serialized' => 'default__user-mh__eyJsYW5ndWFnZSI6ImRlIn0=__79e69d1c-b079-4535-8c8a-37e76736c445'
+            'serialized' => '{"contentRepositoryId":"default","workspaceName":"user-mh","dimensionSpacePoint":{"language":"de"},"aggregateId":"79e69d1c-b079-4535-8c8a-37e76736c445"}'
         ];
 
         yield 'two dimensions' => [
@@ -52,24 +52,26 @@ class NodeAddressTest extends TestCase
                 DimensionSpacePoint::fromArray(['language' => 'en_US', 'audience' => 'nice people']),
                 NodeAggregateId::fromString('my-node-id')
             ),
-            'serialized' => 'second__user-mh__eyJsYW5ndWFnZSI6ImVuX1VTIiwiYXVkaWVuY2UiOiJuaWNlIHBlb3BsZSJ9__my-node-id'
+            'serialized' => '{"contentRepositoryId":"second","workspaceName":"user-mh","dimensionSpacePoint":{"language":"en_US","audience":"nice people"},"aggregateId":"my-node-id"}'
         ];
     }
 
     /**
-     * @dataProvider urlCompatibleSerialization
+     * @dataProvider jsonSerialization
+     * @test
      */
-    public function testUrlCompatibleSerialization(NodeAddress $nodeAddress, string $expected): void
+    public function serialization(NodeAddress $nodeAddress, string $expected): void
     {
-        self::assertEquals($expected, $nodeAddress->toUriString());
+        self::assertEquals($expected, $nodeAddress->toJson());
     }
 
     /**
-     * @dataProvider urlCompatibleSerialization
+     * @dataProvider jsonSerialization
+     * @test
      */
-    public function testUrlCompatibleDeserialization(NodeAddress $expectedNodeAddress, string $encoded): void
+    public function deserialization(NodeAddress $expectedNodeAddress, string $encoded): void
     {
-        $nodeAddress = NodeAddress::fromUriString($encoded);
+        $nodeAddress = NodeAddress::fromJsonString($encoded);
         self::assertInstanceOf(NodeAddress::class, $nodeAddress);
         self::assertTrue($expectedNodeAddress->equals($nodeAddress));
     }

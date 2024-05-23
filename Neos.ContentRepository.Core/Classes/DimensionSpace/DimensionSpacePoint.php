@@ -88,16 +88,6 @@ final class DimensionSpacePoint extends AbstractDimensionSpacePoint
         return self::instance($coordinates);
     }
 
-    final public static function fromUriRepresentation(string $encoded): self
-    {
-        return self::instance(json_decode(base64_decode($encoded), true));
-    }
-
-    final public function toUriRepresentation(): string
-    {
-        return base64_encode(json_encode($this->coordinates, JSON_THROW_ON_ERROR));
-    }
-
     /**
      * Varies a dimension space point in a single coordinate
      */

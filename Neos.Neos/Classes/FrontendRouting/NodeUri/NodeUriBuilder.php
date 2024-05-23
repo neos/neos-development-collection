@@ -86,7 +86,7 @@ final class NodeUriBuilder
     public function previewUriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
         $routeValues = $options?->routingArguments ?? [];
-        $routeValues['node'] = $nodeAddress->toUriString();
+        $routeValues['node'] = $nodeAddress->toJson();
         $routeValues['@action'] = strtolower('preview');
         $routeValues['@controller'] = strtolower('Frontend\Node');
         $routeValues['@package'] = strtolower('Neos.Neos');

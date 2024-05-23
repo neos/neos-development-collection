@@ -248,7 +248,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $dimensionSpacePoint,
             $nodeInfo->getNodeAggregateId(),
         );
-        return new MatchResult($nodeAddress->toUriString(), $nodeInfo->getRouteTags());
+        return new MatchResult($nodeAddress->toJson(), $nodeInfo->getRouteTags());
     }
 
     /**

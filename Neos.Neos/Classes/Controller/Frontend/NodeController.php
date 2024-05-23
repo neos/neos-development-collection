@@ -131,7 +131,7 @@ class NodeController extends ActionController
         $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
-        $nodeAddress = NodeAddress::fromUriString($node);
+        $nodeAddress = NodeAddress::fromJsonString($node);
 
         $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
             $nodeAddress->dimensionSpacePoint,
@@ -193,7 +193,7 @@ class NodeController extends ActionController
      */
     public function showAction(string $node): void
     {
-        $nodeAddress = NodeAddress::fromUriString($node);
+        $nodeAddress = NodeAddress::fromJsonString($node);
         unset($node);
 
         if (!$nodeAddress->workspaceName->isLive()) {

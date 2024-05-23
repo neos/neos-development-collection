@@ -65,16 +65,21 @@ final readonly class NodeAddress implements \JsonSerializable
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentRepositoryId::fromString($array['contentRepositoryId']),
-            WorkspaceName::fromString($array['workspaceName']),
-            DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
-            NodeAggregateId::fromString($array['aggregateId'])
+            ContentRepositoryId::fromString($array['contentRepositoryId'] ?? throw new \InvalidArgumentException(sprintf('Failed to decode NodeAddress from array. Key "contentRepositoryId" does not exist. Got: %s', json_encode($array, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1716478573)),
+            WorkspaceName::fromString($array['workspaceName'] ?? throw new \InvalidArgumentException(sprintf('Failed to decode NodeAddress from array. Key "workspaceName" does not exist. Got: %s', json_encode($array, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1716478580)),
+            DimensionSpacePoint::fromArray($array['dimensionSpacePoint'] ?? throw new \InvalidArgumentException(sprintf('Failed to decode NodeAddress from array. Key "dimensionSpacePoint" does not exist. Got: %s', json_encode($array, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1716478584)),
+            NodeAggregateId::fromString($array['aggregateId'] ?? throw new \InvalidArgumentException(sprintf('Failed to decode NodeAddress from array. Key "aggregateId" does not exist. Got: %s', json_encode($array, JSON_PARTIAL_OUTPUT_ON_ERROR)), 1716478588))
         );
     }
 
     public static function fromJsonString(string $jsonString): self
     {
-        return self::fromArray(\json_decode($jsonString, true, JSON_THROW_ON_ERROR));
+        try {
+            $jsonArray = json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \InvalidArgumentException(sprintf('Failed to JSON-decode NodeAddress: %s', $e->getMessage()), 1716478364, $e);
+        }
+        return self::fromArray($jsonArray);
     }
 
     public function withAggregateId(NodeAggregateId $aggregateId): self
@@ -97,31 +102,6 @@ final readonly class NodeAddress implements \JsonSerializable
         } catch (\JsonException $e) {
             throw new \RuntimeException(sprintf('Failed to JSON-encode NodeAddress: %s', $e->getMessage()), 1715608338, $e);
         }
-    }
-
-    public static function fromUriString(string $encoded): self
-    {
-        $parts = explode('__', $encoded);
-        if (count($parts) !== 4) {
-            throw new \RuntimeException(sprintf('Failed to decode NodeAddress from uri string: %s', $encoded), 1716051847);
-        }
-        return new self(
-            ContentRepositoryId::fromString($parts[0]),
-            WorkspaceName::fromString($parts[1]),
-            DimensionSpacePoint::fromUriRepresentation($parts[2]),
-            NodeAggregateId::fromString($parts[3])
-        );
-    }
-
-    public function toUriString(): string
-    {
-        return sprintf(
-            '%s__%s__%s__%s',
-            $this->contentRepositoryId->value,
-            $this->workspaceName->value,
-            $this->dimensionSpacePoint->toUriRepresentation(),
-            $this->aggregateId->value
-        );
     }
 
     public function jsonSerialize(): mixed

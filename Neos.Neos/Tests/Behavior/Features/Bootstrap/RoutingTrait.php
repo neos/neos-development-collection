@@ -204,7 +204,7 @@ trait RoutingTrait
     public function noNodeShouldMatchUrl(string $url): void
     {
         $matchedNodeAddress = $this->match(new Uri($url));
-        Assert::assertNull($matchedNodeAddress, 'Expected no node to be found, but instead the following node address was matched: ' . $matchedNodeAddress?->toUriString() ?? '- none -');
+        Assert::assertNull($matchedNodeAddress, 'Expected no node to be found, but instead the following node address was matched: ' . $matchedNodeAddress?->toJson() ?? '- none -');
     }
 
     /**
@@ -243,7 +243,7 @@ trait RoutingTrait
             return null;
         }
 
-        return NodeAddress::fromUriString($routeValues['node']);
+        return NodeAddress::fromJsonString($routeValues['node']);
     }
 
 

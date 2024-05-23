@@ -90,7 +90,7 @@ class NodeAddressFactory
         list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdSerialized)
             = explode('__', $serializedNodeAddress);
         $workspaceName = WorkspaceName::fromString($workspaceNameSerialized);
-        $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray(json_decode(base64_decode($dimensionSpacePointSerialized), true));
         $nodeAggregateId = NodeAggregateId::fromString($nodeAggregateIdSerialized);
 
         $contentStreamId = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
