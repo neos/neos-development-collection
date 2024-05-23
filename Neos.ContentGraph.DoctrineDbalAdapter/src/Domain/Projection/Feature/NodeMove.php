@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -33,7 +32,7 @@ trait NodeMove
             );
 
             if (is_null($nodeToBeMoved)) {
-                throw new EventCouldNotBeAppliedToContentGraph(sprintf('Failed to move node because node to be moved does not exist. Content stream: %s, node aggregate id: %s, dimension space point: %s', $contentStreamId->value, $nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson()), 1716471638);
+                throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because it does not exist', $nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamId->value), 1716471638);
             }
 
             if ($newParentNodeAggregateId) {
@@ -87,7 +86,7 @@ trait NodeMove
                 $succeedingSiblingForCoverage->dimensionSpacePoint
             );
             if ($newSucceedingSibling === null) {
-                throw new EventCouldNotBeAppliedToContentGraph(sprintf('Failed to move node because target succeeding sibling node is missing. Content stream: %s, node aggregate id: %s, dimension space point: %s', $contentStreamId->value, $succeedingSiblingForCoverage->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson()), 1716471881);
+                throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target succeeding sibling node "%s" is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamId->value, $succeedingSiblingForCoverage->nodeAggregateId->value), 1716471881);
             }
         }
 
@@ -136,7 +135,7 @@ trait NodeMove
             $succeedingSiblingForCoverage->dimensionSpacePoint
         );
         if ($newParent === null) {
-            throw new EventCouldNotBeAppliedToContentGraph(sprintf('Failed to move node because target parent node is missing. Content stream: %s, node aggregate id: %s, dimension space point: %s', $contentStreamId->value, $parentNodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson()), 1716471955);
+            throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target parent node is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamId->value), 1716471955);
         }
 
         $newSucceedingSibling = null;
@@ -148,7 +147,7 @@ trait NodeMove
                 $succeedingSiblingForCoverage->dimensionSpacePoint
             );
             if ($newSucceedingSibling === null) {
-                throw new EventCouldNotBeAppliedToContentGraph(sprintf('Failed to move node because target succeeding sibling node is missing. Content stream: %s, node aggregate id: %s, dimension space point: %s', $contentStreamId->value, $succeedingSiblingForCoverage->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson()), 1716471995);
+                throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target succeeding sibling node is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamId->value), 1716471995);
             }
         }
 
@@ -192,7 +191,7 @@ trait NodeMove
         if (count($ingoingHierarchyRelations) !== 1) {
             // there should always be exactly one incoming relation in the given DimensionSpacePoint; everything
             // else would be a totally wrong behavior of findIngoingHierarchyRelationsForNode().
-            throw new EventCouldNotBeAppliedToContentGraph(sprintf('Failed move node because ingoing source hierarchy relation is missing. Content stream: %s, node aggregate id: %s, dimension space poins: %s', $contentStreamId->value, $nodeToBeMoved->relationAnchorPoint->value, $restrictToSet->toJson()), 1716472138);
+            throw new \RuntimeException(sprintf('Failed move node "%s" in sub graph %s@%s because ingoing source hierarchy relation is missing', $nodeToBeMoved->nodeAggregateId->value, $restrictToSet->toJson(), $contentStreamId->value), 1716472138);
         }
         return reset($ingoingHierarchyRelations);
     }

@@ -49,24 +49,22 @@ trait NodeRemoval
 
         // remove node itself if it does not have any incoming hierarchy relations anymore
         // also remove outbound reference relations
+        $deleteRelationsStatement = <<<SQL
+            DELETE
+                n, r
+            FROM
+                {$this->tableNames->node()} n
+                LEFT JOIN {$this->tableNames->referenceRelation()} r ON r.nodeanchorpoint = n.relationanchorpoint
+                LEFT JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+            WHERE
+                n.relationanchorpoint = :anchorPointForNode
+                -- the following line means "left join leads to NO MATCHING hierarchyrelation"
+                AND h.contentstreamid IS NULL
+        SQL;
         try {
-            $this->dbal->executeStatement(
-                '
-                DELETE n, r FROM ' . $this->tableNames->node() . ' n
-                    LEFT JOIN ' . $this->tableNames->referenceRelation() . ' r
-                        ON r.nodeanchorpoint = n.relationanchorpoint
-                    LEFT JOIN
-                        ' . $this->tableNames->hierarchyRelation() . ' h
-                            ON h.childnodeanchor = n.relationanchorpoint
-                    WHERE
-                        n.relationanchorpoint = :anchorPointForNode
-                        -- the following line means "left join leads to NO MATCHING hierarchyrelation"
-                        AND h.contentstreamid IS NULL
-                    ',
-                [
-                    'anchorPointForNode' => $ingoingRelation->childNodeAnchor->value,
-                ]
-            );
+            $this->dbal->executeStatement($deleteRelationsStatement, [
+                'anchorPointForNode' => $ingoingRelation->childNodeAnchor->value,
+            ]);
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to remove relations from database: %s', $e->getMessage()), 1716473385, $e);
         }
