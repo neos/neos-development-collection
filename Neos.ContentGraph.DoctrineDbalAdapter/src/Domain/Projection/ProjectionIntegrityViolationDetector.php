@@ -639,9 +639,9 @@ WHERE
     ): array {
         $records = $this->dbal->executeQuery(
             'SELECT
-                DISTINCT nodeaggregateid
+                DISTINCT n.nodeaggregateid
             FROM
-                ' . $this->tableNames->node() . '
+                ' . $this->tableNames->node() . ' n
                 INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
                 ON h.childnodeanchor = n.relationanchorpoint
             WHERE
