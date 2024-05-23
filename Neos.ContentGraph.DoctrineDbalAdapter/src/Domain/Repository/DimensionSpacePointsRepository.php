@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception as DbalException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\AbstractDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -29,11 +30,11 @@ final class DimensionSpacePointsRepository
     /**
      * @var array<string, string>
      */
-    private array $dimensionspacePointsRuntimeCache = [];
+    private array $dimensionSpacePointsRuntimeCache = [];
 
     public function __construct(
-        private readonly Connection $databaseConnection,
-        private readonly ContentGraphTableNames $tableNames
+        private readonly Connection $dbal,
+        private readonly ContentGraphTableNames $tableNames,
     ) {
     }
 
@@ -43,15 +44,12 @@ final class DimensionSpacePointsRepository
             return;
         }
 
-        $this->dimensionspacePointsRuntimeCache[$dimensionSpacePoint->hash] = $dimensionSpacePoint->toJson();
+        $this->dimensionSpacePointsRuntimeCache[$dimensionSpacePoint->hash] = $dimensionSpacePoint->toJson();
         $this->writeDimensionSpacePoint($dimensionSpacePoint->hash, $dimensionSpacePoint->toJson());
     }
 
     /**
-     * @param string $hash
      * @param array<string,string> $dimensionSpacePointCoordinates
-     * @return void
-     * @throws \Doctrine\DBAL\Exception
      */
     public function insertDimensionSpacePointByHashAndCoordinates(string $hash, array $dimensionSpacePointCoordinates): void
     {
@@ -59,8 +57,12 @@ final class DimensionSpacePointsRepository
             return;
         }
 
-        $dimensionSpacePointCoordinatesJson = json_encode($dimensionSpacePointCoordinates, JSON_THROW_ON_ERROR);
-        $this->dimensionspacePointsRuntimeCache[$hash] = $dimensionSpacePointCoordinatesJson;
+        try {
+            $dimensionSpacePointCoordinatesJson = json_encode($dimensionSpacePointCoordinates, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode dimension space point coordinates: %s', $e->getMessage()), 1716474016, $e);
+        }
+        $this->dimensionSpacePointsRuntimeCache[$hash] = $dimensionSpacePointCoordinatesJson;
         $this->writeDimensionSpacePoint($hash, $dimensionSpacePointCoordinatesJson);
     }
 
@@ -81,25 +83,33 @@ final class DimensionSpacePointsRepository
 
     private function writeDimensionSpacePoint(string $hash, string $dimensionSpacePointCoordinatesJson): void
     {
-        $this->databaseConnection->executeStatement(
-            'INSERT IGNORE INTO ' . $this->tableNames->dimensionSpacePoints() . ' (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
-            [
-                'dimensionspacepointhash' => $hash,
-                'dimensionspacepoint' => $dimensionSpacePointCoordinatesJson
-            ]
-        );
+        try {
+            $this->dbal->executeStatement(
+                'INSERT IGNORE INTO ' . $this->tableNames->dimensionSpacePoints() . ' (hash, dimensionspacepoint) VALUES (:dimensionspacepointhash, :dimensionspacepoint)',
+                [
+                    'dimensionspacepointhash' => $hash,
+                    'dimensionspacepoint' => $dimensionSpacePointCoordinatesJson
+                ]
+            );
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to insert dimension space point to database: %s', $e->getMessage()), 1716474073, $e);
+        }
     }
 
     private function getCoordinatesByHashFromRuntimeCache(string $hash): ?string
     {
-        return $this->dimensionspacePointsRuntimeCache[$hash] ?? null;
+        return $this->dimensionSpacePointsRuntimeCache[$hash] ?? null;
     }
 
     private function fillRuntimeCacheFromDatabase(): void
     {
-        $allDimensionSpacePoints = $this->databaseConnection->fetchAllAssociative('SELECT hash, dimensionspacepoint FROM ' . $this->tableNames->dimensionSpacePoints());
+        try {
+            $allDimensionSpacePoints = $this->dbal->fetchAllAssociative('SELECT hash, dimensionspacepoint FROM ' . $this->tableNames->dimensionSpacePoints());
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to load dimension space points from database: %s', $e->getMessage()), 1716488678, $e);
+        }
         foreach ($allDimensionSpacePoints as $dimensionSpacePointRow) {
-            $this->dimensionspacePointsRuntimeCache[(string)$dimensionSpacePointRow['hash']] = (string)$dimensionSpacePointRow['dimensionspacepoint'];
+            $this->dimensionSpacePointsRuntimeCache[(string)$dimensionSpacePointRow['hash']] = (string)$dimensionSpacePointRow['dimensionspacepoint'];
         }
     }
 }

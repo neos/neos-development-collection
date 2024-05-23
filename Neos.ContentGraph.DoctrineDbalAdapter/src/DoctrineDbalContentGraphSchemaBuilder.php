@@ -2,6 +2,7 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
@@ -34,18 +35,18 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createNodeTable(): Table
     {
-        $table = new Table($this->contentGraphTableNames->node(), [
+        $table = self::createTable($this->contentGraphTableNames->node(), [
             DbalSchemaFactory::columnForNodeAnchorPoint('relationanchorpoint')->setAutoincrement(true),
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotnull(false),
             DbalSchemaFactory::columnForNodeTypeName('nodetypename'),
-            (new Column('name', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
-            (new Column('properties', Type::getType(Types::TEXT)))->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
-            (new Column('classification', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
-            (new Column('created', Type::getType(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
-            (new Column('originalcreated', Type::getType(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
-            (new Column('lastmodified', Type::getType(Types::DATETIME_IMMUTABLE)))->setNotnull(false)->setDefault(null),
-            (new Column('originallastmodified', Type::getType(Types::DATETIME_IMMUTABLE)))->setNotnull(false)->setDefault(null)
+            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
+            (new Column('properties', self::type(Types::TEXT)))->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('classification', self::type(Types::BINARY)))->setLength(20)->setNotnull(true),
+            (new Column('created', self::type(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
+            (new Column('originalcreated', self::type(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
+            (new Column('lastmodified', self::type(Types::DATETIME_IMMUTABLE)))->setNotnull(false)->setDefault(null),
+            (new Column('originallastmodified', self::type(Types::DATETIME_IMMUTABLE)))->setNotnull(false)->setDefault(null)
         ]);
 
         return $table
@@ -56,13 +57,13 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createHierarchyRelationTable(): Table
     {
-        $table = new Table($this->contentGraphTableNames->hierarchyRelation(), [
-            (new Column('position', Type::getType(Types::INTEGER)))->setNotnull(true),
+        $table = self::createTable($this->contentGraphTableNames->hierarchyRelation(), [
+            (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor'),
             DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor'),
-            (new Column('subtreetags', Type::getType(Types::JSON)))->setDefault('{}'),
+            (new Column('subtreetags', self::type(Types::JSON)))->setDefault('{}'),
         ]);
 
         return $table
@@ -75,7 +76,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createDimensionSpacePointsTable(): Table
     {
-        $table = new Table($this->contentGraphTableNames->dimensionSpacePoints(), [
+        $table = self::createTable($this->contentGraphTableNames->dimensionSpacePoints(), [
             DbalSchemaFactory::columnForDimensionSpacePointHash('hash')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePoint('dimensionspacepoint')->setNotnull(true)
         ]);
@@ -86,15 +87,36 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createReferenceRelationTable(): Table
     {
-        $table = new Table($this->contentGraphTableNames->referenceRelation(), [
-            (new Column('name', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
-            (new Column('position', Type::getType(Types::INTEGER)))->setNotnull(true),
+        $table = self::createTable($this->contentGraphTableNames->referenceRelation(), [
+            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
+            (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('nodeanchorpoint'),
-            (new Column('properties', Type::getType(Types::TEXT)))->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('properties', self::type(Types::TEXT)))->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
             DbalSchemaFactory::columnForNodeAggregateId('destinationnodeaggregateid')->setNotnull(true)
         ]);
 
         return $table
             ->setPrimaryKey(['name', 'position', 'nodeanchorpoint']);
+    }
+
+    /**
+     * @param array<Column> $columns
+     */
+    private static function createTable(string $tableName, array $columns): Table
+    {
+        try {
+            return new Table($tableName, $columns);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to create table "%s": %s', $tableName, $e->getMessage()), 1716490913, $e);
+        }
+    }
+
+    private static function type(string $type): Type
+    {
+        try {
+            return Type::getType($type);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to create database type "%s": %s', $type, $e->getMessage()), 1716491053, $e);
+        }
     }
 }

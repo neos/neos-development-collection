@@ -14,58 +14,45 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+
 /**
  * The exception to be thrown if an event could not be applied to the content graph
  * @internal
  */
 final class EventCouldNotBeAppliedToContentGraph extends \DomainException
 {
-    public static function becauseTheSourceNodeIsMissing(string $eventClassName): self
+    public static function becauseTheSourceNodeIsMissing(string $variantType, ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint|DimensionSpacePoint $dimensionSpacePoint): self
     {
         return new self(
-            'Event ' . $eventClassName . ' could not be applied: Source node not found.',
+            sprintf('Failed to create node %s variant for node "%s" in sub graph %s@%s because the source node is missing', $variantType, $nodeAggregateId->value, $dimensionSpacePoint->toJson(), $contentStreamId->value),
             1645315210
         );
     }
 
-    public static function becauseTheSourceParentNodeIsMissing(string $eventClassName): self
+    public static function becauseTheSourceParentNodeIsMissing(string $variantType, ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint|DimensionSpacePoint $dimensionSpacePoint): self
     {
         return new self(
-            'Event ' . $eventClassName . ' could not be applied: Source parent node not found.',
+            sprintf('Failed to create node %s variant for node "%s" in sub graph %s@%s because the source parent node is missing', $variantType, $nodeAggregateId->value, $dimensionSpacePoint->toJson(), $contentStreamId->value),
             1645315229
         );
     }
 
-    public static function becauseTheTargetParentNodeIsMissing(string $eventClassName): self
+    public static function becauseTheTargetParentNodeIsMissing(string $variantType, ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint|DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $parentNodeAggregateId): self
     {
         return new self(
-            'Event ' . $eventClassName . ' could not be applied: Target parent node not found.',
+            sprintf('Failed to create node %s variant for node "%s" in sub graph %s@%s because the target parent node "%s" is missing', $variantType, $nodeAggregateId->value, $dimensionSpacePoint->toJson(), $contentStreamId->value, $parentNodeAggregateId->value),
             1645315274
         );
     }
 
-    public static function becauseTheTargetSucceedingSiblingNodeIsMissing(string $eventClassName): self
+    public static function becauseTheIngoingSourceHierarchyRelationIsMissing(string $variantType, ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint|DimensionSpacePoint $dimensionSpacePoint): self
     {
         return new self(
-            'Event ' . $eventClassName . ' could not be applied: Target succeeding sibling node not found.',
-            1667590141
-        );
-    }
-
-    public static function becauseTheTargetSucceedingSiblingNodesParentIsMissing(string $eventClassName): self
-    {
-        return new self(
-            'Event ' . $eventClassName . ' could not be applied: Target succeeding sibling node\'s parent not found.',
-            1667590141
-        );
-    }
-
-
-
-    public static function becauseTheIngoingSourceHierarchyRelationIsMissing(string $eventClassName): self
-    {
-        return new self(
-            'Event ' . $eventClassName . ' could not be applied: Ingoing source hierarchy relation not found.',
+            sprintf('Failed to create node %s variant for node "%s" in sub graph %s@%s because the ingoing hierarchy relation is missing', $variantType, $nodeAggregateId->value, $dimensionSpacePoint->toJson(), $contentStreamId->value),
             1645317567
         );
     }
