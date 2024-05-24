@@ -638,7 +638,17 @@ WHERE
         ContentStreamId $contentStreamId
     ): array {
         $records = $this->dbal->executeQuery(
-            'SELECT DISTINCT nodeaggregateid FROM ' . $this->tableNames->node()
+            'SELECT
+                DISTINCT n.nodeaggregateid
+            FROM
+                ' . $this->tableNames->node() . ' n
+                INNER JOIN ' . $this->tableNames->hierarchyRelation() . ' h
+                ON h.childnodeanchor = n.relationanchorpoint
+            WHERE
+                h.contentstreamid = :contentStreamId',
+            [
+                'contentStreamId' => $contentStreamId->value,
+            ]
         )->fetchAllAssociative();
 
         return array_map(function (array $record) {
