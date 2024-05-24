@@ -278,7 +278,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 'contentStreamId' => $event->contentStreamId->value,
             ]);
         } catch (DbalException $e) {
-            throw new \RuntimeException(sprintf('FAiled to delete hierarchy relation: %s', $e->getMessage()), 1716488943, $e);
+            throw new \RuntimeException(sprintf('Failed to delete hierarchy relation: %s', $e->getMessage()), 1716488943, $e);
         }
         // recreate hierarchy edges for the root node
         $this->connectHierarchy(
