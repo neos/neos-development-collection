@@ -101,7 +101,11 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
 
     public static function fromJsonString(string $jsonString): self
     {
-        return self::fromArray(\json_decode($jsonString, true));
+        try {
+            return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \InvalidArgumentException(sprintf('Failed to JSON-decode "%s" for %s instance: %s', $jsonString, self::class, $e->getMessage()), 1716574712, $e);
+        }
     }
 
     public function merge(self $other): self

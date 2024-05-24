@@ -31,7 +31,7 @@ final class ExportedEvents implements \IteratorAggregate
                     if ($json === '') {
                         continue;
                     }
-                    yield ExportedEvent::fromJson($json);
+                    yield ExportedEvent::fromJsonString($json);
                 }
             }
         );

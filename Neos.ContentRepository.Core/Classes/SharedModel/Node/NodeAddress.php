@@ -74,7 +74,11 @@ final readonly class NodeAddress implements \JsonSerializable
 
     public static function fromJsonString(string $jsonString): self
     {
-        return self::fromArray(\json_decode($jsonString, true, JSON_THROW_ON_ERROR));
+        try {
+            return self::fromArray(\json_decode($jsonString, true, JSON_THROW_ON_ERROR, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \InvalidArgumentException(sprintf('Failed to JSON-decode "%s" for %s instance: %s', $jsonString, self::class, $e->getMessage()), 1716574757, $e);
+        }
     }
 
     public function withAggregateId(NodeAggregateId $aggregateId): self
@@ -95,7 +99,7 @@ final readonly class NodeAddress implements \JsonSerializable
         try {
             return json_encode($this, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            throw new \RuntimeException(sprintf('Failed to JSON-encode NodeAddress: %s', $e->getMessage()), 1715608338, $e);
+            throw new \RuntimeException(sprintf('Failed to JSON-encode instance of %s: %s', self::class, $e->getMessage()), 1715608338, $e);
         }
     }
 

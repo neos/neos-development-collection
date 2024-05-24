@@ -68,7 +68,11 @@ final readonly class DimensionSpacePointSet implements
 
     public static function fromJsonString(string $jsonString): self
     {
-        return new self(\json_decode($jsonString, true));
+        try {
+            return new self(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \InvalidArgumentException(sprintf('Failed to JSON-decode "%s" for %s instance: %s', $jsonString, self::class, $e->getMessage()), 1716574647, $e);
+        }
     }
 
     /**
@@ -156,11 +160,12 @@ final readonly class DimensionSpacePointSet implements
         yield from $this->points;
     }
 
-    /**
-     * @throws \JsonException
-     */
     public function toJson(): string
     {
-        return json_encode($this, JSON_THROW_ON_ERROR);
+        try {
+            return json_encode($this, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode instance of %s: %s', self::class, $e->getMessage()), 1716575140, $e);
+        }
     }
 }

@@ -76,7 +76,11 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
 
     public static function fromJsonString(string $jsonString): self
     {
-        return self::fromArray(json_decode($jsonString, true));
+        try {
+            return self::fromArray(json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \InvalidArgumentException(sprintf('Failed to JSON-decode "%s" for %s instance: %s', $jsonString, self::class, $e->getMessage()), 1716574670, $e);
+        }
     }
 
     public function toDimensionSpacePointSet(): DimensionSpacePointSet
@@ -112,7 +116,11 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
 
     public function toJson(): string
     {
-        return json_encode($this, JSON_THROW_ON_ERROR);
+        try {
+            return json_encode($this, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode instance of %s: %s', self::class, $e->getMessage()), 1716575147, $e);
+        }
     }
 
     /**

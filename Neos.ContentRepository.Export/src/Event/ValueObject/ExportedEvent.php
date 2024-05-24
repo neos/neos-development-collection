@@ -32,13 +32,13 @@ final readonly class ExportedEvent implements \JsonSerializable
         );
     }
 
-    public static function fromJson(string $json): self
+    public static function fromJsonString(string $jsonString): self
     {
         try {
             /** @var array{identifier: string, type: string, payload: array<mixed>, metadata: array<mixed>} $data */
-            $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            throw new \InvalidArgumentException(sprintf('Failed to decode JSON "%s": %s', $json, $e->getMessage()), 1638432979, $e);
+            throw new \InvalidArgumentException(sprintf('Failed to JSON-decode "%s" for %s instance: %s', $jsonString, self::class, $e->getMessage()), 1716574888, $e);
         }
         return new self(
             $data['identifier'],
@@ -76,7 +76,7 @@ final readonly class ExportedEvent implements \JsonSerializable
         try {
             return json_encode($this, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            throw new \RuntimeException(sprintf('Failed to encode exported event to JSON: %s', $e->getMessage()), 1638432972, $e);
+            throw new \RuntimeException(sprintf('Failed to JSON-encode instance of %s: %s', self::class, $e->getMessage()), 1638432972, $e);
         }
     }
 

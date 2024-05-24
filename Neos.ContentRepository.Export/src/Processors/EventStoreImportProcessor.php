@@ -69,7 +69,7 @@ final class EventStoreImportProcessor implements ProcessorInterface, ContentRepo
 
         $keepStreamName = false;
         while (($line = fgets($eventFileResource)) !== false) {
-            $event = ExportedEvent::fromJson(trim($line));
+            $event = ExportedEvent::fromJsonString(trim($line));
             if ($this->contentStreamId === null) {
                 $this->contentStreamId = self::extractContentStreamId($event->payload);
                 $keepStreamName = true;

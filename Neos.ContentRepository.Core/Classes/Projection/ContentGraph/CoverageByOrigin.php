@@ -60,7 +60,11 @@ final class CoverageByOrigin implements \IteratorAggregate, \JsonSerializable
 
     public static function fromJsonString(string $jsonString): self
     {
-        return self::fromArray(json_decode($jsonString, true));
+        try {
+            return self::fromArray(json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \InvalidArgumentException(sprintf('Failed to JSON-decode "%s" for %s instance: %s', $jsonString, self::class, $e->getMessage()), 1716574740, $e);
+        }
     }
 
     public function getCoverage(OriginDimensionSpacePoint $originDimensionSpacePoint): ?DimensionSpacePointSet
@@ -86,6 +90,10 @@ final class CoverageByOrigin implements \IteratorAggregate, \JsonSerializable
 
     public function toJson(): string
     {
-        return json_encode($this, JSON_THROW_ON_ERROR);
+        try {
+            return json_encode($this, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode instance of %s: %s', self::class, $e->getMessage()), 1716575152, $e);
+        }
     }
 }

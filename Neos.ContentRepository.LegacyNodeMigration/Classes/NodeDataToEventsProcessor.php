@@ -245,7 +245,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
      * @param NodeAggregateId $nodeAggregateId
      * @param array<string, mixed> $nodeDataRow
      * @return NodeName[]|void
-     * @throws \JsonException
      */
     public function processNodeDataWithoutFallbackToEmptyDimension(NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, array $nodeDataRow)
     {

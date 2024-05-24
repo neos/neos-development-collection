@@ -48,13 +48,13 @@ final readonly class SerializedAsset implements \JsonSerializable
         );
     }
 
-    public static function fromJson(string $json): self
+    public static function fromJsonString(string $jsonString): self
     {
         try {
             /** @var array{identifier: string, type: string, title: string, copyrightNotice: string, caption: string, assetSourceIdentifier: string, resource: array{filename: string, collectionName: string, mediaType: string, sha1: string}} $data */
-            $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            throw new \InvalidArgumentException(sprintf('Failed to decode JSON: %s', $e->getMessage()), 1646992457);
+            throw new \InvalidArgumentException(sprintf('Failed to JSON-decode "%s" for %s instance: %s', $jsonString, self::class, $e->getMessage()), 1646992457, $e);
         }
         return self::fromArray($data);
     }
@@ -115,7 +115,7 @@ final readonly class SerializedAsset implements \JsonSerializable
         try {
             return json_encode($this, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
         } catch (\JsonException $e) {
-            throw new \RuntimeException(sprintf('Failed to JSON encode asset "%s": %s', $this->identifier, $e->getMessage()), 1646314000);
+            throw new \RuntimeException(sprintf('Failed to JSON-encode instance of %s: %s', self::class, $e->getMessage()), 1646314000, $e);
         }
     }
 

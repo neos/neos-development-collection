@@ -88,7 +88,7 @@ final class AssetRepositoryImportProcessor implements ProcessorInterface
     private function importAsset(StorageAttributes $file): void
     {
         $fileContents = $this->files->read($file->path());
-        $serializedAsset = SerializedAsset::fromJson($fileContents);
+        $serializedAsset = SerializedAsset::fromJsonString($fileContents);
         /** @var Asset|null $existingAsset */
         $existingAsset = $this->assetRepository->findByIdentifier($serializedAsset->identifier);
         if ($existingAsset !== null) {
@@ -123,7 +123,7 @@ final class AssetRepositoryImportProcessor implements ProcessorInterface
     private function importImageVariant(StorageAttributes $file): void
     {
         $fileContents = $this->files->read($file->path());
-        $serializedImageVariant = SerializedImageVariant::fromJson($fileContents);
+        $serializedImageVariant = SerializedImageVariant::fromJsonString($fileContents);
         $existingImageVariant = $this->assetRepository->findByIdentifier($serializedImageVariant->identifier);
         assert($existingImageVariant === null || $existingImageVariant instanceof ImageVariant);
         if ($existingImageVariant !== null) {
