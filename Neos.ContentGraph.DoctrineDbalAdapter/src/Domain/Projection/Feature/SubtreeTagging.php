@@ -184,7 +184,7 @@ trait SubtreeTagging
                     JSON_MERGE_PATCH('{}', h.subtreetags)
                 )
               FROM
-                JSON_TABLE(r.subtreeTagsToInherit, '$[*]' COLUMNS (k VARCHAR(36) PATH '$')) htk
+                JSON_TABLE(r.subtreeTagsToInherit, '\$[*]' COLUMNS (k VARCHAR(36) PATH '\$')) htk
             )
             WHERE
               h.childnodeanchor = r.childnodeanchor

@@ -227,7 +227,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     AND ph.dimensionspacepointhash = h.dimensionspacepointhash
             WHERE
                 EXISTS (
-                    SELECT t.tag FROM JSON_TABLE(JSON_KEYS(ph.subtreetags), \'$[*]\' COLUMNS(tag VARCHAR(30) PATH \'$\')) t WHERE NOT JSON_EXISTS(h.subtreetags, CONCAT(\'$.\', t.tag))
+                    SELECT t.tag FROM JSON_TABLE(JSON_KEYS(ph.subtreetags), '\$[*]' COLUMNS(tag VARCHAR(30) PATH '\$')) t WHERE NOT JSON_EXISTS(h.subtreetags, CONCAT('\$.', t.tag))
                 )
         SQL;
         try {
@@ -363,7 +363,11 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 try {
-                    $nodeAggregateIdsInCycles = $this->dbal->fetchFirstColumn($nodeAggregateIdsInCyclesStatement);
+                    $nodeAggregateIdsInCycles = $this->dbal->fetchFirstColumn($nodeAggregateIdsInCyclesStatement, [
+                        'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge()->value,
+                        'contentStreamId' => $contentStreamId->value,
+                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                    ]);
                 } catch (DbalException $e) {
                     throw new \RuntimeException(sprintf('Failed to load cyclic node relations: %s', $e->getMessage()), 1716493090, $e);
                 }
@@ -415,7 +419,10 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 try {
-                    $ambiguousNodeAggregateRecords = $this->dbal->fetchAllAssociative($ambiguousNodeAggregatesStatement);
+                    $ambiguousNodeAggregateRecords = $this->dbal->fetchAllAssociative($ambiguousNodeAggregatesStatement, [
+                        'contentStreamId' => $contentStreamId->value,
+                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                    ]);
                 } catch (DbalException $e) {
                     throw new \RuntimeException(sprintf('Failed to load ambiguous node aggregates: %s', $e->getMessage()), 1716494110, $e);
                 }
@@ -454,7 +461,10 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 try {
-                    $nodeRecordsWithMultipleParents = $this->dbal->fetchAllAssociative($nodeRecordsWithMultipleParentsStatement);
+                    $nodeRecordsWithMultipleParents = $this->dbal->fetchAllAssociative($nodeRecordsWithMultipleParentsStatement, [
+                        'contentStreamId' => $contentStreamId->value,
+                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                    ]);
                 } catch (DbalException $e) {
                     throw new \RuntimeException(sprintf('Failed to load nodes with multiple parents: %s', $e->getMessage()), 1716494223, $e);
                 }
@@ -651,10 +661,11 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
      */
     private function findProjectedContentStreamIds(): iterable
     {
+        $contentStreamIdsStatement = <<<SQL
+            SELECT DISTINCT contentstreamid FROM {$this->tableNames->hierarchyRelation()}
+        SQL;
         try {
-            $contentStreamIds = $this->dbal->fetchFirstColumn(
-                'SELECT DISTINCT contentstreamid FROM ' . $this->tableNames->hierarchyRelation()
-            );
+            $contentStreamIds = $this->dbal->fetchFirstColumn($contentStreamIdsStatement);
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to load content stream ids: %s', $e->getMessage()), 1716494814, $e);
         }
@@ -666,10 +677,11 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
      */
     private function findProjectedDimensionSpacePoints(): DimensionSpacePointSet
     {
+        $dimensionSpacePointsStatement = <<<SQL
+            SELECT dimensionspacepoint FROM {$this->tableNames->dimensionSpacePoints()}
+        SQL;
         try {
-            $dimensionSpacePoints = $this->dbal->fetchFirstColumn(
-                'SELECT dimensionspacepoint FROM ' . $this->tableNames->dimensionSpacePoints()
-            );
+            $dimensionSpacePoints = $this->dbal->fetchFirstColumn($dimensionSpacePointsStatement);
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to load dimension space points: %s', $e->getMessage()), 1716494888, $e);
         }

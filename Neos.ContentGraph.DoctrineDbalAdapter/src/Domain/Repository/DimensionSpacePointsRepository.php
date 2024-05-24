@@ -103,8 +103,11 @@ final class DimensionSpacePointsRepository
 
     private function fillRuntimeCacheFromDatabase(): void
     {
+        $allDimensionSpacePointsStatement = <<<SQL
+            SELECT hash, dimensionspacepoint FROM {$this->tableNames->dimensionSpacePoints()}
+        SQL;
         try {
-            $allDimensionSpacePoints = $this->dbal->fetchAllAssociative('SELECT hash, dimensionspacepoint FROM ' . $this->tableNames->dimensionSpacePoints());
+            $allDimensionSpacePoints = $this->dbal->fetchAllAssociative($allDimensionSpacePointsStatement);
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to load dimension space points from database: %s', $e->getMessage()), 1716488678, $e);
         }

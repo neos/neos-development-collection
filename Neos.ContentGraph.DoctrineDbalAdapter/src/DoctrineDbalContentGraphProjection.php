@@ -797,18 +797,17 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     h.parentnodeanchor = IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor)
                 WHERE
                   :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
-                  AND h.contentstreamid = :contentStreamId',
+                  AND h.contentstreamid = :contentStreamId
             SQL;
             try {
                 $this->dbal->executeStatement($updateHierarchyRelationStatement, [
                     'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
                     'originalNodeAnchor' => $anchorPoint->value,
-                    'contentStreamId' => $contentStreamIdWhereWriteOccurs->value
+                    'contentStreamId' => $contentStreamIdWhereWriteOccurs->value,
                 ]);
             } catch (DbalException $e) {
                 throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716486444, $e);
             }
-
             // reference relation rows need to be copied as well!
             $this->copyReferenceRelations(
                 $anchorPoint,

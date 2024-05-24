@@ -730,7 +730,14 @@ final class ContentSubgraph implements ContentSubgraphInterface
      */
     private function fetchCteResults(QueryBuilder $queryBuilderInitial, QueryBuilder $queryBuilderRecursive, QueryBuilder $queryBuilderCte, string $cteTableName = 'cte'): array
     {
-        $query = 'WITH RECURSIVE ' . $cteTableName . ' AS (' . $queryBuilderInitial->getSQL() . ' UNION ' . $queryBuilderRecursive->getSQL() . ') ' . $queryBuilderCte->getSQL();
+        $query = <<<SQL
+            WITH RECURSIVE {$cteTableName} AS (
+                {$queryBuilderInitial->getSQL()}
+                UNION
+                {$queryBuilderRecursive->getSQL()}
+            )
+            {$queryBuilderCte->getSQL()}
+        SQL;
         $parameters = array_merge($queryBuilderInitial->getParameters(), $queryBuilderRecursive->getParameters(), $queryBuilderCte->getParameters());
         $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());
         try {
@@ -742,7 +749,14 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     private function fetchCteCountResult(QueryBuilder $queryBuilderInitial, QueryBuilder $queryBuilderRecursive, QueryBuilder $queryBuilderCte, string $cteTableName = 'cte'): int
     {
-        $query = 'WITH RECURSIVE ' . $cteTableName . ' AS (' . $queryBuilderInitial->getSQL() . ' UNION ' . $queryBuilderRecursive->getSQL() . ') ' . $queryBuilderCte->select('COUNT(*)')->resetQueryPart('orderBy')->setFirstResult(0)->setMaxResults(1);
+        $query = <<<SQL
+            WITH RECURSIVE {$cteTableName} AS (
+                {$queryBuilderInitial->getSQL()}
+                UNION
+                {$queryBuilderRecursive->getSQL()}
+            )
+            {$queryBuilderCte->select('COUNT(*)')->resetQueryPart('orderBy')->setFirstResult(0)->setMaxResults(1)}
+        SQL;
         $parameters = array_merge($queryBuilderInitial->getParameters(), $queryBuilderRecursive->getParameters(), $queryBuilderCte->getParameters());
         $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());
         try {

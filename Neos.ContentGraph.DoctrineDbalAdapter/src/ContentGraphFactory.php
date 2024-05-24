@@ -49,7 +49,7 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
 
         $currentContentStreamIdStatement = <<<SQL
             SELECT
-                *
+                currentcontentstreamid
             FROM
                 {$tableName}
             WHERE
