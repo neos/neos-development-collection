@@ -44,6 +44,9 @@ final class CrCommandController extends CommandController
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
+        $this->contentRepositoryRegistry->get($contentRepositoryId)->setUp();
+        $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
+
         if ($resetProjections) {
             if (!$this->output->askConfirmation(sprintf('> Advanced Mode. The flag --reset-projections will reset all projections in "%s", which leaves you with empty projections to be replayed. Are you sure to proceed? (y/n) ', $contentRepositoryId->value), false)) {
                 $this->outputLine('<comment>Abort.</comment>');
@@ -54,9 +57,6 @@ final class CrCommandController extends CommandController
             $projectionService->resetAllProjections();
             $this->outputLine('<success>All projections of Content Repository "%s" were resettet.</success>', [$contentRepositoryId->value]);
         }
-
-        $this->contentRepositoryRegistry->get($contentRepositoryId)->setUp();
-        $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
     }
 
     /**
