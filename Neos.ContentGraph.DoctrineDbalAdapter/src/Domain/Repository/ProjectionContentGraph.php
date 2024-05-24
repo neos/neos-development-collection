@@ -531,9 +531,6 @@ class ProjectionContentGraph
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, node aggregate id %s and dimension space points %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $dimensionSpacePointSet?->toJson() ?? '[any]', $e->getMessage()), 1716476743, $e);
         }
-        if ($rows === false) {
-            return [];
-        }
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
     }
 
