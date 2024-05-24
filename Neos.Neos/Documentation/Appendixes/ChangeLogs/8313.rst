@@ -1,0 +1,259 @@
+`8.3.13 (2024-05-24) <https://github.com/neos/neos-development-collection/releases/tag/8.3.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Workspace module: Tweak UX for collapsed rows in rewiew <https://github.com/neos/neos-development-collection/pull/5013>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This change adds a checkbox to all rows of the workspace review module in order to get a unified look and feel when collapsing those lines.
+
+Previously, the checkbox was hidden for documents that only contained a single change:
+
+!`image <https://github.com/neos/neos-development-collection/assets/307571/fe3a4964-0604-4394-b9a3-29879880d76d>`_
+
+With this change, the list looks cleaner and single changes can be selected more easily even when collapsed:
+
+!`image <https://github.com/neos/neos-development-collection/assets/307571/fd098312-6b58-4df1-b9d2-bdd23c9e7699>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix handling of unset/nulled DataStructure keys <https://github.com/neos/neos-development-collection/pull/5033>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Re-establishes the Neos < 8.0 behavior of removed/nulled data structure keys
+
+## Background:
+
+With `#3645 <https://github.com/neos/neos-development-collection/issues/3645>``_a lot of Fusion core logic was refactored. As an unwanted side-effect, ``Neos.Fusion:DataStructure`` prototypes (effectively all implementations of the ``AbstractArrayFusionObject`) now behave differently when it comes to removed or nulled keys and
+
+```fusion
+Neos.Fusion:DataStructure {
+    someProperty >
+}
+```
+
+led to an array with:
+
+```json
+{"someProperty":[]}
+```
+
+in Neos 8.0+.
+
+This fix reverts this side-effect, making the above return
+
+```json
+[]
+```
+
+again.
+
+* Fixes: `#3859 <https://github.com/neos/neos-development-collection/issues/3859>`_
+* Related: `#3577 <https://github.com/neos/neos-development-collection/issues/3577>`_, #3646
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Invalidate caches correctly after node move changes have been discarded <https://github.com/neos/neos-development-collection/pull/4291>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+**NOTE:** This PR needs to be tested in combination with its companion PR over at ``neos-ui``: https://github.com/neos/neos-ui/pull/3503
+
+## The overall problem
+
+This one's a bit complex and it stretches over two repositories. The basic scenario is:
+
+1. You move some (document) node(s) to a position below a different parent node (so, just sorting them within their own hierarchical level doesn't count)
+2. You discard those changes
+3. Chaos ensues
+
+https://github.com/neos/neos-ui/issues/3184 describes the issues that happen only partially. During my investigation I found several problems that I need to disect piece by piece.
+
+## (I) The UI does not (entirely) recognize that nodes have been moved to a position below a different parent node
+
+**The problem**
+
+https://github.com/neos/neos-ui/assets/2522299/9ce3bdb9-35d7-423d-90af-b2c55a009c9d
+
+In the video you can see that after the two document nodes have been moved, the change is not made visible by the usual orange change indicator on the left hand side of the tree nodes. Also, on the attempt to discard the current set of changes, an error occurs that reads:
+
+```
+Call to a member function isRemoved() on null - Check logs for details
+```
+
+Both phenomena are related, because - as it turns out - the ``UpdateWorkspaceInfo`` feedback object, that is supposed to inform the UI about pending changes, delivers the wrong node context paths for the nodes that have just been moved (the context paths are still the old ones).
+
+Because the context paths are now out of sync, the UI is unable to associate the pending change with the respective tree node. It then also uses the stale workspace information as payload to the discard command, which leads to the above error at the following line:
+
+https://github.com/neos/neos-ui/blob/`5c52e08b8a1effc985911390a7124579c4018c25 <https://github.com/neos/neos-development-collection/commit/5c52e08b8a1effc985911390a7124579c4018c25>`_/Classes/Controller/BackendServiceController.php#L272
+
+How come the context paths are incorrect after the nodes have been moved?
+
+<s>After some investigation I found that the ``Neos\\ContentRepository\\Domain\\Factory\\NodeFactory`` class memoizes stale data - as opposed to e.g. ``ContentContext`` which gets its in-memory cache flushed when nodes were moved:
+
+https://github.com/neos/neos-development-collection/blob/`0e28ef208111f5b1576df9078bb9abfedf12500c <https://github.com/neos/neos-development-collection/commit/0e28ef208111f5b1576df9078bb9abfedf12500c>`_/Neos.ContentRepository/Classes/Domain/Factory/NodeFactory.php#L81
+
+When the ``PublishingService`` is asked for unpublished nodes via ``getUnpublishedNodes``, it receives cache hits within ``NodeFactory->createFromNodeData`` for the nodes that have just been moved - thus the old context paths.</s>
+
+**EDIT:** Not at all true :sweat_smile:! I investigated further after the functional tests over here failed (hooray for functional tests!). The actual reason is as follows:
+
+The Neos UI API uses a slightly different content context configuration than ``getUnpublishedNodes``. So, ``NodeFactory`` actually keeps track of two variants of the moved nodes. The ones that ``getUnpublishedNodes`` receives are not the ones that the move operation has been performed on.
+
+**The solution**
+
+The solution for this is implemented over here: https://github.com/neos/neos-ui/pull/3503
+
+## (II) Discarded move changes are not properly reflected in the document tree
+
+**The problem**
+
+Problem (I) can be circumvented by hard-reloading the UI (after that, the workspace info will be correct again). But, there's still some strangeness going on...
+
+https://github.com/neos/neos-ui/assets/2522299/9f4e6d55-9c92-4590-8b1a-362532f7f799
+
+In the video you can see that the tree actually reflects the discarded changes correctly for a brief moment there. It then quickly jumps to a broken state in which the nodes that should be at their original positions just disappear.
+
+This problem persists even if you hard-reload the UI after discarding:
+
+https://github.com/neos/neos-ui/assets/2522299/7085ee21-91a3-428a-a5e0-55bc0a7899a6
+
+Now, if you use the reload button of the document tree to manually reload the tree, the nodes reappear:
+
+https://github.com/neos/neos-ui/assets/2522299/c7b2dafd-8113-4a28-a3a8-ac3bc56675f8
+
+(But also: If you hard-reload the UI again, the nodes will once again flash briefly and then disappear)
+
+How does this happen?
+
+In those videos, the parent document that originally contained the moved nodes is focused and open in the guest frame. After discard, it should contain those nodes again. The UI reloads the guest frame, but the document is now rendered with stale node metadata. After the guest frame finished loading, the stale metadata (which still thinks the nodes have been moved elsewhere) overwrites the node data in the UI redux store.
+
+This is why the correct state shows up for a brief moment. It gets overwritten after a short delay when the guest frame is loaded. (Also: The nodes do not disappear if you focus a different document and hard-reload the UI).
+
+Looking at the cache configuration for the node metadata:
+
+https://github.com/neos/neos-ui/blob/`5c52e08b8a1effc985911390a7124579c4018c25 <https://github.com/neos/neos-development-collection/commit/5c52e08b8a1effc985911390a7124579c4018c25>`_/Resources/Private/Fusion/Prototypes/Page.fusion#L26-L46
+
+... one should actually assume that the data shouldn't be stale (``Neos.Caching.descendantOfTag(documentNode)`` should do the trick). It turns out though, that the ``Neos\\Neos\\Fusion\\Cache\\ContentCacheFlusher`` class - in case of discard - will only flush tags related to a node's current workspace. We actually need to have all tags flushed in the base workspace as well to cover the ``DescendantOf_*``-tag of the original parent node.
+
+**The solution**
+
+I'm not entirely sure about this. I did two things:
+
+1. I modified the ``nodeDiscarded`` signal so that it carries the base workspace of each discarded node
+
+The reason behind this is that the ``ContentCacheFlusher`` listens to both the ``nodeDiscarded`` and the ``nodePublished`` signal with its method ``registerNodeChange``. ``nodePublished`` carries the target workspace of the publishing operation, which is accepted as a second argument by ``registerNodeChange``. ``nodeDiscarded`` used to not carry such "target workspace" information, so that the ``ContentCacheFlusher`` had no chance to actually flush tags for this workspace.
+
+It feels to me like a bit of a stretch on semantics to just add the base workspace to the ``nodeDiscarded`` signal in such fashion, but I found it to be the least invasive yet most effective solution.
+
+2. I made sure that the ``registerAllTagsToFlushForNodeInWorkspace`` method of the ``ContentCacheFlusher`` actually deals with the given node in the given workspace.
+
+``registerAllTagsToFlushForNodeInWorkspace`` takes a node and a workspace as arguments. It used to just assume that the given node is actually its variant in the given workspace, which seems to be working in a lot of cases, but in the case of discarded node move changes, the method makes false assumptions. It goes up the parent chain of the given node to find all ``DescendantOf_*``-tags that need to be flushed. The given node however has the wrong parent.
+
+I therefore added some code at the start of the method, that replaces the ``$node`` variable with the given node's variant in the given workspace, if the respective workspace names differ.
+
+*Related Commit(s):* https://github.com/neos/neos-development-collection/pull/4291/commits/`f97268a7a3b4259285b45a7a0ed7572d0e03d02a <https://github.com/neos/neos-development-collection/commit/f97268a7a3b4259285b45a7a0ed7572d0e03d02a>``_, https://github.com/neos/neos-development-collection/pull/4291/commits/``184692dd6398924ff769fc8d452454d3427f92c0 <https://github.com/neos/neos-development-collection/commit/184692dd6398924ff769fc8d452454d3427f92c0>`_
+
+## (III) Discarding a node move while having a moved document node open in the guest frame results in an error page
+
+**The problem**
+
+https://github.com/neos/neos-ui/assets/2522299/7ddda073-47b7-4587-bf3f-ad5c50bdf411
+
+The video shows that when you're currently editing a moved document and then discard the move change, the guest frame reloads and shows a misleading fusion error. This is because the guest frame tries to render a document node that doesn't exist anymore.
+
+A similar situation would be a document that has just been created. If you stay on that document and then discard it, the UI behaves correctly and redirects you to the next-higher document:
+
+https://github.com/neos/neos-ui/assets/2522299/bce265f5-507e-4dd2-bb05-9c72d53564a0
+
+Here, the problem lies within the ``discardAction`` of the ``Neos\\Neos\\Ui\\Controller\\BackendServiceController`` which does not recognize discarded move changes and thus misses to inform the UI that it needs to remove the nodes at their former positions and re-insert them at their original positions.
+
+**The solution**
+
+The solution for this is implemented over here: https://github.com/neos/neos-ui/pull/3503
+
+## All solutions combined
+
+Here's what it looks like when the PRs in ``neos-ui`` and ``neos-development-collection`` are combined:
+
+https://github.com/neos/neos-ui/assets/2522299/2904f731-e101-4033-b617-5c196a44bdec
+
+`BUGFIX: Add missing type converts for asset subtypes <https://github.com/neos/neos-development-collection/pull/5007>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This prevents the raw data from being base64 encoded into the rendered output of the Neos backend and included in xhr requests from the Neos UI.
+
+Additionally the default settings for editor and constraints makes the usage of those affected types easier in nodetype properties.
+
+* Resolves: `#5006 <https://github.com/neos/neos-development-collection/issues/5006>`_
+
+**Review instructions**
+
+Example nodetype to use in the Neos backend with the raw content mode:
+
+```
+'Neos.Demo:Content.Test':
+  superTypes:
+    'Neos.Neos:Content': true
+    'Neos.Demo:Constraint.Content.Column': true
+    'Neos.Demo:Constraint.Content.Main': true
+  ui:
+    label: Test
+    icon: picture
+    position: start
+    inspector:
+      groups:
+        settings:
+          label: Test Settings
+  properties:
+    video:
+      type: Neos\\Media\\Domain\\Model\\Video
+      ui:
+        label: 'Video'
+        reloadIfChanged: true
+        showInCreationDialog: true
+        inspector:
+          group: 'settings'
+          editor: Neos.Neos/Inspector/Editors/AssetEditor
+    document:
+      type: Neos\\Media\\Domain\\Model\\Document
+      ui:
+        label: Document
+        inspector:
+          group: 'settings'
+          editor: Neos.Neos/Inspector/Editors/AssetEditor
+    audio:
+      type: Neos\\Media\\Domain\\Model\\Audio
+      ui:
+        label: Audio
+        inspector:
+          group: 'settings'
+          editor: Neos.Neos/Inspector/Editors/AssetEditor
+```
+
+Without the change in this PR, setting the 3 properties will each increase the size of the ``preview`` html and node change requests.
+Also errors are thrown if the editor for each property is not defined.
+
+With this change, the size of the output does not increase and the editor does not need to be defined anymore.
+
+* Packages: ``Neos``
+
+`TASK: set new-password in EditAccount page <https://github.com/neos/neos-development-collection/pull/5017>`_
+-------------------------------------------------------------------------------------------------------------
+
+Solves https://github.com/neos/neos-development-collection/issues/4944
+
+**Upgrade instructions**
+
+Not needed
+
+**Review instructions**
+
+Allow your password manager to autofill everything on page load.
+The password field (for setting new password) will not be autofilled.
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.12...8.3.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
