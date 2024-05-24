@@ -28,10 +28,19 @@ final readonly class PropertyDefinition
      */
     public function __construct(
         public PropertyName $name,
-        public string $type,
-        public PropertyScope $scope,
+        public string $type, // todo use \Neos\ContentRepository\Core\Infrastructure\Property\PropertyType here, and move class?
+        public PropertyScope $scope, // todo move scope value object
         public int|float|string|bool|array|null $defaultValue,
         public array $metadata,
     ) {
+    }
+
+    public static function create(
+        PropertyName $name,
+        string $type,
+        PropertyScope $scope = null,
+        int|float|string|bool|array|null $defaultValue = null,
+        array $metadata = null,
+    ): self {
     }
 }

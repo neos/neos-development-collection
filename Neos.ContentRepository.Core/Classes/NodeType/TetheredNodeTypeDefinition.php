@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  */
 final readonly class TetheredNodeTypeDefinition
 {
+    // todo add static factory
     public function __construct(
         public NodeName $name,
         public NodeTypeName $nodeTypeName,

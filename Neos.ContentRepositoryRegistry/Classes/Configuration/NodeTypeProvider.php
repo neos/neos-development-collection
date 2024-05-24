@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Configuration;
 
-use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -22,19 +21,12 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeProviderInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypes;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Utility\Arrays;
-use Neos\Utility\Exception\PropertyNotAccessibleException;
 
-/**
- * @api
- */
-#[Flow\Scope("singleton")]
+#[Flow\Scope('singleton')]
 final class NodeTypeProvider implements NodeTypeProviderInterface
 {
-
     /**
      * Node types, indexed by name
      *
@@ -49,10 +41,11 @@ final class NodeTypeProvider implements NodeTypeProviderInterface
      */
     private array $cachedSubNodeTypes = [];
 
-    public function __construct(
-        private readonly ConfigurationManager $configurationManager,
-    ) {
-    }
+    /**
+     * @Flow\Inject
+     * @var ConfigurationManager
+     */
+    protected $configurationManager;
 
     public function getNodeTypes(): NodeTypes
     {
@@ -163,7 +156,8 @@ final class NodeTypeProvider implements NodeTypeProviderInterface
      */
     private function loadNodeTypes(): void
     {
-        $completeNodeTypeConfiguration = ($this->nodeTypeConfigLoader)();
+        // todo add NodeTypeEnrichment
+        $completeNodeTypeConfiguration = $this->configurationManager->getConfiguration('NodeTypes');
 
         // the root node type must always exist
         $completeNodeTypeConfiguration[NodeTypeName::ROOT_NODE_TYPE_NAME] ??= [];
@@ -180,49 +174,31 @@ final class NodeTypeProvider implements NodeTypeProviderInterface
     }
 
     /**
-     * Checks if the given $nodeTypeNameToCheck is allowed as a childNode of the given $tetheredNodeName.
+     * This method can be used by Functional of Behavioral Tests to completely
+     * override the node types known in the system.
      *
-     * Returns false if $tetheredNodeName is not tethered to $parentNodeTypeName, or if any of the $nodeTypeNameToCheck does not exist.
+     * In order to reset the node type override, an empty array can be passed in.
+     * In this case, the system-node-types are used again.
      *
-     * @param NodeTypeName $parentNodeTypeName The NodeType to check constraints based on.
-     * @param NodeName $tetheredNodeName The name of a configured tethered node of this NodeType
-     * @param NodeTypeName $nodeTypeNameToCheck The NodeType to check constraints for.
-     * @return bool true if the $nodeTypeNameToCheck is allowed as grandchild node, false otherwise.
+     * @internal todo keep this for unit testing or add another provider abstraction in between :D
+     * @param array<string,mixed> $completeNodeTypeConfiguration
      */
-    public function isNodeTypeAllowedAsChildToTetheredNode(NodeTypeName $parentNodeTypeName, NodeName $tetheredNodeName, NodeTypeName $nodeTypeNameToCheck): bool
+    public function overrideNodeTypes(array $completeNodeTypeConfiguration): void
     {
-        $parentNodeType = $this->getNodeType($parentNodeTypeName);
-        $nodeTypeNameOfTetheredNode = $parentNodeType?->tetheredNodeTypeDefinitions->get($tetheredNodeName)?->nodeTypeName;
-        if (!$parentNodeType || !$nodeTypeNameOfTetheredNode) {
-            // Cannot determine if grandchild is allowed, because the given child node name is not auto-created.
-            return false;
+        $this->cachedNodeTypes = [];
+
+        if ($completeNodeTypeConfiguration === []) {
+            // as cachedNodeTypes is now empty loadNodeTypes will reload the default nodeTypes
+            return;
         }
 
-        $nodeTypeOfTetheredNode = $this->getNodeType($nodeTypeNameOfTetheredNode);
-        if (!$nodeTypeOfTetheredNode) {
-            return false;
+        // the root node type must always exist
+        $completeNodeTypeConfiguration[NodeTypeName::ROOT_NODE_TYPE_NAME] ??= [];
+
+        foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
+            /** @var string $nodeTypeName */
+            $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
         }
-
-        // Constraints configured on the NodeType for the child node
-        $constraints = $nodeTypeOfTetheredNode->getConfiguration('constraints.nodeTypes') ?: [];
-
-        // Constraints configured at the childNode configuration of the parent.
-        try {
-            $childNodeConstraintConfiguration = $parentNodeType->getConfiguration('childNodes.' . $tetheredNodeName->value . '.constraints.nodeTypes') ?? [];
-        } catch (PropertyNotAccessibleException $exception) {
-            // We ignore this because the configuration might just not have any constraints, if the childNode was not configured null would have been returned.
-            $childNodeConstraintConfiguration = [];
-        }
-        $constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
-
-        $nodeTypeToCheck = $this->getNodeType($nodeTypeNameToCheck);
-        if (!$nodeTypeToCheck) {
-            return false;
-        }
-
-        return ConstraintCheck::create($constraints)->isNodeTypeAllowed(
-            $nodeTypeToCheck
-        );
     }
 
     /**

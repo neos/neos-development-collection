@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
+namespace Neos\ContentRepositoryRegistry\Tests\Unit\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,11 +13,19 @@ namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
 
 use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\ContentRepository\Core\NodeType\PropertyDefinition;
+use Neos\ContentRepository\Core\NodeType\PropertyDefinitions;
+use Neos\ContentRepository\Core\NodeType\ReferenceDefinitions;
+use Neos\ContentRepository\Core\NodeType\TetheredNodeTypeDefinition;
+use Neos\ContentRepository\Core\NodeType\TetheredNodeTypeDefinitions;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -446,6 +454,107 @@ class NodeTypeManagerTest extends TestCase
      */
     public function rootNodeTypeIsAlwaysPresent()
     {
+
+/*
+"""yaml
+'Neos.ContentRepository.Testing:AbstractNode':
+  abstract: true
+  properties:
+    text:
+      defaultValue: 'abstract'
+      type: string
+'Neos.ContentRepository.Testing:SubNode':
+  superTypes:
+    'Neos.ContentRepository.Testing:AbstractNode': true
+  properties:
+    other:
+      type: string
+'Neos.ContentRepository.Testing:Node':
+  superTypes:
+    'Neos.ContentRepository.Testing:AbstractNode': true
+  childNodes:
+    child-node:
+      type: 'Neos.ContentRepository.Testing:SubNode'
+  properties:
+    text:
+      defaultValue: 'test'
+'Neos.ContentRepository.Testing:Page':
+  final: true
+  superTypes:
+    'Neos.ContentRepository:Root': true
+"""
+*/
+
+
+NodeType::create(
+    name: NodeTypeName::fromString('Neos.Testing:Foo'),
+    superTypeNames: NodeTypeNames::createEmpty(),
+    tetheredNodeTypeDefinitions: TetheredNodeTypeDefinitions::fromArray([]),
+    propertyDefinitions: PropertyDefinitions::fromArray([]),
+    referenceDefinitions: ReferenceDefinitions::fromArray([]),
+    isAggregate: false,
+    childNodeTypeConstraints: NodeTypeConstraints::createEmpty(),
+    metadata: [],
+    label: null
+);
+
+// === equals
+
+NodeType::create(
+    name: NodeTypeName::fromString('Neos.Testing:Foo')
+);
+
+
+$nodeTypeManager = new NodeTypeManager(
+    DefaultNodeTypeProvider::createFromNodeTypes(
+        NodeType::create(name: NodeTypeName::fromString(NodeTypeName::ROOT_NODE_TYPE_NAME)),
+        NodeType::create(
+            name: NodeTypeName::fromString('Neos.ContentRepository.Testing:AbstractNode'),
+            propertyDefinitions: PropertyDefinitions::fromArray([
+                PropertyDefinition::create(
+                    name: PropertyName::fromString('text'),
+                    type: 'string',
+                    defaultValue: 'abstract',
+                )
+            ])
+        ),
+        NodeType::create(
+            name: NodeTypeName::fromString('Neos.ContentRepository.Testing:SubNode'),
+            superTypeNames: NodeTypeNames::fromStringArray(['Neos.ContentRepository.Testing:AbstractNode']),
+            propertyDefinitions: PropertyDefinitions::fromArray([
+                PropertyDefinition::create(
+                    name: PropertyName::fromString('other'),
+                    type: 'string',
+                )
+                // should property 'text' be actually inherited by logic in the node type manager?
+            ])
+        ),
+        NodeType::create(
+            name: NodeTypeName::fromString('Neos.ContentRepository.Testing:Node'),
+            superTypeNames: NodeTypeNames::fromStringArray(['Neos.ContentRepository.Testing:AbstractNode']),
+            tetheredNodeTypeDefinitions: TetheredNodeTypeDefinitions::fromArray([
+                new TetheredNodeTypeDefinition(
+                    name: NodeName::fromString('child-node'),
+                    nodeTypeName: NodeTypeName::fromString('Neos.ContentRepository.Testing:SubNode'),
+                    nodeTypeConstraints: NodeTypeConstraints::createEmpty()
+                )
+            ]),
+            propertyDefinitions: PropertyDefinitions::fromArray([
+                PropertyDefinition::create(
+                    name: PropertyName::fromString('text'),
+                    type: 'string', // type should be taken from inherited?
+                    defaultValue: 'test',
+                )
+            ])
+        ),
+        NodeType::create(
+            name: NodeTypeName::fromString('Neos.ContentRepository.Testing:Page'),
+            superTypeNames: NodeTypeNames::fromStringArray([NodeTypeName::ROOT_NODE_TYPE_NAME]),
+        ),
+    )
+);
+
+
         $nodeTypeManager = new NodeTypeManager(
             new ClosureNodeTypeProvider(
                 fn() => [],

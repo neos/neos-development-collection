@@ -8,6 +8,8 @@ namespace Neos\ContentRepository\Core\NodeType;
  * vs @see \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria
  * vs @see \Neos\ContentRepository\Core\NodeType\ConstraintCheck
  *
+ * see also https://github.com/neos/neos-development-collection/issues/4522
+ *
  * @api
  */
 final readonly class NodeTypeConstraints
@@ -16,6 +18,11 @@ final readonly class NodeTypeConstraints
         public NodeTypeNames $explicitlyAllowedNodeTypeNames,
         public NodeTypeNames $explicitlyDisallowedNodeTypeNames
     ) {
+    }
+
+    public static function createEmpty(): self
+    {
+        return new self(NodeTypeNames::createEmpty(), NodeTypeNames::createEmpty());
     }
 
     /**

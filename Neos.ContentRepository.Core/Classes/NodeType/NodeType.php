@@ -14,8 +14,6 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
@@ -46,6 +44,30 @@ final class NodeType
         public array $metadata,
         public NodeTypeLabel|null $label,
     ) {
+    }
+
+    public static function create(
+        NodeTypeName $name,
+        NodeTypeNames $superTypeNames = null,
+        TetheredNodeTypeDefinitions $tetheredNodeTypeDefinitions = null,
+        PropertyDefinitions $propertyDefinitions = null,
+        ReferenceDefinitions $referenceDefinitions = null,
+        bool $isAggregate = null,
+        NodeTypeConstraints $childNodeTypeConstraints = null,
+        array $metadata = null,
+        NodeTypeLabel|null $label = null,
+    ): self {
+        return new self(
+            name: $name,
+            superTypeNames: $superTypeNames ?? NodeTypeNames::createEmpty(),
+            tetheredNodeTypeDefinitions: $tetheredNodeTypeDefinitions ?? TetheredNodeTypeDefinitions::fromArray([]),
+            propertyDefinitions: $propertyDefinitions ?? PropertyDefinitions::fromArray([]),
+            referenceDefinitions: $referenceDefinitions ?? ReferenceDefinitions::fromArray([]),
+            isAggregate: $isAggregate ?? false,
+            childNodeTypeConstraints: $childNodeTypeConstraints ?? NodeTypeConstraints::createEmpty(),
+            metadata: $metadata ?? [],
+            label: $label
+        );
     }
 
     /**
