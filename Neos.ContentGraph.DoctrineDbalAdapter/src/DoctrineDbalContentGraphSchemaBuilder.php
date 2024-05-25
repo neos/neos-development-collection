@@ -19,7 +19,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
 
     public function __construct(
-        private readonly ContentGraphTableNames $contentGraphTableNames
+        private readonly ContentGraphTableNames $tableNames
     ) {
     }
 
@@ -29,13 +29,14 @@ class DoctrineDbalContentGraphSchemaBuilder
             $this->createNodeTable(),
             $this->createHierarchyRelationTable(),
             $this->createReferenceRelationTable(),
-            $this->createDimensionSpacePointsTable()
+            $this->createDimensionSpacePointsTable(),
+            $this->createWorkspaceTable(),
         ]);
     }
 
     private function createNodeTable(): Table
     {
-        $table = self::createTable($this->contentGraphTableNames->node(), [
+        $table = self::createTable($this->tableNames->node(), [
             DbalSchemaFactory::columnForNodeAnchorPoint('relationanchorpoint')->setAutoincrement(true),
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotnull(false),
@@ -57,7 +58,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createHierarchyRelationTable(): Table
     {
-        $table = self::createTable($this->contentGraphTableNames->hierarchyRelation(), [
+        $table = self::createTable($this->tableNames->hierarchyRelation(), [
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotnull(true),
@@ -76,7 +77,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createDimensionSpacePointsTable(): Table
     {
-        $table = self::createTable($this->contentGraphTableNames->dimensionSpacePoints(), [
+        $table = self::createTable($this->tableNames->dimensionSpacePoints(), [
             DbalSchemaFactory::columnForDimensionSpacePointHash('hash')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePoint('dimensionspacepoint')->setNotnull(true)
         ]);
@@ -87,7 +88,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createReferenceRelationTable(): Table
     {
-        $table = self::createTable($this->contentGraphTableNames->referenceRelation(), [
+        $table = self::createTable($this->tableNames->referenceRelation(), [
             (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('nodeanchorpoint'),
@@ -97,6 +98,18 @@ class DoctrineDbalContentGraphSchemaBuilder
 
         return $table
             ->setPrimaryKey(['name', 'position', 'nodeanchorpoint']);
+    }
+
+    private function createWorkspaceTable(): Table
+    {
+        $workspaceTable = self::createTable($this->tableNames->workspace(), [
+            DbalSchemaFactory::columnForWorkspaceName('workspacename')->setNotnull(true),
+            DbalSchemaFactory::columnForWorkspaceName('baseworkspacename')->setNotnull(false),
+            DbalSchemaFactory::columnForContentStreamId('currentcontentstreamid')->setNotNull(true),
+            (new Column('status', self::type(Types::BINARY)))->setLength(20)->setNotnull(false),
+        ]);
+
+        return $workspaceTable->setPrimaryKey(['workspacename']);
     }
 
     /**

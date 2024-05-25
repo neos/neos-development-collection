@@ -11,6 +11,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\Workspace;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
@@ -43,6 +44,16 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -65,10 +76,11 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 final class DoctrineDbalContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {
+    use NodeMove;
+    use NodeRemoval;
     use NodeVariation;
     use SubtreeTagging;
-    use NodeRemoval;
-    use NodeMove;
+    use Workspace;
 
 
     public const RELATION_DEFAULT_OFFSET = 128;
@@ -91,7 +103,19 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public function setUp(): void
     {
-        foreach ($this->determineRequiredSqlStatements() as $statement) {
+        $statements = $this->determineRequiredSqlStatements();
+
+        // MIGRATION from 2024-05-23: copy data from "cr_<crid>_p_workspace" to "cr_<crid>_p_graph_workspace" table
+        $legacyWorkspaceTableName = str_replace('_p_graph_workspace', '_p_workspace', $this->tableNames->workspace());
+        if (
+            $this->dbal->getSchemaManager()->tablesExist([$legacyWorkspaceTableName])
+            && !$this->dbal->getSchemaManager()->tablesExist([$this->tableNames->workspace()])
+        ) {
+            $statements[] = 'INSERT INTO ' . $this->tableNames->workspace() . ' (workspacename, baseworkspacename, currentcontentstreamid, status) SELECT workspacename, baseworkspacename, currentcontentstreamid, status FROM ' . $legacyWorkspaceTableName;
+        }
+        // /MIGRATION
+
+        foreach ($statements as $statement) {
             try {
                 $this->dbal->executeStatement($statement);
             } catch (DbalException $e) {
@@ -169,8 +193,18 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             NodeSpecializationVariantWasCreated::class,
             RootNodeAggregateDimensionsWereUpdated::class,
             RootNodeAggregateWithNodeWasCreated::class,
+            RootWorkspaceWasCreated::class,
             SubtreeWasTagged::class,
             SubtreeWasUntagged::class,
+            WorkspaceBaseWorkspaceWasChanged::class,
+            WorkspaceRebaseFailed::class,
+            WorkspaceWasCreated::class,
+            WorkspaceWasDiscarded::class,
+            WorkspaceWasPartiallyDiscarded::class,
+            WorkspaceWasPartiallyPublished::class,
+            WorkspaceWasPublished::class,
+            WorkspaceWasRebased::class,
+            WorkspaceWasRemoved::class,
         ]);
     }
 
@@ -193,8 +227,18 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event, $eventEnvelope),
             RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
+            WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
+            WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
+            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
+            WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
+            WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),
+            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
+            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
+            WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
@@ -628,6 +672,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         );
     }
 
+    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
+    {
+        $this->createWorkspace($event->workspaceName, null, $event->newContentStreamId);
+    }
+
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
         $this->addSubtreeTag($event->contentStreamId, $event->nodeAggregateId, $event->affectedDimensionSpacePoints, $event->tag);
@@ -638,6 +687,71 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $this->removeSubtreeTag($event->contentStreamId, $event->nodeAggregateId, $event->affectedDimensionSpacePoints, $event->tag);
     }
 
+    private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event): void
+    {
+        $this->updateBaseWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId);
+    }
+
+    private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
+    {
+        $this->markWorkspaceAsOutdatedConflict($event->workspaceName);
+    }
+
+    private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
+    {
+        $this->createWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId);
+    }
+
+    private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
+    {
+        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
+        $this->markWorkspaceAsOutdated($event->workspaceName);
+        $this->markDependentWorkspacesAsOutdated($event->workspaceName);
+    }
+
+    private function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
+    {
+        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
+        $this->markDependentWorkspacesAsOutdated($event->workspaceName);
+    }
+
+    private function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event): void
+    {
+        // TODO: How do we test this method? – It's hard to design a BDD testcase that fails if this method is commented out...
+        $this->updateWorkspaceContentStreamId($event->sourceWorkspaceName, $event->newSourceContentStreamId);
+        $this->markDependentWorkspacesAsOutdated($event->targetWorkspaceName);
+
+        // NASTY: we need to set the source workspace name as non-outdated; as it has been made up-to-date again.
+        $this->markWorkspaceAsUpToDate($event->sourceWorkspaceName);
+
+        $this->markDependentWorkspacesAsOutdated($event->sourceWorkspaceName);
+    }
+
+    private function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
+    {
+        // TODO: How do we test this method? – It's hard to design a BDD testcase that fails if this method is commented out...
+        $this->updateWorkspaceContentStreamId($event->sourceWorkspaceName, $event->newSourceContentStreamId);
+        $this->markDependentWorkspacesAsOutdated($event->targetWorkspaceName);
+
+        // NASTY: we need to set the source workspace name as non-outdated; as it has been made up-to-date again.
+        $this->markWorkspaceAsUpToDate($event->sourceWorkspaceName);
+
+        $this->markDependentWorkspacesAsOutdated($event->sourceWorkspaceName);
+    }
+
+    private function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
+    {
+        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
+        $this->markDependentWorkspacesAsOutdated($event->workspaceName);
+
+        // When the rebase is successful, we can set the status of the workspace back to UP_TO_DATE.
+        $this->markWorkspaceAsUpToDate($event->workspaceName);
+    }
+
+    private function whenWorkspaceWasRemoved(WorkspaceWasRemoved $event): void
+    {
+        $this->removeWorkspace($event->workspaceName);
+    }
 
     /** --------------------------------- */
 
@@ -661,6 +775,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
             $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
             $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
+            $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->workspace());
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to truncate database tables for projection %s: %s', self::class, $e->getMessage()), 1716478318, $e);
         }

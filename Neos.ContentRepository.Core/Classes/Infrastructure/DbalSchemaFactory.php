@@ -14,6 +14,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Provide doctrine DBAL column schema definitions for common types in the content repository to
@@ -55,6 +56,13 @@ final class DbalSchemaFactory
     {
         return (new Column($columnName, Type::getType(Types::BINARY)))
             ->setLength(36);
+    }
+
+    public static function columnForWorkspaceName(string $columnName): Column
+    {
+        return (new Column($columnName, Type::getType(Types::STRING)))
+            ->setLength(WorkspaceName::MAX_LENGTH)
+            ->setCustomSchemaOption('collation', 'utf8mb4_unicode_520_ci');
     }
 
     /**
