@@ -26,18 +26,23 @@ final readonly class NodeAggregateId implements \JsonSerializable
     /**
      * A preg pattern to match against node aggregate identifiers
      */
-    public const PATTERN = '/^([a-z0-9\-]{1,64})$/';
+    private const PATTERN = '/^([a-z0-9\-]{1,64})$/';
 
     private function __construct(
         public string $value
     ) {
-        if (!preg_match(self::PATTERN, $value)) {
+        if (!self::hasValidFormat($value)) {
             throw new \InvalidArgumentException(
                 'Invalid node aggregate identifier "' . $value
                 . '" (a node aggregate identifier must only contain lowercase characters, numbers and the "-" sign).',
                 1505840197862
             );
         }
+    }
+
+    public static function hasValidFormat(string $value): bool
+    {
+        return preg_match(self::PATTERN, $value) === 1;
     }
 
     public static function create(): self
