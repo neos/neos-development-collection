@@ -55,7 +55,7 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             );
         }
 
-        foreach ($this->contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+        foreach ($this->contentRepository->getWorkspaces() as $workspace) {
             $contentGraph = $this->contentRepository->getContentGraph($workspace->workspaceName);
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
                 NodeTypeNameFactory::forSites()

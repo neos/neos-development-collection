@@ -24,7 +24,7 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 final readonly class ContentStreamEventStreamName
 {
-    public const EVENT_STREAM_NAME_PREFIX = 'ContentStream:';
+    private const EVENT_STREAM_NAME_PREFIX = 'ContentStream:';
 
     private function __construct(
         public string $value
@@ -34,6 +34,19 @@ final readonly class ContentStreamEventStreamName
     public static function fromContentStreamId(ContentStreamId $contentStreamId): self
     {
         return new self(self::EVENT_STREAM_NAME_PREFIX . $contentStreamId->value);
+    }
+
+    public static function isContentStreamStreamName(StreamName $streamName): bool
+    {
+        return str_starts_with($streamName->value, self::EVENT_STREAM_NAME_PREFIX);
+    }
+
+    public static function extractContentStreamIdFromStreamName(StreamName $streamName): ContentStreamId
+    {
+        if (!self::isContentStreamStreamName($streamName)) {
+            throw new \InvalidArgumentException(sprintf('Failed to extract content stream id from stream name "%s"', $streamName->value), 1716640692);
+        }
+        return ContentStreamId::fromString(substr($streamName->value, strlen(self::EVENT_STREAM_NAME_PREFIX)));
     }
 
     public function getEventStreamName(): StreamName

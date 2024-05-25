@@ -168,20 +168,20 @@ class ContentStreamProjection implements ProjectionInterface
             $this->updateContentStreamVersion($event, $eventEnvelope);
         }
         match ($event::class) {
+            ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event, $eventEnvelope),
             ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event, $eventEnvelope),
-            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
-            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
             ContentStreamWasForked::class => $this->whenContentStreamWasForked($event, $eventEnvelope),
+            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
+            ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event, $eventEnvelope),
+            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
+            WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
             WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
             WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
             WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
-            WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
-            ContentStreamWasClosed::class => $this->whenContentStreamWasClosed($event, $eventEnvelope),
-            ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event, $eventEnvelope),
-            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
-            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
             default => $event instanceof EmbedsContentStreamId || throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
@@ -393,13 +393,13 @@ class ContentStreamProjection implements ProjectionInterface
         if (
             !str_starts_with(
                 $eventEnvelope->streamName->value,
-                ContentStreamEventStreamName::EVENT_STREAM_NAME_PREFIX
+                'ContentStream:'
             )
         ) {
             throw new \RuntimeException(
                 'Cannot extract version number, as it was projected on wrong stream "'
                 . $eventEnvelope->streamName->value . '", but needs to start with '
-                . ContentStreamEventStreamName::EVENT_STREAM_NAME_PREFIX
+                . 'ContentStream:'
             );
         }
         return $eventEnvelope->version->value;

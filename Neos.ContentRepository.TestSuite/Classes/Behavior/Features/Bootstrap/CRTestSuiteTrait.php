@@ -133,6 +133,9 @@ trait CRTestSuiteTrait
      */
     public function iExpectTheContentStreamToNotExist(string $rawContentStreamId): void
     {
+        // todo use, but also it should be assertFAlse?!!!
+        // $this->contentRepository->getContentStreams()
+        //     ->find(fn (ContentStream $contentStream) => $contentStream->id->equals(ContentStreamId::fromString($rawContentStreamId))),
         Assert::assertTrue(
             $this->currentContentRepository->getContentStreamFinder()->hasContentStream(ContentStreamId::fromString($rawContentStreamId)),
             sprintf('The content stream "%s" does exist.', $rawContentStreamId)
@@ -144,9 +147,9 @@ trait CRTestSuiteTrait
      */
     public function workspaceHasStatus(string $rawWorkspaceName, string $status): void
     {
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+        $workspace = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceName));
 
-        Assert::assertSame($status, $workspace->status->value);
+        Assert::assertSame($status, $workspace?->status->value);
     }
 
     /**
@@ -245,8 +248,7 @@ trait CRTestSuiteTrait
     {
         $this->theContentStreamHasState(
             $this->currentContentRepository
-                ->getWorkspaceFinder()
-                ->findOneByName($this->currentWorkspaceName)
+                ->findWorkspaceByName($this->currentWorkspaceName)
                 ->currentContentStreamId->value,
             $expectedState
         );

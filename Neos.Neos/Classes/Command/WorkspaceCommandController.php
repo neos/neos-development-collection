@@ -21,6 +21,8 @@ use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWork
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspaces;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -249,7 +251,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        $crWorkspace = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName($workspaceName);
+        $crWorkspace = $contentRepositoryInstance->findWorkspaceByName($workspaceName);
         if ($crWorkspace === null) {
             $this->outputLine('Workspace "%s" does not exist', [$workspaceName->value]);
             $this->quit(1);
@@ -265,8 +267,10 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        $dependentWorkspaces = $contentRepositoryInstance->getWorkspaceFinder()->findByBaseWorkspace($workspaceName);
-        if (count($dependentWorkspaces) > 0) {
+        $dependentWorkspaces = $contentRepository->getWorkspaces()->filter(
+            static fn (Workspace $potentiallyDependentWorkspace) => $potentiallyDependentWorkspace->baseWorkspaceName?->equals($workspaceName) ?? false
+        );
+        if (!$dependentWorkspaces->isEmpty()) {
             $this->outputLine(
                 'Workspace "%s" cannot be deleted because the following workspaces are based on it:',
                 [$workspaceName->value]
@@ -333,12 +337,12 @@ class WorkspaceCommandController extends CommandController
             $force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL
         );
 
-        if (!count($outdatedWorkspaces)) {
+        if ($outdatedWorkspaces->isEmpty()) {
             $this->outputLine('There are no outdated workspaces.');
-        } else {
-            foreach ($outdatedWorkspaces as $outdatedWorkspace) {
-                $this->outputFormatted('Rebased workspace %s', [$outdatedWorkspace->workspaceName->value]);
-            }
+            return;
+        }
+        foreach ($outdatedWorkspaces as $outdatedWorkspace) {
+            $this->outputFormatted('Rebased workspace <b>%s</b>', [$outdatedWorkspace->workspaceName->value]);
         }
     }
 
@@ -353,9 +357,9 @@ class WorkspaceCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspaces = $contentRepositoryInstance->getWorkspaceFinder()->findAll();
+        $workspaces = $this->contentRepositoryRegistry->get($contentRepositoryId)->getWorkspaces();
 
-        if (count($workspaces) === 0) {
+        if ($workspaces->isEmpty()) {
             $this->outputLine('No workspaces found.');
             $this->quit(0);
         }

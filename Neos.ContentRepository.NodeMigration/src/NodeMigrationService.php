@@ -61,7 +61,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
 
     public function executeMigration(ExecuteMigration $command): void
     {
-        $sourceWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->sourceWorkspaceName);
+        $sourceWorkspace = $this->contentRepository->findWorkspaceByName($command->sourceWorkspaceName);
         if ($sourceWorkspace === null) {
             throw new WorkspaceDoesNotExist(sprintf(
                 'The workspace %s does not exist',

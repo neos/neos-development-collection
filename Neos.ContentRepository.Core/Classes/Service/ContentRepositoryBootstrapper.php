@@ -40,7 +40,7 @@ final readonly class ContentRepositoryBootstrapper
     public function getOrCreateLiveWorkspace(): Workspace
     {
         $liveWorkspaceName = WorkspaceName::forLive();
-        $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($liveWorkspaceName);
+        $liveWorkspace = $this->contentRepository->findWorkspaceByName($liveWorkspaceName);
         if ($liveWorkspace instanceof Workspace) {
             return $liveWorkspace;
         }
@@ -53,7 +53,7 @@ final readonly class ContentRepositoryBootstrapper
                 ContentStreamId::create()
             )
         );
-        $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($liveWorkspaceName);
+        $liveWorkspace = $this->contentRepository->findWorkspaceByName($liveWorkspaceName);
         if (!$liveWorkspace) {
             throw new \Exception('Live workspace creation failed', 1699002435);
         }

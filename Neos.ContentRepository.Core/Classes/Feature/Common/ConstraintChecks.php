@@ -81,14 +81,13 @@ trait ConstraintChecks
         CommandHandlingDependencies $commandHandlingDependencies
     ): ContentStreamId {
         $contentStreamId = $commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
-        $state = $commandHandlingDependencies->getContentStreamFinder()->findStateForContentStream($contentStreamId);
-        if ($state === null) {
+        if (!$commandHandlingDependencies->contentStreamExists($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream for "' . $workspaceName->value . '" does not exist yet.',
                 1521386692
             );
         }
-
+        $state = $commandHandlingDependencies->getContentStreamState($contentStreamId);
         if ($state === ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
@@ -676,7 +675,7 @@ trait ConstraintChecks
     ): ExpectedVersion {
 
         return ExpectedVersion::fromVersion(
-            $commandHandlingDependencies->getContentStreamFinder()->findVersionForContentStream($contentStreamId)->unwrap()
+            $commandHandlingDependencies->getContentStreamVersion($contentStreamId)
         );
     }
 }

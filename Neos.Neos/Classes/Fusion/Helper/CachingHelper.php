@@ -176,7 +176,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             $node->contentRepositoryId
         );
 
-        $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+        $currentWorkspace = $contentRepository->findWorkspaceByName(
             $node->workspaceName
         );
         $workspaceChain = [];
@@ -184,7 +184,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         while ($currentWorkspace !== null) {
             $workspaceChain[$currentWorkspace->workspaceName->value] = $currentWorkspace;
             $currentWorkspace = $currentWorkspace->baseWorkspaceName
-                ? $contentRepository->getWorkspaceFinder()->findOneByName($currentWorkspace->baseWorkspaceName)
+                ? $contentRepository->findWorkspaceByName($currentWorkspace->baseWorkspaceName)
                 : null;
         }
 

@@ -13,7 +13,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 /**
  * Event triggered to indicate that a workspace title or description has changed.
  *
- * @api events are the persistence-API of the content repository
+ * @deprecated This event will never be emitted, and it is ignored in the core projections. This implementation is just kept for backwards-compatibility
+ * @internal
  */
 final readonly class WorkspaceWasRenamed implements EventInterface, EmbedsWorkspaceName
 {

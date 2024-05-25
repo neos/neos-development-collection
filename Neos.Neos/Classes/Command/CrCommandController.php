@@ -9,6 +9,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\ExportService;
 use Neos\ContentRepository\Export\ExportServiceFactory;
 use Neos\ContentRepository\Export\ImportService;
@@ -54,18 +55,22 @@ class CrCommandController extends CommandController
     public function exportCommand(string $path, string $contentRepository = 'default', bool $verbose = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         Files::createDirectoryRecursively($path);
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
+        $liveWorkspace = $contentRepositoryInstance->findWorkspaceByName(WorkspaceName::forLive());
+        if ($liveWorkspace === null) {
+            throw new \RuntimeException('Failed to find live workspace', 1716652280);
+        }
 
         $exportService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new ExportServiceFactory(
                 $filesystem,
-                $contentRepository->getWorkspaceFinder(),
+                $liveWorkspace->currentContentStreamId,
                 $this->assetRepository,
-                $contentRepository->projectionState(AssetUsageFinder::class),
+                $contentRepositoryInstance->projectionState(AssetUsageFinder::class),
             )
         );
         assert($exportService instanceof ExportService);

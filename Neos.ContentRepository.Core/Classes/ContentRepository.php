@@ -30,13 +30,13 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUp;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatuses;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspaces;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -239,22 +239,23 @@ final class ContentRepository
         return $this->nodeTypeManager;
     }
 
+    public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
+    {
+        // TODO implement
+        return null;
+    }
+
+    public function getWorkspaces(): Workspaces
+    {
+        // TODO implement
+    }
+
     /**
      * @throws WorkspaceDoesNotExist if the workspace does not exist
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
         return $this->projectionState(ContentGraphFinder::class)->getByWorkspaceName($workspaceName);
-    }
-
-    public function getWorkspaceFinder(): WorkspaceFinder
-    {
-        return $this->projectionState(WorkspaceFinder::class);
-    }
-
-    public function getContentStreamFinder(): ContentStreamFinder
-    {
-        return $this->projectionState(ContentStreamFinder::class);
     }
 
     public function getVariationGraph(): InterDimensionalVariationGraph

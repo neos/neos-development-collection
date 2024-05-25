@@ -21,6 +21,7 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;
 use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Processors\EventExportProcessor;
@@ -64,7 +65,7 @@ trait CrImportExportTrait
                 public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): EventExportProcessor {
                     return new EventExportProcessor(
                         $this->filesystem,
-                        $serviceFactoryDependencies->contentRepository->getWorkspaceFinder(),
+                        $serviceFactoryDependencies->contentRepository->findWorkspaceByName(WorkspaceName::forLive())->currentContentStreamId,
                         $serviceFactoryDependencies->eventStore
                     );
                 }
