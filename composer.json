@@ -238,6 +238,9 @@
             "manage-resources": true
         }
     },
+    "provide": {
+        "neos/contentrepositoryregistry-storageclient": "self.version"
+    },
     "autoload-dev": {
         "psr-4": {
             "Neos\\ContentGraph\\PostgreSQLAdapter\\Tests\\": [
