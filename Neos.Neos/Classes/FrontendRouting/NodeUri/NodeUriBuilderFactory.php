@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\NodeUri;
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\ServerRequestAttributes;
@@ -14,17 +15,31 @@ use Psr\Http\Message\ServerRequestInterface;
 #[Flow\Scope('singleton')]
 final class NodeUriBuilderFactory
 {
-    public function __construct(
-        private RouterInterface $router
-    ) {
-    }
+    /**
+     * The possibly configured Flow base URI, see {@see \Neos\Flow\Http\BaseUriProvider}
+     * @var string|null
+     */
+    #[Flow\InjectConfiguration(package: 'Neos.Flow', path: 'http.baseUri')]
+    protected $configuredBaseUri;
 
+    #[Flow\Inject]
+    protected RouterInterface $router;
+
+    /**
+     * @api
+     */
     public function forRequest(ServerRequestInterface $request): NodeUriBuilder
     {
-        // TODO Flows base uri configuration is currently ignored
-        $baseUri = RequestInformationHelper::generateBaseUri($request);
+        $baseUri = $this->configuredBaseUri !== null
+            ? new Uri($this->configuredBaseUri)
+            : RequestInformationHelper::generateBaseUri($request);
+
         $routeParameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS)
             ?? RouteParameters::createEmpty();
-        return new NodeUriBuilder($this->router, $baseUri, $routeParameters);
+
+        $uriPathPrefix = RequestInformationHelper::getScriptRequestPath($request);
+        $uriPathPrefix = ltrim($uriPathPrefix, '/');
+
+        return new NodeUriBuilder($this->router, $baseUri, $uriPathPrefix, $routeParameters);
     }
 }

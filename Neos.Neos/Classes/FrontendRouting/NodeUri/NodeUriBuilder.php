@@ -15,42 +15,78 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\NodeUri;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RouterInterface;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
 
+#[Flow\Proxy(false)]
 final class NodeUriBuilder
 {
     /**
-     * @internal
+     * Please inject and use the {@see NodeUriBuilderFactory} to acquire this uri builder
      *
-     * This context ($baseUri and $routeParameters) can be inferred from the current request.
+     *     #[Flow\Inject]
+     *     protected NodeUriBuilderFactory $nodeUriBuilderFactory;
      *
-     * For generating node uris in cli context, you can leverage `fromBaseUri` and pass in the desired base uri,
-     * Wich will be used for when generating host absolute uris.
-     * If the base uri does not contain a host, absolute uris which would contain the host of the current request
-     * like from `absoluteUriFor`, will be generated without host.
+     *     $this->nodeUriBuilderFactory->forRequest($someHttpRequest);
+     *
+     * @internal must not be manually instantiated but its factory must be used
      */
     public function __construct(
         private readonly RouterInterface $router,
+        /**
+         * The base uri either set by using Neos.Flow.http.baseUri or inferred from the current request.
+         * Note that hard coding the base uri in the settings will not work for multi sites and is only to be used as escape hatch for running Neos in a sub-directory
+         */
         private readonly UriInterface $baseUri,
+        /**
+         * This prefix could be used to append to all uris a prefix via `SCRIPT_NAME`, but this feature is currently not well tested and considered experimental
+         */
+        private readonly string $uriPathPrefix,
+        /**
+         * The currently active http attributes that are used to influence the routing. The Neos frontend route part handler requires the {@see SiteDetectionResult} to be serialized in here.
+         */
         private readonly RouteParameters $routeParameters
     ) {
     }
 
     /**
-     * Return human readable host relative uris if the cr of the current request matches the one of the specified node.
-     * For cross-links to another cr the resulting uri be absolute and contain the host of the other site's domain.
+     * Returns a human-readable host relative uri for nodes in the live workspace.
      *
-     * absolute true:
-     * Return human readable absolute uris with host, independent if the node is cross linked or of the current request.
-     * For nodes of the current cr the passed base uri will be used as host. For cross-linked nodes the host will be derived by the site's domain.
+     * As the human-readable uris are only routed for nodes of the live workspace {@see DocumentUriPathProjection}
+     * Preview uris are build for other workspaces {@see previewUriFor}
      *
-     * As the human readable uris are only routed for nodes of the live workspace (see DocumentUriProjection)
-     * This method requires the node to be passed to be in the live workspace and will throw otherwise.
+     * Cross-linking nodes
+     * -------------------
      *
+     * Cross linking to a node happens when the side determined based on the current
+     * route parameters (through the host and sites domain) does not belong to the linked node.
+     * In this case the domain from the node's site might be used to build a host absolute uri {@see CrossSiteLinkerInterface}.
+     *
+     * Host relative urls are build by default for non cross-linked nodes.
+     *
+     * Supported options
+     * -----------------
+     *
+     * forceAbsolute:
+     *   Absolute urls for non cross-linked nodes can be enforced via {@see Options::$forceAbsolute}.
+     *   In which case the base uri determined by the request is used as host instead of a possibly configured site domain's host.
+     *
+     * format:
+     *   todo
+     *
+     * routingArguments:
+     *   todo
+     *
+     * Note that appending additional query parameters can be done via {@see UriHelper::uriWithAdditionalQueryParameters()}
+     *
+     * @api
      * @throws NoMatchingRouteException
      */
     public function uriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
@@ -74,16 +110,25 @@ final class NodeUriBuilder
                 $this->baseUri,
                 $routeValues,
                 $options?->forceAbsolute ?? false,
-                ltrim($this->baseUri->getPath(), '\/'),
+                $this->uriPathPrefix,
                 $this->routeParameters
             )
         );
     }
 
     /**
-     * Returns a host relative uri with fully qualified node as query parameter encoded.
+     * Returns an uri with json encoded node address as query parameter.
      *
-     * Note that only the option {@see Options::$forceAbsolute} is supported.
+     * Supported options
+     * -----------------
+     *
+     * forceAbsolute:
+     *   Absolute urls can be build via {@see Options::$forceAbsolute}, by default host relative urls will be build.
+     *
+     * Note that other options are not considered for preview uri building.
+     *
+     * @api
+     * @throws NoMatchingRouteException
      */
     public function previewUriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
@@ -99,7 +144,7 @@ final class NodeUriBuilder
                 $this->baseUri,
                 $routeValues,
                 $options?->forceAbsolute ?? false,
-                ltrim($this->baseUri->getPath(), '\/'),
+                $this->uriPathPrefix,
                 $this->routeParameters
             )
         );
