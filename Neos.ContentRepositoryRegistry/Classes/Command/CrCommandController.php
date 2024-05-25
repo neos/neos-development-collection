@@ -38,25 +38,13 @@ final class CrCommandController extends CommandController
      * That command will also display information what is about to be migrated.
      *
      * @param string $contentRepository Identifier of the Content Repository to set up
-     * @param bool $resetProjections Advanced. Can be used in rare cases when the projections cannot be migrated to reset everything in advance. This requires a full replay afterwards.
      */
-    public function setupCommand(string $contentRepository = 'default', bool $resetProjections = false): void
+    public function setupCommand(string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
         $this->contentRepositoryRegistry->get($contentRepositoryId)->setUp();
         $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
-
-        if ($resetProjections) {
-            if (!$this->output->askConfirmation(sprintf('> Advanced Mode. The flag --reset-projections will reset all projections in "%s", which leaves you with empty projections to be replayed. Are you sure to proceed? (y/n) ', $contentRepositoryId->value), false)) {
-                $this->outputLine('<comment>Abort.</comment>');
-                return;
-            }
-
-            $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
-            $projectionService->resetAllProjections();
-            $this->outputLine('<success>All projections of Content Repository "%s" were resettet.</success>', [$contentRepositoryId->value]);
-        }
     }
 
     /**
