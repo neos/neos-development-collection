@@ -10,8 +10,6 @@
   },
   "suggest": {
   },
-  "provide": {
-  },
   "scripts": {
     "lint:phpcs": "../../bin/phpcs --colors",
     "lint:phpcs:fix": "../../bin/phpcbf --colors",
@@ -31,9 +29,6 @@
       "FLOW_CONTEXT=Testing/Behat ../../bin/paratest --debug -v --functional --group parallel --processes 2 --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.BehavioralTests/Tests/Functional/Feature/WorkspacePublication/WorkspaceWritingDuringPublication.php",
       "FLOW_CONTEXT=Testing/Behat ../../bin/paratest --debug -v --functional --group parallel --processes 2 --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.BehavioralTests/Tests/Functional/Feature/WorkspacePublication/WorkspaceWritingDuringPublication.php",
       "FLOW_CONTEXT=Testing/Behat ../../bin/paratest --debug -v --functional --group parallel --processes 2 --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.BehavioralTests/Tests/Functional/Feature/WorkspacePublication/WorkspaceWritingDuringPublication.php"
-    ],
-    "test:functional": [
-      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
     ],
     "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
     "test:behavioral": [
@@ -56,7 +51,6 @@
     ],
     "test": [
       "@test:unit",
-      "@test:functional",
       "@test:behavioral",
       "@test:parallel"
     ],
