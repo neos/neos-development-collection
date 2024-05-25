@@ -18,9 +18,7 @@ use Doctrine\DBAL\DBALException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWorkspaceOwner;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
@@ -115,7 +113,7 @@ class WorkspacesController extends AbstractModuleController
         if ($currentAccount === null) {
             throw new \RuntimeException('No account is authenticated', 1710068839);
         }
-        $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+        $userWorkspace = $contentRepository->findWorkspaceByName(
             WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
         );
         if (is_null($userWorkspace)) {
@@ -133,11 +131,14 @@ class WorkspacesController extends AbstractModuleController
             ]
         ];
 
-        foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+        foreach ($contentRepository->getWorkspaces() as $workspace) {
             /** @var \Neos\ContentRepository\Core\Projection\Workspace\Workspace $workspace */
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
             if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace() || $this->domainUserService->currentUserCanManageWorkspace($workspace))) {
                 $workspaceName = $workspace->workspaceName->value;
+                $dependentWorkspaces = $contentRepository->getWorkspaces()->filter(
+                    static fn (Workspace $potentiallyDependentWorkspace) => $potentiallyDependentWorkspace->baseWorkspaceName?->equals($workspace->workspaceName) ?? false
+                );
                 $workspacesAndCounts[$workspaceName]['workspace'] = $workspace;
                 $workspacesAndCounts[$workspaceName]['changesCounts'] =
                     $this->computeChangesCount($workspace, $contentRepository);
@@ -145,9 +146,7 @@ class WorkspacesController extends AbstractModuleController
                     = $this->domainUserService->currentUserCanPublishToWorkspace($workspace);
                 $workspacesAndCounts[$workspaceName]['canManage']
                     = $this->domainUserService->currentUserCanManageWorkspace($workspace);
-                $workspacesAndCounts[$workspaceName]['dependentWorkspacesCount'] = count(
-                    $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->workspaceName)
-                );
+                $workspacesAndCounts[$workspaceName]['dependentWorkspacesCount'] = $dependentWorkspaces->count();
                 $workspacesAndCounts[$workspaceName]['workspaceOwnerHumanReadable'] = $workspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(UserId::fromString($workspace->workspaceOwner))?->getLabel() : null;
             }
         }
@@ -167,7 +166,7 @@ class WorkspacesController extends AbstractModuleController
             new WorkspacesControllerInternalsFactory()
         );
 
-        $workspaceObj = $contentRepository->getWorkspaceFinder()->findOneByName($workspace);
+        $workspaceObj = $contentRepository->findWorkspaceByName($workspace);
         if (is_null($workspaceObj)) {
             /** @todo add flash message */
             $this->redirect('index');
@@ -218,7 +217,7 @@ class WorkspacesController extends AbstractModuleController
             WorkspaceName::transliterateFromString($title->value)->value . '-'
             . substr(base_convert(microtime(false), 10, 36), -5, 5)
         );
-        while ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) instanceof Workspace) {
+        while ($contentRepository->findWorkspaceByName($workspaceName) instanceof Workspace) {
             $workspaceName = WorkspaceName::fromString(
                 WorkspaceName::transliterateFromString($title->value)->value . '-'
                 . substr(base_convert(microtime(false), 10, 36), -5, 5)
@@ -262,7 +261,7 @@ class WorkspacesController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspace = $contentRepository->findWorkspaceByName($workspaceName);
         if (is_null($workspace)) {
             // @todo add flash message
             $this->redirect('index');
@@ -302,7 +301,7 @@ class WorkspacesController extends AbstractModuleController
             $title = WorkspaceTitle::fromString($workspaceName->value);
         }
 
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspace = $contentRepository->findWorkspaceByName($workspaceName);
         if ($workspace === null) {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.workspaceDoesNotExist'),
@@ -310,25 +309,6 @@ class WorkspacesController extends AbstractModuleController
                 Message::SEVERITY_ERROR
             );
             $this->redirect('index');
-        }
-
-        if (!$workspace->workspaceTitle->equals($title) || !$workspace->workspaceDescription->equals($description)) {
-            $contentRepository->handle(
-                RenameWorkspace::create(
-                    $workspaceName,
-                    $title,
-                    $description
-                )
-            );
-        }
-
-        if ($workspace->workspaceOwner !== $workspaceOwner) {
-            $contentRepository->handle(
-                ChangeWorkspaceOwner::create(
-                    $workspaceName,
-                    $workspaceOwner ?: null,
-                )
-            );
         }
 
         $this->addFlashMessage($this->translator->translateById(
@@ -357,7 +337,7 @@ class WorkspacesController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspace = $contentRepository->findWorkspaceByName($workspaceName);
         if ($workspace === null) {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.workspaceDoesNotExist'),
@@ -371,18 +351,19 @@ class WorkspacesController extends AbstractModuleController
             $this->redirect('index');
         }
 
-        $dependentWorkspaces = $contentRepository->getWorkspaceFinder()
-            ->findByBaseWorkspace($workspace->workspaceName);
-        if (count($dependentWorkspaces) > 0) {
-            $dependentWorkspaceTitles = [];
+        $dependentWorkspaces = $contentRepository->getWorkspaces()->filter(
+            static fn (Workspace $potentiallyDependentWorkspace) => $potentiallyDependentWorkspace->baseWorkspaceName?->equals($workspaceName) ?? false
+        );
+        if (!$dependentWorkspaces->isEmpty()) {
+            $dependentWorkspaceNames = [];
             /** @var Workspace $dependentWorkspace */
             foreach ($dependentWorkspaces as $dependentWorkspace) {
-                $dependentWorkspaceTitles[] = $dependentWorkspace->workspaceTitle->value;
+                $dependentWorkspaceNames[] = $dependentWorkspace->workspaceName->value;
             }
 
             $message = $this->translator->translateById(
                 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies',
-                [$workspace->workspaceTitle->value, implode(', ', $dependentWorkspaceTitles)],
+                [$workspace->workspaceName->value, implode(', ', $dependentWorkspaceNames)],
                 null,
                 null,
                 'Modules',
@@ -458,7 +439,7 @@ class WorkspacesController extends AbstractModuleController
         }
         $personalWorkspaceName = WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier());
         /** @var Workspace $personalWorkspace */
-        $personalWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($personalWorkspaceName);
+        $personalWorkspace = $contentRepository->findWorkspaceByName($personalWorkspaceName);
 
         /** @todo do something else
          * if ($personalWorkspace !== $targetWorkspace) {
@@ -891,8 +872,8 @@ class WorkspacesController extends AbstractModuleController
         ContentStreamId $contentStreamIdOfOriginalNode,
         ContentRepository $contentRepository,
     ): array {
-        $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $contentStreamIdOfOriginalNode
+        $currentWorkspace = $contentRepository->getWorkspaces()->find(
+            fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals($contentStreamIdOfOriginalNode)
         );
         $originalNode = null;
         if ($currentWorkspace !== null) {
@@ -1074,7 +1055,7 @@ class WorkspacesController extends AbstractModuleController
         Workspace $excludedWorkspace = null,
     ): array {
         $baseWorkspaceOptions = [];
-        $workspaces = $contentRepository->getWorkspaceFinder()->findAll();
+        $workspaces = $contentRepository->getWorkspaces();
         foreach ($workspaces as $workspace) {
 
             /** @var Workspace $workspace */
@@ -1116,7 +1097,7 @@ class WorkspacesController extends AbstractModuleController
         /** @var WorkspaceName $baseWorkspaceName We expect this to exist */
         $baseWorkspaceName = $workspace->baseWorkspaceName;
         /** @var Workspace $baseWorkspace We expect this to exist */
-        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($baseWorkspaceName);
+        $baseWorkspace = $contentRepository->findWorkspaceByName($baseWorkspaceName);
 
         return $baseWorkspace;
     }

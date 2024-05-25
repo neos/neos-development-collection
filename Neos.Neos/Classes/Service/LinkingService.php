@@ -307,7 +307,7 @@ class LinkingService
                 )->contentRepositoryId;
                 $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
                 $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
-                $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
+                $workspace = $contentRepository->findWorkspaceByName($nodeAddress->workspaceName);
                 $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
                     $nodeAddress->dimensionSpacePoint,
                     $workspace && !$workspace->isPublicWorkspace()
@@ -346,7 +346,7 @@ class LinkingService
         $contentRepository = $this->contentRepositoryRegistry->get(
             $node->contentRepositoryId
         );
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+        $workspace = $contentRepository->findWorkspaceByName(
             $node->workspaceName
         );
         $mainRequest = $controllerContext->getRequest()->getMainRequest();

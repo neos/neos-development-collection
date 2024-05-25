@@ -117,12 +117,12 @@ final class EditorContentStreamZookeeper
         $workspaceName = WorkspaceNameBuilder::fromAccountIdentifier(
             $token->getAccount()->getAccountIdentifier()
         );
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspace = $contentRepository->findWorkspaceByName($workspaceName);
         if ($workspace !== null) {
             return;
         }
 
-        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+        $baseWorkspace = $contentRepository->findWorkspaceByName(WorkspaceName::forLive());
         if (!$baseWorkspace) {
             return;
         }

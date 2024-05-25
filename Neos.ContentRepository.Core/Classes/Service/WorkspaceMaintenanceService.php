@@ -10,6 +10,8 @@ use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspaces;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\EventStore\EventStoreInterface;
 
 /**
@@ -24,17 +26,18 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
     }
 
     /**
-     * @return array<string,Workspace> the workspaces of the removed content streams
-     * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws \Doctrine\DBAL\Exception
-     * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist
-     * @throws \Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist
+     * @return Workspaces the workspaces of the removed content streams
      */
-    public function rebaseOutdatedWorkspaces(?RebaseErrorHandlingStrategy $strategy = null): array
+    public function rebaseOutdatedWorkspaces(?RebaseErrorHandlingStrategy $strategy = null): Workspaces
     {
-        $outdatedWorkspaces = $this->contentRepository->getWorkspaceFinder()->findOutdated();
-
+        $outdatedWorkspaces = $this->contentRepository->getWorkspaces()->filter(
+            fn (Workspace $workspace) => $workspace->status === WorkspaceStatus::OUTDATED
+        );
+        /** @var Workspace $workspace */
         foreach ($outdatedWorkspaces as $workspace) {
+            if ($workspace->status !== WorkspaceStatus::OUTDATED) {
+                continue;
+            }
             $rebaseCommand = RebaseWorkspace::create(
                 $workspace->workspaceName,
             );
@@ -49,9 +52,7 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
 
     public function pruneAll(): void
     {
-        $workspaces = $this->contentRepository->getWorkspaceFinder()->findAll();
-
-        foreach ($workspaces as $workspace) {
+        foreach ($this->contentRepository->getWorkspaces() as $workspace) {
             $streamName = WorkspaceEventStreamName::fromWorkspaceName($workspace->workspaceName)->getEventStreamName();
             $this->eventStore->deleteStream($streamName);
         }

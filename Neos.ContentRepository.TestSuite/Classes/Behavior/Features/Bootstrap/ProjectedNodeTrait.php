@@ -83,6 +83,7 @@ trait ProjectedNodeTrait
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
         $contentGraphFinder->forgetInstances();
+        // TODO Fix
         $workspaceName = $this->currentContentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
             $nodeDiscriminator->contentStreamId
         )->workspaceName;

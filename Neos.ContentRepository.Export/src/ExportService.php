@@ -5,7 +5,7 @@ namespace Neos\ContentRepository\Export;
 
 use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Export\Processors\AssetExportProcessor;
 use Neos\ContentRepository\Export\Processors\EventExportProcessor;
 use Neos\EventStore\EventStoreInterface;
@@ -20,7 +20,7 @@ class ExportService implements ContentRepositoryServiceInterface
 
     public function __construct(
         private readonly Filesystem $filesystem,
-        private readonly WorkspaceFinder $workspaceFinder,
+        private readonly ContentStreamId $targetContentStreamId,
         private readonly AssetRepository $assetRepository,
         private readonly AssetUsageFinder $assetUsageFinder,
         private readonly EventStoreInterface $eventStore,
@@ -33,13 +33,13 @@ class ExportService implements ContentRepositoryServiceInterface
         $processors = [
             'Exporting events' => new EventExportProcessor(
                 $this->filesystem,
-                $this->workspaceFinder,
+                $this->targetContentStreamId,
                 $this->eventStore
             ),
             'Exporting assets' => new AssetExportProcessor(
                 $this->filesystem,
                 $this->assetRepository,
-                $this->workspaceFinder,
+                $this->targetContentStreamId,
                 $this->assetUsageFinder
             )
         ];

@@ -137,7 +137,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         $this->requireContentStreamToNotBeClosed($command->sourceContentStreamId, $commandHandlingDependencies);
         $this->requireContentStreamToNotExistYet($command->newContentStreamId, $commandHandlingDependencies);
 
-        $sourceContentStreamVersion = $commandHandlingDependencies->getContentStreamFinder()->findVersionForContentStream($command->sourceContentStreamId);
+        $sourceContentStreamVersion = $commandHandlingDependencies->getContentStreamVersion($command->sourceContentStreamId);
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId($command->newContentStreamId)
             ->getEventStreamName();
@@ -148,7 +148,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                 new ContentStreamWasForked(
                     $command->newContentStreamId,
                     $command->sourceContentStreamId,
-                    $sourceContentStreamVersion->unwrap(),
+                    $sourceContentStreamVersion,
                 ),
             ),
             // NO_STREAM to ensure the "fork" happens as the first event of the new content stream
@@ -187,7 +187,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): void {
-        if ($commandHandlingDependencies->getContentStreamFinder()->hasContentStream($contentStreamId)) {
+        if ($commandHandlingDependencies->contentStreamExists($contentStreamId)) {
             throw new ContentStreamAlreadyExists(
                 'Content stream "' . $contentStreamId->value . '" already exists.',
                 1521386345
@@ -204,8 +204,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): void {
-        $maybeVersion = $commandHandlingDependencies->getContentStreamFinder()->findVersionForContentStream($contentStreamId);
-        if ($maybeVersion->isNothing()) {
+        if (!$commandHandlingDependencies->contentStreamExists($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
                 'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692
@@ -217,8 +216,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): void {
-        $contentStreamState = $commandHandlingDependencies->getContentStreamFinder()->findStateForContentStream($contentStreamId);
-        if ($contentStreamState === ContentStreamState::STATE_CLOSED) {
+        if ($commandHandlingDependencies->getContentStreamState($contentStreamId) === ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
                 1710260081
@@ -230,8 +228,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): void {
-        $contentStreamState = $commandHandlingDependencies->getContentStreamFinder()->findStateForContentStream($contentStreamId);
-        if ($contentStreamState !== ContentStreamState::STATE_CLOSED) {
+        if ($commandHandlingDependencies->getContentStreamState($contentStreamId) !== ContentStreamState::STATE_CLOSED) {
             throw new ContentStreamIsNotClosed(
                 'Content stream "' . $contentStreamId->value . '" is not closed.',
                 1710405911
@@ -243,10 +240,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): ExpectedVersion {
-        $maybeVersion = $commandHandlingDependencies->getContentStreamFinder()->findVersionForContentStream($contentStreamId);
-        return ExpectedVersion::fromVersion(
-            $maybeVersion
-                ->unwrap()
-        );
+        $version = $commandHandlingDependencies->getContentStreamVersion($contentStreamId);
+        return ExpectedVersion::fromVersion($version);
     }
 }

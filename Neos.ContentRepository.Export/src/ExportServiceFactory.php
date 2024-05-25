@@ -6,7 +6,8 @@ namespace Neos\ContentRepository\Export;
 use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 
@@ -19,7 +20,7 @@ class ExportServiceFactory implements ContentRepositoryServiceFactoryInterface
 
     public function __construct(
         private readonly Filesystem $filesystem,
-        private readonly WorkspaceFinder $workspaceFinder,
+        private readonly ContentStreamId $targetContentStreamId,
         private readonly AssetRepository $assetRepository,
         private readonly AssetUsageFinder $assetUsageFinder,
     ) {
@@ -29,7 +30,7 @@ class ExportServiceFactory implements ContentRepositoryServiceFactoryInterface
     {
         return new ExportService(
             $this->filesystem,
-            $this->workspaceFinder,
+            $this->targetContentStreamId,
             $this->assetRepository,
             $this->assetUsageFinder,
             $serviceFactoryDependencies->eventStore,

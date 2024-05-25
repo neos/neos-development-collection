@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventEnvelope;
@@ -140,7 +141,9 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             // cleared, leading to presumably duplicate nodes in the UI.
             || $eventInstance instanceof NodeAggregateWasMoved
         ) {
-            $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId());
+            $workspace = $this->contentRepository->getWorkspaces()->find(
+                fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals($eventInstance->getContentStreamId())
+            );
             if ($workspace === null) {
                 return;
             }
@@ -177,7 +180,9 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             !($eventInstance instanceof NodeAggregateWasRemoved)
             && $eventInstance instanceof EmbedsContentStreamAndNodeAggregateId
         ) {
-            $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId());
+            $workspace = $this->contentRepository->getWorkspaces()->find(
+                fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals($eventInstance->getContentStreamId())
+            );
             if ($workspace === null) {
                 return;
             }

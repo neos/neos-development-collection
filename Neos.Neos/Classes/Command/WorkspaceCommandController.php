@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWork
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspaces;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -242,13 +243,13 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
-        if (!$workspace instanceof Workspace) {
+        $workspaceInstance = $contentRepository->findWorkspaceByName($workspaceName);
+        if (!$workspaceInstance instanceof Workspace) {
             $this->outputLine('Workspace "%s" does not exist', [$workspaceName->value]);
             $this->quit(1);
         }
 
-        if ($workspace->isPersonalWorkspace()) {
+        if ($workspaceInstance->isPersonalWorkspace()) {
             $this->outputLine(
                 'Did not delete workspace "%s" because it is a personal workspace.'
                     . ' Personal workspaces cannot be deleted manually.',
@@ -257,21 +258,21 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        $dependentWorkspaces = $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspaceName);
-        if (count($dependentWorkspaces) > 0) {
+        $dependentWorkspaces = $contentRepository->getWorkspaces()->filter(
+            static fn (Workspace $potentiallyDependentWorkspace) => $potentiallyDependentWorkspace->baseWorkspaceName?->equals($workspaceName) ?? false
+        );
+        if (!$dependentWorkspaces->isEmpty()) {
             $this->outputLine(
                 'Workspace "%s" cannot be deleted because the following workspaces are based on it:',
                 [$workspaceName->value]
             );
             $this->outputLine();
             $tableRows = [];
-            $headerRow = ['Name', 'Title', 'Description'];
+            $headerRow = ['Name'];
 
             foreach ($dependentWorkspaces as $dependentWorkspace) {
                 $tableRows[] = [
                     $dependentWorkspace->workspaceName->value,
-                    $dependentWorkspace->workspaceTitle->value,
-                    $dependentWorkspace->workspaceDescription->value
                 ];
             }
             $this->output->outputTable($tableRows, $headerRow);
@@ -281,10 +282,10 @@ class WorkspaceCommandController extends CommandController
         try {
             $nodesCount = $contentRepository->projectionState(ChangeFinder::class)
                 ->countByContentStreamId(
-                    $workspace->currentContentStreamId
+                    $workspaceInstance->currentContentStreamId
                 );
         } catch (\Exception $exception) {
-            $this->outputLine('Could not fetch unpublished nodes for workspace %s, nothing was deleted. %s', [$workspace->workspaceName->value, $exception->getMessage()]);
+            $this->outputLine('Could not fetch unpublished nodes for workspace %s, nothing was deleted. %s', [$workspaceInstance->workspaceName->value, $exception->getMessage()]);
             $this->quit(4);
         }
 
@@ -298,11 +299,11 @@ class WorkspaceCommandController extends CommandController
                 $this->quit(5);
             }
             // @todo bypass access control?
-            $workspace = $this->workspaceProvider->provideForWorkspaceName(
+            $workspaceService = $this->workspaceProvider->provideForWorkspaceName(
                 $contentRepositoryId,
                 $workspaceName
             );
-            $workspace->discardAllChanges();
+            $workspaceService->discardAllChanges();
         }
 
         $contentRepository->handle(
@@ -327,12 +328,12 @@ class WorkspaceCommandController extends CommandController
             $force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL
         );
 
-        if (!count($outdatedWorkspaces)) {
+        if ($outdatedWorkspaces->isEmpty()) {
             $this->outputLine('There are no outdated workspaces.');
-        } else {
-            foreach ($outdatedWorkspaces as $outdatedWorkspace) {
-                $this->outputFormatted('Rebased workspace %s', [$outdatedWorkspace->workspaceName->value]);
-            }
+            return;
+        }
+        foreach ($outdatedWorkspaces as $outdatedWorkspace) {
+            $this->outputFormatted('Rebased workspace <b>%s</b>', [$outdatedWorkspace->workspaceName->value]);
         }
     }
 
@@ -344,26 +345,21 @@ class WorkspaceCommandController extends CommandController
     public function listCommand(string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspaces = $this->contentRepositoryRegistry->get($contentRepositoryId)->getWorkspaces();
 
-        $workspaces = $contentRepository->getWorkspaceFinder()->findAll();
-
-        if (count($workspaces) === 0) {
+        if ($workspaces->isEmpty()) {
             $this->outputLine('No workspaces found.');
             $this->quit(0);
         }
 
         $tableRows = [];
-        $headerRow = ['Name', 'Base Workspace', 'Title', 'Owner', 'Description', 'Status', 'Content Stream'];
+        $headerRow = ['Name', 'Base Workspace', 'Status', 'Content Stream'];
 
         foreach ($workspaces as $workspace) {
             /* @var Workspace $workspace */
             $tableRows[] = [
                 $workspace->workspaceName->value,
                 $workspace->baseWorkspaceName?->value ?: '',
-                $workspace->workspaceTitle->value,
-                $workspace->workspaceOwner ?: '',
-                $workspace->workspaceDescription->value,
                 $workspace->status->value,
                 $workspace->currentContentStreamId->value,
             ];

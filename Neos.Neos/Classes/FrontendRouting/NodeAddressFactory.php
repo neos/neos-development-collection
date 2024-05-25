@@ -17,6 +17,7 @@ namespace Neos\Neos\FrontendRouting;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -41,8 +42,8 @@ class NodeAddressFactory
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
     ): NodeAddress {
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $contentStreamId
+        $workspace = $this->contentRepository->getWorkspaces()->find(
+            fn (Workspace $potentialWorkspace) => $potentialWorkspace->currentContentStreamId->equals($contentStreamId)
         );
         if ($workspace === null) {
             throw new \RuntimeException(
@@ -79,7 +80,7 @@ class NodeAddressFactory
         $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
         $nodeAggregateId = NodeAggregateId::fromString($nodeAggregateIdSerialized);
 
-        $contentStreamId = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
+        $contentStreamId = $this->contentRepository->findWorkspaceByName($workspaceName)
             ?->currentContentStreamId;
         if (is_null($contentStreamId)) {
             throw new \InvalidArgumentException(

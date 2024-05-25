@@ -65,7 +65,7 @@ final class WorkspaceProvider
         ContentRepository $contentRepository,
         WorkspaceName $workspaceName
     ): ContentRepositoryWorkspace {
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspace = $contentRepository->findWorkspaceByName($workspaceName);
         if (!$workspace instanceof ContentRepositoryWorkspace) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }

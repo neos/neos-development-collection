@@ -17,11 +17,12 @@ namespace Neos\ContentRepository\Core;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\EventStore\Model\Event\Version;
 
 /**
  * An adapter to provide aceess to read projection data and delegate (sub) commands
@@ -46,14 +47,28 @@ final class CommandHandlingDependencies
         return $this->contentRepository->handle($command);
     }
 
-    public function getWorkspaceFinder(): WorkspaceFinder
+    public function getContentStreamVersion(ContentStreamId $contentStreamId): Version
     {
-        return $this->contentRepository->getWorkspaceFinder();
+        // TODO implement
+        return Version::fromInteger(1);
     }
 
-    public function getContentStreamFinder(): ContentStreamFinder
+    public function contentStreamExists(ContentStreamId $contentStreamId): bool
     {
-        return $this->contentRepository->getContentStreamFinder();
+        // TODO implement
+        return false;
+    }
+
+    public function getContentStreamState(ContentStreamId $contentStreamId): ContentStreamState
+    {
+        // TODO implement
+        return ContentStreamState::STATE_FORKED;
+    }
+
+    public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
+    {
+        // TODO implement
+        return null;
     }
 
     /**

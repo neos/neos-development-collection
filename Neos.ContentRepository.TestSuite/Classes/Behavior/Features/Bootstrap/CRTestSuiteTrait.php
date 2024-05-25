@@ -136,9 +136,9 @@ trait CRTestSuiteTrait
      */
     public function workspacesPointToDifferentContentStreams(string $rawWorkspaceNameA, string $rawWorkspaceNameB): void
     {
-        $workspaceA = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameA));
+        $workspaceA = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceNameA));
         Assert::assertInstanceOf(Workspace::class, $workspaceA, 'Workspace "' . $rawWorkspaceNameA . '" does not exist.');
-        $workspaceB = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameB));
+        $workspaceB = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceNameB));
         Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
         if ($workspaceA && $workspaceB) {
             Assert::assertNotEquals(
@@ -154,9 +154,9 @@ trait CRTestSuiteTrait
      */
     public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamId): void
     {
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+        $workspace = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceName));
 
-        Assert::assertNotEquals($rawContentStreamId, $workspace->currentContentStreamId->value);
+        Assert::assertNotEquals($rawContentStreamId, $workspace?->currentContentStreamId->value);
     }
 
     /**
@@ -164,9 +164,9 @@ trait CRTestSuiteTrait
      */
     public function workspaceHasStatus(string $rawWorkspaceName, string $status): void
     {
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+        $workspace = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceName));
 
-        Assert::assertSame($status, $workspace->status->value);
+        Assert::assertSame($status, $workspace?->status->value);
     }
 
     /**
@@ -269,8 +269,7 @@ trait CRTestSuiteTrait
     {
         $this->theContentStreamHasState(
             $this->currentContentRepository
-                ->getWorkspaceFinder()
-                ->findOneByName($this->currentWorkspaceName)
+                ->findWorkspaceByName($this->currentWorkspaceName)
                 ->currentContentStreamId->value,
             $expectedState
         );

@@ -52,7 +52,7 @@ final class ContentCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspaceInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
+        $workspaceInstance = $contentRepositoryInstance->findWorkspaceByName(WorkspaceName::fromString($workspace));
         if ($workspaceInstance === null) {
             $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
             $this->quit(1);
@@ -102,7 +102,7 @@ final class ContentCommandController extends CommandController
         $targetDimensionSpacePoint = DimensionSpacePoint::fromJsonString($target);
 
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspaceInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
+        $workspaceInstance = $contentRepositoryInstance->findWorkspaceByName(WorkspaceName::fromString($workspace));
         if ($workspaceInstance === null) {
             $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
             $this->quit(1);

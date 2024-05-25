@@ -6,8 +6,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
@@ -24,7 +23,7 @@ final class EventExportProcessor implements ProcessorInterface, ContentRepositor
 
     public function __construct(
         private readonly Filesystem $files,
-        private readonly WorkspaceFinder $workspaceFinder,
+        private readonly ContentStreamId $targetContentStreamId,
         private readonly EventStoreInterface $eventStore,
     ) {
     }
@@ -36,11 +35,7 @@ final class EventExportProcessor implements ProcessorInterface, ContentRepositor
 
     public function run(): ProcessorResult
     {
-        $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
-        if ($liveWorkspace === null) {
-            return ProcessorResult::error('Failed to find live workspace');
-        }
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($liveWorkspace->currentContentStreamId)->getEventStreamName();
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($this->targetContentStreamId)->getEventStreamName();
         $eventStream = $this->eventStore->load($streamName);
 
         $eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+');

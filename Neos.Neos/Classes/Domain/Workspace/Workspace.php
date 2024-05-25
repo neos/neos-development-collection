@@ -444,8 +444,7 @@ final class Workspace
     private function updateCurrentState(): void
     {
         /** The workspace projection should have been marked stale via @see WithMarkStaleInterface in the meantime */
-        $contentRepositoryWorkspace = $this->contentRepository->getWorkspaceFinder()
-            ->findOneByName($this->name);
+        $contentRepositoryWorkspace = $this->contentRepository->findWorkspaceByName($this->name);
         if (!$contentRepositoryWorkspace) {
             throw new WorkspaceDoesNotExist('Cannot update state of non-existent workspace ' . $this->name->value, 1711704397);
         }
