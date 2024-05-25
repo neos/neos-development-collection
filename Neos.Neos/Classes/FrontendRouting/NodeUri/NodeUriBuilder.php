@@ -82,18 +82,17 @@ final class NodeUriBuilder
 
     /**
      * Returns a host relative uri with fully qualified node as query parameter encoded.
+     *
+     * Note that only the option {@see Options::$forceAbsolute} is supported.
      */
     public function previewUriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
-        $routeValues = $options?->routingArguments ?? [];
+        $routeValues = [];
+        // todo use withQuery instead
         $routeValues['node'] = $nodeAddress->toJson();
         $routeValues['@action'] = strtolower('preview');
         $routeValues['@controller'] = strtolower('Frontend\Node');
         $routeValues['@package'] = strtolower('Neos.Neos');
-
-        if ($options?->format !== null && $options->format !== '') {
-            $routeValues['@format'] = $options->format;
-        }
 
         return $this->router->resolve(
             new ResolveContext(
