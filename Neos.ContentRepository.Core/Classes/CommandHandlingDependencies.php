@@ -41,9 +41,9 @@ final class CommandHandlingDependencies
     {
     }
 
-    public function handle(CommandInterface $command): CommandResult
+    public function handle(CommandInterface $command): void
     {
-        return $this->contentRepository->handle($command);
+        $this->contentRepository->handle($command);
     }
 
     public function getWorkspaceFinder(): WorkspaceFinder

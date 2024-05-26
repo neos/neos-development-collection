@@ -7,6 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
 
 /**
  * @internal
@@ -20,7 +21,7 @@ class HypergraphSchemaBuilder
 
     public function buildSchema(): Schema
     {
-        $schema = new Schema();
+        $schema = new Schema([CheckpointHelper::checkpointTableSchema($this->tableNamePrefix)]);
 
         $this->createNodeTable($schema);
         $this->createHierarchyHyperrelationTable($schema);

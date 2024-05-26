@@ -6,7 +6,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
@@ -46,7 +45,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
@@ -56,6 +54,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -73,8 +73,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public const RELATION_DEFAULT_OFFSET = 128;
 
-    private DbalCheckpointStorage $checkpointStorage;
-
     public function __construct(
         private readonly Connection $dbal,
         private readonly ProjectionContentGraph $projectionContentGraph,
@@ -82,11 +80,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
         private readonly ContentGraphFinder $contentGraphFinder
     ) {
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbal,
-            $this->tableNames->checkpoint(),
-            self::class
-        );
     }
 
     protected function getProjectionContentGraph(): ProjectionContentGraph
@@ -97,9 +90,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     public function setUp(): void
     {
         foreach ($this->determineRequiredSqlStatements() as $statement) {
-            $this->getDatabaseConnection()->executeStatement($statement);
+            $this->dbal->executeStatement($statement);
         }
-        $this->checkpointStorage->setUp();
     }
 
     /**
@@ -117,15 +109,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
-            $this->getDatabaseConnection()->connect();
+            $this->dbal->connect();
         } catch (\Throwable $e) {
             return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
         }
@@ -137,15 +122,21 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
         }
+        try {
+            $this->getCheckpoint();
+        } catch (\Exception $exception) {
+            return ProjectionStatus::error('Error while retrieving checkpoint: ' . $exception->getMessage());
+        }
         return ProjectionStatus::ok();
     }
 
     public function reset(): void
     {
-        $this->truncateDatabaseTables();
-
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->node());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
+        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNames->checkpoint());
         $this->getState()->forgetInstances();
     }
 
@@ -154,40 +145,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $this->getState()->forgetInstances();
     }
 
-    private function truncateDatabaseTables(): void
-    {
-        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->node());
-        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->hierarchyRelation());
-        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->referenceRelation());
-        $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNames->dimensionSpacePoints());
-    }
-
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            RootNodeAggregateWithNodeWasCreated::class,
-            RootNodeAggregateDimensionsWereUpdated::class,
-            NodeAggregateWithNodeWasCreated::class,
-            NodeAggregateNameWasChanged::class,
-            ContentStreamWasForked::class,
-            ContentStreamWasRemoved::class,
-            NodePropertiesWereSet::class,
-            NodeReferencesWereSet::class,
-            NodeAggregateTypeWasChanged::class,
-            DimensionSpacePointWasMoved::class,
-            DimensionShineThroughWasAdded::class,
-            NodeAggregateWasRemoved::class,
-            NodeAggregateWasMoved::class,
-            NodeSpecializationVariantWasCreated::class,
-            NodeGeneralizationVariantWasCreated::class,
-            NodePeerVariantWasCreated::class,
-            SubtreeWasTagged::class,
-            SubtreeWasUntagged::class,
-        ]);
-    }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        $this->dbal->beginTransaction();
         match ($event::class) {
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
             RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
@@ -207,13 +168,15 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event, $eventEnvelope),
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNames->checkpoint(), $eventEnvelope->sequenceNumber);
+        $this->dbal->commit();
     }
 
-    public function getCheckpointStorage(): DbalCheckpointStorage
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->checkpointStorage;
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNames->checkpoint());
     }
 
     public function getState(): ContentGraphFinder
@@ -272,13 +235,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         }
 
         // delete all hierarchy edges of the root node
-        $this->getDatabaseConnection()->executeUpdate('
-                DELETE FROM ' . $this->tableNames->hierarchyRelation() . '
-                WHERE
-                    parentnodeanchor = :parentNodeAnchor
-                    AND childnodeanchor = :childNodeAnchor
-                    AND contentstreamid = :contentStreamId
-            ', [
+        $this->dbal->executeUpdate('
+            DELETE FROM ' . $this->tableNames->hierarchyRelation() . '
+            WHERE
+                parentnodeanchor = :parentNodeAnchor
+                AND childnodeanchor = :childNodeAnchor
+                AND contentstreamid = :contentStreamId
+        ', [
             'parentNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value,
             'childNodeAnchor' => $rootNodeAnchorPoint->value,
             'contentStreamId' => $event->contentStreamId->value,
@@ -353,7 +316,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         EventEnvelope $eventEnvelope,
     ): void {
         $node = NodeRecord::createNewInDatabase(
-            $this->getDatabaseConnection(),
+            $this->dbal,
             $this->tableNames,
             $nodeAggregateId,
             $originDimensionSpacePoint->jsonSerialize(),
@@ -442,7 +405,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $inheritedSubtreeTags,
             );
 
-            $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNames);
+            $hierarchyRelation->addToDatabase($this->dbal, $this->tableNames);
         }
     }
 
@@ -529,7 +492,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $position = $offset;
                 $offset += self::RELATION_DEFAULT_OFFSET;
             }
-            $relation->assignNewPosition($offset, $this->getDatabaseConnection(), $this->tableNames);
+            $relation->assignNewPosition($offset, $this->dbal, $this->tableNames);
         }
 
         return $position;
@@ -543,10 +506,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         //
         // 1) Copy HIERARCHY RELATIONS (this is the MAIN OPERATION here)
         //
-        $this->getDatabaseConnection()->executeUpdate('
+        $this->dbal->executeUpdate('
             INSERT INTO ' . $this->tableNames->hierarchyRelation() . ' (
               parentnodeanchor,
               childnodeanchor,
+
               position,
               dimensionspacepointhash,
               subtreetags,
@@ -555,6 +519,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             SELECT
               h.parentnodeanchor,
               h.childnodeanchor,
+
               h.position,
               h.dimensionspacepointhash,
               h.subtreetags,
@@ -565,7 +530,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         ', [
             'sourceContentStreamId' => $event->sourceContentStreamId->value
         ]);
-
         // NOTE: as reference edges are attached to Relation Anchor Points (and they are lazily copy-on-written),
         // we do not need to copy reference edges here (but we need to do it during copy on write).
     }

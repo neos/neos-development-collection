@@ -68,6 +68,7 @@ final class RuntimeConfiguration
         if ($fusionPath === '') {
             throw new Exception('Fusion path cannot be empty.', 1695308681);
         }
+        $currentPrototypeDefinitions = [];
 
         // Find longest prefix of path that already is in path cache
         $pathUntilNow = '';

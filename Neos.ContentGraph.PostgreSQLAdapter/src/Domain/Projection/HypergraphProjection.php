@@ -41,11 +41,10 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -67,7 +66,6 @@ final class HypergraphProjection implements ProjectionInterface
     use NodeTypeChange;
     use NodeVariation;
 
-    private DbalCheckpointStorage $checkpointStorage;
     private ProjectionHypergraph $projectionHypergraph;
 
     public function __construct(
@@ -76,11 +74,6 @@ final class HypergraphProjection implements ProjectionInterface
         private readonly ContentGraphFinder $contentGraphFinder
     ) {
         $this->projectionHypergraph = new ProjectionHypergraph($this->dbal, $this->tableNamePrefix);
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbal,
-            $this->tableNamePrefix . '_checkpoint',
-            self::class
-        );
     }
 
 
@@ -98,20 +91,12 @@ final class HypergraphProjection implements ProjectionInterface
             create index if not exists restriction_affected
                 on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateids);
         ');
-        $this->checkpointStorage->setUp();
     }
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
-            $this->getDatabaseConnection()->connect();
+            $this->dbal->connect();
         } catch (\Throwable $e) {
             return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
         }
@@ -122,6 +107,11 @@ final class HypergraphProjection implements ProjectionInterface
         }
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        try {
+            $this->getCheckpoint();
+        } catch (\Exception $exception) {
+            return ProjectionStatus::error('Error while retrieving checkpoint: ' . $exception->getMessage());
         }
         return ProjectionStatus::ok();
     }
@@ -145,8 +135,7 @@ final class HypergraphProjection implements ProjectionInterface
     {
         $this->truncateDatabaseTables();
 
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint');
     }
 
     private function truncateDatabaseTables(): void
@@ -157,41 +146,9 @@ final class HypergraphProjection implements ProjectionInterface
         $this->dbal->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_restrictionhyperrelation');
     }
 
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            // ContentStreamForking
-            ContentStreamWasForked::class,
-            // NodeCreation
-            RootNodeAggregateWithNodeWasCreated::class,
-            NodeAggregateWithNodeWasCreated::class,
-            // SubtreeTagging
-            SubtreeWasTagged::class,
-            SubtreeWasUntagged::class,
-            // NodeModification
-            NodePropertiesWereSet::class,
-            // NodeReferencing
-            NodeReferencesWereSet::class,
-            // NodeRemoval
-            NodeAggregateWasRemoved::class,
-            // NodeRenaming
-            NodeAggregateNameWasChanged::class,
-            // NodeTypeChange
-            NodeAggregateTypeWasChanged::class,
-            // NodeVariation
-            NodeSpecializationVariantWasCreated::class,
-            NodeGeneralizationVariantWasCreated::class,
-            NodePeerVariantWasCreated::class,
-            // TODO: not yet supported:
-            //ContentStreamWasRemoved::class,
-            //DimensionSpacePointWasMoved::class,
-            //DimensionShineThroughWasAdded::class,
-            //NodeAggregateWasMoved::class,
-        ]);
-    }
-
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        $this->dbal->beginTransaction();
         match ($event::class) {
             // ContentStreamForking
             ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
@@ -215,13 +172,15 @@ final class HypergraphProjection implements ProjectionInterface
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint', $eventEnvelope->sequenceNumber);
+        $this->dbal->commit();
     }
 
-    public function getCheckpointStorage(): DbalCheckpointStorage
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->checkpointStorage;
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint');
     }
 
     public function getState(): ContentGraphFinder

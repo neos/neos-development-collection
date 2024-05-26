@@ -52,7 +52,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly EventPersister $eventPersister,
         private readonly ContentRepository $contentRepository,
-        private readonly Connection $connection,
+        private readonly Connection $dbal,
         private readonly ContentRepositoryId $contentRepositoryId
     ) {
         $this->contentStreamId = contentStreamId::fromString('cs-identifier');
@@ -73,7 +73,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
     public function removeEverything(): void
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
-        $this->connection->executeStatement('TRUNCATE ' . $this->connection->quoteIdentifier($eventTableName));
+        $this->dbal->executeStatement('TRUNCATE ' . $this->dbal->quoteIdentifier($eventTableName));
         $this->contentRepository->resetProjectionStates();
     }
 
@@ -96,7 +96,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
             NodeAggregateClassification::CLASSIFICATION_ROOT,
         );
 
-        $this->eventPersister->publishEvents(new EventsToPublish(
+        $this->eventPersister->publishEvents($this->contentRepository, new EventsToPublish(
             $this->contentStreamEventStream->getEventStreamName(),
             Events::with($rootNodeAggregateWasCreated),
             ExpectedVersion::ANY()
@@ -106,7 +106,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
         $sumSoFar = 0;
         $events = [];
         $this->createHierarchy($rootNodeAggregateId, 1, $levels, $nodesPerLevel, $sumSoFar, $events);
-        $this->eventPersister->publishEvents(new EventsToPublish(
+        $this->eventPersister->publishEvents($this->contentRepository, new EventsToPublish(
             $this->contentStreamEventStream->getEventStreamName(),
             Events::fromArray($events),
             ExpectedVersion::ANY()

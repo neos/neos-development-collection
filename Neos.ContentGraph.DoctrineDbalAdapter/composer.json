@@ -13,8 +13,7 @@
   },
   "require": {
     "neos/contentrepository-core": "self.version",
-    "doctrine/dbal": "^2.13",
-    "doctrine/migrations": "*"
+    "neos/contentrepository-dbaltools": "*"
   },
   "autoload": {
     "psr-4": {

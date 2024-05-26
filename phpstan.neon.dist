@@ -9,6 +9,7 @@ parameters:
         - Neos.ContentGraph.PostgreSQLAdapter/src
         - Neos.ContentRepository.BehavioralTests/Classes
         - Neos.ContentRepository.Core/Classes
+        - Neos.ContentRepository.DbalTools
         - Neos.ContentRepository.Export/src
         - Neos.ContentRepository.LegacyNodeMigration/Classes
         - Neos.ContentRepository.NodeAccess/Classes
@@ -16,6 +17,9 @@ parameters:
         - Neos.ContentRepository.StructureAdjustment/src
         - Neos.ContentRepository.TestSuite/Classes
         - Neos.ContentRepositoryRegistry/Classes
+        - Neos.ContentRepositoryRegistry.DoctrineDbalClient
+        - Neos.ContentRepositoryRegistry.PostgresDbalClient
+        - Neos.ContentRepositoryRegistry.TestSuite
         - Neos.Neos/Classes
         - Neos.TimeableNodeVisibility/Classes
         - Neos.NodeTypes.Form/Classes

@@ -36,14 +36,13 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
+use Neos\ContentRepository\DbalTools\DbalSchemaFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -66,17 +65,11 @@ class ChangeProjection implements ProjectionInterface
      * @var array<string>|null
      */
     private ?array $liveContentStreamIdsRuntimeCache = null;
-    private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
     ) {
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbal,
-            $this->tableNamePrefix . '_checkpoint',
-            self::class
-        );
     }
 
 
@@ -85,18 +78,10 @@ class ChangeProjection implements ProjectionInterface
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        $this->checkpointStorage->setUp();
     }
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
             $this->dbal->connect();
         } catch (\Throwable $e) {
@@ -110,6 +95,11 @@ class ChangeProjection implements ProjectionInterface
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
         }
+        try {
+            $this->getCheckpoint();
+        } catch (\Exception $exception) {
+            return ProjectionStatus::error('Error while retrieving checkpoint: ' . $exception->getMessage());
+        }
         return ProjectionStatus::ok();
     }
 
@@ -118,8 +108,7 @@ class ChangeProjection implements ProjectionInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $connection = $this->dbal;
-        $schemaManager = $connection->getSchemaManager();
+        $schemaManager = $this->dbal->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
@@ -149,38 +138,22 @@ class ChangeProjection implements ProjectionInterface
         ]);
         $liveContentStreamsTable->setPrimaryKey(['contentstreamid']);
 
-        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $liveContentStreamsTable]);
-        return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
+        $checkpointTable = CheckpointHelper::checkpointTableSchema($this->tableNamePrefix . '_checkpoint');
+
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $liveContentStreamsTable, $checkpointTable]);
+        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 
     public function reset(): void
     {
         $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix);
         $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-    }
-
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            RootWorkspaceWasCreated::class,
-            NodeAggregateWasMoved::class,
-            NodePropertiesWereSet::class,
-            NodeReferencesWereSet::class,
-            NodeAggregateWithNodeWasCreated::class,
-            SubtreeWasTagged::class,
-            SubtreeWasUntagged::class,
-            NodeAggregateWasRemoved::class,
-            DimensionSpacePointWasMoved::class,
-            NodeGeneralizationVariantWasCreated::class,
-            NodeSpecializationVariantWasCreated::class,
-            NodePeerVariantWasCreated::class
-        ]);
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint');
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        $this->dbal->beginTransaction();
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
             NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
@@ -194,13 +167,15 @@ class ChangeProjection implements ProjectionInterface
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint', $eventEnvelope->sequenceNumber);
+        $this->dbal->commit();
     }
 
-    public function getCheckpointStorage(): DbalCheckpointStorage
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->checkpointStorage;
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableNamePrefix . '_checkpoint');
     }
 
     public function getState(): ChangeFinder

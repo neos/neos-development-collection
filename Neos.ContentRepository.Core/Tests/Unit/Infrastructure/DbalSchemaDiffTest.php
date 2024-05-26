@@ -9,7 +9,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
 use PHPUnit\Framework\TestCase;
 
 class DbalSchemaDiffTest extends TestCase

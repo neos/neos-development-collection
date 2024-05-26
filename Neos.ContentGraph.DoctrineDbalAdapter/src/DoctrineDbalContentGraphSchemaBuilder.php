@@ -8,7 +8,8 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaFactory;
 
 /**
  * @internal
@@ -28,7 +29,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             $this->createNodeTable(),
             $this->createHierarchyRelationTable(),
             $this->createReferenceRelationTable(),
-            $this->createDimensionSpacePointsTable()
+            $this->createDimensionSpacePointsTable(),
+            CheckpointHelper::checkpointTableSchema($this->contentGraphTableNames->checkpoint()),
         ]);
     }
 

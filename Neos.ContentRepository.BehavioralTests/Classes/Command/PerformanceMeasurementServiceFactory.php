@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
 class PerformanceMeasurementServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function __construct(
-        private readonly Connection $connection,
+        private readonly Connection $dbal,
     ) {
     }
 
@@ -35,7 +35,7 @@ class PerformanceMeasurementServiceFactory implements ContentRepositoryServiceFa
         return new PerformanceMeasurementService(
             $serviceFactoryDependencies->eventPersister,
             $serviceFactoryDependencies->contentRepository,
-            $this->connection,
+            $this->dbal,
             $serviceFactoryDependencies->contentRepositoryId
         );
     }

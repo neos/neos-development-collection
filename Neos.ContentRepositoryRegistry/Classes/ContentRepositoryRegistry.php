@@ -14,7 +14,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
@@ -24,7 +23,6 @@ use Neos\ContentRepositoryRegistry\Factory\Clock\ClockFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensionSourceFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\ProjectionCatchUpTriggerFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderFactoryInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Annotations as Flow;
@@ -156,7 +154,6 @@ final class ContentRepositoryRegistry
                 $this->buildContentDimensionSource($contentRepositoryId, $contentRepositorySettings),
                 $this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionsFactory($contentRepositoryId, $contentRepositorySettings),
-                $this->buildProjectionCatchUpTrigger($contentRepositoryId, $contentRepositorySettings),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
                 $clock
             );
@@ -248,17 +245,6 @@ final class ContentRepositoryRegistry
             }
         }
         return $projectionsFactory;
-    }
-
-    /** @param array<string, mixed> $contentRepositorySettings */
-    private function buildProjectionCatchUpTrigger(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ProjectionCatchUpTriggerInterface
-    {
-        isset($contentRepositorySettings['projectionCatchUpTrigger']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have projectionCatchUpTrigger.factoryObjectName configured.', $contentRepositoryId->value);
-        $projectionCatchUpTriggerFactory = $this->objectManager->get($contentRepositorySettings['projectionCatchUpTrigger']['factoryObjectName']);
-        if (!$projectionCatchUpTriggerFactory instanceof ProjectionCatchUpTriggerFactoryInterface) {
-            throw InvalidConfigurationException::fromMessage('projectionCatchUpTrigger.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryId->value, ProjectionCatchUpTriggerFactoryInterface::class, get_debug_type($projectionCatchUpTriggerFactory));
-        }
-        return $projectionCatchUpTriggerFactory->build($contentRepositoryId, $contentRepositorySettings['projectionCatchUpTrigger']['options'] ?? []);
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */

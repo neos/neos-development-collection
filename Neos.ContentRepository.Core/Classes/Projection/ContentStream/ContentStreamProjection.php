@@ -37,16 +37,14 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageInterface;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
+use Neos\ContentRepository\DbalTools\DbalSchemaFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -63,17 +61,11 @@ class ContentStreamProjection implements ProjectionInterface
      * so that always the same instance is returned
      */
     private ?ContentStreamFinder $contentStreamFinder = null;
-    private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
         private readonly Connection $dbal,
         private readonly string $tableName
     ) {
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbal,
-            $this->tableName . '_checkpoint',
-            self::class
-        );
     }
 
     public function setUp(): void
@@ -87,18 +79,10 @@ class ContentStreamProjection implements ProjectionInterface
         foreach ($statements as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        $this->checkpointStorage->setUp();
     }
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
             $this->dbal->connect();
         } catch (\Throwable $e) {
@@ -111,6 +95,11 @@ class ContentStreamProjection implements ProjectionInterface
         }
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        try {
+            $this->getCheckpoint();
+        } catch (\Exception $exception) {
+            return ProjectionStatus::error('Error while retrieving checkpoint: ' . $exception->getMessage());
         }
         return ProjectionStatus::ok();
     }
@@ -133,7 +122,8 @@ class ContentStreamProjection implements ProjectionInterface
                 // Should become a DB ENUM (unclear how to configure with DBAL) or int (latter needs adaption to code)
                 (new Column('state', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
                 (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
-            ]))
+            ])),
+            CheckpointHelper::checkpointTableSchema($this->tableName . '_checkpoint')
         ]);
 
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
@@ -142,35 +132,16 @@ class ContentStreamProjection implements ProjectionInterface
     public function reset(): void
     {
         $this->dbal->executeStatement('TRUNCATE table ' . $this->tableName);
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-    }
-
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-                ContentStreamWasCreated::class,
-                RootWorkspaceWasCreated::class,
-                WorkspaceWasCreated::class,
-                ContentStreamWasForked::class,
-                WorkspaceWasDiscarded::class,
-                WorkspaceWasPartiallyDiscarded::class,
-                WorkspaceWasPartiallyPublished::class,
-                WorkspaceWasPublished::class,
-                WorkspaceWasRebased::class,
-                WorkspaceRebaseFailed::class,
-                ContentStreamWasClosed::class,
-                ContentStreamWasReopened::class,
-                ContentStreamWasRemoved::class,
-                DimensionShineThroughWasAdded::class,
-            ])
-            || $event instanceof EmbedsContentStreamAndNodeAggregateId;
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableName . '_checkpoint');
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        $this->dbal->beginTransaction();
         if ($event instanceof EmbedsContentStreamAndNodeAggregateId) {
             $this->updateContentStreamVersion($event, $eventEnvelope);
+            CheckpointHelper::updateCheckpoint($this->dbal, $this->tableName . '_checkpoint', $eventEnvelope->sequenceNumber);
+            $this->dbal->commit();
             return;
         }
         match ($event::class) {
@@ -188,13 +159,15 @@ class ContentStreamProjection implements ProjectionInterface
             ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event, $eventEnvelope),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableName . '_checkpoint', $eventEnvelope->sequenceNumber);
+        $this->dbal->commit();
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->checkpointStorage;
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableName . '_checkpoint');
     }
 
     public function getState(): ProjectionStateInterface

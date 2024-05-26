@@ -387,7 +387,6 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
     private function updateEventPayload(SequenceNumber $sequenceNumber, array $payload): void
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
-        $this->connection->beginTransaction();
         $this->connection->executeStatement(
             'UPDATE ' . $eventTableName . ' SET payload=:payload WHERE sequencenumber=:sequenceNumber',
             [
@@ -395,7 +394,6 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 'payload' => json_encode($payload),
             ]
         );
-        $this->connection->commit();
         $this->eventsModified[$sequenceNumber->value] = true;
     }
 
@@ -405,7 +403,6 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
     private function updateEventMetaData(SequenceNumber $sequenceNumber, array $eventMetaData): void
     {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
-        $this->connection->beginTransaction();
         $this->connection->executeStatement(
             'UPDATE ' . $eventTableName . ' SET metadata=:metadata WHERE sequencenumber=:sequenceNumber',
             [
@@ -413,7 +410,6 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 'metadata' => json_encode($eventMetaData),
             ]
         );
-        $this->connection->commit();
         $this->eventsModified[$sequenceNumber->value] = true;
     }
 

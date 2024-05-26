@@ -2,8 +2,8 @@
 
 namespace Neos\ContentRepository\Core\Projection;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -17,8 +17,7 @@ use Neos\EventStore\Model\EventEnvelope;
 interface CatchUpHookInterface
 {
     /**
-     * This hook is called at the beginning of {@see ProjectionInterface::catchUpProjection()};
-     * BEFORE the Database Lock is acquired (by {@see CheckpointStorageInterface::acquireLock()}).
+     * This hook is called at the beginning of {@see ContentRepository::catchUpProjection()};
      *
      * @return void
      */
@@ -37,8 +36,8 @@ interface CatchUpHookInterface
     public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void;
 
     /**
-     * This hook is called directly before the database lock is RELEASED
-     * in {@see CheckpointStorageInterface::updateAndReleaseLock()}.
+     * This hook is called directly before the catchup is done
+     * in {@see ContentRepository::catchUpProjection()}.
      *
      * It can happen that this method is called multiple times, even without
      * having seen Events in the meantime.

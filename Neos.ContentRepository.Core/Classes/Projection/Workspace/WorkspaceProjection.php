@@ -33,15 +33,14 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
-use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\DbalTools\CheckpointHelper;
+use Neos\ContentRepository\DbalTools\DbalSchemaDiff;
+use Neos\ContentRepository\DbalTools\DbalSchemaFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -58,18 +57,12 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
      * so that always the same instance is returned
      */
     private ?WorkspaceFinder $workspaceFinder = null;
-    private DbalCheckpointStorage $checkpointStorage;
     private WorkspaceRuntimeCache $workspaceRuntimeCache;
 
     public function __construct(
         private readonly Connection $dbal,
         private readonly string $tableName,
     ) {
-        $this->checkpointStorage = new DbalCheckpointStorage(
-            $this->dbal,
-            $this->tableName . '_checkpoint',
-            self::class
-        );
         $this->workspaceRuntimeCache = new WorkspaceRuntimeCache();
     }
 
@@ -78,18 +71,10 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         foreach ($this->determineRequiredSqlStatements() as $statement) {
             $this->dbal->executeStatement($statement);
         }
-        $this->checkpointStorage->setUp();
     }
 
     public function status(): ProjectionStatus
     {
-        $checkpointStorageStatus = $this->checkpointStorage->status();
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
-            return ProjectionStatus::error($checkpointStorageStatus->details);
-        }
-        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
-            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
-        }
         try {
             $this->dbal->connect();
         } catch (\Throwable $e) {
@@ -102,6 +87,11 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         }
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        try {
+            $this->getCheckpoint();
+        } catch (\Exception $exception) {
+            return ProjectionStatus::error('Error while retrieving checkpoint: ' . $exception->getMessage());
         }
         return ProjectionStatus::ok();
     }
@@ -126,38 +116,21 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             (new Column('status', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(false)
         ]);
         $workspaceTable->setPrimaryKey(['workspacename']);
+        $checkpointTable = CheckpointHelper::checkpointTableSchema($this->tableName . '_checkpoint');
 
-        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$workspaceTable]);
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$workspaceTable, $checkpointTable]);
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 
     public function reset(): void
     {
         $this->dbal->exec('TRUNCATE ' . $this->tableName);
-        $this->checkpointStorage->acquireLock();
-        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-    }
-
-    public function canHandle(EventInterface $event): bool
-    {
-        return in_array($event::class, [
-            WorkspaceWasCreated::class,
-            WorkspaceWasRenamed::class,
-            RootWorkspaceWasCreated::class,
-            WorkspaceWasDiscarded::class,
-            WorkspaceWasPartiallyDiscarded::class,
-            WorkspaceWasPartiallyPublished::class,
-            WorkspaceWasPublished::class,
-            WorkspaceWasRebased::class,
-            WorkspaceRebaseFailed::class,
-            WorkspaceWasRemoved::class,
-            WorkspaceOwnerWasChanged::class,
-            WorkspaceBaseWorkspaceWasChanged::class,
-        ]);
+        CheckpointHelper::resetCheckpoint($this->dbal, $this->tableName . '_checkpoint');
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
+        $this->dbal->beginTransaction();
         match ($event::class) {
             WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
             WorkspaceWasRenamed::class => $this->whenWorkspaceWasRenamed($event),
@@ -171,13 +144,15 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
             WorkspaceOwnerWasChanged::class => $this->whenWorkspaceOwnerWasChanged($event),
             WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => null,
         };
+        CheckpointHelper::updateCheckpoint($this->dbal, $this->tableName . '_checkpoint', $eventEnvelope->sequenceNumber);
+        $this->dbal->commit();
     }
 
-    public function getCheckpointStorage(): DbalCheckpointStorage
+    public function getCheckpoint(): SequenceNumber
     {
-        return $this->checkpointStorage;
+        return CheckpointHelper::getCheckpoint($this->dbal, $this->tableName . '_checkpoint');
     }
 
     public function getState(): WorkspaceFinder
