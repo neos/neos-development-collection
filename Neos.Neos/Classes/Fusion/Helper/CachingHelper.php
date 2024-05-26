@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
+use Neos\Neos\Fusion\Cache\NodeCacheEntryIdentifier;
 use Neos\Neos\Fusion\Cache\CacheTag;
 use Neos\Neos\Fusion\Cache\CacheTagSet;
 
@@ -56,6 +56,14 @@ class CachingHelper implements ProtectedContextAwareInterface
         return CacheTagSet::forNodeAggregatesFromNodes(Nodes::fromArray($nodes))->toStringArray();
     }
 
+    /**
+     * Generate a `@cache` entry identifier for a given node:
+     *
+     *     entryIdentifier {
+     *       documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
+     *     }
+     *
+     */
     public function entryIdentifierForNode(Node $node): NodeCacheEntryIdentifier
     {
         return NodeCacheEntryIdentifier::fromNode($node);
