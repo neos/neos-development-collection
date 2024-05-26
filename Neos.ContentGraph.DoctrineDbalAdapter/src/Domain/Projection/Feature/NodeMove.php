@@ -4,17 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
-use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
-use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
@@ -25,40 +20,36 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 trait NodeMove
 {
-    abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
+    use SubtreeTagging;
 
-    /**
-     * @param NodeAggregateWasMoved $event
-     * @throws \Throwable
-     */
-    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
+    private function moveNodeAggregate(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, ?NodeAggregateId $newParentNodeAggregateId, InterdimensionalSiblings $succeedingSiblingsForCoverage): void
     {
-        foreach ($event->succeedingSiblingsForCoverage as $succeedingSiblingForCoverage) {
-            $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeInAggregate(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
+        foreach ($succeedingSiblingsForCoverage as $succeedingSiblingForCoverage) {
+            $nodeToBeMoved = $this->projectionContentGraph->findNodeInAggregate(
+                $contentStreamId,
+                $nodeAggregateId,
                 $succeedingSiblingForCoverage->dimensionSpacePoint
             );
 
             if (is_null($nodeToBeMoved)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+                throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because it does not exist', $nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamId->value), 1716471638);
             }
 
-            if ($event->newParentNodeAggregateId) {
+            if ($newParentNodeAggregateId) {
                 $this->moveNodeBeneathParent(
-                    $event->contentStreamId,
+                    $contentStreamId,
                     $nodeToBeMoved,
-                    $event->newParentNodeAggregateId,
+                    $newParentNodeAggregateId,
                     $succeedingSiblingForCoverage
                 );
                 $this->moveSubtreeTags(
-                    $event->contentStreamId,
-                    $event->newParentNodeAggregateId,
+                    $contentStreamId,
+                    $newParentNodeAggregateId,
                     $succeedingSiblingForCoverage->dimensionSpacePoint
                 );
             } else {
                 $this->moveNodeBeforeSucceedingSibling(
-                    $event->contentStreamId,
+                    $contentStreamId,
                     $nodeToBeMoved,
                     $succeedingSiblingForCoverage,
                 );
@@ -73,15 +64,12 @@ trait NodeMove
      * which incoming HierarchyRelation should be moved and where exactly.
      *
      * The move target is given as $succeedingSiblingNodeMoveTarget. This also specifies the new parent node.
-     * @throws \Exception
      */
     private function moveNodeBeforeSucceedingSibling(
         ContentStreamId $contentStreamId,
         NodeRecord $nodeToBeMoved,
         InterdimensionalSibling $succeedingSiblingForCoverage,
     ): void {
-        $projectionContentGraph = $this->getProjectionContentGraph();
-
         // find the single ingoing hierarchy relation which we want to move
         $ingoingHierarchyRelation = $this->findIngoingHierarchyRelationToBeMoved(
             $nodeToBeMoved,
@@ -92,15 +80,13 @@ trait NodeMove
         $newSucceedingSibling = null;
         if ($succeedingSiblingForCoverage->nodeAggregateId) {
             // find the new succeeding sibling NodeRecord; We need this record because we'll use its RelationAnchorPoint later.
-            $newSucceedingSibling = $projectionContentGraph->findNodeInAggregate(
+            $newSucceedingSibling = $this->projectionContentGraph->findNodeInAggregate(
                 $contentStreamId,
                 $succeedingSiblingForCoverage->nodeAggregateId,
                 $succeedingSiblingForCoverage->dimensionSpacePoint
             );
             if ($newSucceedingSibling === null) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetSucceedingSiblingNodeIsMissing(
-                    MoveNodeAggregate::class
-                );
+                throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target succeeding sibling node "%s" is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamId->value, $succeedingSiblingForCoverage->nodeAggregateId->value), 1716471881);
             }
         }
 
@@ -116,7 +102,7 @@ trait NodeMove
         // ...and assign the new position
         $ingoingHierarchyRelation->assignNewPosition(
             $newPosition,
-            $this->getDatabaseConnection(),
+            $this->dbal,
             $this->tableNames
         );
     }
@@ -128,7 +114,6 @@ trait NodeMove
      *
      * The move target is given as $parentNodeAggregateId and $succeedingSiblingForCoverage.
      * We always move beneath the parent before the succeeding sibling if given (or to the end)
-     * @throws DBALException
      */
     private function moveNodeBeneathParent(
         ContentStreamId $contentStreamId,
@@ -136,8 +121,6 @@ trait NodeMove
         NodeAggregateId $parentNodeAggregateId,
         InterdimensionalSibling $succeedingSiblingForCoverage,
     ): void {
-        $projectionContentGraph = $this->getProjectionContentGraph();
-
         // find the single ingoing hierarchy relation which we want to move
         $ingoingHierarchyRelation = $this->findIngoingHierarchyRelationToBeMoved(
             $nodeToBeMoved,
@@ -146,29 +129,25 @@ trait NodeMove
         );
 
         // find the new parent NodeRecord; We need this record because we'll use its RelationAnchorPoints later.
-        $newParent = $projectionContentGraph->findNodeInAggregate(
+        $newParent = $this->projectionContentGraph->findNodeInAggregate(
             $contentStreamId,
             $parentNodeAggregateId,
             $succeedingSiblingForCoverage->dimensionSpacePoint
         );
         if ($newParent === null) {
-            throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
-                MoveNodeAggregate::class
-            );
+            throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target parent node is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamId->value), 1716471955);
         }
 
         $newSucceedingSibling = null;
         if ($succeedingSiblingForCoverage->nodeAggregateId) {
             // find the new succeeding sibling NodeRecord; We need this record because we'll use its RelationAnchorPoint later.
-            $newSucceedingSibling = $projectionContentGraph->findNodeInAggregate(
+            $newSucceedingSibling = $this->projectionContentGraph->findNodeInAggregate(
                 $contentStreamId,
                 $succeedingSiblingForCoverage->nodeAggregateId,
                 $succeedingSiblingForCoverage->dimensionSpacePoint
             );
             if ($newSucceedingSibling === null) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetSucceedingSiblingNodeIsMissing(
-                    MoveNodeAggregate::class
-                );
+                throw new \RuntimeException(sprintf('Failed to move node "%s" in sub graph %s@%s because target succeeding sibling node is missing', $nodeToBeMoved->nodeAggregateId->value, $succeedingSiblingForCoverage->dimensionSpacePoint->toJson(), $contentStreamId->value), 1716471995);
             }
         }
 
@@ -185,7 +164,7 @@ trait NodeMove
         $ingoingHierarchyRelation->assignNewParentNode(
             $newParent->relationAnchorPoint,
             $newPosition,
-            $this->getDatabaseConnection(),
+            $this->dbal,
             $this->tableNames
         );
     }
@@ -197,28 +176,23 @@ trait NodeMove
      * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePoint $coveredDimensionSpacePointWhereMoveShouldHappen
      * @return HierarchyRelation
-     * @throws DBALException
      */
     private function findIngoingHierarchyRelationToBeMoved(
         NodeRecord $nodeToBeMoved,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $coveredDimensionSpacePointWhereMoveShouldHappen
     ): HierarchyRelation {
-        $ingoingHierarchyRelations = $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNode(
+        $restrictToSet = DimensionSpacePointSet::fromArray([$coveredDimensionSpacePointWhereMoveShouldHappen]);
+        $ingoingHierarchyRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
             $nodeToBeMoved->relationAnchorPoint,
             $contentStreamId,
-            DimensionSpacePointSet::fromArray([$coveredDimensionSpacePointWhereMoveShouldHappen])
+            $restrictToSet,
         );
         if (count($ingoingHierarchyRelations) !== 1) {
             // there should always be exactly one incoming relation in the given DimensionSpacePoint; everything
             // else would be a totally wrong behavior of findIngoingHierarchyRelationsForNode().
-            throw EventCouldNotBeAppliedToContentGraph::becauseTheIngoingSourceHierarchyRelationIsMissing(
-                MoveNodeAggregate::class
-            );
+            throw new \RuntimeException(sprintf('Failed move node "%s" in sub graph %s@%s because ingoing source hierarchy relation is missing', $nodeToBeMoved->nodeAggregateId->value, $restrictToSet->toJson(), $contentStreamId->value), 1716472138);
         }
         return reset($ingoingHierarchyRelations);
     }
-
-
-    abstract protected function getDatabaseConnection(): Connection;
 }
