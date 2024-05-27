@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\Core\Projection;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 
 /**
- * @template T of ProjectionInterface
+ * @template-covariant T of ProjectionInterface
  * @api
  */
 interface ProjectionFactoryInterface
