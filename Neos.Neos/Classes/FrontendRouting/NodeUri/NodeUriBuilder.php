@@ -35,7 +35,7 @@ use Psr\Http\Message\UriInterface;
  * @api except its constructor
  */
 #[Flow\Proxy(false)]
-final class NodeUriBuilder
+final readonly class NodeUriBuilder
 {
     /**
      * Please inject and use the {@see NodeUriBuilderFactory} to acquire this uri builder
@@ -48,20 +48,20 @@ final class NodeUriBuilder
      * @internal must not be manually instantiated but its factory must be used
      */
     public function __construct(
-        private readonly RouterInterface $router,
+        private RouterInterface $router,
         /**
          * The base uri either set by using Neos.Flow.http.baseUri or inferred from the current request.
          * Note that hard coding the base uri in the settings will not work for multi sites and is only to be used as escape hatch for running Neos in a sub-directory
          */
-        private readonly UriInterface $baseUri,
+        private UriInterface $baseUri,
         /**
          * This prefix could be used to append to all uris a prefix via `SCRIPT_NAME`, but this feature is currently not well tested and considered experimental
          */
-        private readonly string $uriPathPrefix,
+        private string $uriPathPrefix,
         /**
          * The currently active http attributes that are used to influence the routing. The Neos frontend route part handler requires the {@see SiteDetectionResult} to be serialized in here.
          */
-        private readonly RouteParameters $routeParameters
+        private RouteParameters $routeParameters
     ) {
     }
 
@@ -105,7 +105,8 @@ final class NodeUriBuilder
      *   );
      *
      * @api
-     * @throws NoMatchingRouteException
+     * @throws NoMatchingRouteException in the unlike case the default route definition is misconfigured,
+     *                                  or more likely in combination with custom options but no backing route defined.
      */
     public function uriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
