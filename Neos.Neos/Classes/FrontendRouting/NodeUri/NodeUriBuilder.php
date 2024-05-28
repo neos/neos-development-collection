@@ -29,6 +29,10 @@ use Psr\Http\Message\UriInterface;
 /**
  * Neos abstraction to simplify node uri building.
  *
+*  Builds URIs to nodes, taking workspace (live / shared / user) into account.
+ * Can also be used in order to render "preview" URLs to nodes, that are not
+ * in the live workspace (in the Neos Backend and shared workspaces)
+ *
  * Internally a Flow route is configured using the {@see EventSourcedFrontendNodeRoutePartHandler}.
  * Streamlines the uri building to not having to interact with the {@see UriBuilder} or having to serialize the node address.
  *
@@ -80,6 +84,11 @@ final readonly class NodeUriBuilder
      *
      * Host relative urls are build by default for non cross-linked nodes.
      *
+     * Shortcut nodes
+     * --------------
+     *
+     * Resolving a uri for a shortcut node will result in the url pointing to the shortcut target (node, asset or external URI).
+     *
      * Supported options
      * -----------------
      *
@@ -105,14 +114,23 @@ final readonly class NodeUriBuilder
      *   );
      *
      * @api
-     * @throws NoMatchingRouteException in the unlike case the default route definition is misconfigured,
-     *                                  or more likely in combination with custom options but no backing route defined.
+     * @throws NoMatchingRouteException
+     *   The exception is thrown for various unlike cases in which uri building fails:
+     *   - the default route definitions are misconfigured
+     *   - the custom uri building options don't macht a route
+     *   - the shortcut points to an invalid target
+     *   - the live node address cannot be found in the projection
+     *   Please consult the logs for further information.
      */
     public function uriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
         $options ??= Options::create();
 
         if (!$nodeAddress->workspaceName->isLive()) {
+            // we cannot build a human-readable uri using the showAction as
+            // the DocumentUriPathProjection only handles the live workspace
+            // now we fall back to building an absolute preview uri ignoring all possible options, because they are not applicable.
+            // (e.g. otherwise one would need to define a custom json route also for the previewAction which is unlikely considered and untested)
             return $this->previewUriFor($nodeAddress);
         }
 

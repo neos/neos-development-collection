@@ -270,8 +270,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         try {
             $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult->siteNodeName);
-        } catch (NodeNotFoundException | InvalidShortcutException $exception) {
-            // TODO log exception
+        } catch (NodeNotFoundException | TargetSiteNotFoundException | InvalidShortcutException $exception) {
+            // TODO log exception ... yes todo
             return false;
         }
 
@@ -288,6 +288,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      *
      * @throws InvalidShortcutException
      * @throws NodeNotFoundException
+     * @throws TargetSiteNotFoundException
      */
     private function resolveNodeAddress(
         NodeAddress $nodeAddress,
