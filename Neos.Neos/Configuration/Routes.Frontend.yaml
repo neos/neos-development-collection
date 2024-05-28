@@ -7,7 +7,6 @@
   uriPattern:    'neos/preview'
   defaults:
     '@action':   'preview'
-  appendExceedingArguments: true
 
 -
   name: 'Default Frontend'

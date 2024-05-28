@@ -14,15 +14,18 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Exception as HttpException;
+use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Property\PropertyMapper;
@@ -352,7 +355,7 @@ class LinkingService
         $mainRequest = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($mainRequest);
-        $action = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::disabled()) ? 'show' : 'preview';
+        $createLiveUri = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::disabled());
 
         if ($addQueryString === true) {
             // legacy feature see https://github.com/neos/neos-development-collection/issues/5076
@@ -365,13 +368,27 @@ class LinkingService
             }
         }
 
+        if (!$createLiveUri) {
+            $previewActionUri = $uriBuilder
+                ->reset()
+                ->setSection($section)
+                ->setArguments($arguments)
+                ->setFormat($format ?: $mainRequest->getFormat())
+                ->setCreateAbsoluteUri($absolute)
+                ->uriFor('preview', [], 'Frontend\Node', 'Neos.Neos');
+            return (string)UriHelper::uriWithAdditionalQueryParameters(
+                new Uri($previewActionUri),
+                ['node' => NodeAddress::fromNode($node)->toJson()]
+            );
+        }
+
         return $uriBuilder
             ->reset()
             ->setSection($section)
             ->setArguments($arguments)
             ->setFormat($format ?: $mainRequest->getFormat())
             ->setCreateAbsoluteUri($absolute)
-            ->uriFor($action, ['node' => $node], 'Frontend\Node', 'Neos.Neos');
+            ->uriFor('show', ['node' => NodeAddress::fromNode($node)], 'Frontend\Node', 'Neos.Neos');
     }
 
     /**

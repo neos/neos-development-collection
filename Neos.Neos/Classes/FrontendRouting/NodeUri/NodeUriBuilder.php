@@ -21,10 +21,19 @@ use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RouterInterface;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
 
+/**
+ * Neos abstraction to simplify node uri building.
+ *
+ * Internally a Flow route is configured using the {@see EventSourcedFrontendNodeRoutePartHandler}.
+ * Streamlines the uri building to not having to interact with the {@see UriBuilder} or having to serialize the node address.
+ *
+ * @api except its constructor
+ */
 #[Flow\Proxy(false)]
 final class NodeUriBuilder
 {
@@ -59,7 +68,7 @@ final class NodeUriBuilder
     /**
      * Returns a human-readable host relative uri for nodes in the live workspace.
      *
-     * As the human-readable uris are only routed for nodes of the live workspace {@see DocumentUriPathProjection}
+     * As the human-readable uris are only routed for nodes of the live workspace {@see EventSourcedFrontendNodeRoutePartHandler}
      * Preview uris are build for other workspaces {@see previewUriFor}
      *
      * Cross-linking nodes
@@ -128,18 +137,16 @@ final class NodeUriBuilder
      * Note that other options are not considered for preview uri building.
      *
      * @api
-     * @throws NoMatchingRouteException
+     * @throws NoMatchingRouteException in the unlike case the preview route definition is misconfigured
      */
     public function previewUriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
         $routeValues = [];
-        // todo use withQuery instead
-        $routeValues['node'] = $nodeAddress->toJson();
         $routeValues['@action'] = strtolower('preview');
         $routeValues['@controller'] = strtolower('Frontend\Node');
         $routeValues['@package'] = strtolower('Neos.Neos');
 
-        return $this->router->resolve(
+        $previewActionUri = $this->router->resolve(
             new ResolveContext(
                 $this->baseUri,
                 $routeValues,
@@ -147,6 +154,10 @@ final class NodeUriBuilder
                 $this->uriPathPrefix,
                 $this->routeParameters
             )
+        );
+        return UriHelper::uriWithAdditionalQueryParameters(
+            $previewActionUri,
+            ['node' => $nodeAddress->toJson()]
         );
     }
 }
