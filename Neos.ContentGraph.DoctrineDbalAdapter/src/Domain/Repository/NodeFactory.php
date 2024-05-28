@@ -347,7 +347,11 @@ final class NodeFactory
     {
         $explicitTags = [];
         $inheritedTags = [];
-        $subtreeTagsArray = json_decode($subtreeTagsJson, true, 512, JSON_THROW_ON_ERROR);
+        try {
+            $subtreeTagsArray = json_decode($subtreeTagsJson, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-decode subtree tags from JSON string %s: %s', $subtreeTagsJson, $e->getMessage()), 1716476904, $e);
+        }
         foreach ($subtreeTagsArray as $tagValue => $explicit) {
             if ($explicit) {
                 $explicitTags[] = $tagValue;

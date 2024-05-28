@@ -13,6 +13,7 @@
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\ContentGraphFactoryInterface;
@@ -46,22 +47,28 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
             'workspace'
         ));
 
-        $row = $this->dbal->executeQuery(
-            '
-                SELECT * FROM ' . $tableName . '
-                WHERE workspaceName = :workspaceName
-                LIMIT 1
-            ',
-            [
+        $currentContentStreamIdStatement = <<<SQL
+            SELECT
+                currentcontentstreamid
+            FROM
+                {$tableName}
+            WHERE
+                workspaceName = :workspaceName
+            LIMIT 1
+        SQL;
+        try {
+            $currentContentStreamId = $this->dbal->fetchOne($currentContentStreamIdStatement, [
                 'workspaceName' => $workspaceName->value,
-            ]
-        )->fetchAssociative();
+            ]);
+        } catch (Exception $e) {
+            throw new \RuntimeException(sprintf('Failed to load workspace content stream id from database: %s', $e->getMessage()), 1716486077, $e);
+        }
 
-        if ($row === false) {
+        if ($currentContentStreamId === false) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
 
-        return $this->buildForWorkspaceAndContentStream($workspaceName, ContentStreamId::fromString($row['currentcontentstreamid']));
+        return $this->buildForWorkspaceAndContentStream($workspaceName, ContentStreamId::fromString($currentContentStreamId));
     }
 
     public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraph

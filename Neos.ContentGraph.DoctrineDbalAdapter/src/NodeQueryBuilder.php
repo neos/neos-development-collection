@@ -3,7 +3,6 @@
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
@@ -41,14 +40,12 @@ final readonly class NodeQueryBuilder
 
     public function buildBasicNodeAggregateQuery(): QueryBuilder
     {
-        $queryBuilder = $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->select('n.*, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->tableNames->node(), 'n')
             ->innerJoin('n', $this->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
             ->where('h.contentstreamid = :contentStreamId');
-
-        return $queryBuilder;
     }
 
     public function buildChildNodeAggregateQuery(NodeAggregateId $parentNodeAggregateId, ContentStreamId $contentStreamId): QueryBuilder
@@ -249,11 +246,7 @@ final readonly class NodeQueryBuilder
         return 'JSON_SEARCH(' . $nodeTableAlias . '.properties, \'one\', :' . $paramName . ', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
     }
 
-    /**
-     * @return QueryBuilder
-     * @throws DBALException
-     */
-    public function buildfindUsedNodeTypeNamesQuery(): QueryBuilder
+    public function buildFindUsedNodeTypeNamesQuery(): QueryBuilder
     {
         return $this->createQueryBuilder()
             ->select('DISTINCT nodetypename')

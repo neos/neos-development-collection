@@ -25,7 +25,7 @@ Feature: Run projection integrity violation detection regarding node aggregate c
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
-  Scenario: Create node variants of different type
+  Scenario: Create node variants of different classification
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
       | workspaceName               | "live"                                    |
