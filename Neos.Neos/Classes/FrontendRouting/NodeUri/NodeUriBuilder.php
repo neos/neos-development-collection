@@ -69,7 +69,7 @@ final class NodeUriBuilder
      * Returns a human-readable host relative uri for nodes in the live workspace.
      *
      * As the human-readable uris are only routed for nodes of the live workspace {@see EventSourcedFrontendNodeRoutePartHandler}
-     * Preview uris are build for other workspaces {@see previewUriFor}
+     * Absolute preview uris are build for other workspaces {@see previewUriFor}
      *
      * Cross-linking nodes
      * -------------------
@@ -83,14 +83,16 @@ final class NodeUriBuilder
      * Supported options
      * -----------------
      *
-     * forceAbsolute:
+     * These options will not be considered when building a preview uri {@see previewUriFor}
+     *
+     * - forceAbsolute:
      *   Absolute urls for non cross-linked nodes can be enforced via {@see Options::$forceAbsolute}.
      *   In which case the base uri determined by the request is used as host instead of a possibly configured site domain's host.
      *
-     * format:
+     * - format:
      *   todo
      *
-     * routingArguments:
+     * - routingArguments:
      *   todo
      *
      * Note that appending additional query parameters can be done via {@see UriHelper::uriWithAdditionalQueryParameters()}
@@ -101,7 +103,7 @@ final class NodeUriBuilder
     public function uriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
         if (!$nodeAddress->workspaceName->isLive()) {
-            return $this->previewUriFor($nodeAddress, $options);
+            return $this->previewUriFor($nodeAddress);
         }
 
         $routeValues = $options?->routingArguments ?? [];
@@ -126,20 +128,16 @@ final class NodeUriBuilder
     }
 
     /**
-     * Returns an uri with json encoded node address as query parameter.
+     * Returns a host absolute uri with json encoded node address as query parameter.
      *
-     * Supported options
-     * -----------------
-     *
-     * forceAbsolute:
-     *   Absolute urls can be build via {@see Options::$forceAbsolute}, by default host relative urls will be build.
-     *
-     * Note that other options are not considered for preview uri building.
+     * Any node address regarding of content repository, or workspace can be linked to.
+     * Live node address will still be encoded as query parameter and not resolved
+     * as human friendly url, for that {@see uriFor} must be used.
      *
      * @api
      * @throws NoMatchingRouteException in the unlike case the preview route definition is misconfigured
      */
-    public function previewUriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
+    public function previewUriFor(NodeAddress $nodeAddress): UriInterface
     {
         $routeValues = [];
         $routeValues['@action'] = strtolower('preview');
@@ -150,7 +148,7 @@ final class NodeUriBuilder
             new ResolveContext(
                 $this->baseUri,
                 $routeValues,
-                $options?->forceAbsolute ?? false,
+                true,
                 $this->uriPathPrefix,
                 $this->routeParameters
             )
