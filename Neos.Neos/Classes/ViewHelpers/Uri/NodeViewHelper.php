@@ -213,16 +213,17 @@ class NodeViewHelper extends AbstractViewHelper
 
         $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest($this->controllerContext->getRequest()->getHttpRequest());
 
+        $options = Options::create(forceAbsolute: $this->arguments['absolute']);
+        if ($format = $this->arguments['format']) {
+            $options = $options->withCustomFormat($format);
+        }
+        if ($routingArguments = $this->arguments['arguments']) {
+            $options = $options->withCustomRoutingArguments($routingArguments);
+        }
+
         $uri = '';
         try {
-            $uri = $nodeUriBuilder->uriFor(
-                $nodeAddress,
-                Options::create(
-                    forceAbsolute: $this->arguments['absolute'],
-                    format: $this->arguments['format'],
-                    routingArguments: $this->arguments['arguments']
-                )
-            );
+            $uri = $nodeUriBuilder->uriFor($nodeAddress, $options);
 
             if ($this->arguments['section'] !== '') {
                 $uri = $uri->withFragment($this->arguments['section']);

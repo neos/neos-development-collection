@@ -87,32 +87,41 @@ final class NodeUriBuilder
      *
      * - forceAbsolute:
      *   Absolute urls for non cross-linked nodes can be enforced via {@see Options::$forceAbsolute}.
-     *   In which case the base uri determined by the request is used as host instead of a possibly configured site domain's host.
+     *   In which case the base uri determined by the request is used as host
+     *   instead of a possibly configured site domain's host.
      *
      * - format:
-     *   todo
+     *   A custom format can be specified via {@see Options::withCustomFormat()}
      *
      * - routingArguments:
-     *   todo
+     *   Custom routing arguments can be specified via {@see Options::withCustomRoutingArguments()}
      *
-     * Note that appending additional query parameters can be done via {@see UriHelper::uriWithAdditionalQueryParameters()}
+     * Note that appending additional query parameters can be done
+     * via {@see UriHelper::uriWithAdditionalQueryParameters()}:
+     *
+     *   UriHelper::withAdditionalQueryParameters(
+     *     $this->nodeUriBuilder->uriFor(...),
+     *     ['q' => 'search term']
+     *   );
      *
      * @api
      * @throws NoMatchingRouteException
      */
     public function uriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
+        $options ??= Options::create();
+
         if (!$nodeAddress->workspaceName->isLive()) {
             return $this->previewUriFor($nodeAddress);
         }
 
-        $routeValues = $options?->routingArguments ?? [];
+        $routeValues = $options->routingArguments;
         $routeValues['node'] = $nodeAddress;
         $routeValues['@action'] = strtolower('show');
         $routeValues['@controller'] = strtolower('Frontend\Node');
         $routeValues['@package'] = strtolower('Neos.Neos');
 
-        if ($options?->format !== null && $options->format !== '') {
+        if ($options->format !== '') {
             $routeValues['@format'] = $options->format;
         }
 
@@ -120,7 +129,7 @@ final class NodeUriBuilder
             new ResolveContext(
                 $this->baseUri,
                 $routeValues,
-                $options?->forceAbsolute ?? false,
+                $options->forceAbsolute,
                 $this->uriPathPrefix,
                 $this->routeParameters
             )

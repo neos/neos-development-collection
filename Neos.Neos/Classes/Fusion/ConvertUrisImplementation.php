@@ -142,9 +142,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $nodeAddress = NodeAddress::fromNode($node);
 
         $unresolvedUris = [];
-        $options = Options::create(
-            forceAbsolute: $this->fusionValue('absolute'),
-        );
+        $options = Options::create(forceAbsolute: $this->fusionValue('absolute'));
 
         $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $options) {
             $resolvedUri = null;

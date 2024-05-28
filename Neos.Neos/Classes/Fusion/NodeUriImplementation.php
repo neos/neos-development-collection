@@ -151,11 +151,13 @@ class NodeUriImplementation extends AbstractFusionObject
             $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest(ServerRequest::fromGlobals());
         }
 
-        $options = Options::create(
-            forceAbsolute: $this->isAbsolute(),
-            format: $this->getFormat(),
-            routingArguments: $this->getAdditionalParams()
-        );
+        $options = Options::create(forceAbsolute: $this->isAbsolute());
+        if ($format = $this->getFormat()) {
+            $options = $options->withCustomFormat($format);
+        }
+        if ($routingArguments = $this->getAdditionalParams()) {
+            $options = $options->withCustomRoutingArguments($routingArguments);
+        }
 
         try {
             $resolvedUri = $nodeUriBuilder->uriFor(NodeAddress::fromNode($node), $options);
