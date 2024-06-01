@@ -6,7 +6,7 @@ namespace Neos\Neos\AssetUsage\Dto;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
 final readonly class AssetUsageNodeAddress
 {
     public function __construct(
-        public ContentStreamId $contentStreamId,
+        public WorkspaceName $workspaceName,
         public DimensionSpacePoint $dimensionSpacePoint,
         public NodeAggregateId $nodeAggregateId,
     ) {

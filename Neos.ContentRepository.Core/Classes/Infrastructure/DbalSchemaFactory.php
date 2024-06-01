@@ -116,6 +116,19 @@ final class DbalSchemaFactory
     }
 
     /**
+     * The WorkspaceName is an utf8mb4 string, we should be able to sort it properly, but we don't need unicode here.
+     *
+     * @see NodeTypeName
+     */
+    public static function columnForWorkspaceName(string $columnName): Column
+    {
+        return (new Column($columnName, Type::getType(Types::STRING)))
+            ->setLength(255)
+            ->setNotnull(true)
+            ->setCustomSchemaOption('collation', 'utf8mb4_unicode_520_ci');
+    }
+
+    /**
      * @param AbstractSchemaManager $schemaManager
      * @param Table[] $tables
      * @return Schema

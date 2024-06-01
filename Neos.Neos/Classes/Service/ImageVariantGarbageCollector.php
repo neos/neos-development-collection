@@ -77,7 +77,7 @@ class ImageVariantGarbageCollector
                 // then we are safe to remove the asset here.
                 if (
                     $usageItem instanceof AssetUsageReference
-                    && $usageItem->getContentStreamId()->equals($node->subgraphIdentity->contentStreamId)
+                    && $usageItem->getWorkspaceName()->equals($node->workspaceName)
                     && $usageItem->getOriginDimensionSpacePoint()->equals($node->originDimensionSpacePoint)
                     && $usageItem->getNodeAggregateId()->equals($node->aggregateId)
                 ) {

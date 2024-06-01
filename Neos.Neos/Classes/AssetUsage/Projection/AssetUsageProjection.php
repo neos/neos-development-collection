@@ -7,13 +7,12 @@ namespace Neos\Neos\AssetUsage\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Exception\ORMException;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
-use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
@@ -85,9 +84,9 @@ final class AssetUsageProjection implements ProjectionInterface
             );
         }
         $nodeAddress = new AssetUsageNodeAddress(
-            $event->getContentStreamId(),
+            $event->workspaceName,
             $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-            $event->getNodeAggregateId()
+            $event->nodeAggregateId
         );
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
     }
@@ -108,9 +107,9 @@ final class AssetUsageProjection implements ProjectionInterface
             );
         }
         $nodeAddress = new AssetUsageNodeAddress(
-            $event->getContentStreamId(),
+            $event->workspaceName,
             $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-            $event->getNodeAggregateId()
+            $event->nodeAggregateId
         );
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
     }
@@ -118,7 +117,7 @@ final class AssetUsageProjection implements ProjectionInterface
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         $this->repository->removeNode(
-            $event->getNodeAggregateId(),
+            $event->nodeAggregateId,
             $event->affectedOccupiedDimensionSpacePoints->toDimensionSpacePointSet()
         );
     }
@@ -129,42 +128,38 @@ final class AssetUsageProjection implements ProjectionInterface
         $this->repository->copyDimensions($event->sourceOrigin, $event->peerOrigin);
     }
 
-    public function whenContentStreamWasForked(ContentStreamWasForked $event): void
-    {
-        $this->repository->copyContentStream(
-            $event->sourceContentStreamId,
-            $event->newContentStreamId
-        );
-    }
-
     public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
-        $this->repository->removeContentStream($event->previousContentStreamId);
+        $this->repository->removeWorkspaceName($event->workspaceName);
     }
 
+    // @TODO: Check if asset is part of partially discarded
+    // use NodeIdsToPublishOrDiscard?
     public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
     {
-        $this->repository->removeContentStream($event->previousContentStreamId);
+        $this->repository->removeWorkspaceName($event->workspaceName);
     }
 
+    // @TODO: Check if asset is part of partially published
+    // use NodeIdsToPublishOrDiscard?
     public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event): void
     {
-        $this->repository->removeContentStream($event->previousSourceContentStreamId);
+        $this->repository->removeWorkspaceName($event->sourceWorkspaceName);
     }
 
     public function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
     {
-        $this->repository->removeContentStream($event->previousSourceContentStreamId);
+        $this->repository->removeWorkspaceName($event->targetWorkspaceName);
     }
 
     public function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
     {
-        $this->repository->removeContentStream($event->previousContentStreamId);
+        $this->repository->removeWorkspaceName($event->workspaceName);
     }
 
-    public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
+    public function whenWorkspaceWasRemoved(WorkspaceWasRemoved $event): void
     {
-        $this->repository->removeContentStream($event->contentStreamId);
+        $this->repository->removeWorkspaceName($event->workspaceName);
     }
 
 
@@ -260,13 +255,12 @@ final class AssetUsageProjection implements ProjectionInterface
             NodePropertiesWereSet::class,
             NodeAggregateWasRemoved::class,
             NodePeerVariantWasCreated::class,
-            ContentStreamWasForked::class,
             WorkspaceWasDiscarded::class,
             WorkspaceWasPartiallyDiscarded::class,
             WorkspaceWasPartiallyPublished::class,
             WorkspaceWasPublished::class,
             WorkspaceWasRebased::class,
-            ContentStreamWasRemoved::class,
+            WorkspaceWasRemoved::class
         ]);
     }
 
@@ -277,13 +271,12 @@ final class AssetUsageProjection implements ProjectionInterface
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
-            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
             WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
             WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
             WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
-            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
+            WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
