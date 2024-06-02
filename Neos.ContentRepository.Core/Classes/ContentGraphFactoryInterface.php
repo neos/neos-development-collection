@@ -16,8 +16,12 @@ namespace Neos\ContentRepository\Core;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 
 /**
  * Create implementations of ContentGraphs bound to a specific Workspace and/or ContentStream
@@ -32,4 +36,18 @@ interface ContentGraphFactoryInterface
     public function buildForWorkspace(WorkspaceName $workspaceName): ContentGraphInterface;
 
     public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface;
+
+    public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace;
+
+    public function getWorkspaces(): Workspaces;
+
+    public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream;
+
+    public function getContentStreams(): ContentStreams;
+
+    /**
+     * @return iterable<ContentStreamId>
+     * @internal This is currently only used by the {@see ContentStreamPruner} and might be removed in the future!
+     */
+    public function getUnusedAndRemovedContentStreamIds(): iterable;
 }

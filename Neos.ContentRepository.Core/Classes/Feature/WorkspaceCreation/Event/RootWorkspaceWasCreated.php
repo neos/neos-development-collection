@@ -19,9 +19,7 @@ use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 
 /**
  * Event triggered to indicate that a root workspace, i.e. a workspace without base workspace, was created.
@@ -35,8 +33,6 @@ final readonly class RootWorkspaceWasCreated implements EventInterface, EmbedsWo
 {
     public function __construct(
         public WorkspaceName $workspaceName,
-        public WorkspaceTitle $workspaceTitle,
-        public WorkspaceDescription $workspaceDescription,
         public ContentStreamId $newContentStreamId
     ) {
     }
@@ -50,8 +46,6 @@ final readonly class RootWorkspaceWasCreated implements EventInterface, EmbedsWo
     {
         return new self(
             WorkspaceName::fromString($values['workspaceName']),
-            WorkspaceTitle::fromString($values['workspaceTitle']),
-            WorkspaceDescription::fromString($values['workspaceDescription']),
             ContentStreamId::fromString($values['newContentStreamId']),
         );
     }

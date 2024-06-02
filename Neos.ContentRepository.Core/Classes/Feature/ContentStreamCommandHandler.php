@@ -35,7 +35,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistY
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsNotClosed;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -216,7 +216,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): void {
-        if ($commandHandlingDependencies->getContentStreamState($contentStreamId) === ContentStreamState::STATE_CLOSED) {
+        if ($commandHandlingDependencies->getContentStreamStatus($contentStreamId) === ContentStreamStatus::CLOSED) {
             throw new ContentStreamIsClosed(
                 'Content stream "' . $contentStreamId->value . '" is closed.',
                 1710260081
@@ -228,7 +228,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ContentStreamId $contentStreamId,
         CommandHandlingDependencies $commandHandlingDependencies
     ): void {
-        if ($commandHandlingDependencies->getContentStreamState($contentStreamId) !== ContentStreamState::STATE_CLOSED) {
+        if ($commandHandlingDependencies->getContentStreamStatus($contentStreamId) !== ContentStreamStatus::CLOSED) {
             throw new ContentStreamIsNotClosed(
                 'Content stream "' . $contentStreamId->value . '" is not closed.',
                 1710405911

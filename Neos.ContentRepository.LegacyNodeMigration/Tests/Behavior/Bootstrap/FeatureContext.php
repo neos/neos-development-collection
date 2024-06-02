@@ -123,11 +123,11 @@ class FeatureContext implements Context
     {
         $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
         $propertyMapper = $this->getObject(PropertyMapper::class);
-        $contentGraphFinder = $this->currentContentRepository->projectionState(\Neos\ContentRepository\Core\ContentGraphFinder::class);
+        $contentGraphAdapter = $this->currentContentRepository->projectionState(\Neos\ContentRepository\Core\ContentGraphAdapter::class);
         // FIXME: Dirty
-        $contentGraphFactory = (new \ReflectionClass($contentGraphFinder))
+        $contentGraphFactory = (new \ReflectionClass($contentGraphAdapter))
             ->getProperty('contentGraphFactory')
-            ->getValue($contentGraphFinder);
+            ->getValue($contentGraphAdapter);
         $nodeFactory = (new \ReflectionClass($contentGraphFactory))
             ->getProperty('nodeFactory')
             ->getValue($contentGraphFactory);

@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Service;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\ContentGraphAdapter;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\EventStore\EventStoreInterface;
 
 /**
- * For internal implementation details, see {@see ContentStreamFinder}.
+ * For internal implementation details, see {@see ContentGraphAdapter}.
  *
  * @api
  */
 class ContentStreamPruner implements ContentRepositoryServiceInterface
 {
-    private ?CommandResult $lastCommandResult;
-
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly EventStoreInterface $eventStore,
+        private readonly ContentGraphAdapter $contentGraphAdapter,
     ) {
     }
 
@@ -46,17 +46,23 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      */
     public function prune(bool $removeTemporary = false): iterable
     {
-        $unusedContentStreams = $this->contentRepository->getContentStreamFinder()->findUnusedContentStreams(
-            $removeTemporary
+        $status = [ContentStreamStatus::NO_LONGER_IN_USE, ContentStreamStatus::REBASE_ERROR];
+        if ($removeTemporary) {
+            $status[] = ContentStreamStatus::CREATED;
+            $status[] = ContentStreamStatus::FORKED;
+        }
+        $unusedContentStreams = $this->contentRepository->getContentStreams()->filter(
+            static fn (ContentStream $contentStream) => in_array($contentStream->status, $status, true),
         );
-
+        $unusedContentStreamIds = [];
         foreach ($unusedContentStreams as $contentStream) {
-            $this->lastCommandResult = $this->contentRepository->handle(
-                RemoveContentStream::create($contentStream)
+            $this->contentRepository->handle(
+                RemoveContentStream::create($contentStream->id)
             );
+            $unusedContentStreamIds[] = $contentStream->id;
         }
 
-        return $unusedContentStreams;
+        return $unusedContentStreamIds;
     }
 
     /**
@@ -68,34 +74,24 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      *
      *   - Otherwise, we cannot replay the other content streams correctly (if the base content streams are missing).
      *
-     * @return iterable<int,ContentStreamId> the identifiers of the removed content streams
+     * @return iterable<ContentStreamId> the identifiers of the removed content streams
      */
     public function pruneRemovedFromEventStream(): iterable
     {
-        $removedContentStreams = $this->contentRepository->getContentStreamFinder()
-            ->findUnusedAndRemovedContentStreams();
-
-        foreach ($removedContentStreams as $removedContentStream) {
+        $removedContentStreamIds = $this->contentGraphAdapter->getUnusedAndRemovedContentStreamIds();
+        foreach ($removedContentStreamIds as $removedContentStream) {
             $streamName = ContentStreamEventStreamName::fromContentStreamId($removedContentStream)
                 ->getEventStreamName();
             $this->eventStore->deleteStream($streamName);
         }
-
-        return $removedContentStreams;
+        return $removedContentStreamIds;
     }
 
     public function pruneAll(): void
     {
-        $contentStreamIds = $this->contentRepository->getContentStreamFinder()->findAllIds();
-
-        foreach ($contentStreamIds as $contentStreamId) {
-            $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName();
+        foreach ($this->contentRepository->getContentStreams() as $contentStream) {
+            $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStream->id)->getEventStreamName();
             $this->eventStore->deleteStream($streamName);
         }
-    }
-
-    public function getLastCommandResult(): ?CommandResult
-    {
-        return $this->lastCommandResult;
     }
 }

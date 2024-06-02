@@ -8,12 +8,10 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 
 /**
  * Utility class that provides functionality to initialize a Content Repository instance (i.e. create the first
@@ -48,8 +46,6 @@ final readonly class ContentRepositoryBootstrapper
         $this->contentRepository->handle(
             CreateRootWorkspace::create(
                 $liveWorkspaceName,
-                WorkspaceTitle::fromString('Live'),
-                WorkspaceDescription::fromString('Public live workspace'),
                 ContentStreamId::create()
             )
         );

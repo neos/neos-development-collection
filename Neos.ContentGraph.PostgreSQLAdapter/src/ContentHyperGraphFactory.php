@@ -8,17 +8,21 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\ContentGraphFactoryInterface;
-use Neos\ContentRepository\Core\ContentGraphFinder;
+use Neos\ContentRepository\Core\ContentGraphAdapter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreams;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 
 /**
  * @internal only used within
- * @see ContentGraphFinder
+ * @see ContentGraphAdapter
  */
 final readonly class ContentHyperGraphFactory implements ContentGraphFactoryInterface
 {
@@ -60,5 +64,35 @@ final readonly class ContentHyperGraphFactory implements ContentGraphFactoryInte
     public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
     {
         return new ContentHyperGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNamePrefix, $workspaceName, $contentStreamId);
+    }
+
+    public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
+    {
+        // TODO: Implement findWorkspaceByName() method.
+        return null;
+    }
+
+    public function getWorkspaces(): Workspaces
+    {
+        // TODO: Implement getWorkspaces() method.
+        return Workspaces::createEmpty();
+    }
+
+    public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
+    {
+        // TODO: Implement findContentStreamById() method.
+        return null;
+    }
+
+    public function getContentStreams(): ContentStreams
+    {
+        // TODO: Implement getContentStreams() method.
+        return ContentStreams::createEmpty();
+    }
+
+    public function getUnusedAndRemovedContentStreamIds(): iterable
+    {
+        // TODO: Implement getUnusedAndRemovedContentStreamIds() method.
+        return [];
     }
 }

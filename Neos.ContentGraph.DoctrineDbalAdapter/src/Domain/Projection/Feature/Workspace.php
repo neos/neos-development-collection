@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -18,7 +18,7 @@ trait Workspace
     private function createWorkspace(WorkspaceName $workspaceName, ?WorkspaceName $baseWorkspaceName, ContentStreamId $contentStreamId): void
     {
         $this->dbal->insert($this->tableNames->workspace(), [
-            'workspaceName' => $workspaceName->value,
+            'name' => $workspaceName->value,
             'baseWorkspaceName' => $baseWorkspaceName?->value,
             'currentContentStreamId' => $contentStreamId->value,
             'status' => WorkspaceStatus::UP_TO_DATE->value
@@ -29,7 +29,7 @@ trait Workspace
     {
         $this->dbal->delete(
             $this->tableNames->workspace(),
-            ['workspaceName' => $workspaceName->value]
+            ['name' => $workspaceName->value]
         );
     }
 
@@ -52,7 +52,7 @@ trait Workspace
         $this->dbal->update($this->tableNames->workspace(), [
             'currentContentStreamId' => $contentStreamId->value,
         ], [
-            'workspaceName' => $workspaceName->value
+            'name' => $workspaceName->value
         ]);
     }
 
@@ -62,7 +62,7 @@ trait Workspace
             UPDATE ' . $this->tableNames->workspace() . '
             SET status = :upToDate
             WHERE
-                workspacename = :workspaceName
+                name = :workspaceName
         ', [
             'upToDate' => WorkspaceStatus::UP_TO_DATE->value,
             'workspaceName' => $workspaceName->value
@@ -89,7 +89,7 @@ trait Workspace
             SET
                 status = :outdated
             WHERE
-                workspacename = :workspaceName
+                name = :workspaceName
         ', [
             'outdated' => WorkspaceStatus::OUTDATED->value,
             'workspaceName' => $workspaceName->value
@@ -103,7 +103,7 @@ trait Workspace
             SET
                 status = :outdatedConflict
             WHERE
-                workspacename = :workspaceName
+                name = :workspaceName
         ', [
             'outdatedConflict' => WorkspaceStatus::OUTDATED_CONFLICT->value,
             'workspaceName' => $workspaceName->value

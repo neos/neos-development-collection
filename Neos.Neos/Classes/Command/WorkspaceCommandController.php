@@ -20,16 +20,12 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlr
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspaces;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -203,10 +199,7 @@ class WorkspaceCommandController extends CommandController
             $contentRepositoryInstance->handle(CreateWorkspace::create(
                 WorkspaceName::fromString($workspace),
                 WorkspaceName::fromString($baseWorkspace),
-                WorkspaceTitle::fromString($title ?: $workspace),
-                WorkspaceDescription::fromString($description ?: $workspace),
                 ContentStreamId::create(),
-                $workspaceOwnerUserId !== null ? \Neos\ContentRepository\Core\SharedModel\User\UserId::fromString($workspaceOwnerUserId->value) : null,
             ));
         } catch (WorkspaceAlreadyExists $workspaceAlreadyExists) {
             $this->outputLine('Workspace "%s" already exists', [$workspace]);

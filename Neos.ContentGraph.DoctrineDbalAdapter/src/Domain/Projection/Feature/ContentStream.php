@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\EventStore\Model\Event\Version;
 
 /**
@@ -15,22 +15,22 @@ use Neos\EventStore\Model\Event\Version;
  */
 trait ContentStream
 {
-    private function createContentStream(ContentStreamId $contentStreamId, ContentStreamState $state, ?ContentStreamId $sourceContentStreamId = null): void
+    private function createContentStream(ContentStreamId $contentStreamId, ContentStreamStatus $status, ?ContentStreamId $sourceContentStreamId = null): void
     {
         $this->dbal->insert($this->tableNames->contentStream(), [
-            'contentStreamId' => $contentStreamId->value,
+            'id' => $contentStreamId->value,
             'sourceContentStreamId' => $sourceContentStreamId?->value,
             'version' => 0,
-            'state' => $state->value,
+            'status' => $status->value,
         ]);
     }
 
-    private function updateContentStreamState(ContentStreamId $contentStreamId, ContentStreamState $state): void
+    private function updateContentStreamStatus(ContentStreamId $contentStreamId, ContentStreamStatus $status): void
     {
         $this->dbal->update($this->tableNames->contentStream(), [
-            'state' => $state->value,
+            'status' => $status->value,
         ], [
-            'contentStreamId' => $contentStreamId->value
+            'id' => $contentStreamId->value
         ]);
     }
 
@@ -39,7 +39,7 @@ trait ContentStream
         $this->dbal->update($this->tableNames->contentStream(), [
             'removed' => true,
         ], [
-            'contentStreamId' => $contentStreamId->value
+            'id' => $contentStreamId->value
         ]);
     }
 
@@ -48,7 +48,7 @@ trait ContentStream
         $this->dbal->update($this->tableNames->contentStream(), [
             'version' => $version->value,
         ], [
-            'contentStreamId' => $contentStreamId->value,
+            'id' => $contentStreamId->value,
         ]);
     }
 }

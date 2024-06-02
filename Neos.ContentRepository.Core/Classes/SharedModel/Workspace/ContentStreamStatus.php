@@ -51,43 +51,43 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
  *
  * @api
  */
-enum ContentStreamState: string implements \JsonSerializable
+enum ContentStreamStatus: string implements \JsonSerializable
 {
     /**
      * the content stream was created, but not yet assigned to a workspace.
      *
      * **temporary state** which should not appear if the system is idle (for content streams which are used with workspaces).
      */
-    case STATE_CREATED = 'CREATED';
+    case CREATED = 'CREATED';
 
     /**
-     * STATE_FORKED means the content stream was forked from an existing content stream, but not yet assigned
+     * FORKED means the content stream was forked from an existing content stream, but not yet assigned
      * to a workspace.
      *
      * **temporary state** which should not appear if the system is idle (for content streams which are used with workspaces).
      */
-    case STATE_FORKED = 'FORKED';
+    case FORKED = 'FORKED';
 
     /**
      * the content stream is currently referenced as the "active" content stream by a workspace.
      */
-    case STATE_IN_USE_BY_WORKSPACE = 'IN_USE_BY_WORKSPACE';
+    case IN_USE_BY_WORKSPACE = 'IN_USE_BY_WORKSPACE';
 
     /**
      * a workspace was tried to be rebased, and during the rebase an error occured. This is the content stream
      * which contains the errored state - so that we can recover content from it (probably manually)
      */
-    case STATE_REBASE_ERROR = 'REBASE_ERROR';
+    case REBASE_ERROR = 'REBASE_ERROR';
 
     /**
      * the content stream was closed and must no longer accept new events
      */
-    case STATE_CLOSED = 'CLOSED';
+    case CLOSED = 'CLOSED';
 
     /**
      * the content stream is not used anymore, and can be removed.
      */
-    case STATE_NO_LONGER_IN_USE = 'NO_LONGER_IN_USE';
+    case NO_LONGER_IN_USE = 'NO_LONGER_IN_USE';
 
     public static function fromString(string $value): self
     {

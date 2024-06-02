@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature;
 
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\StreamName;
 
@@ -41,6 +42,7 @@ final readonly class ContentStreamEventStreamName
         return str_starts_with($streamName->value, self::EVENT_STREAM_NAME_PREFIX);
     }
 
+    /** @todo rather use {@see EmbedsContentStreamId} instead!? */
     public static function extractContentStreamIdFromStreamName(StreamName $streamName): ContentStreamId
     {
         if (!self::isContentStreamStreamName($streamName)) {

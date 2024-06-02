@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
-use Neos\ContentRepository\Core\ContentGraphFinder;
+use Neos\ContentRepository\Core\ContentGraphAdapter;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -125,9 +125,9 @@ trait CRTestSuiteRuntimeVariables
 
     public function getCurrentSubgraph(): ContentSubgraphInterface
     {
-        $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
+        $contentGraphAdapter = $this->currentContentRepository->projectionState(ContentGraphAdapter::class);
 
-        return $contentGraphFinder->getByWorkspaceName($this->currentWorkspaceName)->getSubgraph(
+        return $contentGraphAdapter->getContentGraphByWorkspaceName($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints
         );

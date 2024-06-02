@@ -43,7 +43,6 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlr
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\BaseWorkspaceEqualsWorkspaceException;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\CircularRelationBetweenWorkspacesException;
@@ -64,7 +63,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\CommandThatFailedDuringR
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -142,10 +141,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             new WorkspaceWasCreated(
                 $command->workspaceName,
                 $command->baseWorkspaceName,
-                $command->workspaceTitle,
-                $command->workspaceDescription,
                 $command->newContentStreamId,
-                $command->workspaceOwner
             )
         );
 
@@ -178,8 +174,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         $events = Events::with(
             new RootWorkspaceWasCreated(
                 $command->workspaceName,
-                $command->workspaceTitle,
-                $command->workspaceDescription,
                 $newContentStreamId
             )
         );
@@ -327,7 +321,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         if (!$commandHandlingDependencies->contentStreamExists($oldWorkspaceContentStreamId)) {
             throw new \DomainException('Cannot rebase a workspace with a stateless content stream', 1711718314);
         }
-        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamState($oldWorkspaceContentStreamId);
+        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamStatus($oldWorkspaceContentStreamId);
 
         // 0) close old content stream
         $commandHandlingDependencies->handle(
@@ -460,7 +454,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         if (!$commandHandlingDependencies->contentStreamExists($oldWorkspaceContentStreamId)) {
             throw new \DomainException('Cannot publish nodes on a workspace with a stateless content stream', 1710410114);
         }
-        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamState($oldWorkspaceContentStreamId);
+        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamStatus($oldWorkspaceContentStreamId);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
         // 1) close old content stream
@@ -601,7 +595,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         if (!$commandHandlingDependencies->contentStreamExists($contentGraph->getContentStreamId())) {
             throw new \DomainException('Cannot discard nodes on a workspace with a stateless content stream', 1710408112);
         }
-        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamState($contentGraph->getContentStreamId());
+        $oldWorkspaceContentStreamIdState = $commandHandlingDependencies->getContentStreamStatus($contentGraph->getContentStreamId());
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
 
         // 1) close old content stream

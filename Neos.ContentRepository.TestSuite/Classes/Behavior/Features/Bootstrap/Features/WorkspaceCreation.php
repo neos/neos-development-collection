@@ -21,11 +21,8 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWork
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 
@@ -67,8 +64,6 @@ trait WorkspaceCreation
 
         $command = CreateRootWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
-            new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
-            new WorkspaceDescription($commandArguments['workspaceDescription'] ?? ('The workspace "' . $commandArguments['workspaceName'] . '"')),
             ContentStreamId::fromString($commandArguments['newContentStreamId'])
         );
 
@@ -99,10 +94,7 @@ trait WorkspaceCreation
         $command = CreateWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             WorkspaceName::fromString($commandArguments['baseWorkspaceName']),
-            new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
-            new WorkspaceDescription($commandArguments['workspaceDescription'] ?? 'The workspace "' . $commandArguments['workspaceName'] . '"'),
             ContentStreamId::fromString($commandArguments['newContentStreamId']),
-            isset($commandArguments['workspaceOwner']) ? UserId::fromString($commandArguments['workspaceOwner']) : null
         );
 
         $this->currentContentRepository->handle($command);

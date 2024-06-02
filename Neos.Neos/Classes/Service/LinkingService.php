@@ -312,7 +312,7 @@ class LinkingService
                 $workspace = $contentRepository->findWorkspaceByName($nodeAddress->workspaceName);
                 $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
                     $nodeAddress->dimensionSpacePoint,
-                    $workspace && !$workspace->isPublicWorkspace()
+                    $workspace && !$workspace->workspaceName->isLive()
                         ? VisibilityConstraints::withoutRestrictions()
                         : VisibilityConstraints::frontend()
                 );
@@ -354,7 +354,7 @@ class LinkingService
         $mainRequest = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($mainRequest);
-        $createLiveUri = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::disabled());
+        $createLiveUri = $workspace && $workspace->workspaceName->isLive() && $node->tags->contain(SubtreeTag::disabled());
 
         if ($addQueryString === true) {
             // legacy feature see https://github.com/neos/neos-development-collection/issues/5076

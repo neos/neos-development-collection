@@ -20,8 +20,8 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
   Scenario: content streams are marked as IN_USE_BY_WORKSPACE properly after creation
-    Then the content stream "cs-identifier" has state "IN_USE_BY_WORKSPACE"
-    Then the content stream "non-existing" has state ""
+    Then the content stream "cs-identifier" has status "IN_USE_BY_WORKSPACE"
+    Then the content stream "non-existing" does not exist
 
   Scenario: on creating a nested workspace, the new content stream is marked as IN_USE_BY_WORKSPACE.
     When the command CreateWorkspace is executed with payload:
@@ -30,7 +30,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
 
-    Then the content stream "user-cs-identifier" has state "IN_USE_BY_WORKSPACE"
+    Then the content stream "user-cs-identifier" has status "IN_USE_BY_WORKSPACE"
 
   Scenario: when rebasing a nested workspace, the new content stream will be marked as IN_USE_BY_WORKSPACE; and the old content stream is NO_LONGER_IN_USE.
     When the command CreateWorkspace is executed with payload:
@@ -43,8 +43,8 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | workspaceName | "user-test" |
 
     When I am in workspace "user-test" and dimension space point {}
-    Then the current content stream has state "IN_USE_BY_WORKSPACE"
-    And the content stream "user-cs-identifier" has state "NO_LONGER_IN_USE"
+    Then the current content stream has status "IN_USE_BY_WORKSPACE"
+    And the content stream "user-cs-identifier" has status "NO_LONGER_IN_USE"
 
 
   Scenario: when pruning content streams, NO_LONGER_IN_USE content streams will be properly cleaned from the graph projection.

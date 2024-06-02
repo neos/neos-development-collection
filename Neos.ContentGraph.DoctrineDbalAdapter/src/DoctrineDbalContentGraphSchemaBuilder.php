@@ -112,23 +112,23 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createWorkspaceTable(): Table
     {
         $workspaceTable = self::createTable($this->tableNames->workspace(), [
-            DbalSchemaFactory::columnForWorkspaceName('workspacename')->setNotnull(true),
-            DbalSchemaFactory::columnForWorkspaceName('baseworkspacename')->setNotnull(false),
-            DbalSchemaFactory::columnForContentStreamId('currentcontentstreamid')->setNotNull(true),
+            DbalSchemaFactory::columnForWorkspaceName('name')->setNotnull(true),
+            DbalSchemaFactory::columnForWorkspaceName('baseWorkspaceName')->setNotnull(false),
+            DbalSchemaFactory::columnForContentStreamId('currentContentStreamId')->setNotNull(true),
             (new Column('status', self::type(Types::BINARY)))->setLength(20)->setNotnull(false),
         ]);
 
-        return $workspaceTable->setPrimaryKey(['workspacename']);
+        return $workspaceTable->setPrimaryKey(['name']);
     }
 
     private function createContentStreamTable(): Table
     {
         return self::createTable($this->tableNames->contentStream(), [
-            DbalSchemaFactory::columnForContentStreamId('contentStreamId')->setNotnull(true),
+            DbalSchemaFactory::columnForContentStreamId('id')->setNotnull(true),
             (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId')->setNotnull(false),
             // Should become a DB ENUM (unclear how to configure with DBAL) or int (latter needs adaption to code)
-            (new Column('state', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
+            (new Column('status', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
             (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
         ]);
     }
