@@ -159,7 +159,7 @@ final class AssetUsageProjection implements ProjectionInterface
 
     public function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
     {
-        $this->repository->removeWorkspaceName($event->targetWorkspaceName);
+        $this->repository->removeWorkspaceName($event->sourceWorkspaceName);
     }
 
     public function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
@@ -265,6 +265,8 @@ final class AssetUsageProjection implements ProjectionInterface
             NodePropertiesWereSet::class,
             NodeAggregateWasRemoved::class,
             NodePeerVariantWasCreated::class,
+            // NodeGeneralizationVariantWasCreated::class,
+            // NodeSpecializationVariantWasCreated::class,
             WorkspaceWasDiscarded::class,
             WorkspaceWasPartiallyDiscarded::class,
             WorkspaceWasPartiallyPublished::class,
@@ -281,6 +283,9 @@ final class AssetUsageProjection implements ProjectionInterface
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
+            // TODO
+            // NodeGeneralizationVariantWasCreated::class => "",
+            // NodeSpecializationVariantWasCreated::class => "",
             WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
             WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
             WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),
