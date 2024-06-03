@@ -54,7 +54,7 @@ trait MigrationsTrait
      */
     public function iRunTheFollowingNodeMigrationWithoutPublishingOnSuccess(string $sourceWorkspaceName, string $targetWorkspaceName, string $contentStreamId, PyStringNode $string): void
     {
-        $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, $targetWorkspaceName, $contentStreamId, $string,false);
+        $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, $targetWorkspaceName, $contentStreamId, $string, false);
     }
 
     /**
