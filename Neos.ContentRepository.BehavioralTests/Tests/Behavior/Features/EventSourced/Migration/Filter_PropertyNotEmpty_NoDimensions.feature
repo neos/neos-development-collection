@@ -23,13 +23,11 @@ Feature: Filter - Property not empty
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId             | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /name1 (has text value set)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -39,7 +37,6 @@ Feature: Filter - Property not empty
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "Original name1"}                |
-    And the graph projection is fully up to date
 
     # Node /name2 (has text value empty)
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -50,7 +47,6 @@ Feature: Filter - Property not empty
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": ""}                              |
-    And the graph projection is fully up to date
 
       # no node name (has text value not set)
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -60,7 +56,6 @@ Feature: Filter - Property not empty
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": null}                            |
-    And the graph projection is fully up to date
 
     # no node name (has text value not set, and null will be ignored as unset)
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -70,7 +65,6 @@ Feature: Filter - Property not empty
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {}                                        |
-    And the graph projection is fully up to date
 
 
   Scenario: PropertyNotEmpty
@@ -91,7 +85,7 @@ Feature: Filter - Property not empty
               newSerializedValue: 'fixed value'
     """
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "na-name1" to lead to node cs-identifier;na-name1;{}
     And I expect this node to have the following properties:
       | Key  | Value            |

@@ -11,7 +11,7 @@ prototype(Neos.Neos:RawContent.NodeHeader) < prototype(Neos.Fusion:Component) {
   renderer = afx`
     <header>
       <i class={'fas fa-' + props.icon + ' ' + props.icon} @if={props.icon}></i>&nbsp;
-      {(node.tethered || q(node).is('[instanceof Neos.Neos:Document]')) ? node.label : Translation.translate(props.labelParts[2], node.nodeType.label, [], props.labelParts[1], props.labelParts[0])}
+      {(node.tethered || q(node).is('[instanceof Neos.Neos:Document]')) ? q(node).label() : Translation.translate(props.labelParts[2], node.nodeType.label, [], props.labelParts[1], props.labelParts[0])}
       <span @if={props.visibilityInformations}> - {props.visibilityInformations}</span>
     </header>
   `

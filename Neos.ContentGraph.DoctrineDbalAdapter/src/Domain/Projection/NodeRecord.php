@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
@@ -41,50 +42,65 @@ final class NodeRecord
         public SerializedPropertyValues $properties,
         public NodeTypeName $nodeTypeName,
         public NodeAggregateClassification $classification,
-        /** Transient node name to store a node name after fetching a node with hierarchy (not always available) */
         public ?NodeName $nodeName,
         public Timestamps $timestamps,
     ) {
     }
 
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     */
     public function updateToDatabase(Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
-        $databaseConnection->update(
-            $tableNames->node(),
-            [
-                'nodeaggregateid' => $this->nodeAggregateId->value,
-                'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
-                'properties' => json_encode($this->properties),
-                'nodetypename' => $this->nodeTypeName->value,
-                'classification' => $this->classification->value,
-                'lastmodified' => $this->timestamps->lastModified,
-                'originallastmodified' => $this->timestamps->originalLastModified,
-            ],
-            [
-                'relationanchorpoint' => $this->relationAnchorPoint->value
-            ],
-            [
-                'lastmodified' => Types::DATETIME_IMMUTABLE,
-                'originallastmodified' => Types::DATETIME_IMMUTABLE,
-            ]
-        );
+        try {
+            $propertiesJson = json_encode($this->properties, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode node properties: %s', $e->getMessage()), 1716485838, $e);
+        }
+        try {
+            $databaseConnection->update(
+                $tableNames->node(),
+                [
+                    'nodeaggregateid' => $this->nodeAggregateId->value,
+                    'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
+                    'properties' => $propertiesJson,
+                    'nodetypename' => $this->nodeTypeName->value,
+                    'name' => $this->nodeName?->value,
+                    'classification' => $this->classification->value,
+                    'lastmodified' => $this->timestamps->lastModified,
+                    'originallastmodified' => $this->timestamps->originalLastModified,
+                ],
+                [
+                    'relationanchorpoint' => $this->relationAnchorPoint->value
+                ],
+                [
+                    'lastmodified' => Types::DATETIME_IMMUTABLE,
+                    'originallastmodified' => Types::DATETIME_IMMUTABLE,
+                ]
+            );
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to update node in database: %s', $e->getMessage()), 1716473799, $e);
+        }
     }
 
     /**
      * @param array<string,mixed> $databaseRow
-     * @throws \Exception
      */
     public static function fromDatabaseRow(array $databaseRow): self
     {
+        try {
+            $originDimensionSpacePoint = json_decode($databaseRow['origindimensionspacepoint'], true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-decode origin dimension space point: %s', $e->getMessage()), 1716473882, $e);
+        }
+        try {
+            $propertiesArray = json_decode($databaseRow['properties'], true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-decode node properties: %s', $e->getMessage()), 1716485918, $e);
+        }
         return new self(
             NodeRelationAnchorPoint::fromInteger($databaseRow['relationanchorpoint']),
             NodeAggregateId::fromString($databaseRow['nodeaggregateid']),
-            json_decode($databaseRow['origindimensionspacepoint'], true),
+            $originDimensionSpacePoint,
             $databaseRow['origindimensionspacepointhash'],
-            SerializedPropertyValues::fromArray(json_decode($databaseRow['properties'], true)),
+            SerializedPropertyValues::fromArray($propertiesArray),
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::from($databaseRow['classification']),
             isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null,
@@ -101,7 +117,6 @@ final class NodeRecord
      * Insert a node record with the given data and return it.
      *
      * @param array<string,string> $originDimensionSpacePoint
-     * @throws \Doctrine\DBAL\Exception
      */
     public static function createNewInDatabase(
         Connection $databaseConnection,
@@ -116,24 +131,21 @@ final class NodeRecord
         ?NodeName $nodeName,
         Timestamps $timestamps,
     ): self {
-        $relationAnchorPoint = $databaseConnection->transactional(function ($databaseConnection) use (
-            $tableNames,
-            $nodeAggregateId,
-            $originDimensionSpacePoint,
-            $originDimensionSpacePointHash,
-            $properties,
-            $nodeTypeName,
-            $classification,
-            $timestamps
-        ) {
-            $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNames);
-            $dimensionSpacePoints->insertDimensionSpacePointByHashAndCoordinates($originDimensionSpacePointHash, $originDimensionSpacePoint);
+        $dimensionSpacePoints = new DimensionSpacePointsRepository($databaseConnection, $tableNames);
+        $dimensionSpacePoints->insertDimensionSpacePointByHashAndCoordinates($originDimensionSpacePointHash, $originDimensionSpacePoint);
+        try {
+            $propertiesJson = json_encode($properties, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode node properties: %s', $e->getMessage()), 1716485868, $e);
+        }
 
+        try {
             $databaseConnection->insert($tableNames->node(), [
                 'nodeaggregateid' => $nodeAggregateId->value,
                 'origindimensionspacepointhash' => $originDimensionSpacePointHash,
-                'properties' => json_encode($properties),
+                'properties' => $propertiesJson,
                 'nodetypename' => $nodeTypeName->value,
+                'name' => $nodeName?->value,
                 'classification' => $classification->value,
                 'created' => $timestamps->created,
                 'originalcreated' => $timestamps->originalCreated,
@@ -145,9 +157,11 @@ final class NodeRecord
                 'lastmodified' => Types::DATETIME_IMMUTABLE,
                 'originallastmodified' => Types::DATETIME_IMMUTABLE,
             ]);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to add node to database: %s', $e->getMessage()), 1716473919, $e);
+        }
 
-            return NodeRelationAnchorPoint::fromInteger((int)$databaseConnection->lastInsertId());
-        });
+        $relationAnchorPoint = NodeRelationAnchorPoint::fromInteger((int)$databaseConnection->lastInsertId());
 
         return new self(
             $relationAnchorPoint,
@@ -164,8 +178,6 @@ final class NodeRecord
 
     /**
      * Creates a copy of this NodeRecord with a new anchor point.
-     *
-     * @throws \Doctrine\DBAL\Exception
      */
     public static function createCopyFromNodeRecord(
         Connection $databaseConnection,

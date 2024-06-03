@@ -41,7 +41,7 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
             if ($strategy) {
                 $rebaseCommand = $rebaseCommand->withErrorHandlingStrategy($strategy);
             }
-            $this->contentRepository->handle($rebaseCommand)->block();
+            $this->contentRepository->handle($rebaseCommand);
         }
 
         return $outdatedWorkspaces;

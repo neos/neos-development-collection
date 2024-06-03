@@ -36,16 +36,12 @@ trait ContentStreamForking
     public function theCommandForkContentStreamIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $sourceContentStreamId = isset($commandArguments['sourceContentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['sourceContentStreamId'])
-            : $this->currentContentStreamId;
-
         $command = ForkContentStream::create(
             ContentStreamId::fromString($commandArguments['contentStreamId']),
-            $sourceContentStreamId,
+            ContentStreamId::fromString($commandArguments['sourceContentStreamId']),
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**

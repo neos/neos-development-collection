@@ -19,17 +19,16 @@ Feature: Run integrity violation detection regarding sibling sorting
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
 
   Scenario: Create two siblings and set the sorting to the same value
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "nody-mc-nodeface"                                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
@@ -39,6 +38,7 @@ Feature: Run integrity violation detection regarding sibling sorting
       | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "noderella-mc-nodeface"                                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
@@ -46,7 +46,6 @@ Feature: Run integrity violation detection regarding sibling sorting
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
       | nodeAggregateClassification | "regular"                                                |
-    And the graph projection is fully up to date
     And I set the following position:
       | Key                  | Value              |
       | contentStreamId      | "cs-identifier"    |

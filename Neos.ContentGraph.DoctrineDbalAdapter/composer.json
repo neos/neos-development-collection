@@ -8,6 +8,9 @@
     "docs": "https://docs.neos.io/"
   },
   "license": "GPL-3.0+",
+  "provide": {
+    "neos/contentrepositoryregistry-storageclient": "self.version"
+  },
   "require": {
     "neos/contentrepository-core": "self.version",
     "doctrine/dbal": "^2.13",

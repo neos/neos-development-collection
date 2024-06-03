@@ -59,21 +59,21 @@ trait NodeCreationInternals
                 // a) happy path, the explicitly requested succeeding sibling also exists in this dimension space point
                 $interdimensionalSiblings[] = new InterdimensionalSibling(
                     $coveredDimensionSpacePoint,
-                    $variantSucceedingSibling->nodeAggregateId,
+                    $variantSucceedingSibling->aggregateId,
                 );
                 continue;
             }
 
             // check the other siblings succeeding in the origin dimension space point
             foreach ($originAlternativeSucceedingSiblings as $originSibling) {
-                $alternativeVariantSucceedingSibling = $subGraph->findNodeById($originSibling->nodeAggregateId);
+                $alternativeVariantSucceedingSibling = $subGraph->findNodeById($originSibling->aggregateId);
                 if (!$alternativeVariantSucceedingSibling) {
                     continue;
                 }
                 // b) one of the further succeeding sibling exists in this dimension space point
                 $interdimensionalSiblings[] = new InterdimensionalSibling(
                     $coveredDimensionSpacePoint,
-                    $alternativeVariantSucceedingSibling->nodeAggregateId,
+                    $alternativeVariantSucceedingSibling->aggregateId,
                 );
                 continue 2;
             }

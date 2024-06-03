@@ -29,13 +29,11 @@ Feature: Create node specialization
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeName            | parentNodeAggregateId  | succeedingSiblingNodeAggregateId | nodeTypeName                                | tetheredDescendantNodeAggregateIds                                                         |
@@ -49,7 +47,7 @@ Feature: Create node specialization
       | invariable-mc-nodeface | invariable-document | nody-mc-nodeface       |                                  | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
 
   Scenario: check the tree state before the specialization
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    When I am in workspace "live" and dimension space point {"example":"source"}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 3 levels deep should be:
       | Level | nodeAggregateId        |
       | 0     | lady-eleonode-rootford |
@@ -91,7 +89,6 @@ Feature: Create node specialization
       | specializationOrigin   | {"example":"spec"}                                                                                                                        |
       | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"leafSpec"},"nodeAggregateId":null}] |
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 12 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
@@ -106,7 +103,7 @@ Feature: Create node specialization
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
@@ -143,7 +140,7 @@ Feature: Create node specialization
     And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"spec"}
+    When I am in workspace "live" and dimension space point {"example":"spec"}
     Then I expect the subgraph projection to consist of exactly 9 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 3 levels deep should be:
@@ -174,7 +171,7 @@ Feature: Create node specialization
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                                       |
+      | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -218,7 +215,7 @@ Feature: Create node specialization
       | cs-identifier;eldest-mc-nodeface;{"example":"source"}  |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"leafSpec"}
+    When I am in workspace "live" and dimension space point {"example":"leafSpec"}
     Then I expect the subgraph projection to consist of exactly 9 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -238,7 +235,7 @@ Feature: Create node specialization
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                                       |
+      | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -288,7 +285,6 @@ Feature: Create node specialization
       | nodeAggregateId | "nody-mc-nodeface"     |
       | sourceOrigin    | {"example":"source"}   |
       | targetOrigin    | {"example":"leafSpec"} |
-    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
       | nodeAggregateId | "nody-mc-nodeface"   |
@@ -317,7 +313,6 @@ Feature: Create node specialization
       | specializationOrigin   | {"example":"spec"}                                                  |
       | specializationSiblings | [{"dimensionSpacePoint":{"example":"spec"},"nodeAggregateId":null}] |
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 15 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"example":"source"} to exist in the content graph
@@ -335,7 +330,7 @@ Feature: Create node specialization
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
@@ -372,7 +367,7 @@ Feature: Create node specialization
     And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"},{"example":"spec"},{"example":"leafSpec"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"spec"}
+    When I am in workspace "live" and dimension space point {"example":"spec"}
     Then I expect the subgraph projection to consist of exactly 9 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -392,7 +387,7 @@ Feature: Create node specialization
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                                       |
+      | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |
@@ -436,7 +431,7 @@ Feature: Create node specialization
       | cs-identifier;eldest-mc-nodeface;{"example":"source"}  |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"leafSpec"}
+    When I am in workspace "live" and dimension space point {"example":"leafSpec"}
     Then I expect the subgraph projection to consist of exactly 9 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -456,7 +451,7 @@ Feature: Create node specialization
       | cs-identifier;youngest-mc-nodeface;{"example":"source"} |
     And I expect node aggregate identifier "elder-mc-nodeface" and node path "elder-document" to lead to node cs-identifier;elder-mc-nodeface;{"example":"source"}
     And I expect this node to have the following preceding siblings:
-      | NodeDiscriminator                                       |
+      | NodeDiscriminator                                     |
       | cs-identifier;eldest-mc-nodeface;{"example":"source"} |
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                       |

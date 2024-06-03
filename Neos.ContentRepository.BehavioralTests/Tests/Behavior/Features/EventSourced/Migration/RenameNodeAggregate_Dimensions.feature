@@ -21,36 +21,32 @@ Feature: Rename Node Aggregate
     And I am in content repository "default"
 
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live"
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                                      |
-      | nodeAggregateId     | "lady-eleonode-rootford"                                                   |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document (in "de")
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | nodeName                      | "foo"                                     |
-      | originDimensionSpacePoint     | {"language": "de"}                        |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | initialPropertyValues         | {"text": "Original text"}                 |
-    And the graph projection is fully up to date
+      | Key                       | Value                                     |
+      | nodeAggregateId           | "sir-david-nodenborough"                  |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
+      | nodeName                  | "foo"                                     |
+      | originDimensionSpacePoint | {"language": "de"}                        |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
+      | initialPropertyValues     | {"text": "Original text"}                 |
 
     # Node /document (in "en")
     When the command CreateNodeVariant is executed with payload:
-      | Key                      | Value                    |
-      | nodeAggregateId  | "sir-david-nodenborough" |
-      | sourceOrigin             | {"language":"de"}        |
-      | targetOrigin             | {"language":"en"}        |
-    And the graph projection is fully up to date
+      | Key             | Value                    |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"language":"de"}        |
+      | targetOrigin    | {"language":"en"}        |
 
 
   Scenario: Rename Node Aggregate
@@ -72,10 +68,10 @@ Feature: Rename Node Aggregate
 
 
     # the original content stream has not been touched
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect the node "sir-david-nodenborough" to have the name "foo"
 
-    When I am in the active content stream of workspace "live" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect the node "sir-david-nodenborough" to have the name "foo"
 
     # the node was changed inside the new content stream, across all dimensions

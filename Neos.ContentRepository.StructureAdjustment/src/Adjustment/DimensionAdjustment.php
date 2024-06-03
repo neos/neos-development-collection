@@ -9,12 +9,13 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 
 class DimensionAdjustment
 {
     public function __construct(
-        protected ProjectedNodeIterator $projectedNodeIterator,
+        protected ContentGraphInterface $contentGraph,
         protected InterDimensionalVariationGraph $interDimensionalVariationGraph,
         protected NodeTypeManager $nodeTypeManager,
     ) {
@@ -30,7 +31,7 @@ class DimensionAdjustment
             return [];
         }
         if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
-            foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
+            foreach ($this->contentGraph->findNodeAggregatesByType($nodeTypeName) as $nodeAggregate) {
                 if (
                     !$nodeAggregate->coveredDimensionSpacePoints->equals($this->interDimensionalVariationGraph->getDimensionSpacePoints())
                 ) {
@@ -42,7 +43,7 @@ class DimensionAdjustment
             }
             return [];
         }
-        foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
+        foreach ($this->contentGraph->findNodeAggregatesByType($nodeTypeName) as $nodeAggregate) {
             foreach ($nodeAggregate->getNodes() as $node) {
                 foreach (
                     $nodeAggregate->getCoverageByOccupant(

@@ -19,7 +19,7 @@ trait NodeTypeWithFallbackProvider
 {
     protected function getNodeType(Node $node): NodeType
     {
-        $nodeTypeManager = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId)->getNodeTypeManager();
+        $nodeTypeManager = $this->contentRepositoryRegistry->get($node->contentRepositoryId)->getNodeTypeManager();
 
         return $nodeTypeManager->getNodeType($node->nodeTypeName)
             ?? $nodeTypeManager->getNodeType(NodeTypeNameFactory::forFallback())

@@ -147,7 +147,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         }
         throw new \InvalidArgumentException(sprintf(
             'The node %s does not exist in this set',
-            $subject->nodeAggregateId->value
+            $subject->aggregateId->value
         ), 1542901216);
     }
 
@@ -210,7 +210,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     public function toNodeAggregateIds(): NodeAggregateIds
     {
         return NodeAggregateIds::create(...$this->map(
-            fn (Node $node): NodeAggregateId => $node->nodeAggregateId,
+            fn (Node $node): NodeAggregateId => $node->aggregateId,
         ));
     }
 }

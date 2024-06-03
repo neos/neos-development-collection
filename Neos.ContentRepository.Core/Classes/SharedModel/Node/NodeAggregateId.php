@@ -26,18 +26,11 @@ final readonly class NodeAggregateId implements \JsonSerializable
     /**
      * A preg pattern to match against node aggregate identifiers
      */
-    public const PATTERN = '/^([a-z0-9\-]{1,64})$/';
+    private const PATTERN = '/^([a-z0-9\-]{1,64})$/';
 
     private function __construct(
         public string $value
     ) {
-        if (!preg_match(self::PATTERN, $value)) {
-            throw new \InvalidArgumentException(
-                'Invalid node aggregate identifier "' . $value
-                . '" (a node aggregate identifier must only contain lowercase characters, numbers and the "-" sign).',
-                1505840197862
-            );
-        }
     }
 
     public static function create(): self
@@ -47,7 +40,19 @@ final readonly class NodeAggregateId implements \JsonSerializable
 
     public static function fromString(string $value): self
     {
+        if (!self::hasValidFormat($value)) {
+            throw new \InvalidArgumentException(
+                'Invalid node aggregate identifier "' . $value
+                . '" (a node aggregate identifier must only contain lowercase characters, numbers and the "-" sign).',
+                1505840197862
+            );
+        }
         return new self($value);
+    }
+
+    public static function tryFromString(string $value): ?self
+    {
+        return self::hasValidFormat($value) ? new self($value) : null;
     }
 
     public function equals(self $other): bool
@@ -58,5 +63,10 @@ final readonly class NodeAggregateId implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    private static function hasValidFormat(string $value): bool
+    {
+        return preg_match(self::PATTERN, $value) === 1;
     }
 }

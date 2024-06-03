@@ -43,7 +43,7 @@ trait ProjectedNodeAggregateTrait
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
         $this->initializeCurrentNodeAggregate(function (ContentGraphInterface $contentGraph) use ($nodeAggregateId) {
             $currentNodeAggregate = $contentGraph->findNodeAggregateById($nodeAggregateId);
-            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s".', $nodeAggregateId->value, $this->currentContentStreamId->value));
+            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current workspace "%s".', $nodeAggregateId->value, $this->currentWorkspaceName->value));
             return $currentNodeAggregate;
         });
     }
@@ -175,11 +175,11 @@ trait ProjectedNodeAggregateTrait
         $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
         $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) use ($expectedNodeAggregateIds) {
             $expectedDiscriminators = array_values(array_map(function (NodeAggregateId $nodeAggregateId) {
-                return $this->currentContentStreamId->value . ';' . $nodeAggregateId->value;
+                return $this->currentWorkspaceName->value . ';' . $nodeAggregateId->value;
             }, iterator_to_array($expectedNodeAggregateIds)));
             $actualDiscriminators = array_values(array_map(
                 fn (NodeAggregate $parentNodeAggregate): string
-                    => $parentNodeAggregate->contentStreamId->value . ';' . $parentNodeAggregate->nodeAggregateId->value,
+                    => $parentNodeAggregate->workspaceName->value . ';' . $parentNodeAggregate->nodeAggregateId->value,
                 iterator_to_array(
                     $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findParentNodeAggregates(
                         $nodeAggregate->nodeAggregateId
@@ -218,12 +218,12 @@ trait ProjectedNodeAggregateTrait
         $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
         $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) use ($expectedNodeAggregateIds) {
             $expectedDiscriminators = array_values(array_map(
-                fn (NodeAggregateId $nodeAggregateId): string => $this->currentContentStreamId->value . ':' . $nodeAggregateId->value,
+                fn (NodeAggregateId $nodeAggregateId): string => $this->currentWorkspaceName->value . ':' . $nodeAggregateId->value,
                 iterator_to_array($expectedNodeAggregateIds)
             ));
             $actualDiscriminators = array_values(array_map(
                 fn (NodeAggregate $parentNodeAggregate): string
-                    => $parentNodeAggregate->contentStreamId->value . ':' . $parentNodeAggregate->nodeAggregateId->value,
+                    => $parentNodeAggregate->workspaceName->value . ':' . $parentNodeAggregate->nodeAggregateId->value,
                 iterator_to_array($this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findChildNodeAggregates(
                     $nodeAggregate->nodeAggregateId
                 ))

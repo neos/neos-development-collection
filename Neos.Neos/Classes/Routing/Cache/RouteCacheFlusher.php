@@ -54,7 +54,7 @@ class RouteCacheFlusher
      */
     public function registerNodeChange(Node $node)
     {
-        $identifier = $node->nodeAggregateId->value;
+        $identifier = $node->aggregateId->value;
         if (in_array($identifier, $this->tagsToFlush)) {
             return;
         }

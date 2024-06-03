@@ -150,6 +150,7 @@ trait NodeReferencing
 
         $events = Events::with(
             new NodeReferencesWereSet(
+                $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->sourceNodeAggregateId,
                 $affectedOrigins,

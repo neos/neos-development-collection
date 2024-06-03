@@ -51,7 +51,7 @@ final readonly class NodeDiscriminator implements \JsonSerializable
     {
         return new self(
             $node->subgraphIdentity->contentStreamId,
-            $node->nodeAggregateId,
+            $node->aggregateId,
             $node->originDimensionSpacePoint
         );
     }

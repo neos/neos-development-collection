@@ -80,3 +80,6 @@ Neos\Neos\AssetUsage\GlobalAssetUsageService:
   arguments:
     3:
       setting: Neos.Neos.assetUsage.contentRepositories
+
+Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface:
+  className: Neos\Neos\Domain\NodeLabel\DelegatingNodeLabelRenderer

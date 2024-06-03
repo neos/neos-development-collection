@@ -96,7 +96,7 @@
                             <f:if condition="{nodeInformation.documentNode}">
                                 <f:then>
                                     <neos:link.node node="{nodeInformation.documentNode}" target="_blank"
-                                                    title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: nodeInformation.documentNode.workspace.title})}">
+                                                    title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: nodeInformation.workspace.workspaceTitle.value})}">
                                 <span title="{f:render(partial: 'Module/Shared/DocumentBreadcrumb', arguments: {node: nodeInformation.documentNode})}" data-neos-toggle="tooltip">{nodeInformation.documentNode.label}</span>
                                         <i class="fas fa-external-link-alt"></i>
                                     </neos:link.node>

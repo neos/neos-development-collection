@@ -56,7 +56,6 @@ class FeatureContext implements BehatContext
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
         $this->persistenceManager = $this->getObject(PersistenceManagerInterface::class);
 
-        $this->setupCRTestSuiteTrait();
     }
 
     /*

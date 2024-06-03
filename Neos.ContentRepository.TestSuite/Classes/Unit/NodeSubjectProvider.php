@@ -35,10 +35,12 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -87,17 +89,13 @@ final class NodeSubjectProvider
     ): Node {
         $serializedDefaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->propertyConverter);
         return Node::create(
-            ContentSubgraphIdentity::create(
-                ContentRepositoryId::fromString('default'),
-                ContentStreamId::fromString('cs-id'),
-                DimensionSpacePoint::createWithoutDimensions(),
-                VisibilityConstraints::withoutRestrictions()
-            ),
+            ContentRepositoryId::fromString('default'),
+            WorkspaceName::forLive(),
+            DimensionSpacePoint::createWithoutDimensions(),
             NodeAggregateId::create(),
             OriginDimensionSpacePoint::createWithoutDimensions(),
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
             $nodeType->name,
-            $nodeType,
             new PropertyCollection(
                 $propertyValues
                     ? $serializedDefaultPropertyValues->merge($propertyValues)
@@ -111,7 +109,10 @@ final class NodeSubjectProvider
                 new \DateTimeImmutable(),
                 new \DateTimeImmutable(),
                 new \DateTimeImmutable()
-            )
+            ),
+            VisibilityConstraints::withoutRestrictions(),
+            $nodeType,
+            ContentStreamId::fromString('cs-id'),
         );
     }
 }

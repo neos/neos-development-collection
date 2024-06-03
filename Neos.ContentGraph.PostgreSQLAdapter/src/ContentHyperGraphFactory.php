@@ -2,9 +2,9 @@
 
 namespace Neos\ContentGraph\PostgreSQLAdapter;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\ContentGraphFactoryInterface;
 use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class ContentHyperGraphFactory implements ContentGraphFactoryInterface
 {
     public function __construct(
-        private PostgresDbalClientInterface $databaseClient,
+        private Connection $dbal,
         private NodeFactory $nodeFactory,
         private ContentRepositoryId $contentRepositoryId,
         private NodeTypeManager $nodeTypeManager,
@@ -38,7 +38,7 @@ final readonly class ContentHyperGraphFactory implements ContentGraphFactoryInte
             'Workspace'
         ));
 
-        $row = $this->databaseClient->getConnection()->executeQuery(
+        $row = $this->dbal->executeQuery(
             '
                 SELECT * FROM ' . $tableName . '
                 WHERE workspaceName = :workspaceName
@@ -57,6 +57,6 @@ final readonly class ContentHyperGraphFactory implements ContentGraphFactoryInte
 
     public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
     {
-        return new ContentHyperGraph($this->databaseClient, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNamePrefix, $workspaceName, $contentStreamId);
+        return new ContentHyperGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNamePrefix, $workspaceName, $contentStreamId);
     }
 }

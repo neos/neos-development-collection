@@ -12,10 +12,11 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\ContentGraphFactoryInterface;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -29,7 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
 {
     public function __construct(
-        private DbalClientInterface $client,
+        private Connection $dbal,
         private NodeFactory $nodeFactory,
         private ContentRepositoryId $contentRepositoryId,
         private NodeTypeManager $nodeTypeManager,
@@ -46,26 +47,32 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
             'workspace'
         ));
 
-        $row = $this->client->getConnection()->executeQuery(
-            '
-                SELECT * FROM ' . $tableName . '
-                WHERE workspaceName = :workspaceName
-                LIMIT 1
-            ',
-            [
+        $currentContentStreamIdStatement = <<<SQL
+            SELECT
+                currentcontentstreamid
+            FROM
+                {$tableName}
+            WHERE
+                workspaceName = :workspaceName
+            LIMIT 1
+        SQL;
+        try {
+            $currentContentStreamId = $this->dbal->fetchOne($currentContentStreamIdStatement, [
                 'workspaceName' => $workspaceName->value,
-            ]
-        )->fetchAssociative();
+            ]);
+        } catch (Exception $e) {
+            throw new \RuntimeException(sprintf('Failed to load workspace content stream id from database: %s', $e->getMessage()), 1716486077, $e);
+        }
 
-        if ($row === false) {
+        if ($currentContentStreamId === false) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
 
-        return $this->buildForWorkspaceAndContentStream($workspaceName, ContentStreamId::fromString($row['currentcontentstreamid']));
+        return $this->buildForWorkspaceAndContentStream($workspaceName, ContentStreamId::fromString($currentContentStreamId));
     }
 
     public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraph
     {
-        return new ContentGraph($this->client, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $contentStreamId);
+        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $contentStreamId);
     }
 }

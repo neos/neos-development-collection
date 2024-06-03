@@ -17,34 +17,32 @@ Feature: Enable a node aggregate
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
-      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
+      | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName |
+      | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document |
 
   Scenario: Try to enable a node aggregate in a non-existing content stream
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
-      | workspaceName      | "i-do-not-exist"         |
-      | nodeAggregateId      | "sir-david-nodenborough" |
+      | workspaceName                | "i-do-not-exist"         |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
   Scenario: Try to enable a non-existing node aggregate
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value            |
-      | nodeAggregateId      | "i-do-not-exist" |
+      | nodeAggregateId              | "i-do-not-exist" |
       | nodeVariantSelectionStrategy | "allVariants"    |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
@@ -52,14 +50,14 @@ Feature: Enable a node aggregate
   Scenario: Try to enable an already enabled node aggregate
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | nodeAggregateId      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
     Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-identifier"
 
   Scenario: Try to enable a node aggregate in a non-existing dimension space point
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                       |
-      | nodeAggregateId      | "sir-david-nodenborough"    |
+      | nodeAggregateId              | "sir-david-nodenborough"    |
       | coveredDimensionSpacePoint   | {"undeclared": "undefined"} |
       | nodeVariantSelectionStrategy | "allVariants"               |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
@@ -67,7 +65,7 @@ Feature: Enable a node aggregate
   Scenario: Try to disable a node aggregate in a dimension space point it does not cover
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
-      | nodeAggregateId      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "en"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"

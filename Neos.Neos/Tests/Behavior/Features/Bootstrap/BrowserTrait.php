@@ -122,9 +122,7 @@ trait BrowserTrait
             $this->currentContentStreamId,
             $this->currentDimensionSpacePoint,
             $nodeAggregateId,
-            $this->currentContentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamId($this->currentContentStreamId)
-                ->workspaceName
+            $this->currentWorkspaceName,
         );
     }
 
@@ -146,10 +144,8 @@ trait BrowserTrait
         $this->currentNodeAddresses[$alias] = new NodeAddress(
             $this->currentContentStreamId,
             $this->currentDimensionSpacePoint,
-            $node->nodeAggregateId,
-            $this->currentContentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamId($this->currentContentStreamId)
-                ->workspaceName
+            $node->aggregateId,
+            $this->currentWorkspaceName,
         );
     }
 

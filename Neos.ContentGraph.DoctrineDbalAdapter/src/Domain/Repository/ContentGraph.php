@@ -16,7 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception as DriverException;
-use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
@@ -24,7 +24,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -73,7 +72,7 @@ final class ContentGraph implements ContentGraphInterface
     private array $subgraphs = [];
 
     public function __construct(
-        private readonly DbalClientInterface $client,
+        private readonly Connection $dbal,
         private readonly NodeFactory $nodeFactory,
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
@@ -81,7 +80,17 @@ final class ContentGraph implements ContentGraphInterface
         public readonly WorkspaceName $workspaceName,
         public readonly ContentStreamId $contentStreamId
     ) {
-        $this->nodeQueryBuilder = new NodeQueryBuilder($this->client->getConnection(), $this->tableNames);
+        $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $this->tableNames);
+    }
+
+    public function getContentRepositoryId(): ContentRepositoryId
+    {
+        return $this->contentRepositoryId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public function getSubgraph(
@@ -97,7 +106,7 @@ final class ContentGraph implements ContentGraphInterface
                     $this->contentStreamId,
                     $dimensionSpacePoint,
                     $visibilityConstraints,
-                    $this->client,
+                    $this->dbal,
                     $this->nodeFactory,
                     $this->nodeTypeManager,
                     $this->tableNames
@@ -171,12 +180,17 @@ final class ContentGraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
+            $this->workspaceName,
             $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
     }
 
     /**
+     * Parent node aggregates can have a greater dimension space coverage than the given child.
+     * Thus, it is not enough to just resolve them from the nodes and edges connected to the given child node aggregate.
+     * Instead, we resolve all parent node aggregate ids instead and fetch the complete aggregates from there.
+     *
      * @return iterable<NodeAggregate>
      */
     public function findParentNodeAggregates(
@@ -218,7 +232,7 @@ final class ContentGraph implements ContentGraphInterface
             ->andWhere('cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash');
 
         $queryBuilder = $this->createQueryBuilder()
-            ->select('n.*, h.name, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
+            ->select('n.*, h.contentstreamid, h.subtreetags, dsp.dimensionspacepoint AS covereddimensionspacepoint')
             ->from($this->nodeQueryBuilder->tableNames->node(), 'n')
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->innerJoin('h', $this->nodeQueryBuilder->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
@@ -232,6 +246,7 @@ final class ContentGraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $this->fetchRows($queryBuilder),
+            $this->workspaceName,
             $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -244,6 +259,17 @@ final class ContentGraph implements ContentGraphInterface
             ->setParameter('tetheredClassification', NodeAggregateClassification::CLASSIFICATION_TETHERED->value);
 
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
+    }
+
+    public function findChildNodeAggregateByName(
+        NodeAggregateId $parentNodeAggregateId,
+        NodeName $name
+    ): ?NodeAggregate {
+        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamId)
+            ->andWhere('cn.name = :relationName')
+            ->setParameter('relationName', $name->value);
+
+        return $this->mapQueryBuilderToNodeAggregate($queryBuilder);
     }
 
     public function getDimensionSpacePointsOccupiedByChildNodeName(NodeName $nodeName, NodeAggregateId $parentNodeAggregateId, OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint, DimensionSpacePointSet $dimensionSpacePointsToCheck): DimensionSpacePointSet
@@ -259,7 +285,7 @@ final class ContentGraph implements ContentGraphInterface
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash IN (:dimensionSpacePointHashes)')
-            ->andWhere('h.name = :nodeName')
+            ->andWhere('n.name = :nodeName')
             ->setParameters([
                 'parentNodeAggregateId' => $parentNodeAggregateId->value,
                 'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->hash,
@@ -277,33 +303,19 @@ final class ContentGraph implements ContentGraphInterface
         return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
-    /**
-     * @return iterable<NodeAggregate>
-     */
-    public function findChildNodeAggregatesByName(
-        NodeAggregateId $parentNodeAggregateId,
-        NodeName $name
-    ): iterable {
-        $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamId)
-            ->andWhere('ch.name = :relationName')
-            ->setParameter('relationName', $name->value);
-
-        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
-    }
-
     public function countNodes(): int
     {
         $queryBuilder = $this->createQueryBuilder()
             ->select('COUNT(*)')
             ->from($this->nodeQueryBuilder->tableNames->node());
-        $result = $queryBuilder->execute();
-        if (!$result instanceof Result) {
-            throw new \RuntimeException(sprintf('Failed to count nodes. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);
-        }
         try {
+            $result = $queryBuilder->execute();
+            if (!$result instanceof Result) {
+                throw new \RuntimeException(sprintf('Failed to count nodes. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);
+            }
             return (int)$result->fetchOne();
-        } catch (DriverException | DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444590, $e);
+        } catch (DriverException | DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
         }
     }
 
@@ -311,13 +323,23 @@ final class ContentGraph implements ContentGraphInterface
     {
         return array_map(
             static fn (array $row) => NodeTypeName::fromString($row['nodetypename']),
-            $this->fetchRows($this->nodeQueryBuilder->buildfindUsedNodeTypeNamesQuery())
+            $this->fetchRows($this->nodeQueryBuilder->buildFindUsedNodeTypeNamesQuery())
         );
     }
 
     private function createQueryBuilder(): QueryBuilder
     {
-        return $this->client->getConnection()->createQueryBuilder();
+        return $this->dbal->createQueryBuilder();
+    }
+
+    private function mapQueryBuilderToNodeAggregate(QueryBuilder $queryBuilder): ?NodeAggregate
+    {
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            $this->fetchRows($queryBuilder),
+            $this->workspaceName,
+            $this->contentStreamId,
+            VisibilityConstraints::withoutRestrictions()
+        );
     }
 
     /**
@@ -328,6 +350,7 @@ final class ContentGraph implements ContentGraphInterface
     {
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $this->fetchRows($queryBuilder),
+            $this->workspaceName,
             $this->contentStreamId,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -338,24 +361,17 @@ final class ContentGraph implements ContentGraphInterface
      */
     private function fetchRows(QueryBuilder $queryBuilder): array
     {
-        $result = $queryBuilder->execute();
-        if (!$result instanceof Result) {
-            throw new \RuntimeException(sprintf('Failed to execute query. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701443535);
-        }
         try {
+            $result = $queryBuilder->execute();
+            if (!$result instanceof Result) {
+                throw new \RuntimeException(sprintf('Failed to execute query. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701443535);
+            }
             return $result->fetchAllAssociative();
-        } catch (DriverException | DBALException $e) {
+        } catch (DriverException | DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
         }
     }
 
-    /** The workspace this content graph is operating on */
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
-    }
-
-    /** @internal The content stream id where the workspace name points to for this instance */
     public function getContentStreamId(): ContentStreamId
     {
         return $this->contentStreamId;

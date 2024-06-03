@@ -46,7 +46,7 @@ trait WorkspaceDiscarding
             $command = $command->withNewContentStreamId(ContentStreamId::fromString($commandArguments['newContentStreamId']));
         }
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
 
@@ -67,7 +67,7 @@ trait WorkspaceDiscarding
             $command = $command->withNewContentStreamId(ContentStreamId::fromString($commandArguments['newContentStreamId']));
         }
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
 

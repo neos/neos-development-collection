@@ -29,13 +29,11 @@ Feature: Create node generalization
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | originDimensionSpacePoint | nodeName            | parentNodeAggregateId  | succeedingSiblingNodeAggregateId | nodeTypeName                                                   | tetheredDescendantNodeAggregateIds                                                            |
     # We have to add another node since root nodes have no origin dimension space points and thus cannot be varied.
@@ -56,13 +54,11 @@ Feature: Create node generalization
       | nodeAggregateId | "nody-mc-nodeface"    |
       | sourceOrigin    | {"example":"source"}  |
       | targetOrigin    | {"example":"general"} |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
       | nodeAggregateId | "elder-mc-nodeface"   |
       | sourceOrigin    | {"example":"source"}  |
       | targetOrigin    | {"example":"general"} |
-    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                  |
       | nodeAggregateId | "youngest-mc-nodeface" |
@@ -106,7 +102,6 @@ Feature: Create node generalization
       | generalizationOrigin      | {"example":"general"}                                                                                                                     |
       | variantSucceedingSiblings | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"specB"},"nodeAggregateId":null}] |
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 14 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"general"} to exist in the content graph
@@ -123,7 +118,7 @@ Feature: Create node generalization
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"general"} to exist in the content graph
     And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"rootGeneral"},{"example":"general"},{"example":"source"},{"example":"specB"}]
@@ -160,7 +155,7 @@ Feature: Create node generalization
     And I expect this node aggregate to occupy dimension space points [{"example":"source"},{"example":"general"}]
     And I expect this node aggregate to cover dimension space points [{"example":"general"},{"example":"source"},{"example":"specB"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"source"}
+    When I am in workspace "live" and dimension space point {"example":"source"}
     Then I expect the subgraph projection to consist of exactly 9 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -221,7 +216,7 @@ Feature: Create node generalization
       | cs-identifier;eldest-mc-nodeface;{"example":"general"}  |
     And I expect this node to have no succeeding siblings
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"general"}
+    When I am in workspace "live" and dimension space point {"example":"general"}
     Then I expect the subgraph projection to consist of exactly 8 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -286,7 +281,7 @@ Feature: Create node generalization
     And I expect this node to have no succeeding siblings
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"rootGeneral"}
+    When I am in workspace "live" and dimension space point {"example":"rootGeneral"}
     Then I expect the subgraph projection to consist of exactly 1 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
@@ -299,7 +294,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"specB"}
+    When I am in workspace "live" and dimension space point {"example":"specB"}
     Then I expect the subgraph projection to consist of exactly 8 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -370,7 +365,6 @@ Feature: Create node generalization
       | nodeAggregateId | "nody-mc-nodeface"   |
       | sourceOrigin    | {"example":"source"} |
       | targetOrigin    | {"example":"specB"}  |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
@@ -421,7 +415,6 @@ Feature: Create node generalization
       | generalizationOrigin      | {"example":"general"}                                                  |
       | variantSucceedingSiblings | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId":null}] |
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 15 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"general"} to exist in the content graph
@@ -439,7 +432,7 @@ Feature: Create node generalization
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"rootGeneral"},{"example":"general"},{"example":"source"},{"example":"specB"}]
@@ -472,7 +465,7 @@ Feature: Create node generalization
     And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"general"}
+    When I am in workspace "live" and dimension space point {"example":"general"}
     Then I expect the subgraph projection to consist of exactly 6 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -511,7 +504,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "specB"}
+    When I am in workspace "live" and dimension space point {"example": "specB"}
     Then I expect the subgraph projection to consist of exactly 6 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -556,7 +549,6 @@ Feature: Create node generalization
       | nodeAggregateId | "nody-mc-nodeface"    |
       | sourceOrigin    | {"example":"source"}  |
       | targetOrigin    | {"example":"general"} |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                |
@@ -607,7 +599,6 @@ Feature: Create node generalization
       | peerOrigin             | {"example":"specB"}                                                  |
       | peerSucceedingSiblings | [{"dimensionSpacePoint":{"example":"specB"},"nodeAggregateId":null}] |
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 15 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"general"} to exist in the content graph
@@ -625,7 +616,7 @@ Feature: Create node generalization
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"rootGeneral"},{"example":"general"},{"example":"source"},{"example":"specB"}]
@@ -658,7 +649,7 @@ Feature: Create node generalization
     And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"general"}
+    When I am in workspace "live" and dimension space point {"example":"general"}
     Then I expect the subgraph projection to consist of exactly 6 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -697,7 +688,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "specB"}
+    When I am in workspace "live" and dimension space point {"example": "specB"}
     Then I expect the subgraph projection to consist of exactly 6 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -742,7 +733,6 @@ Feature: Create node generalization
       | nodeAggregateId | "nody-mc-nodeface"        |
       | sourceOrigin    | {"example":"source"}      |
       | targetOrigin    | {"example":"rootGeneral"} |
-    And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
@@ -793,7 +783,6 @@ Feature: Create node generalization
       | generalizationOrigin      | {"example":"general"}                                                                                                                     |
       | variantSucceedingSiblings | [{"dimensionSpacePoint":{"example":"general"},"nodeAggregateId":null},{"dimensionSpacePoint":{"example":"specB"},"nodeAggregateId":null}] |
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 15 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;eldest-mc-nodeface;{"example":"general"} to exist in the content graph
@@ -811,7 +800,7 @@ Feature: Create node generalization
     And I expect a node identified by cs-identifier;youngest-mc-nodeface;{"example":"source"} to exist in the content graph
     And I expect a node identified by cs-identifier;invariable-mc-nodeface;{"example":"source"} to exist in the content graph
 
-    When I am in the active content stream of workspace "live"
+    When I am in workspace "live"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
     And I expect this node aggregate to cover dimension space points [{"example":"rootGeneral"},{"example":"general"},{"example":"source"},{"example":"specB"}]
@@ -844,7 +833,7 @@ Feature: Create node generalization
     And I expect this node aggregate to occupy dimension space points [{"example":"source"}]
     And I expect this node aggregate to cover dimension space points [{"example":"source"}]
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example":"rootGeneral"}
+    When I am in workspace "live" and dimension space point {"example":"rootGeneral"}
     Then I expect the subgraph projection to consist of exactly 4 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -867,7 +856,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "general"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
     Then I expect the subgraph projection to consist of exactly 6 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
@@ -906,7 +895,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "youngest-mc-nodeface" and node path "youngest-document" to lead to no node
     And I expect node aggregate identifier "invariable-mc-nodeface" and node path "document/invariable-document" to lead to no node
 
-    When I am in the active content stream of workspace "live" and dimension space point {"example": "specB"}
+    When I am in workspace "live" and dimension space point {"example": "specB"}
     Then I expect the subgraph projection to consist of exactly 6 nodes
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:

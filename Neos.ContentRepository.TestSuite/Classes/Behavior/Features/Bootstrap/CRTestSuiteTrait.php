@@ -49,7 +49,6 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\Subtre
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\EventStore\EventStoreInterface;
 use PHPUnit\Framework\Assert;
 
@@ -85,13 +84,6 @@ trait CRTestSuiteTrait
     use WorkspaceDiscarding;
     use WorkspacePublishing;
 
-    protected function setupCRTestSuiteTrait(): void
-    {
-        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
-            CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
-        }
-    }
-
     /**
      * @BeforeScenario
      * @throws \Exception
@@ -124,7 +116,6 @@ trait CRTestSuiteTrait
                 $propertyOrMethodName = \mb_substr($line['Value'], \mb_strlen('$this->'));
                 $value = match ($propertyOrMethodName) {
                     'currentNodeAggregateId' => $this->getCurrentNodeAggregateId()->value,
-                    'contentStreamId' => $this->currentContentStreamId->value,
                     default => method_exists($this, $propertyOrMethodName) ? (string)$this->$propertyOrMethodName() : (string)$this->$propertyOrMethodName,
                 };
             } else {
@@ -138,18 +129,6 @@ trait CRTestSuiteTrait
         }
 
         return $eventPayload;
-    }
-
-    /**
-     * @When /^the graph projection is fully up to date$/
-     */
-    public function theGraphProjectionIsFullyUpToDate(): void
-    {
-        if ($this->lastCommandOrEventResult === null) {
-            throw new \RuntimeException('lastCommandOrEventResult not filled; so I cannot block!');
-        }
-        $this->lastCommandOrEventResult->block();
-        $this->lastCommandOrEventResult = null;
     }
 
     /**
@@ -229,7 +208,7 @@ trait CRTestSuiteTrait
             $actualLevel = $flattenedSubtree[$i]->level;
             Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel);
             $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
-            $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
+            $actualNodeAggregateId = $flattenedSubtree[$i]->node->aggregateId;
             Assert::assertTrue(
                 $expectedNodeAggregateId->equals($actualNodeAggregateId),
                 'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId->value . '", actual: "' . $actualNodeAggregateId->value . '"'
@@ -288,7 +267,13 @@ trait CRTestSuiteTrait
      */
     public function theCurrentContentStreamHasState(string $expectedState): void
     {
-        $this->theContentStreamHasState($this->currentContentStreamId->value, $expectedState);
+        $this->theContentStreamHasState(
+            $this->currentContentRepository
+                ->getWorkspaceFinder()
+                ->findOneByName($this->currentWorkspaceName)
+                ->currentContentStreamId->value,
+            $expectedState
+        );
     }
 
     /**
@@ -299,7 +284,6 @@ trait CRTestSuiteTrait
         /** @var ContentStreamPruner $contentStreamPruner */
         $contentStreamPruner = $this->getContentRepositoryService(new ContentStreamPrunerFactory());
         $contentStreamPruner->prune();
-        $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
     }
 
     /**

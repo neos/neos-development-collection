@@ -48,12 +48,10 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsTethered;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsAbstract;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
@@ -173,14 +171,13 @@ trait ConstraintChecks
 
     /**
      * @param NodeType $nodeType
-     * @throws NodeTypeNotFoundException the configured child nodeType doesnt exist
+     * @throws NodeTypeNotFound the configured child nodeType doesnt exist
      */
     protected function requireTetheredDescendantNodeTypesToExist(NodeType $nodeType): void
     {
-        // this getter throws if any of the child nodeTypes doesnt exist!
-        $tetheredNodeTypes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType);
-        foreach ($tetheredNodeTypes as $tetheredNodeType) {
-            $this->requireTetheredDescendantNodeTypesToExist($tetheredNodeType);
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $nodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
+            $this->requireTetheredDescendantNodeTypesToExist($nodeType);
         }
     }
 
@@ -190,7 +187,8 @@ trait ConstraintChecks
      */
     protected function requireTetheredDescendantNodeTypesToNotBeOfTypeRoot(NodeType $nodeType): void
     {
-        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $tetheredChildNodeType) {
+        foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+            $tetheredChildNodeType = $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName);
             if ($tetheredChildNodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 throw new NodeTypeIsOfTypeRoot(
                     'Node type "' . $nodeType->name->value . '" for tethered descendant is of type root.',
@@ -219,6 +217,17 @@ trait ConstraintChecks
             return;
         }
         throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
+    }
+
+    protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void
+    {
+        $nodeType = $this->requireNodeType($nodeTypeName);
+        if ($nodeType->tetheredNodeTypeDefinitions->contain($nodeName)) {
+            throw new NodeNameIsAlreadyCovered(
+                'Node name "' . $nodeName->value . '" is reserved for a tethered child of parent node aggregate of type "'
+                . $nodeTypeName->value . '".'
+            );
+        }
     }
 
     protected function requireNodeTypeToAllowNodesOfTypeInReference(
@@ -257,19 +266,13 @@ trait ConstraintChecks
     }
 
     /**
-     * NodeType and NodeName must belong together to the same node, which is the to-be-checked one.
-     *
-     * @param ContentGraphInterface $contentGraph
-     * @param NodeType $nodeType
-     * @param NodeName|null $nodeName
      * @param array|NodeAggregateId[] $parentNodeAggregateIds
      * @throws NodeConstraintException
      */
     protected function requireConstraintsImposedByAncestorsAreMet(
         ContentGraphInterface $contentGraph,
         NodeType $nodeType,
-        ?NodeName $nodeName,
-        array $parentNodeAggregateIds
+        array $parentNodeAggregateIds,
     ): void {
         foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
             $parentAggregate = $this->requireProjectedNodeAggregate(
@@ -279,7 +282,7 @@ trait ConstraintChecks
             if (!$parentAggregate->classification->isTethered()) {
                 try {
                     $parentsNodeType = $this->requireNodeType($parentAggregate->nodeTypeName);
-                    $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeName, $nodeType);
+                    $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeType);
                 } catch (NodeTypeNotFound $e) {
                     // skip constraint check; Once the parent is changed to be of an available type,
                     // the constraint checks are executed again. See handleChangeNodeAggregateType
@@ -308,12 +311,11 @@ trait ConstraintChecks
     }
 
     /**
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFound
      * @throws NodeConstraintException
      */
     protected function requireNodeTypeConstraintsImposedByParentToBeMet(
         NodeType $parentsNodeType,
-        ?NodeName $nodeName,
         NodeType $nodeType
     ): void {
         // !!! IF YOU ADJUST THIS METHOD, also adjust the method below.
@@ -324,35 +326,14 @@ trait ConstraintChecks
                 1707561400
             );
         }
-        if (
-            $nodeName
-            && $parentsNodeType->hasTetheredNode($nodeName)
-            && !$this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->equals($nodeType->name)
-        ) {
-            throw new NodeConstraintException(
-                'Node type "' . $nodeType->name->value . '" does not match configured "'
-                    . $this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->value
-                    . '" for auto created child nodes for parent type "' . $parentsNodeType->name->value
-                    . '" with name "' . $nodeName->value . '"',
-                1707561404
-            );
-        }
     }
 
     protected function areNodeTypeConstraintsImposedByParentValid(
         NodeType $parentsNodeType,
-        ?NodeName $nodeName,
         NodeType $nodeType
     ): bool {
         // !!! IF YOU ADJUST THIS METHOD, also adjust the method above.
         if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
-            return false;
-        }
-        if (
-            $nodeName
-            && $parentsNodeType->hasTetheredNode($nodeName)
-            && !$this->getNodeTypeManager()->getTypeOfTetheredNode($parentsNodeType, $nodeName)->name->equals($nodeType->name)
-        ) {
             return false;
         }
         return true;
@@ -387,8 +368,8 @@ trait ConstraintChecks
         NodeType $nodeType
     ): bool {
         return !($parentNodeName
-            && $grandParentsNodeType->hasTetheredNode($parentNodeName)
-            && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType, $parentNodeName, $nodeType));
+            && $grandParentsNodeType->tetheredNodeTypeDefinitions->contain($parentNodeName)
+            && !$this->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType->name, $parentNodeName, $nodeType->name));
     }
 
     /**
@@ -603,62 +584,26 @@ trait ConstraintChecks
     }
 
     /**
-     * @throws NodeNameIsAlreadyOccupied
-     */
-    protected function requireNodeNameToBeUnoccupied(
-        ContentGraphInterface $contentGraph,
-        ?NodeName $nodeName,
-        NodeAggregateId $parentNodeAggregateId,
-        OriginDimensionSpacePoint $parentOriginDimensionSpacePoint,
-        DimensionSpacePointSet $dimensionSpacePoints
-    ): void {
-        if ($nodeName === null) {
-            return;
-        }
-        $dimensionSpacePointsOccupiedByChildNodeName = $contentGraph
-            ->getDimensionSpacePointsOccupiedByChildNodeName(
-                $nodeName,
-                $parentNodeAggregateId,
-                $parentOriginDimensionSpacePoint,
-                $dimensionSpacePoints
-            );
-        if (count($dimensionSpacePointsOccupiedByChildNodeName) > 0) {
-            throw new NodeNameIsAlreadyOccupied(
-                'Child node name "' . $nodeName->value . '" is already occupied for parent "'
-                    . $parentNodeAggregateId->value . '" in dimension space points '
-                    . $dimensionSpacePointsOccupiedByChildNodeName->toJson()
-            );
-        }
-    }
-
-    /**
      * @throws NodeNameIsAlreadyCovered
      */
     protected function requireNodeNameToBeUncovered(
         ContentGraphInterface $contentGraph,
         ?NodeName $nodeName,
         NodeAggregateId $parentNodeAggregateId,
-        DimensionSpacePointSet $dimensionSpacePointsToBeCovered
     ): void {
         if ($nodeName === null) {
             return;
         }
 
-        $childNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
+        $childNodeAggregate = $contentGraph->findChildNodeAggregateByName(
             $parentNodeAggregateId,
             $nodeName
         );
-        foreach ($childNodeAggregates as $childNodeAggregate) {
-            /* @var $childNodeAggregate NodeAggregate */
-            $alreadyCoveredDimensionSpacePoints = $childNodeAggregate->coveredDimensionSpacePoints
-                ->getIntersection($dimensionSpacePointsToBeCovered);
-            if (!$alreadyCoveredDimensionSpacePoints->isEmpty()) {
-                throw new NodeNameIsAlreadyCovered(
-                    'Node name "' . $nodeName->value . '" is already covered in dimension space points '
-                        . $alreadyCoveredDimensionSpacePoints->toJson() . ' by node aggregate "'
-                        . $childNodeAggregate->nodeAggregateId->value . '".'
-                );
-            }
+        if ($childNodeAggregate instanceof NodeAggregate) {
+            throw new NodeNameIsAlreadyCovered(
+                'Node name "' . $nodeName->value . '" is already covered by node aggregate "'
+                    . $childNodeAggregate->nodeAggregateId->value . '".'
+            );
         }
     }
 

@@ -22,8 +22,7 @@ Feature: Workspace based content publishing
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -40,14 +39,12 @@ Feature: Workspace based content publishing
       | propertyValues            | {"text": "Original"} |
     # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
     # of-date base version. This means the content stream can never be merged back, but must always be rebased.
-    And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                | Value                |
       | workspaceName      | "user-test"          |
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
       | workspaceOwner     | "owner-identifier"   |
-    And the graph projection is fully up to date
 
   Scenario: Basic events are emitted
     # LIVE workspace
@@ -89,15 +86,14 @@ Feature: Workspace based content publishing
       | nodeAggregateId           | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Modified"} |
-    And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
       | text | "Original" |
 
-    When I am in the active content stream of workspace "user-test" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
@@ -107,9 +103,8 @@ Feature: Workspace based content publishing
     When the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
-    And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value      |
@@ -123,14 +118,12 @@ Feature: Workspace based content publishing
       | nodeAggregateId           | "nody-mc-nodeface"                     |
       | originDimensionSpacePoint | {}                                     |
       | propertyValues            | {"text": "Modified in user workspace"} |
-    And the graph projection is fully up to date
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                  |
       | workspaceName             | "live"                                 |
       | nodeAggregateId           | "nody-mc-nodeface"                     |
       | originDimensionSpacePoint | {}                                     |
       | propertyValues            | {"text": "Modified in live workspace"} |
-    And the graph projection is fully up to date
 
     # PUBLISHING without rebase: error
     When the command PublishWorkspace is executed with payload and exceptions are caught:
@@ -141,17 +134,15 @@ Feature: Workspace based content publishing
 
     # REBASING + Publishing: works now (TODO soft constraint check for old value)
     When the command RebaseWorkspace is executed with payload:
-      | Key                    | Value          |
-      | workspaceName          | "user-test"    |
+      | Key                    | Value           |
+      | workspaceName          | "user-test"     |
       | rebasedContentStreamId | "rebased-cs-id" |
-    And the graph projection is fully up to date
 
     And the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
-    And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
 
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
@@ -167,14 +158,12 @@ Feature: Workspace based content publishing
       | originDimensionSpacePoint | {}                   |
       | propertyValues            | {"text": "Modified"} |
 
-    And the graph projection is fully up to date
 
     # PUBLISHING
     And the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
-    And the graph projection is fully up to date
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
 
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                     |
@@ -183,15 +172,13 @@ Feature: Workspace based content publishing
       | originDimensionSpacePoint | {}                        |
       | propertyValues            | {"text": "Modified anew"} |
 
-    And the graph projection is fully up to date
 
     # PUBLISHING
     And the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
-    And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value           |

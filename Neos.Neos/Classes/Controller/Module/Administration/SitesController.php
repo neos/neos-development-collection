@@ -18,8 +18,8 @@ use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregate
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -204,15 +204,11 @@ class SitesController extends AbstractModuleController
             }
 
             foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
-                // technically, due to the name being the "identifier", there might be more than one :/
-                /** @var NodeAggregate[] $siteNodeAggregates */
-                /** @var Workspace $workspace */
-                $siteNodeAggregates = $contentRepository->getContentGraph($workspace->workspaceName)->findChildNodeAggregatesByName(
+                $siteNodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findChildNodeAggregateByName(
                     $sitesNode->nodeAggregateId,
                     $site->getNodeName()->toNodeName()
                 );
-
-                foreach ($siteNodeAggregates as $siteNodeAggregate) {
+                if ($siteNodeAggregate instanceof NodeAggregate) {
                     $contentRepository->handle(ChangeNodeAggregateName::create(
                         $workspace->workspaceName,
                         $siteNodeAggregate->nodeAggregateId,
@@ -393,7 +389,7 @@ class SitesController extends AbstractModuleController
     {
         try {
             $site = $this->siteService->createSite($packageKey, $siteName, $nodeType);
-        } catch (NodeTypeNotFoundException $exception) {
+        } catch (NodeTypeNotFound $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.body', [$nodeType]),
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.title'),
@@ -414,7 +410,7 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyOccupied $exception) {
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyCovered $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$siteName]),
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.title'),

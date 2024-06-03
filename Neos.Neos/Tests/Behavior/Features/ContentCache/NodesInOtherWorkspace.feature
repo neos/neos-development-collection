@@ -34,16 +34,15 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the command CreateWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "user-test"          |
-      | baseWorkspaceName          | "live"               |
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                 | initialPropertyValues                            | nodeName |
       | a               | root                  | Neos.Neos:Site               | {}                                               | site     |
@@ -51,8 +50,8 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
       | a1-1            | a1                    | Neos.Neos:Test.DocumentType1 | {"uriPathSegment": "a1-1", "title": "Node a1-1"} | a1-1     |
       | a2              | a                     | Neos.Neos:Test.DocumentType2 | {"uriPathSegment": "a2", "title": "Node a2"}     | a2       |
     When the command RebaseWorkspace is executed with payload:
-      | Key                      | Value                        |
-      | workspaceName            | "user-test"                  |
+      | Key           | Value       |
+      | workspaceName | "user-test" |
     And A site exists for node name "a" and domain "http://localhost"
     And the sites configuration is:
     """yaml
@@ -121,7 +120,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
 
   Scenario: ContentCache doesn't get flushed when a property of a node in other workspace has changed
     Given I have Fusion content cache enabled
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a1
 
     And I execute the following Fusion code:
@@ -135,15 +134,14 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
     cacheVerifier=first execution, title=Node a1
     """
 
-    And I am in the active content stream of workspace "user-test" and dimension space point {}
+    And I am in workspace "user-test" and dimension space point {}
     When the command SetNodeProperties is executed with payload:
       | Key             | Value                    |
       | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "a1"                     |
       | propertyValues  | {"title": "Node a1 new"} |
-    And the graph projection is fully up to date
 
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a1
     And I execute the following Fusion code:
     """fusion
@@ -158,7 +156,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
 
   Scenario: ContentCache gets not flushed when a property of another node has changed in different workspace
     Given I have Fusion content cache enabled
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a1
 
     And I execute the following Fusion code:
@@ -171,15 +169,14 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
     """
     cacheVerifier=first execution, title=Node a1
     """
-    And I am in the active content stream of workspace "user-test" and dimension space point {}
+    And I am in workspace "user-test" and dimension space point {}
     When the command SetNodeProperties is executed with payload:
       | Key             | Value                    |
       | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "a2"                     |
       | propertyValues  | {"title": "Node a2 new"} |
-    And the graph projection is fully up to date
 
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a1
     And I execute the following Fusion code:
     """fusion
@@ -194,7 +191,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
 
   Scenario: ContentCache doesn't get flushed when a property of a node has changed by NodeType name in different workspace
     Given I have Fusion content cache enabled
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a2
     And I execute the following Fusion code:
     """fusion
@@ -207,15 +204,14 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
     cacheVerifier=first execution, title=Node a2
     """
 
-    And I am in the active content stream of workspace "user-test" and dimension space point {}
+    And I am in workspace "user-test" and dimension space point {}
     When the command SetNodeProperties is executed with payload:
       | Key             | Value                    |
       | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "a1"                     |
       | propertyValues  | {"title": "Node a1 new"} |
-    And the graph projection is fully up to date
 
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the Fusion context node is a2
     And I execute the following Fusion code:
     """fusion
@@ -230,7 +226,7 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
 
   Scenario: ContentCache doesn't get flushed when a property of a node has changed of a descendant node in different workspace
     Given I have Fusion content cache enabled
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the Fusion context node is "a1"
     And I execute the following Fusion code:
     """fusion
@@ -243,15 +239,14 @@ Feature: Tests for the ContentCacheFlusher and cache flushing on node and nodety
     cacheVerifier=first execution, title=Node a1
     """
 
-    And I am in the active content stream of workspace "user-test" and dimension space point {}
+    And I am in workspace "user-test" and dimension space point {}
     When the command SetNodeProperties is executed with payload:
-      | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
+      | Key             | Value                      |
+      | contentStreamId | "cs-identifier"            |
       | nodeAggregateId | "a1-1"                     |
       | propertyValues  | {"title": "Node a1-1 new"} |
-    And the graph projection is fully up to date
 
-    And I am in the active content stream of workspace "live" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the Fusion context node is "a1"
     And I execute the following Fusion code:
     """fusion

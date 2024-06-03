@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * @api
+ * @deprecated will be removed before Final 9.0
  */
 class NodeAddressFactory
 {
@@ -63,8 +63,8 @@ class NodeAddressFactory
     {
         return $this->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
             $node->subgraphIdentity->contentStreamId,
-            $node->subgraphIdentity->dimensionSpacePoint,
-            $node->nodeAggregateId,
+            $node->dimensionSpacePoint,
+            $node->aggregateId,
         );
     }
 
