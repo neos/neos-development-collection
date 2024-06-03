@@ -61,16 +61,16 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
 
     public function executeMigration(ExecuteMigration $command): void
     {
-        $sourceWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getSourceWorkspaceName());
+        $sourceWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->sourceWorkspaceName);
         if ($sourceWorkspace === null) {
             throw new WorkspaceDoesNotExist(sprintf(
                 'The workspace %s does not exist',
-                $command->getSourceWorkspaceName()->value
+                $command->sourceWorkspaceName->value
             ), 1611688225);
         }
 
         $targetWorkspaceWasCreated = false;
-        if ($targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getTargetWorkspaceName())) {
+        if ($targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->targetWorkspaceName)) {
             if (!$this->workspaceIsEmpty($targetWorkspace)) {
                 throw new MigrationException(sprintf('Target workspace "%s" already exists an is not empty. Please clear the workspace before.', $targetWorkspace->workspaceName->value));
             }
@@ -78,22 +78,22 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
         } else {
             $this->contentRepository->handle(
                 CreateWorkspace::create(
-                    $command->getTargetWorkspaceName(),
+                    $command->targetWorkspaceName,
                     $sourceWorkspace->workspaceName,
-                    WorkspaceTitle::fromString($command->getTargetWorkspaceName()->value),
+                    WorkspaceTitle::fromString($command->targetWorkspaceName->value),
                     WorkspaceDescription::fromString(''),
-                    ContentStreamId::create(),
+                    $command->contentStreamId,
                 )
             );
-            $targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getTargetWorkspaceName());
+            $targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->targetWorkspaceName);
             $targetWorkspaceWasCreated = true;
         }
 
         if($targetWorkspace === null) {
-            throw new MigrationException(sprintf('Target workspace "%s" could not loaded nor created.', $command->getTargetWorkspaceName()->value));
+            throw new MigrationException(sprintf('Target workspace "%s" could not loaded nor created.', $command->targetWorkspaceName->value));
         }
 
-        foreach ($command->getMigrationConfiguration()->getMigration() as $migrationDescription) {
+        foreach ($command->migrationConfiguration->getMigration() as $migrationDescription) {
             /** array $migrationDescription */
             $this->executeSubMigrationAndBlock(
                 $migrationDescription,
@@ -102,14 +102,14 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
             );
         }
 
-        if ($command->getPublishOnSuccess() === true) {
+        if ($command->publishOnSuccess === true) {
             $this->contentRepository->handle(
-                PublishWorkspace::create($command->getTargetWorkspaceName())
+                PublishWorkspace::create($command->targetWorkspaceName)
             );
 
             if ($targetWorkspaceWasCreated === true) {
                 $this->contentRepository->handle(
-                    DeleteWorkspace::create($command->getTargetWorkspaceName())
+                    DeleteWorkspace::create($command->targetWorkspaceName)
                 );
             }
         }

@@ -22,13 +22,11 @@ Feature: Publishing on Success
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -37,11 +35,10 @@ Feature: Publishing on Success
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "Original text"}                 |
-    And the graph projection is fully up to date
 
 
   Scenario: Fixed newValue
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", with publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", with publishing on success:
     """yaml
     migration:
       -
@@ -59,7 +56,7 @@ Feature: Publishing on Success
     """
 
     When I am in workspace "live" and dimension space point {}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |

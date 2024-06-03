@@ -50,7 +50,7 @@ Feature: Rename Node Aggregate
 
 
   Scenario: Rename Node Aggregate
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -86,7 +86,7 @@ Feature: Rename Node Aggregate
 
 
   Scenario: Rename Node Aggregate will fail when restricted to a single Dimension
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -

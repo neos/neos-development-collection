@@ -55,7 +55,7 @@ Feature: Move dimension space point
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -68,7 +68,7 @@ Feature: Move dimension space point
     """
     # the original content stream has not been touched
     When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
 
@@ -76,7 +76,7 @@ Feature: Move dimension space point
     When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When I am in workspace "migration-workspace" and dimension space point {"language": "de_DE"}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de_DE"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
     When I run integrity violation detection
@@ -95,7 +95,7 @@ Feature: Move dimension space point
     When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
@@ -103,7 +103,7 @@ Feature: Move dimension space point
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -119,14 +119,14 @@ Feature: Move dimension space point
     When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
     When VisibilityConstraints are set to "frontend"
 
     # The visibility edges were modified
     When I am in workspace "migration-workspace" and dimension space point {"language": "de_DE"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de_DE"} to exist in the content graph
     When VisibilityConstraints are set to "frontend"
 
     When I run integrity violation detection
@@ -138,7 +138,7 @@ Feature: Move dimension space point
       | Identifier | Values  | Generalizations |
       | language   | mul, ch | ch->mul         |
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -
@@ -152,7 +152,7 @@ Feature: Move dimension space point
     Then the last command should have thrown an exception of type "DimensionSpacePointAlreadyExists"
 
   Scenario: Error case - the target dimension is not configured
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -

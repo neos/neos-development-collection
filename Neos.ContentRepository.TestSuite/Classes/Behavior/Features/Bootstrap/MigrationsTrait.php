@@ -31,16 +31,17 @@ trait MigrationsTrait
     use CRTestSuiteRuntimeVariables;
 
     /**
-     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName, with publishing on success:
+     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName on contentStreamId :contentStreamId, with publishing on success:
      */
-    public function iRunTheFollowingNodeMigrationWithTargetWorkspace(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string, bool $publishingOnSuccess = true): void
+    public function iRunTheFollowingNodeMigrationWithTargetWorkspace(string $sourceWorkspaceName, string $targetWorkspaceName, string $contentStreamId, PyStringNode $string, bool $publishingOnSuccess = true): void
     {
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
         $command = new ExecuteMigration(
             $migrationConfiguration,
             WorkspaceName::fromString($sourceWorkspaceName),
             WorkspaceName::fromString($targetWorkspaceName),
-            $publishingOnSuccess
+            $publishingOnSuccess,
+            ContentStreamId::fromString($contentStreamId)
         );
 
         /** @var NodeMigrationService $nodeMigrationService */
@@ -49,20 +50,20 @@ trait MigrationsTrait
     }
 
     /**
-     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName, without publishing on success:
+     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName on contentStreamId :contentStreamId, without publishing on success:
      */
-    public function iRunTheFollowingNodeMigrationWithoutPublishingOnSuccess(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string): void
+    public function iRunTheFollowingNodeMigrationWithoutPublishingOnSuccess(string $sourceWorkspaceName, string $targetWorkspaceName, string $contentStreamId, PyStringNode $string): void
     {
-        $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, $targetWorkspaceName, $string, false);
+        $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, $targetWorkspaceName, $contentStreamId, $string,false);
     }
 
     /**
-     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName and exceptions are caught:
+     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName on contentStreamId :contentStreamId and exceptions are caught:
      */
-    public function iRunTheFollowingNodeMigrationAndExceptionsAreCaught(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string): void
+    public function iRunTheFollowingNodeMigrationAndExceptionsAreCaught(string $sourceWorkspaceName, string $targetWorkspaceName, string $contentStreamId, PyStringNode $string): void
     {
         try {
-            $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, $targetWorkspaceName, $string);
+            $this->iRunTheFollowingNodeMigrationWithTargetWorkspace($sourceWorkspaceName, $targetWorkspaceName, $contentStreamId, $string);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }

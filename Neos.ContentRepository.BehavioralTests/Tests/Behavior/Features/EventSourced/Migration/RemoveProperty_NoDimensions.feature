@@ -39,7 +39,7 @@ Feature: Remove Property
 
 
   Scenario: Fixed newValue
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -56,18 +56,18 @@ Feature: Remove Property
     """
     # the original content stream has not been touched
     When I am in workspace "live" and dimension space point {}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
     # the node type was changed inside the new content stream
     When I am in workspace "migration-workspace" and dimension space point {}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have no properties
 
   Scenario: Ignoring transformation if property does not exist on node
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -84,7 +84,7 @@ Feature: Remove Property
     """
     # we did not change anything because notExisting does not exist
     When I am in workspace "migration-workspace" and dimension space point {}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |

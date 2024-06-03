@@ -56,7 +56,7 @@ Feature: Adjust node types with a node migration
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
     # we should be able to rename the node type
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -73,18 +73,18 @@ Feature: Adjust node types with a node migration
     """
     # the original content stream has not been touched
     When I am in workspace "live" and dimension space point {"language": "de"}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     # ... also in the fallback dimension
     When I am in workspace "live" and dimension space point {"language": "ch"}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
     # the node type was changed inside the new content stream
     When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"
     # ... also in the fallback dimension
     When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"

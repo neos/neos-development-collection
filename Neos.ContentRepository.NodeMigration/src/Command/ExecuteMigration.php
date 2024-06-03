@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Command;
 
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -22,30 +23,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final class ExecuteMigration
 {
     public function __construct(
-        private readonly MigrationConfiguration $migrationConfiguration,
-        private readonly WorkspaceName $sourceWorkspaceName,
-        private readonly WorkspaceName $targetWorkspaceName,
-        private readonly bool $publishOnSuccess,
+        public readonly MigrationConfiguration $migrationConfiguration,
+        public readonly WorkspaceName $sourceWorkspaceName,
+        public readonly WorkspaceName $targetWorkspaceName,
+        public readonly bool $publishOnSuccess,
+        public readonly ContentStreamId $contentStreamId,
     ) {
-    }
-
-    public function getMigrationConfiguration(): MigrationConfiguration
-    {
-        return $this->migrationConfiguration;
-    }
-
-    public function getSourceWorkspaceName(): WorkspaceName
-    {
-        return $this->sourceWorkspaceName;
-    }
-
-    public function getTargetWorkspaceName(): WorkspaceName
-    {
-        return $this->targetWorkspaceName;
-    }
-
-    public function getPublishOnSuccess(): bool
-    {
-        return $this->publishOnSuccess;
     }
 }

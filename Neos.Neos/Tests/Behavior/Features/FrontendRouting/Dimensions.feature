@@ -183,7 +183,7 @@ Feature: Routing functionality with multiple content dimensions
                         en: ''
     """
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-cs", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-cs" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -252,7 +252,7 @@ Feature: Routing functionality with multiple content dimensions
                         en: ''
     """
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should not resolve to an URL
-    When I run the following node migration for workspace "live", creating target workspace "migration-cs", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-cs" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -

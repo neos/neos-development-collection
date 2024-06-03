@@ -57,7 +57,7 @@ Feature: Add Dimension Specialization
     Given I change the content dimensions in content repository "default" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -71,7 +71,7 @@ Feature: Add Dimension Specialization
     # the original content stream has not been touched
     When I am in workspace "live"
     And I am in dimension space point {"language": "de"}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"de"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     And I expect this node to have the following properties:
       | Key  | Value   |
@@ -82,13 +82,13 @@ Feature: Add Dimension Specialization
 
     # now, we find the node underneath both DimensionSpacePoints
     When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language":"de"} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value   |
       | text | "hello" |
     When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     # shine through added
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language":"de"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     And I expect this node to have the following properties:
       | Key  | Value   |
@@ -108,20 +108,20 @@ Feature: Add Dimension Specialization
       | originDimensionSpacePoint | {"language": "de"}       |
       | propertyValues            | {"text": "changed"}      |
     When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language":"de"} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value     |
       | text | "changed" |
     When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     # ch shines through to the DE node
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language":"de"} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value     |
       | text | "changed" |
 
     # the original content stream was untouched
     When I am in workspace "live" and dimension space point {"language": "de"}
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"de"} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value   |
       | text | "hello" |
@@ -143,7 +143,7 @@ Feature: Add Dimension Specialization
     When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"de"} to exist in the content graph
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
@@ -151,7 +151,7 @@ Feature: Add Dimension Specialization
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -167,14 +167,14 @@ Feature: Add Dimension Specialization
     When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"de"} to exist in the content graph
     When VisibilityConstraints are set to "frontend"
 
     # The visibility edges were modified
     When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
-    Then I get the node with id "sir-david-nodenborough"
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"de"} to exist in the content graph
     When VisibilityConstraints are set to "frontend"
 
     When I run integrity violation detection
@@ -194,7 +194,7 @@ Feature: Add Dimension Specialization
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"en"}        |
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -
@@ -208,7 +208,7 @@ Feature: Add Dimension Specialization
     Then the last command should have thrown an exception of type "DimensionSpacePointAlreadyExists"
 
   Scenario: Error case - the target dimension is not configured
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -
@@ -227,7 +227,7 @@ Feature: Add Dimension Specialization
       | Identifier | Values       | Generalizations |
       | language   | mul, de, foo | de->mul         |
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -
@@ -246,7 +246,7 @@ Feature: Add Dimension Specialization
       | Identifier | Values       | Generalizations   |
       | language   | mul, de, foo | de->mul, foo->mul |
 
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" and exceptions are caught:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs" and exceptions are caught:
     """yaml
     migration:
       -

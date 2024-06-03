@@ -19,7 +19,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
@@ -70,19 +69,6 @@ trait ProjectedNodeTrait
         $nodePath = NodePath::fromString($serializedNodePath);
         $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodePath) {
             return $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-        });
-    }
-
-    /**
-     * @Then /^I get the node with id "([^"]*)"$/
-     * @param string $id
-     * @throws \Exception
-     */
-    public function iGetTheNodeWithId(string $id): void
-    {
-        $nodeAggregateId = NodeAggregateId::fromString($id);
-        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId) {
-            return $subgraph->findNodeById($nodeAggregateId);
         });
     }
 

@@ -13,6 +13,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
  */
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
@@ -78,7 +79,8 @@ class NodeMigrationCommandController extends CommandController
                     $migrationConfiguration,
                     $sourceWorkspaceName,
                     $targetWorkspaceName,
-                    $publishOnSuccess
+                    $publishOnSuccess,
+                    ContentStreamId::create()
                 )
             );
 

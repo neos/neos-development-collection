@@ -68,7 +68,7 @@ Feature: Filter - Property not empty
 
 
   Scenario: PropertyNotEmpty
-    When I run the following node migration for workspace "live", creating target workspace "migration-workspace", without publishing on success:
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -86,34 +86,34 @@ Feature: Filter - Property not empty
     """
     # the original content stream has not been touched
     When I am in workspace "live" and dimension space point {}
-    Then I get the node with id "na-name1"
+    Then I expect a node identified by cs-identifier;na-name1;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value            |
       | text | "Original name1" |
-    Then I get the node with id "na-name2"
+    Then I expect a node identified by cs-identifier;na-name2;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value |
       | text | ""    |
-    Then I get the node with id "na-null-value"
+    Then I expect a node identified by cs-identifier;na-null-value;{} to exist in the content graph
     And I expect this node to have no properties
 
-    Then I get the node with id "na-no-text"
+    Then I expect a node identified by cs-identifier;na-no-text;{} to exist in the content graph
     And I expect this node to not have the property "text"
 
     # we filter based on the node name
     When I am in workspace "migration-workspace" and dimension space point {}
-    Then I get the node with id "na-name1"
+    Then I expect a node identified by migration-cs;na-name1;{} to exist in the content graph
     # only changed here
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
-    Then I get the node with id "na-name2"
+    Then I expect a node identified by migration-cs;na-name2;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value |
       | text | ""    |
-    Then I get the node with id "na-null-value"
+    Then I expect a node identified by migration-cs;na-null-value;{} to exist in the content graph
     And I expect this node to have no properties
 
-    Then I get the node with id "na-no-text"
+    Then I expect a node identified by migration-cs;na-no-text;{} to exist in the content graph
     And I expect this node to not have the property "text"
 
