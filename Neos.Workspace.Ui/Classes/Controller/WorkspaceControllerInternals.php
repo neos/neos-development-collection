@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 /**
  * @deprecated really un-nice :D
  */
-class WorkspacesControllerInternals implements ContentRepositoryServiceInterface
+class WorkspaceControllerInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(
         protected ContentDimensionSourceInterface $contentDimensionSource,

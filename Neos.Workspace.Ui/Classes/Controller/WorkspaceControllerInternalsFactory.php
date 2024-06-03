@@ -18,14 +18,14 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependenc
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 
 /**
- * @implements ContentRepositoryServiceFactoryInterface<WorkspacesControllerInternals>
+ * @implements ContentRepositoryServiceFactoryInterface<WorkspaceControllerInternals>
  */
-class WorkspacesControllerInternalsFactory implements ContentRepositoryServiceFactoryInterface
+class WorkspaceControllerInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function build(
         ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
-    ): WorkspacesControllerInternals {
-        return new WorkspacesControllerInternals(
+    ): WorkspaceControllerInternals {
+        return new WorkspaceControllerInternals(
             $serviceFactoryDependencies->contentDimensionSource,
         );
     }

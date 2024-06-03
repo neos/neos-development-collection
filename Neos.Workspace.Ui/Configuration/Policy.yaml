@@ -4,23 +4,23 @@ privilegeTargets:
 
     'Neos.Neos:Backend.PublishAllToLiveWorkspace':
       label: Allowed to publish to the live workspace
-      matcher: 'method(Neos\Workspace\Ui\Controller\WorkspacesController->publishWorkspaceAction(workspace.baseWorkspace.name === "live"))'
+      matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->publishWorkspaceAction(workspace.baseWorkspace.name === "live"))'
 
     'Neos.Neos:Backend.CreateWorkspaces':
       label: Allowed to create a workspace
-      matcher: 'method(Neos\Workspace\Ui\Controller\WorkspacesController->(create|new)Action())'
+      matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->(create|new)Action())'
 
     'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
       label: Allowed to manage own workspaces
-      matcher: 'method(Neos\Workspace\Ui\Controller\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === current.userInformation.backendUser))'
+      matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === current.userInformation.backendUser))'
 
     'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces':
       label: Manage internal workspaces
-      matcher: 'method(Neos\Workspace\Ui\Controller\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === null))'
+      matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === null))'
 
     'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces':
       label: Manage all private workspaces
-      matcher: 'method(Neos\Workspace\Ui\Controller\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === false)'
+      matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->(publishWorkspace|discardWorkspace|edit|update|delete)Action()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === false)'
 
   'Neos\Neos\Security\Authorization\Privilege\ModulePrivilege':
     'Neos.Neos:Backend.Module.Management.Workspaces':

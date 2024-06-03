@@ -69,18 +69,6 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name === current.userInformation.personalWorkspaceName))'
 
     #
-    # Workspace management
-    #
-
-    'Neos.Neos:Backend.Service.Workspaces.Index':
-      label: Access workspace services
-      matcher: 'method(Neos\Neos\Controller\Service\WorkspacesController->(index|error|show)Action())'
-
-    'Neos.Neos:Backend.Service.Workspaces.ManageOwnWorkspaces':
-      label: Access services to manage own workspace
-      matcher: 'method(Neos\Neos\Controller\Service\WorkspacesController->(update|delete)Action(workspace.owner === current.userInformation.backendUser))'
-
-    #
     # User management and user settings
     #
 
@@ -207,14 +195,6 @@ roles:
 
       -
         privilegeTarget: 'Neos.Neos:Backend.DiscardOwnWorkspaceContent'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'Neos.Neos:Backend.Service.Workspaces.Index'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'Neos.Neos:Backend.Service.Workspaces.ManageOwnWorkspaces'
         permission: GRANT
 
       -

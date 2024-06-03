@@ -5,7 +5,7 @@ Neos:
         submodules:
           workspaces:
             label: 'Neos.Workspace.Ui:Main:workspaces.label'
-            controller: 'Neos\Workspace\Ui\Controller\WorkspacesController'
+            controller: 'Neos\Workspace\Ui\Controller\WorkspaceController'
             description: 'Neos.Workspace.Ui:Main:workspaces.description'
             icon: fas fa-th-large
             mainStylesheet: 'Lite'

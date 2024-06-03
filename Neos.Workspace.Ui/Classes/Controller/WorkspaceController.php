@@ -69,11 +69,10 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
- * The Neos Workspaces module controller
- *
- * @Flow\Scope("singleton")
+ * The Neos Workspace module controller
  */
-class WorkspacesController extends AbstractModuleController
+#[Flow\Scope('singleton')]
+class WorkspaceController extends AbstractModuleController
 {
     use ModuleTranslationTrait;
     use NodeTypeWithFallbackProvider;
@@ -160,9 +159,9 @@ class WorkspacesController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspacesControllerInternals = $this->contentRepositoryRegistry->buildService(
+        $workspaceControllerInternals = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
-            new WorkspacesControllerInternalsFactory()
+            new WorkspaceControllerInternalsFactory()
         );
 
         $workspaceObj = $contentRepository->getWorkspaceFinder()->findOneByName($workspace);
@@ -178,7 +177,7 @@ class WorkspacesController extends AbstractModuleController
             // TODO $this->domainUserService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
             'canPublishToBaseWorkspace' => true,
             'siteChanges' => $this->computeSiteChanges($workspaceObj, $contentRepository),
-            'contentDimensions' => $workspacesControllerInternals->getContentDimensionsOrderedByPriority()
+            'contentDimensions' => $workspaceControllerInternals->getContentDimensionsOrderedByPriority()
         ]);
     }
 

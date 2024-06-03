@@ -1,4 +1,4 @@
-- requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspaces") && isFormat("html")'
+- requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspace") && isFormat("html")'
   options:
     layoutRootPathPattern: 'resource://Neos.Neos/Private/Layouts'
     partialRootPaths:
