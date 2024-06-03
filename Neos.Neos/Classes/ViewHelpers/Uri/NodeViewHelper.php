@@ -158,20 +158,6 @@ class NodeViewHelper extends AbstractViewHelper
             ''
         );
         $this->registerArgument(
-            'addQueryString',
-            'boolean',
-            'If set, the current query parameters will be kept in the URI',
-            false,
-            false
-        );
-        $this->registerArgument(
-            'argumentsToBeExcludedFromQueryString',
-            'array',
-            'arguments to be removed from the URI. Only active if $addQueryString = true',
-            false,
-            []
-        );
-        $this->registerArgument(
             'baseNodeName',
             'string',
             'The name of the base node inside the Fusion context to use for the ContentContext'
@@ -208,7 +194,7 @@ class NodeViewHelper extends AbstractViewHelper
 
         if ($node instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->subgraphIdentity->contentRepositoryId
+                $node->contentRepositoryId
             );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);
@@ -227,9 +213,7 @@ class NodeViewHelper extends AbstractViewHelper
         $uriBuilder->setFormat($this->arguments['format'])
             ->setCreateAbsoluteUri($this->arguments['absolute'])
             ->setArguments($this->arguments['arguments'])
-            ->setSection($this->arguments['section'])
-            ->setAddQueryString($this->arguments['addQueryString'])
-            ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
+            ->setSection($this->arguments['section']);
 
         $uri = '';
         if (!$nodeAddress) {
@@ -264,7 +248,7 @@ class NodeViewHelper extends AbstractViewHelper
         /* @var Node $documentNode */
         $documentNode = $this->getContextVariable('documentNode');
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $documentNode->subgraphIdentity->contentRepositoryId
+            $documentNode->contentRepositoryId
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);
@@ -281,9 +265,10 @@ class NodeViewHelper extends AbstractViewHelper
             $siteNode = $subgraph->findClosestNode($documentNodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
-                    'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
+                    'Failed to determine site node for aggregate node "%s" in workspace "%s" and dimension %s',
                     $documentNodeAddress->nodeAggregateId->value,
-                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                    $subgraph->getWorkspaceName()->value,
+                    $subgraph->getDimensionSpacePoint()->toJson()
                 ), 1601366598);
             }
             if ($path === '~') {
@@ -291,24 +276,25 @@ class NodeViewHelper extends AbstractViewHelper
             } else {
                 $targetNode = $subgraph->findNodeByPath(
                     NodePath::fromString(substr($path, 1)),
-                    $siteNode->nodeAggregateId
+                    $siteNode->aggregateId
                 );
             }
         } else {
             $targetNode = $subgraph->findNodeByPath(
                 NodePath::fromString($path),
-                $documentNode->nodeAggregateId
+                $documentNode->aggregateId
             );
         }
         if ($targetNode === null) {
             $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
-                'Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"',
+                'Node on path "%s" could not be found for aggregate node "%s" in workspace "%s" and dimension %s',
                 $path,
                 $documentNodeAddress->nodeAggregateId->value,
-                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                $subgraph->getWorkspaceName()->value,
+                $subgraph->getDimensionSpacePoint()->toJson()
             ), 1601311789));
             return null;
         }
-        return $documentNodeAddress->withNodeAggregateId($targetNode->nodeAggregateId);
+        return $documentNodeAddress->withNodeAggregateId($targetNode->aggregateId);
     }
 }

@@ -37,13 +37,11 @@ Feature: Add Dimension Specialization
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
@@ -52,7 +50,6 @@ Feature: Add Dimension Specialization
       | originDimensionSpacePoint | {"language": "de"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "hello" }                        |
-    And the graph projection is fully up to date
 
   Scenario: Success Case - simple
     # we change the dimension configuration
@@ -110,7 +107,6 @@ Feature: Add Dimension Specialization
       | nodeAggregateId           | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {"language": "de"}       |
       | propertyValues            | {"text": "changed"}      |
-    And the graph projection is fully up to date
     When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
     Then I get the node with id "sir-david-nodenborough"
     And I expect this node to have the following properties:
@@ -142,7 +138,6 @@ Feature: Add Dimension Specialization
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "de"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the graph projection is fully up to date
 
     # ensure the node is disabled
     When I am in workspace "live" and dimension space point {"language": "de"}

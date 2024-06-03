@@ -29,11 +29,11 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
 
   Scenario:
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
+      | workspaceName               | "live"                        |
       | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "shernode-homes"              |
       | nodeTypeName                | "Neos.Neos:Test.Routing.Page" |
@@ -41,6 +41,7 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | nodeAggregateClassification | "regular"                     |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                 |
+      | workspaceName               | "live"                                                                |
       | contentStreamId             | "cs-identifier"                                                       |
       | nodeAggregateId             | "sir-david-nodenborough"                                              |
       | nodeTypeName                | "Neos.Neos:Test.Routing.Page"                                         |
@@ -49,13 +50,13 @@ Feature: Basic routing functionality (match & resolve nodes with unknown types)
       | initialPropertyValues       | {"uriPathSegment": {"type": "string", "value": "david-nodenborough"}} |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                           |
+      | workspaceName               | "live"                                                          |
       | contentStreamId             | "cs-identifier"                                                 |
       | nodeAggregateId             | "unknown-nodetype"                                              |
       | nodeTypeName                | "Neos.Neos:Test.Routing.NonExisting"                            |
       | parentNodeAggregateId       | "shernode-homes"                                                |
       | nodeAggregateClassification | "regular"                                                       |
       | initialPropertyValues       | {"uriPathSegment": {"type": "string", "value": "non-existing"}} |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath              | nodeaggregateidpath                                            | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""                   | "lady-eleonode-rootford"                                       | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |

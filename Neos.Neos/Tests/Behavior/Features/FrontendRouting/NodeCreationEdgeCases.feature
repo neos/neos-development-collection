@@ -27,20 +27,17 @@ Feature: Test cases for node creation edge cases
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example":"source"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                    |
       | nodeAggregateId           | "shernode-homes"         |
       | nodeTypeName              | "Neos.Neos:Site"         |
       | parentNodeAggregateId     | "lady-eleonode-rootford" |
       | originDimensionSpacePoint | {"example":"source"}     |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId      | nodeName          | parentNodeAggregateId | succeedingSiblingNodeAggregateId | nodeTypeName       | initialPropertyValues          |
     # Let's prepare some siblings to check orderings. Also, everything gets better with siblings.
@@ -53,7 +50,6 @@ Feature: Test cases for node creation edge cases
       | nodeAggregateId              | "younger-mc-nodeface" |
       | coveredDimensionSpacePoint   | {"example":"spec"}    |
       | nodeVariantSelectionStrategy | "allSpecializations"  |
-    And the graph projection is fully up to date
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId  | nodeName | parentNodeAggregateId | succeedingSiblingNodeAggregateId | nodeTypeName       | initialPropertyValues      |
       | nody-mc-nodeface | document | shernode-homes        | younger-mc-nodeface              | Neos.Neos:Document | {"uriPathSegment": "nody"} |

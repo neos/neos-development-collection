@@ -33,10 +33,9 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                    |
-      | nodeAggregateId             | "lady-eleonode-rootford" |
-      | nodeTypeName                | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
 
     # lady-eleonode-rootford
     #   shernode-homes
@@ -66,7 +65,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
-    And The documenturipath projection is up to date
 
   Scenario: Match homepage URL
     When I am on URL "/"
@@ -94,7 +92,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
-    And The documenturipath projection is up to date
     And I am on URL "/"
     Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated"
     And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-document"
@@ -105,13 +102,11 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | nodeAggregateId           | "sir-david-nodenborough"                           |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-a"} |
-    And The documenturipath projection is up to date
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
       | nodeAggregateId           | "sir-david-nodenborough"                           |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-b"} |
-    And The documenturipath projection is up to date
 
     And I am on URL "/"
     Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated-b"
@@ -131,7 +126,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "shernode-homes"        |
       | newSucceedingSiblingNodeAggregateId | null                    |
-    And The documenturipath projection is up to date
     And I am on URL "/earl-document"
     Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
     And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/earl-document"
@@ -143,7 +137,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "earl-o-documentbourgh" |
       | newSucceedingSiblingNodeAggregateId | null                    |
-    And The documenturipath projection is up to date
     And I am on URL "/david-nodenborough/earl-document/nody"
     Then the matched node should be "nody-mc-nodeface" in content stream "cs-identifier" and dimension "{}"
     And the node "nody-mc-nodeface" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document/nody"

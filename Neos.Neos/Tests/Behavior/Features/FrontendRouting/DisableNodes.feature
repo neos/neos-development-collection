@@ -35,7 +35,6 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
 
     # lady-eleonode-rootford
     #   shernode-homes
@@ -67,15 +66,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
 
-    And The documenturipath projection is up to date
-
   Scenario: Disable leaf node
     When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value           |
-      | nodeAggregateId              | "leaf-mc-node"  |
-      | coveredDimensionSpacePoint   | {}              |
-      | nodeVariantSelectionStrategy | "allVariants"   |
-    And The documenturipath projection is up to date
+      | Key                          | Value          |
+      | nodeAggregateId              | "leaf-mc-node" |
+      | coveredDimensionSpacePoint   | {}             |
+      | nodeVariantSelectionStrategy | "allVariants"  |
     Then No node should match URL "/david-nodenborough/earl-document/leaf"
     And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
 
@@ -85,7 +81,6 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
@@ -102,8 +97,6 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
@@ -113,8 +106,6 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
     When I am on URL "/david-nodenborough"
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
     And No node should match URL "/david-nodenborough/earl-document"
@@ -132,8 +123,6 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
@@ -143,8 +132,6 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
@@ -158,12 +145,11 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"         |
+      | workspaceName                | "live"                   |
+      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                          | "disabled"               |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
@@ -173,8 +159,6 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
     When I am on URL "/david-nodenborough"
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
@@ -188,12 +172,11 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                   |
+      | workspaceName                | "live"                  |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | affectedDimensionSpacePoints | [{}]                    |
       | tag                          | "disabled"              |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
@@ -205,12 +188,11 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event SubtreeWasUntagged was published with payload:
       | Key                          | Value                    |
+      | workspaceName                | "live"                   |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                          | "disabled"               |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
     When I am on URL "/david-nodenborough"
     Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
@@ -222,14 +204,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
       | nodeAggregateId                     | "earl-o-documentbourgh" |
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "nody-mc-nodeface"      |
       | newSucceedingSiblingNodeAggregateId | null                    |
-    And The documenturipath projection is up to date
     When I am on URL "/nody/earl-document"
     Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
 
@@ -239,14 +219,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
-    And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
       | nodeAggregateId                     | "earl-o-documentbourgh" |
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "nody-mc-nodeface"      |
       | newSucceedingSiblingNodeAggregateId | null                    |
-    And The documenturipath projection is up to date
     Then No node should match URL "/nody/earl-document"
     And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/nody/earl-document/leaf"
 
@@ -256,11 +234,9 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "nody-mc-nodeface" |
       | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |
-    And the graph projection is fully up to date
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId | nodeTypeName                | initialPropertyValues            |
       | nody-mc-nodeface-child | nody-mc-nodeface      | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "nody-child"} |
-    And The documenturipath projection is up to date
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId              | "nody-mc-nodeface" |

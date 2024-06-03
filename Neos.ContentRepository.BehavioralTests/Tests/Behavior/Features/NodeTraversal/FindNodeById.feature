@@ -63,13 +63,11 @@ Feature: Find nodes using the findNodeById query
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeName | nodeTypeName                               | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds       |
       | home            | home     | Neos.ContentRepository.Testing:Homepage    | lady-eleonode-rootford | {}                    | {"terms": "terms", "contact": "contact"} |
@@ -82,10 +80,9 @@ Feature: Find nodes using the findNodeById query
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateId              | "a2a1"             |
-      | nodeVariantSelectionStrategy | "allVariants"      |
-    And the graph projection is fully up to date
+      | Key                          | Value         |
+      | nodeAggregateId              | "a2a1"        |
+      | nodeVariantSelectionStrategy | "allVariants" |
 
   Scenario:
     # findNodeById queries without result

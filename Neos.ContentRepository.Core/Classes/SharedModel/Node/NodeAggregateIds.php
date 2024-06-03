@@ -71,7 +71,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
     public static function fromNodes(Nodes $nodes): self
     {
         return self::fromArray(
-            array_map(fn(Node $node) => $node->nodeAggregateId, iterator_to_array($nodes))
+            array_map(fn(Node $node) => $node->aggregateId, iterator_to_array($nodes))
         );
     }
 

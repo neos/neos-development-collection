@@ -24,30 +24,27 @@ Feature: Node References with Dimensions
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
-      | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
-      | anthony-destinode       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
+      | nodeAggregateId   | nodeTypeName                                      | parentNodeAggregateId  |
+      | source-nodandaise | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford |
+      | anthony-destinode | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford |
 
   Scenario: Create a reference and check whether they can be read in the different subgraphs
     When the command SetNodeReferences is executed with payload:
-      | Key                           | Value                             |
+      | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName                 | "referenceProperty"               |
-      | references                    | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
+      | referenceName         | "referenceProperty"               |
+      | references            | [{"target": "anthony-destinode"}] |
 
     When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}

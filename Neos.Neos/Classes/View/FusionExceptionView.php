@@ -16,6 +16,7 @@ namespace Neos\Neos\View;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -105,27 +106,26 @@ class FusionExceptionView extends AbstractView
             return $this->renderErrorWelcomeScreen();
         }
 
-        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
         $fusionExceptionViewInternals = $this->contentRepositoryRegistry->buildService(
             $siteDetectionResult->contentRepositoryId,
             new FusionExceptionViewInternalsFactory()
         );
         $dimensionSpacePoint = $fusionExceptionViewInternals->getArbitraryDimensionSpacePoint();
 
-        $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
-
-        $currentSiteNode = null;
         $site = $this->siteRepository->findOneByNodeName($siteDetectionResult->siteNodeName);
-        if ($liveWorkspace && $site) {
+
+        if (!$site) {
+            return $this->renderErrorWelcomeScreen();
+        }
+
+        try {
             $currentSiteNode = $this->siteNodeUtility->findSiteNodeBySite(
                 $site,
-                $liveWorkspace->workspaceName,
+                WorkspaceName::forLive(),
                 $dimensionSpacePoint,
                 VisibilityConstraints::frontend()
             );
-        }
-
-        if (!$currentSiteNode) {
+        } catch (WorkspaceDoesNotExist | \RuntimeException) {
             return $this->renderErrorWelcomeScreen();
         }
 

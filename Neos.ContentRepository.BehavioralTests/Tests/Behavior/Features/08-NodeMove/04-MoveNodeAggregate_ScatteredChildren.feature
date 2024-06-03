@@ -21,7 +21,6 @@ Feature: Move a node with content dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example": "general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -49,7 +48,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "nodimus-mediocre"        |
       | newSucceedingSiblingNodeAggregateId | "younger-child-destinode" |
       | relationDistributionStrategy        | "scatter"                 |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                        |
@@ -58,7 +56,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | "bustling-destinode"         |
       | relationDistributionStrategy        | "gatherSpecializations"      |
-    And the graph projection is fully up to date
 
     Then I expect exactly 15 events to be published on stream "ContentStream:cs-identifier"
     And event at index 14 is of type "NodeAggregateWasMoved" with payload:
@@ -119,7 +116,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "nodimus-mediocre"        |
       | newSucceedingSiblingNodeAggregateId | "younger-child-destinode" |
       | relationDistributionStrategy        | "scatter"                 |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                   |
@@ -127,7 +123,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint          | {"example": "source"}   |
       | newParentNodeAggregateId     | "bustling-destinode"    |
       | relationDistributionStrategy | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     Then I expect exactly 15 events to be published on stream "ContentStream:cs-identifier"
     And event at index 14 is of type "NodeAggregateWasMoved" with payload:
@@ -177,7 +172,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "nodimus-mediocre"        |
       | newSucceedingSiblingNodeAggregateId | "younger-child-destinode" |
       | relationDistributionStrategy        | "scatter"                 |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
@@ -185,7 +179,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                 | {"example": "source"}   |
       | newSucceedingSiblingNodeAggregateId | "elder-destinode"       |
       | relationDistributionStrategy        | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     Then I expect exactly 15 events to be published on stream "ContentStream:cs-identifier"
     And event at index 14 is of type "NodeAggregateWasMoved" with payload:
@@ -247,7 +240,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "nodimus-mediocre"        |
       | newSucceedingSiblingNodeAggregateId | "younger-child-destinode" |
       | relationDistributionStrategy        | "scatter"                 |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                | Value                |
       | nodeAggregateId                    | "elder-destinode"    |
@@ -255,7 +247,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId           | "nodimus-mediocre"   |
       | newPrecedingSiblingNodeAggregateId | "bustling-destinode" |
       | relationDistributionStrategy       | "scatter"            |
-    And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
@@ -263,7 +254,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                 | {"example": "source"}   |
       | newSucceedingSiblingNodeAggregateId | "bustling-destinode"    |
       | relationDistributionStrategy        | "gatherSpecializations" |
-    And the graph projection is fully up to date
 
     Then I expect exactly 16 events to be published on stream "ContentStream:cs-identifier"
     And event at index 15 is of type "NodeAggregateWasMoved" with payload:

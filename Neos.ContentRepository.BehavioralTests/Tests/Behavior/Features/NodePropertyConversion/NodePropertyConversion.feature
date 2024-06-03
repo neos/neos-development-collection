@@ -13,27 +13,24 @@ Feature: Node Property Conversion
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value           |
-      | workspaceName              | "live"          |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | nodeAggregateId     | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
 
   Scenario: DateTime objects at Node Creation
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                              |
-      | nodeAggregateId       | "nody-mc-nodeface"                                 |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"           |
-      | originDimensionSpacePoint     | {}                                                 |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                           |
-      | initialPropertyValues         | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
+      | Key                       | Value                                              |
+      | nodeAggregateId           | "nody-mc-nodeface"                                 |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content"           |
+      | originDimensionSpacePoint | {}                                                 |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                           |
+      | initialPropertyValues     | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
 
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
@@ -43,20 +40,18 @@ Feature: Node Property Conversion
 
   Scenario: DateTime objects at Node Property Updating
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                              |
-      | nodeAggregateId       | "nody-mc-nodeface"                                 |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"           |
-      | originDimensionSpacePoint     | {}                                                 |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                           |
-      | initialPropertyValues         | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
-    And the graph projection is fully up to date
+      | Key                       | Value                                              |
+      | nodeAggregateId           | "nody-mc-nodeface"                                 |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content"           |
+      | originDimensionSpacePoint | {}                                                 |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                           |
+      | initialPropertyValues     | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
 
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
-      | nodeAggregateId   | "nody-mc-nodeface"                                 |
+      | nodeAggregateId           | "nody-mc-nodeface"                                 |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"dateProperty": "Date:1997-07-19T19:20:30+05:00"} |
-    And the graph projection is fully up to date
 
     When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}

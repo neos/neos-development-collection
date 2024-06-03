@@ -83,26 +83,6 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * Arguments to be removed from the URI. Only active if addQueryString = true
-     *
-     * @return array<int,string>
-     */
-    public function getArgumentsToBeExcludedFromQueryString(): array
-    {
-        return $this->fusionValue('argumentsToBeExcludedFromQueryString');
-    }
-
-    /**
-     * If true, the current query parameters will be kept in the URI
-     *
-     * @return boolean
-     */
-    public function getAddQueryString()
-    {
-        return (bool)$this->fusionValue('addQueryString');
-    }
-
-    /**
      * If true, an absolute URI is rendered
      *
      * @return boolean
@@ -141,7 +121,7 @@ class NodeUriImplementation extends AbstractFusionObject
         $node = $this->getNode();
         if ($node instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->subgraphIdentity->contentRepositoryId
+                $node->contentRepositoryId
             );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);
@@ -177,14 +157,12 @@ class NodeUriImplementation extends AbstractFusionObject
             ->setFormat($this->getFormat())
             ->setCreateAbsoluteUri($this->isAbsolute())
             ->setArguments($this->getAdditionalParams())
-            ->setSection($this->getSection())
-            ->setAddQueryString($this->getAddQueryString())
-            ->setArgumentsToBeExcludedFromQueryString($this->getArgumentsToBeExcludedFromQueryString());
+            ->setSection($this->getSection());
 
         try {
             return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
         } catch (NoMatchingRouteException) {
-            $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri. Arguments: %s', $node->nodeAggregateId->value, json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
+            $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri. Arguments: %s', $node->aggregateId->value, json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
         }
         return '';
     }

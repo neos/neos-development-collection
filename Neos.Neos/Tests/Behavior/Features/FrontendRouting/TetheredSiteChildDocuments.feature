@@ -35,7 +35,6 @@ Feature: Tests for site node child documents. These are special in that they hav
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
     # We explicitly create a site node with a tethered child document without uriPathSegment, so its uriPath is empty, exactly as the site node's
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues | nodeName |
@@ -53,7 +52,6 @@ Feature: Tests for site node child documents. These are special in that they hav
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
-    And The documenturipath projection is up to date
 
   Scenario: Set tethered child uriPathSegment
     When I remember NodeAggregateId of node "shernode-homes"s child "notFound" as "notFoundId"
@@ -61,8 +59,6 @@ Feature: Tests for site node child documents. These are special in that they hav
       | Key             | Value                           |
       | nodeAggregateId | "$notFoundId"                   |
       | propertyValues  | {"uriPathSegment": "not-found"} |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
     And I am on URL "/"
     Then the matched node should be "shernode-homes" in content stream "cs-identifier" and dimension "{}"
     And the node "$notFoundId" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/not-found"

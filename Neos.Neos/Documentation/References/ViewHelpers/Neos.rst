@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 #########################
 
-This reference was automatically generated from code on 2024-05-11
+This reference was automatically generated from code on 2024-06-03
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -538,9 +538,9 @@ Arguments
 
 * ``additionalParams`` (array, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
 
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
+* ``addQueryString`` (boolean, *optional*): Deprecated with Neos 9. If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): Deprecated with Neos 9. arguments to be removed from the URI. Only active if $addQueryString = true
 
 
 
@@ -636,10 +636,6 @@ Arguments
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
 * ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
-
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
@@ -1009,9 +1005,9 @@ Arguments
 
 * ``additionalParams`` (string, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
 
-* ``addQueryString`` (string, *optional*): If set, the current query parameters will be kept in the URI
+* ``addQueryString`` (string, *optional*): Deprecated with Neos 9. If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (string, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
+* ``argumentsToBeExcludedFromQueryString`` (string, *optional*): Deprecated with Neos 9. arguments to be removed from the URI. Only active if $addQueryString = true
 
 
 
@@ -1077,10 +1073,6 @@ Arguments
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
 * ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
-
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 

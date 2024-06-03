@@ -62,8 +62,7 @@ class CachingHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Generate a `@cache` entry tag for a single node identifier. If a Node $contextNode is given the
-     * entry tag will respect the workspace hash.
+     * Generate a `@cache` entry tag for a single node identifier.
      *
      * @param string $identifier
      * @param Node $contextNode
@@ -72,8 +71,8 @@ class CachingHelper implements ProtectedContextAwareInterface
     public function nodeTagForIdentifier(string $identifier, Node $contextNode): string
     {
         return CacheTag::forNodeAggregate(
-            $contextNode->subgraphIdentity->contentRepositoryId,
-            $contextNode->subgraphIdentity->contentStreamId,
+            $contextNode->contentRepositoryId,
+            $contextNode->workspaceName,
             NodeAggregateId::fromString($identifier)
         )->value;
     }
@@ -96,8 +95,8 @@ class CachingHelper implements ProtectedContextAwareInterface
         }
 
         return CacheTagSet::forNodeTypeNames(
-            $contextNode->subgraphIdentity->contentRepositoryId,
-            $contextNode->subgraphIdentity->contentStreamId,
+            $contextNode->contentRepositoryId,
+            $contextNode->workspaceName,
             NodeTypeNames::fromStringArray($nodeTypes)
         )->toStringArray();
     }
@@ -135,17 +134,15 @@ class CachingHelper implements ProtectedContextAwareInterface
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->contentRepositoryId
         );
 
-
-        /** @var Workspace $currentWorkspace */
-        $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $node->subgraphIdentity->contentStreamId
+        $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+            $node->workspaceName
         );
         $workspaceChain = [];
         // TODO: Maybe write CTE here
-        while ($currentWorkspace instanceof Workspace) {
+        while ($currentWorkspace !== null) {
             $workspaceChain[$currentWorkspace->workspaceName->value] = $currentWorkspace;
             $currentWorkspace = $currentWorkspace->baseWorkspaceName
                 ? $contentRepository->getWorkspaceFinder()->findOneByName($currentWorkspace->baseWorkspaceName)

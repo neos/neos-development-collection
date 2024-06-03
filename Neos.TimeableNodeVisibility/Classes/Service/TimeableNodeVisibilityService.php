@@ -42,14 +42,9 @@ class TimeableNodeVisibilityService
     public function handleExceededNodeDates(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): ChangedVisibilities
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
-        if ($liveWorkspace === null) {
-            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
-        }
-
         $now = new \DateTimeImmutable();
 
-        $nodes = $this->getNodesWithExceededDates($contentRepository, $liveWorkspace, $now);
+        $nodes = $this->getNodesWithExceededDates($contentRepository, $workspaceName, $now);
         $results = [];
 
         /** @var Node $node */
@@ -58,9 +53,9 @@ class TimeableNodeVisibilityService
             if ($this->needsEnabling($node, $now) && $nodeIsDisabled) {
                 $contentRepository->handle(
                     EnableNodeAggregate::create(
-                        $liveWorkspace->workspaceName,
-                        $node->nodeAggregateId,
-                        $node->subgraphIdentity->dimensionSpacePoint,
+                        $workspaceName,
+                        $node->aggregateId,
+                        $node->dimensionSpacePoint,
                         NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
                     )
                 );
@@ -72,9 +67,9 @@ class TimeableNodeVisibilityService
             if ($this->needsDisabling($node, $now) && !$nodeIsDisabled) {
                 $contentRepository->handle(
                     DisableNodeAggregate::create(
-                        $liveWorkspace->workspaceName,
-                        $node->nodeAggregateId,
-                        $node->subgraphIdentity->dimensionSpacePoint,
+                        $workspaceName,
+                        $node->aggregateId,
+                        $node->dimensionSpacePoint,
                         NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
                     )
                 );
@@ -89,13 +84,13 @@ class TimeableNodeVisibilityService
     /**
      * @return \Generator<Node>
      */
-    private function getNodesWithExceededDates(ContentRepository $contentRepository, Workspace $liveWorkspace, \DateTimeImmutable $now): \Generator
+    private function getNodesWithExceededDates(ContentRepository $contentRepository, WorkspaceName $workspaceName, \DateTimeImmutable $now): \Generator
     {
         $dimensionSpacePoints = $contentRepository->getVariationGraph()->getDimensionSpacePoints();
 
         foreach ($dimensionSpacePoints as $dimensionSpacePoint) {
 
-            $contentGraph = $contentRepository->getContentGraph($liveWorkspace->workspaceName);
+            $contentGraph = $contentRepository->getContentGraph($workspaceName);
 
             // We fetch without restriction to get also all disabled nodes
             $subgraph = $contentGraph->getSubgraph(
@@ -110,7 +105,7 @@ class TimeableNodeVisibilityService
             }
 
             $nodes = $subgraph->findDescendantNodes(
-                $rootNode->nodeAggregateId,
+                $rootNode->aggregateId,
                 FindDescendantNodesFilter::create(
                     nodeTypes: NodeTypeCriteria::createWithAllowedNodeTypeNames(NodeTypeNames::fromStringArray(['Neos.TimeableNodeVisibility:Timeable'])),
                     propertyValue: OrCriteria::create(
@@ -162,11 +157,11 @@ class TimeableNodeVisibilityService
     private function logResult(ChangedVisibility $result): void
     {
         $this->logger->info(
-            sprintf('Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]: %s',
+            sprintf('Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]',
                 $result->type->value,
-                $result->node->nodeAggregateId->value,
-                implode(',', $result->node->originDimensionSpacePoint->coordinates),
-                $result->node->getLabel())
+                $result->node->aggregateId->value,
+                implode(',', $result->node->originDimensionSpacePoint->coordinates)
+            )
         );
     }
 }

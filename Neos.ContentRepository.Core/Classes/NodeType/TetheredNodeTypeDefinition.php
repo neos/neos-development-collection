@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository.Core package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,13 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\NodeType;
 
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+
 /**
- * @internal
+ * @api
  */
-final class DefaultNodeLabelGeneratorFactory implements NodeLabelGeneratorFactoryInterface
+final readonly class TetheredNodeTypeDefinition
 {
-    public function create(NodeType $nodeType): NodeLabelGeneratorInterface
-    {
-        return new NodeTypeNameNodeLabelGenerator();
+    public function __construct(
+        public NodeName $name,
+        public NodeTypeName $nodeTypeName
+    ) {
     }
 }

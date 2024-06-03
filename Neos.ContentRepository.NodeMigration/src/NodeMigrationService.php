@@ -84,7 +84,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
                     WorkspaceDescription::fromString(''),
                     ContentStreamId::create(),
                 )
-            )->block();
+            );
             $targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getTargetWorkspaceName());
             $targetWorkspaceWasCreated = true;
         }

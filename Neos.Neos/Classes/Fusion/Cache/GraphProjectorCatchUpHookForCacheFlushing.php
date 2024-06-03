@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemove
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -157,7 +157,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
                     assert($parentNodeAggregate instanceof NodeAggregate);
                     $this->scheduleCacheFlushJobForNodeAggregate(
                         $this->contentRepository,
-                        $parentNodeAggregate->contentStreamId,
+                        $workspace->workspaceName,
                         $parentNodeAggregate->nodeAggregateId
                     );
                 }
@@ -189,12 +189,13 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             if ($nodeAggregate) {
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
-                    $nodeAggregate->contentStreamId,
+                    $workspace->workspaceName,
                     $nodeAggregate->nodeAggregateId
                 );
             }
         }
     }
+
     /**
      * @var array<string,array<string,mixed>>
      */
@@ -206,13 +207,13 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 
     protected function scheduleCacheFlushJobForNodeAggregate(
         ContentRepository $contentRepository,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId
     ): void {
         // we store this in an associative array deduplicate.
-        $this->cacheFlushesOnBeforeBatchCompleted[$contentStreamId->value . '__' . $nodeAggregateId->value] = [
+        $this->cacheFlushesOnBeforeBatchCompleted[$workspaceName->value . '__' . $nodeAggregateId->value] = [
             'cr' => $contentRepository,
-            'csi' => $contentStreamId,
+            'wsn' => $workspaceName,
             'nai' => $nodeAggregateId
         ];
     }
@@ -220,18 +221,17 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     public function onBeforeBatchCompleted(): void
     {
         foreach ($this->cacheFlushesOnBeforeBatchCompleted as $k => $entry) {
-            $this->contentCacheFlusher->flushNodeAggregate($entry['cr'], $entry['csi'], $entry['nai']);
+            $this->contentCacheFlusher->flushNodeAggregate($entry['cr'], $entry['wsn'], $entry['nai']);
             $this->cacheFlushesOnAfterCatchUp[$k] = $entry;
         }
         $this->cacheFlushesOnBeforeBatchCompleted = [];
     }
 
 
-
     public function onAfterCatchUp(): void
     {
         foreach ($this->cacheFlushesOnAfterCatchUp as $entry) {
-            $this->contentCacheFlusher->flushNodeAggregate($entry['cr'], $entry['csi'], $entry['nai']);
+            $this->contentCacheFlusher->flushNodeAggregate($entry['cr'], $entry['wsn'], $entry['nai']);
         }
         $this->cacheFlushesOnAfterCatchUp = [];
     }

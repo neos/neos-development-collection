@@ -12,19 +12,18 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\NodeType;
+namespace Neos\Neos\Domain\NodeLabel;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
- * The node type name based node label generator
- *
- * @internal
+ * @api to access the Node's label in PHP, in Fusion one can use ${q(node).label()}.
  */
-final class NodeTypeNameNodeLabelGenerator implements NodeLabelGeneratorInterface
+interface NodeLabelGeneratorInterface
 {
-    public function getLabel(Node $node): string
-    {
-        return \mb_substr($node->nodeTypeName->value, \mb_strrpos($node->nodeTypeName->value, '.') + 1);
-    }
+    /**
+     * Render a node label
+     * @api
+     */
+    public function getLabel(Node $node): string;
 }

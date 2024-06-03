@@ -71,6 +71,7 @@ trait NodeDisabling
 
         $events = Events::with(
             new SubtreeWasTagged(
+                $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
@@ -126,6 +127,7 @@ trait NodeDisabling
 
         $events = Events::with(
             new SubtreeWasUntagged(
+                $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,

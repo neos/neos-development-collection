@@ -24,37 +24,33 @@ Feature: Node References with Dimensions
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
-      | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
-      | anthony-destinode       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
+      | nodeAggregateId   | nodeTypeName                                      | parentNodeAggregateId  |
+      | source-nodandaise | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford |
+      | anthony-destinode | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford |
 
   Scenario: Create a reference, then specialize the source node; and the references should exist on the specialization
     When the command SetNodeReferences is executed with payload:
-      | Key                           | Value                             |
+      | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName                 | "referenceProperty"               |
-      | references                    | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
+      | referenceName         | "referenceProperty"               |
+      | references            | [{"target": "anthony-destinode"}] |
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value               |
+      | Key             | Value               |
       | nodeAggregateId | "source-nodandaise" |
-      | sourceOrigin            | {"language":"de"}   |
-      | targetOrigin            | {"language":"ch"}   |
-    And the graph projection is fully up to date
+      | sourceOrigin    | {"language":"de"}   |
+      | targetOrigin    | {"language":"ch"}   |
 
     # after specialization, the reference must still exist on the specialized node
     When I am in workspace "live" and dimension space point {"language": "ch"}
@@ -82,11 +78,10 @@ Feature: Node References with Dimensions
     # now, when modifying the specialization reference, only the specialization is changed.
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | sourceNodeAggregateId   | "source-nodandaise"               |
+      | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "source-nodandaise"}] |
-    And the graph projection is fully up to date
 
     # reference to self (modified 2 lines above)
     When I am in workspace "live" and dimension space point {"language": "ch"}
@@ -111,19 +106,17 @@ Feature: Node References with Dimensions
 
   Scenario: specialize the source node, only set reference on the specialization. Then, the reference should only appear on the specialization
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value               |
+      | Key             | Value               |
       | nodeAggregateId | "source-nodandaise" |
-      | sourceOrigin            | {"language":"de"}   |
-      | targetOrigin            | {"language":"ch"}   |
-    And the graph projection is fully up to date
+      | sourceOrigin    | {"language":"de"}   |
+      | targetOrigin    | {"language":"ch"}   |
 
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | sourceNodeAggregateId   | "source-nodandaise"               |
+      | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
 
 
     # on the specialization, the reference exists.
@@ -149,25 +142,22 @@ Feature: Node References with Dimensions
   Scenario: Create a reference, then create a peer variant of the source node; and the references should exist on the peer
     # prerequisite: "anthony-destinode" also exists in EN
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value               |
+      | Key             | Value               |
       | nodeAggregateId | "anthony-destinode" |
-      | sourceOrigin            | {"language":"de"}   |
-      | targetOrigin            | {"language":"en"}   |
-    And the graph projection is fully up to date
+      | sourceOrigin    | {"language":"de"}   |
+      | targetOrigin    | {"language":"en"}   |
 
     When the command SetNodeReferences is executed with payload:
-      | Key                           | Value                             |
+      | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName                 | "referenceProperty"               |
-      | references                    | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
+      | referenceName         | "referenceProperty"               |
+      | references            | [{"target": "anthony-destinode"}] |
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value               |
+      | Key             | Value               |
       | nodeAggregateId | "source-nodandaise" |
-      | sourceOrigin            | {"language":"de"}   |
-      | targetOrigin            | {"language":"en"}   |
-    And the graph projection is fully up to date
+      | sourceOrigin    | {"language":"de"}   |
+      | targetOrigin    | {"language":"en"}   |
 
     # after creating a peer, the reference must still exist on the peer node
     When I am in workspace "live" and dimension space point {"language": "en"}
@@ -205,11 +195,10 @@ Feature: Node References with Dimensions
     # now, when modifying the peer reference, only the peer is changed.
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | sourceNodeAggregateId   | "source-nodandaise"               |
+      | sourceNodeAggregateId           | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "en"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "source-nodandaise"}] |
-    And the graph projection is fully up to date
 
     # reference to self (modified 2 lines above)
     When I am in workspace "live" and dimension space point {"language": "en"}
@@ -245,28 +234,25 @@ Feature: Node References with Dimensions
   Scenario: Create a reference, then create a generalization of the source node; and the references should exist on the generalization
     # We need to create a new ch-only node to test this; as by default, only a german node already exists shining through in ch
     And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                               |
-      | nodeAggregateId       | "ch-only"                                           |
-      | originDimensionSpacePoint     | {"language": "ch"}                                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                            |
-    And the graph projection is fully up to date
+      | Key                       | Value                                               |
+      | nodeAggregateId           | "ch-only"                                           |
+      | originDimensionSpacePoint | {"language": "ch"}                                  |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:NodeWithReferences" |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                            |
 
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | sourceNodeAggregateId   | "ch-only"                         |
+      | sourceNodeAggregateId           | "ch-only"                         |
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
 
     # here we generalize
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value             |
+      | Key             | Value             |
       | nodeAggregateId | "ch-only"         |
-      | sourceOrigin            | {"language":"ch"} |
-      | targetOrigin            | {"language":"de"} |
-    And the graph projection is fully up to date
+      | sourceOrigin    | {"language":"ch"} |
+      | targetOrigin    | {"language":"de"} |
 
     # after generalizing, the reference must still exist on the generalized node
     When I am in workspace "live" and dimension space point {"language": "de"}

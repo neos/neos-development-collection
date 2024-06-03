@@ -153,7 +153,7 @@ class WorkspaceCommandController extends CommandController
             WorkspaceTitle::fromString($name),
             WorkspaceDescription::fromString($name),
             ContentStreamId::create()
-        ))->block();
+        ));
     }
 
     /**
@@ -199,7 +199,7 @@ class WorkspaceCommandController extends CommandController
                 WorkspaceDescription::fromString($description ?: $workspace),
                 ContentStreamId::create(),
                 $workspaceOwnerUserId
-            ))->block();
+            ));
         } catch (WorkspaceAlreadyExists $workspaceAlreadyExists) {
             $this->outputLine('Workspace "%s" already exists', [$workspace]);
             $this->quit(1);
@@ -309,7 +309,7 @@ class WorkspaceCommandController extends CommandController
             DeleteWorkspace::create(
                 $workspaceName
             )
-        )->block();
+        );
         $this->outputLine('Deleted workspace "%s"', [$workspaceName->value]);
     }
 

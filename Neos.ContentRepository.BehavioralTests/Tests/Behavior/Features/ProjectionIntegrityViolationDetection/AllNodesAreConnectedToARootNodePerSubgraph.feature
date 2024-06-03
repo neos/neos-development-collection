@@ -20,11 +20,11 @@ Feature: Run projection integrity violation detection regarding root connection
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
 
   Scenario: Create a cycle
     When the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "lady-eleonode-rootford"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
@@ -32,6 +32,7 @@ Feature: Run projection integrity violation detection regarding root connection
       | nodeAggregateClassification | "root"                                    |
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "sir-david-nodenborough"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
@@ -42,6 +43,7 @@ Feature: Run projection integrity violation detection regarding root connection
       | nodeAggregateClassification | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
+      | workspaceName               | "live"                                    |
       | contentStreamId             | "cs-identifier"                           |
       | nodeAggregateId             | "nody-mc-nodeface"                        |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
@@ -50,14 +52,13 @@ Feature: Run projection integrity violation detection regarding root connection
       | parentNodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeName                    | "child-document"                          |
       | nodeAggregateClassification | "regular"                                 |
-    And the graph projection is fully up to date
     And the event NodeAggregateWasMoved was published with payload:
       | Key                           | Value                                                                                                                                  |
+      | workspaceName                 | "live"                                                                                                                                 |
       | contentStreamId               | "cs-identifier"                                                                                                                        |
       | nodeAggregateId               | "sir-david-nodenborough"                                                                                                               |
       | newParentNodeAggregateId      | "nody-mc-nodeface"                                                                                                                     |
       | succeedingSiblingsForCoverage | [{"dimensionSpacePoint":{"language":"de"},"nodeAggregateId": null},{"dimensionSpacePoint":{"language":"gsw"},"nodeAggregateId": null}] |
-    And the graph projection is fully up to date
     And I run integrity violation detection
     # one error per subgraph
     Then I expect the integrity violation detection result to contain exactly 2 errors

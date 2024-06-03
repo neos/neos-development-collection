@@ -17,7 +17,6 @@ Feature: Additional constraint checks after move node capabilities are introduce
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in workspace "live" and dimension space point {"example": "general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -38,21 +37,18 @@ Feature: Additional constraint checks after move node capabilities are introduce
       | dimensionSpacePoint          | {"example": "spec"}          |
       | newParentNodeAggregateId     | "sir-nodeward-nodington-iii" |
       | relationDistributionStrategy | "scatter"                    |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                       |
       | nodeAggregateId              | "bustling-mc-nodeface"      |
       | dimensionSpacePoint          | {"example": "peer"}         |
       | newParentNodeAggregateId     | "lady-abigail-nodenborough" |
       | relationDistributionStrategy | "scatter"                   |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                  |
       | nodeAggregateId              | "bustling-mc-nodeface" |
       | dimensionSpacePoint          | {"example": "general"} |
       | newParentNodeAggregateId     | "general-nodesworth"   |
       | relationDistributionStrategy | "scatter"              |
-    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                     |
@@ -60,20 +56,20 @@ Feature: Additional constraint checks after move node capabilities are introduce
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "sir-nodeward-nodington-iii"              |
       | nodeName              | "document"                                |
-    Then the last command should have thrown an exception of type "NodeNameIsAlreadyOccupied"
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                     |
       | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "lady-abigail-nodenborough"               |
       | nodeName              | "document"                                |
-    Then the last command should have thrown an exception of type "NodeNameIsAlreadyOccupied"
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                     |
       | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "general-nodesworth"                      |
       | nodeName              | "document"                                |
-    Then the last command should have thrown an exception of type "NodeNameIsAlreadyOccupied"
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
 

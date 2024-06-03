@@ -31,12 +31,6 @@ class FusionExceptionViewInternals implements ContentRepositoryServiceInterface
     public function getArbitraryDimensionSpacePoint(): DimensionSpacePoint
     {
         $rootDimensionSpacePoints = $this->interDimensionalVariationGraph->getRootGeneralizations();
-        if (empty($rootDimensionSpacePoints)) {
-            throw new \InvalidArgumentException(
-                'The dimension space is empty, please check your configuration.',
-                1651957153
-            );
-        }
         $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
         return $arbitraryRootDimensionSpacePoint;
     }

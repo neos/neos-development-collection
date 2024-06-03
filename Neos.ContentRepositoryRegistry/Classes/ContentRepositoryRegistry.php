@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
@@ -15,7 +16,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
@@ -93,15 +93,11 @@ final class ContentRepositoryRegistry
 
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
-        $contentRepository = $this->get($node->subgraphIdentity->contentRepositoryId);
+        $contentRepository = $this->get($node->contentRepositoryId);
 
-        // FIXME: node->workspace
-        /** @var Workspace $workspace */
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($node->subgraphIdentity->contentStreamId);
-
-        return $contentRepository->getContentGraph($workspace->workspaceName)->getSubgraph(
-            $node->subgraphIdentity->dimensionSpacePoint,
-            $node->subgraphIdentity->visibilityConstraints
+        return $contentRepository->getContentGraph($node->workspaceName)->getSubgraph(
+            $node->dimensionSpacePoint,
+            $node->visibilityConstraints
         );
     }
 

@@ -391,8 +391,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: Error: non-existing dimension name
     Given I change the content dimensions in content repository "default" to:
-      | Identifier   | Values         | Generalizations |
-      | language     | en, de         |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
@@ -410,8 +410,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: Error: non-existing dimension value
     Given I change the content dimensions in content repository "default" to:
-      | Identifier   | Values         | Generalizations |
-      | language     | en, de         |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
@@ -431,8 +431,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: Error: / in dimensionValueMapping
     Given I change the content dimensions in content repository "default" to:
-      | Identifier   | Values         | Generalizations |
-      | language     | en, de         |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
@@ -453,8 +453,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: Error: / as separator
     Given I change the content dimensions in content repository "default" to:
-      | Identifier   | Values         | Generalizations |
-      | language     | en, de         |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:
@@ -476,8 +476,8 @@ Feature: UriPathResolver works as expected
 
   Scenario: Error: separator in dimensionValueMapping
     Given I change the content dimensions in content repository "default" to:
-      | Identifier   | Values         | Generalizations |
-      | language     | en, de         |                 |
+      | Identifier | Values | Generalizations |
+      | language   | en, de |                 |
 
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration and exceptions are caught:

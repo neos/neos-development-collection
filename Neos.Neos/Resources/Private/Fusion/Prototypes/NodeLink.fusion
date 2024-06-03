@@ -5,8 +5,6 @@ prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
   node = null
   additionalParams = Neos.Fusion:DataStructure
   arguments = Neos.Fusion:DataStructure
-  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
-  addQueryString = false
   absolute = false
   baseNodeName = 'documentNode'
 
@@ -14,8 +12,6 @@ prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
     node = ${this.node}
     additionalParams = ${this.additionalParams}
     arguments = ${this.arguments}
-    argumentsToBeExcludedFromQueryString = ${this.argumentsToBeExcludedFromQueryString}
-    addQueryString = ${this.addQueryString}
     absolute = ${this.absolute}
     baseNodeName = ${this.baseNodeName}
   }
@@ -26,12 +22,10 @@ prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
       node = ${node}
       additionalParams = ${additionalParams}
       arguments = ${arguments}
-      argumentsToBeExcludedFromQueryString = ${argumentsToBeExcludedFromQueryString}
-      addQueryString = ${addQueryString}
       absolute = ${absolute}
       baseNodeName = ${baseNodeName}
     }
   }
 
-  content = ${node.label}
+  content = ${q(node).label()}
 }

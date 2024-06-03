@@ -240,7 +240,7 @@ class WorkspacesController extends AbstractModuleController
                     ContentStreamId::create(),
                     $visibility === 'private' ? $currentUserIdentifier : null
                 )
-            )->block();
+            );
         } catch (WorkspaceAlreadyExists $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.workspaceWithThisTitleAlreadyExists'),
@@ -319,7 +319,7 @@ class WorkspacesController extends AbstractModuleController
                     $title,
                     $description
                 )
-            )->block();
+            );
         }
 
         if ($workspace->workspaceOwner !== $workspaceOwner) {
@@ -328,7 +328,7 @@ class WorkspacesController extends AbstractModuleController
                     $workspaceName,
                     $workspaceOwner ?: null,
                 )
-            )->block();
+            );
         }
 
         $this->addFlashMessage($this->translator->translateById(
@@ -428,7 +428,7 @@ class WorkspacesController extends AbstractModuleController
             DeleteWorkspace::create(
                 $workspaceName,
             )
-        )->block();
+        );
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenRemoved',
@@ -481,8 +481,8 @@ class WorkspacesController extends AbstractModuleController
 
         $targetNodeAddressInPersonalWorkspace = new NodeAddress(
             $personalWorkspace->currentContentStreamId,
-            $targetNode->subgraphIdentity->dimensionSpacePoint,
-            $targetNode->nodeAggregateId,
+            $targetNode->dimensionSpacePoint,
+            $targetNode->aggregateId,
             $personalWorkspace->workspaceName
         );
 
@@ -531,7 +531,7 @@ class WorkspacesController extends AbstractModuleController
             ),
         );
         $contentRepository->handle($command)
-            ->block();
+            ;
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.selectedChangeHasBeenPublished',
@@ -568,7 +568,7 @@ class WorkspacesController extends AbstractModuleController
             ),
         );
         $contentRepository->handle($command)
-            ->block();
+            ;
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.selectedChangeHasBeenDiscarded',
@@ -611,7 +611,7 @@ class WorkspacesController extends AbstractModuleController
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
                 $contentRepository->handle($command)
-                    ->block();
+                    ;
                 $this->addFlashMessage($this->translator->translateById(
                     'workspaces.selectedChangesHaveBeenPublished',
                     [],
@@ -627,7 +627,7 @@ class WorkspacesController extends AbstractModuleController
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
                 $contentRepository->handle($command)
-                    ->block();
+                    ;
                 $this->addFlashMessage($this->translator->translateById(
                     'workspaces.selectedChangesHaveBeenDiscarded',
                     [],
@@ -770,7 +770,7 @@ class WorkspacesController extends AbstractModuleController
                 $documentNode = null;
                 $siteNode = null;
                 $ancestors = $subgraph->findAncestorNodes(
-                    $node->nodeAggregateId,
+                    $node->aggregateId,
                     FindAncestorNodesFilter::create()
                 );
                 $ancestors = Nodes::fromArray([$node])->merge($ancestors);
@@ -778,7 +778,7 @@ class WorkspacesController extends AbstractModuleController
                 $nodePathSegments = [];
                 $documentPathSegments = [];
                 foreach ($ancestors as $ancestor) {
-                    $pathSegment = $ancestor->nodeName ?: NodeName::fromString($ancestor->nodeAggregateId->value);
+                    $pathSegment = $ancestor->name ?: NodeName::fromString($ancestor->aggregateId->value);
                     // Don't include `sites` path as they are not needed
                     // by the HTML/JS magic and won't be included as `$documentPathSegments`
                     if (!$this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_SITES)) {
@@ -797,8 +797,8 @@ class WorkspacesController extends AbstractModuleController
 
                 // Neither $documentNode, $siteNode or its cannot really be null, this is just for type checks;
                 // We should probably throw an exception though
-                if ($documentNode !== null && $siteNode !== null && $siteNode->nodeName) {
-                    $siteNodeName = $siteNode->nodeName->value;
+                if ($documentNode !== null && $siteNode !== null && $siteNode->name) {
+                    $siteNodeName = $siteNode->name->value;
                     // Reverse `$documentPathSegments` to start with the site node.
                     // The paths are used for grouping the nodes and for selecting a tree of nodes.
                     $documentPath = implode('/', array_reverse(array_map(
@@ -870,14 +870,14 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function getOriginalNode(
         Node $modifiedNode,
-        WorkspaceName $workspaceName,
+        WorkspaceName $baseWorkspaceName,
         ContentRepository $contentRepository,
     ): ?Node {
-        $baseSubgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
-            $modifiedNode->subgraphIdentity->dimensionSpacePoint,
+        $baseSubgraph = $contentRepository->getContentGraph($baseWorkspaceName)->getSubgraph(
+            $modifiedNode->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        return $baseSubgraph->findNodeById($modifiedNode->nodeAggregateId);
+        return $baseSubgraph->findNodeById($modifiedNode->aggregateId);
     }
 
     /**
