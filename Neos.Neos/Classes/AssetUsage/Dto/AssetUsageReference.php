@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Dto;
 
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
-use Neos\Media\Domain\Model\Dto\UsageReference;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\Media\Domain\Model\Dto\UsageReference;
 
 /**
  * @api

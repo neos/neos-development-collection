@@ -15,10 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 
@@ -33,7 +33,6 @@ trait WorkspacePublishing
 
     /**
      * @Given /^the command PublishIndividualNodesFromWorkspace is executed with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theCommandPublishIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
@@ -42,7 +41,9 @@ trait WorkspacePublishing
         $nodesToPublish = NodeIdsToPublishOrDiscard::fromArray($commandArguments['nodesToPublish']);
 
         $command = PublishIndividualNodesFromWorkspace::create(
-            WorkspaceName::fromString($commandArguments['workspaceName']),
+            array_key_exists('workspaceName', $commandArguments)
+                ? WorkspaceName::fromString($commandArguments['workspaceName'])
+                : $this->currentWorkspaceName,
             $nodesToPublish,
         );
         if (isset($commandArguments['contentStreamIdForMatchingPart'])) {
@@ -52,12 +53,23 @@ trait WorkspacePublishing
             $command = $command->withContentStreamIdForRemainingPart(ContentStreamId::fromString($commandArguments['contentStreamIdForRemainingPart']));
         }
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
+    }
+
+    /**
+     * @Given /^the command PublishIndividualNodesFromWorkspace is executed with payload and exceptions are caught:$/
+     */
+    public function theCommandPublishIndividualNodesFromWorkspaceIsExecutedAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandPublishIndividualNodesFromWorkspaceIsExecuted($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
     }
 
     /**
      * @Given /^the command PublishWorkspace is executed with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theCommandPublishWorkspaceIsExecuted(TableNode $payloadTable): void
@@ -67,14 +79,17 @@ trait WorkspacePublishing
         $command = PublishWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
         );
+        if (array_key_exists('newContentStreamId', $commandArguments)) {
+            $command = $command->withNewContentStreamId(
+                ContentStreamId::fromString($commandArguments['newContentStreamId'])
+            );
+        }
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**
      * @Given /^the command PublishWorkspace is executed with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
      */
     public function theCommandPublishWorkspaceIsExecutedAndExceptionsAreCaught(TableNode $payloadTable): void
     {

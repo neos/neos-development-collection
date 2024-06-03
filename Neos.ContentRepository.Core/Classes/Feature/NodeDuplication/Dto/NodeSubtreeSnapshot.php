@@ -4,34 +4,34 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeDuplication\Dto;
 
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 
 /**
  * Implementation detail of {@see CopyNodesRecursively}
  *
  * @internal You'll never create this class yourself; see {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
  */
-final class NodeSubtreeSnapshot implements \JsonSerializable
+final readonly class NodeSubtreeSnapshot implements \JsonSerializable
 {
     /**
      * @param NodeSubtreeSnapshot[] $childNodes
      */
     private function __construct(
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeTypeName $nodeTypeName,
-        public readonly ?NodeName $nodeName,
-        public readonly NodeAggregateClassification $nodeAggregateClassification,
-        public readonly SerializedPropertyValues $propertyValues,
-        public readonly NodeReferencesSnapshot $nodeReferences,
-        public readonly array $childNodes
+        public NodeAggregateId $nodeAggregateId,
+        public NodeTypeName $nodeTypeName,
+        public ?NodeName $nodeName,
+        public NodeAggregateClassification $nodeAggregateClassification,
+        public SerializedPropertyValues $propertyValues,
+        public NodeReferencesSnapshot $nodeReferences,
+        public array $childNodes
     ) {
         foreach ($childNodes as $childNode) {
             if (!$childNode instanceof NodeSubtreeSnapshot) {
@@ -46,20 +46,20 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
     {
         $childNodes = [];
         foreach (
-            $subgraph->findChildNodes($sourceNode->nodeAggregateId, FindChildNodesFilter::create()) as $sourceChildNode
+            $subgraph->findChildNodes($sourceNode->aggregateId, FindChildNodesFilter::create()) as $sourceChildNode
         ) {
             $childNodes[] = self::fromSubgraphAndStartNode($subgraph, $sourceChildNode);
         }
         $properties = $sourceNode->properties;
 
         return new self(
-            $sourceNode->nodeAggregateId,
+            $sourceNode->aggregateId,
             $sourceNode->nodeTypeName,
-            $sourceNode->nodeName,
+            $sourceNode->name,
             $sourceNode->classification,
             $properties->serialized(),
             NodeReferencesSnapshot::fromReferences(
-                $subgraph->findReferences($sourceNode->nodeAggregateId, FindReferencesFilter::create())
+                $subgraph->findReferences($sourceNode->aggregateId, FindReferencesFilter::create())
             ),
             $childNodes
         );

@@ -23,14 +23,14 @@ Feature: ForkContentStream Without Dimensions
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | contentStreamId             | "cs-identifier"               |
-      | nodeAggregateId             | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                    |
+      | workspaceName               | "live"                                   |
       | contentStreamId             | "cs-identifier"                          |
       | nodeAggregateId             | "nody-mc-nodeface"                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Content" |
@@ -39,20 +39,21 @@ Feature: ForkContentStream Without Dimensions
       | parentNodeAggregateId       | "lady-eleonode-rootford"                 |
       | nodeName                    | "child"                                  |
       | nodeAggregateClassification | "regular"                                |
-    And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
+    And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
+      | workspaceName                | "live"                                                  |
       | contentStreamId              | "cs-identifier"                                         |
       | nodeAggregateId              | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint    | {}                                                      |
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "original value", "type": "string"}} |
+      | propertiesToUnset            | {}                                                      |
 
   Scenario: Ensure that the node is available in the forked content stream
     When the command "ForkContentStream" is executed with payload:
       | Key                   | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
     And I am in content stream "user-cs-identifier" and dimension space point {}
 
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
@@ -62,14 +63,15 @@ Feature: ForkContentStream Without Dimensions
       | Key                   | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "cs-identifier"      |
-    And the Event "NodePropertiesWereSet" was published to stream "ContentStream:user-cs-identifier" with payload:
+    And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
+      | workspaceName                | "user"                                                  |
       | contentStreamId              | "user-cs-identifier"                                    |
       | nodeAggregateId              | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint    | {}                                                      |
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
-    And the graph projection is fully up to date
+      | propertiesToUnset            | {}                                                      |
 
       # live
     When I am in content stream "cs-identifier" and dimension space point {}
@@ -91,14 +93,15 @@ Feature: ForkContentStream Without Dimensions
       | Key                   | Value                |
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "cs-identifier"      |
-    And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
+    And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
+      | workspaceName                | "live"                                                  |
       | contentStreamId              | "cs-identifier"                                         |
       | nodeAggregateId              | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint    | {}                                                      |
       | affectedDimensionSpacePoints | [{}]                                                    |
       | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
-    And the graph projection is fully up to date
+      | propertiesToUnset            | {}                                                      |
 
     # live
     When I am in content stream "cs-identifier" and dimension space point {}

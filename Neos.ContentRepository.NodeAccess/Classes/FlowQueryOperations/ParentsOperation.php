@@ -14,12 +14,12 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "parents" operation working on ContentRepository nodes. It iterates over all
@@ -40,7 +40,7 @@ class ParentsOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 100;
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject
@@ -80,7 +80,7 @@ class ParentsOperation extends AbstractOperation
             $ancestorNodes = $this->contentRepositoryRegistry
                 ->subgraphForNode($contextNode)
                 ->findAncestorNodes(
-                    $contextNode->nodeAggregateId,
+                    $contextNode->aggregateId,
                     $findAncestorNodesFilter
                 );
             $parents = $parents->merge($ancestorNodes);

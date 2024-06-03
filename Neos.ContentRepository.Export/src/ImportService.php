@@ -9,14 +9,14 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Export\Exception\LiveWorkspaceContentStreamExistsException;
+use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
 use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
 use Neos\EventStore\EventStoreInterface;
-use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
-use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Flow\ResourceManagement\ResourceRepository;
-use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\ContentRepository\Export\Exception\LiveWorkspaceContentStreamExistsException;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Media\Domain\Repository\AssetRepository;
 
 /**
  * @internal
@@ -51,7 +51,7 @@ class ImportService implements ContentRepositoryServiceInterface
                 $this->resourceManager,
                 $this->persistenceManager,
             ),
-            'Importing events' => new  EventStoreImportProcessor(
+            'Importing events' => new EventStoreImportProcessor(
                 false,
                 $this->filesystem,
                 $this->eventStore,

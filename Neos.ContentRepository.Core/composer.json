@@ -11,8 +11,8 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/eventstore": "~1.0.0",
-        "neos/eventstore-doctrineadapter": "~1.0.0",
+        "neos/eventstore": "^1",
+        "neos/eventstore-doctrineadapter": "^1 || ^2",
         "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",

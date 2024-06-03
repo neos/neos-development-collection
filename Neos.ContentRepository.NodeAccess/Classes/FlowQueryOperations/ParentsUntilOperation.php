@@ -11,12 +11,16 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
  * "parentsUntil" operation working on ContentRepository nodes. It iterates over all
@@ -38,7 +42,7 @@ class ParentsUntilOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 100;
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject
@@ -69,22 +73,27 @@ class ParentsUntilOperation extends AbstractOperation
     {
         $output = [];
         $outputNodeAggregateIds = [];
+        $findAncestorNodesFilter = FindAncestorNodesFilter::create(
+            NodeTypeCriteria::createWithDisallowedNodeTypeNames(
+                NodeTypeNames::with(NodeTypeNameFactory::forRoot())
+            )
+        );
         foreach ($flowQuery->getContext() as $contextNode) {
-            $parentNodes = $this->getParents($contextNode);
+            $parentNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                ->findAncestorNodes($contextNode->nodeAggregateId, $findAncestorNodesFilter);
             if (isset($arguments[0]) && !empty($arguments[0] && !$parentNodes->isEmpty())) {
-                $untilQuery = new FlowQuery([$parentNodes->first()]);
-                $untilQuery->pushOperation('closest', [$arguments[0]]);
-                $until = $untilQuery->getContext();
+                $filterQuery = new FlowQuery(iterator_to_array($parentNodes));
+                $filterQuery->pushOperation('filter', [$arguments[0]]);
+                $filteredParents = Nodes::fromArray(iterator_to_array($filterQuery));
             }
 
-            if (isset($until) && is_array($until) && !empty($until) && isset($until[0])) {
-                $parentNodes = $parentNodes->until($until[0]);
+            if (isset($filteredParents) && $filteredParents instanceof Nodes && !$filteredParents->isEmpty()) {
+                $parentNodes = $parentNodes->previousAll($filteredParents->first());
             }
-
             foreach ($parentNodes as $parentNode) {
                 if ($parentNode !== null
-                    && !isset($outputNodeAggregateIds[$parentNode->nodeAggregateId->value])) {
-                    $outputNodeAggregateIds[$parentNode->nodeAggregateId->value] = true;
+                    && !isset($outputNodeAggregateIds[$parentNode->aggregateId->value])) {
+                    $outputNodeAggregateIds[$parentNode->aggregateId->value] = true;
                     $output[] = $parentNode;
                 }
             }
@@ -95,21 +104,5 @@ class ParentsUntilOperation extends AbstractOperation
         if (isset($arguments[1]) && !empty($arguments[1])) {
             $flowQuery->pushOperation('filter', $arguments[1]);
         }
-    }
-
-    protected function getParents(Node $contextNode): Nodes
-    {
-        $ancestors = [];
-        $node = $contextNode;
-        do {
-            $node = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findParentNode($node->nodeAggregateId);
-            if ($node === null) {
-                // no parent found
-                break;
-            }
-            $ancestors[] = $node;
-        } while (true);
-        return Nodes::fromArray($ancestors);
     }
 }

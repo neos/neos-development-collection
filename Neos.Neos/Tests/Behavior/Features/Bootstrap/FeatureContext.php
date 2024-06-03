@@ -17,13 +17,15 @@ use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsS
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Utility\Environment;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 
 class FeatureContext implements BehatContext
 {
@@ -31,25 +33,29 @@ class FeatureContext implements BehatContext
     use FlowEntitiesTrait;
     use BrowserTrait;
 
-    use CRTestSuiteTrait;
+    use CRTestSuiteTrait {
+        deserializeProperties  as deserializePropertiesCrTestSuiteTrait;
+    }
     use CRBehavioralTestsSubjectProvider;
     use RoutingTrait;
     use MigrationsTrait;
     use FusionTrait;
 
+    use ContentCacheTrait;
     use AssetTrait;
 
     protected Environment $environment;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+    protected PersistenceManagerInterface $persistenceManager;
 
     public function __construct()
     {
         self::bootstrapFlow();
         $this->environment = $this->getObject(Environment::class);
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
+        $this->persistenceManager = $this->getObject(PersistenceManagerInterface::class);
 
-        $this->setupCRTestSuiteTrait();
     }
 
     /*
@@ -101,5 +107,29 @@ class FeatureContext implements BehatContext
         GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
 
         return $contentRepository;
+    }
+
+    protected function deserializeProperties(array $properties): PropertyValuesToWrite
+    {
+        $properties = array_map(
+            $this->loadObjectsRecursive(...),
+            $properties
+        );
+
+        return $this->deserializePropertiesCrTestSuiteTrait($properties);
+    }
+
+    private function loadObjectsRecursive(mixed $value): mixed
+    {
+        if (is_string($value) && str_starts_with($value, 'Asset:')) {
+            $assetIdentier = substr($value, strlen('Asset:'));
+            return $this->persistenceManager->getObjectByIdentifier($assetIdentier, 'Neos\\Media\\Domain\\Model\\Asset', true);
+        } elseif (is_array($value)) {
+            return array_map(
+                $this->loadObjectsRecursive(...),
+                $value
+            );
+        }
+        return $value;
     }
 }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Service;
 
-use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 
 /**
@@ -26,8 +26,8 @@ class AssetUsageSyncServiceFactory implements ContentRepositoryServiceFactoryInt
         ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies,
     ): AssetUsageSyncService {
         return new AssetUsageSyncService(
+            $serviceFactoryDependencies->contentRepository,
             $serviceFactoryDependencies->contentRepository->projectionState(AssetUsageFinder::class),
-            $serviceFactoryDependencies->contentRepository->getContentGraph(),
             $this->assetRepository,
             $this->assetUsageRepositoryFactory->build($serviceFactoryDependencies->contentRepositoryId),
         );

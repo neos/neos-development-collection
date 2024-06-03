@@ -34,31 +34,26 @@ trait NodeModification
      */
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
-        $this->transactional(function () use ($event) {
-            $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
-                $event->contentStreamId,
-                $event->originDimensionSpacePoint,
-                $event->nodeAggregateId
-            );
-            if (is_null($nodeRecord)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+        $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
+            $event->contentStreamId,
+            $event->originDimensionSpacePoint,
+            $event->nodeAggregateId
+        );
+        if (is_null($nodeRecord)) {
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+        }
+        $this->copyOnWrite(
+            $event->contentStreamId,
+            $nodeRecord,
+            function (NodeRecord $node) use ($event) {
+                $node->properties = $node->properties
+                    ->merge($event->propertyValues)
+                    ->unsetProperties($event->propertiesToUnset);
             }
-            $this->copyOnWrite(
-                $event->contentStreamId,
-                $nodeRecord,
-                function (NodeRecord $node) use ($event) {
-                    $node->properties = $node->properties->merge($event->propertyValues);
-                }
-            );
-        });
+        );
     }
 
     abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
-
-    /**
-     * @throws \Throwable
-     */
-    abstract protected function transactional(\Closure $operations): void;
 
     abstract protected function getDatabaseConnection(): Connection;
 }

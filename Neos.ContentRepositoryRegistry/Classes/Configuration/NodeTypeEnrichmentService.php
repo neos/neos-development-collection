@@ -144,7 +144,7 @@ class NodeTypeEnrichmentService
      * Resolve help message thumbnail url
      *
      * @param string $nodeTypeName
-     * @param string $configurationThumbnail
+     * @param string|null $configurationThumbnail
      * @return string $thumbnailUrl
      */
     protected function resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail)
@@ -275,6 +275,7 @@ class NodeTypeEnrichmentService
             }
         }
 
+        // todo ui.creationDialog logic should rather reside in the Neos.Neos.Ui
         $creationDialogConfiguration = Arrays::getValueByPath($configuration, 'ui.creationDialog.elements');
         if (is_array($creationDialogConfiguration)) {
             $creationDialogConfiguration = &$configuration['ui']['creationDialog']['elements'];

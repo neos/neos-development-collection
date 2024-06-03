@@ -66,14 +66,14 @@ class ModuleViewHelper extends AbstractViewHelper
         $this->registerArgument(
             'addQueryString',
             'string',
-            'If set, the current query parameters will be kept in the URI',
+            'Deprecated with Neos 9. If set, the current query parameters will be kept in the URI',
             false,
             false
         );
         $this->registerArgument(
             'argumentsToBeExcludedFromQueryString',
             'string',
-            'arguments to be removed from the URI. Only active if $addQueryString = true',
+            'Deprecated with Neos 9. arguments to be removed from the URI. Only active if $addQueryString = true',
             false,
             []
         );

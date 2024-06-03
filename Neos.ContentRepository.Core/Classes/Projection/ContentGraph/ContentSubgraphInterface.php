@@ -17,9 +17,10 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * This is the most important read model of a content repository.
@@ -33,7 +34,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * From the central Content Repository instance, you can fetch the singleton
  * {@see ContentGraphInterface}. There, you can call
  * {@see ContentGraphInterface::getSubgraph()} and pass in
- * the {@see ContentStreamId}, {@see DimensionSpacePoint} and
+ * the {@see DimensionSpacePoint} and
  * {@see VisibilityConstraints} you want to have.
  *
  *
@@ -46,16 +47,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api
  */
-interface ContentSubgraphInterface extends \JsonSerializable
+interface ContentSubgraphInterface
 {
-    /**
-     * Returns the subgraph's identity, i.e. the current perspective we look at content from, composed of
-     * * the content repository the subgraph belongs to
-     * * the ID of the content stream we are currently working in
-     * * the dimension space point we are currently looking at
-     * * the applied visibility constraints
-     */
-    public function getIdentity(): ContentSubgraphIdentity;
+    public function getContentRepositoryId(): ContentRepositoryId;
+
+    public function getWorkspaceName(): WorkspaceName;
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint;
+
+    public function getVisibilityConstraints(): VisibilityConstraints;
 
     /**
      * Find a single node by its aggregate id
@@ -144,7 +144,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Find all "outgoing" references of a given node that match the specified $filter
      *
-     * A reference is a node property of type "reference" or "references"
      * Because each reference has a name and can contain properties itself, this method does not return the target nodes
      * directly, but a collection of references {@see References}.
      * The corresponding nodes can be retrieved via {@see References::getNodes()}

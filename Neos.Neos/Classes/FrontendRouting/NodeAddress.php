@@ -31,19 +31,21 @@ use Neos\Flow\Annotations as Flow;
  *
  * It is used in Neos Routing to build a URI to a node.
  *
- * @api
+ * @deprecated will be removed before Final 9.0
+ * The NodeAddress was added 6 years ago without the concept of multiple crs
+ * Its usages will be replaced by the new node attached node address
  */
 #[Flow\Proxy(false)]
-final class NodeAddress
+final readonly class NodeAddress
 {
     /**
      * @internal use NodeAddressFactory, if you want to create a NodeAddress
      */
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly DimensionSpacePoint $dimensionSpacePoint,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly WorkspaceName $workspaceName
+        public ContentStreamId $contentStreamId,
+        public DimensionSpacePoint $dimensionSpacePoint,
+        public NodeAggregateId $nodeAggregateId,
+        public WorkspaceName $workspaceName
     ) {
     }
 

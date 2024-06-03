@@ -14,12 +14,12 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
-use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\Utility\ObjectAccess;
-use Neos\Utility\Arrays;
-use Neos\Utility\PositionalArraySorter;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * A Node Type
@@ -30,12 +30,15 @@ use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocess
  *
  * @api Note: The constructor is not part of the public API
  */
-class NodeType
+final class NodeType
 {
     /**
      * Name of this node type. Example: "ContentRepository:Folder"
      */
     public readonly NodeTypeName $name;
+
+    /** @phpstan-ignore-next-line */
+    public readonly TetheredNodeTypeDefinitions $tetheredNodeTypeDefinitions;
 
     /**
      * Configuration for this node type, can be an arbitrarily nested array. Does not include inherited configuration.
@@ -68,8 +71,6 @@ class NodeType
      */
     protected array $declaredSuperTypes;
 
-    protected ?NodeLabelGeneratorInterface $nodeLabelGenerator = null;
-
     /**
      * Whether or not this node type has been initialized (e.g. if it has been postprocessed)
      */
@@ -77,7 +78,7 @@ class NodeType
 
     /**
      * @param NodeTypeName $name Name of the node type
-     * @param array<string,mixed> $declaredSuperTypes Parent types of this node type
+     * @param array<string,NodeType|null> $declaredSuperTypes Parent types instances of this node type, if null it should be unset
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
      *
@@ -86,19 +87,9 @@ class NodeType
     public function __construct(
         NodeTypeName $name,
         array $declaredSuperTypes,
-        array $configuration,
-        private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
+        array $configuration
     ) {
         $this->name = $name;
-
-        foreach ($declaredSuperTypes as $type) {
-            if ($type !== null && !$type instanceof NodeType) {
-                throw new \InvalidArgumentException(
-                    '$declaredSuperTypes must be an array of NodeType objects',
-                    1291300950
-                );
-            }
-        }
         $this->declaredSuperTypes = $declaredSuperTypes;
 
         if (isset($configuration['abstract']) && $configuration['abstract'] === true) {
@@ -112,6 +103,23 @@ class NodeType
         }
 
         $this->localConfiguration = $configuration;
+        /** lazy properties {@see __get()} */
+        /** @phpstan-ignore-next-line */
+        unset($this->tetheredNodeTypeDefinitions);
+    }
+
+    /**
+     * We unset the readonly properties in the constructor, so that this magic getter is invoked, which initializes the properties.
+     * {@see https://peakd.com/hive-168588/@crell/php-tricks-lazy-public-readonly-properties}
+     * This is a temporary hack until https://github.com/neos/neos-development-collection/pull/4999 is merged.
+     */
+    public function __get(string $key): mixed
+    {
+        if ($key === 'tetheredNodeTypeDefinitions') {
+            /** @phpstan-ignore-next-line */
+            return $this->tetheredNodeTypeDefinitions = $this->getTetheredNodeTypeDefinitions();
+        }
+        throw new \BadMethodCallException(sprintf('NodeType::%s does not exist.', $key), 1715710576);
     }
 
     /**
@@ -154,6 +162,40 @@ class NodeType
             $sorter = new PositionalArraySorter($this->fullConfiguration['childNodes']);
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
+
+        $referencesConfiguration = $this->fullConfiguration['references'] ?? [];
+        foreach ($this->fullConfiguration['properties'] ?? [] as $propertyName => $propertyConfiguration) {
+            // assert that references and properties never declare a thing with the same name
+            if (isset($this->fullConfiguration['references'][$propertyName])) {
+                throw new NodeConfigurationException(sprintf('NodeType %s cannot declare "%s" as property and reference.', $this->name->value, $propertyName), 1708022344);
+            }
+            // migrate old property like references to references
+            $propertyType = $propertyConfiguration['type'] ?? null;
+            if ($propertyType !== 'reference' && $propertyType !== 'references') {
+                continue;
+            }
+            if (isset($propertyConfiguration['constraints']) || isset($propertyConfiguration['properties'])) {
+                // we don't allow the new syntax `constraints.maxItems` on legacy property-like reference-declarations
+                throw new NodeConfigurationException(sprintf(
+                    'Legacy property-like reference-declaration for "%s" does not allow new configuration `constraints` or `properties` in NodeType %s.'
+                    . ' Please use the reference declaration syntax instead.',
+                    $propertyName,
+                    $this->name->value
+                ), 1708022344);
+            }
+            if ($propertyType === 'reference') {
+                unset($propertyConfiguration['type']);
+                $propertyConfiguration['constraints']['maxItems'] = 1;
+                $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                unset($this->fullConfiguration['properties'][$propertyName]);
+            }
+            if ($propertyType === 'references') {
+                unset($propertyConfiguration['type']);
+                $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                unset($this->fullConfiguration['properties'][$propertyName]);
+            }
+        }
+        $this->fullConfiguration['references'] = $referencesConfiguration;
 
         return $this->fullConfiguration;
     }
@@ -371,20 +413,6 @@ class NodeType
     }
 
     /**
-     * Return the node label generator class for the given node
-     */
-    public function getNodeLabelGenerator(): NodeLabelGeneratorInterface
-    {
-        $this->initialize();
-
-        if ($this->nodeLabelGenerator === null) {
-            $this->nodeLabelGenerator = $this->nodeLabelGeneratorFactory->create($this);
-        }
-
-        return $this->nodeLabelGenerator;
-    }
-
-    /**
      * Return the array with the defined properties. The key is the property name,
      * the value the property configuration. There are no guarantees on how the
      * property configuration looks like.
@@ -397,6 +425,31 @@ class NodeType
         $this->initialize();
 
         return ($this->fullConfiguration['properties'] ?? []);
+    }
+
+    /**
+     * Check if the property is configured in the schema.
+     */
+    public function hasReference(string $referenceName): bool
+    {
+        $this->initialize();
+
+        return isset($this->fullConfiguration['references'][$referenceName]);
+    }
+
+    /**
+     * Return the array with the defined references. The key is the reference name,
+     * the value the reference configuration. There are no guarantees on how the
+     * reference configuration looks like.
+     *
+     * @return array<string,mixed>
+     * @api
+     */
+    public function getReferences(): array
+    {
+        $this->initialize();
+
+        return ($this->fullConfiguration['references'] ?? []);
     }
 
     /**
@@ -420,8 +473,8 @@ class NodeType
 
         if (!$this->hasProperty($propertyName)) {
             throw new \InvalidArgumentException(
-                sprintf('NodeType schema has no property "%s" configured. Cannot read its type.', $propertyName),
-                1695062252040
+                sprintf('NodeType schema has no property "%s" configured for the NodeType "%s". Cannot read its type.', $propertyName, $this->name->value),
+                1708025421
             );
         }
 
@@ -433,7 +486,7 @@ class NodeType
      *
      * The default value is configured for each property under the "default" key.
      *
-     * @return array<string,mixed>
+     * @return array<string,int|float|string|bool|array<int|string,mixed>>
      * @api
      */
     public function getDefaultValuesForProperties(): array
@@ -453,36 +506,19 @@ class NodeType
         return $defaultValues;
     }
 
-    /**
-     * @return bool true if $nodeName is an autocreated child node, false otherwise
-     */
-    public function hasTetheredNode(NodeName $nodeName): bool
+    private function getTetheredNodeTypeDefinitions(): TetheredNodeTypeDefinitions
     {
-        $this->initialize();
-        foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
+        $childNodeConfiguration = $this->getConfiguration('childNodes') ?? [];
+        $tetheredNodeTypeDefinitions = [];
+        foreach ($childNodeConfiguration as $childNodeName => $configurationForChildNode) {
             if (isset($configurationForChildNode['type'])) {
-                if (NodeName::transliterateFromString($rawChildNodeName)->equals($nodeName)) {
-                    return true;
-                }
+                $tetheredNodeTypeDefinitions[] = new TetheredNodeTypeDefinition(
+                    NodeName::transliterateFromString($childNodeName),
+                    NodeTypeName::fromString($configurationForChildNode['type'])
+                );
             }
         }
-        return false;
-    }
-
-    /**
-     * @throws TetheredNodeNotConfigured if the requested tethred node is not configured. Check via {@see NodeType::hasTetheredNode()}.
-     */
-    public function getNodeTypeNameOfTetheredNode(NodeName $nodeName): NodeTypeName
-    {
-        $this->initialize();
-        foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
-            if (isset($configurationForChildNode['type'])) {
-                if (NodeName::transliterateFromString($rawChildNodeName)->equals($nodeName)) {
-                    return NodeTypeName::fromString($configurationForChildNode['type']);
-                }
-            }
-        }
-        throw new TetheredNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $nodeName->value, $this->name->value), 1694786811);
+        return TetheredNodeTypeDefinitions::fromArray($tetheredNodeTypeDefinitions);
     }
 
     /**

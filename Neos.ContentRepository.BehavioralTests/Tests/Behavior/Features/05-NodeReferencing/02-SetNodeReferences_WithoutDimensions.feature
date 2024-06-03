@@ -7,20 +7,24 @@ Feature: Node References without Dimensions
     Given using no content dimensions
     And using the following node types:
     """yaml
+    'Neos.ContentRepository.Testing:ReferencedNode': []
+
     'Neos.ContentRepository.Testing:NodeWithReferences':
+      # legacy notation
       properties:
         referenceProperty:
           type: reference
         referencesProperty:
           type: references
+      references:
         restrictedReferenceProperty:
-          type: reference
           constraints:
             nodeTypes:
               '*': false
-              'Neos.ContentRepository.Testing:NodeWithReferences': true
+              'Neos.ContentRepository.Testing:ReferencedNode': true
         referencePropertyWithProperty:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             text:
               type: string
@@ -29,7 +33,6 @@ Feature: Node References without Dimensions
             postalAddress:
               type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
         referencesPropertyWithProperty:
-          type: references
           properties:
             text:
               type: string
@@ -47,19 +50,18 @@ Feature: Node References without Dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId   | parentNodeAggregateId  | nodeTypeName                                      |
       | source-nodandaise | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
-      | anthony-destinode | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
-      | berta-destinode   | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
-      | carl-destinode    | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
+      | node-wan-kenodi   | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
+      | anthony-destinode | lady-eleonode-rootford | Neos.ContentRepository.Testing:ReferencedNode     |
+      | berta-destinode   | lady-eleonode-rootford | Neos.ContentRepository.Testing:ReferencedNode     |
+      | carl-destinode    | lady-eleonode-rootford | Neos.ContentRepository.Testing:ReferencedNode     |
 
   Scenario: Ensure that a single reference between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
@@ -67,7 +69,6 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName         | "referenceProperty"               |
       | references            | [{"target": "anthony-destinode"}] |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
@@ -81,20 +82,19 @@ Feature: Node References without Dimensions
 
   Scenario: Ensure that a single reference with properties between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
-      | Key                   | Value                                                                                                     |
-      | sourceNodeAggregateId | "source-nodandaise"                                                                                       |
-      | referenceName         | "referencePropertyWithProperty"                                                                           |
+      | Key                   | Value                                                                                                                                                        |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                                                                                          |
+      | referenceName         | "referencePropertyWithProperty"                                                                                                                              |
       | references            | [{"target": "anthony-destinode", "properties":{"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:dummy"}}] |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
-      | Name                          | Node                               | Properties                                                |
+      | Name                          | Node                               | Properties                                                                                                   |
       | referencePropertyWithProperty | cs-identifier;anthony-destinode;{} | {"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:dummy"} |
 
     And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
     And I expect this node to be referenced by:
-      | Name                          | Node                               | Properties                                                |
+      | Name                          | Node                               | Properties                                                                                                   |
       | referencePropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:dummy"} |
 
   Scenario: Ensure that multiple references between nodes can be set and read
@@ -103,7 +103,6 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateId | "source-nodandaise"                                           |
       | referenceName         | "referencesProperty"                                          |
       | references            | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
@@ -123,26 +122,25 @@ Feature: Node References without Dimensions
 
   Scenario: Ensure that multiple references with properties between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
-      | Key                   | Value                                                                                                                                                                                                                    |
-      | sourceNodeAggregateId | "source-nodandaise"                                                                                                                                                                                                      |
-      | referenceName         | "referencesPropertyWithProperty"                                                                                                                                                                                         |
+      | Key                   | Value                                                                                                                                                                                                                                                                                                                             |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                                                                                                                                                                                                                                                               |
+      | referenceName         | "referencesPropertyWithProperty"                                                                                                                                                                                                                                                                                                  |
       | references            | [{"target":"berta-destinode", "properties":{"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Wednesday", "postalAddress":"PostalAddress:dummy"}}, {"target":"carl-destinode", "properties":{"text":"my other text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:anotherDummy"}}] |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
-      | Name                           | Node                             | Properties                                                             |
-      | referencesPropertyWithProperty | cs-identifier;berta-destinode;{} | {"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Wednesday", "postalAddress":"PostalAddress:dummy"}              |
+      | Name                           | Node                             | Properties                                                                                                                |
+      | referencesPropertyWithProperty | cs-identifier;berta-destinode;{} | {"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Wednesday", "postalAddress":"PostalAddress:dummy"}           |
       | referencesPropertyWithProperty | cs-identifier;carl-destinode;{}  | {"text":"my other text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:anotherDummy"} |
 
     And I expect node aggregate identifier "berta-destinode" to lead to node cs-identifier;berta-destinode;{}
     And I expect this node to be referenced by:
-      | Name                           | Node                               | Properties                                                |
+      | Name                           | Node                               | Properties                                                                                                      |
       | referencesPropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Wednesday", "postalAddress":"PostalAddress:dummy"} |
 
     And I expect node aggregate identifier "carl-destinode" to lead to node cs-identifier;carl-destinode;{}
     And I expect this node to be referenced by:
-      | Name                           | Node                               | Properties                                                             |
+      | Name                           | Node                               | Properties                                                                                                                |
       | referencesPropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my other text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:anotherDummy"} |
 
   Scenario: Ensure that references between nodes can be set and overwritten
@@ -151,14 +149,12 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateId | "source-nodandaise"                                           |
       | references            | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
       | referenceName         | "referencesProperty"                                          |
-    And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
       | references            | [{"target": "anthony-destinode"}] |
       | referenceName         | "referencesProperty"              |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
@@ -183,14 +179,12 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateId | "source-nodandaise"                                           |
       | references            | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
       | referenceName         | "referencesProperty"                                          |
-    And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                                         |
       | sourceNodeAggregateId | "source-nodandaise"                                           |
       | references            | [{"target": "carl-destinode"}, {"target": "berta-destinode"}] |
       | referenceName         | "referencesProperty"                                          |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
@@ -205,7 +199,6 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateId | "source-nodandaise"                                           |
       | references            | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
       | referenceName         | "referencesProperty"                                          |
-    And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                |
@@ -213,7 +206,6 @@ Feature: Node References without Dimensions
       | references            | []                   |
       | referenceName         | "referencesProperty" |
 
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have no references
@@ -231,19 +223,17 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateId | "source-nodandaise"               |
       | references            | [{"target": "anthony-destinode"}] |
       | referenceName         | "referenceProperty"               |
-    And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
-      | sourceNodeAggregateId | "berta-destinode"                 |
+      | sourceNodeAggregateId | "node-wan-kenodi"                 |
       | references            | [{"target": "anthony-destinode"}] |
       | referenceName         | "referenceProperty"               |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
     And I expect this node to be referenced by:
       | Name              | Node                               | Properties |
-      | referenceProperty | cs-identifier;berta-destinode;{}   | null       |
+      | referenceProperty | cs-identifier;node-wan-kenodi;{}   | null       |
       | referenceProperty | cs-identifier;source-nodandaise;{} | null       |
 
   Scenario: Ensure that a reference between nodes can be set and read when matching constraints
@@ -252,7 +242,6 @@ Feature: Node References without Dimensions
       | sourceNodeAggregateId | "source-nodandaise"               |
       | references            | [{"target": "anthony-destinode"}] |
       | referenceName         | "restrictedReferenceProperty"     |
-    And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:

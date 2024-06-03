@@ -39,11 +39,11 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @api
  */
-final class AbsoluteNodePath implements \JsonSerializable
+final readonly class AbsoluteNodePath implements \JsonSerializable
 {
     private function __construct(
-        public readonly NodeTypeName $rootNodeTypeName,
-        public readonly NodePath $path
+        public NodeTypeName $rootNodeTypeName,
+        public NodePath $path
     ) {
     }
 
@@ -86,14 +86,14 @@ final class AbsoluteNodePath implements \JsonSerializable
             if ($ancestor->classification->isRoot()) {
                 continue;
             }
-            if (!$ancestor->nodeName) {
+            if (!$ancestor->name) {
                 throw new \InvalidArgumentException(
-                    'Could not resolve node path for node ' . $leafNode->nodeAggregateId->value
-                    . ', ancestor ' . $ancestor->nodeAggregateId->value . ' is unnamed.',
+                    'Could not resolve node path for node ' . $leafNode->aggregateId->value
+                    . ', ancestor ' . $ancestor->aggregateId->value . ' is unnamed.',
                     1687509348
                 );
             }
-            $nodeNames[] = $ancestor->nodeName;
+            $nodeNames[] = $ancestor->name;
         }
 
         return new self(

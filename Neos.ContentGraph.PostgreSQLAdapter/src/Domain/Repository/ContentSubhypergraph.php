@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Connection as DatabaseConnection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphParentQuery;
@@ -22,13 +23,10 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphRefere
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblingQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblingQueryMode;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
-use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
@@ -39,19 +37,21 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSibl
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The content subgraph application repository
@@ -76,23 +76,34 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
     public function __construct(
         private ContentRepositoryId $contentRepositoryId,
         private ContentStreamId $contentStreamId,
+        private WorkspaceName $workspaceName,
         private DimensionSpacePoint $dimensionSpacePoint,
         private VisibilityConstraints $visibilityConstraints,
-        private PostgresDbalClientInterface $databaseClient,
+        private Connection $dbal,
         private NodeFactory $nodeFactory,
         private NodeTypeManager $nodeTypeManager,
         private string $tableNamePrefix
     ) {
     }
 
-    public function getIdentity(): ContentSubgraphIdentity
+    public function getContentRepositoryId(): ContentRepositoryId
     {
-        return ContentSubgraphIdentity::create(
-            $this->contentRepositoryId,
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $this->visibilityConstraints
-        );
+        return $this->contentRepositoryId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
+
+    public function getVisibilityConstraints(): VisibilityConstraints
+    {
+        return $this->visibilityConstraints;
     }
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
@@ -102,7 +113,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             ->withNodeAggregateId($nodeAggregateId)
             ->withRestriction($this->visibilityConstraints);
 
-        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+        $nodeRow = $query->execute($this->dbal)->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
@@ -119,7 +130,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             ->withClassification(NodeAggregateClassification::CLASSIFICATION_ROOT)
             ->withRestriction($this->visibilityConstraints);
 
-        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+        $nodeRow = $query->execute($this->dbal)->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
@@ -152,7 +163,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
                 ->withOffset($filter->pagination->offset);
         }
 
-        $childNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $childNodeRows = $query->execute($this->dbal)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodes(
             $childNodeRows,
@@ -189,7 +200,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         $orderings[] = 'r.position';
         $query = $query->orderedBy($orderings);
 
-        $referenceRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $referenceRows = $query->execute($this->dbal)->fetchAllAssociative();
 
         return $this->nodeFactory->mapReferenceRowsToReferences(
             $referenceRows,
@@ -239,7 +250,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
                 ->withOffset($filter->pagination->offset);
         }
 
-        $referenceRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $referenceRows = $query->execute($this->dbal)->fetchAllAssociative();
 
         return $this->nodeFactory->mapReferenceRowsToReferences(
             $referenceRows,
@@ -260,7 +271,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             ->withRestriction($this->visibilityConstraints)
             ->withChildNodeAggregateId($childNodeAggregateId);
 
-        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+        $nodeRow = $query->execute($this->dbal)->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
@@ -302,7 +313,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             ->withRestriction($this->visibilityConstraints)
             ->withChildNodeName($nodeName);
 
-        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+        $nodeRow = $query->execute($this->dbal)->fetchAssociative();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
@@ -363,7 +374,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
                 ->withOffset($pagination->offset);
         }
 
-        $siblingsRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+        $siblingsRows = $query->execute($this->dbal)->fetchAllAssociative();
 
         return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows, $this->visibilityConstraints);
     }
@@ -450,7 +461,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 
 
 
-        $nodeRows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
+        $nodeRows = $this->dbal->executeQuery($query, $parameters, $types)
             ->fetchAllAssociative();
         if ($nodeRows === []) {
             return null;
@@ -511,7 +522,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash
         ];
 
-        $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchNumeric();
+        $result = $this->dbal->executeQuery($query, $parameters)->fetchNumeric();
 
         return $result ? $result[0] : 0;
     }
@@ -521,27 +532,11 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         $currentNode = $startingNode;
         foreach ($path->getParts() as $edgeName) {
             // id exists here :)
-            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->aggregateId, $edgeName);
             if ($currentNode === null) {
                 return null;
             }
         }
         return $currentNode;
-    }
-
-    private function getDatabaseConnection(): DatabaseConnection
-    {
-        return $this->databaseClient->getConnection();
-    }
-
-    /**
-     * @return array<string,mixed>
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'dimensionSpacePoint' => $this->dimensionSpacePoint
-        ];
     }
 }

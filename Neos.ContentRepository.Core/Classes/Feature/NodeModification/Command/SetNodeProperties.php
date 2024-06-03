@@ -18,10 +18,13 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * Set property values for a given node.
+ * Add property values for a given node.
+ *
+ * The properties will not be replaced but will be merged via the existing ones by the projection.
+ * A null value will cause to unset a nodes' property.
  *
  * The property values support arbitrary types (but must match the NodeType's property types -
  * this is validated in the command handler).
@@ -31,30 +34,30 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class SetNodeProperties implements CommandInterface
+final readonly class SetNodeProperties implements CommandInterface
 {
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the set properties operation is to be performed
+     * @param WorkspaceName $workspaceName The workspace in which the set properties operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint The dimension space point the properties should be changed in
-     * @param PropertyValuesToWrite $propertyValues Names and (unserialized) values of properties to set
+     * @param PropertyValuesToWrite $propertyValues Names and (unserialized) values of properties to set, or unset if the value is null
      */
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly PropertyValuesToWrite $propertyValues,
+        public WorkspaceName $workspaceName,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public PropertyValuesToWrite $propertyValues,
     ) {
     }
 
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the set properties operation is to be performed
+     * @param WorkspaceName $workspaceName The workspace in which the set properties operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint The dimension space point the properties should be changed in
-     * @param PropertyValuesToWrite $propertyValues Names and (unserialized) values of properties to set
+     * @param PropertyValuesToWrite $propertyValues Names and (unserialized) values of properties to set, or unset if the value is null
      */
-    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, PropertyValuesToWrite $propertyValues): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, PropertyValuesToWrite $propertyValues): self
     {
-        return new self($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, $propertyValues);
+        return new self($workspaceName, $nodeAggregateId, $originDimensionSpacePoint, $propertyValues);
     }
 }

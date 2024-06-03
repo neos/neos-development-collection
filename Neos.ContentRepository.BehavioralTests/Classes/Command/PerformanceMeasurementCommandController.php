@@ -14,9 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\Command;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Cli\CommandController;
 use Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushing;
 
@@ -47,10 +46,8 @@ final class PerformanceMeasurementCommandController extends CommandController
     {
         $this->performanceMeasurementService->removeEverything();
         $this->outputLine("All removed. Starting to fill.");
-        CatchUpTriggerWithSynchronousOption::synchronously(
-            fn() => GraphProjectorCatchUpHookForCacheFlushing::disabled(
-                fn() => $this->performanceMeasurementService->createNodesForPerformanceTest($nodesPerLevel, $levels)
-            )
+        GraphProjectorCatchUpHookForCacheFlushing::disabled(
+            fn() => $this->performanceMeasurementService->createNodesForPerformanceTest($nodesPerLevel, $levels)
         );
     }
 
@@ -62,9 +59,7 @@ final class PerformanceMeasurementCommandController extends CommandController
     public function testPerformanceCommand(): void
     {
         $time = microtime(true);
-        CatchUpTriggerWithSynchronousOption::synchronously(
-            fn() => $this->performanceMeasurementService->forkContentStream()
-        );
+        $this->performanceMeasurementService->forkContentStream();
 
         $timeElapsed = microtime(true) - $time;
         $this->outputLine('Time: ' . $timeElapsed);

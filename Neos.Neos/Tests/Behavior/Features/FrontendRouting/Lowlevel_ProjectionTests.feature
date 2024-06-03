@@ -39,14 +39,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                    |
-      | contentStreamId             | "cs-identifier"          |
-      | nodeAggregateId             | "lady-eleonode-rootford" |
-      | nodeTypeName                | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
 
-    And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues           | nodeName |
       | shernode-homes  | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | site     |
@@ -54,7 +52,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | b               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b"}         | b        |
       | c               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "c"}         | c        |
     And A site exists for node name "site"
-    And The documenturipath projection is up to date
 
   Scenario: initial state
     Then I expect the documenturipath table to contain exactly:
@@ -67,13 +64,11 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
   Scenario: abc => acb (moving b)
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "b"             |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | null            |
-      | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "b"   |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | null  |
+      | newSucceedingSiblingNodeAggregateId | null  |
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -84,13 +79,11 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
   Scenario: abc => acb (moving c)
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "c"             |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | null            |
-      | newSucceedingSiblingNodeAggregateId | "b"             |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "c"   |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | null  |
+      | newSucceedingSiblingNodeAggregateId | "b"   |
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -101,13 +94,11 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
   Scenario: abc => bac (moving b)
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "b"             |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | null            |
-      | newSucceedingSiblingNodeAggregateId | "a"             |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "b"   |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | null  |
+      | newSucceedingSiblingNodeAggregateId | "a"   |
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -118,13 +109,11 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
   Scenario: abc => bac (moving a)
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "a"             |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | null            |
-      | newSucceedingSiblingNodeAggregateId | "c"             |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "a"   |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | null  |
+      | newSucceedingSiblingNodeAggregateId | "c"   |
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -135,13 +124,11 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
   Scenario: abc => bca (moving a)
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "a"             |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | null            |
-      | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "a"   |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | null  |
+      | newSucceedingSiblingNodeAggregateId | null  |
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -152,21 +139,17 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
   Scenario: abc => bca (moving b and c)
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "b"             |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | null            |
-      | newSucceedingSiblingNodeAggregateId | "a"             |
-    And the graph projection is fully up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "b"   |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | null  |
+      | newSucceedingSiblingNodeAggregateId | "a"   |
     And the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "c"             |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | null            |
-      | newSucceedingSiblingNodeAggregateId | "a"             |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "c"   |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | null  |
+      | newSucceedingSiblingNodeAggregateId | "a"   |
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -177,13 +160,11 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
   Scenario: abc => a(> b)c (moving b below a)
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "b"             |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | "a"             |
-      | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "b"   |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | "a"   |
+      | newSucceedingSiblingNodeAggregateId | null  |
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                         | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                    | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -195,22 +176,18 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: ab(> b1)c => a(> b > b1)c (moving b & b1 below a)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                              | Value                         |
-      | contentStreamId                  | "cs-identifier"               |
       | nodeAggregateId                  | "b1"                          |
       | nodeTypeName                     | "Neos.Neos:Test.Routing.Page" |
       | originDimensionSpacePoint        | {}                            |
       | parentNodeAggregateId            | "b"                           |
       | initialPropertyValues            | {"uriPathSegment": "b1"}      |
       | succeedingSiblingNodeAggregateId | null                          |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "b"             |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | "a"             |
-      | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "b"   |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | "a"   |
+      | newSucceedingSiblingNodeAggregateId | null  |
     Then I expect the documenturipath table to contain exactly:
       | uripath  | nodeaggregateidpath                            | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""       | "lady-eleonode-rootford"                       | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -223,22 +200,18 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: ab(> b1)c => a(> b1)bc (moving b1 below a)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                              | Value                         |
-      | contentStreamId                  | "cs-identifier"               |
       | nodeAggregateId                  | "b1"                          |
       | nodeTypeName                     | "Neos.Neos:Test.Routing.Page" |
       | originDimensionSpacePoint        | {}                            |
       | parentNodeAggregateId            | "b"                           |
       | initialPropertyValues            | {"uriPathSegment": "b1"}      |
       | succeedingSiblingNodeAggregateId | null                          |
-    And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "b1"            |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | "a"             |
-      | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "b1"  |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | "a"   |
+      | newSucceedingSiblingNodeAggregateId | null  |
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                          | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""      | "lady-eleonode-rootford"                     | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -249,20 +222,18 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"     | "lady-eleonode-rootford/shernode-homes/c"    | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: ab(> b1, b2 > b2a)c => a(> b2 > b2a)b(> b1)c (moving b1 below a)
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                | initialPropertyValues     | nodeName |
       | b1              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
       | b2              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |
       | b2a             | b2                    | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2a"} | b2a      |
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "b2"            |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | "a"             |
-      | newSucceedingSiblingNodeAggregateId | null            |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "b2"  |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | "a"   |
+      | newSucceedingSiblingNodeAggregateId | null  |
     Then I expect the documenturipath table to contain exactly:
       | uripath    | nodeaggregateidpath                              | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""         | "lady-eleonode-rootford"                         | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -275,20 +246,18 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"        | "lady-eleonode-rootford/shernode-homes/c"        | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: ab(> b1, b2 > b2a)c => b(> b1, a, b2 > b2a)c (moving a below b)
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                | initialPropertyValues     | nodeName |
       | b1              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
       | b2              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |
       | b2a             | b2                    | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2a"} | b2a      |
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                 | Value           |
-      | contentStreamId                     | "cs-identifier" |
-      | nodeAggregateId                     | "a"             |
-      | dimensionSpacePoint                 | {}              |
-      | newParentNodeAggregateId            | "b"             |
-      | newSucceedingSiblingNodeAggregateId | "b2"            |
-    And The documenturipath projection is up to date
+      | Key                                 | Value |
+      | nodeAggregateId                     | "a"   |
+      | dimensionSpacePoint                 | {}    |
+      | newParentNodeAggregateId            | "b"   |
+      | newSucceedingSiblingNodeAggregateId | "b2"  |
     Then I expect the documenturipath table to contain exactly:
       | uripath    | nodeaggregateidpath                              | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
       | ""         | "lady-eleonode-rootford"                         | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
@@ -301,13 +270,11 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"        | "lady-eleonode-rootford/shernode-homes/c"        | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: Changing the NodeTypeName of a NodeAggregate
-    When the command ChangeNodeAggregateType was published with payload:
+    When the command ChangeNodeAggregateType is executed with payload:
       | Key             | Value                                  |
-      | contentStreamId | "cs-identifier"                        |
       | nodeAggregateId | "c"                                    |
       | newNodeTypeName | "Neos.Neos:Test.Routing.SomeOtherPage" |
       | strategy        | "happypath"                            |
-    And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
       | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                           |
       | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"                      |

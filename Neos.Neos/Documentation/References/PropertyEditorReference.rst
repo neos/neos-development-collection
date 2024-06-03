@@ -729,8 +729,8 @@ Options Reference:
 
 		``aspectRatio``
 
-      ``forceCrop``
-        Show the crop dialog on image upload
+			``forceCrop`` (boolean)
+				Show the crop dialog on image upload
 
 			``locked``
 				Locks the aspect ratio to a specific width/height ratio

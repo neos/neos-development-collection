@@ -11,11 +11,7 @@ use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
-use Neos\EventStore\Model\Event;
-use Neos\EventStore\Model\Event\EventId;
-use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Events;
-use Neos\EventStore\Model\EventStore\CommitResult;
 
 /**
  * Internal service to persist {@see EventInterface} with the proper normalization, and triggering the
@@ -23,13 +19,13 @@ use Neos\EventStore\Model\EventStore\CommitResult;
  *
  * @internal
  */
-final class EventPersister
+final readonly class EventPersister
 {
     public function __construct(
-        private readonly EventStoreInterface $eventStore,
-        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
-        private readonly EventNormalizer $eventNormalizer,
-        private readonly Projections $projections,
+        private EventStoreInterface $eventStore,
+        private ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
+        private EventNormalizer $eventNormalizer,
+        private Projections $projections,
     ) {
     }
 
@@ -41,12 +37,12 @@ final class EventPersister
     public function publishEvents(EventsToPublish $eventsToPublish): CommandResult
     {
         if ($eventsToPublish->events->isEmpty()) {
-            return CommandResult::empty();
+            return new CommandResult();
         }
         // the following logic could also be done in an AppEventStore::commit method (being called
         // directly from the individual Command Handlers).
         $normalizedEvents = Events::fromArray(
-            $eventsToPublish->events->map(fn(EventInterface|DecoratedEvent $event) => $this->normalizeEvent($event))
+            $eventsToPublish->events->map($this->eventNormalizer->normalize(...))
         );
         $commitResult = $this->eventStore->commit(
             $eventsToPublish->streamName,
@@ -68,26 +64,6 @@ final class EventPersister
             }
         }
         $this->projectionCatchUpTrigger->triggerCatchUp($pendingProjections->projections);
-
-        // The CommandResult can be used to block until projections are up to date.
-        return new CommandResult($pendingProjections, $commitResult);
-    }
-
-    private function normalizeEvent(EventInterface|DecoratedEvent $event): Event
-    {
-        if ($event instanceof DecoratedEvent) {
-            $eventId = $event->eventId;
-            $eventMetadata = $event->eventMetadata;
-            $event = $event->innerEvent;
-        } else {
-            $eventId = EventId::create();
-            $eventMetadata = EventMetadata::none();
-        }
-        return new Event(
-            $eventId,
-            $this->eventNormalizer->getEventType($event),
-            $this->eventNormalizer->getEventData($event),
-            $eventMetadata,
-        );
+        return new CommandResult();
     }
 }

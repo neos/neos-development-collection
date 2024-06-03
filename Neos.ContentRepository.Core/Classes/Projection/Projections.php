@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Core\Projection;
  * @implements \IteratorAggregate<ProjectionInterface>
  * @internal
  */
-final class Projections implements \IteratorAggregate
+final class Projections implements \IteratorAggregate, \Countable
 {
     /**
      * @var array<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionInterface<ProjectionStateInterface>>
@@ -92,5 +92,10 @@ final class Projections implements \IteratorAggregate
     public function getIterator(): \Traversable
     {
         yield from $this->projections;
+    }
+
+    public function count(): int
+    {
+        return count($this->projections);
     }
 }

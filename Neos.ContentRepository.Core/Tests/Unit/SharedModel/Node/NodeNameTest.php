@@ -25,9 +25,9 @@ class NodeNameTest extends TestCase
     /**
      * A data provider returning titles and the expected valid node names based on those.
      *
-     * @return array
+     * @return array<int,array<string>>
      */
-    public function sourcesAndNodeNames()
+    public static function sourcesAndNodeNames(): array
     {
         return [
             ['Überlandstraßen; adé', 'uberlandstrassen-ade'],

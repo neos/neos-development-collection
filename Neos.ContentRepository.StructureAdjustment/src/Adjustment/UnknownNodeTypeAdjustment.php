@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 
 class UnknownNodeTypeAdjustment
 {
     use RemoveNodeAggregateTrait;
 
     public function __construct(
-        private readonly ProjectedNodeIterator $projectedNodeIterator,
+        private readonly ContentGraphInterface $contentGraph,
         private readonly NodeTypeManager $nodeTypeManager
     ) {
     }
@@ -33,14 +34,14 @@ class UnknownNodeTypeAdjustment
      */
     private function removeAllNodesOfType(NodeTypeName $nodeTypeName): \Generator
     {
-        foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
+        foreach ($this->contentGraph->findNodeAggregatesByType($nodeTypeName) as $nodeAggregate) {
             yield StructureAdjustment::createForNodeAggregate(
                 $nodeAggregate,
                 StructureAdjustment::NODE_TYPE_MISSING,
                 'The node type "' . $nodeTypeName->value
                     . '" is not found; so the node should be removed (or converted)',
                 function () use ($nodeAggregate) {
-                    return $this->removeNodeAggregate($nodeAggregate);
+                    return $this->removeNodeAggregate($this->contentGraph, $nodeAggregate);
                 }
             );
         }

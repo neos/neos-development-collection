@@ -41,13 +41,11 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
-      | contentStreamId | "cs-identifier"   |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName   |
       | a               | root                  | Neos.Neos:Site |
@@ -57,8 +55,9 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'a':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
@@ -112,13 +111,11 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
   Scenario:
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                         |
-      | contentStreamId                    | "cs-identifier"               |
       | nodeAggregateId                    | "a1"                          |
       | nodeTypeName                       | "Neos.Neos:Test.DocumentType" |
       | parentNodeAggregateId              | "a"                           |
       | initialPropertyValues              | {}                            |
       | tetheredDescendantNodeAggregateIds | { "main": "a1-main"}          |
-    And the graph projection is fully up to date
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName               |
       | content1        | a1-main               | Neos.Neos:Test.ContentType |

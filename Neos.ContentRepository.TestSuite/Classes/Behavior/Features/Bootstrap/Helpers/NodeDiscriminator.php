@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The node discriminator value object
@@ -27,12 +27,12 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
  * * the node's aggregate's external id
  * * the dimension space point the node originates in within its aggregate
  */
-final class NodeDiscriminator implements \JsonSerializable
+final readonly class NodeDiscriminator implements \JsonSerializable
 {
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
     }
 
@@ -51,7 +51,7 @@ final class NodeDiscriminator implements \JsonSerializable
     {
         return new self(
             $node->subgraphIdentity->contentStreamId,
-            $node->nodeAggregateId,
+            $node->aggregateId,
             $node->originDimensionSpacePoint
         );
     }

@@ -15,10 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting;
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\Exception as HttpException;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Psr\Http\Message\UriInterface;
 
@@ -31,22 +30,25 @@ final class NodeUriBuilder
 {
     private UriBuilder $uriBuilder;
 
-    protected function __construct(UriBuilder $uriBuilder)
+    /**
+     * @Flow\Autowiring(false)
+     */
+    private function __construct(UriBuilder $uriBuilder)
     {
         $this->uriBuilder = $uriBuilder;
     }
 
-    public static function fromRequest(ActionRequest $request): static
+    public static function fromRequest(ActionRequest $request): self
     {
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
 
-        return new static($uriBuilder);
+        return new self($uriBuilder);
     }
 
-    public static function fromUriBuilder(UriBuilder $uriBuilder): static
+    public static function fromUriBuilder(UriBuilder $uriBuilder): self
     {
-        return new static($uriBuilder);
+        return new self($uriBuilder);
     }
 
     /**
@@ -54,7 +56,7 @@ final class NodeUriBuilder
      * If the node belongs to the live workspace, the public URL is generated
      * Otherwise a preview URI is rendered (@see previewUriFor())
      *
-     * Note: Shortcut nodes will are resolved in the RoutePartHandler thus the resulting URI will point
+     * Note: Shortcut nodes will be resolved in the RoutePartHandler thus the resulting URI will point
      * to the shortcut target (node, asset or external URI)
      *
      * @param NodeAddress $nodeAddress
@@ -63,10 +65,11 @@ final class NodeUriBuilder
      */
     public function uriFor(NodeAddress $nodeAddress): UriInterface
     {
-        if (!$nodeAddress->isInLiveWorkspace()) {
+        if (!$nodeAddress->workspaceName->isLive()) {
+            // we cannot build a human-readable uri using the showAction as
+            // the DocumentUriPathProjection only handles the live workspace
             return $this->previewUriFor($nodeAddress);
         }
-        /** @noinspection PhpUnhandledExceptionInspection */
         return new Uri($this->uriBuilder->uriFor('show', ['node' => $nodeAddress], 'Frontend\Node', 'Neos.Neos'));
     }
 

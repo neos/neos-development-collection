@@ -28,32 +28,26 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                                      |
-      | contentStreamId             | "cs-identifier"                                                            |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                                   |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document (in "de")
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "sir-david-nodenborough"                  |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {"language": "de"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "Original text"}                 |
-    And the graph projection is fully up to date
 
     # Node /document (in "en")
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"en"}        |
-    And the graph projection is fully up to date
 
 
   Scenario: change materialized "de" node, should shine through in "ch", but not in "en"
@@ -81,19 +75,19 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
-    When I am in content stream "cs-identifier" and dimension space point {"language": "en"}
+    When I am in workspace "live" and dimension space point {"language": "en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "en"}
     And I expect this node to have the following properties:
       | Key  | Value           |
@@ -123,11 +117,9 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     # Node /document (in "ch")
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"ch"}        |
-    And the graph projection is fully up to date
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """yaml
@@ -170,11 +162,9 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     # Node /document (in "ch")
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"ch"}        |
-    And the graph projection is fully up to date
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """yaml

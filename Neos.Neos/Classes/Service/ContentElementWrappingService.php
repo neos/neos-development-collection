@@ -81,7 +81,7 @@ class ContentElementWrappingService
         array $additionalAttributes = []
     ): ?string {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->contentRepositoryId
         );
 
         // TODO: reenable permissions
@@ -97,7 +97,8 @@ class ContentElementWrappingService
 
         $this->userLocaleService->switchToUILocale();
 
-        $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
+        // TODO illegal dependency on ui
+        $serializedNode = json_encode($this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node));
 
         $this->userLocaleService->switchToUILocale(true);
 
@@ -111,31 +112,6 @@ class ContentElementWrappingService
     }
 
     /**
-     * @param array<string,mixed> $additionalAttributes
-     * additional attributes in the form ['<attribute-name>' => '<attibute-value>', ...]
-     * to be rendered in the element wrapping
-     *
-     * @deprecated
-     */
-    public function wrapCurrentDocumentMetadata(
-        Node $node,
-        string $content,
-        string $fusionPath,
-        array $additionalAttributes = [],
-    ): string {
-        // TODO: reenable permissions
-        //if ($this->nodeAuthorizationService->isGrantedToEditNode($node) === false) {
-        //    return $content;
-        //}
-
-        $attributes = $additionalAttributes;
-        $attributes['data-__neos-fusion-path'] = $fusionPath;
-        $attributes = $this->addCssClasses($attributes, $node, []);
-
-        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', ['typeof']);
-    }
-
-    /**
      * Add required CSS classes to the attributes.
      *
      * @param array<string,mixed> $attributes
@@ -145,7 +121,7 @@ class ContentElementWrappingService
     protected function addCssClasses(array $attributes, Node $node, array $initialClasses = []): array
     {
         $classNames = $initialClasses;
-        if (!$node->subgraphIdentity->dimensionSpacePoint->equals($node->originDimensionSpacePoint)) {
+        if (!$node->dimensionSpacePoint->equals($node->originDimensionSpacePoint)) {
             $classNames[] = 'neos-contentelement-shine-through';
         }
 

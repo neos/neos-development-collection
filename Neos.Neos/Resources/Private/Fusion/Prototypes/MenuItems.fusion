@@ -19,8 +19,8 @@ prototype(Neos.Neos:MenuItems) {
   # (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``. The filter is only used for fetching subItems and is ignored for determining the ``startingPoint``
   filter = 'Neos.Neos:Document'
 
-  # (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
-  renderHiddenInIndex = false
+  # (boolean) Whether nodes with the property ``hiddenInMenu`` should be rendered, defaults to ``false``
+  renderHiddenInMenu = false
 
   # (boolean) activate the *expensive* calculation of item states defaults to ``false``.
   calculateItemStates = false

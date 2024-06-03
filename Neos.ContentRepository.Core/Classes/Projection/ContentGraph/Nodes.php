@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.Core package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,6 +13,9 @@
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
+
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 
 /**
  * An immutable, type-safe collection of Node objects
@@ -97,8 +100,18 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     public function first(): ?Node
     {
         if (count($this->nodes) > 0) {
-            $array = $this->nodes;
-            return reset($array);
+            $key = array_key_first($this->nodes);
+            return $this->nodes[$key];
+        }
+
+        return null;
+    }
+
+    public function last(): ?Node
+    {
+        if (count($this->nodes) > 0) {
+            $key = array_key_last($this->nodes);
+            return $this->nodes[$key];
         }
 
         return null;
@@ -116,6 +129,10 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return new self(array_reverse($this->nodes));
     }
 
+    /**
+     * @phpstan-assert-if-false Node $this->first()
+     * @phpstan-assert-if-false Node $this->last()
+     */
     public function isEmpty(): bool
     {
         return $this->count() === 0;
@@ -130,16 +147,13 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         }
         throw new \InvalidArgumentException(sprintf(
             'The node %s does not exist in this set',
-            $subject->nodeAggregateId->value
+            $subject->aggregateId->value
         ), 1542901216);
     }
 
     /**
      * Returns the node before the given $referenceNode in this set.
      * Throws an exception if $referenceNode does not exist. Returns NULL if $referenceNode has no preceding sibling
-     *
-     * @param Node $referenceNode
-     * @return Node
      */
     public function previous(Node $referenceNode): ?Node
     {
@@ -185,11 +199,18 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * Returns all nodes after the given $referenceNode in this set
+     * @param \Closure(Node $node): mixed $callback
+     * @return array<mixed>
      */
-    public function until(Node $referenceNode): self
+    public function map(\Closure $callback): array
     {
-        $referenceNodeIndex = $this->getNodeIndex($referenceNode);
-        return new self(array_slice($this->nodes, $referenceNodeIndex + 1));
+        return array_map($callback, $this->nodes);
+    }
+
+    public function toNodeAggregateIds(): NodeAggregateIds
+    {
+        return NodeAggregateIds::create(...$this->map(
+            fn (Node $node): NodeAggregateId => $node->aggregateId,
+        ));
     }
 }

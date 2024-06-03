@@ -30,12 +30,11 @@ Feature: Route cache invalidation
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "lady-eleonode-rootford" |
       | nodeTypeName    | "Neos.Neos:Sites"        |
-    And the graph projection is fully up to date
 
     # lady-eleonode-rootford
     #   shernode-homes
@@ -44,7 +43,7 @@ Feature: Route cache invalidation
     #        earl-o-documentbourgh
     #      nody-mc-nodeface
     #
-    And I am in content stream "cs-identifier" and dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                   | initialPropertyValues                    | nodeName |
       | shernode-homes         | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
@@ -58,13 +57,13 @@ Feature: Route cache invalidation
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
-    And The documenturipath projection is up to date
 
   Scenario: Change uri path segment invalidates route cache
     When I am on URL "/"
@@ -72,11 +71,9 @@ Feature: Route cache invalidation
     And The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                            |
-      | contentStreamId           | "cs-identifier"                                  |
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
-    And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
 
@@ -87,18 +84,14 @@ Feature: Route cache invalidation
     And The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
-      | contentStreamId           | "cs-identifier"                                    |
       | nodeAggregateId           | "sir-david-nodenborough"                           |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-a"} |
-    And The documenturipath projection is up to date
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
-      | contentStreamId           | "cs-identifier"                                    |
       | nodeAggregateId           | "sir-david-nodenborough"                           |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-b"} |
-    And The documenturipath projection is up to date
 
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
@@ -113,12 +106,10 @@ Feature: Route cache invalidation
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
-      | contentStreamId                     | "cs-identifier"         |
       | nodeAggregateId                     | "earl-o-documentbourgh" |
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "shernode-homes"        |
       | newSucceedingSiblingNodeAggregateId | null                    |
-    And The documenturipath projection is up to date
 
     Then No node should match URL "/david-nodenborough/earl-document"
 
@@ -128,12 +119,10 @@ Feature: Route cache invalidation
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
-      | contentStreamId                     | "cs-identifier"         |
       | nodeAggregateId                     | "nody-mc-nodeface"      |
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "earl-o-documentbourgh" |
       | newSucceedingSiblingNodeAggregateId | null                    |
-    And The documenturipath projection is up to date
 
     Then No node should match URL "/nody"
 
@@ -144,11 +133,9 @@ Feature: Route cache invalidation
 
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And The documenturipath projection is up to date
 
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
@@ -161,11 +148,9 @@ Feature: Route cache invalidation
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And The documenturipath projection is up to date
 
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"

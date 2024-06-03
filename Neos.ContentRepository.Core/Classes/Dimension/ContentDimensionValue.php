@@ -21,22 +21,20 @@ use Neos\Utility\Arrays;
  * A content dimension value in a single ContentDimension; e.g. the value "de" in the dimension "language".
  * @api
  */
-final class ContentDimensionValue
+final readonly class ContentDimensionValue
 {
     /**
      * @throws ContentDimensionValueIsInvalid
      */
     public function __construct(
-        public readonly string $value,
-        /** @codingStandardsIgnoreStart */
-        public readonly ContentDimensionValueSpecializationDepth $specializationDepth = new ContentDimensionValueSpecializationDepth(0),
-        /** @codingStandardsIgnoreEnd */
-        public readonly ContentDimensionConstraintSet $constraints = new ContentDimensionConstraintSet([]),
+        public string $value,
+        public ContentDimensionValueSpecializationDepth $specializationDepth = new ContentDimensionValueSpecializationDepth(0),
+        public ContentDimensionConstraintSet $constraints = new ContentDimensionConstraintSet([]),
         /**
          * General configuration like UI, detection etc.
          * @var array<string,mixed>
          */
-        public readonly array $configuration = []
+        public array $configuration = []
     ) {
         if (empty($value)) {
             throw ContentDimensionValueIsInvalid::becauseItMustNotBeEmpty();

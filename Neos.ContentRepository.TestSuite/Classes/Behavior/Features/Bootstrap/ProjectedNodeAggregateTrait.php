@@ -15,15 +15,16 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -41,15 +42,15 @@ trait ProjectedNodeAggregateTrait
     {
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
         $this->initializeCurrentNodeAggregate(function (ContentGraphInterface $contentGraph) use ($nodeAggregateId) {
-            $currentNodeAggregate = $contentGraph->findNodeAggregateById($this->currentContentStreamId, $nodeAggregateId);
-            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s".', $nodeAggregateId->value, $this->currentContentStreamId->value));
+            $currentNodeAggregate = $contentGraph->findNodeAggregateById($nodeAggregateId);
+            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current workspace "%s".', $nodeAggregateId->value, $this->currentWorkspaceName->value));
             return $currentNodeAggregate;
         });
     }
 
     protected function initializeCurrentNodeAggregate(callable $query): void
     {
-        $this->currentNodeAggregate = $query($this->currentContentRepository->getContentGraph());
+        $this->currentNodeAggregate = $query($this->currentContentRepository->getContentGraph($this->currentWorkspaceName));
     }
 
     /**
@@ -90,11 +91,12 @@ trait ProjectedNodeAggregateTrait
     {
         $expectedDisabledDimensionSpacePoints = DimensionSpacePointSet::fromJsonString($serializedExpectedDisabledDimensionSpacePoints);
         $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) use ($expectedDisabledDimensionSpacePoints) {
+            $actualDisabledDimensionSpacePoints = $nodeAggregate->getDimensionSpacePointsTaggedWith(SubtreeTag::disabled());
             Assert::assertEquals(
                 $expectedDisabledDimensionSpacePoints,
-                $nodeAggregate->disabledDimensionSpacePoints,
+                $actualDisabledDimensionSpacePoints,
                 'Expected disabled dimension space point set ' . $expectedDisabledDimensionSpacePoints->toJson() . ', got ' .
-                $nodeAggregate->disabledDimensionSpacePoints->toJson()
+                $actualDisabledDimensionSpacePoints->toJson()
             );
         });
     }
@@ -157,8 +159,7 @@ trait ProjectedNodeAggregateTrait
     {
         $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) {
             Assert::assertEmpty(
-                iterator_to_array($this->currentContentRepository->getContentGraph()->findParentNodeAggregates(
-                    $nodeAggregate->contentStreamId,
+                iterator_to_array($this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findParentNodeAggregates(
                     $nodeAggregate->nodeAggregateId
                 )),
                 'Did not expect parent node aggregates.'
@@ -174,14 +175,13 @@ trait ProjectedNodeAggregateTrait
         $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
         $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) use ($expectedNodeAggregateIds) {
             $expectedDiscriminators = array_values(array_map(function (NodeAggregateId $nodeAggregateId) {
-                return $this->currentContentStreamId->value . ';' . $nodeAggregateId->value;
+                return $this->currentWorkspaceName->value . ';' . $nodeAggregateId->value;
             }, iterator_to_array($expectedNodeAggregateIds)));
             $actualDiscriminators = array_values(array_map(
                 fn (NodeAggregate $parentNodeAggregate): string
-                    => $parentNodeAggregate->contentStreamId->value . ';' . $parentNodeAggregate->nodeAggregateId->value,
+                    => $parentNodeAggregate->workspaceName->value . ';' . $parentNodeAggregate->nodeAggregateId->value,
                 iterator_to_array(
-                    $this->currentContentRepository->getContentGraph()->findParentNodeAggregates(
-                        $nodeAggregate->contentStreamId,
+                    $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findParentNodeAggregates(
                         $nodeAggregate->nodeAggregateId
                     )
                 )
@@ -201,8 +201,7 @@ trait ProjectedNodeAggregateTrait
     {
         $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) {
             Assert::assertEmpty(
-                iterator_to_array($this->currentContentRepository->getContentGraph()->findChildNodeAggregates(
-                    $nodeAggregate->contentStreamId,
+                iterator_to_array($this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findChildNodeAggregates(
                     $nodeAggregate->nodeAggregateId
                 )),
                 'No child node aggregates were expected.'
@@ -219,17 +218,20 @@ trait ProjectedNodeAggregateTrait
         $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
         $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) use ($expectedNodeAggregateIds) {
             $expectedDiscriminators = array_values(array_map(
-                fn (NodeAggregateId $nodeAggregateId): string => $this->currentContentStreamId->value . ':' . $nodeAggregateId->value,
+                fn (NodeAggregateId $nodeAggregateId): string => $this->currentWorkspaceName->value . ':' . $nodeAggregateId->value,
                 iterator_to_array($expectedNodeAggregateIds)
             ));
             $actualDiscriminators = array_values(array_map(
                 fn (NodeAggregate $parentNodeAggregate): string
-                    => $parentNodeAggregate->contentStreamId->value . ':' . $parentNodeAggregate->nodeAggregateId->value,
-                iterator_to_array($this->currentContentRepository->getContentGraph()->findChildNodeAggregates(
-                    $nodeAggregate->contentStreamId,
+                    => $parentNodeAggregate->workspaceName->value . ':' . $parentNodeAggregate->nodeAggregateId->value,
+                iterator_to_array($this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findChildNodeAggregates(
                     $nodeAggregate->nodeAggregateId
                 ))
             ));
+
+            /** we can't ensure the ordering of children on node aggregate level */
+            sort($expectedDiscriminators);
+            sort($actualDiscriminators);
 
             Assert::assertSame(
                 $expectedDiscriminators,

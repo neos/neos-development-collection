@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
-use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
  * @implements ProjectionFactoryInterface<HypergraphProjection>
@@ -18,7 +19,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 final class HypergraphProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
-        private readonly PostgresDbalClientInterface $dbalClient
+        private readonly Connection $dbal,
     ) {
     }
 
@@ -36,16 +37,16 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
             $projectionFactoryDependencies->contentRepositoryId
         );
 
-        return new HypergraphProjection(
-            $this->dbalClient,
-            new NodeFactory(
-                $projectionFactoryDependencies->contentRepositoryId,
-                $projectionFactoryDependencies->nodeTypeManager,
-                $projectionFactoryDependencies->propertyConverter
-            ),
+        $nodeFactory = new NodeFactory(
             $projectionFactoryDependencies->contentRepositoryId,
             $projectionFactoryDependencies->nodeTypeManager,
-            $tableNamePrefix
+            $projectionFactoryDependencies->propertyConverter
+        );
+
+        return new HypergraphProjection(
+            $this->dbal,
+            $tableNamePrefix,
+            new ContentGraphFinder(new ContentHyperGraphFactory($this->dbal, $nodeFactory, $projectionFactoryDependencies->contentRepositoryId, $projectionFactoryDependencies->nodeTypeManager, $tableNamePrefix))
         );
     }
 }

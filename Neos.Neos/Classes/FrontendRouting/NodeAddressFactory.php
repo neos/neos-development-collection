@@ -18,11 +18,11 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * @api
+ * @deprecated will be removed before Final 9.0
  */
 class NodeAddressFactory
 {
@@ -63,8 +63,8 @@ class NodeAddressFactory
     {
         return $this->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
             $node->subgraphIdentity->contentStreamId,
-            $node->subgraphIdentity->dimensionSpacePoint,
-            $node->nodeAggregateId,
+            $node->dimensionSpacePoint,
+            $node->aggregateId,
         );
     }
 

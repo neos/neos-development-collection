@@ -1,8 +1,8 @@
 <?php
 namespace Neos\ContentRepositoryRegistry\Exception;
 
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 #[Flow\Proxy(false)]
 final class ContentRepositoryNotFoundException extends \InvalidArgumentException

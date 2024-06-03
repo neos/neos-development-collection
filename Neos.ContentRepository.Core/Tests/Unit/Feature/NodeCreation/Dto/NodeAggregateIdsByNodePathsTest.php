@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Tests\Unit\Feature\NodeCreation\Dto;
 
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
-use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -56,8 +55,7 @@ class NodeAggregateIdsByNodePathsTest extends TestCase
                         ]
                     ]
                 ]
-            ],
-            new DefaultNodeLabelGeneratorFactory()
+            ]
         );
 
         $completeSubject = $subject->completeForNodeOfType(

@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
@@ -119,6 +120,7 @@ final class ContentRepositoryFactory
     public function buildService(
         ContentRepositoryServiceFactoryInterface $serviceFactory
     ): ContentRepositoryServiceInterface {
+
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
             $this->getOrBuild(),
@@ -137,22 +139,22 @@ final class ContentRepositoryFactory
                 new WorkspaceCommandHandler(
                     $this->buildEventPersister(),
                     $this->projectionFactoryDependencies->eventStore,
-                    $this->projectionFactoryDependencies->eventNormalizer
+                    $this->projectionFactoryDependencies->eventNormalizer,
                 ),
                 new NodeAggregateCommandHandler(
                     $this->projectionFactoryDependencies->nodeTypeManager,
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
                     $this->projectionFactoryDependencies->interDimensionalVariationGraph,
-                    $this->projectionFactoryDependencies->propertyConverter
+                    $this->projectionFactoryDependencies->propertyConverter,
                 ),
                 new DimensionSpaceCommandHandler(
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
-                    $this->projectionFactoryDependencies->interDimensionalVariationGraph
+                    $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 ),
                 new NodeDuplicationCommandHandler(
                     $this->projectionFactoryDependencies->nodeTypeManager,
                     $this->projectionFactoryDependencies->contentDimensionZookeeper,
-                    $this->projectionFactoryDependencies->interDimensionalVariationGraph
+                    $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 )
             );
         }

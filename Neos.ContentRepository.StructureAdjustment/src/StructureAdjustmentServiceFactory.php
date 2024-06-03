@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\StructureAdjustment;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<StructureAdjustmentService>
@@ -20,6 +19,7 @@ class StructureAdjustmentServiceFactory implements ContentRepositoryServiceFacto
             $serviceFactoryDependencies->eventPersister,
             $serviceFactoryDependencies->nodeTypeManager,
             $serviceFactoryDependencies->interDimensionalVariationGraph,
+            $serviceFactoryDependencies->propertyConverter,
         );
     }
 }

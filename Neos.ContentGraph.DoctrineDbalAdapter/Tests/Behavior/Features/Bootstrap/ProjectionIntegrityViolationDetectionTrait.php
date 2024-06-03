@@ -15,17 +15,19 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
-use Neos\ContentRepositoryRegistry\DoctrineDbalClient\DoctrineDbalClient;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use PHPUnit\Framework\Assert;
@@ -39,7 +41,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 {
     use CRTestSuiteRuntimeVariables;
 
-    private DoctrineDbalClient $dbalClient;
+    private Connection $dbal;
 
     protected Result $lastIntegrityViolationDetectionResult;
 
@@ -51,66 +53,37 @@ trait ProjectionIntegrityViolationDetectionTrait
      */
     abstract private function getObject(string $className): object;
 
-    protected function getTableNamePrefix(): string
+    private function tableNames(): ContentGraphTableNames
     {
-        return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
+        return ContentGraphTableNames::create(
             $this->currentContentRepository->id
         );
     }
 
     public function setupDbalGraphAdapterIntegrityViolationTrait()
     {
-        $this->dbalClient = $this->getObject(DoctrineDbalClient::class);
+        $this->dbal = $this->getObject(Connection::class);
     }
 
     /**
-     * @When /^I remove the following restriction relation:$/
+     * @When /^I remove the following subtree tag:$/
      * @param TableNode $payloadTable
      * @throws DBALException
      * @throws InvalidArgumentException
      */
-    public function iRemoveTheFollowingRestrictionRelation(TableNode $payloadTable): void
+    public function iRemoveTheFollowingSubtreeTag(TableNode $payloadTable): void
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
-        $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
-
-        $this->dbalClient->getConnection()->delete(
-            $this->getTableNamePrefix() . '_restrictionrelation',
-            $record
-        );
-    }
-
-    /**
-     * @When /^I detach the following restriction relation from its origin:$/
-     * @param TableNode $payloadTable
-     * @throws DBALException
-     */
-    public function iDetachTheFollowingRestrictionRelationFromItsOrigin(TableNode $payloadTable): void
-    {
-        $dataset = $this->transformPayloadTableToDataset($payloadTable);
-        $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
-        $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_restrictionrelation',
+        $subtreeTagToRemove = SubtreeTag::fromString($dataset['subtreeTag']);
+        $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
+        $subtreeTags = NodeFactory::extractNodeTagsFromJson($record['subtreetags']);
+        if (!$subtreeTags->contain($subtreeTagToRemove)) {
+            throw new \RuntimeException(sprintf('Failed to remove subtree tag "%s" because that tag is not set', $subtreeTagToRemove->value), 1708618267);
+        }
+        $this->dbal->update(
+            $this->tableNames()->hierarchyRelation(),
             [
-                'originnodeaggregateid' => (string)TestingNodeAggregateId::nonExistent()
-            ],
-            $record
-        );
-    }
-
-    /**
-     * @When /^I detach the following restriction relation from its target:$/
-     * @param TableNode $payloadTable
-     * @throws DBALException
-     */
-    public function iDetachTheFollowingRestrictionRelationFromItsTarget(TableNode $payloadTable): void
-    {
-        $dataset = $this->transformPayloadTableToDataset($payloadTable);
-        $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
-        $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_restrictionrelation',
-            [
-                'affectednodeaggregateid' => (string)TestingNodeAggregateId::nonExistent()
+                'subtreetags' => json_encode($subtreeTags->without($subtreeTagToRemove), JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
             ],
             $record
         );
@@ -124,8 +97,8 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
-        $this->dbalClient->getConnection()->insert(
-            $this->getTableNamePrefix() . '_hierarchyrelation',
+        $this->dbal->insert(
+            $this->tableNames()->hierarchyRelation(),
             $record
         );
     }
@@ -141,12 +114,45 @@ trait ProjectionIntegrityViolationDetectionTrait
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         unset($record['position']);
 
-        $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_hierarchyrelation',
+        $this->dbal->update(
+            $this->tableNames()->hierarchyRelation(),
             [
                 'dimensionspacepointhash' => $dataset['newDimensionSpacePointHash']
             ],
             $record
+        );
+    }
+
+    /**
+     * @When /^I change the following node's name:$/
+     * @param TableNode $payloadTable
+     * @throws DBALException
+     */
+    public function iChangeTheFollowingNodesName(TableNode $payloadTable): void
+    {
+        $dataset = $this->transformPayloadTableToDataset($payloadTable);
+
+        $relationAnchorPoint = $this->dbal->executeQuery(
+            'SELECT n.relationanchorpoint FROM ' . $this->tableNames()->node() . ' n
+                JOIN ' . $this->tableNames()->hierarchyRelation() . ' h ON h.childnodeanchor = n.relationanchorpoint
+                WHERE h.contentstreamid = :contentStreamId
+                AND n.nodeaggregateId = :nodeAggregateId
+                AND n.origindimensionspacepointhash = :originDimensionSpacePointHash',
+            [
+                'contentStreamId' => $dataset['contentStreamId'],
+                'nodeAggregateId' => $dataset['nodeAggregateId'],
+                'originDimensionSpacePointHash' => OriginDimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'])->hash,
+            ]
+        )->fetchOne();
+
+        $this->dbal->update(
+            $this->tableNames()->node(),
+            [
+                'name' => $dataset['newName']
+            ],
+            [
+                'relationanchorpoint' => $relationAnchorPoint
+            ]
         );
     }
 
@@ -165,8 +171,8 @@ trait ProjectionIntegrityViolationDetectionTrait
             'childnodeanchor' => $this->findRelationAnchorPointByDataset($dataset)
         ];
 
-        $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_hierarchyrelation',
+        $this->dbal->update(
+            $this->tableNames()->hierarchyRelation(),
             [
                 'position' => $dataset['newPosition']
             ],
@@ -183,10 +189,10 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
-        $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_referencerelation',
+        $this->dbal->update(
+            $this->tableNames()->referenceRelation(),
             [
-                'nodeanchorpoint' => 'detached'
+                'nodeanchorpoint' => 7777777
             ],
             $this->transformDatasetToReferenceRelationRecord($dataset)
         );
@@ -201,8 +207,8 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
-        $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_referencerelation',
+        $this->dbal->update(
+            $this->tableNames()->referenceRelation(),
             [
                 'position' => $dataset['newPosition']
             ],
@@ -214,24 +220,12 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         return [
             'name' => $dataset['referenceName'],
-            'nodeanchorpoint' => $this->findRelationAnchorPointByIds(
+            'nodeanchorpoint' => $this->findHierarchyRelationByIds(
                 ContentStreamId::fromString($dataset['contentStreamId']),
                 DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']),
                 NodeAggregateId::fromString($dataset['sourceNodeAggregateId'])
-            ),
+            )['childnodeanchor'],
             'destinationnodeaggregateid' => $dataset['destinationNodeAggregateId']
-        ];
-    }
-
-    private function transformDatasetToRestrictionRelationRecord(array $dataset): array
-    {
-        $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
-
-        return [
-            'contentstreamid' => $dataset['contentStreamId'],
-            'dimensionspacepointhash' => $dimensionSpacePoint->hash,
-            'originnodeaggregateid' => $dataset['originNodeAggregateId'],
-            'affectednodeaggregateid' => $dataset['affectedNodeAggregateId'],
         ];
     }
 
@@ -241,60 +235,67 @@ trait ProjectionIntegrityViolationDetectionTrait
         $parentNodeAggregateId = TestingNodeAggregateId::fromString($dataset['parentNodeAggregateId']);
         $childAggregateId = TestingNodeAggregateId::fromString($dataset['childNodeAggregateId']);
 
+        $parentHierarchyRelation = $parentNodeAggregateId->isNonExistent()
+            ? null
+            : $this->findHierarchyRelationByIds(
+                ContentStreamId::fromString($dataset['contentStreamId']),
+                $dimensionSpacePoint,
+                NodeAggregateId::fromString($dataset['parentNodeAggregateId'])
+            );
+
+        $childHierarchyRelation = $childAggregateId->isNonExistent()
+            ? null
+            : $this->findHierarchyRelationByIds(
+                ContentStreamId::fromString($dataset['contentStreamId']),
+                $dimensionSpacePoint,
+                NodeAggregateId::fromString($dataset['childNodeAggregateId'])
+            );
+
         return [
             'contentstreamid' => $dataset['contentStreamId'],
-            'dimensionspacepoint' => $dimensionSpacePoint->toJson(),
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
-            'parentnodeanchor' => $parentNodeAggregateId->isNonExistent()
-                ? UuidFactory::create()
-                : $this->findRelationAnchorPointByIds(
-                    ContentStreamId::fromString($dataset['contentStreamId']),
-                    $dimensionSpacePoint,
-                    NodeAggregateId::fromString($dataset['parentNodeAggregateId'])
-                ),
-            'childnodeanchor' => $childAggregateId->isNonExistent()
-                ? UuidFactory::create()
-                : $this->findRelationAnchorPointByIds(
-                    ContentStreamId::fromString($dataset['contentStreamId']),
-                    $dimensionSpacePoint,
-                    NodeAggregateId::fromString($dataset['childNodeAggregateId'])
-                ),
-            'position' => $dataset['position'] ?? 0
+            'parentnodeanchor' => $parentHierarchyRelation !== null ? $parentHierarchyRelation['childnodeanchor'] : 9999999,
+            'childnodeanchor' => $childHierarchyRelation !== null ? $childHierarchyRelation['childnodeanchor'] : 8888888,
+            'position' => $dataset['position'] ?? $parentHierarchyRelation !== null ? $parentHierarchyRelation['position'] : 0,
+            'subtreetags' => $parentHierarchyRelation !== null ? $parentHierarchyRelation['subtreetags'] : '{}',
         ];
     }
 
-    private function findRelationAnchorPointByDataset(array $dataset): string
+    private function findRelationAnchorPointByDataset(array $dataset): int
     {
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'] ?? $dataset['dimensionSpacePoint']);
 
-        return $this->findRelationAnchorPointByIds(
+        return $this->findHierarchyRelationByIds(
             ContentStreamId::fromString($dataset['contentStreamId']),
             $dimensionSpacePoint,
             NodeAggregateId::fromString($dataset['nodeAggregateId'] ?? $dataset['childNodeAggregateId'])
-        );
+        )['childnodeanchor'];
     }
 
-    private function findRelationAnchorPointByIds(
+    private function findHierarchyRelationByIds(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
-    ): string {
-        $nodeRecord = $this->dbalClient->getConnection()->executeQuery(
-            'SELECT n.relationanchorpoint
-                            FROM ' . $this->getTableNamePrefix() . '_node n
-                            INNER JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation h
-                            ON n.relationanchorpoint = h.childnodeanchor
-                            WHERE n.nodeaggregateid = :nodeAggregateId
-                            AND h.contentstreamid = :contentStreamId
-                            AND h.dimensionspacepointhash = :dimensionSpacePointHash',
+    ): array {
+        $nodeRecord = $this->dbal->executeQuery(
+            'SELECT h.*
+                FROM ' . $this->tableNames()->node() . ' n
+                INNER JOIN ' . $this->tableNames()->hierarchyRelation() . ' h
+                ON n.relationanchorpoint = h.childnodeanchor
+                WHERE n.nodeaggregateid = :nodeAggregateId
+                AND h.contentstreamid = :contentStreamId
+                AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateId' => $nodeAggregateId->value
             ]
         )->fetchAssociative();
+        if ($nodeRecord === false) {
+            throw new \InvalidArgumentException(sprintf('Failed to find hierarchy relation for content stream "%s", dimension space point "%s" and node aggregate id "%s"', $contentStreamId->value, $dimensionSpacePoint->hash, $nodeAggregateId->value), 1708617712);
+        }
 
-        return $nodeRecord['relationanchorpoint'];
+        return $nodeRecord;
     }
 
     private function transformPayloadTableToDataset(TableNode $payloadTable): array
@@ -312,7 +313,7 @@ trait ProjectionIntegrityViolationDetectionTrait
      */
     public function iRunIntegrityViolationDetection(): void
     {
-        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService(new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbalClient));
+        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService(new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbal));
         $this->lastIntegrityViolationDetectionResult = $projectionIntegrityViolationDetectionRunner->run();
     }
 

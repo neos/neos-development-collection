@@ -25,12 +25,14 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The Fusion Parser
  *
- * @api
+ * @internal The Fusion parsing is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
  */
 class Parser
 {
     /**
      * Reserved parse tree keys for internal usage.
+     * @var list<string>
      */
     public static array $reservedParseTreeKeys = ['__meta', '__prototypes', '__stopInheritanceChain', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
 
@@ -53,7 +55,6 @@ class Parser
      * @param FusionSourceCodeCollection $sourceCode The Fusion source code to parse
      * @return FusionConfiguration The fusion configuration for the Fusion runtime
      * @throws Fusion\Exception
-     * @api
      */
     public function parseFromSource(FusionSourceCodeCollection $sourceCode): FusionConfiguration
     {
@@ -75,11 +76,10 @@ class Parser
      *
      * @param string $sourceCode The Fusion source code to parse
      * @param string|null $contextPathAndFilename An optional path and filename used for relative Fusion file includes
-     * @param array $mergedArrayTreeUntilNow Used internally for keeping track of the built merged array tree
-     * @return array The merged array tree for the Fusion runtime, generated from the source code
+     * @param array<int|string, mixed> $mergedArrayTreeUntilNow Used internally for keeping track of the built merged array tree
+     * @return array<int|string, mixed> The merged array tree for the Fusion runtime, generated from the source code
      * @throws Fusion\Exception
      * @deprecated with Neos 8.3 – will be removed with Neos 9.0, use {@link parseFromSource} instead
-     * @api
      */
     public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $mergedArrayTreeUntilNow = []): array
     {
@@ -114,7 +114,7 @@ class Parser
         }
     }
 
-    protected function handleDslTranspile(string $identifier, string $code)
+    protected function handleDslTranspile(string $identifier, string $code): mixed
     {
         return $this->parserCache->cacheForDsl(
             $identifier,

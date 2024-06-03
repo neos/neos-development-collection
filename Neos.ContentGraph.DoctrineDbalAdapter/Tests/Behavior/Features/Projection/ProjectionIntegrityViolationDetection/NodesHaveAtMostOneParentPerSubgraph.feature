@@ -19,14 +19,14 @@ Feature: Run integrity violation detection regarding parent relations
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "sir-david-nodenborough"                                 |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
@@ -37,6 +37,7 @@ Feature: Run integrity violation detection regarding parent relations
       | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "sir-nodeward-nodington-iii"                             |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
@@ -47,6 +48,7 @@ Feature: Run integrity violation detection regarding parent relations
       | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
+      | workspaceName               | "live"                                                   |
       | contentStreamId             | "cs-identifier"                                          |
       | nodeAggregateId             | "nody-mc-nodeface"                                       |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
@@ -55,7 +57,6 @@ Feature: Run integrity violation detection regarding parent relations
       | parentNodeAggregateId       | "sir-david-nodenborough"                                 |
       | nodeName                    | "child-document"                                         |
       | nodeAggregateClassification | "regular"                                                |
-    And the graph projection is fully up to date
 
   Scenario: Set a second parent for Nody McNodeface
     And I add the following hierarchy relation:

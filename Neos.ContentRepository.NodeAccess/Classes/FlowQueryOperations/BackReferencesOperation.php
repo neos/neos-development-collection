@@ -42,6 +42,19 @@ use Neos\Flow\Annotations as Flow;
  */
 final class BackReferencesOperation implements OperationInterface
 {
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'backReferences';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject
@@ -66,7 +79,7 @@ final class BackReferencesOperation implements OperationInterface
         /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-            $output[] = iterator_to_array($subgraph->findBackReferences($contextNode->nodeAggregateId, $filter));
+            $output[] = iterator_to_array($subgraph->findBackReferences($contextNode->aggregateId, $filter));
         }
         $flowQuery->setContext(array_merge(...$output));
     }

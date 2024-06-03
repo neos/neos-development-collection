@@ -2,13 +2,11 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ProjectionIntegrityViolationDetector;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunner;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<ProjectionIntegrityViolationDetectionRunner>
@@ -17,7 +15,7 @@ use Neos\ContentRepository\Core\SharedModel\User\UserId;
 class DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function __construct(
-        private readonly DbalClientInterface $dbalClient
+        private readonly Connection $dbal,
     ) {
     }
 
@@ -26,8 +24,8 @@ class DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory implements 
     ): ProjectionIntegrityViolationDetectionRunner {
         return new ProjectionIntegrityViolationDetectionRunner(
             new ProjectionIntegrityViolationDetector(
-                $this->dbalClient,
-                DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
+                $this->dbal,
+                ContentGraphTableNames::create(
                     $serviceFactoryDependencies->contentRepositoryId
                 )
             )

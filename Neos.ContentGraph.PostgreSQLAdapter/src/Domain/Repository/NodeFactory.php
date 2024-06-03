@@ -16,31 +16,34 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
+use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The node factory for mapping database rows to nodes and node aggregates
@@ -76,22 +79,21 @@ final class NodeFactory
             : null;
 
         return Node::create(
-            ContentSubgraphIdentity::create(
-                $this->contentRepositoryId,
-                $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
-                $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
-                $visibilityConstraints
-            ),
+            $this->contentRepositoryId,
+            // todo use actual workspace name
+            WorkspaceName::fromString('missing'),
+            $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
             NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
-            $nodeType,
             new PropertyCollection(
                 SerializedPropertyValues::fromJsonString($nodeRow['properties']),
                 $this->propertyConverter
             ),
             $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
+            // TODO implement {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowToNode()}
+            NodeTags::createEmpty(),
             Timestamps::create(
                 // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
                 self::parseDateTimeString('2023-03-17 12:00:00'),
@@ -99,6 +101,9 @@ final class NodeFactory
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
+            $visibilityConstraints,
+            $nodeType,
+            $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
         );
     }
 
@@ -238,8 +243,9 @@ final class NodeFactory
             }
         }
 
-        return new NodeAggregate(
-            $contentStreamId,
+        return NodeAggregate::create(
+            $this->contentRepositoryId,
+            WorkspaceName::fromString('missing'), // todo
             $nodeAggregateId,
             $nodeAggregateClassification,
             $nodeTypeName,
@@ -250,7 +256,9 @@ final class NodeFactory
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
             $nodesByCoveredDimensionSpacePoint,
             OriginByCoverage::fromArray($occupationByCovered),
-            new DimensionSpacePointSet($disabledDimensionSpacePoints)
+            // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregate())
+            DimensionSpacePointsBySubtreeTags::create(),
+            $contentStreamId,
         );
     }
 
@@ -334,8 +342,9 @@ final class NodeFactory
         }
 
         foreach ($nodeAggregateIds as $key => $nodeAggregateId) {
-            yield new NodeAggregate(
-                $contentStreamId,
+            yield NodeAggregate::create(
+                $this->contentRepositoryId,
+                WorkspaceName::fromString('missing'), // todo
                 $nodeAggregateId,
                 $nodeAggregateClassifications[$key],
                 $nodeTypeNames[$key],
@@ -346,7 +355,9 @@ final class NodeFactory
                 new DimensionSpacePointSet($coveredDimensionSpacePoints[$key]),
                 $nodesByCoveredDimensionSpacePoint[$key],
                 OriginByCoverage::fromArray($occupationByCovered[$key]),
-                new DimensionSpacePointSet($disabledDimensionSpacePoints[$key])
+                // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregates())
+                DimensionSpacePointsBySubtreeTags::create(),
+                $contentStreamId,
             );
         }
     }

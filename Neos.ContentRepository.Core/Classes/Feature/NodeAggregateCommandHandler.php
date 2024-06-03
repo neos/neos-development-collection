@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -47,10 +48,11 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\NodeVariation;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\SubtreeTagging;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -61,6 +63,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     use RootNodeHandling;
     use NodeCreation;
     use NodeDisabling;
+    use SubtreeTagging;
     use NodeModification;
     use NodeMove;
     use NodeReferencing;
@@ -71,70 +74,50 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     use TetheredNodeInternals;
 
     /**
-     * Used for constraint checks against the current outside configuration state of node types
-     */
-    private NodeTypeManager $nodeTypeManager;
-
-    /**
-     * Used for variation resolution from the current outside state of content dimensions
-     */
-    private DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph;
-
-    /**
-     * Used for constraint checks against the current outside configuration state of content dimensions
-     */
-    private DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper;
-
-    protected PropertyConverter $propertyConverter;
-
-    /**
-     * can be disabled in {@see NodeAggregateCommandHandler::withoutAnchestorNodeTypeConstraintChecks()}
+     * can be disabled in {@see NodeAggregateCommandHandler::withoutAncestorNodeTypeConstraintChecks()}
      */
     private bool $ancestorNodeTypeConstraintChecksEnabled = true;
 
     public function __construct(
-        NodeTypeManager $nodeTypeManager,
-        DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
-        DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        PropertyConverter $propertyConverter
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
+        private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        private readonly PropertyConverter $propertyConverter,
     ) {
-        $this->nodeTypeManager = $nodeTypeManager;
-        $this->contentDimensionZookeeper = $contentDimensionZookeeper;
-        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
-        $this->propertyConverter = $propertyConverter;
     }
-
 
     public function canHandle(CommandInterface $command): bool
     {
         return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
+    public function handle(CommandInterface $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
     {
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
-            SetNodeProperties::class => $this->handleSetNodeProperties($command, $contentRepository),
+            SetNodeProperties::class => $this->handleSetNodeProperties($command, $commandHandlingDependencies),
             SetSerializedNodeProperties::class
-                => $this->handleSetSerializedNodeProperties($command, $contentRepository),
-            SetNodeReferences::class => $this->handleSetNodeReferences($command, $contentRepository),
+            => $this->handleSetSerializedNodeProperties($command, $commandHandlingDependencies),
+            SetNodeReferences::class => $this->handleSetNodeReferences($command, $commandHandlingDependencies),
             SetSerializedNodeReferences::class
-                => $this->handleSetSerializedNodeReferences($command, $contentRepository),
-            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $contentRepository),
-            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $contentRepository),
+            => $this->handleSetSerializedNodeReferences($command, $commandHandlingDependencies),
+            ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $commandHandlingDependencies),
+            RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $commandHandlingDependencies),
             CreateNodeAggregateWithNode::class
-                => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
+            => $this->handleCreateNodeAggregateWithNode($command, $commandHandlingDependencies),
             CreateNodeAggregateWithNodeAndSerializedProperties::class
-                => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository),
-            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $contentRepository),
-            CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $contentRepository),
+            => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $commandHandlingDependencies),
+            MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $commandHandlingDependencies),
+            CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $commandHandlingDependencies),
             CreateRootNodeAggregateWithNode::class
-                => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
+            => $this->handleCreateRootNodeAggregateWithNode($command, $commandHandlingDependencies),
             UpdateRootNodeAggregateDimensions::class
-                => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
-            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
-            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
-            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $contentRepository),
+            => $this->handleUpdateRootNodeAggregateDimensions($command, $commandHandlingDependencies),
+            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $commandHandlingDependencies),
+            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $commandHandlingDependencies),
+            TagSubtree::class => $this->handleTagSubtree($command, $commandHandlingDependencies),
+            UntagSubtree::class => $this->handleUntagSubtree($command, $commandHandlingDependencies),
+            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $commandHandlingDependencies),
         };
     }
 
@@ -180,73 +163,5 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         $callback();
 
         $this->ancestorNodeTypeConstraintChecksEnabled = $previousAncestorNodeTypeConstraintChecksEnabled;
-    }
-
-    /**
-     * @todo perhaps reuse when ChangeNodeAggregateType is reimplemented
-     */
-    protected function checkConstraintsImposedByAncestors(
-        ChangeNodeAggregateType $command,
-        ContentRepository $contentRepository
-    ): void {
-        $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
-        );
-        $newNodeType = $this->requireNodeType($command->newNodeTypeName);
-        foreach (
-            $contentRepository->getContentGraph()->findParentNodeAggregates(
-                $command->contentStreamId,
-                $command->nodeAggregateId
-            ) as $parentAggregate
-        ) {
-            /* @var $parentAggregate NodeAggregate */
-            $parentsNodeType = $this->nodeTypeManager->getNodeType($parentAggregate->nodeTypeName->value);
-            if (!$parentsNodeType->allowsChildNodeType($newNodeType)) {
-                throw new NodeConstraintException(
-                    'Node type ' . $command->newNodeTypeName->value
-                        . ' is not allowed below nodes of type ' . $parentAggregate->nodeTypeName->value
-                );
-            }
-            if (
-                $nodeAggregate->nodeName
-                && $parentsNodeType->hasTetheredNode($nodeAggregate->nodeName)
-                && $this->nodeTypeManager->getTypeOfTetheredNode($parentsNodeType, $nodeAggregate->nodeName)->name
-                    !== $command->newNodeTypeName->value
-            ) {
-                throw new NodeConstraintException(
-                    'Cannot change type of auto created child node' . $nodeAggregate->nodeName->value
-                        . ' to ' . $command->newNodeTypeName->value
-                );
-            }
-            foreach (
-                $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $command->contentStreamId,
-                    $parentAggregate->nodeAggregateId
-                ) as $grandParentAggregate
-            ) {
-                /* @var $grandParentAggregate NodeAggregate */
-                $grandParentsNodeType = $this->nodeTypeManager->getNodeType(
-                    $grandParentAggregate->nodeTypeName->value
-                );
-                if (
-                    $parentAggregate->nodeName
-                    && $grandParentsNodeType->hasTetheredNode($parentAggregate->nodeName)
-                    && !$this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
-                        $grandParentsNodeType,
-                        $parentAggregate->nodeName,
-                        $newNodeType
-                    )
-                ) {
-                    throw new NodeConstraintException(
-                        'Node type "' . $command->newNodeTypeName->value
-                            . '" is not allowed below auto created child nodes "' . $parentAggregate->nodeName->value
-                            . '" of nodes of type "' . $grandParentAggregate->nodeTypeName->value . '"',
-                        1520011791
-                    );
-                }
-            }
-        }
     }
 }

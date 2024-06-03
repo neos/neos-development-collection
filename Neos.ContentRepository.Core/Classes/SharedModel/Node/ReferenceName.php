@@ -17,10 +17,10 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
 /**
  * @api
  */
-final class ReferenceName implements \JsonSerializable
+final readonly class ReferenceName implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
         if ($value === '') {
             throw new \InvalidArgumentException('Reference name must not be empty.', 1661950814);

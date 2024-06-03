@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Factory\ProjectionsAndCatchUpHooksFactory;
@@ -16,6 +16,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
@@ -41,7 +42,6 @@ use Symfony\Component\Serializer\Serializer;
 #[Flow\Scope("singleton")]
 final class ContentRepositoryRegistry
 {
-
     /**
      * @var array<string, ContentRepositoryFactory>
      */
@@ -57,6 +57,23 @@ final class ContentRepositoryRegistry
     }
 
     /**
+     * This is the main entry point for Neos / Flow installations to fetch a content repository.
+     * A content repository is not a singleton and must be fetched by its identifier.
+     *
+     * To get a hold of a content repository identifier, it has to be passed along.
+     *
+     * For Neos web requests, the current content repository can be inferred by the domain and the connected site:
+     * {@see \Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult::fromRequest()}
+     * Or it has to be encoded manually as part of a query parameter.
+     *
+     * For CLI applications, it's a necessity to specify the content repository as argument from the outside,
+     * generally via `--content-repository default`
+     *
+     * The content repository identifier should never be hard-coded without being aware of its implications.
+     *
+     * Hint: in case you are already in a service that is scoped to a content repository or a projection catchup hook,
+     * the content repository will likely be already available via e.g. the service factory.
+     *
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
     public function get(ContentRepositoryId $contentRepositoryId): ContentRepository
@@ -76,11 +93,11 @@ final class ContentRepositoryRegistry
 
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
-        $contentRepository = $this->get($node->subgraphIdentity->contentRepositoryId);
-        return $contentRepository->getContentGraph()->getSubgraph(
-            $node->subgraphIdentity->contentStreamId,
-            $node->subgraphIdentity->dimensionSpacePoint,
-            $node->subgraphIdentity->visibilityConstraints
+        $contentRepository = $this->get($node->contentRepositoryId);
+
+        return $contentRepository->getContentGraph($node->workspaceName)->getSubgraph(
+            $node->dimensionSpacePoint,
+            $node->visibilityConstraints
         );
     }
 
@@ -141,7 +158,7 @@ final class ContentRepositoryRegistry
                 $this->buildProjectionsFactory($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionCatchUpTrigger($contentRepositoryId, $contentRepositorySettings),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
-                $clock,
+                $clock
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryId, $exception);
@@ -196,7 +213,7 @@ final class ContentRepositoryRegistry
 
         $normalizers = [];
         foreach ($propertyConvertersConfiguration as $propertyConverterConfiguration) {
-            $normalizer = new $propertyConverterConfiguration['className'];
+            $normalizer = new $propertyConverterConfiguration['className']();
             if (!$normalizer instanceof NormalizerInterface && !$normalizer instanceof DenormalizerInterface) {
                 throw InvalidConfigurationException::fromMessage('Serializers can only be created of %s and %s, %s given', NormalizerInterface::class, DenormalizerInterface::class, get_debug_type($normalizer));
             }
@@ -211,12 +228,18 @@ final class ContentRepositoryRegistry
         (isset($contentRepositorySettings['projections']) && is_array($contentRepositorySettings['projections'])) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have projections configured, or the value is no array.', $contentRepositoryId->value);
         $projectionsFactory = new ProjectionsAndCatchUpHooksFactory();
         foreach ($contentRepositorySettings['projections'] as $projectionName => $projectionOptions) {
+            if ($projectionOptions === null) {
+                continue;
+            }
             $projectionFactory = $this->objectManager->get($projectionOptions['factoryObjectName']);
             if (!$projectionFactory instanceof ProjectionFactoryInterface) {
                 throw InvalidConfigurationException::fromMessage('Projection factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s.', $projectionName, $contentRepositoryId->value, ProjectionFactoryInterface::class, get_debug_type($projectionFactory));
             }
             $projectionsFactory->registerFactory($projectionFactory, $projectionOptions['options'] ?? []);
             foreach (($projectionOptions['catchUpHooks'] ?? []) as $catchUpHookOptions) {
+                if ($catchUpHookOptions === null) {
+                    continue;
+                }
                 $catchUpHookFactory = $this->objectManager->get($catchUpHookOptions['factoryObjectName']);
                 if (!$catchUpHookFactory instanceof CatchUpHookFactoryInterface) {
                     throw InvalidConfigurationException::fromMessage('CatchUpHook factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s', $projectionName, $contentRepositoryId->value, CatchUpHookFactoryInterface::class, get_debug_type($catchUpHookFactory));

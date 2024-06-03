@@ -17,16 +17,14 @@ namespace Neos\Neos\FrontendRouting;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
-use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -64,6 +62,9 @@ class NodeShortcutResolver
      */
     public function resolveShortcutTarget(NodeAddress $nodeAddress, ContentRepository $contentRepository)
     {
+        if (!$nodeAddress->workspaceName->isLive()) {
+            throw new \RuntimeException(sprintf('Cannot resolve shortcut target for node-address %s in workspace %s because the DocumentUriPathProjection only handles the live workspace.', $nodeAddress->nodeAggregateId->value, $nodeAddress->workspaceName->value), 1707208650);
+        }
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
         $documentNodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAddress->nodeAggregateId,

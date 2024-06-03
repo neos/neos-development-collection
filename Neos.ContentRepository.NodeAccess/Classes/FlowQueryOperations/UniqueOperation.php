@@ -11,12 +11,9 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\OperationInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * "unique" operation working on Nodes
@@ -34,6 +31,20 @@ use Neos\Flow\Annotations as Flow;
 final class UniqueOperation implements OperationInterface
 {
     use CreateNodeHashTrait;
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'unique';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 100;
 
     /** @param array<int, mixed> $context */
     public function canEvaluate($context): bool

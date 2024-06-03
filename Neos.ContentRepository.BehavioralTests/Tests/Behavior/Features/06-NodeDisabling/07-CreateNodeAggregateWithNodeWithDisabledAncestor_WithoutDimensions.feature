@@ -16,39 +16,35 @@ Feature: Creation of nodes underneath disabled nodes
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
-      | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
+      | nodeAggregateId  | nodeTypeName                            | parentNodeAggregateId  | nodeName |
+      | the-great-nodini | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | nodeAggregateId      | "the-great-nodini" |
+      | nodeAggregateId              | "the-great-nodini" |
       | nodeVariantSelectionStrategy | "allVariants"      |
-    And the graph projection is fully up to date
 
   Scenario: When a new node is created underneath a hidden node, this one should be hidden as well
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName     |
-      | nodingers-cat           | Neos.ContentRepository.Testing:Document | the-great-nodini              | pet-document |
+      | nodingers-cat   | Neos.ContentRepository.Testing:Document | the-great-nodini      | pet-document |
     Then I expect the node aggregate "nodingers-cat" to exist
     And I expect this node aggregate to disable dimension space points []
     And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | nodeAggregateId      | "the-great-nodini" |
+      | nodeAggregateId              | "the-great-nodini" |
       | nodeVariantSelectionStrategy | "allVariants"      |
-    And the graph projection is fully up to date
     Then I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{}
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{}

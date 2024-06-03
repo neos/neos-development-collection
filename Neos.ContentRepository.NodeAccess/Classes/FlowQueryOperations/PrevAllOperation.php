@@ -11,9 +11,8 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
@@ -69,11 +68,16 @@ class PrevAllOperation extends AbstractOperation
         $output = [];
         $outputNodeAggregateIds = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            foreach ($this->getPrevForNode($contextNode) as $prevNode) {
+            $prevNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                ->findPrecedingSiblingNodes(
+                    $contextNode->nodeAggregateId,
+                    FindPrecedingSiblingNodesFilter::create()
+                )->reverse();
+            foreach ($prevNodes as $prevNode) {
                 if ($prevNode !== null
-                    && !isset($outputNodeAggregateIds[$prevNode->nodeAggregateId->value])
+                    && !isset($outputNodeAggregateIds[$prevNode->aggregateId->value])
                 ) {
-                    $outputNodeAggregateIds[$prevNode->nodeAggregateId->value] = true;
+                    $outputNodeAggregateIds[$prevNode->aggregateId->value] = true;
                     $output[] = $prevNode;
                 }
             }
@@ -83,21 +87,5 @@ class PrevAllOperation extends AbstractOperation
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);
         }
-    }
-
-    /**
-     * @param Node $contextNode The node for which the preceding node should be found
-     * @return Nodes The preceding nodes of $contextNode
-     */
-    protected function getPrevForNode(Node $contextNode): Nodes
-    {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
-        if ($parentNode === null) {
-            return Nodes::createEmpty();
-        }
-
-        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create())
-            ->previousAll($contextNode);
     }
 }

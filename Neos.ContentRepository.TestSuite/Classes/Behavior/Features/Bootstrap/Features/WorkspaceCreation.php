@@ -15,12 +15,14 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -39,6 +41,22 @@ trait WorkspaceCreation
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
 
     /**
+     * @When /^the command CreateContentStream is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandCreateContentStreamIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        $command = CreateContentStream::create(
+            ContentStreamId::fromString($commandArguments['contentStreamId']),
+        );
+
+        $this->currentContentRepository->handle($command);
+    }
+
+    /**
      * @When /^the command CreateRootWorkspace is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
@@ -54,7 +72,7 @@ trait WorkspaceCreation
             ContentStreamId::fromString($commandArguments['newContentStreamId'])
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
     /**
      * @Given /^the event RootWorkspaceWasCreated was published with payload:$/
@@ -87,7 +105,7 @@ trait WorkspaceCreation
             isset($commandArguments['workspaceOwner']) ? UserId::fromString($commandArguments['workspaceOwner']) : null
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
 
@@ -105,7 +123,22 @@ trait WorkspaceCreation
         if (isset($commandArguments['rebasedContentStreamId'])) {
             $command = $command->withRebasedContentStreamId(ContentStreamId::fromString($commandArguments['rebasedContentStreamId']));
         }
+        if (isset($commandArguments['rebaseErrorHandlingStrategy'])) {
+            $command = $command->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::from($commandArguments['rebaseErrorHandlingStrategy']));
+        }
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
+    }
+
+    /**
+     * @When /^the command RebaseWorkspace is executed with payload and exceptions are caught:$/
+     */
+    public function theCommandRebaseWorkspaceIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandRebaseWorkspaceIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $e) {
+            $this->lastCommandException = $e;
+        }
     }
 }

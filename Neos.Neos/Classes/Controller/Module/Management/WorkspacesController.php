@@ -15,57 +15,58 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Module\Management;
 
 use Doctrine\DBAL\DBALException;
-use JsonException;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWorkspaceOwner;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
-use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
-use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Neos\Domain\Model\SiteNodeName;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWorkspaceOwner;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
-use Neos\Neos\Controller\Module\ModuleTranslationTrait;
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
+use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Controller\Module\ModuleTranslationTrait;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\Neos\Domain\Workspace\DiscardAllChanges;
+use Neos\Neos\Domain\Workspace\PublishAllChanges;
+use Neos\Neos\Domain\Workspace\WorkspaceProvider;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\PendingChangesProjection\ChangeFinder;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * The Neos Workspaces module controller
@@ -95,6 +96,9 @@ class WorkspacesController extends AbstractModuleController
     #[Flow\Inject]
     protected PackageManager $packageManager;
 
+    #[Flow\Inject]
+    protected WorkspaceProvider $workspaceProvider;
+
     /**
      * Display a list of unpublished content
      *
@@ -106,7 +110,11 @@ class WorkspacesController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
+        /** @var ?Account $currentAccount */
         $currentAccount = $this->securityContext->getAccount();
+        if ($currentAccount === null) {
+            throw new \RuntimeException('No account is authenticated', 1710068839);
+        }
         $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
             WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
         );
@@ -232,7 +240,7 @@ class WorkspacesController extends AbstractModuleController
                     ContentStreamId::create(),
                     $visibility === 'private' ? $currentUserIdentifier : null
                 )
-            )->block();
+            );
         } catch (WorkspaceAlreadyExists $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.workspaceWithThisTitleAlreadyExists'),
@@ -311,7 +319,7 @@ class WorkspacesController extends AbstractModuleController
                     $title,
                     $description
                 )
-            )->block();
+            );
         }
 
         if ($workspace->workspaceOwner !== $workspaceOwner) {
@@ -320,7 +328,7 @@ class WorkspacesController extends AbstractModuleController
                     $workspaceName,
                     $workspaceOwner ?: null,
                 )
-            )->block();
+            );
         }
 
         $this->addFlashMessage($this->translator->translateById(
@@ -420,7 +428,7 @@ class WorkspacesController extends AbstractModuleController
             DeleteWorkspace::create(
                 $workspaceName,
             )
-        )->block();
+        );
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenRemoved',
@@ -443,10 +451,14 @@ class WorkspacesController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
+        /** @var ?Account $currentAccount */
         $currentAccount = $this->securityContext->getAccount();
+        if ($currentAccount === null) {
+            throw new \RuntimeException('No account is authenticated', 1710068880);
+        }
         $personalWorkspaceName = WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier());
-        $personalWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($personalWorkspaceName);
         /** @var Workspace $personalWorkspace */
+        $personalWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($personalWorkspaceName);
 
         /** @todo do something else
          * if ($personalWorkspace !== $targetWorkspace) {
@@ -469,8 +481,8 @@ class WorkspacesController extends AbstractModuleController
 
         $targetNodeAddressInPersonalWorkspace = new NodeAddress(
             $personalWorkspace->currentContentStreamId,
-            $targetNode->subgraphIdentity->dimensionSpacePoint,
-            $targetNode->nodeAggregateId,
+            $targetNode->dimensionSpacePoint,
+            $targetNode->aggregateId,
             $personalWorkspace->workspaceName
         );
 
@@ -513,14 +525,13 @@ class WorkspacesController extends AbstractModuleController
             $selectedWorkspace,
             NodeIdsToPublishOrDiscard::create(
                 new NodeIdToPublishOrDiscard(
-                    $nodeAddress->contentStreamId,
                     $nodeAddress->nodeAggregateId,
                     $nodeAddress->dimensionSpacePoint
                 )
             ),
         );
         $contentRepository->handle($command)
-            ->block();
+            ;
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.selectedChangeHasBeenPublished',
@@ -551,14 +562,13 @@ class WorkspacesController extends AbstractModuleController
             $selectedWorkspace,
             NodeIdsToPublishOrDiscard::create(
                 new NodeIdToPublishOrDiscard(
-                    $nodeAddress->contentStreamId,
                     $nodeAddress->nodeAggregateId,
                     $nodeAddress->dimensionSpacePoint
                 )
             ),
         );
         $contentRepository->handle($command)
-            ->block();
+            ;
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.selectedChangeHasBeenDiscarded',
@@ -579,7 +589,7 @@ class WorkspacesController extends AbstractModuleController
      */
     public function publishOrDiscardNodesAction(array $nodes, string $action, string $selectedWorkspace): void
     {
-        $selectedWorkspace = WorkspaceName::fromString($selectedWorkspace);
+        $selectedWorkspaceName = WorkspaceName::fromString($selectedWorkspace);
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -589,7 +599,6 @@ class WorkspacesController extends AbstractModuleController
         foreach ($nodes as $node) {
             $nodeAddress = $nodeAddressFactory->createFromUriString($node);
             $nodesToPublishOrDiscard[] = new NodeIdToPublishOrDiscard(
-                $nodeAddress->contentStreamId,
                 $nodeAddress->nodeAggregateId,
                 $nodeAddress->dimensionSpacePoint
             );
@@ -598,11 +607,11 @@ class WorkspacesController extends AbstractModuleController
         switch ($action) {
             case 'publish':
                 $command = PublishIndividualNodesFromWorkspace::create(
-                    $selectedWorkspace,
+                    $selectedWorkspaceName,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
                 $contentRepository->handle($command)
-                    ->block();
+                    ;
                 $this->addFlashMessage($this->translator->translateById(
                     'workspaces.selectedChangesHaveBeenPublished',
                     [],
@@ -614,11 +623,11 @@ class WorkspacesController extends AbstractModuleController
                 break;
             case 'discard':
                 $command = DiscardIndividualNodesFromWorkspace::create(
-                    $selectedWorkspace,
+                    $selectedWorkspaceName,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
                 $contentRepository->handle($command)
-                    ->block();
+                    ;
                 $this->addFlashMessage($this->translator->translateById(
                     'workspaces.selectedChangesHaveBeenDiscarded',
                     [],
@@ -632,7 +641,7 @@ class WorkspacesController extends AbstractModuleController
                 throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
         }
 
-        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
+        $this->redirect('show', null, null, ['workspace' => $selectedWorkspaceName->value]);
     }
 
     /**
@@ -642,20 +651,23 @@ class WorkspacesController extends AbstractModuleController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepository->handle(
-            PublishWorkspace::create(
-                $workspace
-            )
-        )->block();
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace);
-        /** @var Workspace $workspace Otherwise the command handler would have thrown an exception */
+        /** @todo send from UI */
+        $command = new PublishAllChanges(
+            $contentRepositoryId,
+            $workspace
+        );
+
+        $workspace = $this->workspaceProvider->provideForWorkspaceName(
+            $command->contentRepositoryId,
+            $command->workspaceName
+        );
+        $workspace->publishAllChanges();
         /** @var WorkspaceName $baseWorkspaceName Otherwise the command handler would have thrown an exception */
-        $baseWorkspaceName = $workspace->baseWorkspaceName;
+        $baseWorkspaceName = $workspace->getCurrentBaseWorkspaceName();
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.allChangesInWorkspaceHaveBeenPublished',
             [
-                htmlspecialchars($workspace->workspaceName->value),
+                htmlspecialchars($workspace->name->value),
                 htmlspecialchars($baseWorkspaceName->value)
             ],
             null,
@@ -675,16 +687,20 @@ class WorkspacesController extends AbstractModuleController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepository->handle(
-            DiscardWorkspace::create(
-                $workspace,
-            )
-        )->block();
+        /** @todo send from UI */
+        $command = new DiscardAllChanges(
+            $contentRepositoryId,
+            $workspace
+        );
+        $workspace = $this->workspaceProvider->provideForWorkspaceName(
+            $command->contentRepositoryId,
+            $command->workspaceName
+        );
+        $workspace->discardAllChanges();
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.allChangesInWorkspaceHaveBeenDiscarded',
-            [htmlspecialchars($workspace->value)],
+            [htmlspecialchars($workspace->name->value)],
             null,
             null,
             'Modules',
@@ -697,7 +713,7 @@ class WorkspacesController extends AbstractModuleController
      * Computes the number of added, changed and removed nodes for the given workspace
      *
      * @return array<string,int>
-     * @throws JsonException
+     * @throws \JsonException
      */
     protected function computeChangesCount(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {
@@ -711,7 +727,7 @@ class WorkspacesController extends AbstractModuleController
                         $changesCount['new']++;
                     } else {
                         $changesCount['changed']++;
-                    };
+                    }
                     $changesCount['total']++;
                 }
             }
@@ -723,7 +739,7 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Builds an array of changes for sites in the given workspace
      * @return array<string,mixed>
-     * @throws JsonException
+     * @throws \JsonException
      */
     protected function computeSiteChanges(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {
@@ -734,8 +750,7 @@ class WorkspacesController extends AbstractModuleController
             );
 
         foreach ($changes as $change) {
-            $contentStreamId = $change->contentStreamId;
-
+            $workspaceName = $selectedWorkspace->workspaceName;
             if ($change->deleted) {
                 // If we deleted a node, there is no way for us to anymore find the deleted node in the ContentStream
                 // where the node was deleted.
@@ -743,10 +758,9 @@ class WorkspacesController extends AbstractModuleController
                 //
                 // This is safe because the UI basically shows what would be removed once the deletion is published.
                 $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($selectedWorkspace, $contentRepository);
-                $contentStreamId = $baseWorkspace->currentContentStreamId;
+                $workspaceName = $baseWorkspace->workspaceName;
             }
-            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $contentStreamId,
+            $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
                 $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                 VisibilityConstraints::withoutRestrictions()
             );
@@ -756,7 +770,7 @@ class WorkspacesController extends AbstractModuleController
                 $documentNode = null;
                 $siteNode = null;
                 $ancestors = $subgraph->findAncestorNodes(
-                    $node->nodeAggregateId,
+                    $node->aggregateId,
                     FindAncestorNodesFilter::create()
                 );
                 $ancestors = Nodes::fromArray([$node])->merge($ancestors);
@@ -764,7 +778,7 @@ class WorkspacesController extends AbstractModuleController
                 $nodePathSegments = [];
                 $documentPathSegments = [];
                 foreach ($ancestors as $ancestor) {
-                    $pathSegment = $ancestor->nodeName ?: NodeName::fromString($ancestor->nodeAggregateId->value);
+                    $pathSegment = $ancestor->name ?: NodeName::fromString($ancestor->aggregateId->value);
                     // Don't include `sites` path as they are not needed
                     // by the HTML/JS magic and won't be included as `$documentPathSegments`
                     if (!$this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_SITES)) {
@@ -783,8 +797,8 @@ class WorkspacesController extends AbstractModuleController
 
                 // Neither $documentNode, $siteNode or its cannot really be null, this is just for type checks;
                 // We should probably throw an exception though
-                if ($documentNode !== null && $siteNode !== null && $siteNode->nodeName) {
-                    $siteNodeName = $siteNode->nodeName->value;
+                if ($documentNode !== null && $siteNode !== null && $siteNode->name) {
+                    $siteNodeName = $siteNode->name->value;
                     // Reverse `$documentPathSegments` to start with the site node.
                     // The paths are used for grouping the nodes and for selecting a tree of nodes.
                     $documentPath = implode('/', array_reverse(array_map(
@@ -856,17 +870,14 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function getOriginalNode(
         Node $modifiedNode,
-        ContentStreamId $baseContentStreamId,
+        WorkspaceName $baseWorkspaceName,
         ContentRepository $contentRepository,
     ): ?Node {
-        $baseSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $baseContentStreamId,
-            $modifiedNode->subgraphIdentity->dimensionSpacePoint,
+        $baseSubgraph = $contentRepository->getContentGraph($baseWorkspaceName)->getSubgraph(
+            $modifiedNode->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $node = $baseSubgraph->findNodeById($modifiedNode->nodeAggregateId);
-
-        return $node;
+        return $baseSubgraph->findNodeById($modifiedNode->aggregateId);
     }
 
     /**
@@ -886,8 +897,7 @@ class WorkspacesController extends AbstractModuleController
         $originalNode = null;
         if ($currentWorkspace !== null) {
             $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($currentWorkspace, $contentRepository);
-            $baseContentStreamId = $baseWorkspace->currentContentStreamId;
-            $originalNode = $this->getOriginalNode($changedNode, $baseContentStreamId, $contentRepository);
+            $originalNode = $this->getOriginalNode($changedNode, $baseWorkspace->workspaceName, $contentRepository);
         }
 
 
@@ -898,7 +908,7 @@ class WorkspacesController extends AbstractModuleController
         $renderer = new HtmlArrayRenderer();
         foreach ($changedNode->properties as $propertyName => $changedPropertyValue) {
             if (
-                $originalNode === null && empty($changedPropertyValue)
+                ($originalNode === null && empty($changedPropertyValue))
                 || (
                     isset($changeNodePropertiesDefaults[$propertyName])
                     && $changedPropertyValue === $changeNodePropertiesDefaults[$propertyName]
@@ -936,8 +946,8 @@ class WorkspacesController extends AbstractModuleController
                         'diff' => $diffArray
                     ];
                 }
-                // The && in belows condition is on purpose as creating a thumbnail for comparison only works
-                // if actually BOTH are ImageInterface (or NULL).
+            // The && in belows condition is on purpose as creating a thumbnail for comparison only works
+            // if actually BOTH are ImageInterface (or NULL).
             } elseif (
                 ($originalPropertyValue instanceof ImageInterface || $originalPropertyValue === null)
                 && ($changedPropertyValue instanceof ImageInterface || $changedPropertyValue === null)

@@ -24,25 +24,20 @@ Feature: Properties
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                         |
-      | contentStreamId             | "cs-identifier"               |
-      | nodeAggregateId             | "lady-eleonode-rootford"      |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "sir-david-nodenborough"                  |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {}                                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
-    And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key    | Value |
@@ -59,7 +54,7 @@ Feature: Properties
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no properties
 
@@ -81,7 +76,7 @@ Feature: Properties
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following properties:
       | Key       | Value |
@@ -102,11 +97,9 @@ Feature: Properties
     """
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                    |
-      | contentStreamId           | "cs-identifier"          |
       | nodeAggregateId           | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {}                       |
       | propertyValues            | {"otherProp": ""}        |
-    And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: a broken property (which cannot be deserialized) is detected and removed
@@ -119,20 +112,21 @@ Feature: Properties
           type: string
     """
 
-    And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
+    And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                                       |
+      | workspaceName                | "live"                                                                      |
       | contentStreamId              | "cs-identifier"                                                             |
       | nodeAggregateId              | "sir-david-nodenborough"                                                    |
       | originDimensionSpacePoint    | {}                                                                          |
       | affectedDimensionSpacePoints | [{}]                                                                        |
       | propertyValues               | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
-    And the graph projection is fully up to date
+      | propertiesToUnset            | {}                                                                          |
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                        | nodeAggregateId        |
       | NON_DESERIALIZABLE_PROPERTY | sir-david-nodenborough |
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no properties

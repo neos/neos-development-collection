@@ -6,10 +6,11 @@
     ],
     "type": "neos-package-collection",
     "require": {
+        "neos/flow-development-collection": "9.0.x-dev",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
-        "neos/eventstore": "~1.0.0",
-        "neos/eventstore-doctrineadapter": "~1.0.0",
+        "neos/eventstore": "^1",
+        "neos/eventstore-doctrineadapter": "^1 || ^2",
         "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
@@ -22,7 +23,8 @@
         "webmozart/assert": "^1.11",
         "neos/flow": "*",
         "behat/behat": "^3.5",
-        "phpunit/phpunit": "^9.0",
+        "phpunit/phpunit": "^9.6",
+        "brianium/paratest": "^6.11",
         "neos/behat": "^9.0",
         "neos/contentrepositoryregistry-storageclient": "self.version",
         "symfony/property-access": "^5.4|^6.0",
@@ -32,10 +34,12 @@
         "neos/utility-unicode": "*",
         "doctrine/orm": "^2.6",
         "ext-dom": "*",
+        "ext-libxml": "*",
         "neos/twitter-bootstrap": "^3.0.6",
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "doctrine/common": "^2.7 || ^3.0",
+        "enshrined/svg-sanitize": "^0.17.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
         "neos/party": "~7.0.3",
@@ -60,8 +64,6 @@
         "neos/contentrepository-nodemigration": "self.version",
         "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepository-testsuite": "self.version",
-        "neos/contentrepositoryregistry-doctrinedbalclient": "self.version",
-        "neos/contentrepositoryregistry-postgresdbalclient": "self.version",
         "neos/contentrepositoryregistry-testsuite": "self.version",
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
@@ -78,7 +80,8 @@
         "neos/nodetypes-html": "self.version",
         "neos/nodetypes-navigation": "self.version",
         "neos/nodetypes": "self.version",
-        "neos/site-kickstarter": "self.version"
+        "neos/site-kickstarter": "self.version",
+        "neos/timeable-node-visibility": "self.version"
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
@@ -89,15 +92,11 @@
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
-    "provide": {
-        "neos/contentrepositoryregistry-storageclient": "self.version"
-    },
     "scripts": {
-        "lint:phpcs-psr12": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.TestSuite/Classes ./Neos.ContentRepository.Core/Classes ./Neos.Neos/Classes",
-        "lint:phpcs": [
-            "@lint:phpcs-psr12 --exclude=Generic.Files.LineLength,PSR1.Files.SideEffects"
-        ],
+        "lint:phpcs": "../../bin/phpcs --colors",
+        "lint:phpcs:fix": "../../bin/phpcbf --colors",
         "lint:phpstan": "../../bin/phpstan analyse",
+        "lint:phpstan-generate-baseline": "../../bin/phpstan analyse --generate-baseline",
         "lint:distributionintegrity": "[ -d 'Neos.ContentRepository' ] && { echo 'Package Neos.ContentRepository should not exist.' 1>&2; exit 1; } || exit 0;",
         "lint": [
             "@lint:phpcs",
@@ -108,28 +107,36 @@
             "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository.Core/Tests/Unit",
             "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepositoryRegistry/Tests/Unit"
         ],
-        "test:functional": [
-            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
+        "test:parallel": [
+            "FLOW_CONTEXT=Testing/Behat ../../bin/paratest --debug -v --functional --group parallel --processes 2 --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.BehavioralTests/Tests/Functional/Feature/WorkspacePublication/WorkspaceWritingDuringPublication.php",
+            "FLOW_CONTEXT=Testing/Behat ../../bin/paratest --debug -v --functional --group parallel --processes 2 --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.BehavioralTests/Tests/Functional/Feature/WorkspacePublication/WorkspaceWritingDuringPublication.php",
+            "FLOW_CONTEXT=Testing/Behat ../../bin/paratest --debug -v --functional --group parallel --processes 2 --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.BehavioralTests/Tests/Functional/Feature/WorkspacePublication/WorkspaceWritingDuringPublication.php"
         ],
+        "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
         "test:behavioral": [
-            "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-            "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml",
-            "../../bin/behat -f progress -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
+            "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml"
         ],
         "test:behavioral:stop-on-failure": [
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml",
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
+            "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml"
         ],
         "test": [
             "@test:unit",
-            "@test:functional",
-            "@test:behavioral"
-        ]
+            "@test:behavioral",
+            "@test:parallel"
+        ],
+        "build:composer-json": "php ../../Build/BuildEssentials/ComposerManifestMerger.php"
     },
     "autoload": {
         "psr-4": {
@@ -162,12 +169,6 @@
             ],
             "Neos\\ContentRepository\\TestSuite\\": [
                 "Neos.ContentRepository.TestSuite/Classes"
-            ],
-            "Neos\\ContentRepositoryRegistry\\DoctrineDbalClient\\": [
-                "Neos.ContentRepositoryRegistry.DoctrineDbalClient/Classes"
-            ],
-            "Neos\\ContentRepositoryRegistry\\PostgresDbalClient\\": [
-                "Neos.ContentRepositoryRegistry.PostgresDbalClient/Classes"
             ],
             "Neos\\ContentRepositoryRegistry\\TestSuite\\": [
                 "Neos.ContentRepositoryRegistry.TestSuite/Classes"
@@ -219,6 +220,9 @@
             ],
             "Neos\\SiteKickstarter\\": [
                 "Neos.SiteKickstarter/Classes"
+            ],
+            "Neos\\TimeableNodeVisibility\\": [
+                "Neos.TimeableNodeVisibility/Classes"
             ]
         }
     },
@@ -233,6 +237,9 @@
         "neos/flow": {
             "manage-resources": true
         }
+    },
+    "provide": {
+        "neos/contentrepositoryregistry-storageclient": "self.version"
     },
     "autoload-dev": {
         "psr-4": {
@@ -274,6 +281,9 @@
             ],
             "Neos\\SiteKickstarter\\Tests\\": [
                 "Neos.SiteKickstarter/Tests"
+            ],
+            "Neos\\TimeableNodeVisibility\\Tests\\": [
+                "Neos.TimeableNodeVisibility/Tests"
             ]
         }
     },

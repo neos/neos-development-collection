@@ -18,10 +18,12 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * When a node property is changed, this event is triggered.
@@ -34,18 +36,20 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api events are the persistence-API of the content repository
  */
-final class NodePropertiesWereSet implements
+final readonly class NodePropertiesWereSet implements
     EventInterface,
-    PublishableToOtherContentStreamsInterface,
+    PublishableToWorkspaceInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public WorkspaceName $workspaceName,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
         /** the covered dimension space points for this modification - i.e. where this change is visible */
-        public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
-        public readonly SerializedPropertyValues $propertyValues
+        public DimensionSpacePointSet $affectedDimensionSpacePoints,
+        public SerializedPropertyValues $propertyValues,
+        public PropertyNames $propertiesToUnset
     ) {
     }
 
@@ -64,36 +68,42 @@ final class NodePropertiesWereSet implements
         return $this->originDimensionSpacePoint;
     }
 
-    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
-            $targetContentStreamId,
+            $targetWorkspaceName,
+            $contentStreamId,
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
             $this->affectedDimensionSpacePoints,
-            $this->propertyValues
+            $this->propertyValues,
+            $this->propertiesToUnset
         );
     }
 
     public function mergeProperties(self $other): self
     {
         return new self(
+            $this->workspaceName,
             $this->contentStreamId,
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
             $this->affectedDimensionSpacePoints,
-            $this->propertyValues->merge($other->propertyValues)
+            $this->propertyValues->merge($other->propertyValues),
+            $this->propertiesToUnset->merge($other->propertiesToUnset)
         );
     }
 
     public static function fromArray(array $values): EventInterface
     {
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),
             SerializedPropertyValues::fromArray($values['propertyValues']),
+            PropertyNames::fromArray($values['propertiesToUnset'])
         );
     }
 

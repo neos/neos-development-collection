@@ -23,8 +23,8 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -32,6 +32,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -44,6 +45,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 class PerformanceMeasurementService implements ContentRepositoryServiceInterface
 {
     private ContentStreamId $contentStreamId;
+    private WorkspaceName $workspaceName;
     private DimensionSpacePointSet $dimensionSpacePoints;
     private ContentStreamEventStreamName $contentStreamEventStream;
 
@@ -54,6 +56,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
         private readonly ContentRepositoryId $contentRepositoryId
     ) {
         $this->contentStreamId = contentStreamId::fromString('cs-identifier');
+        $this->workspaceName = WorkspaceName::fromString('some-workspace');
         $this->dimensionSpacePoints = new DimensionSpacePointSet([
             DimensionSpacePoint::fromArray(['language' => 'mul']),
             DimensionSpacePoint::fromArray(['language' => 'de']),
@@ -85,6 +88,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
 
         $rootNodeAggregateId = nodeAggregateId::fromString('lady-eleonode-rootford');
         $rootNodeAggregateWasCreated = new RootNodeAggregateWithNodeWasCreated(
+            $this->workspaceName,
             $this->contentStreamId,
             $rootNodeAggregateId,
             NodeTypeName::fromString('Neos.ContentRepository:Root'),
@@ -128,11 +132,12 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
             for ($i = 0; $i < $numberOfNodes; $i++) {
                 $nodeAggregateId = nodeAggregateId::create();
                 $events[] = new NodeAggregateWithNodeWasCreated(
+                    $this->workspaceName,
                     $this->contentStreamId,
                     $nodeAggregateId,
                     NodeTypeName::fromString('Neos.ContentRepository:Testing'),
                     OriginDimensionSpacePoint::fromArray(['language' => 'mul']),
-                    $this->dimensionSpacePoints,
+                    InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings($this->dimensionSpacePoints),
                     $parentNodeAggregateId,
                     null,
                     SerializedPropertyValues::createEmpty(),

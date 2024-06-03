@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Core\Projection\Workspace;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -34,14 +33,15 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -58,15 +58,15 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
      * so that always the same instance is returned
      */
     private ?WorkspaceFinder $workspaceFinder = null;
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
     private WorkspaceRuntimeCache $workspaceRuntimeCache;
 
     public function __construct(
-        private readonly DbalClientInterface $dbalClient,
+        private readonly Connection $dbal,
         private readonly string $tableName,
     ) {
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
-            $this->dbalClient->getConnection(),
+        $this->checkpointStorage = new DbalCheckpointStorage(
+            $this->dbal,
             $this->tableName . '_checkpoint',
             self::class
         );
@@ -75,14 +75,43 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     public function setUp(): void
     {
-        $this->setupTables();
-        $this->checkpointStorage->setup();
+        foreach ($this->determineRequiredSqlStatements() as $statement) {
+            $this->dbal->executeStatement($statement);
+        }
+        $this->checkpointStorage->setUp();
     }
 
-    private function setupTables(): void
+    public function status(): ProjectionStatus
     {
-        $connection = $this->dbalClient->getConnection();
-        $schemaManager = $connection->getSchemaManager();
+        $checkpointStorageStatus = $this->checkpointStorage->status();
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
+            return ProjectionStatus::error($checkpointStorageStatus->details);
+        }
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
+            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
+        }
+        try {
+            $this->dbal->connect();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
+        }
+        try {
+            $requiredSqlStatements = $this->determineRequiredSqlStatements();
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
+        }
+        if ($requiredSqlStatements !== []) {
+            return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+        }
+        return ProjectionStatus::ok();
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function determineRequiredSqlStatements(): array
+    {
+        $schemaManager = $this->dbal->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
@@ -94,20 +123,17 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             (new Column('workspacedescription', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
             (new Column('workspaceowner', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
             DbalSchemaFactory::columnForContentStreamId('currentcontentstreamid')->setNotNull(true),
-            (new Column('status', Type::getType(Types::STRING)))->setLength(20)->setNotnull(false)->setCustomSchemaOption('charset', 'binary')
+            (new Column('status', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(false)
         ]);
         $workspaceTable->setPrimaryKey(['workspacename']);
 
         $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$workspaceTable]);
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
-            $connection->executeStatement($statement);
-        }
+        return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 
     public function reset(): void
     {
-        $this->getDatabaseConnection()->exec('TRUNCATE ' . $this->tableName);
+        $this->dbal->exec('TRUNCATE ' . $this->tableName);
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
@@ -149,7 +175,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         };
     }
 
-    public function getCheckpointStorage(): CheckpointStorageInterface
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
         return $this->checkpointStorage;
     }
@@ -158,7 +184,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     {
         if (!$this->workspaceFinder) {
             $this->workspaceFinder = new WorkspaceFinder(
-                $this->dbalClient,
+                $this->dbal,
                 $this->workspaceRuntimeCache,
                 $this->tableName
             );
@@ -173,7 +199,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
     {
-        $this->getDatabaseConnection()->insert($this->tableName, [
+        $this->dbal->insert($this->tableName, [
             'workspaceName' => $event->workspaceName->value,
             'baseWorkspaceName' => $event->baseWorkspaceName->value,
             'workspaceTitle' => $event->workspaceTitle->value,
@@ -186,7 +212,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenWorkspaceWasRenamed(WorkspaceWasRenamed $event): void
     {
-        $this->getDatabaseConnection()->update(
+        $this->dbal->update(
             $this->tableName,
             [
                 'workspaceTitle' => $event->workspaceTitle->value,
@@ -198,7 +224,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
-        $this->getDatabaseConnection()->insert($this->tableName, [
+        $this->dbal->insert($this->tableName, [
             'workspaceName' => $event->workspaceName->value,
             'workspaceTitle' => $event->workspaceTitle->value,
             'workspaceDescription' => $event->workspaceDescription->value,
@@ -210,6 +236,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
         $this->updateContentStreamId($event->newContentStreamId, $event->workspaceName);
+        $this->markWorkspaceAsOutdated($event->workspaceName);
         $this->markDependentWorkspacesAsOutdated($event->workspaceName);
     }
 
@@ -269,7 +296,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenWorkspaceWasRemoved(WorkspaceWasRemoved $event): void
     {
-        $this->getDatabaseConnection()->delete(
+        $this->dbal->delete(
             $this->tableName,
             ['workspaceName' => $event->workspaceName->value]
         );
@@ -277,7 +304,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenWorkspaceOwnerWasChanged(WorkspaceOwnerWasChanged $event): void
     {
-        $this->getDatabaseConnection()->update(
+        $this->dbal->update(
             $this->tableName,
             ['workspaceOwner' => $event->newWorkspaceOwner],
             ['workspaceName' => $event->workspaceName->value]
@@ -286,7 +313,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event): void
     {
-        $this->getDatabaseConnection()->update(
+        $this->dbal->update(
             $this->tableName,
             [
                 'baseWorkspaceName' => $event->baseWorkspaceName->value,
@@ -300,7 +327,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         ContentStreamId $contentStreamId,
         WorkspaceName $workspaceName,
     ): void {
-        $this->getDatabaseConnection()->update($this->tableName, [
+        $this->dbal->update($this->tableName, [
             'currentContentStreamId' => $contentStreamId->value,
         ], [
             'workspaceName' => $workspaceName->value
@@ -309,7 +336,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function markWorkspaceAsUpToDate(WorkspaceName $workspaceName): void
     {
-        $this->getDatabaseConnection()->executeUpdate('
+        $this->dbal->executeUpdate('
             UPDATE ' . $this->tableName . '
             SET status = :upToDate
             WHERE
@@ -322,7 +349,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function markDependentWorkspacesAsOutdated(WorkspaceName $baseWorkspaceName): void
     {
-        $this->getDatabaseConnection()->executeUpdate('
+        $this->dbal->executeUpdate('
             UPDATE ' . $this->tableName . '
             SET status = :outdated
             WHERE
@@ -333,9 +360,23 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         ]);
     }
 
+    private function markWorkspaceAsOutdated(WorkspaceName $workspaceName): void
+    {
+        $this->dbal->executeUpdate('
+            UPDATE ' . $this->tableName . '
+            SET
+                status = :outdated
+            WHERE
+                workspacename = :workspaceName
+        ', [
+            'outdated' => WorkspaceStatus::OUTDATED->value,
+            'workspaceName' => $workspaceName->value
+        ]);
+    }
+
     private function markWorkspaceAsOutdatedConflict(WorkspaceName $workspaceName): void
     {
-        $this->getDatabaseConnection()->executeUpdate('
+        $this->dbal->executeUpdate('
             UPDATE ' . $this->tableName . '
             SET
                 status = :outdatedConflict
@@ -345,10 +386,5 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             'outdatedConflict' => WorkspaceStatus::OUTDATED_CONFLICT->value,
             'workspaceName' => $workspaceName->value
         ]);
-    }
-
-    private function getDatabaseConnection(): Connection
-    {
-        return $this->dbalClient->getConnection();
     }
 }

@@ -8,8 +8,11 @@ use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -24,7 +27,6 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
-use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\Flow\Utility\Algorithms;
@@ -32,18 +34,23 @@ use Neos\Flow\Utility\Algorithms;
 /**
  * Processor that imports all events from an "events.jsonl" file to the event store
  */
-final class EventStoreImportProcessor implements ProcessorInterface
+final class EventStoreImportProcessor implements ProcessorInterface, ContentRepositoryServiceInterface
 {
     /** @var array<int, \Closure> */
     private array $callbacks = [];
+
+    private ?ContentStreamId $contentStreamId = null;
 
     public function __construct(
         private readonly bool $keepEventIds,
         private readonly Filesystem $files,
         private readonly EventStoreInterface $eventStore,
         private readonly EventNormalizer $eventNormalizer,
-        private ?ContentStreamId $contentStreamId,
+        ?ContentStreamId $overrideContentStreamId
     ) {
+        if ($overrideContentStreamId) {
+            $this->contentStreamId = $overrideContentStreamId;
+        }
     }
 
     public function onMessage(\Closure $callback): void
@@ -102,18 +109,18 @@ final class EventStoreImportProcessor implements ProcessorInterface
                     Event\EventMetadata::fromArray($event->metadata)
                 )
             );
-            $domainEvent = DecoratedEvent::withEventId($domainEvent, EventId::fromString($event->identifier));
-            if ($event->metadata !== null && $event->metadata !== []) {
-                $domainEvent = DecoratedEvent::withMetadata($domainEvent, EventMetadata::fromArray($event->metadata));
+            if (in_array($domainEvent::class, [ContentStreamWasCreated::class, ContentStreamWasForked::class, ContentStreamWasRemoved::class], true)) {
+                return ProcessorResult::error(sprintf('Failed to read events. %s is not expected in imported event stream.', $event->type));
             }
-            $domainEvents[] = $this->normalizeEvent($domainEvent);
+            $domainEvent = DecoratedEvent::create($domainEvent, eventId: EventId::fromString($event->identifier), metadata: $event->metadata);
+            $domainEvents[] = $this->eventNormalizer->normalize($domainEvent);
         }
 
         assert($this->contentStreamId !== null);
 
         $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamId($this->contentStreamId)->getEventStreamName();
         $events = Events::with(
-            $this->normalizeEvent(
+            $this->eventNormalizer->normalize(
                 new ContentStreamWasCreated(
                     $this->contentStreamId,
                 )
@@ -128,7 +135,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         $workspaceName = WorkspaceName::forLive();
         $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($workspaceName)->getEventStreamName();
         $events = Events::with(
-            $this->normalizeEvent(
+            $this->eventNormalizer->normalize(
                 new RootWorkspaceWasCreated(
                     $workspaceName,
                     WorkspaceTitle::fromString('live workspace'),
@@ -149,30 +156,6 @@ final class EventStoreImportProcessor implements ProcessorInterface
             return ProcessorResult::error(sprintf('Failed to publish %d events because the event stream "%s" already exists (3)', count($domainEvents), $contentStreamStreamName->value));
         }
         return ProcessorResult::success(sprintf('Imported %d event%s into stream "%s"', count($domainEvents), count($domainEvents) === 1 ? '' : 's', $contentStreamStreamName->value));
-    }
-
-    /**
-     * Copied from {@see EventPersister::normalizeEvent()}
-     *
-     * @param EventInterface|DecoratedEvent $event
-     * @return Event
-     */
-    private function normalizeEvent(EventInterface|DecoratedEvent $event): Event
-    {
-        if ($event instanceof DecoratedEvent) {
-            $eventId = $event->eventId;
-            $eventMetadata = $event->eventMetadata;
-            $event = $event->innerEvent;
-        } else {
-            $eventId = EventId::create();
-            $eventMetadata = EventMetadata::none();
-        }
-        return new Event(
-            $eventId,
-            $this->eventNormalizer->getEventType($event),
-            $this->eventNormalizer->getEventData($event),
-            $eventMetadata,
-        );
     }
 
     /** --------------------------- */

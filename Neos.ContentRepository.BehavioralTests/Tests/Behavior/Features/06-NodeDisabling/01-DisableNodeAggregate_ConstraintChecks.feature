@@ -17,71 +17,79 @@ Feature: Constraint checks on node aggregate disabling
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
-      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
+      | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName |
+      | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document |
 
   Scenario: Try to disable a node aggregate in a non-existing content stream
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                                  |
-      | contentStreamId      | "i-do-not-exist"                       |
-      | nodeAggregateId      | "sir-david-nodenborough"               |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+      | Key                          | Value                    |
+      | workspaceName                | "i-do-not-exist"         |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
+
+  Scenario: Try to disable a node aggregate in a workspace whose content stream is closed
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
 
   Scenario: Try to disable a non-existing node aggregate
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                                  |
-      | nodeAggregateId      | "i-do-not-exist"                       |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
-    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
+      | Key                          | Value            |
+      | nodeAggregateId              | "i-do-not-exist" |
+      | nodeVariantSelectionStrategy | "allVariants"    |
+      | tag                          | "disabled"       |
 
   Scenario: Try to disable an already disabled node aggregate
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                                  |
-      | nodeAggregateId      | "sir-david-nodenborough"               |
-      | coveredDimensionSpacePoint   | {"language": "de"}            |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
-    And the graph projection is fully up to date
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"language": "de"}       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
 
       # Note: The behavior has been changed with https://github.com/neos/neos-development-collection/pull/4284 and the test was adjusted accordingly
     When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                                  |
-      | nodeAggregateId      | "sir-david-nodenborough"               |
-      | coveredDimensionSpacePoint   | {"language": "de"}                                     |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"language": "de"}       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
     Then I expect exactly 4 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 3 is of type "NodeAggregateWasDisabled" with payload:
+    And event at index 3 is of type "SubtreeWasTagged" with payload:
       | Key                          | Expected                               |
       | contentStreamId              | "cs-identifier"                        |
       | nodeAggregateId              | "sir-david-nodenborough"               |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
+      | tag                          | "disabled"                             |
 
 
   Scenario: Try to disable a node aggregate in a non-existing dimension space point
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                                  |
-      | nodeAggregateId      | "sir-david-nodenborough"               |
-      | coveredDimensionSpacePoint   | {"undeclared": "undefined"}            |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | Key                          | Value                       |
+      | nodeAggregateId              | "sir-david-nodenborough"    |
+      | coveredDimensionSpacePoint   | {"undeclared": "undefined"} |
+      | nodeVariantSelectionStrategy | "allVariants"               |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to disable a node aggregate in a dimension space point it does not cover
     When the command DisableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                                  |
-      | nodeAggregateId      | "sir-david-nodenborough"               |
-      | coveredDimensionSpacePoint   | {"language": "en"}            |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"language": "en"}       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"

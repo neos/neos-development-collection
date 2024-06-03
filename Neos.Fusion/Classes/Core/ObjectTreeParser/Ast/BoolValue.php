@@ -16,16 +16,16 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
+/** @internal */
 #[Flow\Proxy(false)]
-class BoolValue extends AbstractPathValue
+final readonly class BoolValue extends AbstractPathValue
 {
     public function __construct(
-        /** @psalm-readonly */
         public bool $value
     ) {
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitBoolValue($this, ...$args);
     }

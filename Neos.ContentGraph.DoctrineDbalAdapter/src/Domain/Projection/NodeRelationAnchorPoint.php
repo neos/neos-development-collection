@@ -14,38 +14,34 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
-use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
-
 /**
  * The node relation anchor value object
  *
  * @internal
  */
-class NodeRelationAnchorPoint implements \JsonSerializable
+final readonly class NodeRelationAnchorPoint implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $value
+        public int $value
     ) {
-    }
-
-    public static function create(): self
-    {
-        return new self(UuidFactory::create());
+        if ($value < 0) {
+            throw new \InvalidArgumentException('A NodeRelationAnchorPoint cannot be negative, got %d', $value);
+        }
     }
 
     public static function forRootEdge(): self
     {
-        return new self('00000000-0000-0000-0000-000000000000');
+        return new self(0);
     }
 
-    public static function fromString(string $value): self
+    public static function fromInteger(int $value): self
     {
         return new self($value);
     }
 
     public function jsonSerialize(): string
     {
-        return $this->value;
+        return (string)$this->value;
     }
 
     public function equals(self $other): bool

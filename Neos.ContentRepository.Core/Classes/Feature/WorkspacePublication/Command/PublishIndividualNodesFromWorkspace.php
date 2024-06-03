@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class PublishIndividualNodesFromWorkspace implements CommandInterface
+final readonly class PublishIndividualNodesFromWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Name of the affected workspace
@@ -33,10 +33,10 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
      * @param ContentStreamId $contentStreamIdForRemainingPart The id of the new content stream that will contain all remaining events {@see self::withContentStreamIdForRemainingPart()}
      */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly NodeIdsToPublishOrDiscard $nodesToPublish,
-        public readonly ContentStreamId $contentStreamIdForMatchingPart,
-        public readonly ContentStreamId $contentStreamIdForRemainingPart
+        public WorkspaceName $workspaceName,
+        public NodeIdsToPublishOrDiscard $nodesToPublish,
+        public ContentStreamId $contentStreamIdForMatchingPart,
+        public ContentStreamId $contentStreamIdForRemainingPart
     ) {
     }
 

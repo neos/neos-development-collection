@@ -5,7 +5,7 @@
   "license": "GNU GPLv3",
   "scripts": {
     "build": "yarn build:js && yarn build:styles",
-    "build-watch": "yarn build --progress --colors --watch",
+    "build-watch": "yarn build --progress --watch",
     "build:production": "yarn build:js:prod && yarn build:styles:prod",
     "build:js": "webpack --mode development --config=webpack.js.config.js",
     "build:styles": "webpack --mode development --config=webpack.styles.config.js",

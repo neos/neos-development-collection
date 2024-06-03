@@ -25,13 +25,11 @@ Feature: Create node variant
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    And I am in workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the following CreateNodeAggregateWithNode commands are executed:
@@ -41,14 +39,25 @@ Feature: Create node variant
     # Node /document/child
       | nody-mc-nodeface       | child    | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | {}                                 |
 
-  Scenario: Try to create a variant in a content stream that does not exist yet
+  Scenario: Try to create a variant in a workspace that does not exist
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
       | Key             | Value                             |
-      | contentStreamId | "i-do-not-exist-yet"              |
+      | workspaceName   | "i-do-not-exist-yet"              |
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin    | {"market":"CH", "language":"gsw"} |
       | targetOrigin    | {"market":"DE", "language":"de"}  |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
+
+  Scenario: Try to create a variant in a workspace that does not exist
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    And the command CreateNodeVariant is executed with payload and exceptions are caught:
+      | Key             | Value                             |
+      | nodeAggregateId | "sir-david-nodenborough"          |
+      | sourceOrigin    | {"market":"CH", "language":"gsw"} |
+      | targetOrigin    | {"market":"DE", "language":"de"}  |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
 
   Scenario: Try to create a variant in a node aggregate that currently does not exist
     When the command CreateNodeVariant is executed with payload and exceptions are caught:

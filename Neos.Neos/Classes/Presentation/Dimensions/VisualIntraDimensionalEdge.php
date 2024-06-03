@@ -17,15 +17,15 @@ namespace Neos\Neos\Presentation\Dimensions;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-final class VisualIntraDimensionalEdge
+final readonly class VisualIntraDimensionalEdge
 {
     private const VERTICAL_OFFSET = 40;
 
     public function __construct(
-        public readonly int $x1,
-        public readonly int $y1,
-        public readonly int $x2,
-        public readonly int $y2
+        public int $x1,
+        public int $y1,
+        public int $x2,
+        public int $y2
     ) {
     }
 

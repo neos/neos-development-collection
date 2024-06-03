@@ -14,9 +14,9 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Utility\ObjectAccess;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * This filter implementation contains specific behavior for use on ContentRepository
@@ -95,7 +95,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     protected function matchesPropertyNameFilter($element, $propertyNameFilter)
     {
         assert($element instanceof Node);
-        return $element->nodeName?->value === $propertyNameFilter;
+        return $element->name?->value === $propertyNameFilter;
     }
 
     /**
@@ -107,7 +107,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function matchesIdentifierFilter($element, $identifier)
     {
-        return (strtolower($element->nodeAggregateId->value) === strtolower($identifier));
+        return (strtolower($element->aggregateId->value) === strtolower($identifier));
     }
 
     /**
@@ -121,8 +121,8 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     {
         if ($propertyPath === '_identifier') {
             // TODO: deprecated (Neos <9 case)
-            return $element->nodeAggregateId->value;
-        } elseif ($propertyPath[0] === '_' && $propertyPath !== '_hiddenInIndex') {
+            return $element->aggregateId->value;
+        } elseif ($propertyPath[0] === '_') {
             return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
         } else {
             return $element->getProperty($propertyPath);

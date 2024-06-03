@@ -14,19 +14,19 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches;
 
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -34,8 +34,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Wrapper for a concrete implementation of the {@see ContentSubgraphInterface} that
@@ -43,19 +46,34 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @internal the parent {@see ContentSubgraphInterface} is API
  */
-final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
+final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 {
-    public readonly InMemoryCache $inMemoryCache;
+    public InMemoryCache $inMemoryCache;
 
     public function __construct(
-        private readonly ContentSubgraphInterface $wrappedContentSubgraph,
+        private ContentSubgraphInterface $wrappedContentSubgraph,
     ) {
         $this->inMemoryCache = new InMemoryCache();
     }
 
-    public function getIdentity(): ContentSubgraphIdentity
+    public function getContentRepositoryId(): ContentRepositoryId
     {
-        return $this->wrappedContentSubgraph->getIdentity();
+        return $this->wrappedContentSubgraph->getContentRepositoryId();
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->wrappedContentSubgraph->getWorkspaceName();
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->wrappedContentSubgraph->getDimensionSpacePoint();
+    }
+
+    public function getVisibilityConstraints(): VisibilityConstraints
+    {
+        return $this->wrappedContentSubgraph->getVisibilityConstraints();
     }
 
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
@@ -72,9 +90,9 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         }
         $childNodes = $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter);
         foreach ($childNodes as $node) {
-            $namedChildNodeCache->add($parentNodeAggregateId, $node->nodeName, $node);
-            $parentNodeIdCache->add($node->nodeAggregateId, $parentNodeAggregateId);
-            $nodeByIdCache->add($node->nodeAggregateId, $node);
+            $namedChildNodeCache->add($parentNodeAggregateId, $node->name, $node);
+            $parentNodeIdCache->add($node->aggregateId, $parentNodeAggregateId);
+            $nodeByIdCache->add($node->aggregateId, $node);
         }
         $childNodesCache->add($parentNodeAggregateId, $filter->nodeTypes, $childNodes);
         return $childNodes;
@@ -156,10 +174,10 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
             $parentNodeIdCache->rememberNonExistingParentNode($childNodeAggregateId);
             return null;
         }
-        $parentNodeIdCache->add($childNodeAggregateId, $parentNode->nodeAggregateId);
+        $parentNodeIdCache->add($childNodeAggregateId, $parentNode->aggregateId);
         // we also add the parent node to the NodeAggregateId => Node cache;
         // as this might improve cache hit rates as well.
-        $this->inMemoryCache->getNodeByNodeAggregateIdCache()->add($parentNode->nodeAggregateId, $parentNode);
+        $this->inMemoryCache->getNodeByNodeAggregateIdCache()->add($parentNode->aggregateId, $parentNode);
         return $parentNode;
     }
 
@@ -245,10 +263,5 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
     private static function isFilterEmpty(object $filter): bool
     {
         return array_filter(get_object_vars($filter), static fn ($value) => $value !== null) === [];
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        return $this->wrappedContentSubgraph->jsonSerialize();
     }
 }

@@ -93,7 +93,7 @@ The following options are allowed for defining a NodeType:
 
   ``generatorClass``
     Alternatively the class of a node label generator implementing
-    ``Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface`` can be specified as a nested option.
+    ``Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface`` can be specified as a nested option.
 
 ``options``
   Options for third party-code, the Content-Repository ignores those options but Neos or Packages may use this to adjust
@@ -388,8 +388,8 @@ The following options are allowed for defining a NodeType:
       ``editorListeners`` (removed since Neos 3.3)
         This feature has been removed in favor of `Depending Properties`_ with Neos 3.3
 
-    ``showInCreationDialog`` (since Neos 5.1)
-      If `true` the corresponding property will appear in the Node Creation Dialog. Editor configuration
+    ``showInCreationDialog``
+      If `true` the corresponding property will be promoted into the Node Creation Dialog. Editor configuration
       will be copied from the respective ``ui.inspector`` settings in that case and can be overridden with
       the ``creationDialog.elements.<propertyName>``, see `Node Creation Dialog Configuration`_
 

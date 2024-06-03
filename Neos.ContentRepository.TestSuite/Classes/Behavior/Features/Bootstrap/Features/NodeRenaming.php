@@ -18,7 +18,7 @@ use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use PHPUnit\Framework\Assert;
 
@@ -37,17 +37,17 @@ trait NodeRenaming
     public function theCommandChangeNodeAggregateNameIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamId = isset($commandArguments['contentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->currentContentStreamId;
+        $workspaceName = isset($commandArguments['workspaceName'])
+            ? WorkspaceName::fromString($commandArguments['workspaceName'])
+            : $this->currentWorkspaceName;
 
         $command = ChangeNodeAggregateName::create(
-            $contentStreamId,
+            $workspaceName,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             NodeName::fromString($commandArguments['newNodeName']),
         );
 
-        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
+        $this->currentContentRepository->handle($command);
     }
 
     /**
@@ -72,6 +72,6 @@ trait NodeRenaming
     public function iExpectTheNodeToHaveTheName(string $nodeAggregateId, string $nodeName)
     {
         $node = $this->getCurrentSubgraph()->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
-        Assert::assertEquals($nodeName, $node->nodeName->value, 'Node Names do not match');
+        Assert::assertEquals($nodeName, $node->name->value, 'Node Names do not match');
     }
 }

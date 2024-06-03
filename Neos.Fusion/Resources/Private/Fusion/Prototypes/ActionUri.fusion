@@ -18,8 +18,6 @@ prototype(Neos.Fusion:ActionUri) {
   section = null
   additionalParams = Neos.Fusion:DataStructure
   arguments = Neos.Fusion:DataStructure
-  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
-  addQueryString = false
   absolute = false
 
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'

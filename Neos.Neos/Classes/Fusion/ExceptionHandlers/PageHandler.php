@@ -19,6 +19,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
+use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\FluidAdaptor\View\StandaloneView;
@@ -61,7 +63,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
      *
      * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
-     * @param integer $referenceCode
+     * @param string|null $referenceCode
      * @return string
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
@@ -94,14 +96,6 @@ class PageHandler extends AbstractRenderingExceptionHandler
                 && $renderingMode->isEdit
             ) {
                 $isBackend = true;
-                $fluidView->assign(
-                    'metaData',
-                    $this->contentElementWrappingService->wrapCurrentDocumentMetadata(
-                        $documentNode,
-                        '<div id="neos-document-metadata"></div>',
-                        $fusionPath
-                    )
-                );
             }
         }
 
@@ -111,7 +105,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
             'node' => $node
         ]);
 
-        return $this->wrapHttpResponse($exception, $fluidView->render());
+        return $this->wrapHttpResponse($exception, $fluidView->render()->getContents());
     }
 
     /**
@@ -137,7 +131,14 @@ class PageHandler extends AbstractRenderingExceptionHandler
     protected function prepareFluidView()
     {
         $fluidView = new StandaloneView();
-        $fluidView->setControllerContext($this->runtime->getControllerContext());
+        $fluidView->setControllerContext(
+            new ControllerContext(
+                $this->runtime->getControllerContext()->getRequest(),
+                $this->runtime->getControllerContext()->getResponse(),
+                new Arguments(),
+                $this->runtime->getControllerContext()->getUriBuilder()
+            )
+        );
         $fluidView->setFormat('html');
         $fluidView->setTemplatePathAndFilename('resource://Neos.Neos/Private/Templates/Error/NeosBackendMessage.html');
         $fluidView->setLayoutRootPath('resource://Neos.Neos/Private/Layouts/');

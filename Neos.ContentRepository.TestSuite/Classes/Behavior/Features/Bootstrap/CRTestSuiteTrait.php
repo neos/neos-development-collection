@@ -31,7 +31,9 @@ use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamClosing;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCopying;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCreation;
@@ -43,10 +45,10 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRe
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRenaming;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeTypeChange;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeVariation;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\SubtreeTagging;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\EventStore\EventStoreInterface;
 use PHPUnit\Framework\Assert;
 
@@ -64,10 +66,12 @@ trait CRTestSuiteTrait
     use GenericCommandExecutionAndEventPublication;
 
     use ContentStreamForking;
+    use ContentStreamClosing;
 
     use NodeCreation;
     use NodeCopying;
     use NodeDisabling;
+    use SubtreeTagging;
     use NodeModification;
     use NodeMove;
     use NodeReferencing;
@@ -79,13 +83,6 @@ trait CRTestSuiteTrait
     use WorkspaceCreation;
     use WorkspaceDiscarding;
     use WorkspacePublishing;
-
-    protected function setupCRTestSuiteTrait(): void
-    {
-        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
-            CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
-        }
-    }
 
     /**
      * @BeforeScenario
@@ -101,6 +98,7 @@ trait CRTestSuiteTrait
         $this->currentDimensionSpacePoint = null;
         $this->currentRootNodeAggregateId = null;
         $this->currentContentStreamId = null;
+        $this->currentWorkspaceName = null;
         $this->currentNodeAggregate = null;
         $this->currentNode = null;
     }
@@ -118,7 +116,6 @@ trait CRTestSuiteTrait
                 $propertyOrMethodName = \mb_substr($line['Value'], \mb_strlen('$this->'));
                 $value = match ($propertyOrMethodName) {
                     'currentNodeAggregateId' => $this->getCurrentNodeAggregateId()->value,
-                    'contentStreamId' => $this->currentContentStreamId->value,
                     default => method_exists($this, $propertyOrMethodName) ? (string)$this->$propertyOrMethodName() : (string)$this->$propertyOrMethodName,
                 };
             } else {
@@ -132,18 +129,6 @@ trait CRTestSuiteTrait
         }
 
         return $eventPayload;
-    }
-
-    /**
-     * @When /^the graph projection is fully up to date$/
-     */
-    public function theGraphProjectionIsFullyUpToDate(): void
-    {
-        if ($this->lastCommandOrEventResult === null) {
-            throw new \RuntimeException('lastCommandOrEventResult not filled; so I cannot block!');
-        }
-        $this->lastCommandOrEventResult->block();
-        $this->lastCommandOrEventResult = null;
     }
 
     /**
@@ -175,12 +160,22 @@ trait CRTestSuiteTrait
     }
 
     /**
+     * @Then /^workspace ([^"]*) has status ([^"]*)$/
+     */
+    public function workspaceHasStatus(string $rawWorkspaceName, string $status): void
+    {
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+
+        Assert::assertSame($status, $workspace->status->value);
+    }
+
+    /**
      * @Then /^I expect the graph projection to consist of exactly (\d+) node(?:s)?$/
      * @param int $expectedNumberOfNodes
      */
     public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes): void
     {
-        $actualNumberOfNodes = $this->currentContentRepository->getContentGraph()->countNodes();
+        $actualNumberOfNodes = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->countNodes();
         Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
     }
 
@@ -213,7 +208,7 @@ trait CRTestSuiteTrait
             $actualLevel = $flattenedSubtree[$i]->level;
             Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel);
             $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
-            $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
+            $actualNodeAggregateId = $flattenedSubtree[$i]->node->aggregateId;
             Assert::assertTrue(
                 $expectedNodeAggregateId->equals($actualNodeAggregateId),
                 'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId->value . '", actual: "' . $actualNodeAggregateId->value . '"'
@@ -247,8 +242,7 @@ trait CRTestSuiteTrait
         }
 
         try {
-            return $this->currentContentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $this->currentContentStreamId,
+            return $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findRootNodeAggregateByType(
                 NodeTypeName::fromString('Neos.Neos:Sites')
             )->nodeAggregateId;
         } catch (RootNodeAggregateDoesNotExist) {
@@ -265,7 +259,7 @@ trait CRTestSuiteTrait
         $contentStreamFinder = $this->currentContentRepository->getContentStreamFinder();
 
         $actual = $contentStreamFinder->findStateForContentStream($contentStreamId);
-        Assert::assertEquals($expectedState, $actual);
+        Assert::assertSame(ContentStreamState::tryFrom($expectedState), $actual);
     }
 
     /**
@@ -273,7 +267,13 @@ trait CRTestSuiteTrait
      */
     public function theCurrentContentStreamHasState(string $expectedState): void
     {
-        $this->theContentStreamHasState($this->currentContentStreamId->value, $expectedState);
+        $this->theContentStreamHasState(
+            $this->currentContentRepository
+                ->getWorkspaceFinder()
+                ->findOneByName($this->currentWorkspaceName)
+                ->currentContentStreamId->value,
+            $expectedState
+        );
     }
 
     /**
@@ -284,7 +284,6 @@ trait CRTestSuiteTrait
         /** @var ContentStreamPruner $contentStreamPruner */
         $contentStreamPruner = $this->getContentRepositoryService(new ContentStreamPrunerFactory());
         $contentStreamPruner->prune();
-        $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
     }
 
     /**

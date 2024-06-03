@@ -16,16 +16,16 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
+/** @internal */
 #[Flow\Proxy(false)]
-class ValueAssignment extends AbstractOperation
+final readonly class ValueAssignment extends AbstractOperation
 {
     public function __construct(
-        /** @psalm-readonly */
         public AbstractPathValue $pathValue
     ) {
     }
 
-    public function visit(AstNodeVisitorInterface $visitor, ...$args)
+    public function visit(AstNodeVisitorInterface $visitor, mixed ...$args)
     {
         return $visitor->visitValueAssignment($this, ...$args);
     }

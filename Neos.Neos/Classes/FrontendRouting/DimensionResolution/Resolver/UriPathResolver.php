@@ -17,16 +17,14 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Neos\Domain\Model\SiteNodeName;
-use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
-use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segment;
+use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMappingElement;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\UriPathResolverConfigurationException;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
-use Neos\Neos\Domain\Model\Site;
 
 /**
  * URI path segment based dimension value resolver
