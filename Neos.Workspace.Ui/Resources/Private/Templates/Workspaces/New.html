@@ -2,14 +2,14 @@
 <f:layout name="BackendSubModule"/>
 
 <f:section name="subtitle">
-	<h2>{neos:backend.translate(id: 'workspaces.createNewWorkspace', source: 'Modules', package: 'Neos.Neos')}</h2>
+	<h2>{neos:backend.translate(id: 'workspaces.createNewWorkspace', source: 'Main', package: 'Neos.Workspace.Ui')}</h2>
 </f:section>
 
 <f:section name="content">
 	<f:form action="create" objectName="workspace">
 		<fieldset>
 			<div class="neos-control-group{f:validation.ifHasErrors(for: 'title', then: ' neos-error')}">
-				<label class="neos-control-label" for="title">{neos:backend.translate(id: 'workspaces.workspace.title', source: 'Modules', package: 'Neos.Neos')}</label>
+				<label class="neos-control-label" for="title">{neos:backend.translate(id: 'workspaces.workspace.title', source: 'Main', package: 'Neos.Workspace.Ui')}</label>
 				<div class="neos-controls">
 					<f:form.textfield name="title" id="title" class="neos-span3"/>
 					<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'title'}"/>
@@ -17,7 +17,7 @@
 			</div>
 
 			<div class="neos-control-group{f:validation.ifHasErrors(for: 'description', then: ' neos-error')}">
-				<label class="neos-control-label" for="description">{neos:backend.translate(id: 'workspaces.workspace.description', source: 'Modules', package: 'Neos.Neos')}</label>
+				<label class="neos-control-label" for="description">{neos:backend.translate(id: 'workspaces.workspace.description', source: 'Main', package: 'Neos.Workspace.Ui')}</label>
 				<div class="neos-controls">
 					<f:form.textfield name="description" id="description" class="neos-span10"/>
 					<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'description'}"/>
@@ -25,7 +25,7 @@
 			</div>
 
 			<div class="neos-control-group{f:validation.ifHasErrors(for: 'baseWorkspace', then: ' neos-error')}">
-				<label class="neos-control-label" for="baseWorkspace">{neos:backend.translate(id: 'workspaces.workspace.baseWorkspace', source: 'Modules', package: 'Neos.Neos')}</label>
+				<label class="neos-control-label" for="baseWorkspace">{neos:backend.translate(id: 'workspaces.workspace.baseWorkspace', source: 'Main', package: 'Neos.Workspace.Ui')}</label>
 				<div class="neos-controls">
 					<f:form.select name="baseWorkspace" id="baseWorkspace" options="{baseWorkspaceOptions}" value="live" />
 				</div>
@@ -34,17 +34,17 @@
 			<f:security.ifAccess privilegeTarget="Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces">
 				<f:then>
 					<div class="neos-control-group">
-						<label class="neos-control-label">{neos:backend.translate(id: 'workspaces.workspace.visibility', source: 'Modules', package: 'Neos.Neos')}</label>
+						<label class="neos-control-label">{neos:backend.translate(id: 'workspaces.workspace.visibility', source: 'Main', package: 'Neos.Workspace.Ui')}</label>
 						<div class="neos-controls">
 							<label for="visibility.private" class="neos-radio">
 								<f:form.radio name="visibility" id="visibility.private" value="private" checked="checked"/><span></span>
-								<span>{neos:backend.translate(id: 'workspaces.workspace.visibility.private', source: 'Modules', package: 'Neos.Neos')} <span class="neos-help-inline">{neos:backend.translate(id: 'workspaces.workspace.visibility.private.help', source: 'Modules', package: 'Neos.Neos')}</span></span>
+								<span>{neos:backend.translate(id: 'workspaces.workspace.visibility.private', source: 'Main', package: 'Neos.Workspace.Ui')} <span class="neos-help-inline">{neos:backend.translate(id: 'workspaces.workspace.visibility.private.help', source: 'Main', package: 'Neos.Workspace.Ui')}</span></span>
 							</label>
 						</div>
 						<div class="neos-controls">
 							<label for="visibility.internal" class="neos-radio">
 								<f:form.radio name="visibility" id="visibility.internal" value="internal"/><span></span>
-								<span>{neos:backend.translate(id: 'workspaces.workspace.visibility.internal', source: 'Modules', package: 'Neos.Neos')} <span class="neos-help-inline">{neos:backend.translate(id: 'workspaces.workspace.visibility.internal.help', source: 'Modules', package: 'Neos.Neos')}</span></span>
+								<span>{neos:backend.translate(id: 'workspaces.workspace.visibility.internal', source: 'Main', package: 'Neos.Workspace.Ui')} <span class="neos-help-inline">{neos:backend.translate(id: 'workspaces.workspace.visibility.internal.help', source: 'Main', package: 'Neos.Workspace.Ui')}</span></span>
 							</label>
 						</div>
 					</div>
@@ -56,9 +56,9 @@
 		</fieldset>
 
 		<div class="neos-footer">
-			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}
+			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'Neos.Workspace.Ui')}
 			</f:link.action>
-			<f:form.submit value="{neos:backend.translate(id: 'workspaces.createWorkspace', source: 'Modules', package: 'Neos.Neos')}" class="neos-button neos-button-primary"/>
+			<f:form.submit value="{neos:backend.translate(id: 'workspaces.createWorkspace', source: 'Main', package: 'Neos.Workspace.Ui')}" class="neos-button neos-button-primary"/>
 		</div>
 	</f:form>
 </f:section>

@@ -1,0 +1,17 @@
+Neos:
+  Neos:
+    modules:
+      management:
+        submodules:
+          workspaces:
+            label: 'Neos.Workspace.Ui:Main:workspaces.label'
+            controller: 'Neos\Workspace\Ui\Controller\WorkspacesController'
+            description: 'Neos.Workspace.Ui:Main:workspaces.description'
+            icon: fas fa-th-large
+            mainStylesheet: 'Lite'
+
+    userInterface:
+      translation:
+        autoInclude:
+          Neos.Workspace.Ui:
+            - Main

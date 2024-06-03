@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Workspace.Ui" source-language="en" datatype="plaintext" target-language="es-ES">
+    <body>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+        <source>Back</source>
+        <target state="final">Atrás</target>
+      </trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
+        <source>Cancel</source>
+        <target state="final">Cancelar</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="translated">Ruta</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="translated">Ruta relativa</target>
+      </trans-unit>
+      <!-- Management -->
+      <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
+        <source>Workspaces</source>
+        <target state="final">Espacios de Trabajo</target>
+      </trans-unit>
+      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
+        <source>Details for "{0}"</source>
+        <target state="final">Detalles de "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
+        <source>Create new workspace</source>
+        <target state="final">Crear un nuevo espacio de trabajo</target>
+      </trans-unit>
+      <trans-unit id="workspaces.createWorkspace" xml:space="preserve" approved="yes">
+        <source>Create workspace</source>
+        <target state="final">Crear espacio de trabajo</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
+        <source>Delete workspace</source>
+        <target state="final">Eliminar espacio de trabajo</target>
+      </trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
+        <source>Edit workspace</source>
+        <target state="final">Editar espacio de trabajo</target>
+      </trans-unit>
+      <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve" approved="yes">
+        <source>Yes, delete the workspace</source>
+        <target state="final">Sí, elimínalo</target>
+      </trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="no">
+        <source>Edit workspace "{0}"</source>
+        <target state="translated">Editar espacio de trabajo</target>
+      </trans-unit>
+      <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
+        <source>Personal workspace</source>
+        <target state="final">Espacio de trabajo personal</target>
+      </trans-unit>
+      <trans-unit id="workspaces.privateWorkspace" xml:space="preserve" approved="yes">
+        <source>Private workspace</source>
+        <target state="final">Espacio de trabajo privado</target>
+      </trans-unit>
+      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
+        <source>Internal workspace</source>
+        <target state="final">Espacio de trabajo interno</target>
+      </trans-unit>
+      <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
+        <source>Read-only workspace</source>
+        <target state="final">Espacio de trabajo de solo lectura</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.title" xml:space="preserve" approved="yes">
+        <source>Title</source>
+        <target state="final">Título</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.description" xml:space="preserve" approved="yes">
+        <source>Description</source>
+        <target state="final">Descripción</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve" approved="yes">
+        <source>Base workspace</source>
+        <target state="final">Espacio de trabajo base</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
+        <source>Owner</source>
+        <target state="translated">Dueño</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
+        <source>Visibility</source>
+        <target state="translated">Visiblidad</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
+        <source>Private</source>
+        <target state="translated">Privado</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
+        <source>Only reviewers and administrators can access and modify this workspace</source>
+        <target state="final">Solo los revisores y administradores pueden acceder y modificar este espacio de trabajo</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
+        <source>Internal</source>
+        <target state="translated">Interno</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
+        <source>Any logged in editor can see and modify this workspace.</source>
+        <target state="final">Cualquiera que inicie sesión en el editor puede ver y modificar este espacio de trabajo.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
+        <source>Changes</source>
+        <target state="translated">Cambios</target>
+      </trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve" approved="yes">
+        <source>Open page in "{0}" workspace</source>
+        <target state="final">Abrir la página en el espacio de trabajo "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
+        <source>This is your personal workspace which you can't delete.</source>
+        <target state="translated">Este es tu espacio de trabajo personal que no se puede eliminar.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve" approved="yes">
+        <source>The workspace contains changes. To delete, discard the changes first.</source>
+        <target state="final">El espacio de trabajo contiene cambios. Para eliminarlos, descarta los cambios primero.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
+        <source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
+        <target state="translated">El espacio de trabajo no puede ser reajustado en un espacio de trabajo distinto ya que contiene cambios.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
+        <source>The workspace cannot be deleted because other workspaces depend on it.</source>
+        <target state="translated">El espacio de trabajo no se puede eliminar porque otros espacios de trabajo dependen de el.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
+        <source>You don't have the permissions for deleting this workspace.</source>
+        <target state="translated">No tienes los permisos para eliminar esta área de trabajo.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve" approved="yes">
+        <source>Do you really want to delete the workspace "{0}"?</source>
+        <target state="final">¿Realmente deseas eliminar el espacio de trabajo "{0}"?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
+        <source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
+        <target state="translated">Esto eliminará el espacio de trabajo incluyendo contenido todo inédito. Esta operación no se puede deshacer.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
+        <source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
+        <target state="final">Este módulo contiene el resumen de todos los elementos dentro del espacio de trabajo actual y permite seguir el flujo de trabajo de revisión y publicación para ellos.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+        <source>Unpublished changes in workspace "{0}"</source>
+        <target state="translated">Cambios no publicados</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
+        <source>additions: {new}, changes: {changed}, removals: {removed}</source>
+        <target state="final">añadidos: {new}, cambios: {changed}, removidos: {removed}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.review" xml:space="preserve">
+        <source>Review</source>
+        <target state="translated">Revisar 	</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
+        <source>Discard selected changes</source>
+        <target state="final">Descartar los cambios seleccionados</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
+        <source>Discard all changes</source>
+        <target state="final">Descartar todos los cambios</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
+        <source>Publish all changes</source>
+        <target state="final">Publicar todos los cambios</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
+        <source>Publish all changes to {0}</source>
+        <target state="translated">Publicar todos los cambios en {0}</target>
+      </trans-unit>
+      <trans-unit id="changedContentCaption" xml:space="preserve" approved="yes">
+        <source>Changed Content</source>
+        <target state="final">Contenido cambiado</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
+        <source>deleted</source>
+        <target state="final">eliminado</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.created" xml:space="preserve" approved="yes">
+        <source>created</source>
+        <target state="final">creado</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
+        <source>moved</source>
+        <target state="final">movido</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
+        <source>hidden</source>
+        <target state="translated">oculto</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
+        <source>edited</source>
+        <target state="final">editado</target>
+      </trans-unit>
+      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
+        <source>There are no unpublished changes in this workspace.</source>
+        <target state="final">No hay cambios sin publicar en este espacio de trabajo.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
+        <source>Do you really want to discard all changes in the "{0}" workspace?</source>
+        <target state="translated">¿Desea descartar todos los cambios en el espacio de trabajo "{0}"?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
+        <source>A workspace with this title already exists.</source>
+        <target state="final">Un espacio de trabajo con este título ya existe.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenUpdated" approved="yes">
+        <source>The workspace "{0}" has been updated.</source>
+        <target state="final">Se ha actualizado el espacio de trabajo "{0}".</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies" approved="yes">
+        <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
+        <target state="final">Espacio de trabajo "{0}" no se puede eliminar porque las siguientes áreas de trabajo se basan en él: {1}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes">
+        <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
+        <target state="translated">Un error ha ocurrido mientras se buscaba los nodos no publicados del espacio de trabajo "{0}", nada ha sido eliminado.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
+        <source>Your personal workspace contains changes, please publish or discard them first.</source>
+        <target state="translated">Su espacio de trabajo personal contiene cambios, por favor publíquelos o descártelos.</target>
+      </trans-unit>
+      <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
+          <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
+          <target state="translated">No se eliminó el espacio de trabajo "{0}" porque actualmente contiene {1} nodo.</target>
+        </trans-unit>
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
+          <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
+          <target state="translated">No se eliminó el espacio de trabajo "{0}" porque actualmente contiene {1} nodos.</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="workspaces.workspaceHasBeenRemoved">
+        <source>The workspace "{0}" has been removed.</source>
+        <target state="translated">El espacio de trabajo "{0}" ha sido eliminado.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenPublished" approved="yes">
+        <source>The selected change has been published.</source>
+        <target state="final">El cambio seleccionado ha sido publicado.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenDiscarded" approved="yes">
+        <source>The selected change has been discarded.</source>
+        <target state="final">El cambio seleccionado ha sido descartado.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenPublished">
+        <source>The selected changes have been published.</source>
+        <target state="translated">Los cambios seleccionados han sido publicados.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded">
+        <source>The selected changes have been discarded.</source>
+        <target state="translated">Los cambios seleccionados ha sido descartados.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished">
+        <source>All changes from workspace "{0}" have been published to {1}.</source>
+        <target state="translated">Todos los cambios del espacio de trabajo "{0}" han sido publicados a {1}.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
+        <source>All changes from workspace "{0}" have been discarded.</source>
+        <target state="translated">Todos los cambios del espacio de trabajo "{0}" han sido descartados.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
