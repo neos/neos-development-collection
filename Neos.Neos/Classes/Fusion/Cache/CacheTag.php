@@ -157,6 +157,5 @@ class CacheTag
             return sha1($workspaceName->value . '@' . $contentRepositoryId->value);
         }
         return sha1($contentRepositoryId->value);
-
     }
 }
