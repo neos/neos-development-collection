@@ -58,7 +58,7 @@ trait Workspace
 
     private function markWorkspaceAsUpToDate(WorkspaceName $workspaceName): void
     {
-        $this->dbal->executeUpdate('
+        $this->dbal->executeStatement('
             UPDATE ' . $this->tableNames->workspace() . '
             SET status = :upToDate
             WHERE
@@ -71,7 +71,7 @@ trait Workspace
 
     private function markDependentWorkspacesAsOutdated(WorkspaceName $baseWorkspaceName): void
     {
-        $this->dbal->executeUpdate('
+        $this->dbal->executeStatement('
             UPDATE ' . $this->tableNames->workspace() . '
             SET status = :outdated
             WHERE
@@ -84,7 +84,7 @@ trait Workspace
 
     private function markWorkspaceAsOutdated(WorkspaceName $workspaceName): void
     {
-        $this->dbal->executeUpdate('
+        $this->dbal->executeStatement('
             UPDATE ' . $this->tableNames->workspace() . '
             SET
                 status = :outdated
@@ -98,7 +98,7 @@ trait Workspace
 
     private function markWorkspaceAsOutdatedConflict(WorkspaceName $workspaceName): void
     {
-        $this->dbal->executeUpdate('
+        $this->dbal->executeStatement('
             UPDATE ' . $this->tableNames->workspace() . '
             SET
                 status = :outdatedConflict

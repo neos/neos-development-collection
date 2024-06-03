@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Core\ContentGraphAdapter;
+use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -33,7 +33,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceFilter;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
@@ -82,8 +81,8 @@ trait ProjectedNodeTrait
     public function iExpectANodeIdentifiedByXToExistInTheContentGraph(string $serializedNodeDiscriminator): void
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
-        $contentGraphAdapter = $this->currentContentRepository->projectionState(ContentGraphAdapter::class);
-        $contentGraphAdapter->forgetInstances();
+        $contentRepositoryReadModel = $this->currentContentRepository->projectionState(ContentRepositoryReadModel::class);
+        $contentRepositoryReadModel->forgetInstances();
         $matchingWorkspace = $this->currentContentRepository->getWorkspaces()->find(
             static fn (Workspace $workspace) => $workspace->currentContentStreamId->equals($nodeDiscriminator->contentStreamId)
         );

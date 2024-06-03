@@ -32,7 +32,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
  * @internal User land code should not use this directly.
  * @see ContentRepository::getContentGraph()
  */
-final class ContentGraphAdapter implements ProjectionStateInterface
+final class ContentRepositoryReadModel implements ProjectionStateInterface
 {
     /**
      * @var array<string, ContentGraphInterface> Runtime cache for {@see ContentGraphInterface} instances, indexed by their workspace name
@@ -50,7 +50,7 @@ final class ContentGraphAdapter implements ProjectionStateInterface
     private array $contentStreamInstancesById = [];
 
     public function __construct(
-        private readonly ContentGraphFactoryInterface $contentGraphFactory
+        private readonly ContentRepositoryReadModelAdapterInterface $adapter
     ) {
     }
 
@@ -70,7 +70,7 @@ final class ContentGraphAdapter implements ProjectionStateInterface
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
         if (!array_key_exists($workspaceName->value, $this->workspaceInstancesByName)) {
-            $workspace = $this->contentGraphFactory->findWorkspaceByName($workspaceName);
+            $workspace = $this->adapter->findWorkspaceByName($workspaceName);
             if ($workspace === null) {
                 return null;
             }
@@ -79,15 +79,15 @@ final class ContentGraphAdapter implements ProjectionStateInterface
         return $this->workspaceInstancesByName[$workspaceName->value];
     }
 
-    public function getWorkspaces(): Workspaces
+    public function findWorkspaces(): Workspaces
     {
-        return $this->contentGraphFactory->getWorkspaces();
+        return $this->adapter->findWorkspaces();
     }
 
     public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
     {
         if (!array_key_exists($contentStreamId->value, $this->contentStreamInstancesById)) {
-            $contentStream = $this->contentGraphFactory->findContentStreamById($contentStreamId);
+            $contentStream = $this->adapter->findContentStreamById($contentStreamId);
             if ($contentStream === null) {
                 return null;
             }
@@ -96,18 +96,18 @@ final class ContentGraphAdapter implements ProjectionStateInterface
         return $this->contentStreamInstancesById[$contentStreamId->value];
     }
 
-    public function getContentStreams(): ContentStreams
+    public function findContentStreams(): ContentStreams
     {
-        return $this->contentGraphFactory->getContentStreams();
+        return $this->adapter->findContentStreams();
     }
 
     /**
      * @return iterable<ContentStreamId>
      * @internal This is currently only used by the {@see ContentStreamPruner} and might be removed in the future!
      */
-    public function getUnusedAndRemovedContentStreamIds(): iterable
+    public function findUnusedAndRemovedContentStreamIds(): iterable
     {
-        return $this->contentGraphFactory->getUnusedAndRemovedContentStreamIds();
+        return $this->adapter->findUnusedAndRemovedContentStreamIds();
     }
 
     /**
@@ -120,7 +120,11 @@ final class ContentGraphAdapter implements ProjectionStateInterface
     public function getContentGraphByWorkspaceName(WorkspaceName $workspaceName): ContentGraphInterface
     {
         if (!array_key_exists($workspaceName->value, $this->contentGraphInstancesByWorkspaceName)) {
-            $this->contentGraphInstancesByWorkspaceName[$workspaceName->value] = $this->contentGraphFactory->buildForWorkspace($workspaceName);
+            $workspace = $this->findWorkspaceByName($workspaceName);
+            if ($workspace === null) {
+                throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
+            }
+            $this->contentGraphInstancesByWorkspaceName[$workspaceName->value] = $this->adapter->buildContentGraph($workspace->workspaceName, $workspace->currentContentStreamId);
         }
         return $this->contentGraphInstancesByWorkspaceName[$workspaceName->value];
     }
@@ -134,6 +138,6 @@ final class ContentGraphAdapter implements ProjectionStateInterface
      */
     public function getContentGraphByWorkspaceNameAndContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
     {
-        return $this->contentGraphFactory->buildForWorkspaceAndContentStream($workspaceName, $contentStreamId);
+        return $this->adapter->buildContentGraph($workspaceName, $contentStreamId);
     }
 }

@@ -102,7 +102,7 @@ final class CommandHandlingDependencies
             throw new \RuntimeException('Contentstream override for this workspace already in effect, nesting not allowed.', 1715170938);
         }
 
-        $contentGraph = $this->contentRepository->projectionState(ContentGraphAdapter::class)->getContentGraphByWorkspaceNameAndContentStreamId($workspaceName, $contentStreamId);
+        $contentGraph = $this->contentRepository->projectionState(ContentRepositoryReadModel::class)->getContentGraphByWorkspaceNameAndContentStreamId($workspaceName, $contentStreamId);
         $this->overriddenContentGraphInstances[$workspaceName->value] = $contentGraph;
 
         try {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Service;
 
-use Neos\ContentRepository\Core\ContentGraphAdapter;
+use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -15,7 +15,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamStatus;
 use Neos\EventStore\EventStoreInterface;
 
 /**
- * For internal implementation details, see {@see ContentGraphAdapter}.
+ * For internal implementation details, see {@see ContentRepositoryReadModel}.
  *
  * @api
  */
@@ -24,7 +24,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly EventStoreInterface $eventStore,
-        private readonly ContentGraphAdapter $contentGraphAdapter,
+        private readonly ContentRepositoryReadModel $contentRepositoryReadModel,
     ) {
     }
 
@@ -78,7 +78,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      */
     public function pruneRemovedFromEventStream(): iterable
     {
-        $removedContentStreamIds = $this->contentGraphAdapter->getUnusedAndRemovedContentStreamIds();
+        $removedContentStreamIds = $this->contentRepositoryReadModel->findUnusedAndRemovedContentStreamIds();
         foreach ($removedContentStreamIds as $removedContentStream) {
             $streamName = ContentStreamEventStreamName::fromContentStreamId($removedContentStream)
                 ->getEventStreamName();

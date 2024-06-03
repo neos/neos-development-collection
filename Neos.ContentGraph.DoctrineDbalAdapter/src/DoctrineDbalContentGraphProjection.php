@@ -17,7 +17,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentRepository\Core\ContentGraphAdapter;
+use Neos\ContentRepository\Core\ContentRepositoryReadModel;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -75,7 +75,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
- * @implements ProjectionInterface<ContentGraphAdapter>
+ * @implements ProjectionInterface<ContentRepositoryReadModel>
  * @internal but the graph projection is api
  */
 final class DoctrineDbalContentGraphProjection implements ProjectionInterface
@@ -97,7 +97,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
-        private readonly ContentGraphAdapter $contentGraphAdapter
+        private readonly ContentRepositoryReadModel $contentRepositoryReadModel
     ) {
         $this->checkpointStorage = new DbalCheckpointStorage(
             $this->dbal,
@@ -175,9 +175,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface
         return $this->checkpointStorage;
     }
 
-    public function getState(): ContentGraphAdapter
+    public function getState(): ContentRepositoryReadModel
     {
-        return $this->contentGraphAdapter;
+        return $this->contentRepositoryReadModel;
     }
 
     public function canHandle(EventInterface $event): bool

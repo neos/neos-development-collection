@@ -243,22 +243,22 @@ final class ContentRepository
 
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
-        return $this->getContentGraphAdapter()->findWorkspaceByName($workspaceName);
+        return $this->getContentRepositoryReadModel()->findWorkspaceByName($workspaceName);
     }
 
     public function getWorkspaces(): Workspaces
     {
-        return $this->getContentGraphAdapter()->getWorkspaces();
+        return $this->getContentRepositoryReadModel()->findWorkspaces();
     }
 
     public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream
     {
-        return $this->getContentGraphAdapter()->findContentStreamById($contentStreamId);
+        return $this->getContentRepositoryReadModel()->findContentStreamById($contentStreamId);
     }
 
     public function getContentStreams(): ContentStreams
     {
-        return $this->getContentGraphAdapter()->getContentStreams();
+        return $this->getContentRepositoryReadModel()->findContentStreams();
     }
 
     /**
@@ -266,7 +266,7 @@ final class ContentRepository
      */
     public function getContentGraph(WorkspaceName $workspaceName): ContentGraphInterface
     {
-        return $this->getContentGraphAdapter()->getContentGraphByWorkspaceName($workspaceName);
+        return $this->getContentRepositoryReadModel()->getContentGraphByWorkspaceName($workspaceName);
     }
 
     public function getVariationGraph(): InterDimensionalVariationGraph
@@ -279,8 +279,8 @@ final class ContentRepository
         return $this->contentDimensionSource;
     }
 
-    private function getContentGraphAdapter(): ContentGraphAdapter
+    private function getContentRepositoryReadModel(): ContentRepositoryReadModel
     {
-        return $this->projectionState(ContentGraphAdapter::class);
+        return $this->projectionState(ContentRepositoryReadModel::class);
     }
 }

@@ -28,26 +28,21 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
  *
  * @internal This is just an implementation detail to delegate creating the specific implementations of a ContentGraph.
  */
-interface ContentGraphFactoryInterface
+interface ContentRepositoryReadModelAdapterInterface
 {
-    /**
-     * @throws WorkspaceDoesNotExist if the workspace does not exist
-     */
-    public function buildForWorkspace(WorkspaceName $workspaceName): ContentGraphInterface;
-
-    public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface;
+    public function buildContentGraph(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface;
 
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace;
 
-    public function getWorkspaces(): Workspaces;
+    public function findWorkspaces(): Workspaces;
 
     public function findContentStreamById(ContentStreamId $contentStreamId): ?ContentStream;
 
-    public function getContentStreams(): ContentStreams;
+    public function findContentStreams(): ContentStreams;
 
     /**
      * @return iterable<ContentStreamId>
      * @internal This is currently only used by the {@see ContentStreamPruner} and might be removed in the future!
      */
-    public function getUnusedAndRemovedContentStreamIds(): iterable;
+    public function findUnusedAndRemovedContentStreamIds(): iterable;
 }
