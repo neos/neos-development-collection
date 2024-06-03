@@ -55,8 +55,7 @@ class AssetUsageSyncService implements ContentRepositoryServiceInterface
         }
         $dimensionSpacePoint = $usage->originDimensionSpacePoint->toDimensionSpacePoint();
 
-        // FIXME: AssetUsage->workspaceName ?
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->contentStreamId);
+        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($usage->workspaceName);
         if (is_null($workspace)) {
             return false;
         }

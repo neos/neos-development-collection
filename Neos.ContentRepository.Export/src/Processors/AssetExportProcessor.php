@@ -47,7 +47,7 @@ final class AssetExportProcessor implements ProcessorInterface
         if ($liveWorkspace === null) {
             return ProcessorResult::error('Failed to find live workspace');
         }
-        $assetFilter = AssetUsageFilter::create()->withContentStream($liveWorkspace->currentContentStreamId)->groupByAsset();
+        $assetFilter = AssetUsageFilter::create()->withWorkspaceName($liveWorkspace->workspaceName)->groupByAsset();
 
         $numberOfExportedAssets = 0;
         $numberOfExportedImageVariants = 0;

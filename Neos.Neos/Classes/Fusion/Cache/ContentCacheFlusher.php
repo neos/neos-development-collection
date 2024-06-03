@@ -284,27 +284,13 @@ class ContentCacheFlusher
             ->includeVariantsOfAsset();
 
 
-        $workspaceNamesByContentStreamId = [];
         foreach ($this->globalAssetUsageService->findByFilter($filter) as $contentRepositoryId => $usages) {
             foreach ($usages as $usage) {
-                // TODO: Remove when WorkspaceName is part of the AssetUsageProjection
-                $workspaceName = $workspaceNamesByContentStreamId[$contentRepositoryId][$usage->contentStreamId->value] ?? null;
-                if ($workspaceName === null) {
-                    $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryId));
-                    $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->contentStreamId);
-                    if ($workspace === null) {
-                        continue;
-                    }
-                    $workspaceName = $workspace->workspaceName;
-                    $workspaceNamesByContentStreamId[$contentRepositoryId][$usage->contentStreamId->value] = $workspaceName;
-                }
-                //
-
                 $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryId));
                 $tagsToFlush = array_merge(
                     $this->collectTagsForChangeOnNodeAggregate(
                         $contentRepository,
-                        $workspaceName,
+                        $usage->workspaceName,
                         $usage->nodeAggregateId
                     ),
                     $tagsToFlush
