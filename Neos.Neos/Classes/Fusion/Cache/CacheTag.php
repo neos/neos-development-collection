@@ -32,7 +32,7 @@ class CacheTag
 
     final public static function forNodeAggregate(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        ?WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
         return new self(
@@ -51,9 +51,18 @@ class CacheTag
         );
     }
 
+    final public static function forNodeAggregateFromNodeWithoutWorkspace(Node $node): self
+    {
+        return self::forNodeAggregate(
+            $node->contentRepositoryId,
+            null,
+            $node->aggregateId
+        );
+    }
+
     final public static function forDescendantOfNode(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        ?WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
         return new self(
@@ -72,9 +81,18 @@ class CacheTag
         );
     }
 
+    final public static function forDescendantOfNodeFromNodeWithoutWorkspace(Node $node): self
+    {
+        return self::forDescendantOfNode(
+            $node->contentRepositoryId,
+            null,
+            $node->aggregateId
+        );
+    }
+
     final public static function forAncestorNode(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        ?WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
         return new self(
@@ -93,9 +111,18 @@ class CacheTag
         );
     }
 
+    final public static function forAncestorNodeFromNodeWithoutWorkspace(Node $node): self
+    {
+        return self::forAncestorNode(
+            $node->contentRepositoryId,
+            null,
+            $node->aggregateId
+        );
+    }
+
     final public static function forNodeTypeName(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        ?WorkspaceName $workspaceName,
         NodeTypeName $nodeTypeName,
     ): self {
         return new self(
@@ -107,7 +134,7 @@ class CacheTag
 
     final public static function forDynamicNodeAggregate(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        ?WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
         return new self(
@@ -123,9 +150,13 @@ class CacheTag
     }
 
     protected static function getHashForWorkspaceNameAndContentRepositoryId(
-        WorkspaceName $workspaceName,
+        ?WorkspaceName $workspaceName,
         ContentRepositoryId $contentRepositoryId,
     ): string {
-        return sha1($workspaceName->value . '@' . $contentRepositoryId->value);
+        if ($workspaceName) {
+            return sha1($workspaceName->value . '@' . $contentRepositoryId->value);
+        }
+        return sha1($contentRepositoryId->value);
+
     }
 }

@@ -45,6 +45,17 @@ final class CacheTagSet
         ));
     }
 
+    public static function forDescendantOfNodesFromNodesWithoutWorkspace(
+        Nodes $nodes
+    ): self {
+        return new self(...array_map(
+            fn (Node $node): CacheTag => CacheTag::forDescendantOfNodeFromNodeWithoutWorkspace(
+                $node
+            ),
+            iterator_to_array($nodes)
+        ));
+    }
+
     public static function forNodeAggregatesFromNodes(
         Nodes $nodes
     ): self {
@@ -56,6 +67,16 @@ final class CacheTagSet
         ));
     }
 
+    public static function forNodeAggregatesFromNodesWithoutWorkspace(
+        Nodes $nodes
+    ): self {
+        return new self(...array_map(
+            fn (Node $node): CacheTag => CacheTag::forNodeAggregateFromNodeWithoutWorkspace(
+                $node
+            ),
+            iterator_to_array($nodes)
+        ));
+    }
 
     public static function forNodeTypeNames(
         ContentRepositoryId $contentRepositoryId,
@@ -66,6 +87,20 @@ final class CacheTagSet
             fn (NodeTypeName $nodeTypeName): CacheTag => CacheTag::forNodeTypeName(
                 $contentRepositoryId,
                 $workspaceName,
+                $nodeTypeName
+            ),
+            iterator_to_array($nodeTypeNames)
+        ));
+    }
+
+    public static function forNodeTypeNamesWithoutWorkspace(
+        ContentRepositoryId $contentRepositoryId,
+        NodeTypeNames $nodeTypeNames
+    ): self {
+        return new self(...array_map(
+            fn (NodeTypeName $nodeTypeName): CacheTag => CacheTag::forNodeTypeName(
+                $contentRepositoryId,
+                null,
                 $nodeTypeName
             ),
             iterator_to_array($nodeTypeNames)
