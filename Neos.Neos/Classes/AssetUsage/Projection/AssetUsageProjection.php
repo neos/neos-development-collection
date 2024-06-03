@@ -6,6 +6,7 @@ namespace Neos\Neos\AssetUsage\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Exception\ORMException;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
@@ -116,9 +117,10 @@ final class AssetUsageProjection implements ProjectionInterface
 
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        $this->repository->removeNode(
+        $this->repository->removeNodeInWorkspace(
             $event->nodeAggregateId,
-            $event->affectedOccupiedDimensionSpacePoints->toDimensionSpacePointSet()
+            $event->affectedOccupiedDimensionSpacePoints->toDimensionSpacePointSet(),
+            $event->workspaceName
         );
     }
 
@@ -133,18 +135,26 @@ final class AssetUsageProjection implements ProjectionInterface
         $this->repository->removeWorkspaceName($event->workspaceName);
     }
 
-    // @TODO: Check if asset is part of partially discarded
-    // use NodeIdsToPublishOrDiscard?
     public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
     {
-        $this->repository->removeWorkspaceName($event->workspaceName);
+        foreach ($event->discardedNodes as $discardedNode) {
+            $this->repository->removeNodeInWorkspace(
+                $discardedNode->nodeAggregateId,
+                DimensionSpacePointSet::fromArray([$discardedNode->dimensionSpacePoint]),
+                $event->workspaceName
+            );
+        }
     }
 
-    // @TODO: Check if asset is part of partially published
-    // use NodeIdsToPublishOrDiscard?
     public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event): void
     {
-        $this->repository->removeWorkspaceName($event->sourceWorkspaceName);
+        foreach ($event->publishedNodes as $publishedNode) {
+            $this->repository->removeNodeInWorkspace(
+                $publishedNode->nodeAggregateId,
+                DimensionSpacePointSet::fromArray([$publishedNode->dimensionSpacePoint]),
+                $event->sourceWorkspaceName
+            );
+        }
     }
 
     public function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void

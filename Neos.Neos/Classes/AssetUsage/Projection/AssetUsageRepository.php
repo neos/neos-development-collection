@@ -227,17 +227,20 @@ final class AssetUsageRepository
         ]);
     }
 
-    public function removeNode(
+    public function removeNodeInWorkspace(
         NodeAggregateId $nodeAggregateId,
         DimensionSpacePointSet $dimensionSpacePoints,
+        WorkspaceName $workspaceName
     ): void {
         $this->dbal->executeStatement(
             'DELETE FROM ' . $this->tableNamePrefix
-            . ' WHERE nodeAggregateId = :nodeAggregateId'
-            . ' AND originDimensionSpacePointHash IN (:dimensionSpacePointHashes)',
+            . ' WHERE nodeaggregateid = :nodeAggregateId'
+            . ' AND origindimensionspacepointhash IN (:dimensionSpacePointHashes)'
+            . ' AND workspacename = :workspaceName',
             [
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'dimensionSpacePointHashes' => $dimensionSpacePoints->getPointHashes(),
+                'workspaceName' => $workspaceName->value,
             ],
             [
                 'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
