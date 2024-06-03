@@ -31,7 +31,7 @@
 				</div>
 			</div>
 
-			<f:security.ifAccess privilegeTarget="Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces">
+			<f:security.ifAccess privilegeTarget="Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces">
 				<f:then>
 					<div class="neos-control-group">
 						<label class="neos-control-label">{neos:backend.translate(id: 'workspaces.workspace.visibility', source: 'Main', package: 'Neos.Workspace.Ui')}</label>

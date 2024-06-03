@@ -152,7 +152,7 @@
 		</table>
 	</div>
 	<div class="neos-footer">
-		<f:security.ifAccess privilegeTarget="Neos.Neos:Backend.CreateWorkspaces">
+		<f:security.ifAccess privilegeTarget="Neos.Workspace.Ui:Backend.CreateWorkspaces">
 		<f:link.action action="new" class="neos-button neos-button-primary">{neos:backend.translate(id: 'workspaces.createNewWorkspace', source: 'Main', package: 'Neos.Workspace.Ui')}</f:link.action>
 		</f:security.ifAccess>
 	</div>

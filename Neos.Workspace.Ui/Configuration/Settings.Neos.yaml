@@ -3,7 +3,7 @@ Neos:
     modules:
       management:
         submodules:
-          workspaces:
+          workspace:
             label: 'Neos.Workspace.Ui:Main:workspaces.label'
             controller: 'Neos\Workspace\Ui\Controller\WorkspaceController'
             description: 'Neos.Workspace.Ui:Main:workspaces.description'

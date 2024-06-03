@@ -2,58 +2,58 @@ privilegeTargets:
 
   'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
-    'Neos.Neos:Backend.PublishAllToLiveWorkspace':
+    'Neos.Workspace.Ui:Backend.PublishAllToLiveWorkspace':
       label: Allowed to publish to the live workspace
       matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->publishWorkspaceAction(workspace.baseWorkspace.name === "live"))'
 
-    'Neos.Neos:Backend.CreateWorkspaces':
+    'Neos.Workspace.Ui:Backend.CreateWorkspaces':
       label: Allowed to create a workspace
       matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->(create|new)Action())'
 
-    'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
+    'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageOwnWorkspaces':
       label: Allowed to manage own workspaces
       matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === current.userInformation.backendUser))'
 
-    'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces':
+    'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces':
       label: Manage internal workspaces
       matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === null))'
 
-    'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces':
+    'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageAllPrivateWorkspaces':
       label: Manage all private workspaces
       matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->(publishWorkspace|discardWorkspace|edit|update|delete)Action()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === false)'
 
   'Neos\Neos\Security\Authorization\Privilege\ModulePrivilege':
-    'Neos.Neos:Backend.Module.Management.Workspaces':
+    'Neos.Workspace.Ui:Backend.Module.Management.Workspace':
       label: General access to the workspace module
-      matcher: 'management/workspaces'
+      matcher: 'management/workspace'
 
 roles:
   'Neos.Neos:LivePublisher':
     privileges:
       -
-        privilegeTarget: 'Neos.Neos:Backend.PublishAllToLiveWorkspace'
+        privilegeTarget: 'Neos.Workspace.Ui:Backend.PublishAllToLiveWorkspace'
         permission: GRANT
 
   'Neos.Neos:AbstractEditor':
     privileges:
       -
-        privilegeTarget: 'Neos.Neos:Backend.CreateWorkspaces'
+        privilegeTarget: 'Neos.Workspace.Ui:Backend.CreateWorkspaces'
         permission: GRANT
 
       -
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
+        privilegeTarget: 'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageOwnWorkspaces'
         permission: GRANT
 
       -
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces'
+        privilegeTarget: 'Neos.Workspace.Ui:Backend.Module.Management.Workspace'
         permission: GRANT
 
   'Neos.Neos:Administrator':
     privileges:
       -
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+        privilegeTarget: 'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces'
         permission: GRANT
 
       -
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
+        privilegeTarget: 'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageAllPrivateWorkspaces'
         permission: GRANT
