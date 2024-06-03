@@ -31,7 +31,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 												},
 												function (data) {
 													window.parent.NeosMediaBrowserCallbacks.assetChosen(data.localAssetIdentifier);
-													$(this).remove('data-import-in-process')
+													$(this).removeAttr('data-import-in-process')
 												}
 											);
 										}
