@@ -4,8 +4,8 @@ const impersonateIcon = '<i class="fas fa-random icon-white"></i>'
 
 const ImpersonateButton = (identifier, disabled) => {
 		const localizedTooltip = !isNil(window.NeosCMS) ?
-			window.NeosCMS.I18n.translate('impersonate.tooltip.impersonateUserButton', 'Login as this user', 'Neos.Neos') :
-			'Login as this user';
+				window.NeosCMS.I18n.translate('impersonate.tooltip.impersonateUserButton', 'Login as this user', 'Neos.Neos') :
+				'Login as this user';
     const attributesObject = {
         'data-neos-toggle': 'tooltip',
         'title': localizedTooltip,
