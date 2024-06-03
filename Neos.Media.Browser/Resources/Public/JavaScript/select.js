@@ -12,17 +12,39 @@ window.addEventListener('DOMContentLoaded', (event) => {
 									if (localAssetIdentifier !== '') {
 											window.parent.NeosMediaBrowserCallbacks.assetChosen(localAssetIdentifier);
 									} else {
-										$.post(
-											$('link[rel="neos-media-browser-service-assetproxies-import"]').attr('href'),
-													{
-															assetSourceIdentifier: $(this).attr('data-asset-source-identifier'),
-															assetIdentifier: $(this).attr('data-asset-identifier'),
-															__csrfToken: $('body').attr('data-csrf-token')
-													},
-													function(data) {
-															window.parent.NeosMediaBrowserCallbacks.assetChosen(data.localAssetIdentifier);
-													}
+										if ($(this).attr('data-import-in-process') !== 'true') {
+											$(this).attr('data-import-in-process', 'true')
+											const message = window.NeosCMS.I18n.translate(
+												'assetImport.importInfo',
+												'Asset is being imported. Please wait.',
+												'Neos.Media.Browser',
+												'Main',
+												[]
+											)
+											window.NeosCMS.Notification.ok(message)
+											$.post(
+												$('link[rel="neos-media-browser-service-assetproxies-import"]').attr('href'),
+												{
+													assetSourceIdentifier: $(this).attr('data-asset-source-identifier'),
+													assetIdentifier: $(this).attr('data-asset-identifier'),
+													__csrfToken: $('body').attr('data-csrf-token')
+												},
+												function (data) {
+													window.parent.NeosMediaBrowserCallbacks.assetChosen(data.localAssetIdentifier);
+													$(this).remove('data-import-in-process')
+												}
 											);
+										}
+										else {
+											const message = window.NeosCMS.I18n.translate(
+												'assetImport.importInProcess',
+												'Import still in process. Please wait.',
+												'Neos.Media.Browser',
+												'Main',
+												[]
+											)
+											window.NeosCMS.Notification.warning(message)
+										}
 									}
 									e.preventDefault();
 							}
