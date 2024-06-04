@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "8.4.x-dev",
+        "neos/flow-development-collection": "8.3.x-dev",
         "php": "^8.0",
         "neos/flow": "*",
         "neos/cache": "*",
@@ -32,7 +32,7 @@
         "neos/party": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
-        "neos/kickstarter": "~8.4.0"
+        "neos/kickstarter": "^8.3"
     },
     "scripts": {
         "lint:phpstan": "../../bin/phpstan analyse",
