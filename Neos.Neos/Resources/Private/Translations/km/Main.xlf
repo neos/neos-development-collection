@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="final">ប្រភេទនៃថ្នាំង</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
-        <source>Path</source>
-        <target state="final">ទីតាំង</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-        <source>Relative Path</source>
-        <target state="final">ទីតាំងប្រែប្រួល</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve" approved="yes">
         <source>Version</source>
         <target state="final">កំណែ</target>

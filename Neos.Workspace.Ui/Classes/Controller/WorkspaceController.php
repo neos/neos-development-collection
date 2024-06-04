@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.Workspace.Ui package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Controller\Module\Management;
+namespace Neos\Workspace\Ui\Controller;
 
 use Doctrine\DBAL\DBALException;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -69,11 +69,10 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
- * The Neos Workspaces module controller
- *
- * @Flow\Scope("singleton")
+ * The Neos Workspace module controller
  */
-class WorkspacesController extends AbstractModuleController
+#[Flow\Scope('singleton')]
+class WorkspaceController extends AbstractModuleController
 {
     use ModuleTranslationTrait;
     use NodeTypeWithFallbackProvider;
@@ -101,10 +100,8 @@ class WorkspacesController extends AbstractModuleController
 
     /**
      * Display a list of unpublished content
-     *
-     * @return void
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
@@ -162,9 +159,9 @@ class WorkspacesController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspacesControllerInternals = $this->contentRepositoryRegistry->buildService(
+        $workspaceControllerInternals = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
-            new WorkspacesControllerInternalsFactory()
+            new WorkspaceControllerInternalsFactory()
         );
 
         $workspaceObj = $contentRepository->getWorkspaceFinder()->findOneByName($workspace);
@@ -180,7 +177,7 @@ class WorkspacesController extends AbstractModuleController
             // TODO $this->domainUserService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
             'canPublishToBaseWorkspace' => true,
             'siteChanges' => $this->computeSiteChanges($workspaceObj, $contentRepository),
-            'contentDimensions' => $workspacesControllerInternals->getContentDimensionsOrderedByPriority()
+            'contentDimensions' => $workspaceControllerInternals->getContentDimensionsOrderedByPriority()
         ]);
     }
 
@@ -336,8 +333,8 @@ class WorkspacesController extends AbstractModuleController
             [$title->value],
             null,
             null,
-            'Modules',
-            'Neos.Neos'
+            'Main',
+            'Neos.Workspace.Ui'
         ) ?: 'workspaces.workspaceHasBeenUpdated');
         $this->redirect('index');
     }
@@ -385,8 +382,8 @@ class WorkspacesController extends AbstractModuleController
                 [$workspace->workspaceTitle->value, implode(', ', $dependentWorkspaceTitles)],
                 null,
                 null,
-                'Modules',
-                'Neos.Neos'
+                'Main',
+                'Neos.Workspace.Ui'
             ) ?: 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies';
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->redirect('index');
@@ -405,8 +402,8 @@ class WorkspacesController extends AbstractModuleController
                 [$workspace->workspaceTitle->value],
                 null,
                 null,
-                'Modules',
-                'Neos.Neos'
+                'Main',
+                'Neos.Workspace.Ui'
             ) ?: 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes';
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->redirect('index');
@@ -417,8 +414,8 @@ class WorkspacesController extends AbstractModuleController
                 [$workspace->workspaceTitle->value, $nodesCount],
                 $nodesCount,
                 null,
-                'Modules',
-                'Neos.Neos'
+                'Main',
+                'Neos.Workspace.Ui'
             ) ?: 'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes';
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->redirect('index');
@@ -435,8 +432,8 @@ class WorkspacesController extends AbstractModuleController
             [$workspace->workspaceTitle->value],
             null,
             null,
-            'Modules',
-            'Neos.Neos'
+            'Main',
+            'Neos.Workspace.Ui'
         ) ?: 'workspaces.workspaceHasBeenRemoved');
         $this->redirect('index');
     }
@@ -468,8 +465,8 @@ class WorkspacesController extends AbstractModuleController
          * [],
          * null,
          * null,
-         * 'Modules',
-         * 'Neos.Neos'
+         * 'Main,
+         * 'Neos.Workspace.Ui
          * ) ?: 'workspaces.cantEditBecauseWorkspaceContainsChanges';
          * $this->addFlashMessage($message, '', Message::SEVERITY_WARNING, [], 1437833387);
          * $this->redirect('show', null, null, ['workspace' => $targetWorkspace]);
@@ -502,7 +499,7 @@ class WorkspacesController extends AbstractModuleController
         $this->redirect(
             'show',
             'Frontend\\Node',
-            'Neos.Neos',
+            'Neos.Workspace.Ui',
             ['node' => $targetNodeAddressInPersonalWorkspace]
         );
     }
@@ -538,8 +535,8 @@ class WorkspacesController extends AbstractModuleController
             [],
             null,
             null,
-            'Modules',
-            'Neos.Neos'
+            'Main',
+            'Neos.Workspace.Ui'
         ) ?: 'workspaces.selectedChangeHasBeenPublished');
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
     }
@@ -575,8 +572,8 @@ class WorkspacesController extends AbstractModuleController
             [],
             null,
             null,
-            'Modules',
-            'Neos.Neos'
+            'Main',
+            'Neos.Workspace.Ui'
         ) ?: 'workspaces.selectedChangeHasBeenDiscarded');
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
     }
@@ -617,8 +614,8 @@ class WorkspacesController extends AbstractModuleController
                     [],
                     null,
                     null,
-                    'Modules',
-                    'Neos.Neos'
+                    'Main',
+                    'Neos.Workspace.Ui'
                 ) ?: 'workspaces.selectedChangesHaveBeenPublished');
                 break;
             case 'discard':
@@ -633,8 +630,8 @@ class WorkspacesController extends AbstractModuleController
                     [],
                     null,
                     null,
-                    'Modules',
-                    'Neos.Neos'
+                    'Main',
+                    'Neos.Workspace.Ui'
                 ) ?: 'workspaces.selectedChangesHaveBeenDiscarded');
                 break;
             default:
@@ -672,8 +669,8 @@ class WorkspacesController extends AbstractModuleController
             ],
             null,
             null,
-            'Modules',
-            'Neos.Neos'
+            'Main',
+            'Neos.Workspace.Ui'
         ) ?: 'workspaces.allChangesInWorkspaceHaveBeenPublished');
         $this->redirect('index');
     }
@@ -703,8 +700,8 @@ class WorkspacesController extends AbstractModuleController
             [htmlspecialchars($workspace->name->value)],
             null,
             null,
-            'Modules',
-            'Neos.Neos'
+            'Main',
+            'Neos.Workspace.Ui'
         ) ?: 'workspaces.allChangesInWorkspaceHaveBeenDiscarded');
         $this->redirect('index');
     }

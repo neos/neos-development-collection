@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="final">Type de noeud</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
-        <source>Path</source>
-        <target state="final">Chemin</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-        <source>Relative Path</source>
-        <target state="final">Chemin relatif</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve" approved="yes">
         <source>Version</source>
         <target state="final">Version</target>

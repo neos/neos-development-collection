@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="translated">Тип вузла</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve">
-        <source>Path</source>
-        <target state="translated">Шлях</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
-        <source>Relative Path</source>
-        <target state="translated">Відносний шлях</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve">
         <source>Version</source>
         <target state="translated">Версія</target>

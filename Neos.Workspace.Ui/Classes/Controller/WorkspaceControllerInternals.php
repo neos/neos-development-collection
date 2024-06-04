@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.Workspace.Ui package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Controller\Module\Management;
+namespace Neos\Workspace\Ui\Controller;
 
 use Neos\ContentRepository\Core\Dimension\ContentDimension;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 /**
  * @deprecated really un-nice :D
  */
-class WorkspacesControllerInternals implements ContentRepositoryServiceInterface
+class WorkspaceControllerInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(
         protected ContentDimensionSourceInterface $contentDimensionSource,
