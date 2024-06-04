@@ -72,7 +72,7 @@ class ContentCacheFlusher
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
         $tagsToFlush = array_merge(
-            $this->collectTagsForChangeOnNodeAggregate($contentRepository, $workspaceName, $nodeAggregateId, $workspaceName),
+            $this->collectTagsForChangeOnNodeAggregate($contentRepository, $workspaceName, $nodeAggregateId, false),
             $tagsToFlush
         );
 
@@ -90,7 +90,7 @@ class ContentCacheFlusher
         ContentRepository $contentRepository,
         WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
-        ?WorkspaceName $workspaceNameToFlush
+        bool $anyWorkspace,
     ): array {
         $contentGraph = $contentRepository->getContentGraph($workspaceName);
 
@@ -101,6 +101,7 @@ class ContentCacheFlusher
             // Node Aggregate was removed in the meantime, so no need to clear caches on this one anymore.
             return [];
         }
+        $workspaceNameToFlush = $anyWorkspace ? CacheTagWorkspaceName::ANY : $workspaceName;
         $tagsToFlush = $this->collectTagsForChangeOnNodeIdentifier($contentRepository->id, $workspaceNameToFlush, $nodeAggregateId);
 
         $tagsToFlush = array_merge($this->collectTagsForChangeOnNodeType(
@@ -164,7 +165,7 @@ class ContentCacheFlusher
      */
     private function collectTagsForChangeOnNodeIdentifier(
         ContentRepositoryId $contentRepositoryId,
-        ?WorkspaceName $workspaceName,
+        WorkspaceName|CacheTagWorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): array {
         $tagsToFlush = [];
@@ -197,7 +198,7 @@ class ContentCacheFlusher
     private function collectTagsForChangeOnNodeType(
         NodeTypeName $nodeTypeName,
         ContentRepositoryId $contentRepositoryId,
-        ?WorkspaceName $workspaceName,
+        WorkspaceName|CacheTagWorkspaceName $workspaceName,
         ?NodeAggregateId $referenceNodeIdentifier,
         ContentRepository $contentRepository
     ): array {
@@ -311,7 +312,7 @@ class ContentCacheFlusher
                         $contentRepository,
                         $workspaceName,
                         $usage->nodeAggregateId,
-                        null
+                        true
                     ),
                     $tagsToFlush
                 );

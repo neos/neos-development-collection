@@ -25,6 +25,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
 use Neos\Neos\Fusion\Cache\CacheTag;
 use Neos\Neos\Fusion\Cache\CacheTagSet;
+use Neos\Neos\Fusion\Cache\CacheTagWorkspaceName;
 
 /**
  * Caching helper to make cache tag generation easier.
@@ -103,8 +104,9 @@ class CachingHelper implements ProtectedContextAwareInterface
                 $contextNode->workspaceName,
                 NodeTypeNames::fromStringArray($nodeTypes)
             )->toStringArray(),
-            CacheTagSet::forNodeTypeNamesWithoutWorkspace(
+            CacheTagSet::forNodeTypeNames(
                 $contextNode->contentRepositoryId,
+                CacheTagWorkspaceName::ANY,
                 NodeTypeNames::fromStringArray($nodeTypes)
             )->toStringArray(),
         );
