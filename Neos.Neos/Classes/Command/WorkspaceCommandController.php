@@ -146,9 +146,9 @@ class WorkspaceCommandController extends CommandController
     public function createRootCommand(string $name, string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $contentRepository->handle(CreateRootWorkspace::create(
+        $contentRepositoryInstance->handle(CreateRootWorkspace::create(
             WorkspaceName::fromString($name),
             WorkspaceTitle::fromString($name),
             WorkspaceDescription::fromString($name),
@@ -178,7 +178,7 @@ class WorkspaceCommandController extends CommandController
         string $contentRepository = 'default'
     ): void {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         if ($owner === '') {
             $workspaceOwnerUserId = null;
@@ -192,7 +192,7 @@ class WorkspaceCommandController extends CommandController
         }
 
         try {
-            $contentRepository->handle(CreateWorkspace::create(
+            $contentRepositoryInstance->handle(CreateWorkspace::create(
                 WorkspaceName::fromString($workspace),
                 WorkspaceName::fromString($baseWorkspace),
                 WorkspaceTitle::fromString($title ?: $workspace),
@@ -235,7 +235,7 @@ class WorkspaceCommandController extends CommandController
     public function deleteCommand(string $workspace, bool $force = false, string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspaceName = WorkspaceName::fromString($workspace);
         if ($workspaceName->isLive()) {
@@ -243,7 +243,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspace = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName($workspaceName);
         if (!$workspace instanceof Workspace) {
             $this->outputLine('Workspace "%s" does not exist', [$workspaceName->value]);
             $this->quit(1);
@@ -258,7 +258,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        $dependentWorkspaces = $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspaceName);
+        $dependentWorkspaces = $contentRepositoryInstance->getWorkspaceFinder()->findByBaseWorkspace($workspaceName);
         if (count($dependentWorkspaces) > 0) {
             $this->outputLine(
                 'Workspace "%s" cannot be deleted because the following workspaces are based on it:',
@@ -280,7 +280,7 @@ class WorkspaceCommandController extends CommandController
         }
 
         try {
-            $nodesCount = $contentRepository->projectionState(ChangeFinder::class)
+            $nodesCount = $contentRepositoryInstance->projectionState(ChangeFinder::class)
                 ->countByContentStreamId(
                     $workspace->currentContentStreamId
                 );
@@ -306,7 +306,7 @@ class WorkspaceCommandController extends CommandController
             $workspace->discardAllChanges();
         }
 
-        $contentRepository->handle(
+        $contentRepositoryInstance->handle(
             DeleteWorkspace::create(
                 $workspaceName
             )
@@ -349,9 +349,9 @@ class WorkspaceCommandController extends CommandController
     public function listCommand(string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspaces = $contentRepository->getWorkspaceFinder()->findAll();
+        $workspaces = $contentRepositoryInstance->getWorkspaceFinder()->findAll();
 
         if (count($workspaces) === 0) {
             $this->outputLine('No workspaces found.');
