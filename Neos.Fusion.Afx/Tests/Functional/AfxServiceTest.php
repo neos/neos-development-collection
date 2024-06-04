@@ -68,7 +68,7 @@ class AfxServiceTest extends TestCase
     {
         $afxCode = <<<'EOF'
             <h1>
-                
+
             </h1>
             EOF;
 
@@ -89,6 +89,7 @@ class AfxServiceTest extends TestCase
         $afxCode = '<h1></h1><p></p><p></p>';
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Join {
+                @sortProperties = false
                 item_1 = Neos.Fusion:Tag {
                     tagName = 'h1'
                 }
@@ -111,6 +112,7 @@ class AfxServiceTest extends TestCase
         $afxCode = 'Foo<h1></h1>Bar<p></p>Baz';
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Join {
+                @sortProperties = false
                 item_1 = 'Foo'
                 item_2 = Neos.Fusion:Tag {
                     tagName = 'h1'
@@ -133,6 +135,7 @@ class AfxServiceTest extends TestCase
         $afxCode = '  <h1></h1><p></p>  ';
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Join {
+                @sortProperties = false
                 item_1 = Neos.Fusion:Tag {
                     tagName = 'h1'
                 }
@@ -152,6 +155,7 @@ class AfxServiceTest extends TestCase
         $afxCode = '<h1></h1><p></p><p></p>';
         $expectedFusion = <<<'EOF'
             Neos.Fusion:Join {
+                @sortProperties = false
                 item_1 = Neos.Fusion:Tag {
                     tagName = 'h1'
                 }
@@ -478,6 +482,7 @@ EOF;
             Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = Neos.Fusion:Join {
+                    @sortProperties = false
                     item_1 = Neos.Fusion:Tag {
                         tagName = 'strong'
                         content = 'foo'
@@ -499,11 +504,11 @@ EOF;
     {
         $afxCode = <<<'EOF'
             <h1>
-                
+
                 <strong>foo</strong>
-                    
+
                 <i>bar</i>
-                
+
             </h1>
             EOF;
 
@@ -511,6 +516,7 @@ EOF;
             Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = Neos.Fusion:Join {
+                    @sortProperties = false
                     item_1 = Neos.Fusion:Tag {
                         tagName = 'strong'
                         content = 'foo'
@@ -535,6 +541,7 @@ EOF;
             Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = Neos.Fusion:Join {
+                    @sortProperties = false
                     key_one = Neos.Fusion:Tag {
                         tagName = 'strong'
                         content = 'foo'
@@ -559,6 +566,7 @@ EOF;
             Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = Neos.Fusion:Join {
+                    @sortProperties = false
                     item_1 = 'a string'
                     item_2 = Neos.Fusion:Tag {
                         tagName = 'strong'
@@ -624,6 +632,7 @@ EOF;
                     content = 'bar'
                 }
                 content = Neos.Fusion:Join {
+                    @sortProperties = false
                     item_1 = Neos.Fusion:Tag {
                         tagName = 'div'
                         content = 'a tag'
@@ -673,6 +682,7 @@ EOF;
             Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = Neos.Fusion:Join {
+                    @sortProperties = false
                     item_1 = ${eelExpression1}
                     item_2 = ${eelExpression2}
                     item_3 = ${eelExpression3}
@@ -695,6 +705,7 @@ EOF;
             Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = Neos.Fusion:Join {
+                    @sortProperties = false
                     item_1 = ${eelExpression1}
                     item_2 = ' '
                     item_3 = ${eelExpression2}
@@ -717,6 +728,7 @@ EOF;
             Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = Neos.Fusion:Join {
+                    @sortProperties = false
                     item_1 = 'String '
                     item_2 = ${eelExpression}
                     item_3 = ' String'
@@ -852,6 +864,7 @@ EOF;
             Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = Neos.Fusion:Join {
+                    @sortProperties = false
                     item_1 = 'Example'
                     item_2 = 'Content'
                 }

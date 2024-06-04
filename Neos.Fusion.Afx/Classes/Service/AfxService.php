@@ -209,6 +209,8 @@ class AfxService
 
         $index = 0;
         $fusion = 'Neos.Fusion:Join {' . PHP_EOL;
+        $fusion .= $indentation . self::INDENTATION . '@sortProperties = false' . PHP_EOL;
+
         foreach ($payload as $astNode) {
             // detect key
             $fusionName = 'item_' . ++$index;

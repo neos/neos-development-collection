@@ -52,6 +52,7 @@ prototype(Vendor.Site:Example) < prototype(Neos.Fusion:Component) {
     renderer = Neos.Fusion:Tag {
         tagName = 'div'
         content = Neos.Fusion:Join {
+            @sortProperties = false
             headline = Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = ${props.title}
@@ -191,6 +192,7 @@ Neos.Fusion:Tag {
 
 If an AFX-tag contains more than one child the content is are rendered as `Neos.Fusion:Join` into the
 `content`-attribute. The children are interpreted as string, eel-expression, html- or fusion-object-tag.
+The sorting of the items is disables via `@sortProperties = false`
 
 The following AFX-Code:
 
@@ -202,6 +204,7 @@ Is transpiled as:
 Neos.Fusion:Tag {
     tagName = 'h1'
     content = Neos.Fusion:Join {
+        @sortProperties = false
         item_1 = {props.title}
         item_2 = ': '
         item_3 = ${props.subtitle}
@@ -222,6 +225,7 @@ Is transpiled as:
 ```
 Vendor.Site:Prototype {
     text = Neos.Fusion:Join {
+        @sortProperties = false
         title = Neos.Fusion:Tag {
             tagName = 'h2'
             content  = ${props.title}
@@ -313,6 +317,7 @@ Is transpiled as:
 Neos.Fusion:Tag {
 	tagName = 'h1'
 	contents = Neos.Fusion:Join {
+		@sortProperties = false
 		item_1 = ${'eelExpression 1'}
 		item_2 = ${'eelExpression 2'}
 	}
@@ -331,6 +336,7 @@ Is transpiled as:
 Neos.Fusion:Tag {
 	tagName = 'h1'
 	contents = Neos.Fusion:Join {
+		@sortProperties = false
 		item_1 = ${'eelExpression 1'}
 		item_2 = ' '
 		item_3 = ${'eelExpression 2'}
@@ -347,6 +353,7 @@ foo<!-- comment -->bar
 Is transpiled as:
 ```
 Neos.Fusion:Join {
+    @sortProperties = false
     item_1 = 'foo'
     item_2 = 'bar'
 }
