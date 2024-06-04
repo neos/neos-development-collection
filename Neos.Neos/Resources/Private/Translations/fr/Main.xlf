@@ -1062,6 +1062,14 @@
         <source>Login as user</source>
         <target state="translated">Se connecter comme utilisateur</target>
       </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Chemin</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Chemin relatif</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

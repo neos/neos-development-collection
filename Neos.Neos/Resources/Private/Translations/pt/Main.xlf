@@ -1123,6 +1123,14 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
         <source>Content Tree</source>
         <target state="translated">Árvore de conteúdo</target>
       </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Caminho</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Caminho relativo</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

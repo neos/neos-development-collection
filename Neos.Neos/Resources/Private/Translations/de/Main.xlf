@@ -1106,6 +1106,14 @@
         <source>Back to user "{0}"</source>
         <target state="translated">Zurück zu Benutzer "{0}"</target>
       </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Pfad</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Relativer Pfad</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

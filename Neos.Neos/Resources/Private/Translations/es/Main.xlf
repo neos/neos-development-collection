@@ -1106,6 +1106,14 @@
         <source>You might want to import or create a new site in the setup.</source>
         <target state="translated">Es posible que desee importar o crear un nuevo sitio en la configuración.</target>
       </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Ruta</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Ruta relativa</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
