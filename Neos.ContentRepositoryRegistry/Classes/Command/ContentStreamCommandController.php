@@ -29,7 +29,7 @@ class ContentStreamCommandController extends CommandController
      * to a workspace (f.e. dangling ones in FORKED or CREATED.).
      *
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
-     * @param boolean $removeTemporary
+     * @param boolean $removeTemporary Will delete all content streams which are currently not assigned (Default: false)
      */
     public function pruneCommand(string $contentRepository = 'default', bool $removeTemporary = false): void
     {
