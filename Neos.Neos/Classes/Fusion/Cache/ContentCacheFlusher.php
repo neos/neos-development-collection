@@ -114,9 +114,6 @@ class ContentCacheFlusher
         ) {
             $parentNodeAggregates[] = $parentNodeAggregate;
         }
-        // we do not need these variables anymore here
-        unset($nodeAggregateId);
-
 
         // NOTE: Normally, the content graph cannot contain cycles. However, during the
         // testcase "Features/ProjectionIntegrityViolationDetection/AllNodesAreConnectedToARootNodePerSubgraph.feature"
@@ -287,18 +284,15 @@ class ContentCacheFlusher
         foreach ($this->globalAssetUsageService->findByFilter($filter) as $contentRepositoryId => $usages) {
             foreach ($usages as $usage) {
                 $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryId));
-                $tagsToFlush = array_merge(
-                    $this->collectTagsForChangeOnNodeAggregate(
-                        $contentRepository,
-                        $usage->workspaceName,
-                        $usage->nodeAggregateId
-                    ),
-                    $tagsToFlush
+                $tagsToFlush[] = $this->collectTagsForChangeOnNodeAggregate(
+                    $contentRepository,
+                    $usage->workspaceName,
+                    $usage->nodeAggregateId
                 );
             }
         }
-
-        $this->tagsToFlushAfterPersistance = array_merge($tagsToFlush, $this->tagsToFlushAfterPersistance);
+        $tagsToFlush[] = $this->tagsToFlushAfterPersistance;
+        $this->tagsToFlushAfterPersistance = array_merge(...$tagsToFlush);
     }
 
     /**
