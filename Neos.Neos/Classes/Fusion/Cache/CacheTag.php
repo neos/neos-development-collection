@@ -18,6 +18,8 @@ use Neos\Flow\Annotations as Flow;
 class CacheTag
 {
     protected const PATTERN = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
+    protected const NODE_PREFIX = 'Node';
+    protected const PARTS_DELIMITER = '_';
 
     private function __construct(
         public readonly string $value
@@ -32,13 +34,28 @@ class CacheTag
 
     final public static function forNodeAggregate(
         ContentRepositoryId $contentRepositoryId,
-        ?WorkspaceName $workspaceName,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
         return new self(
-            'Node_'
+            self::NODE_PREFIX
+            . self::PARTS_DELIMITER
             . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
-            . '_' . $nodeAggregateId->value
+            . self::PARTS_DELIMITER
+            . $nodeAggregateId->value
+        );
+    }
+
+    final public static function forNodeAggregateWithoutWorkspaceName(
+        ContentRepositoryId $contentRepositoryId,
+        NodeAggregateId $nodeAggregateId,
+    ): self {
+        return new self(
+            self::NODE_PREFIX
+            . self::PARTS_DELIMITER
+            . self::getHashForContentRepositoryId($contentRepositoryId)
+            . self::PARTS_DELIMITER
+            . $nodeAggregateId->value
         );
     }
 
@@ -53,9 +70,8 @@ class CacheTag
 
     final public static function forNodeAggregateFromNodeWithoutWorkspace(Node $node): self
     {
-        return self::forNodeAggregate(
+        return self::forNodeAggregateWithoutWorkspaceName(
             $node->contentRepositoryId,
-            null,
             $node->aggregateId
         );
     }
@@ -83,9 +99,8 @@ class CacheTag
 
     final public static function forDescendantOfNodeFromNodeWithoutWorkspace(Node $node): self
     {
-        return self::forDescendantOfNode(
+        return self::forNodeAggregateWithoutWorkspaceName(
             $node->contentRepositoryId,
-            null,
             $node->aggregateId
         );
     }
@@ -113,9 +128,8 @@ class CacheTag
 
     final public static function forAncestorNodeFromNodeWithoutWorkspace(Node $node): self
     {
-        return self::forAncestorNode(
+        return self::forNodeAggregateWithoutWorkspaceName(
             $node->contentRepositoryId,
-            null,
             $node->aggregateId
         );
     }
@@ -153,9 +167,12 @@ class CacheTag
         ?WorkspaceName $workspaceName,
         ContentRepositoryId $contentRepositoryId,
     ): string {
-        if ($workspaceName) {
-            return sha1($workspaceName->value . '@' . $contentRepositoryId->value);
-        }
+        return sha1($workspaceName->value . '@' . $contentRepositoryId->value);
+    }
+
+    protected static function getHashForContentRepositoryId(
+        ContentRepositoryId $contentRepositoryId,
+    ): string {
         return sha1($contentRepositoryId->value);
     }
 }
