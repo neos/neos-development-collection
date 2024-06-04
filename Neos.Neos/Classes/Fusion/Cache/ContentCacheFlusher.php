@@ -80,9 +80,8 @@ class ContentCacheFlusher
     }
 
     /**
-     * WorkspaceNameToFlush is nullable, so we can flush all workspaces as no specific workspaceName is provided.
-     * This is needed to flush nodes on asset changes, as the asset can get rendered in all workspaces, but lives
-     * usually only in live workspace.
+     * @param bool $anyWorkspace This is needed to flush nodes on asset changes, as the asset can get rendered in all workspaces, but lives
+     *                            usually only in live workspace.
      *
      * @return array<string,string>
      */
