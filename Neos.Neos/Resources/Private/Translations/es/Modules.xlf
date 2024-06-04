@@ -981,10 +981,6 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
         <source>The electronic address "{0}" ({1}) has been deleted for "{2}".</source>
         <target state="translated">La dirección electrónica "{0}" ({1}) ha sido suprimida para "{2}".</target>
       </trans-unit>
-      <trans-unit id="workspaces.selectAllCurrentChanges">
-        <source>Select all current changes</source>
-        <target state="translated">Seleccionar todos los cambios actuales</target>
-      </trans-unit>
       <trans-unit id="users.lastLogin" xml:space="preserve">
         <source>Last Login</source>
         <target state="translated">Última conexión</target>
@@ -992,14 +988,6 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
       <trans-unit id="user.description" xml:space="preserve">
         <source>Contains modules related to management of users</source>
         <target state="translated">Contiene módulos relacionados con la gestión de usuarios</target>
-      </trans-unit>
-      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
-        <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
-        <target state="translated">¿Realmente deseas descartar los cambios seleccionados en el espacio de trabajo "{0}"?</target>
-      </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
-        <source>Publish selected changes to {0}</source>
-        <target state="translated">Publica los cambios seleccionados en {0}</target>
       </trans-unit>
       <trans-unit id="users.sortBy.lastLogin" xml:space="preserve">
         <source>Sort by last login</source>
