@@ -64,7 +64,7 @@ class WorkspaceCommandController extends CommandController
      * This command publishes all modified, created or deleted nodes in the specified workspace to its base workspace.
      *
      * @param string $workspace Name of the workspace containing the changes to publish, for example "user-john"
-     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      */
     public function publishCommand(string $workspace, string $contentRepository = 'default'): void
     {
@@ -87,7 +87,7 @@ class WorkspaceCommandController extends CommandController
      * This command discards all modified, created or deleted nodes in the specified workspace.
      *
      * @param string $workspace Name of the workspace, for example "user-john"
-     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @throws StopCommandException
      */
     public function discardCommand(string $workspace, string $contentRepository = 'default'): void
@@ -113,7 +113,7 @@ class WorkspaceCommandController extends CommandController
      * This command rebases the given workspace on its base workspace, it may fail if the rebase is not possible.
      *
      * @param string $workspace Name of the workspace, for example "user-john"
-     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @param bool $force Rebase all events that do not conflict
      * @throws StopCommandException
      */
@@ -141,7 +141,7 @@ class WorkspaceCommandController extends CommandController
      * Create a new root workspace for a content repository.
      *
      * @param string $name Name of the new root
-     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      */
     public function createRootCommand(string $name, string $contentRepository = 'default'): void
     {
@@ -166,7 +166,7 @@ class WorkspaceCommandController extends CommandController
      * @param string|null $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param string|null $description A description explaining the purpose of the new workspace
      * @param string $owner The identifier of a User to own the workspace
-     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @throws StopCommandException
      */
     public function createCommand(

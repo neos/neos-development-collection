@@ -33,7 +33,7 @@ final class StructureAdjustmentsCommandController extends CommandController
      * Detect required structure adjustments for the specified node type in the given content repository.
      *
      * @param string|null $nodeType The node type to find structure adjustments for. If not provided, all adjustments will be shown. (Default: null)
-     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      */
     public function detectCommand(string $nodeType = null, string $contentRepository = 'default'): void
     {
@@ -55,7 +55,7 @@ final class StructureAdjustmentsCommandController extends CommandController
      * Apply required structure adjustments for the specified node type in the given content repository.
      *
      * @param string|null $nodeType The node type to apply structure adjustments for. If not provided, all found adjustments will be applied. (Default: null)
-     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @return void
      */
     public function fixCommand(string $nodeType = null, string $contentRepository = 'default'): void

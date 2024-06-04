@@ -28,7 +28,7 @@ class ContentStreamCommandController extends CommandController
      * If you also call with "--removeTemporary", will delete ALL content streams which are currently not assigned
      * to a workspace (f.e. dangling ones in FORKED or CREATED.).
      *
-     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @param boolean $removeTemporary
      */
     public function pruneCommand(string $contentRepository = 'default', bool $removeTemporary = false): void
@@ -50,7 +50,7 @@ class ContentStreamCommandController extends CommandController
     /**
      * Remove unused and deleted content streams from the event stream; effectively REMOVING information completely
      *
-     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      */
     public function pruneRemovedFromEventStreamCommand(string $contentRepository = 'default'): void
     {

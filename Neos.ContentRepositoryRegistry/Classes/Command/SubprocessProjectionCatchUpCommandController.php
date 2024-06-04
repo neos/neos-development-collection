@@ -25,7 +25,7 @@ class SubprocessProjectionCatchUpCommandController extends CommandController
     protected $contentRepositoryRegistry;
 
     /**
-     * @param string $contentRepository
+     * @param string $contentRepository Identifier of the content repository
      * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName fully qualified class name of the projection to catch up
      * @internal
      */

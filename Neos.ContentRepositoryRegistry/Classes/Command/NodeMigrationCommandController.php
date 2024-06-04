@@ -50,7 +50,7 @@ class NodeMigrationCommandController extends CommandController
      * @param string $version The version of the migration configuration you want to use.
      * @param string $workspace The workspace where the migration should be applied; by default "live"
      * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
-     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @return void
      * @throws StopCommandException
      * @see neos.contentrepositoryregistry:nodemigration:execute
