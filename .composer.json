@@ -40,11 +40,6 @@
       "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
       "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml"
     ],
-    "test:legacy": [
-      "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist Packages/Neos/Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/Features/MultiDimensionImport.feature",
-      "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-      "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml"
-    ],
     "test:behavioral:stop-on-failure": [
       "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
