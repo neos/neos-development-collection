@@ -87,9 +87,9 @@
         <source>Discard</source>
         <target state="final">Verwerfen</target>
       </trans-unit>
-      <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
+      <trans-unit id="discardChanges" xml:space="preserve" approved="no">
         <source>Discard changes</source>
-        <target state="final">Verwerfen</target>
+        <target state="translated">Änderungen verwerfen</target>
       </trans-unit>
       <trans-unit id="editTitle" xml:space="preserve" approved="yes">
         <source>Edit title</source>
@@ -243,9 +243,9 @@
         <source>Search</source>
         <target state="final">Suche</target>
       </trans-unit>
-      <trans-unit id="toggleInspector" xml:space="preserve" approved="yes">
+      <trans-unit id="toggleInspector" xml:space="preserve" approved="no">
         <source>Toggle inspector</source>
-        <target state="final">Inspector auf- / zuklappen</target>
+        <target state="translated">Inspektor auf- / zuklappen</target>
       </trans-unit>
       <trans-unit id="username" xml:space="preserve" approved="yes">
         <source>Username</source>
@@ -275,9 +275,9 @@
         <source>This operation cannot be undone.</source>
         <target state="final">Dieser Vorgang kann nicht rückgängig gemacht werden.</target>
       </trans-unit>
-      <trans-unit id="asset" xml:space="preserve" approved="yes">
+      <trans-unit id="asset" xml:space="preserve" approved="no">
         <source>Asset</source>
-        <target state="final">Asset</target>
+        <target state="translated">Datei</target>
       </trans-unit>
       <trans-unit id="created" xml:space="preserve" approved="yes">
         <source>Created</source>
@@ -427,9 +427,9 @@
         <source>Yes, delete it!</source>
         <target state="final">Ja, wirklich löschen!</target>
       </trans-unit>
-      <trans-unit id="packageKey" xml:space="preserve" approved="yes">
+      <trans-unit id="packageKey" xml:space="preserve" approved="no">
         <source>Package Key</source>
-        <target state="final">Paket-Schlüssel</target>
+        <target state="translated">Paketschlüssel</target>
       </trans-unit>
       <trans-unit id="description" xml:space="preserve" approved="yes">
         <source>Description</source>
@@ -679,9 +679,9 @@
         <source>A valid number is expected.</source>
         <target state="final">Eine gültige Zahl wird erwartet.</target>
       </trans-unit>
-      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
+      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="no">
         <source>Please enter a valid number between {minimum} and {maximum}</source>
-        <target state="final">Bitte geben Sie eine gültige Zahl zwischen {minimum} und {maximum} ein.</target>
+        <target state="translated">Bitte geben Sie eine gültige Zahl zwischen {minimum} und {maximum} ein</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
         <source>The given subject did not match the pattern ({pattern})</source>
@@ -1064,11 +1064,47 @@
       </trans-unit>
       <trans-unit id="documentTree" xml:space="preserve">
         <source>Document Tree</source>
-        <target state="needs-translation">Dokumentbaum</target>
+        <target state="translated">Dokumentbaum</target>
       </trans-unit>
       <trans-unit id="contentTree" xml:space="preserve">
         <source>Content Tree</source>
-        <target state="needs-translation">Inhaltsbaum</target>
+        <target state="translated">Inhaltsbaum</target>
+      </trans-unit>
+      <trans-unit id="impersonate.title.restoreUserButton" xml:space="preserve" approved="no">
+        <source>Switch back to the orginal user account</source>
+        <target state="translated">Zurück zum ursprünglichen Benutzerkonto wechseln</target>
+      </trans-unit>
+      <trans-unit id="cantPublishSingleNodeInNewPage" xml:space="preserve">
+        <source>Can't publish a single node in a new page</source>
+        <target state="translated">Eine einzelner Knoten kann nicht auf einer neuen Seite zu veröffentlicht werden</target>
+      </trans-unit>
+      <trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="no">
+        <source>Switched to the new user "{0}".</source>
+        <target state="translated">Zum neuen Benutzer "{0}" gewechselt.</target>
+      </trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.setupMessage" xml:space="preserve">
+        <source>You might want to import or create a new site in the setup.</source>
+        <target state="translated">Möglicherweise möchten Sie eine neue Site im Setup importieren oder erstellen.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.error.impersonateUser" xml:space="preserve" approved="no">
+        <source>Could not switch to the selected user.</source>
+        <target state="translated">Es konnte nicht zum ausgewählten Benutzer gewechselt werden.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.tooltip.impersonateUserButton" xml:space="preserve" approved="no">
+        <source>Login as user</source>
+        <target state="translated">Als Benutzer anmelden</target>
+      </trans-unit>
+      <trans-unit id="impersonate.error.restoreUser" xml:space="preserve" approved="no">
+        <source>Could not switch back to the original user.</source>
+        <target state="translated">Es konnte nicht zum ursprünglichen Benutzer zurückgewechselt werden.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.success.restoreUser" xml:space="preserve" approved="no">
+        <source>Switched back from "{0}" to the orginal user "{1}"</source>
+        <target state="translated">Zurückgewechselt von "{0}" zum ursprünglichen Benutzer "{1}"</target>
+      </trans-unit>
+      <trans-unit id="impersonate.label.restoreUserButton" xml:space="preserve" approved="no">
+        <source>Back to user "{0}"</source>
+        <target state="translated">Zurück zu Benutzer "{0}"</target>
       </trans-unit>
     </body>
   </file>
