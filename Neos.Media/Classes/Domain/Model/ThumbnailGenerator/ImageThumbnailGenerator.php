@@ -57,6 +57,11 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
     public function refresh(Thumbnail $thumbnail)
     {
         try {
+            /**
+             * @todo ... add additional crop to ensure that the focal point is
+             * in view after resizing ... needs common understanding wit
+             * the thumbnail service here: Packages/Neos/Neos.Media/Classes/Domain/Service/ThumbnailService.php:151
+             */
             $adjustments = [
                 new ResizeImageAdjustment(
                     [
