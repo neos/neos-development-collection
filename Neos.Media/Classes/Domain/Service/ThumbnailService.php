@@ -19,6 +19,7 @@ use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\FocalPointSupportInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
@@ -146,6 +147,17 @@ class ThumbnailService
         $async = $configuration->isAsync();
         if ($thumbnail === null) {
             $thumbnail = new Thumbnail($asset, $configuration);
+
+            if ($asset instanceof FocalPointSupportInterface) {
+                // @todo: needs common understanding of dimension change with resize adjustment
+                // - if a focal point was set
+                // - calculate target dimensions here
+                // - calculate new focalPointAfter transformation
+                // - store focal point in new image
+                // has to work closely with: Packages/Neos/Neos.Media/Classes/Domain/Model/ThumbnailGenerator/ImageThumbnailGenerator.php:58
+                $thumbnail->setFocalPointX($asset->getFocalPointX() ? $asset->getFocalPointX() + 1 : null);
+                $thumbnail->setFocalPointY($asset->getFocalPointY() ? $asset->getFocalPointY() + 1 : null);
+            }
 
             // If the thumbnail strategy failed to generate a valid thumbnail
             if ($async === false && $thumbnail->getResource() === null && $thumbnail->getStaticResource() === null) {
