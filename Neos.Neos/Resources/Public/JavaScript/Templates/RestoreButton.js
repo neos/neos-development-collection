@@ -18,9 +18,9 @@ const RestoreButton = (user) => {
             'Back to user "{0}"',
             'Neos.Neos',
             'Main',
-            [user.accountIdentifier]
+            [user.fullName]
         )
-        : `Restore user "${user.accountIdentifier}"`
+        : `Restore user "${user.fullName}"`
     return `<button ${attributes}>${impersonateIcon} ${restoreLabel}</button>`
 }
 
