@@ -1,6 +1,5 @@
 @contentrepository @LegacyMigration
 Feature: Migrating nodes with moved nodes in multiple content dimensions
-
   Background:
     Given using the following content dimensions:
       | Identifier | Default | Values | Generalizations |
@@ -39,11 +38,11 @@ Feature: Migrating nodes with moved nodes in multiple content dimensions
     Then I expect the following events to be exported
       | Type                                | Payload         |
       | RootNodeAggregateWithNodeWasCreated | {"nodeAggregateId": "sites", "nodeTypeName": "Neos.Neos:Sites", "coveredDimensionSpacePoints": [{"language": "en"},{"language": "de"}], "nodeAggregateClassification": "root"} |
-      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site", "parentNodeAggregateId": "sites",  "coveredDimensionSpacePoints": [{"language": "de"}]}  |
-      | NodePeerVariantWasCreated           | {"nodeAggregateId": "site", "sourceOrigin":{"language":"de"},"peerOrigin":{"language":"en"},"peerCoverage":[{"language":"en"}]} |
-      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "node-a", "parentNodeAggregateId": "site",  "coveredDimensionSpacePoints": [{"language": "en"}]} |
-      | NodePeerVariantWasCreated           | {"nodeAggregateId": "node-a", "sourceOrigin":{"language":"en"},"peerOrigin":{"language":"de"},"peerCoverage":[{"language":"de"}]} |
-      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "node-b", "parentNodeAggregateId": "site",  "coveredDimensionSpacePoints": [{"language": "de"}]} |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "site", "parentNodeAggregateId": "sites",  "originDimensionSpacePoint":{"language":"de"}}  |
+      | NodePeerVariantWasCreated           | {"nodeAggregateId": "site", "sourceOrigin":{"language":"de"},"peerOrigin":{"language":"en"}} |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "node-a", "parentNodeAggregateId": "site", "originDimensionSpacePoint":{"language":"en"}} |
+      | NodePeerVariantWasCreated           | {"nodeAggregateId": "node-a", "sourceOrigin":{"language":"en"},"peerOrigin":{"language":"de"}} |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "node-b", "parentNodeAggregateId": "site",  "originDimensionSpacePoint":{"language":"de"}} |
     And I expect exactly 6 nodes to be imported
 
   Scenario: Moved Nodes do not throw errors

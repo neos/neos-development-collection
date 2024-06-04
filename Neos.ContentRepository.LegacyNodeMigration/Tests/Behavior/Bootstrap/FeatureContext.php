@@ -165,7 +165,7 @@ class FeatureContext implements Context
      */
     public function iImportAllEvents(string $contentStream = 'contentStream') : void
     {
-        $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
+        $eventNormalizer = $this->getObject(EventNormalizer::class);
         $eventStore = (new \ReflectionClass($this->currentContentRepository))
             ->getProperty('eventStore')
             ->getValue($this->currentContentRepository);
@@ -204,7 +204,7 @@ class FeatureContext implements Context
         }
         $eventsJson = $this->mockFilesystem->read('events.jsonl');
         $exportedEvents = iterator_to_array(ExportedEvents::fromJsonl($eventsJson));
-
+        //print_r($eventsJson);die();
         $expectedEvents = $table->getHash();
         foreach ($exportedEvents as $exportedEvent) {
             $expectedEventRow = array_shift($expectedEvents);
@@ -235,7 +235,7 @@ class FeatureContext implements Context
      */
     public function iExpectXNodesToBeImported(int $count): void
     {
-        Assert::assertSame($this->currentContentRepository->getContentGraph()->countNodes(), $count, 'Expected number of nodes does not match actual number');
+        Assert::assertSame($this->currentContentRepository->getContentGraph(WorkspaceName::forLive())->countNodes(), $count, 'Expected number of nodes does not match actual number');
 
     }
 
