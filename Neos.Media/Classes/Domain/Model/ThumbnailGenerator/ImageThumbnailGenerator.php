@@ -58,7 +58,7 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
     {
         try {
             /**
-             * @todo ... add additional crop to ensure that the focal point is
+             * @todo ... add additional crop to ensure that the focal point is in view
              * in view after resizing ... needs common understanding wit
              * the thumbnail service here: Packages/Neos/Neos.Media/Classes/Domain/Service/ThumbnailService.php:151
              */
