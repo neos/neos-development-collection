@@ -20,6 +20,8 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
@@ -64,7 +66,7 @@ final class AssetUsageRepository
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-        $table = new Table($this->tableNamePrefix, [
+        $assetUsageTable = new Table($this->tableNamePrefix, [
             (new Column('assetid', Type::getType(Types::STRING)))->setLength(40)->setNotnull(true)->setDefault(''),
             (new Column('originalassetid', Type::getType(Types::STRING)))->setLength(40)->setNotnull(false)->setDefault(null),
             DbalSchemaFactory::columnForWorkspaceName('workspacename')->setNotNull(true),
@@ -74,7 +76,7 @@ final class AssetUsageRepository
             (new Column('propertyname', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setDefault('')
         ]);
 
-        $table
+        $assetUsageTable
             ->addUniqueIndex(['assetid', 'originalassetid', 'workspacename', 'nodeaggregateid', 'origindimensionspacepointhash', 'propertyname'], 'assetperproperty')
             ->addIndex(['assetid'])
             ->addIndex(['originalassetid'])
@@ -82,7 +84,18 @@ final class AssetUsageRepository
             ->addIndex(['nodeaggregateid'])
             ->addIndex(['origindimensionspacepointhash']);
 
-        return DbalSchemaFactory::createSchemaWithTables($schemaManager, [$table]);
+
+        $workspaceChainTable = new Table($this->getWorkspacesTableName(), [
+            DbalSchemaFactory::columnForWorkspaceName('workspacename')->setNotNull(true),
+            DbalSchemaFactory::columnForWorkspaceName('baseworkspacename')->setNotNull(false),
+        ]);
+
+        $workspaceChainTable
+            ->addUniqueIndex(['workspacename', 'baseworkspacename'], 'workspacerelation')
+            ->addIndex(['workspacename'])
+            ->addIndex(['baseworkspacename']);
+
+        return DbalSchemaFactory::createSchemaWithTables($schemaManager, [$assetUsageTable, $workspaceChainTable]);
     }
 
     public function findUsages(AssetUsageFilter $filter): AssetUsages
@@ -148,18 +161,7 @@ final class AssetUsageRepository
     public function addUsagesForNode(AssetUsageNodeAddress $nodeAddress, AssetIdsByProperty $assetIdsByProperty): void
     {
         // Delete all asset usage entries for newly set properties to ensure that removed or replaced assets are reflected
-        $this->dbal->executeStatement('DELETE FROM ' . $this->tableNamePrefix
-            . ' WHERE workspacename = :workspaceName'
-            . ' AND nodeaggregateid = :nodeAggregateId'
-            . ' AND origindimensionspacepointhash = :originDimensionSpacePointHash'
-            . ' AND propertyname IN (:propertyNames)', [
-            'workspaceName' => $nodeAddress->workspaceName->value,
-            'nodeAggregateId' => $nodeAddress->nodeAggregateId->value,
-            'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
-            'propertyNames' => $assetIdsByProperty->propertyNames(),
-        ], [
-            'propertyNames' => Connection::PARAM_STR_ARRAY,
-        ]);
+        $this->deleteAssetUsageByNodeAddressAndPropertyNames($nodeAddress, PropertyNames::fromArray($assetIdsByProperty->propertyNames()));
 
         foreach ($assetIdsByProperty as $propertyName => $assetIdAndOriginalAssetIds) {
             /** @var AssetIdAndOriginalAssetId $assetIdAndOriginalAssetId */
@@ -181,29 +183,60 @@ final class AssetUsageRepository
         }
     }
 
-    public function removeWorkspaceName(WorkspaceName $workspaceName): void
+    public function deleteAssetUsageByNodeAddressAndPropertyNames(AssetUsageNodeAddress $nodeAddress, PropertyNames $propertyNames): void
     {
-        $this->dbal->delete($this->tableNamePrefix, ['workspaceName' => $workspaceName->value]);
+        $this->dbal->executeStatement('DELETE FROM ' . $this->tableNamePrefix
+            . ' WHERE workspacename = :workspaceName'
+            . ' AND nodeaggregateid = :nodeAggregateId'
+            . ' AND origindimensionspacepointhash = :originDimensionSpacePointHash'
+            . ' AND propertyname IN (:propertyNames)', [
+            'workspaceName' => $nodeAddress->workspaceName->value,
+            'nodeAggregateId' => $nodeAddress->nodeAggregateId->value,
+            'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
+            'propertyNames' => array_map(static fn(PropertyName $propertyName) => $propertyName->value, iterator_to_array($propertyNames)),
+        ], [
+            'propertyNames' => Connection::PARAM_STR_ARRAY,
+        ]);
     }
 
-    public function copyDimensions(
+    public function removeByWorkspaceName(WorkspaceName $workspaceName): void
+    {
+        $this->dbal->delete($this->tableNamePrefix, ['workspacename' => $workspaceName->value]);
+    }
+
+    public function copyNodeAggregateFromBaseWorkspace(
+        NodeAggregateId $nodeAggregateId,
+        WorkspaceName $workspaceName,
         OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         OriginDimensionSpacePoint $targetOriginDimensionSpacePoint,
     ): void {
         try {
-            $this->dbal->executeStatement(
-                'INSERT INTO ' . $this->tableNamePrefix . ' (assetid, originalassetid, workspacename, nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, propertyname)'
-                . ' SELECT assetid, originalassetid, workspacename, nodeaggregateid,'
-                . ' :targetOriginDimensionSpacePoint AS origindimensionspacepoint,'
-                . ' :targetOriginDimensionSpacePointHash AS origindimensionspacepointhash, propertyname'
-                . ' FROM ' . $this->tableNamePrefix
-                . ' WHERE originDimensionSpacePointHash = :sourceOriginDimensionSpacePointHash',
-                [
-                    'sourceOriginDimensionSpacePointHash' => $sourceOriginDimensionSpacePoint->hash,
-                    'targetOriginDimensionSpacePoint' => $targetOriginDimensionSpacePoint->toJson(),
-                    'targetOriginDimensionSpacePointHash' => $targetOriginDimensionSpacePoint->hash,
-                ]
-            );
+            $baseWorkspaces = $this->getBaseWorkspaces($workspaceName);
+            foreach ($baseWorkspaces as $baseWorkspace) {
+                $affectedRows = $this->dbal->executeStatement(
+                    'INSERT INTO ' . $this->tableNamePrefix . ' (assetid, originalassetid, workspacename, nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, propertyname)'
+                    . ' SELECT assetid, originalassetid, :workspaceName, nodeaggregateid,'
+                    . ' :targetOriginDimensionSpacePoint AS origindimensionspacepoint,'
+                    . ' :targetOriginDimensionSpacePointHash AS origindimensionspacepointhash, propertyname'
+                    . ' FROM ' . $this->tableNamePrefix
+                    . ' WHERE originDimensionSpacePointHash = :sourceOriginDimensionSpacePointHash'
+                    . '  AND nodeaggregateid = :nodeAggregateId'
+                    . '  AND workspacename = :baseWorkspaceName',
+                    [
+                        'nodeAggregateId' => $nodeAggregateId->value,
+                        'workspaceName' => $workspaceName->value,
+                        'baseWorkspaceName' => $baseWorkspace->value,
+                        'sourceOriginDimensionSpacePointHash' => $sourceOriginDimensionSpacePoint->hash,
+                        'targetOriginDimensionSpacePoint' => $targetOriginDimensionSpacePoint->toJson(),
+                        'targetOriginDimensionSpacePointHash' => $targetOriginDimensionSpacePoint->hash,
+                    ]
+                );
+
+                if ($affectedRows > 0) {
+                    // We found a baseWorkspace with an assetUsage
+                    return;
+                }
+            }
         } catch (UniqueConstraintViolationException $e) {
             // A usage already exists for this node and property -> can be ignored
         }
@@ -248,6 +281,62 @@ final class AssetUsageRepository
         );
     }
 
+    public function addWorkspace(WorkspaceName $workspaceName, ?WorkspaceName $baseWorkspaceName): void
+    {
+        $this->dbal->insert(
+            $this->getWorkspacesTableName(),
+            [
+                'workspacename' => $workspaceName->value,
+                'baseworkspacename' => $baseWorkspaceName?->value,
+            ]
+        );
+    }
+
+    public function updateWorkspace(WorkspaceName $workspaceName, ?WorkspaceName $baseWorkspaceName): void
+    {
+        $this->dbal->update(
+            $this->getWorkspacesTableName(),
+            [
+                'baseworkspacename' => $baseWorkspaceName?->value,
+            ],
+            [
+                'workspacename' => $workspaceName->value,
+            ],
+        );
+    }
+
+    public function removeWorkspace(WorkspaceName $workspaceName): void
+    {
+        $this->dbal->delete(
+            $this->getWorkspacesTableName(),
+            [
+                'workspacename' => $workspaceName->value,
+            ]
+        );
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName
+     * @return array<WorkspaceName>
+     */
+    public function getBaseWorkspaces(WorkspaceName $workspaceName): array
+    {
+        $baseWorkspaces = $this->dbal->executeQuery(
+            'WITH RECURSIVE workspaceChain AS ('
+            . 'SELECT * FROM ' . $this->getWorkspacesTableName() . ' w WHERE w.workspacename = :workspaceName'
+            . ' UNION'
+            . ' SELECT w.workspacename, w.baseworkspacename from ' . $this->getWorkspacesTableName() . ' w'
+            . ' INNER JOIN workspaceChain  ON workspaceChain.baseworkspacename = w.workspacename'
+            . ' )'
+            . 'SELECT baseworkspacename FROM workspaceChain WHERE baseworkspacename is not null  ;',
+            [
+                'workspaceName' => $workspaceName->value
+            ]
+        )->fetchFirstColumn();
+
+        return array_map(WorkspaceName::fromString(...), $baseWorkspaces);
+    }
+
     /**
      * @throws DbalException
      */
@@ -265,10 +354,16 @@ final class AssetUsageRepository
             );
         }
         $this->dbal->executeStatement($platform->getTruncateTableSQL($this->tableNamePrefix));
+        $this->dbal->executeStatement($platform->getTruncateTableSQL($this->getWorkspacesTableName()));
     }
 
     public function getTableNamePrefix(): string
     {
         return $this->tableNamePrefix;
+    }
+
+    private function getWorkspacesTableName(): string
+    {
+        return $this->tableNamePrefix . '_workspaces';
     }
 }

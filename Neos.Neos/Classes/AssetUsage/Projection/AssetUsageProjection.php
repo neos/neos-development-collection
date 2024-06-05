@@ -12,7 +12,12 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
@@ -112,6 +117,8 @@ final class AssetUsageProjection implements ProjectionInterface
             $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
             $event->nodeAggregateId
         );
+
+        $this->repository->deleteAssetUsageByNodeAddressAndPropertyNames($nodeAddress, $event->propertiesToUnset);
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
     }
 
@@ -124,15 +131,24 @@ final class AssetUsageProjection implements ProjectionInterface
         );
     }
 
-
     public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
-        $this->repository->copyDimensions($event->sourceOrigin, $event->peerOrigin);
+        $this->repository->copyNodeAggregateFromBaseWorkspace($event->nodeAggregateId, $event->workspaceName, $event->sourceOrigin, $event->peerOrigin);
+    }
+
+    public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
+    {
+        $this->repository->copyNodeAggregateFromBaseWorkspace($event->nodeAggregateId, $event->workspaceName, $event->sourceOrigin, $event->generalizationOrigin);
+    }
+
+    public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
+    {
+        $this->repository->copyNodeAggregateFromBaseWorkspace($event->nodeAggregateId, $event->workspaceName, $event->sourceOrigin, $event->specializationOrigin);
     }
 
     public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
-        $this->repository->removeWorkspaceName($event->workspaceName);
+        $this->repository->removeByWorkspaceName($event->workspaceName);
     }
 
     public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
@@ -159,17 +175,34 @@ final class AssetUsageProjection implements ProjectionInterface
 
     public function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
     {
-        $this->repository->removeWorkspaceName($event->sourceWorkspaceName);
+        $this->repository->removeByWorkspaceName($event->sourceWorkspaceName);
     }
 
     public function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
     {
-        $this->repository->removeWorkspaceName($event->workspaceName);
+        $this->repository->removeByWorkspaceName($event->workspaceName);
     }
 
     public function whenWorkspaceWasRemoved(WorkspaceWasRemoved $event): void
     {
-        $this->repository->removeWorkspaceName($event->workspaceName);
+        $this->repository->removeByWorkspaceName($event->workspaceName);
+        $this->repository->removeWorkspace($event->workspaceName);
+    }
+
+    public function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
+    {
+        $this->repository->addWorkspace($event->workspaceName, $event->baseWorkspaceName);
+    }
+
+    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
+    {
+        $this->repository->addWorkspace($event->workspaceName, null);
+    }
+
+    private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event): void
+    {
+        $this->repository->updateWorkspace($event->workspaceName, $event->baseWorkspaceName);
+
     }
 
 
@@ -265,14 +298,17 @@ final class AssetUsageProjection implements ProjectionInterface
             NodePropertiesWereSet::class,
             NodeAggregateWasRemoved::class,
             NodePeerVariantWasCreated::class,
-            // NodeGeneralizationVariantWasCreated::class,
-            // NodeSpecializationVariantWasCreated::class,
+            NodeGeneralizationVariantWasCreated::class,
+            NodeSpecializationVariantWasCreated::class,
             WorkspaceWasDiscarded::class,
             WorkspaceWasPartiallyDiscarded::class,
             WorkspaceWasPartiallyPublished::class,
             WorkspaceWasPublished::class,
             WorkspaceWasRebased::class,
-            WorkspaceWasRemoved::class
+            WorkspaceWasRemoved::class,
+            WorkspaceWasCreated::class,
+            RootWorkspaceWasCreated::class,
+            WorkspaceBaseWorkspaceWasChanged::class,
         ]);
     }
 
@@ -283,15 +319,17 @@ final class AssetUsageProjection implements ProjectionInterface
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
-            // TODO
-            // NodeGeneralizationVariantWasCreated::class => "",
-            // NodeSpecializationVariantWasCreated::class => "",
+            NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
+            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
             WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
             WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
             WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
             WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
+            WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
@@ -318,7 +356,7 @@ final class AssetUsageProjection implements ProjectionInterface
             } /** @noinspection PhpRedundantCatchClauseInspection */ catch (ORMException) {
                 return null;
             }
-            /** @phpstan-ignore-next-line  */
+            /** @phpstan-ignore-next-line */
             $this->originalAssetIdMappingRuntimeCache[$assetId] = $asset instanceof AssetVariantInterface ? $asset->getOriginalAsset()->getIdentifier() : null;
         }
 
