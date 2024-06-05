@@ -277,9 +277,9 @@ class ContentCacheFlusher
 
         $tagsToFlush = [];
         $filter = AssetUsageFilter::create()
+            ->groupByNode()
             ->withAsset($this->persistenceManager->getIdentifierByObject($asset))
             ->includeVariantsOfAsset();
-
 
         foreach ($this->globalAssetUsageService->findByFilter($filter) as $contentRepositoryId => $usages) {
             foreach ($usages as $usage) {
