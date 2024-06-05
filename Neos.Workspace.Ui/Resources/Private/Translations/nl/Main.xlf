@@ -253,6 +253,26 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="translated">Alle wijzigingen van workspace "{0}" zijn ongedaan gemaakt.</target>
       </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
+        <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
+        <target state="needs-translation">Weet u zeker dat u de geselecteerde wijzigingen in de "{0}" workspace wilt annuleren?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectAllCurrentChanges" xml:space="preserve">
+        <source>Select all current changes</source>
+        <target state="needs-translation">Selecteer alle huidige wijzigingen</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Pad</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Relatief pad</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
+        <source>Publish selected changes to {0}</source>
+        <target state="needs-translation">Publiceer geselecteerde wijzigingen naar {0}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
