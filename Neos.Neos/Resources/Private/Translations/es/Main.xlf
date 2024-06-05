@@ -1108,11 +1108,11 @@
       </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
         <source>Path</source>
-        <target state="needs-translation">Ruta</target>
+        <target state="translated">Ruta</target>
       </trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
         <source>Relative Path</source>
-        <target state="needs-translation">Ruta relativa</target>
+        <target state="translated">Ruta relativa</target>
       </trans-unit>
     </body>
   </file>

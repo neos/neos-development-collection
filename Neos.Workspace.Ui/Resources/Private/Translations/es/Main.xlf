@@ -261,6 +261,18 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="translated">Todos los cambios del espacio de trabajo "{0}" han sido descartados.</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
+        <source>Publish selected changes to {0}</source>
+        <target state="translated">Publicar cambios seleccionados en {0}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectAllCurrentChanges" xml:space="preserve">
+        <source>Select all current changes</source>
+        <target state="translated">Seleccionar todos los cambios actuales</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
+        <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
+        <target state="translated">¿Realmente desea descartar los cambios seleccionados en el espacio de trabajo "{0}"?</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
