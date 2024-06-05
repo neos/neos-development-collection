@@ -1,0 +1,29 @@
+prototype(Neos.Workspace.Ui:Component.WorkspaceTreeNode) < prototype(Neos.Fusion:Component) {
+  userWorkspace = ''
+  workspaceName = ''
+  workspacesAndChangeCounts = ${{}}
+  level = 0
+
+  @private {
+    workspaceData = ${props.workspacesAndChangeCounts[props.workspaceName]}
+    subWorkspacesAndChangeCounts = ${Array.filter(props.workspacesAndChangeCounts, (workspaceData) => workspaceData.workspace.baseWorkspaceName.value == props.workspaceName)}
+  }
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.WorkspaceTableRow
+      userWorkspace={props.userWorkspace}
+      workspaceName={props.workspaceName}
+      workspaceData={private.workspaceData}
+      level={props.level}
+      @if={props.workspaceName != 'live'}
+    />
+    <Neos.Fusion:Loop items={private.subWorkspacesAndChangeCounts} itemKey="workspaceName" itemName="workspaceData">
+      <Neos.Workspace.Ui:Component.WorkspaceTreeNode
+        userWorkspace={props.userWorkspace}
+        workspaceName={workspaceName}
+        workspacesAndChangeCounts={props.workspacesAndChangeCounts}
+        level={props.level + 1}
+      />
+    </Neos.Fusion:Loop>
+  `
+}

@@ -1,0 +1,78 @@
+.workspace-table {
+  --column-color: var(--grayDark);
+  --indent-level: 0;
+
+  margin-top: 1em;
+  border-spacing: 0;
+  position: relative;
+  width: 100%;
+}
+
+.workspace-table th {
+  padding: 0.5em;
+  position: sticky;
+  top: 40px;
+  user-select: none;
+  background: var(--grayDark);
+  border-bottom: 1px solid var(--grayDark);
+  z-index: 1;
+}
+
+.workspace-table td {
+  padding: 0 0.5em;
+  border-top: 1px solid var(--grayDark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: var(--column-color);
+  min-height: 40px;
+}
+
+.workspace-type-column {
+  padding: 0 0.5ch;
+  text-align: center;
+}
+
+.workspace-type-column > * {
+  width: 20px !important;
+}
+
+  /**
+   * The arrow icon to show sub-workspace indentation
+   */
+.workspace-label-column .fas {
+  transform: rotate(90deg);
+  vertical-align: middle;
+  margin-left: calc((var(--indent-level) - 2) * 1.2ch);
+  margin-right: 0.5ch;
+}
+
+.workspace__info-text {
+  font-size: 0.8em;
+  font-style: italic;
+  margin-left: 0.5ch;
+  user-select: none;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  color: var(--textOnGray);
+}
+
+.icon--secondary {
+  left: 0.5em;
+  top: 0.5em;
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.workspace--stale {
+  --column-color: var(--grayDark);
+}
+.workspace--personal-workspace {
+  --column-color: var(--blueDark);
+}

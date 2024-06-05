@@ -1,0 +1,38 @@
+prototype(Neos.Workspace.Ui:Component.WorkspaceTable) < prototype(Neos.Fusion:Component) {
+  userWorkspace = ''
+  workspacesAndChangeCounts = ${{}}
+
+  renderer = afx`
+    <table id="workspaceTable" class="workspace-table">
+      <thead>
+      <tr>
+        <th></th>
+        <th>
+          <button type="button" class="icon-button">
+            {I18n.translate('table.header.title', 'Title', [], 'Main', 'Neos.Workspace.Ui')}
+            <i class="fas fa-sort-alpha-down"></i>
+          </button>
+        </th>
+        <th>{I18n.translate('table.header.description', 'Description', [], 'Main', 'Neos.Workspace.Ui')}</th>
+        <th>{I18n.translate('table.header.owner', 'Owner', [], 'Main', 'Neos.Workspace.Ui')}</th>
+        <th>
+          <button type="button" class="icon-button">
+            {I18n.translate('table.header.lastModified', 'Last modified', [], 'Main', 'Neos.Workspace.Ui')}
+            <i class="fas fa-sort"></i>
+          </button>
+        </th>
+        <th>{I18n.translate('table.header.status', 'Status', [], 'Main', 'Neos.Workspace.Ui')}</th>
+        <th>{I18n.translate('table.header.changes', 'Changes', [], 'Main', 'Neos.Workspace.Ui')}</th>
+        <th>{I18n.translate('table.header.actions', 'Actions', [], 'Main', 'Neos.Workspace.Ui')}</th>
+      </tr>
+      </thead>
+      <tbody>
+        <Neos.Workspace.Ui:Component.WorkspaceTreeNode
+          userWorkspace={props.userWorkspace}
+          workspaceName="live"
+          workspacesAndChangeCounts={props.workspacesAndChangeCounts}
+        />
+      </tbody>
+    </table>
+  `
+}

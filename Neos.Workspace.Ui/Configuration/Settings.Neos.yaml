@@ -9,6 +9,9 @@ Neos:
             description: 'Neos.Workspace.Ui:Main:workspaces.description'
             icon: fas fa-th-large
             mainStylesheet: 'Lite'
+            additionalResources:
+              styleSheets:
+                'Neos.Workspace.Ui': 'resource://Neos.Workspace.Ui/Public/Styles/Module.css'
 
     userInterface:
       translation:

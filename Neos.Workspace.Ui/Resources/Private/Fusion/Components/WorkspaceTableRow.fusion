@@ -1,0 +1,92 @@
+prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion:Component) {
+  userWorkspace = ''
+  workspaceName = ''
+  workspaceData = ${{}}
+  level = 0
+
+  @private {
+    workspaceStatus = Neos.Fusion:Case {
+      personal-workspace {
+        condition = ${props.workspaceName == props.userWorkspace.workspaceName.value}
+        renderer = 'personal-workspace'
+      }
+      stale {
+        // TODO: Calculate stale status based on last change data
+        condition = false
+        renderer = 'stale'
+      }
+      withAcl {
+        // TODO: Calculate acl status on whether the workspace is shared with selected users
+        condition = false
+        renderer = 'with-acl'
+      }
+      private {
+        condition = ${props.workspaceData.workspace.workspaceOwner}
+        renderer = 'private'
+      }
+      default {
+        condition = true
+        renderer = 'internal'
+      }
+    }
+    workspaceStatusLabel = Neos.Fusion:Match {
+      @subject = ${private.workspaceStatus}
+      personal-workspace = ${I18n.translate('badge.isPersonalWorkspace', 'This is your personal workspace', [], 'Main', 'Neos.Workspace.Ui')}
+      stale = ${I18n.translate('badge.isStale', 'This workspace has not been used for a long time', [], 'Main', 'Neos.Workspace.Ui')}
+      with-acl = ${I18n.translate('table.column.access.acl', 'This workspace is owned by ' + props.workspaceData.workspaceOwnerHumanReadable + ' but allows access to additional users', [], 'Main', 'Neos.Workspace.Ui')}
+      private = ${I18n.translate('table.column.access.private', 'This workspace is owned by ' + props.workspaceData.workspaceOwnerHumanReadable, {}, 'Main', 'Neos.Workspace.Ui')}
+      @default = ${I18n.translate('table.column.access.internal', 'Internal workspace', [], 'Main', 'Neos.Workspace.Ui')}
+    }
+    workspaceStatusIcon = Neos.Fusion:Match {
+      @subject = ${private.workspaceStatus}
+      internal = 'users'
+      with-acl = 'user-plus'
+      @default = 'user'
+    }
+    showWorkspaceUri = Neos.Fusion:UriBuilder {
+      action = 'show'
+      arguments {
+        workspace = ${props.workspaceName}
+      }
+    }
+  }
+
+  renderer = afx`
+    <tr id={'workspace-' + props.workspaceName} class={'workspace--' + private.workspaceStatus}>
+      <td class="workspace-type-column" title={private.workspaceStatusLabel}>
+        <Neos.Workspace.Ui:Component.Icon
+          icon={private.workspaceStatusIcon}
+          secondaryIcon={private.workspaceStatus == 'stale' ? 'clock' : ''}
+        />
+      </td>
+      <td class="workspace-label-column" style={'--indent-level:' + props.level }>
+        <i class="fas fa-level-up-alt" @if={props.level > 1}></i>
+        {props.workspaceData.workspace.workspaceTitle.value}
+        <span class="workspace__info-text" @if={props.workspaceName == props.userWorkspace.workspaceName.value}>
+          ({I18n.translate('badge.isUserWorkspace', 'This is your workspace', [], 'Main', 'Neos.Workspace.Ui')})
+        </span>
+      </td>
+      <td>{props.workspaceData.workspace.workspaceDescription.value || '–'}</td>
+      <td>{props.workspaceData.workspaceOwnerHumanReadable || '–'}</td>
+      <td>–</td>
+      <td>{props.workspaceData.workspace.status.value || '–'}</td>
+      <td>–</td>
+      <td>
+        <a class="neos-button"
+          title={I18n.translate(workspace.changesCounts.total ? 'table.column.action.show.title' : 'table.column.action.show.disabled.title', 'Show changes in workspace ' + workspace.title, { workspace: workspace.title }, 'Main', 'Neos.Workspace.Ui')}
+          disabled={workspace.changesCounts.total == 0}
+          href={private.showWorkspaceUri}
+        >
+          <i class="fas fa-review"></i> {I18n.translate('table.column.action.show', 'Show', [], 'Main', 'Neos.Workspace.Ui')}
+        </a>
+        <button class="neos-button" type="button"
+            title={I18n.translate('table.column.action.edit', 'Edit workspace ' + workspace.title, {workspace: workspace.title}, 'Main', 'Neos.Workspace.Ui')}
+            onClick=""
+            disabled={!workspace.canManage || workspace.changesCounts == null}
+        >
+          <i class="fas fa-pencil-alt"></i>
+        </button>
+      </td>
+    </tr>
+  `
+}

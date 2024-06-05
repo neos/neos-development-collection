@@ -156,6 +156,7 @@ class WorkspaceController extends AbstractModuleController
 
         $this->view->assign('userWorkspace', $userWorkspace);
         $this->view->assign('workspacesAndChangeCounts', $workspacesAndCounts);
+        $this->view->assign('flashMessages', $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush());
     }
 
 

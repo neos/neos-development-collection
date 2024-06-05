@@ -1,0 +1,20 @@
+Neos.Workspace.Ui.WorkspaceController {
+  index = Neos.Fusion:Component {
+    userWorkspace = ${userWorkspace}
+    workspacesAndChangeCounts = ${workspacesAndChangeCounts}
+    flashMessages = ${flashMessages}
+
+    renderer = afx`
+      <div class="neos-content neos-container-fluid">
+        <div class="neos-row-fluid">
+          <Neos.Workspace.Ui:Component.WorkspaceTable
+            userWorkspace={props.userWorkspace}
+            workspacesAndChangeCounts={props.workspacesAndChangeCounts}
+          />
+          <Neos.Workspace.Ui:Component.Footer workspacesAndChangeCounts={props.workspacesAndChangeCounts}/>
+          <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
+        </div>
+      </div>
+    `
+  }
+}
