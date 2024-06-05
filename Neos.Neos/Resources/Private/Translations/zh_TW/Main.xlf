@@ -511,29 +511,9 @@
         <source>Discard all</source>
         <target state="translated">捨棄全部</target>
       </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
-        <source>Discard all changes</source>
-        <target state="translated">捨棄全部變更</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
-        <source>Are you sure that you want to discard all changes in this workspace?</source>
-        <target state="translated">你確定要放棄所有在此工作區的變更？</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
-        <source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-        <target state="translated">您確定要放棄 {numberOfChanges} 筆在此工作區所做的修改?</target>
-      </trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
         <source>Publish all</source>
         <target state="translated">發布全部</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
-        <source>Publish all changes</source>
-        <target state="translated">發布全部變更</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
-        <source>Are you sure that you want to publish all changes?</source>
-        <target state="translated">您確定要發布所有變更？</target>
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
         <source>Pending changes</source>

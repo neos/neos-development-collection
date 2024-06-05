@@ -511,29 +511,9 @@
         <source>Discard all</source>
         <target state="needs-translation">Discard all</target>
       </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
-        <source>Discard all changes</source>
-        <target state="translated">Скасувати всі зміни</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
-        <source>Are you sure that you want to discard all changes in this workspace?</source>
-        <target state="translated">Ви дійсно бажаєте скасувати всі зміни в робочій області?</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
-        <source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-        <target state="needs-translation">Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</target>
-      </trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
         <source>Publish all</source>
         <target state="needs-translation">Publish all</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
-        <source>Publish all changes</source>
-        <target state="translated">Опублікувати всі зміни</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
-        <source>Are you sure that you want to publish all changes?</source>
-        <target state="translated">Ви впевнені, що ви хочете опублікувати всі зміни?</target>
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
         <source>Pending changes</source>

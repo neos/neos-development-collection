@@ -511,29 +511,9 @@
         <source>Discard all</source>
         <target state="final">Alle verwerfen</target>
       </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
-        <source>Discard all changes</source>
-        <target state="final">Alle Änderungen verwerfen</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to discard all changes in this workspace?</source>
-        <target state="final">Sind Sie sicher, dass Sie alle Änderungen in diesem Workspace verwerfen möchten?</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-        <target state="final">Sind Sie sicher, dass Sie {numberOfChanges} Änderung(en) in diesem Arbeitsbereich verwerfen möchten?</target>
-      </trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
         <source>Publish all</source>
         <target state="final">Alles veröffentlichen</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
-        <source>Publish all changes</source>
-        <target state="final">Alle Änderungen veröffentlichen</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to publish all changes?</source>
-        <target state="final">Sind Sie sicher, dass Sie alle Änderungen veröffentlichen möchten?</target>
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
         <source>Pending changes</source>
