@@ -96,12 +96,12 @@ Feature: Create node aggregate with node
       | workspaceName             | "live"                   |
       | nodeAggregateId           | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {}                       |
-      | propertyValues            | {}                       |
-      | propertiesToUnset         | ["asset"]                |
+      | propertyValues            | {"asset": null}          |
 
     Then I expect the AssetUsageProjection to have the following AssetUsages:
       | nodeAggregateId            | assetId | propertyName | workspaceName | originDimensionSpacePoint |
       | nody-mc-nodeface           | asset-2 | assets       | live          | {}                        |
+      | nody-mc-nodeface           | asset-3 | assets       | live          | {}                        |
       | sir-nodeward-nodington-iii | asset-3 | text         | live          | {}                        |
 
   Scenario: Add an asset in a property

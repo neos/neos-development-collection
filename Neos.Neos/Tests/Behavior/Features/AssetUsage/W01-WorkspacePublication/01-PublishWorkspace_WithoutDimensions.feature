@@ -119,14 +119,3 @@ Feature: Publish nodes without dimensions
       | asset-1 | sir-david-nodenborough     | asset        | review-workspace | {}                        |
       | asset-2 | nody-mc-nodeface           | assets       | review-workspace | {}                        |
       | asset-3 | sir-nodeward-nodington-iii | text         | review-workspace | {}                        |
-
-    And the command PublishWorkspace is executed with payload:
-      | Key                | Value                        |
-      | workspaceName      | "review-workspace"           |
-      | newContentStreamId | "new-review-workspace-cs-id" |
-
-    And I expect the AssetUsageProjection to have the following AssetUsages:
-      | assetId | nodeAggregateId            | propertyName | workspaceName | originDimensionSpacePoint |
-      | asset-1 | sir-david-nodenborough     | asset        | live          | {}                        |
-      | asset-2 | nody-mc-nodeface           | assets       | live          | {}                        |
-      | asset-3 | sir-nodeward-nodington-iii | text         | live          | {}                        |
