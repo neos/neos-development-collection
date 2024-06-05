@@ -23,7 +23,7 @@
         </div>
         <div class="neos-media-content{f:if(condition: '{tags -> f:count()} > 25', then: ' neos-media-aside-condensed')}">
             <div class="neos-media-assets">
-                <div class="neos-notification-container">
+                <div id="neos-notification-container">
                     <f:render partial="FlashMessages"/>
                 </div>
                 <f:render section="Content"/>
