@@ -170,7 +170,7 @@ Arguments
 ^^^^^^^^^
 
 ``--cache-identifier``
-  
+
 
 
 
@@ -1996,7 +1996,7 @@ Options
 ``--simulate``
   If set, this command will only tell what it would do instead of doing it right away
 ``--quiet``
-  
+
 
 
 
@@ -2757,8 +2757,7 @@ Options
   A description explaining the purpose of the new workspace
 ``--owner``
   The identifier of a User to own the workspace
-``--content-repository-identifier``
-  
+``--content-repository``
 
 
 
@@ -2777,15 +2776,13 @@ Arguments
 ^^^^^^^^^
 
 ``--name``
-  
 
 
 
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
 
 
 
@@ -2814,8 +2811,8 @@ Options
 
 ``--force``
   Delete the workspace and all of its contents
-``--content-repository-identifier``
-  contentRepositoryIdentifier
+``--content-repository``
+  contentRepository
 
 
 
@@ -2847,8 +2844,7 @@ Arguments
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
 
 
 
@@ -2868,8 +2864,8 @@ Options
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  contentRepositoryIdentifier
+``--content-repository``
+  contentRepository
 
 
 
@@ -2895,8 +2891,7 @@ Arguments
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
 
 
 
@@ -2922,8 +2917,8 @@ Arguments
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
+
 ``--force``
   Rebase all events that do not conflict
 
@@ -2945,8 +2940,8 @@ Options
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  contentRepositoryIdentifier
+``--content-repository``
+  contentRepository
 ``--force``
   force
 
