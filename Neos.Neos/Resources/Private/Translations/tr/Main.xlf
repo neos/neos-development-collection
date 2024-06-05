@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="translated">İçerik Türü</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve">
-        <source>Path</source>
-        <target state="translated">Yol</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
-        <source>Relative Path</source>
-        <target state="translated">Göreceli Yol</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve">
         <source>Version</source>
         <target state="translated">Sürüm</target>
@@ -1065,6 +1057,14 @@
       <trans-unit id="login.loggedOut.body" xml:space="preserve">
         <source>Successfully logged out</source>
         <target state="translated">Oturum başarıyla kapatıldı</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Yol</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Göreceli Yol</target>
       </trans-unit>
     </body>
   </file>

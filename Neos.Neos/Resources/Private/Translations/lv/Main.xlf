@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="translated">Mezgla tips</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
-        <source>Path</source>
-        <target state="final">Ceļš</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-        <source>Relative Path</source>
-        <target state="final">Relatīvais ceļš</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve" approved="yes">
         <source>Version</source>
         <target state="final">Versija</target>
@@ -1065,6 +1057,14 @@
       <trans-unit id="login.loggedOut.body" xml:space="preserve">
         <source>Successfully logged out</source>
         <target state="translated">Veiksmīgi atteicies no sistēmas</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Ceļš</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Relatīvais ceļš</target>
       </trans-unit>
     </body>
   </file>

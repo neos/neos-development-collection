@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="translated">Tipo de nodo</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve">
-        <source>Path</source>
-        <target state="translated">Ruta</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
-        <source>Relative Path</source>
-        <target state="translated">Ruta relativa</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve">
         <source>Version</source>
         <target state="translated">Versión</target>
@@ -1113,6 +1105,14 @@
       <trans-unit id="error.exception.notFoundExceptions.setupMessage" xml:space="preserve">
         <source>You might want to import or create a new site in the setup.</source>
         <target state="translated">Es posible que desee importar o crear un nuevo sitio en la configuración.</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="translated">Ruta</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="translated">Ruta relativa</target>
       </trans-unit>
     </body>
   </file>

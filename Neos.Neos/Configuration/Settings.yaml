@@ -336,13 +336,6 @@ Neos:
         description: 'Neos.Neos:Modules:management.description'
         icon: fas fa-briefcase
         mainStylesheet: 'Lite'
-        submodules:
-          workspaces:
-            label: 'Neos.Neos:Modules:workspaces.label'
-            controller: 'Neos\Neos\Controller\Module\Management\WorkspacesController'
-            description: 'Neos.Neos:Modules:workspaces.description'
-            icon: fas fa-th-large
-            mainStylesheet: 'Lite'
       administration:
         label: 'Neos.Neos:Modules:administration.label'
         controller: 'Neos\Neos\Controller\Module\AdministrationController'

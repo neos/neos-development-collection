@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="translated">Nodetype</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve">
-        <source>Path</source>
-        <target state="translated">Bane</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
-        <source>Relative Path</source>
-        <target state="translated">Relativ bane</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve">
         <source>Version</source>
         <target state="translated">Versjon</target>
@@ -1093,6 +1085,14 @@
       <trans-unit id="impersonate.label.restoreUserButton" xml:space="preserve" approved="no">
         <source>Back to user "{0}"</source>
         <target>Tilbake til {0}-brukeren</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Bane</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Relativ bane</target>
       </trans-unit>
     </body>
   </file>

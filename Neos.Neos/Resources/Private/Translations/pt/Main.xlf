@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="translated">Tipo de Conteúdo</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve">
-        <source>Path</source>
-        <target state="translated">Caminho</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
-        <source>Relative Path</source>
-        <target state="translated">Caminho relativo</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve">
         <source>Version</source>
         <target state="translated">Versão</target>
@@ -1130,6 +1122,14 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       <trans-unit id="contentTree" xml:space="preserve">
         <source>Content Tree</source>
         <target state="translated">Árvore de conteúdo</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Caminho</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Caminho relativo</target>
       </trans-unit>
     </body>
   </file>
