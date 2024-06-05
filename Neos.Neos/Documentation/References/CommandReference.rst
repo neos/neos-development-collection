@@ -170,7 +170,7 @@ Arguments
 ^^^^^^^^^
 
 ``--cache-identifier``
-
+  
 
 
 
@@ -1996,7 +1996,7 @@ Options
 ``--simulate``
   If set, this command will only tell what it would do instead of doing it right away
 ``--quiet``
-
+  
 
 
 
@@ -2758,6 +2758,7 @@ Options
 ``--owner``
   The identifier of a User to own the workspace
 ``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2776,6 +2777,7 @@ Arguments
 ^^^^^^^^^
 
 ``--name``
+  Name of the new root
 
 
 
@@ -2783,6 +2785,7 @@ Options
 ^^^^^^^
 
 ``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2812,7 +2815,7 @@ Options
 ``--force``
   Delete the workspace and all of its contents
 ``--content-repository``
-  contentRepository
+  The name of the content repository. (Default: 'default')
 
 
 
@@ -2845,6 +2848,7 @@ Options
 ^^^^^^^
 
 ``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2865,7 +2869,7 @@ Options
 ^^^^^^^
 
 ``--content-repository``
-  contentRepository
+  The name of the content repository. (Default: 'default')
 
 
 
@@ -2892,6 +2896,7 @@ Options
 ^^^^^^^
 
 ``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2918,7 +2923,7 @@ Options
 ^^^^^^^
 
 ``--content-repository``
-
+  Identifier of the content repository. (Default: 'default')
 ``--force``
   Rebase all events that do not conflict
 
@@ -2941,9 +2946,9 @@ Options
 ^^^^^^^
 
 ``--content-repository``
-  contentRepository
+  The name of the content repository. (Default: 'default')
 ``--force``
-  force
+  
 
 
 
