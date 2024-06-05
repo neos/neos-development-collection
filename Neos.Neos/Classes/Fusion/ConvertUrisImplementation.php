@@ -153,13 +153,12 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     );
                     $possibleRequest = $this->runtime->fusionGlobals->get('request');
                     if ($possibleRequest instanceof ActionRequest) {
-                        $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest($possibleRequest->getHttpRequest());
+                        $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($possibleRequest);
                     } else {
-                        // unfortunately, the uri-builder always needs a request at hand and cannot build uris without
-                        // even, if the default param merging would not be required
+                        // unfortunately, the uri-builder always needs a request at hand and cannot build uris without it
                         // this will improve with a reformed uri building:
-                        // https://github.com/neos/flow-development-collection/pull/2744
-                        $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest(ServerRequest::fromGlobals());
+                        // https://github.com/neos/flow-development-collection/issues/3354
+                        $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest(ActionRequest::fromHttpRequest(ServerRequest::fromGlobals()));
                     }
                     try {
                         $resolvedUri = (string)$nodeUriBuilder->uriFor($nodeAddress, $options);

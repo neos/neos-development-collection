@@ -286,7 +286,7 @@ class NodeController extends ActionController
                 return;
             }
             try {
-                $resolvedUri = $this->nodeUriBuilderFactory->forRequest($this->request->getHttpRequest())
+                $resolvedUri = $this->nodeUriBuilderFactory->forActionRequest($this->request)
                     ->uriFor($nodeAddress);
             } catch (NoMatchingRouteException $e) {
                 throw new NodeNotFoundException(sprintf(

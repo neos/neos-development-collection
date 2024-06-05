@@ -107,7 +107,7 @@ class LinkHelper implements ProtectedContextAwareInterface
             return null;
         }
 
-        $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest($controllerContext->getRequest()->getHttpRequest());
+        $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($controllerContext->getRequest());
 
         try {
             $targetUri = $nodeUriBuilder->uriFor(NodeAddress::fromNode($targetNode));

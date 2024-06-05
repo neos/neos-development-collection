@@ -8,10 +8,13 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\ServerRequestAttributes;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RouterInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @api
+ */
 #[Flow\Scope('singleton')]
 final class NodeUriBuilderFactory
 {
@@ -25,11 +28,10 @@ final class NodeUriBuilderFactory
     #[Flow\Inject]
     protected RouterInterface $router;
 
-    /**
-     * @api
-     */
-    public function forRequest(ServerRequestInterface $request): NodeUriBuilder
+    public function forActionRequest(ActionRequest $actionRequest): NodeUriBuilder
     {
+        $request = $actionRequest->getHttpRequest();
+
         $baseUri = $this->configuredBaseUri !== null
             ? new Uri($this->configuredBaseUri)
             : RequestInformationHelper::generateBaseUri($request);

@@ -211,7 +211,7 @@ class NodeViewHelper extends AbstractViewHelper
             ), 1601372376);
         }
 
-        $nodeUriBuilder = $this->nodeUriBuilderFactory->forRequest($this->controllerContext->getRequest()->getHttpRequest());
+        $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($this->controllerContext->getRequest());
 
         $options = Options::create(forceAbsolute: $this->arguments['absolute']);
         if ($format = $this->arguments['format']) {

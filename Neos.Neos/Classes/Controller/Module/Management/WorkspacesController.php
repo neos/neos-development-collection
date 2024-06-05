@@ -512,7 +512,7 @@ class WorkspacesController extends AbstractModuleController
         }
 
         $this->redirectToUri(
-            $this->nodeUriBuilderFactory->forRequest($this->request->getHttpRequest())
+            $this->nodeUriBuilderFactory->forActionRequest($this->request)
                 ->uriFor($targetNodeAddressInPersonalWorkspace)
         );
     }

@@ -318,7 +318,7 @@ trait RoutingTrait
         $httpRequest = $this->addRoutingParameters($httpRequest);
 
         return $this->getObject(NodeUriBuilderFactory::class)
-            ->forRequest($httpRequest)
+            ->forActionRequest(\Neos\Flow\Mvc\ActionRequest::fromHttpRequest($httpRequest))
             ->uriFor($nodeAddress);
     }
 

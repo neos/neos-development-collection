@@ -29,7 +29,7 @@ use Psr\Http\Message\UriInterface;
 /**
  * Neos abstraction to simplify node uri building.
  *
-*  Builds URIs to nodes, taking workspace (live / shared / user) into account.
+ * Builds URIs to nodes, taking workspace (live / shared / user) into account.
  * Can also be used in order to render "preview" URLs to nodes, that are not
  * in the live workspace (in the Neos Backend and shared workspaces)
  *
@@ -78,7 +78,7 @@ final readonly class NodeUriBuilder
      * Cross-linking nodes
      * -------------------
      *
-     * Cross linking to a node happens when the side determined based on the current
+     * Cross linking to a node happens when the site determined based on the current
      * route parameters (through the host and sites domain) does not belong to the linked node.
      * In this case the domain from the node's site might be used to build a host absolute uri {@see CrossSiteLinkerInterface}.
      *
