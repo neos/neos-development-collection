@@ -15,9 +15,9 @@
         <source>Management</source>
         <target state="final">Inhaltsverwaltung</target>
       </trans-unit>
-      <trans-unit id="management.description" xml:space="preserve" approved="yes">
+      <trans-unit id="management.description" xml:space="preserve" approved="no">
         <source>Contains multiple modules related to management of content</source>
-        <target state="final">Enthält Module zur Inhaltsverwaltung</target>
+        <target state="translated">Enthält mehrere Module zur Inhaltsverwaltung</target>
       </trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">

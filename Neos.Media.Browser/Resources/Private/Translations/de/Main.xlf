@@ -108,7 +108,7 @@
       </trans-unit>
       <trans-unit id="message.reallyDeleteAsset" xml:space="preserve" approved="no">
         <source>Do you really want to delete asset "{0}"?</source>
-        <target state="translated">Wollen Sie die Datei "{0}" wirklich löschen?</target>
+        <target state="translated">Wollen Sie das Datei "{0}" wirklich löschen?</target>
       </trans-unit>
       <trans-unit id="message.reallyDeleteCollection" xml:space="preserve" approved="yes">
         <source>Do you really want to delete collection "{0}"?</source>
