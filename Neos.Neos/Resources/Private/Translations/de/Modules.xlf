@@ -15,9 +15,9 @@
         <source>Management</source>
         <target state="final">Inhaltsverwaltung</target>
       </trans-unit>
-      <trans-unit id="management.description" xml:space="preserve" approved="yes">
+      <trans-unit id="management.description" xml:space="preserve" approved="no">
         <source>Contains multiple modules related to management of content</source>
-        <target state="final">Enthält Module zur Inhaltsverwaltung</target>
+        <target state="translated">Enthält mehrere Module zur Inhaltsverwaltung</target>
       </trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
         <source>Workspaces</source>
@@ -1306,6 +1306,10 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       <trans-unit id="users.lastLogin" xml:space="preserve">
         <source>Last Login</source>
         <target>Letzter Login</target>
+      </trans-unit>
+      <trans-unit id="branding.link.title" xml:space="preserve">
+        <source>Go back to your starting module</source>
+        <target state="translated">Gehen Sie zurück zu Ihrem Startmodul</target>
       </trans-unit>
     </body>
   </file>
