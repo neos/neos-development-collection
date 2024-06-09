@@ -83,26 +83,6 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * Arguments to be removed from the URI. Only active if addQueryString = true
-     *
-     * @return array<int,string>
-     */
-    public function getArgumentsToBeExcludedFromQueryString(): array
-    {
-        return $this->fusionValue('argumentsToBeExcludedFromQueryString');
-    }
-
-    /**
-     * If true, the current query parameters will be kept in the URI
-     *
-     * @return boolean
-     */
-    public function getAddQueryString()
-    {
-        return (bool)$this->fusionValue('addQueryString');
-    }
-
-    /**
      * If true, an absolute URI is rendered
      *
      * @return boolean
@@ -177,9 +157,7 @@ class NodeUriImplementation extends AbstractFusionObject
             ->setFormat($this->getFormat())
             ->setCreateAbsoluteUri($this->isAbsolute())
             ->setArguments($this->getAdditionalParams())
-            ->setSection($this->getSection())
-            ->setAddQueryString($this->getAddQueryString())
-            ->setArgumentsToBeExcludedFromQueryString($this->getArgumentsToBeExcludedFromQueryString());
+            ->setSection($this->getSection());
 
         try {
             return (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);

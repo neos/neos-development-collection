@@ -63,7 +63,7 @@ class FeatureContext implements Context
             VisibilityConstraints::withoutRestrictions(),
         );
         $currentNode = $subgraph->findNodeById($this->currentNode->aggregateId);
-        Assert::assertNotNull($currentNode, sprintf('Failed to find node with id "%s" in subgraph %s', $this->currentNode->aggregateId->value, json_encode($subgraph)));
+        Assert::assertNotNull($currentNode, sprintf('Failed to find node with id "%s" in workspace %s and dimension %s', $this->currentNode->aggregateId->value, $subgraph->getWorkspaceName()->value, $subgraph->getDimensionSpacePoint()->toJson()));
         Assert::assertFalse($currentNode->tags->contain(SubtreeTag::disabled()), sprintf('Node "%s" was expected to be enabled, but it is not', $this->currentNode->aggregateId->value));
     }
 
@@ -78,7 +78,7 @@ class FeatureContext implements Context
             VisibilityConstraints::withoutRestrictions(),
         );
         $currentNode = $subgraph->findNodeById($this->currentNode->aggregateId);
-        Assert::assertNotNull($currentNode, sprintf('Failed to find node with id "%s" in subgraph %s', $this->currentNode->aggregateId->value, json_encode($subgraph)));
+        Assert::assertNotNull($currentNode, sprintf('Failed to find node with id "%s" in workspace %s and dimension %s', $this->currentNode->aggregateId->value, $subgraph->getWorkspaceName()->value, $subgraph->getDimensionSpacePoint()->toJson()));
         Assert::assertTrue($currentNode->tags->contain(SubtreeTag::disabled()), sprintf('Node "%s" was expected to be disabled, but it is not', $this->currentNode->aggregateId->value));
     }
 

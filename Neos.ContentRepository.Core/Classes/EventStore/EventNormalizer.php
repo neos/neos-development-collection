@@ -41,6 +41,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event\EventId;
@@ -52,7 +53,7 @@ use Neos\EventStore\Model\Event\EventType;
  * For normalizing (from classes to event store), this is called from {@see ContentRepository::normalizeEvent()}.
  *
  * For denormalizing (from event store to classes), this is called in the individual projections; f.e.
- * {@see ContentGraphProjection::apply()}.
+ * {@see ProjectionInterface::apply()}.
  *
  * @api because inside projections, you get an instance of EventNormalizer to handle events.
  */

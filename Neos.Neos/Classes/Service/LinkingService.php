@@ -34,8 +34,8 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -87,12 +87,6 @@ class LinkingService
      * @var ResourceManager
      */
     protected $resourceManager;
-
-    /**
-     * @Flow\Inject
-     * @var NodeShortcutResolver
-     */
-    protected $nodeShortcutResolver;
 
     /**
      * @Flow\Inject
@@ -260,9 +254,9 @@ class LinkingService
      * @param array<string,mixed> $arguments Additional arguments to be passed to the UriBuilder
      *                                       (e.g. pagination parameters)
      * @param string $section
-     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
+     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI @deprecated see https://github.com/neos/neos-development-collection/issues/5076
      * @param array<int,string> $argumentsToBeExcludedFromQueryString arguments to be removed from the URI.
-     *                                                    Only active if $addQueryString = true
+     *                                                    Only active if $addQueryString = true @deprecated see https://github.com/neos/neos-development-collection/issues/5076
      * @param boolean $resolveShortcuts @deprecated With Neos 7.0 this argument is no longer evaluated
      *                                  and log a message if set to FALSE
      * @return string The rendered URI
@@ -355,18 +349,27 @@ class LinkingService
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
             $node->workspaceName
         );
-        $request = $controllerContext->getRequest()->getMainRequest();
+        $mainRequest = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
-        $uriBuilder->setRequest($request);
+        $uriBuilder->setRequest($mainRequest);
         $action = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::disabled()) ? 'show' : 'preview';
+
+        if ($addQueryString === true) {
+            // legacy feature see https://github.com/neos/neos-development-collection/issues/5076
+            $requestArguments = $mainRequest->getArguments();
+            foreach ($argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
+                unset($requestArguments[$argumentToBeExcluded]);
+            }
+            if ($requestArguments !== []) {
+                $arguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
+            }
+        }
 
         return $uriBuilder
             ->reset()
             ->setSection($section)
             ->setArguments($arguments)
-            ->setAddQueryString($addQueryString)
-            ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-            ->setFormat($format ?: $request->getFormat())
+            ->setFormat($format ?: $mainRequest->getFormat())
             ->setCreateAbsoluteUri($absolute)
             ->uriFor($action, ['node' => $node], 'Frontend\Node', 'Neos.Neos');
     }

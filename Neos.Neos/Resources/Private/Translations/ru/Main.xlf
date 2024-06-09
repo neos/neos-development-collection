@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="final">Тип содержимого</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
-        <source>Path</source>
-        <target state="final">Путь</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-        <source>Relative Path</source>
-        <target state="final">Относительный путь</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve" approved="yes">
         <source>Version</source>
         <target state="final">Версия</target>
@@ -519,29 +511,9 @@
         <source>Discard all</source>
         <target state="final">Отменить все</target>
       </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
-        <source>Discard all changes</source>
-        <target state="final">Отменить все изменения</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to discard all changes in this workspace?</source>
-        <target state="final">Вы уверены, что хотите отменить все изменения в этой рабочей области?</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-        <target state="final">Вы уверены, что хотите отменить правки в количестве {numberOfChanges} шт. в этой рабочей области?</target>
-      </trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
         <source>Publish all</source>
         <target state="final">Опубликовать все</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
-        <source>Publish all changes</source>
-        <target state="final">Опубликовать все изменения</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to publish all changes?</source>
-        <target state="final">Вы уверены, что хотите опубликовать все изменения?</target>
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
         <source>Pending changes</source>
@@ -1065,6 +1037,14 @@
       <trans-unit id="login.loggedOut.body" xml:space="preserve">
         <source>Successfully logged out</source>
         <target state="needs-translation">Successfully logged out</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Путь</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Относительный путь</target>
       </trans-unit>
     </body>
   </file>

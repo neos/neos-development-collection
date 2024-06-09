@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-05-19
+The following reference was automatically generated from code on 2024-06-05
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -2757,8 +2757,8 @@ Options
   A description explaining the purpose of the new workspace
 ``--owner``
   The identifier of a User to own the workspace
-``--content-repository-identifier``
-  
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2777,15 +2777,15 @@ Arguments
 ^^^^^^^^^
 
 ``--name``
-  
+  Name of the new root
 
 
 
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2814,8 +2814,8 @@ Options
 
 ``--force``
   Delete the workspace and all of its contents
-``--content-repository-identifier``
-  contentRepositoryIdentifier
+``--content-repository``
+  The name of the content repository. (Default: 'default')
 
 
 
@@ -2847,8 +2847,8 @@ Arguments
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2868,8 +2868,8 @@ Options
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  contentRepositoryIdentifier
+``--content-repository``
+  The name of the content repository. (Default: 'default')
 
 
 
@@ -2895,8 +2895,8 @@ Arguments
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 
 
 
@@ -2922,8 +2922,8 @@ Arguments
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  
+``--content-repository``
+  Identifier of the content repository. (Default: 'default')
 ``--force``
   Rebase all events that do not conflict
 
@@ -2945,10 +2945,10 @@ Options
 Options
 ^^^^^^^
 
-``--content-repository-identifier``
-  contentRepositoryIdentifier
+``--content-repository``
+  The name of the content repository. (Default: 'default')
 ``--force``
-  force
+  
 
 
 

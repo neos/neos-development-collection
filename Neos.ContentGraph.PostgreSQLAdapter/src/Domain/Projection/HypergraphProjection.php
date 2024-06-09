@@ -234,14 +234,6 @@ final class HypergraphProjection implements ProjectionInterface
         return $this->projectionHypergraph;
     }
 
-    /**
-     * @throws \Throwable
-     */
-    protected function transactional(\Closure $operations): void
-    {
-        $this->getDatabaseConnection()->transactional($operations);
-    }
-
     protected function getDatabaseConnection(): Connection
     {
         return $this->dbal;

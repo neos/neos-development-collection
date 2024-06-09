@@ -539,15 +539,4 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         }
         return $currentNode;
     }
-
-    /**
-     * @return array<string,mixed>
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'workspaceName' => $this->workspaceName,
-            'dimensionSpacePoint' => $this->dimensionSpacePoint,
-        ];
-    }
 }

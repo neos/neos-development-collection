@@ -16,7 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception as DriverException;
-use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
@@ -308,13 +308,13 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->createQueryBuilder()
             ->select('COUNT(*)')
             ->from($this->nodeQueryBuilder->tableNames->node());
-        $result = $queryBuilder->execute();
-        if (!$result instanceof Result) {
-            throw new \RuntimeException(sprintf('Failed to count nodes. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);
-        }
         try {
+            $result = $queryBuilder->execute();
+            if (!$result instanceof Result) {
+                throw new \RuntimeException(sprintf('Failed to count nodes. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);
+            }
             return (int)$result->fetchOne();
-        } catch (DriverException | DBALException $e) {
+        } catch (DriverException | DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
         }
     }
@@ -323,7 +323,7 @@ final class ContentGraph implements ContentGraphInterface
     {
         return array_map(
             static fn (array $row) => NodeTypeName::fromString($row['nodetypename']),
-            $this->fetchRows($this->nodeQueryBuilder->buildfindUsedNodeTypeNamesQuery())
+            $this->fetchRows($this->nodeQueryBuilder->buildFindUsedNodeTypeNamesQuery())
         );
     }
 
@@ -361,13 +361,13 @@ final class ContentGraph implements ContentGraphInterface
      */
     private function fetchRows(QueryBuilder $queryBuilder): array
     {
-        $result = $queryBuilder->execute();
-        if (!$result instanceof Result) {
-            throw new \RuntimeException(sprintf('Failed to execute query. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701443535);
-        }
         try {
+            $result = $queryBuilder->execute();
+            if (!$result instanceof Result) {
+                throw new \RuntimeException(sprintf('Failed to execute query. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701443535);
+            }
             return $result->fetchAllAssociative();
-        } catch (DriverException | DBALException $e) {
+        } catch (DriverException | DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
         }
     }

@@ -187,7 +187,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 return $matches[0];
             }
 
-            return $resolvedUri;
+            return (string)$resolvedUri;
         }, $text);
         assert($processedContent !== null, 'preg_* error');
 
