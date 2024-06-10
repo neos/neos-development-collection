@@ -13,7 +13,6 @@ namespace Neos\SiteKickstarter\Generator;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
 use Neos\Kickstarter\Service\GeneratorService;
@@ -86,11 +85,8 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
         $contextVariables['siteNodeName'] = $packageKeyDomainPart;
 
         $fusionRecursiveDirectoryRenderer = new FusionRecursiveDirectoryRenderer();
-
-        $packageDirectory = $this->packageManager->getPackage('Neos.SiteKickstarter')->getResourcesPath();
-
         $fusionRecursiveDirectoryRenderer->renderDirectory(
-            $packageDirectory . 'Private/AfxGenerator/Fusion',
+            $this->getTemplateFolder() . 'Fusion',
             $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion',
             $contextVariables
         );
@@ -104,16 +100,18 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
      */
     protected function generateNodeTypesConfiguration(string $packageKey) : void
     {
-        $templatePathAndFilename = $this->getResourcePathForFile('Configuration/NodeTypes.Document.Page.yaml');
+        $templateFolder = $this->getTemplateFolder() . 'NodeTypes';
+        $targetFolder = $this->packageManager->getPackage($packageKey)->getPackagePath() . 'NodeTypes';
 
         $contextVariables = [
             'packageKey' => $packageKey
         ];
 
-        $fileContent = $this->simpleTemplateRenderer->render($templatePathAndFilename, $contextVariables);
-
-        $sitesNodeTypesPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.Document.Page.yaml';
-        $this->generateFile($sitesNodeTypesPathAndFilename, $fileContent);
+        foreach (Files::readDirectoryRecursively($templateFolder, '.yaml') as $templatePathAndFilename) {
+            $fileContent = $this->simpleTemplateRenderer->render($templatePathAndFilename, $contextVariables);
+            $targetPathAndFilename = str_replace($templateFolder, $targetFolder, $templatePathAndFilename);
+            $this->generateFile($targetPathAndFilename, $fileContent);
+        }
     }
 
     /**
@@ -133,15 +131,9 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
         }
     }
 
-    /**
-     * returns resource path for the generator
-     *
-     * @param $pathToFile
-     * @return string
-     */
-    protected function getResourcePathForFile(string $pathToFile) : string
+    protected function getTemplateFolder(): string
     {
-        return 'resource://Neos.SiteKickstarter/Private/AfxGenerator/' . $pathToFile;
+        return $this->packageManager->getPackage('Neos.SiteKickstarter')->getResourcesPath() . 'Private/AfxGenerator/';
     }
 
     public function getGeneratorName(): string

@@ -1,0 +1,11 @@
+# This is a custom root node type which has been auto-generated for your site package
+# by Neos. You can customize this to your needs.
+'{packageKey}:Document.Homepage':
+  superTypes:
+    'Neos.Neos:Site': true
+  ui:
+    icon: globe
+    label: '{packageKey} Homepage'
+  childNodes:
+    main:
+      type: 'Neos.Neos:ContentCollection'
