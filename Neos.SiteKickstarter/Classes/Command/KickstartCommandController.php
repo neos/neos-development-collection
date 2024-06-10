@@ -44,7 +44,7 @@ class KickstartCommandController extends CommandController
     /**
      * Kickstart a new site package
      *
-     * This command generates a new site package with basic Fusion and Sites.xml
+     * This command generates a new site package with basic Fusion
      *
      * @param string $packageKey The packageKey for your site
      * @param string $siteName The siteName of your site

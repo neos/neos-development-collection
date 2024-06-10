@@ -17,9 +17,9 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
 use Neos\Kickstarter\Service\GeneratorService;
+use Neos\SiteKickstarter\Service\FusionRecursiveDirectoryRenderer;
 use Neos\SiteKickstarter\Service\SimpleTemplateRenderer;
 use Neos\Utility\Files;
-use Neos\SiteKickstarter\Service\FusionRecursiveDirectoryRenderer;
 
 /**
  * Service to generate site packages
@@ -63,37 +63,11 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
             ]
         ]);
 
-        $this->generateSitesXml($packageKey, $siteName);
         $this->generateSitesFusionDirectory($packageKey, $siteName);
         $this->generateNodeTypesConfiguration($packageKey);
         $this->generateAdditionalFolders($packageKey);
 
         return $this->generatedFiles;
-    }
-
-    /**
-     * Generate a "Sites.xml" for the given package and name.
-     *
-     * @param string $packageKey
-     * @param string $siteName
-     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
-     * @throws \Neos\FluidAdaptor\Core\Exception
-     */
-    protected function generateSitesXml(string $packageKey, string $siteName) : void
-    {
-        $templatePathAndFilename = $this->getResourcePathForFile('Content/Sites.xml');
-
-        $contextVariables = [
-            'packageKey' => $packageKey,
-            'siteName' => htmlspecialchars($siteName),
-            'siteNodeName' => $this->generateSiteNodeName($packageKey),
-            'dimensions' => 'wat' //$this->contentDimensionZookeeper->getAllowedDimensionSubspace()
-        ];
-
-        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
-
-        $sitesXmlPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Content/Sites.xml';
-        $this->generateFile($sitesXmlPathAndFilename, $fileContent);
     }
 
     /**
