@@ -71,29 +71,6 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
     }
 
     /**
-     * Generate basic root Fusion file.
-     *
-     * @param string $packageKey
-     * @param string $siteName
-     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
-     */
-    protected function generateSitesRootFusion(string $packageKey, string $siteName) : void
-    {
-        $templatePathAndFilename = $this->getResourcePathForFile('Fusion/Root.fusion');
-
-        $contextVariables = [
-            'packageKey' => $packageKey,
-            'siteName' => $siteName,
-            'siteNodeName' => $this->generateSiteNodeName($packageKey)
-        ];
-
-        $fileContent = $this->simpleTemplateRenderer->render($templatePathAndFilename, $contextVariables);
-
-        $sitesRootFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/Root.fusion';
-        $this->generateFile($sitesRootFusionPathAndFilename, $fileContent);
-    }
-
-    /**
      * Render the whole directory of the fusion part
      *
      * @param $packageKey
@@ -117,14 +94,6 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
             $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion',
             $contextVariables
         );
-    }
-
-    /**
-     * Generate site node name based on the given package key
-     */
-    protected function generateSiteNodeName(string $packageKey) : string
-    {
-        return NodeName::transliterateFromString($packageKey)->value;
     }
 
     /**
