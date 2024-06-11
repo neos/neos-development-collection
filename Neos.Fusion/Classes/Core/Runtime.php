@@ -508,6 +508,9 @@ class Runtime
             $evaluatedValue = $this->evaluateProcessors($evaluatedValue, $fusionConfiguration, $fusionPath, $contextObject);
         }
 
+        // set the status to EXECUTED again, in case some side effect inside the eel expression set it to SKIPPED
+        $this->lastEvaluationStatus = self::EVALUATION_EXECUTED;
+
         return $evaluatedValue;
     }
 
