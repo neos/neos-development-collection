@@ -374,26 +374,14 @@
 			<trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
 			</trans-unit>
-			<trans-unit id="sites.generatorClass" xml:space="preserve">
-	  		    <source>Select a site generator</source>
-			</trans-unit>
 			<trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
 			</trans-unit>
 			<trans-unit id="sites.createNode" xml:space="preserve">
 				<source>Create empty site</source>
 			</trans-unit>
-			<trans-unit id="sites.createPackage" xml:space="preserve">
-				<source>Create a new site package</source>
-			</trans-unit>
-			<trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
-				<source>VendorName.MyPackageKey</source>
-			</trans-unit>
 			<trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
-			</trans-unit>
-			<trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
-				<source>The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</source>
 			</trans-unit>
 			<trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
@@ -552,21 +540,6 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			</trans-unit>
 			<trans-unit id="sites.update.body" xml:space="preserve">
 				<source>The site "{0}" has been updated.</source>
-			</trans-unit>
-			<trans-unit id="sites.missingPackage.title" xml:space="preserve">
-				<source>Missing Package</source>
-			</trans-unit>
-			<trans-unit id="sites.missingPackage.body" xml:space="preserve">
-				<source>The package "{0}" is required to create new site packages.</source>
-			</trans-unit>
-			<trans-unit id="sites.invalidPackageKey.title" xml:space="preserve">
-				<source>Invalid package key</source>
-			</trans-unit>
-			<trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
-				<source>The package key "{0}" already exists.</source>
-			</trans-unit>
-			<trans-unit id="sites.sitePackagesWasCreated.body" xml:space="preserve">
-				<source>Site package {0} was created.</source>
 			</trans-unit>
 			<trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
 				<source>The site has been imported.</source>
