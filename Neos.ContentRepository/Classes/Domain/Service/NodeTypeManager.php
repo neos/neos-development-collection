@@ -200,6 +200,7 @@ class NodeTypeManager
     public function overrideNodeTypes(array $completeNodeTypeConfiguration)
     {
         $this->cachedNodeTypes = [];
+        $this->cachedSubNodeTypes = [];
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
             $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
         }
