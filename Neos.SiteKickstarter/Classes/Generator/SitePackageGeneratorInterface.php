@@ -20,7 +20,7 @@ interface SitePackageGeneratorInterface
      *
      * @param string $packageKey
      * @param string $siteName
-     * @return array
+     * @return list<string>
      */
     public function generateSitePackage(string $packageKey, string $siteName): array;
 

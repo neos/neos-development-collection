@@ -25,6 +25,9 @@ class SiteGeneratorCollectingService
      */
     protected $reflectionService;
 
+    /**
+     * @return list<class-string<SitePackageGeneratorInterface>>
+     */
     public function getAllGenerators(): array
     {
         return $this->reflectionService->getAllImplementationClassNamesForInterface(SitePackageGeneratorInterface::class);

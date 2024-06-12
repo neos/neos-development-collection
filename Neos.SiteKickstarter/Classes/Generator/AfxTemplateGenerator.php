@@ -14,6 +14,7 @@ namespace Neos\SiteKickstarter\Generator;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Kickstarter\Service\GeneratorService;
 use Neos\SiteKickstarter\Service\FusionRecursiveDirectoryRenderer;
@@ -43,7 +44,7 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
      *
      * @param string $packageKey
      * @param string $siteName
-     * @return array
+     * @return list<string>
      * @throws \Neos\Flow\Composer\Exception\InvalidConfigurationException
      * @throws \Neos\Flow\Package\Exception
      * @throws \Neos\Flow\Package\Exception\CorruptPackageException
@@ -55,56 +56,57 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
      */
     public function generateSitePackage(string $packageKey, string $siteName) : array
     {
-        $this->packageManager->createPackage($packageKey, [
+        $package = $this->packageManager->createPackage($packageKey, [
             'type' => 'neos-site',
-            "require" => [
-                "neos/neos" => "*"
+            'require' => [
+                'neos/neos' => '*'
             ]
         ]);
 
-        $this->generateSitesFusionDirectory($packageKey, $siteName);
-        $this->generateNodeTypesConfiguration($packageKey);
-        $this->generateAdditionalFolders($packageKey);
+        if (!$package instanceof FlowPackageInterface) {
+            throw new \RuntimeException('Expected to generate flow site package for "' . $packageKey . '" but got ' . get_class($package));
+        }
+
+        $this->generateSitesFusionDirectory($package, $siteName);
+        $this->generateNodeTypesConfiguration($package);
+        $this->generateAdditionalFolders($package);
 
         return $this->generatedFiles;
     }
 
     /**
      * Render the whole directory of the fusion part
-     *
-     * @param $packageKey
-     * @param $siteName
-     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
-    protected function generateSitesFusionDirectory(string $packageKey, string $siteName) : void
+    protected function generateSitesFusionDirectory(FlowPackageInterface $package, string $siteName) : void
     {
+        $packageKey = $package->getPackageKey();
         $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['siteName'] = $siteName;
-        $packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
+        $packageKeyDomainPart = $packageKey;
+        if ($lastPackagePartWithDot = strrchr($packageKey, '.')) {
+            $packageKeyDomainPart = substr($lastPackagePartWithDot, 1) ?: $packageKey;
+        }
         $contextVariables['siteNodeName'] = $packageKeyDomainPart;
 
         $fusionRecursiveDirectoryRenderer = new FusionRecursiveDirectoryRenderer();
         $fusionRecursiveDirectoryRenderer->renderDirectory(
             $this->getTemplateFolder() . 'Fusion',
-            $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion',
+            $package->getResourcesPath() . 'Private/Fusion',
             $contextVariables
         );
     }
 
     /**
      * Generate a example NodeTypes.yaml
-     *
-     * @param string $packageKey
-     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
-    protected function generateNodeTypesConfiguration(string $packageKey) : void
+    protected function generateNodeTypesConfiguration(FlowPackageInterface $package) : void
     {
         $templateFolder = $this->getTemplateFolder() . 'NodeTypes';
-        $targetFolder = $this->packageManager->getPackage($packageKey)->getPackagePath() . 'NodeTypes';
+        $targetFolder = $package->getPackagePath() . 'NodeTypes';
 
         $contextVariables = [
-            'packageKey' => $packageKey
+            'packageKey' => $package->getPackageKey(),
         ];
 
         foreach (Files::readDirectoryRecursively($templateFolder, '.yaml') as $templatePathAndFilename) {
@@ -116,14 +118,10 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
 
     /**
      * Generate additional folders for site packages.
-     *
-     * @param string $packageKey
-     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
-     * @throws \Neos\Utility\Exception\FilesException
      */
-    protected function generateAdditionalFolders(string $packageKey) : void
+    protected function generateAdditionalFolders(FlowPackageInterface $package) : void
     {
-        $resourcesPath = $this->packageManager->getPackage($packageKey)->getResourcesPath();
+        $resourcesPath = $package->getResourcesPath();
         $publicResourcesPath = Files::concatenatePaths([$resourcesPath, 'Public']);
 
         foreach (['Images', 'JavaScript', 'Styles'] as $publicResourceFolder) {
@@ -133,7 +131,9 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
 
     protected function getTemplateFolder(): string
     {
-        return $this->packageManager->getPackage('Neos.SiteKickstarter')->getResourcesPath() . 'Private/AfxGenerator/';
+        $currentPackage = $this->packageManager->getPackage('Neos.SiteKickstarter');
+        assert($currentPackage instanceof FlowPackageInterface);
+        return $currentPackage->getResourcesPath() . 'Private/AfxGenerator/';
     }
 
     public function getGeneratorName(): string
