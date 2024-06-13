@@ -14,13 +14,12 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
-
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\Utility\ObjectAccess;
-use Neos\Utility\Arrays;
-use Neos\Utility\PositionalArraySorter;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * A Node Type
@@ -29,18 +28,17 @@ use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocess
  * not need to deal with creating or managing node types manually. New node types
  * should be defined in a NodeTypes.yaml file.
  *
- * TODO: REFACTOR TO immutable readonly; and value objects
- *
- * TODO: I'd love to make NodeType final; but this breaks quite some unit and functional tests.
- *
- * @api
+ * @api Note: The constructor is not part of the public API
  */
-class NodeType
+final class NodeType
 {
     /**
      * Name of this node type. Example: "ContentRepository:Folder"
      */
     public readonly NodeTypeName $name;
+
+    /** @phpstan-ignore-next-line */
+    public readonly TetheredNodeTypeDefinitions $tetheredNodeTypeDefinitions;
 
     /**
      * Configuration for this node type, can be an arbitrarily nested array. Does not include inherited configuration.
@@ -59,7 +57,7 @@ class NodeType
     /**
      * Is this node type marked abstract
      */
-    public bool $abstract = false;
+    protected bool $abstract = false;
 
     /**
      * Is this node type marked final
@@ -73,38 +71,25 @@ class NodeType
      */
     protected array $declaredSuperTypes;
 
-    protected ?NodeLabelGeneratorInterface $nodeLabelGenerator = null;
-
     /**
      * Whether or not this node type has been initialized (e.g. if it has been postprocessed)
      */
     protected bool $initialized = false;
 
     /**
-     * Constructs this node type
-     *
      * @param NodeTypeName $name Name of the node type
-     * @param array<string,mixed> $declaredSuperTypes Parent types of this node type
+     * @param array<string,NodeType|null> $declaredSuperTypes Parent types instances of this node type, if null it should be unset
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
+     *
+     * @internal
      */
     public function __construct(
         NodeTypeName $name,
         array $declaredSuperTypes,
-        array $configuration,
-        private readonly NodeTypeManager $nodeTypeManager,
-        private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
+        array $configuration
     ) {
         $this->name = $name;
-
-        foreach ($declaredSuperTypes as $type) {
-            if ($type !== null && !$type instanceof NodeType) {
-                throw new \InvalidArgumentException(
-                    '$declaredSuperTypes must be an array of NodeType objects',
-                    1291300950
-                );
-            }
-        }
         $this->declaredSuperTypes = $declaredSuperTypes;
 
         if (isset($configuration['abstract']) && $configuration['abstract'] === true) {
@@ -118,6 +103,23 @@ class NodeType
         }
 
         $this->localConfiguration = $configuration;
+        /** lazy properties {@see __get()} */
+        /** @phpstan-ignore-next-line */
+        unset($this->tetheredNodeTypeDefinitions);
+    }
+
+    /**
+     * We unset the readonly properties in the constructor, so that this magic getter is invoked, which initializes the properties.
+     * {@see https://peakd.com/hive-168588/@crell/php-tricks-lazy-public-readonly-properties}
+     * This is a temporary hack until https://github.com/neos/neos-development-collection/pull/4999 is merged.
+     */
+    public function __get(string $key): mixed
+    {
+        if ($key === 'tetheredNodeTypeDefinitions') {
+            /** @phpstan-ignore-next-line */
+            return $this->tetheredNodeTypeDefinitions = $this->getTetheredNodeTypeDefinitions();
+        }
+        throw new \BadMethodCallException(sprintf('NodeType::%s does not exist.', $key), 1715710576);
     }
 
     /**
@@ -160,6 +162,40 @@ class NodeType
             $sorter = new PositionalArraySorter($this->fullConfiguration['childNodes']);
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
+
+        $referencesConfiguration = $this->fullConfiguration['references'] ?? [];
+        foreach ($this->fullConfiguration['properties'] ?? [] as $propertyName => $propertyConfiguration) {
+            // assert that references and properties never declare a thing with the same name
+            if (isset($this->fullConfiguration['references'][$propertyName])) {
+                throw new NodeConfigurationException(sprintf('NodeType %s cannot declare "%s" as property and reference.', $this->name->value, $propertyName), 1708022344);
+            }
+            // migrate old property like references to references
+            $propertyType = $propertyConfiguration['type'] ?? null;
+            if ($propertyType !== 'reference' && $propertyType !== 'references') {
+                continue;
+            }
+            if (isset($propertyConfiguration['constraints']) || isset($propertyConfiguration['properties'])) {
+                // we don't allow the new syntax `constraints.maxItems` on legacy property-like reference-declarations
+                throw new NodeConfigurationException(sprintf(
+                    'Legacy property-like reference-declaration for "%s" does not allow new configuration `constraints` or `properties` in NodeType %s.'
+                    . ' Please use the reference declaration syntax instead.',
+                    $propertyName,
+                    $this->name->value
+                ), 1708022344);
+            }
+            if ($propertyType === 'reference') {
+                unset($propertyConfiguration['type']);
+                $propertyConfiguration['constraints']['maxItems'] = 1;
+                $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                unset($this->fullConfiguration['properties'][$propertyName]);
+            }
+            if ($propertyType === 'references') {
+                unset($propertyConfiguration['type']);
+                $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                unset($this->fullConfiguration['properties'][$propertyName]);
+            }
+        }
+        $this->fullConfiguration['references'] = $referencesConfiguration;
 
         return $this->fullConfiguration;
     }
@@ -224,15 +260,6 @@ class NodeType
     }
 
     /**
-     * Returns the name of this node type
-     * @deprecated use "name" property directly
-     */
-    public function getName(): string
-    {
-        return $this->name->value;
-    }
-
-    /**
      * Return boolean true if marked abstract
      */
     public function isAbstract(): bool
@@ -290,19 +317,23 @@ class NodeType
      * @return boolean true if this node type is of the given kind, otherwise false
      * @api
      */
-    public function isOfType(string $nodeType): bool
+    public function isOfType(string|NodeTypeName $nodeTypeName): bool
     {
-        if ($nodeType === $this->name->value) {
+        if (!is_string($nodeTypeName)) {
+            $nodeTypeName = $nodeTypeName->value;
+        }
+        if ($nodeTypeName === $this->name->value) {
             return true;
         }
-        if (array_key_exists($nodeType, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeType] === null) {
+        if (array_key_exists($nodeTypeName, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeTypeName] === null) {
             return false;
         }
         foreach ($this->declaredSuperTypes as $superType) {
-            if ($superType !== null && $superType->isOfType($nodeType) === true) {
+            if ($superType !== null && $superType->isOfType($nodeTypeName) === true) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -328,6 +359,7 @@ class NodeType
     public function getFullConfiguration(): array
     {
         $this->initialize();
+
         return $this->fullConfiguration;
     }
 
@@ -351,6 +383,7 @@ class NodeType
     public function getConfiguration(string $configurationPath): mixed
     {
         $this->initialize();
+
         return ObjectAccess::getPropertyPath($this->fullConfiguration, $configurationPath);
     }
 
@@ -380,20 +413,6 @@ class NodeType
     }
 
     /**
-     * Return the node label generator class for the given node
-     */
-    public function getNodeLabelGenerator(): NodeLabelGeneratorInterface
-    {
-        $this->initialize();
-
-        if ($this->nodeLabelGenerator === null) {
-            $this->nodeLabelGenerator = $this->nodeLabelGeneratorFactory->create($this);
-        }
-
-        return $this->nodeLabelGenerator;
-    }
-
-    /**
      * Return the array with the defined properties. The key is the property name,
      * the value the property configuration. There are no guarantees on how the
      * property configuration looks like.
@@ -409,22 +428,57 @@ class NodeType
     }
 
     /**
-     * Returns the configured type of the specified property
+     * Check if the property is configured in the schema.
+     */
+    public function hasReference(string $referenceName): bool
+    {
+        $this->initialize();
+
+        return isset($this->fullConfiguration['references'][$referenceName]);
+    }
+
+    /**
+     * Return the array with the defined references. The key is the reference name,
+     * the value the reference configuration. There are no guarantees on how the
+     * reference configuration looks like.
      *
-     * @param string $propertyName Name of the property
+     * @return array<string,mixed>
+     * @api
+     */
+    public function getReferences(): array
+    {
+        $this->initialize();
+
+        return ($this->fullConfiguration['references'] ?? []);
+    }
+
+    /**
+     * Check if the property is configured in the schema.
+     */
+    public function hasProperty(string $propertyName): bool
+    {
+        $this->initialize();
+
+        return isset($this->fullConfiguration['properties'][$propertyName]);
+    }
+
+    /**
+     * Returns the configured type of the specified property, and falls back to 'string'.
+     *
+     * @throws \InvalidArgumentException if the property is not configured
      */
     public function getPropertyType(string $propertyName): string
     {
         $this->initialize();
 
-        if (
-            !isset($this->fullConfiguration['properties'])
-            || !isset($this->fullConfiguration['properties'][$propertyName])
-            || !isset($this->fullConfiguration['properties'][$propertyName]['type'])
-        ) {
-            return 'string';
+        if (!$this->hasProperty($propertyName)) {
+            throw new \InvalidArgumentException(
+                sprintf('NodeType schema has no property "%s" configured for the NodeType "%s". Cannot read its type.', $propertyName, $this->name->value),
+                1708025421
+            );
         }
-        return $this->fullConfiguration['properties'][$propertyName]['type'];
+
+        return $this->fullConfiguration['properties'][$propertyName]['type'] ?? 'string';
     }
 
     /**
@@ -432,7 +486,7 @@ class NodeType
      *
      * The default value is configured for each property under the "default" key.
      *
-     * @return array<string,mixed>
+     * @return array<string,int|float|string|bool|array<int|string,mixed>>
      * @api
      */
     public function getDefaultValuesForProperties(): array
@@ -452,235 +506,34 @@ class NodeType
         return $defaultValues;
     }
 
-    /**
-     * Return an array with child nodes which should be automatically created
-     *
-     * @return array<string,self> the key of this array is the name of the child, and the value its NodeType.
-     * @api
-     */
-    public function getAutoCreatedChildNodes(): array
+    private function getTetheredNodeTypeDefinitions(): TetheredNodeTypeDefinitions
     {
-        $this->initialize();
-        if (!isset($this->fullConfiguration['childNodes'])) {
-            return [];
-        }
-
-        $autoCreatedChildNodes = [];
-        foreach ($this->fullConfiguration['childNodes'] as $childNodeName => $childNodeConfiguration) {
-            if (isset($childNodeConfiguration['type'])) {
-                $autoCreatedChildNodes[NodeName::transliterateFromString($childNodeName)->value]
-                    = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
+        $childNodeConfiguration = $this->getConfiguration('childNodes') ?? [];
+        $tetheredNodeTypeDefinitions = [];
+        foreach ($childNodeConfiguration as $childNodeName => $configurationForChildNode) {
+            if (isset($configurationForChildNode['type'])) {
+                $tetheredNodeTypeDefinitions[] = new TetheredNodeTypeDefinition(
+                    NodeName::transliterateFromString($childNodeName),
+                    NodeTypeName::fromString($configurationForChildNode['type'])
+                );
             }
         }
-
-        return $autoCreatedChildNodes;
+        return TetheredNodeTypeDefinitions::fromArray($tetheredNodeTypeDefinitions);
     }
-
-    /**
-     * @return bool true if $nodeName is an autocreated child node, false otherwise
-     */
-    public function hasAutoCreatedChildNode(NodeName $nodeName): bool
-    {
-        $this->initialize();
-        return isset($this->fullConfiguration['childNodes'][$nodeName->value]);
-    }
-
-    /**
-     * @throws NodeTypeNotFoundException
-     */
-    public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeType
-    {
-        return isset($this->fullConfiguration['childNodes'][$nodeName->value]['type'])
-            ? $this->nodeTypeManager->getNodeType($this->fullConfiguration['childNodes'][$nodeName->value]['type'])
-            : null;
-    }
-
 
     /**
      * Checks if the given NodeType is acceptable as sub-node with the configured constraints,
      * not taking constraints of auto-created nodes into account. Thus, this method only returns
      * the correct result if called on NON-AUTO-CREATED nodes!
      *
-     * Otherwise, allowsGrandchildNodeType() needs to be called on the *parent node type*.
+     * Otherwise, isNodeTypeAllowedAsChildToTetheredNode() needs to be called on the *parent node type*.
      *
      * @return boolean true if the $nodeType is allowed as child node, false otherwise.
      */
     public function allowsChildNodeType(NodeType $nodeType): bool
     {
         $constraints = $this->getConfiguration('constraints.nodeTypes') ?: [];
-
-        return $this->isNodeTypeAllowedByConstraints($nodeType, $constraints);
-    }
-
-    /**
-     * Checks if the given $nodeType is allowed as a childNode of the given $childNodeName
-     * (which must be auto-created in $this NodeType).
-     *
-     * Only allowed to be called if $childNodeName is auto-created.
-     *
-     * @param string $childNodeName The name of a configured childNode of this NodeType
-     * @param NodeType $nodeType The NodeType to check constraints for.
-     * @return bool true if the $nodeType is allowed as grandchild node, false otherwise.
-     * @throws \InvalidArgumentException If the given $childNodeName is not configured to be auto-created in $this.
-     */
-    public function allowsGrandchildNodeType(string $childNodeName, NodeType $nodeType): bool
-    {
-        $autoCreatedChildNodes = $this->getAutoCreatedChildNodes();
-        if (!isset($autoCreatedChildNodes[$childNodeName])) {
-            throw new \InvalidArgumentException(
-                'The method "allowsGrandchildNodeType" can only be used on auto-created childNodes, '
-                    . 'given $childNodeName "' . $childNodeName . '" is not auto-created.',
-                1403858395
-            );
-        }
-        $constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: [];
-
-        $childNodeConfiguration = [];
-        foreach ($this->getConfiguration('childNodes') as $name => $configuration) {
-            $childNodeConfiguration[NodeName::transliterateFromString($name)->value] = $configuration;
-        }
-        $childNodeConstraintConfiguration = ObjectAccess::getPropertyPath(
-            $childNodeConfiguration,
-            $childNodeName . '.constraints.nodeTypes'
-        ) ?: [];
-
-        $constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
-
-        return $this->isNodeTypeAllowedByConstraints($nodeType, $constraints);
-    }
-
-    /**
-     * Internal method to check whether the passed-in $nodeType is allowed by the $constraints array.
-     *
-     * $constraints is an associative array where the key is the Node Type Name. If the value is "true",
-     * the node type is explicitly allowed. If the value is "false", the node type is explicitly denied.
-     * If nothing is specified, the fallback "*" is used. If that one is also not specified, we DENY by
-     * default.
-     *
-     * Super types of the given node types are also checked, so if a super type is constrained
-     * it will also take affect on the inherited node types. The closest constrained super type match is used.
-     *
-     * @param array<string,mixed> $constraints
-     */
-    protected function isNodeTypeAllowedByConstraints(NodeType $nodeType, array $constraints): bool
-    {
-        $directConstraintsResult = $this->isNodeTypeAllowedByDirectConstraints($nodeType, $constraints);
-        if ($directConstraintsResult !== null) {
-            return $directConstraintsResult;
-        }
-
-        $inheritanceConstraintsResult = $this->isNodeTypeAllowedByInheritanceConstraints($nodeType, $constraints);
-        if ($inheritanceConstraintsResult !== null) {
-            return $inheritanceConstraintsResult;
-        }
-
-        if (isset($constraints['*'])) {
-            return (bool)$constraints['*'];
-        }
-
-        return false;
-    }
-
-    /**
-     * @param array<string,mixed> $constraints
-     * @return boolean true if the passed $nodeType is allowed by the $constraints
-     */
-    protected function isNodeTypeAllowedByDirectConstraints(NodeType $nodeType, array $constraints): ?bool
-    {
-        if ($constraints === []) {
-            return true;
-        }
-
-        if (
-            array_key_exists($nodeType->name->value, $constraints)
-            && $constraints[$nodeType->name->value] === true
-        ) {
-            return true;
-        }
-
-        if (
-            array_key_exists($nodeType->name->value, $constraints)
-            && $constraints[$nodeType->name->value] === false
-        ) {
-            return false;
-        }
-
-        return null;
-    }
-
-    /**
-     * This method loops over the constraints and finds node types that the given node type inherits from. For all
-     * matched super types, their super types are traversed to find the closest super node with a constraint which
-     * is used to evaluated if the node type is allowed. It finds the closest results for true and false, and uses
-     * the distance to choose which one wins (lowest). If no result is found the node type is allowed.
-     *
-     * @param array<string,mixed> $constraints
-     * @return ?boolean (null if no constraint matched)
-     */
-    protected function isNodeTypeAllowedByInheritanceConstraints(NodeType $nodeType, array $constraints): ?bool
-    {
-        $constraintDistanceForTrue = null;
-        $constraintDistanceForFalse = null;
-        foreach ($constraints as $superType => $constraint) {
-            if ($nodeType->isOfType($superType)) {
-                $distance = $this->traverseSuperTypes($nodeType, $superType, 0);
-
-                if (
-                    $constraint === true
-                    && ($constraintDistanceForTrue === null || $constraintDistanceForTrue > $distance)
-                ) {
-                    $constraintDistanceForTrue = $distance;
-                }
-                if (
-                    $constraint === false
-                    && ($constraintDistanceForFalse === null || $constraintDistanceForFalse > $distance)
-                ) {
-                    $constraintDistanceForFalse = $distance;
-                }
-            }
-        }
-
-        if ($constraintDistanceForTrue !== null && $constraintDistanceForFalse !== null) {
-            return $constraintDistanceForTrue < $constraintDistanceForFalse;
-        }
-
-        if ($constraintDistanceForFalse !== null) {
-            return false;
-        }
-
-        if ($constraintDistanceForTrue !== null) {
-            return true;
-        }
-
-        return null;
-    }
-
-    /**
-     * This method traverses the given node type to find the first super type that matches the constraint node type.
-     * In case the hierarchy has more than one way of finding a path to the node type it's not taken into account,
-     * since the first matched is returned. This is accepted on purpose for performance reasons and due to the fact
-     * that such hierarchies should be avoided.
-     *
-     * Returns null if no NodeType matched
-     */
-    protected function traverseSuperTypes(
-        NodeType $currentNodeType,
-        string $constraintNodeTypeName,
-        int $distance
-    ): ?int {
-        if ($currentNodeType->getName() === $constraintNodeTypeName) {
-            return $distance;
-        }
-
-        $distance++;
-        foreach ($currentNodeType->getDeclaredSuperTypes() as $superType) {
-            $result = $this->traverseSuperTypes($superType, $constraintNodeTypeName, $distance);
-            if ($result !== null) {
-                return $result;
-            }
-        }
-
-        return null;
+        return ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType);
     }
 
     /**

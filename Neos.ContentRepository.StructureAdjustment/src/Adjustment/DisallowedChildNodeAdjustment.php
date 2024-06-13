@@ -7,27 +7,26 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class DisallowedChildNodeAdjustment
 {
     use RemoveNodeAggregateTrait;
-    use LoadNodeTypeTrait;
 
     public function __construct(
-        private readonly ContentRepository $contentRepository,
-        private readonly ProjectedNodeIterator $projectedNodeIterator,
+        private readonly ContentGraphInterface $contentGraph,
         private readonly NodeTypeManager $nodeTypeManager,
     ) {
     }
@@ -37,16 +36,14 @@ class DisallowedChildNodeAdjustment
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        $nodeType = $this->loadNodeType($nodeTypeName);
-
-        if ($nodeType === null) {
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
             // no adjustments for unknown node types
             return;
         }
 
-        foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
-            $nodeType = $this->loadNodeType($nodeAggregate->nodeTypeName);
-            if ($nodeType === null) {
+        foreach ($this->contentGraph->findNodeAggregatesByType($nodeTypeName) as $nodeAggregate) {
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName);
+            if (!$nodeType) {
                 // unknown child node type, so we skip this test as we won't be able to find out node type constraints
                 continue;
             }
@@ -55,42 +52,38 @@ class DisallowedChildNodeAdjustment
             // as it can happen that the constraint is only violated in e.g. "AT", but not in "DE".
             // Then, we only want to remove the single edge.
             foreach ($nodeAggregate->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
-                $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                    $nodeAggregate->contentStreamId,
+                $subgraph = $this->contentGraph->getSubgraph(
                     $coveredDimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()
                 );
 
                 $parentNode = $subgraph->findParentNode($nodeAggregate->nodeAggregateId);
                 $grandparentNode = $parentNode !== null
-                    ? $subgraph->findParentNode($parentNode->nodeAggregateId)
+                    ? $subgraph->findParentNode($parentNode->aggregateId)
                     : null;
-
 
                 $allowedByParent = true;
                 $parentNodeType = null;
                 if ($parentNode !== null) {
-                    $parentNodeType = $this->loadNodeType($parentNode->nodeTypeName);
-                    if ($parentNodeType !== null) {
-                        $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType);
+                    $parentNodeType = $this->nodeTypeManager->getNodeType($parentNode->nodeTypeName);
+                    if ($parentNodeType) {
+                        $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType)
+                            || ($nodeAggregate->nodeName && $parentNodeType->tetheredNodeTypeDefinitions->contain($nodeAggregate->nodeName));
                     }
                 }
 
                 $allowedByGrandparent = false;
-                $grandparentNodeType = null;
                 if (
                     $parentNode !== null
-                    && $grandparentNode != null
+                    && $grandparentNode !== null
                     && $parentNode->classification->isTethered()
-                    && !is_null($parentNode->nodeName)
+                    && !is_null($parentNode->name)
                 ) {
-                    $grandparentNodeType = $this->loadNodeType($grandparentNode->nodeTypeName);
-                    if ($grandparentNodeType !== null) {
-                        $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType(
-                            $parentNode->nodeName->value,
-                            $nodeType
-                        );
-                    }
+                    $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
+                        $grandparentNode->nodeTypeName,
+                        $parentNode->name,
+                        $nodeAggregate->nodeTypeName
+                    );
                 }
 
                 if (!$allowedByParent && !$allowedByGrandparent) {
@@ -101,13 +94,13 @@ class DisallowedChildNodeAdjustment
 
                     $message = sprintf(
                         '
-                        The parent node type "%s" is not allowing children of type "%s",
-                        and the grandparent node type "%s" is not allowing grandchildren of type "%s".
-                        Thus, the node is invalid at this location and should be removed.
-                    ',
-                        $parentNodeType !== null ? $parentNodeType->name->value : '',
+                    The parent node type "%s" is not allowing children of type "%s",
+                    and the grandparent node type "%s" is not allowing grandchildren of type "%s".
+                    Thus, the node is invalid at this location and should be removed.
+                ',
+                        $parentNode?->nodeTypeName->value ?? '',
                         $node->nodeTypeName->value,
-                        $grandparentNodeType !== null ? $grandparentNodeType->name->value : '',
+                        $grandparentNode?->nodeTypeName->value ?? '',
                         $node->nodeTypeName->value,
                     );
 
@@ -127,6 +120,7 @@ class DisallowedChildNodeAdjustment
         }
     }
 
+
     private function removeNodeInSingleDimensionSpacePoint(
         NodeAggregate $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
@@ -134,7 +128,8 @@ class DisallowedChildNodeAdjustment
         $referenceOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint);
         $events = Events::with(
             new NodeAggregateWasRemoved(
-                $nodeAggregate->contentStreamId,
+                $this->contentGraph->getWorkspaceName(),
+                $this->contentGraph->getContentStreamId(),
                 $nodeAggregate->nodeAggregateId,
                 $nodeAggregate->occupiesDimensionSpacePoint($referenceOrigin)
                     ? new OriginDimensionSpacePointSet([$referenceOrigin])
@@ -144,7 +139,7 @@ class DisallowedChildNodeAdjustment
         );
 
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            $nodeAggregate->contentStreamId
+            $this->contentGraph->getContentStreamId()
         );
 
         return new EventsToPublish(
@@ -152,10 +147,5 @@ class DisallowedChildNodeAdjustment
             $events,
             ExpectedVersion::ANY()
         );
-    }
-
-    protected function getNodeTypeManager(): NodeTypeManager
-    {
-        return $this->nodeTypeManager;
     }
 }

@@ -4,13 +4,14 @@ Feature: Update Root Node aggregate dimensions
   I want to update a root node aggregate's dimensions when the dimension config changes.
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values  | Generalizations |
       | language   | mul, de |                 |
-    And I have the following NodeTypes configuration:
+    And using the following node types:
+    """yaml
     """
-    'Neos.ContentRepository:Root': []
-    """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -18,8 +19,7 @@ Feature: Update Root Node aggregate dimensions
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -38,7 +38,6 @@ Feature: Update Root Node aggregate dimensions
     And event metadata at index 1 is:
       | Key | Expected |
 
-    When the graph projection is fully up to date
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
     And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
@@ -73,8 +72,7 @@ Feature: Update Root Node aggregate dimensions
 
 
   Scenario: Adding a dimension and updating the root node works
-    When the graph projection is fully up to date
-    Given I have the following content dimensions:
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, en |                 |
 
@@ -97,7 +95,6 @@ Feature: Update Root Node aggregate dimensions
     And event metadata at index 1 is:
       | Key | Expected |
 
-    When the graph projection is fully up to date
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"
     And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
@@ -137,14 +134,12 @@ Feature: Update Root Node aggregate dimensions
 
 
   Scenario: Adding a dimension updating the root node, removing dimension, updating the root node, works (dimension gone again)
-    When the graph projection is fully up to date
-    Given I have the following content dimensions:
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, en |                 |
     And the command UpdateRootNodeAggregateDimensions is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
-    And the graph projection is fully up to date
 
     # now, the root node exists in "en"
     When I am in dimension space point {"language":"en"}
@@ -152,13 +147,12 @@ Feature: Update Root Node aggregate dimensions
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
 
     # again, remove "en"
-    Given I have the following content dimensions:
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values   | Generalizations |
       | language   | mul, de, |                 |
     And the command UpdateRootNodeAggregateDimensions is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
-    And the graph projection is fully up to date
 
     # now, the root node should not exist anymore in "en"
     When I am in dimension space point {"language":"en"}

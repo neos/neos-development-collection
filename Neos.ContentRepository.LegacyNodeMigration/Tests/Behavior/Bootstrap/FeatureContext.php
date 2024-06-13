@@ -1,28 +1,24 @@
 <?php
 declare(strict_types=1);
 
-require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentDateTimeTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
-
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-use Neos\Behat\Tests\Behat\FlowContextTrait;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\Behat\FlowBootstrapTrait;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
@@ -32,13 +28,10 @@ use Neos\ContentRepository\Export\Asset\ValueObject\SerializedResource;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;
 use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use PHPUnit\Framework\Assert;
@@ -49,9 +42,9 @@ use PHPUnit\Framework\MockObject\Generator as MockGenerator;
  */
 class FeatureContext implements Context
 {
-    use FlowContextTrait;
-    use NodeOperationsTrait;
-    use EventSourcedTrait;
+    use FlowBootstrapTrait;
+    use CRTestSuiteTrait;
+    use CRBehavioralTestsSubjectProvider;
 
     protected $isolated = false;
 
@@ -65,16 +58,27 @@ class FeatureContext implements Context
 
     private ProcessorResult|null $lastMigrationResult = null;
 
+    /**
+     * @var array<string>
+     */
+    private array $loggedErrors = [];
+
+    /**
+     * @var array<string>
+     */
+    private array $loggedWarnings = [];
+
+    private ContentRepository $contentRepository;
+
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     public function __construct()
     {
-        if (self::$bootstrap === null) {
-            self::$bootstrap = $this->initializeFlow();
-        }
-        $this->objectManager = self::$bootstrap->getObjectManager();
+        self::bootstrapFlow();
+        $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
+
         $this->mockFilesystemAdapter = new InMemoryFilesystemAdapter();
         $this->mockFilesystem = new Filesystem($this->mockFilesystemAdapter);
-        $this->setupEventSourcedTrait();
-
     }
 
     /**
@@ -83,7 +87,10 @@ class FeatureContext implements Context
     public function failIfLastMigrationHasErrors(): void
     {
         if ($this->lastMigrationResult !== null && $this->lastMigrationResult->severity === Severity::ERROR) {
-            Assert::fail(sprintf('The last migration run led to an error: %s', $this->lastMigrationResult->message));
+            throw new \RuntimeException(sprintf('The last migration run led to an error: %s', $this->lastMigrationResult->message));
+        }
+        if ($this->loggedErrors !== []) {
+            throw new \RuntimeException(sprintf('The last migration run logged %d error%s', count($this->loggedErrors), count($this->loggedErrors) === 1 ? '' : 's'));
         }
     }
 
@@ -101,6 +108,8 @@ class FeatureContext implements Context
                 'properties' => !empty($row['Properties']) ? $row['Properties'] : '{}',
                 'dimensionvalues' => !empty($row['Dimension Values']) ? $row['Dimension Values'] : '{}',
                 'hiddeninindex' => $row['Hidden in index'] ?? '0',
+                'hiddenbeforedatetime' =>  !empty($row['Hidden before DateTime']) ? ($row['Hidden before DateTime']): null,
+                'hiddenafterdatetime' =>  !empty($row['Hidden after DateTime']) ? ($row['Hidden after DateTime']) : null,
                 'hidden' => $row['Hidden'] ?? '0',
             ];
         }, $nodeDataRows->getHash());
@@ -112,16 +121,41 @@ class FeatureContext implements Context
      */
     public function iRunTheEventMigration(string $contentStream = null): void
     {
-        $nodeTypeManager = $this->contentRepository->getNodeTypeManager();
-        $propertyMapper = $this->getObjectManager()->get(PropertyMapper::class);
-        $propertyConverter = $this->getContentRepositoryInternals()->propertyConverter;
-        $interDimensionalVariationGraph = $this->getContentRepositoryInternals()->interDimensionalVariationGraph;
+        $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
+        $propertyMapper = $this->getObject(PropertyMapper::class);
+        $contentGraphFinder = $this->currentContentRepository->projectionState(\Neos\ContentRepository\Core\ContentGraphFinder::class);
+        // FIXME: Dirty
+        $contentGraphFactory = (new \ReflectionClass($contentGraphFinder))
+            ->getProperty('contentGraphFactory')
+            ->getValue($contentGraphFinder);
+        $nodeFactory = (new \ReflectionClass($contentGraphFactory))
+            ->getProperty('nodeFactory')
+            ->getValue($contentGraphFactory);
+        $propertyConverter = (new \ReflectionClass($nodeFactory))
+            ->getProperty('propertyConverter')
+            ->getValue($nodeFactory);
+        $interDimensionalVariationGraph = $this->currentContentRepository->getVariationGraph();
 
-        $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
-        $migration = new NodeDataToEventsProcessor($nodeTypeManager, $propertyMapper, $propertyConverter, $interDimensionalVariationGraph, $eventNormalizer, $this->mockFilesystem, $this->nodeDataRows);
+        $eventNormalizer = $this->getObject(EventNormalizer::class);
+        $migration = new NodeDataToEventsProcessor(
+            $nodeTypeManager,
+            $propertyMapper,
+            $propertyConverter,
+            $interDimensionalVariationGraph,
+            $eventNormalizer,
+            $this->mockFilesystem,
+            $this->nodeDataRows
+        );
         if ($contentStream !== null) {
             $migration->setContentStreamId(ContentStreamId::fromString($contentStream));
         }
+        $migration->onMessage(function (Severity $severity, string $message) {
+            if ($severity === Severity::ERROR) {
+                $this->loggedErrors[] = $message;
+            } elseif ($severity === Severity::WARNING) {
+                $this->loggedWarnings[] = $message;
+            }
+        });
         $this->lastMigrationResult = $migration->run();
     }
 
@@ -160,6 +194,24 @@ class FeatureContext implements Context
             Assert::assertEquals($expectedEventPayload, $actualEventPayload, 'Actual event: ' . $exportedEvent->toJson());
         }
         Assert::assertCount(count($table->getHash()), $exportedEvents, 'Expected number of events does not match actual number');
+    }
+
+    /**
+     * @Then I expect the following errors to be logged
+     */
+    public function iExpectTheFollowingErrorsToBeLogged(TableNode $table): void
+    {
+        Assert::assertSame($table->getColumn(0), $this->loggedErrors, 'Expected logged errors do not match');
+        $this->loggedErrors = [];
+    }
+
+    /**
+     * @Then I expect the following warnings to be logged
+     */
+    public function iExpectTheFollowingWarningsToBeLogged(TableNode $table): void
+    {
+        Assert::assertSame($table->getColumn(0), $this->loggedWarnings, 'Expected logged warnings do not match');
+        $this->loggedWarnings = [];
     }
 
     /**
@@ -237,7 +289,7 @@ class FeatureContext implements Context
      */
     public function iRunTheAssetMigration(): void
     {
-        $nodeTypeManager = $this->getContentRepositoryInternals()->nodeTypeManager;
+        $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
         $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface {
 
             /**
@@ -274,6 +326,13 @@ class FeatureContext implements Context
         $this->mockFilesystemAdapter->deleteEverything();
         $assetExporter = new AssetExporter($this->mockFilesystem, $mockAssetLoader, $mockResourceLoader);
         $migration = new NodeDataToAssetsProcessor($nodeTypeManager, $assetExporter, $this->nodeDataRows);
+        $migration->onMessage(function (Severity $severity, string $message) {
+            if ($severity === Severity::ERROR) {
+                $this->loggedErrors[] = $message;
+            } elseif ($severity === Severity::WARNING) {
+                $this->loggedWarnings[] = $message;
+            }
+        });
         $this->lastMigrationResult = $migration->run();
     }
 
@@ -340,5 +399,25 @@ class FeatureContext implements Context
                 return json_decode($jsonValue, true, 512, JSON_THROW_ON_ERROR);
             }, $row);
         }, $table->getHash());
+    }
+
+    protected function getContentRepositoryService(
+        ContentRepositoryServiceFactoryInterface $factory
+    ): ContentRepositoryServiceInterface {
+        return $this->contentRepositoryRegistry->buildService(
+            $this->currentContentRepository->id,
+            $factory
+        );
+    }
+
+    protected function createContentRepository(
+        ContentRepositoryId $contentRepositoryId
+    ): ContentRepository {
+        $this->contentRepositoryRegistry->resetFactoryInstance($contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
+
+        return $contentRepository;
     }
 }

@@ -15,25 +15,38 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 /**
- * An immutable, type-safe collection of Reference objects
+ * An immutable, 0-indexed, type-safe collection of Reference objects
+ *
+ * Each reference describes the edge with its properties to another node.
+ *
+ * - references:
+ *  In the case of "outgoing" references {@see ContentSubgraphInterface::findReferences()}
+ *  each reference name {@see Reference::$name} corresponds to the reference property name from the "outgoing" node, to wich node {@see Reference::$node} the reference points to.
+ *
+ * - back-references:
+ *  In the case of "incoming" references {@see ContentSubgraphInterface::findBackReferences()}
+ *  each reference name {@see Reference::$name} corresponds to the reference property name from wich "incoming" node {@see Reference::$node} the reference points from.
+ *
+ * The properties {@see Reference::$properties} are declared directly on the reference, and can provide information how one node is linked to another.
+ *
+ * This collection might return multiple references with the same name {@see Reference::$name} if multiple "outgoing" references were set.
  *
  * @implements \IteratorAggregate<int,Reference>
  * @implements \ArrayAccess<int,Reference>
  *
  * @api
  */
-final class References implements \IteratorAggregate, \ArrayAccess, \Countable
+final readonly class References implements \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
      * @var array<int,Reference>
      */
-    public readonly array $references;
+    public array $references;
 
     private function __construct(
         Reference ...$references
     ) {
-        /** @var array<int,Reference> $references */
-        $this->references = $references;
+        $this->references = array_values($references);
     }
 
     /**
@@ -53,11 +66,11 @@ final class References implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @return \ArrayIterator<int,Reference>
+     * @return \Traversable<int,Reference>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->references);
+        yield from $this->references;
     }
 
     public function offsetExists(mixed $offset): bool

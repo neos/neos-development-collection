@@ -25,14 +25,14 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
  *
  * @internal
  */
-final class ReferenceRelationRecord
+final readonly class ReferenceRelationRecord
 {
     public function __construct(
-        public readonly NodeRelationAnchorPoint $sourceNodeAnchor,
-        public readonly ReferenceName $name,
-        public readonly int $position,
-        public readonly ?SerializedPropertyValues $properties,
-        public readonly NodeAggregateId $targetNodeAggregateId
+        public NodeRelationAnchorPoint $sourceNodeAnchor,
+        public ReferenceName $name,
+        public int $position,
+        public ?SerializedPropertyValues $properties,
+        public NodeAggregateId $targetNodeAggregateId
     ) {
     }
 

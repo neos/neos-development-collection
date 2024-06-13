@@ -64,33 +64,16 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     tagName = 'body'
     omitClosingTag = true
     attributes.class.@process.addNeosBackendClass = ${Array.push(value, 'neos-backend')}
-    attributes.class.@process.addNeosBackendClass.@if.onlyRenderWhenNotInLiveWorkspace = ${Neos.Node.inBackend(documentNode)}
+    attributes.class.@process.addNeosBackendClass.@if.onlyRenderWhenNotInLiveWorkspace = ${renderingMode.isEdit}
   }
 
   # Content of the body tag. To be defined by the integrator.
-  body = Neos.Fusion:Template {
+  body = Neos.Fusion:Join {
     @position = 'after bodyTag'
-    node = ${node}
-    site = ${site}
 
-    # Script includes before the closing body tag should go here
+    # Scripts before the closing body tag
     javascripts = Neos.Fusion:Join
-    # This processor appends the rendered javascripts Array to the rendered template
-    @process.appendJavaScripts = ${value + this.javascripts}
-  }
-
-  # This enables redirecting to the last visited page after login
-  lastVisitedNodeScript = Neos.Fusion:Tag {
-    @position = 'before closingBodyTag'
-
-    tagName = 'script'
-    attributes {
-      data-neos-node = ${Neos.Node.serializedNodeAddress(node)}
-      src = Neos.Fusion:ResourceUri {
-        path = 'resource://Neos.Neos/Public/JavaScript/LastVisitedNode.js'
-      }
-      async = true
-    }
+    javascripts.@position = 'end 100'
   }
 
   closingBodyTag = '</body>'

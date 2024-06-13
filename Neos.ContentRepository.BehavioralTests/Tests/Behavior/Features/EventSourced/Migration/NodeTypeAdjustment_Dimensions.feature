@@ -2,16 +2,11 @@
 Feature: Adjust node types with a node migration
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-
-  Scenario: Success Case
-    ########################
-    # SETUP
-    ########################
-    And I have the following NodeTypes configuration:
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -21,38 +16,38 @@ Feature: Adjust node types with a node migration
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
-    And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+
+  Scenario: Success Case
+    ########################
+    # SETUP
+    ########################
+    When the command CreateRootWorkspace is executed with payload:
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                                      |
-      | contentStreamId     | "cs-identifier"                                                            |
-      | nodeAggregateId     | "lady-eleonode-rootford"                                                   |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language": "de"}                        |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-    And the graph projection is fully up to date
+      | Key                       | Value                                     |
+      | nodeAggregateId           | "sir-david-nodenborough"                  |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint | {"language": "de"}                        |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
 
     ########################
     # Actual Test
     ########################
     # we remove the Document node type (which still exists in the CR)
-    And I have the following NodeTypes configuration:
-    """
-    # !!fallback node is needed!! - TODO DISCUSS
-    'Neos.Neos:FallbackNode': []
-
+    When I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -62,7 +57,7 @@ Feature: Adjust node types with a node migration
     """
     # we should be able to rename the node type
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -77,11 +72,11 @@ Feature: Adjust node types with a node migration
               newType: 'Neos.ContentRepository.Testing:OtherDocument'
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     # ... also in the fallback dimension
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 

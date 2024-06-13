@@ -354,10 +354,10 @@ Neos.Fusion:Join {
 
 ## Examples
 
-### Rendering of Collections with `Neos.Fusion:Collection`
+### Rendering of Collections with `Neos.Fusion:Loop`
 
 For rendering of lists or menus a presentational-component usually will recieve arrays of
-preprocessed data as prop. To iterate over such an array the `Neos.Fusion:Collection`
+preprocessed data as prop. To iterate over such an array the `Neos.Fusion:Loop`
 can be used in afx.
 
 ```
@@ -368,11 +368,11 @@ prototype(Vendor.Site:IterationExample) < prototype(Neos.Fusion:Component) {
 
     renderer = afx`
         <ul @if.has={props.items ? true : false}>
-        <Neos.Fusion:Collection collection={props.items} itemName="item">
-            <li @path='itemRenderer'>
+        <Neos.Fusion:Loop items={props.items} itemName="item">
+            <li>
                 <Vendor.Site:LinkExample {...item} />
             </li>
-        </Neos.Fusion:Collection>
+        </Neos.Fusion:Loop>
         </ul>
     `
 }
@@ -389,11 +389,11 @@ prototype(PackageFactory.AtomicFusion.AFX:SliderExample) < prototype(Packagefact
   images = ${[]}
   renderer = afx`
      <div class="slider">
-        <Neos.Fusion:Collection collection={props.images} itemName="image" iterationName="iteration" @children="itemRenderer">
+        <Neos.Fusion:Loop items={props.images} itemName="image" iterationName="iteration">
             <Neos.Fusion:Augmenter class="slider__slide" data-index={iteration.index}>
                 <Vendor.Site:ImageExample {...image} />
             </Neos.Fusion:Augmenter>
-        </Neos.Fusion:Collection>
+        </Neos.Fusion:Loop>
      </div>
   `
 }

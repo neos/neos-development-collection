@@ -14,18 +14,18 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyCovered;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
 use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\Domain\Model\Site;
 
 /**
  * The Site Command Controller
@@ -89,23 +89,23 @@ class SiteCommandController extends CommandController
 
         try {
             $this->siteService->createSite($packageKey, $name, $nodeType, $nodeName, $inactive);
-        } catch (NodeTypeNotFoundException $exception) {
+        } catch (NodeTypeNotFound $exception) {
             $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
             $this->quit(1);
         } catch (SiteNodeTypeIsInvalid $exception) {
             $this->outputLine(
                 '<error>The given node type "%s" is not based on the superType "%s"</error>',
-                [$nodeType, NodeTypeNameFactory::forSite()]
+                [$nodeType, NodeTypeNameFactory::NAME_SITE]
             );
             $this->quit(1);
-        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyOccupied $exception) {
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyCovered $exception) {
             $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName ?: $name]);
             $this->quit(1);
         }
 
         $this->outputLine(
             'Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"',
-            [$name, $nodeName, $nodeType, $packageKey, $inactive ? 'offline' : 'online']
+            [$name, $nodeName ?: $name, $nodeType, $packageKey, $inactive ? 'offline' : 'online']
         );
     }
 
@@ -158,12 +158,12 @@ class SiteCommandController extends CommandController
 
         foreach ($sites as $site) {
             /** @var Site $site */
-            array_push($availableSites, [
+            $availableSites[] = [
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName()->value,
                 'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey(),
                 'status' => ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline'
-            ]);
+            ];
             if (strlen($site->getName()) > $longestSiteName) {
                 $longestSiteName = strlen($site->getName());
             }

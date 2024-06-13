@@ -10,22 +10,15 @@ namespace Neos\ContentRepository\Core\Projection;
  * @implements \IteratorAggregate<ProjectionInterface>
  * @internal
  */
-final class Projections implements \IteratorAggregate
+final class Projections implements \IteratorAggregate, \Countable
 {
     /**
-     * @var array<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionInterface>
-     * @phpstan-ignore-next-line
+     * @var array<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionInterface<ProjectionStateInterface>>
      */
     private array $projections;
 
     /**
-     * @var array<class-string<ProjectionStateInterface>,ProjectionStateInterface>
-     */
-    private array $projectionStateCache;
-
-    /**
-     * @param array<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionInterface> $projections
-     * @phpstan-ignore-next-line
+     * @param ProjectionInterface<ProjectionStateInterface> ...$projections
      */
     private function __construct(ProjectionInterface ...$projections)
     {
@@ -33,30 +26,31 @@ final class Projections implements \IteratorAggregate
         $this->projections = $projections;
     }
 
-    public static function create(): self
+    public static function empty(): self
     {
         return new self();
     }
 
     /**
-     * @template T of ProjectionStateInterface
-     * @param ProjectionInterface<T> $projection
+     * @param array<ProjectionInterface<ProjectionStateInterface>> $projections
      * @return self
      */
-    public function with(ProjectionInterface $projection): self
+    public static function fromArray(array $projections): self
     {
-        if ($this->has($projection::class)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'a projection of type "%s" already exists in this set',
-                    $projection::class
-                ),
-                1650121280
-            );
+        $projectionsByClassName = [];
+        foreach ($projections as $projection) {
+            if (array_key_exists($projection::class, $projectionsByClassName)) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'a projection of type "%s" already exists in this set',
+                        $projection::class
+                    ),
+                    1650121280
+                );
+            }
+            $projectionsByClassName[$projection::class] = $projection;
         }
-        $projections = $this->projections;
-        $projections[$projection::class] = $projection;
-        return new self(...$projections);
+        return new self(...$projectionsByClassName);
     }
 
     /**
@@ -66,7 +60,8 @@ final class Projections implements \IteratorAggregate
      */
     public function get(string $projectionClassName): ProjectionInterface
     {
-        if (!$this->has($projectionClassName)) {
+        $projection = $this->projections[$projectionClassName] ?? null;
+        if (!$projection instanceof $projectionClassName) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'a projection of type "%s" is not registered in this content repository instance.',
@@ -75,8 +70,7 @@ final class Projections implements \IteratorAggregate
                 1650120813
             );
         }
-        // @phpstan-ignore-next-line
-        return $this->projections[$projectionClassName];
+        return $projection;
     }
 
     public function has(string $projectionClassName): bool
@@ -85,40 +79,23 @@ final class Projections implements \IteratorAggregate
     }
 
     /**
-     * @return \Traversable<ProjectionInterface>
-     * @phpstan-ignore-next-line
+     * @return list<class-string<ProjectionInterface<ProjectionStateInterface>>>
      */
-    public function getIterator(): \Traversable
+    public function getClassNames(): array
     {
-        return new \ArrayIterator($this->projections);
+        return array_keys($this->projections);
     }
 
     /**
-     * @template T of ProjectionStateInterface
-     * @param class-string<T> $projectionStateClassName
-     * @return T
+     * @return \Traversable<ProjectionInterface<ProjectionStateInterface>>
      */
-    public function getProjectionState(string $projectionStateClassName): ProjectionStateInterface
+    public function getIterator(): \Traversable
     {
-        if (isset($this->projectionStateCache[$projectionStateClassName])) {
-            // @phpstan-ignore-next-line
-            return $this->projectionStateCache[$projectionStateClassName];
-        }
+        yield from $this->projections;
+    }
 
-        foreach ($this->projections as $projection) {
-            $projectionState = $projection->getState();
-            if ($projectionState instanceof $projectionStateClassName) {
-                $this->projectionStateCache[$projectionStateClassName] = $projectionState;
-                return $projectionState;
-            }
-        }
-
-        throw new \InvalidArgumentException(
-            sprintf(
-                'a projection state of type "%s" is not registered in this content repository instance.',
-                $projectionStateClassName
-            ),
-            1662033650
-        );
+    public function count(): int
+    {
+        return count($this->projections);
     }
 }

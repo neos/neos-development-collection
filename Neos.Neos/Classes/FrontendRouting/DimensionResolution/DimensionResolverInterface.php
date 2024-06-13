@@ -6,7 +6,7 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Neos\Domain\Model\SiteNodeName;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\CompositeResolver;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
@@ -115,6 +115,7 @@ interface DimensionResolverInterface
     public function fromDimensionSpacePointToUriConstraints(
         DimensionSpacePoint $filteredDimensionSpacePoint,
         DocumentNodeInfo $targetNodeInfo,
-        UriConstraints $uriConstraints
+        Site $targetSite,
+        UriConstraints $uriConstraints,
     ): UriConstraints;
 }

@@ -107,7 +107,7 @@
 						</td>
 						<td>
 							<div class="neos-select">
-								<f:form.select property="electronicAddresses.{index}.usage" options="{electronicAddressUsageTypes}" />
+								<f:form.select property="electronicAddresses.{index}.usage" options="{electronicAddressUsageTypes}" translate="{by: 'id', prefix: 'users.electronicAddress.usage.type.', package: 'Neos.Neos', source: 'Modules'}" />
 							</div>
 						</td>
 						<td class="neos-control-group{f:validation.ifHasErrors(for: 'user.electronicAddresses', then: ' neos-error')}">

@@ -12,9 +12,9 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\Property;
  */
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\Tests\Unit\Fixtures\PostalAddress;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
@@ -51,7 +51,7 @@ class PropertyTypeTest extends TestCase
         }
     }
 
-    public function declarationAndValueProvider(): array
+    public static function declarationAndValueProvider(): array
     {
         $bool = true;
         $int = 42;
@@ -66,52 +66,52 @@ class PropertyTypeTest extends TestCase
 
         return [
             [
-                ['bool', '?bool', 'boolean', '?boolean'],
+                ['bool', 'boolean'],
                 [$bool, null],
                 [0, $int, 0.0, $float, '', $string, [], $array, $date, $uri, $postalAddress, $image, $asset, [$asset]]
             ],
             [
-                ['int', '?int', 'integer', '?integer'],
+                ['int', 'integer'],
                 [42, null],
                 [$bool, $float, $string, $array, $date, $uri, $postalAddress, $image, $asset, [$asset]]
             ],
             [
-                ['float', '?float', 'double', '?double'],
+                ['float', 'double'],
                 [4.2, null],
                 [$bool, $int, $string, $array, $date, $uri, $postalAddress, $image, $asset, [$asset]]
             ],
             [
-                ['string', '?string'],
+                ['string'],
                 ['', null],
                 [$bool, $int, $float, $array, $date, $uri, $postalAddress, $image, $asset, [$asset]]
             ],
             [
-                ['array', '?array'],
+                ['array'],
                 [[], $array, [$asset], null],
                 [$bool, $int, $float, $string, $date, $uri, $postalAddress, $image, $asset]
             ],
             [
-                [\DateTime::class, '?' . \DateTime::class, \DateTimeImmutable::class, '?' . \DateTimeImmutable::class, \DateTimeInterface::class, '?' . \DateTimeInterface::class],
+                [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class],
                 [$date, null],
                 [$bool, $int, $float, $string, $array, $uri, $postalAddress, $image, $asset, [$asset]]
             ],
             [
-                ['Uri', '?Uri', Uri::class, '?' . Uri::class, UriInterface::class, '?' . UriInterface::class],
+                ['Uri', Uri::class, UriInterface::class],
                 [$uri, null],
                 [$bool, $int, $float, $string, $array, $date, $postalAddress, $image, $asset, [$asset]]
             ],
             [
-                [PostalAddress::class, '?' . PostalAddress::class],
+                [PostalAddress::class],
                 [$postalAddress, null],
                 [$bool, $int, $float, $string, $array, $date, $uri, $image, $asset, [$asset]]
             ],
             [
-                [ImageInterface::class, '?' . ImageInterface::class],
+                [ImageInterface::class],
                 [$image, null],
                 [$bool, $int, $float, $string, $array, $date, $uri, $postalAddress, $asset, [$image]]
             ],
             [
-                [Asset::class, '?' . Asset::class],
+                [Asset::class],
                 [$asset, $image, null],
                 [$bool, $int, $float, $string, $array, $date, $uri, $postalAddress, [$asset]]
             ],
@@ -119,7 +119,17 @@ class PropertyTypeTest extends TestCase
                 ['array<' . Asset::class . '>'],
                 [[$asset], [$image], null],
                 [$bool, $int, $float, $string, $array, $date, $uri, $postalAddress, $image, $asset]
-            ]
+            ],
+            [
+                ['array<string>'],
+                [[], [$string], [$string, ''], null],
+                [$bool, $int, $float, $string, [$string, $int], $date, $uri, $postalAddress, $image, $asset, [$bool], [$float]]
+            ],
+            [
+                ['array<integer>'],
+                [[], [$int], [$int, 23432], null],
+                [$bool, $int, $float, $string, $date, $uri, $postalAddress, $image, $asset, [$bool], [$float]]
+            ],
         ];
     }
 
@@ -144,20 +154,20 @@ class PropertyTypeTest extends TestCase
         }
     }
 
-    public function declarationTypeProvider(): array
+    public static function declarationTypeProvider(): array
     {
         return [
-            [['bool', '?bool', 'boolean', '?boolean'], 'boolean'],
-            [['int', '?int', 'integer', '?integer'], 'integer'],
-            [['float', '?float', 'double', '?double'], 'float'],
-            [['string', '?string'], 'string'],
-            [['array', '?array'], 'array'],
-            [['DateTime', '?DateTime', 'DateTimeImmutable', '?DateTimeImmutable', 'DateTimeInterface', '?DateTimeInterface'], 'DateTimeImmutable'],
-            [['Uri', '?Uri', Uri::class, '?' . Uri::class, UriInterface::class, '?' . UriInterface::class], Uri::class],
-            [[PostalAddress::class, '?' . PostalAddress::class], PostalAddress::class],
-            [[ImageInterface::class, '?' . ImageInterface::class], ImageInterface::class],
-            [[Asset::class, '?' . Asset::class], Asset::class],
-            [['array<' . Asset::class . '>', '?array<' . Asset::class . '>'], 'array<' . Asset::class . '>'],
+            [['bool', 'boolean'], 'boolean'],
+            [['int', 'integer'], 'integer'],
+            [['float', 'double'], 'float'],
+            [['string', ], 'string'],
+            [['array', ], 'array'],
+            [['DateTime', 'DateTimeImmutable', 'DateTimeInterface'], 'DateTimeImmutable'],
+            [['Uri', Uri::class, UriInterface::class], Uri::class],
+            [[PostalAddress::class], PostalAddress::class],
+            [[ImageInterface::class], ImageInterface::class],
+            [[Asset::class], Asset::class],
+            [['array<' . Asset::class . '>'], 'array<' . Asset::class . '>'],
         ];
     }
 }

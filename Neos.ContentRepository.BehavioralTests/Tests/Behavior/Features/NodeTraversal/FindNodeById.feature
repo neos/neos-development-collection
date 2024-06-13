@@ -2,24 +2,24 @@
 Feature: Find nodes using the findNodeById query
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
       properties:
         text:
           type: string
+      references:
         refs:
-          type: references
           properties:
             foo:
               type: string
         ref:
-          type: reference
+          constraints:
+            maxItems: 1
           properties:
             foo:
               type: string
@@ -54,6 +54,8 @@ Feature: Find nodes using the findNodeById query
       superTypes:
         'Neos.ContentRepository.Testing:AbstractPage': true
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -61,13 +63,11 @@ Feature: Find nodes using the findNodeById query
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeName | nodeTypeName                               | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds       |
       | home            | home     | Neos.ContentRepository.Testing:Homepage    | lady-eleonode-rootford | {}                    | {"terms": "terms", "contact": "contact"} |
@@ -80,10 +80,9 @@ Feature: Find nodes using the findNodeById query
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateId              | "a2a1"             |
-      | nodeVariantSelectionStrategy | "allVariants"      |
-    And the graph projection is fully up to date
+      | Key                          | Value         |
+      | nodeAggregateId              | "a2a1"        |
+      | nodeVariantSelectionStrategy | "allVariants" |
 
   Scenario:
     # findNodeById queries without result

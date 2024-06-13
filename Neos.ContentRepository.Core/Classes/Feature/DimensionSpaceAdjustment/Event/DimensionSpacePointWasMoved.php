@@ -15,9 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Moved a dimension space point to a new location; basically moving all content to the new dimension space point.
@@ -28,19 +29,21 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
  *
  * @api events are the persistence-API of the content repository
  */
-final class DimensionSpacePointWasMoved implements EventInterface, PublishableToOtherContentStreamsInterface
+final readonly class DimensionSpacePointWasMoved implements EventInterface, PublishableToWorkspaceInterface
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly DimensionSpacePoint $source,
-        public readonly DimensionSpacePoint $target
+        public WorkspaceName $workspaceName,
+        public ContentStreamId $contentStreamId,
+        public DimensionSpacePoint $source,
+        public DimensionSpacePoint $target
     ) {
     }
 
-    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
     {
         return new self(
-            $targetContentStreamId,
+            $targetWorkspaceName,
+            $contentStreamId,
             $this->source,
             $this->target
         );
@@ -49,6 +52,7 @@ final class DimensionSpacePointWasMoved implements EventInterface, PublishableTo
     public static function fromArray(array $values): self
     {
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             DimensionSpacePoint::fromArray($values['source']),
             DimensionSpacePoint::fromArray($values['target'])

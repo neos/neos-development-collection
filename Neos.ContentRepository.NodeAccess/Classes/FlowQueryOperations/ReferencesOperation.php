@@ -40,6 +40,19 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ReferencesOperation implements OperationInterface
 {
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'references';
+
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject
@@ -47,11 +60,13 @@ final class ReferencesOperation implements OperationInterface
      */
     protected $contentRepositoryRegistry;
 
+    /** @param array<int, mixed> $context */
     public function canEvaluate($context): bool
     {
         return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
+    /** @param array<int, mixed> $arguments */
     public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
         $output = [];
@@ -62,7 +77,7 @@ final class ReferencesOperation implements OperationInterface
         /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-            $output[] = iterator_to_array($subgraph->findReferences($contextNode->nodeAggregateId, $filter));
+            $output[] = iterator_to_array($subgraph->findReferences($contextNode->aggregateId, $filter));
         }
         $flowQuery->setContext(array_merge(...$output));
     }

@@ -7,10 +7,9 @@ namespace Neos\ContentRepository\Core\Service;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -22,10 +21,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  *
  * @api
  */
-final class ContentRepositoryBootstrapper
+final readonly class ContentRepositoryBootstrapper
 {
     private function __construct(
-        private readonly ContentRepository $contentRepository,
+        private ContentRepository $contentRepository,
     ) {
     }
 
@@ -38,22 +37,28 @@ final class ContentRepositoryBootstrapper
      * Retrieve the Content Stream ID of the "live" workspace.
      * If the "live" workspace does not exist yet, it will be created
      */
-    public function getOrCreateLiveContentStream(): ContentStreamId
+    public function getOrCreateLiveWorkspace(): Workspace
     {
-        $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+        $liveWorkspaceName = WorkspaceName::forLive();
+        $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($liveWorkspaceName);
         if ($liveWorkspace instanceof Workspace) {
-            return $liveWorkspace->currentContentStreamId;
+            return $liveWorkspace;
         }
-        $liveContentStreamId = ContentStreamId::create();
+
         $this->contentRepository->handle(
-            new CreateRootWorkspace(
-                WorkspaceName::forLive(),
+            CreateRootWorkspace::create(
+                $liveWorkspaceName,
                 WorkspaceTitle::fromString('Live'),
                 WorkspaceDescription::fromString('Public live workspace'),
-                $liveContentStreamId
+                ContentStreamId::create()
             )
-        )->block();
-        return $liveContentStreamId;
+        );
+        $liveWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($liveWorkspaceName);
+        if (!$liveWorkspace) {
+            throw new \Exception('Live workspace creation failed', 1699002435);
+        }
+
+        return $liveWorkspace;
     }
 
     /**
@@ -61,23 +66,22 @@ final class ContentRepositoryBootstrapper
      * If no root node of the specified $rootNodeTypeName exist, it will be created
      */
     public function getOrCreateRootNodeAggregate(
-        ContentStreamId $contentStreamId,
+        Workspace $workspace,
         NodeTypeName $rootNodeTypeName
     ): NodeAggregateId {
         try {
-            return $this->contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $contentStreamId,
+            return $this->contentRepository->getContentGraph($workspace->workspaceName)->findRootNodeAggregateByType(
                 $rootNodeTypeName
             )->nodeAggregateId;
 
             // TODO make this case more explicit
         } catch (\Exception $exception) {
             $rootNodeAggregateId = NodeAggregateId::create();
-            $this->contentRepository->handle(new CreateRootNodeAggregateWithNode(
-                $contentStreamId,
+            $this->contentRepository->handle(CreateRootNodeAggregateWithNode::create(
+                $workspace->workspaceName,
                 $rootNodeAggregateId,
                 $rootNodeTypeName,
-            ))->block();
+            ));
             return $rootNodeAggregateId;
         }
     }

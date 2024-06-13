@@ -2,144 +2,121 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
+use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 
 /**
  * @internal
  */
 class DoctrineDbalContentGraphSchemaBuilder
 {
+    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
+
     public function __construct(
-        private readonly string $tableNamePrefix,
+        private readonly ContentGraphTableNames $contentGraphTableNames
     ) {
     }
 
-    public function buildSchema(): Schema
+    public function buildSchema(AbstractSchemaManager $schemaManager): Schema
     {
-        $schema = new Schema();
-
-        $this->createNodeTable($schema);
-        $this->createHierarchyRelationTable($schema);
-        $this->createReferenceRelationTable($schema);
-        $this->createRestrictionRelationTable($schema);
-
-        return $schema;
+        return DbalSchemaFactory::createSchemaWithTables($schemaManager, [
+            $this->createNodeTable(),
+            $this->createHierarchyRelationTable(),
+            $this->createReferenceRelationTable(),
+            $this->createDimensionSpacePointsTable()
+        ]);
     }
 
-    private function createNodeTable(Schema $schema): void
+    private function createNodeTable(): Table
     {
+        $table = self::createTable($this->contentGraphTableNames->node(), [
+            DbalSchemaFactory::columnForNodeAnchorPoint('relationanchorpoint')->setAutoincrement(true),
+            DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotnull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotnull(false),
+            DbalSchemaFactory::columnForNodeTypeName('nodetypename'),
+            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
+            (new Column('properties', self::type(Types::TEXT)))->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('classification', self::type(Types::BINARY)))->setLength(20)->setNotnull(true),
+            (new Column('created', self::type(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
+            (new Column('originalcreated', self::type(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
+            (new Column('lastmodified', self::type(Types::DATETIME_IMMUTABLE)))->setNotnull(false)->setDefault(null),
+            (new Column('originallastmodified', self::type(Types::DATETIME_IMMUTABLE)))->setNotnull(false)->setDefault(null)
+        ]);
 
-        $table = $schema->createTable($this->tableNamePrefix . '_node');
-        $table->addColumn('relationanchorpoint', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(false);
-        $table->addColumn('origindimensionspacepoint', Types::TEXT)
-            ->setNotnull(false);
-        $table->addColumn('origindimensionspacepointhash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false);
-        $table->addColumn('nodetypename', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('properties', Types::TEXT) // TODO longtext?
-        ->setNotnull(true);
-        $table->addColumn('classification', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('created', Types::DATETIME_IMMUTABLE)
-            ->setDefault('CURRENT_TIMESTAMP')
-            ->setNotnull(true);
-        $table->addColumn('originalcreated', Types::DATETIME_IMMUTABLE)
-            ->setDefault('CURRENT_TIMESTAMP')
-            ->setNotnull(true);
-        $table->addColumn('lastmodified', Types::DATETIME_IMMUTABLE)
-            ->setNotnull(false)
-            ->setDefault(null);
-        $table->addColumn('originallastmodified', Types::DATETIME_IMMUTABLE)
-            ->setNotnull(false)
-            ->setDefault(null);
-        $table
+        return $table
             ->setPrimaryKey(['relationanchorpoint'])
-            ->addIndex(['nodeaggregateid'], 'NODE_AGGREGATE_ID')
-            ->addIndex(['nodetypename'], 'NODE_TYPE_NAME');
+            ->addIndex(['nodeaggregateid'])
+            ->addIndex(['nodetypename']);
     }
 
-    private function createHierarchyRelationTable(Schema $schema): void
+    private function createHierarchyRelationTable(): Table
     {
-        $table = $schema->createTable($this->tableNamePrefix . '_hierarchyrelation');
-        $table->addColumn('name', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false);
-        $table->addColumn('position', Types::INTEGER)
-            ->setNotnull(true);
-        $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $table->addColumn('dimensionspacepoint', Types::TEXT)
-            ->setNotnull(true);
-        $table->addColumn('dimensionspacepointhash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('parentnodeanchor', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('childnodeanchor', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table
-            ->addIndex(['childnodeanchor'], 'CHILDNODEANCHOR')
-            ->addIndex(['contentstreamid'], 'CONTENTSTREAMID')
-            ->addIndex(['parentnodeanchor'], 'PARENTNODEANCHOR')
-            ->addIndex(['contentstreamid', 'dimensionspacepointhash'], 'SUBGRAPH_ID');
+        $table = self::createTable($this->contentGraphTableNames->hierarchyRelation(), [
+            (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
+            DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotnull(true),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotnull(true),
+            DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor'),
+            DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor'),
+            (new Column('subtreetags', self::type(Types::JSON)))->setDefault('{}'),
+        ]);
+
+        return $table
+            ->addIndex(['childnodeanchor'])
+            ->addIndex(['contentstreamid'])
+            ->addIndex(['parentnodeanchor'])
+            ->addIndex(['contentstreamid', 'childnodeanchor', 'dimensionspacepointhash'])
+            ->addIndex(['contentstreamid', 'dimensionspacepointhash']);
     }
 
-    private function createReferenceRelationTable(Schema $schema): void
+    private function createDimensionSpacePointsTable(): Table
     {
-        $table = $schema->createTable($this->tableNamePrefix . '_referencerelation');
-        $table->addColumn('name', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('position', Types::INTEGER)
-            ->setNotnull(true);
-        $table->addColumn('nodeanchorpoint', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('properties', Types::TEXT)
-            ->setNotnull(false);
-        $table->addColumn('destinationnodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
+        $table = self::createTable($this->contentGraphTableNames->dimensionSpacePoints(), [
+            DbalSchemaFactory::columnForDimensionSpacePointHash('hash')->setNotnull(true),
+            DbalSchemaFactory::columnForDimensionSpacePoint('dimensionspacepoint')->setNotnull(true)
+        ]);
 
-        $table
+        return $table
+            ->setPrimaryKey(['hash']);
+    }
+
+    private function createReferenceRelationTable(): Table
+    {
+        $table = self::createTable($this->contentGraphTableNames->referenceRelation(), [
+            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
+            (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
+            DbalSchemaFactory::columnForNodeAnchorPoint('nodeanchorpoint'),
+            (new Column('properties', self::type(Types::TEXT)))->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            DbalSchemaFactory::columnForNodeAggregateId('destinationnodeaggregateid')->setNotnull(true)
+        ]);
+
+        return $table
             ->setPrimaryKey(['name', 'position', 'nodeanchorpoint']);
     }
 
-    private function createRestrictionRelationTable(Schema $schema): void
+    /**
+     * @param array<Column> $columns
+     */
+    private static function createTable(string $tableName, array $columns): Table
     {
-        $table = $schema->createTable($this->tableNamePrefix . '_restrictionrelation');
-        $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $table->addColumn('dimensionspacepointhash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('originnodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
-        $table->addColumn('affectednodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
+        try {
+            return new Table($tableName, $columns);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to create table "%s": %s', $tableName, $e->getMessage()), 1716490913, $e);
+        }
+    }
 
-        $table
-            ->setPrimaryKey([
-                'contentstreamid',
-                'dimensionspacepointhash',
-                'originnodeaggregateid',
-                'affectednodeaggregateid'
-            ]);
+    private static function type(string $type): Type
+    {
+        try {
+            return Type::getType($type);
+        } catch (DbalException $e) {
+            throw new \RuntimeException(sprintf('Failed to create database type "%s": %s', $type, $e->getMessage()), 1716491053, $e);
+        }
     }
 }

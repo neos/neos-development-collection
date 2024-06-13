@@ -28,7 +28,21 @@ use Neos\Eel\FlowQuery\OperationInterface;
  */
 final class ReferencePropertyOperation implements OperationInterface
 {
+    /**
+     * {@inheritdoc}
+     *
+     * @var string
+     */
+    protected static $shortName = 'referenceProperty';
 
+    /**
+     * {@inheritdoc}
+     *
+     * @var integer
+     */
+    protected static $priority = 0;
+
+    /** @param array<int, mixed> $context */
     public function canEvaluate($context): bool
     {
         return (isset($context[0]) && $context[0] instanceof Reference);
@@ -36,6 +50,7 @@ final class ReferencePropertyOperation implements OperationInterface
 
     /**
      * @throws FlowQueryException
+     * @param array<int, mixed> $arguments
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments): mixed
     {
@@ -48,7 +63,7 @@ final class ReferencePropertyOperation implements OperationInterface
         if (!$element instanceof Reference) {
             return null;
         }
-        return $element->properties[$arguments[0]];
+        return $element->properties[$arguments[0]] ?? null;
     }
 
     public static function getShortName(): string

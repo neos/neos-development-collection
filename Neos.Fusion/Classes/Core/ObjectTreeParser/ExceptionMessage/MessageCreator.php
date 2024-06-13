@@ -15,6 +15,7 @@ namespace Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage;
 
 /**
  * Creates exception messages for the Fusion parser
+ * @internal
  */
 class MessageCreator
 {

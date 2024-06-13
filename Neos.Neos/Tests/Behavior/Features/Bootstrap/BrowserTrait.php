@@ -15,26 +15,36 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use PHPUnit\Framework\Assert;
 
 /**
- * Features context
+ * Browser related Behat steps
+ *
+ * Note this trait is impure see {@see self::setupBrowserForEveryScenario()}!
+ *  It sets up a {@see FunctionalTestRequestHandler} as {@see \Neos\Flow\Core\Bootstrap::getActiveRequestHandler()}.
+ *
+ * @internal only for behat tests within the Neos.Neos package
  */
 trait BrowserTrait
 {
-
-    /**
-     * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
-     */
-    abstract protected function getObjectManager();
+    use CRTestSuiteRuntimeVariables;
 
     /**
      * @var \Neos\Flow\Http\Client\Browser
      */
     protected $browser;
+
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    abstract private function getObject(string $className): object;
 
     /**
      * @BeforeScenario
@@ -43,11 +53,11 @@ trait BrowserTrait
     {
         // we reset the security context at the beginning of every scenario; such that we start with a clean session at
         // every scenario and SHARE the session throughout the scenario!
-        $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->clearContext();
+        $this->getObject(\Neos\Flow\Security\Context::class)->clearContext();
 
         $this->browser = new \Neos\Flow\Http\Client\Browser();
         $this->browser->setRequestEngine(new \Neos\Neos\Testing\CustomizedInternalRequestEngine());
-        $bootstrap = $this->getObjectManager()->get(\Neos\Flow\Core\Bootstrap::class);
+        $bootstrap = $this->getObject(\Neos\Flow\Core\Bootstrap::class);
 
         $requestHandler = new \Neos\Flow\Tests\FunctionalTestRequestHandler($bootstrap);
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());
@@ -103,18 +113,16 @@ trait BrowserTrait
      */
     public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateId, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
         $node = $subgraph->findNodeById($nodeAggregateId);
         Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId->value . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
+            $this->currentContentStreamId,
+            $this->currentDimensionSpacePoint,
             $nodeAggregateId,
-            $this->contentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamId($this->contentStreamId)
-                ->workspaceName
+            $this->currentWorkspaceName,
         );
     }
 
@@ -126,7 +134,7 @@ trait BrowserTrait
      */
     public function iGetTheNodeAddressForTheNodeAtPath(string $serializedNodePath, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         if (!$this->getRootNodeAggregateId()) {
             throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }
@@ -134,12 +142,10 @@ trait BrowserTrait
         Assert::assertNotNull($node, 'Did not find a node at path "' . $serializedNodePath . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $node->nodeAggregateId,
-            $this->contentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamId($this->contentStreamId)
-                ->workspaceName
+            $this->currentContentStreamId,
+            $this->currentDimensionSpacePoint,
+            $node->aggregateId,
+            $this->currentWorkspaceName,
         );
     }
 
@@ -222,7 +228,7 @@ trait BrowserTrait
      */
     public function iSendTheFollowingChanges(TableNode $changeDefinition)
     {
-        $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
+        $this->getObject(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
 
         $changes = [];
         foreach ($changeDefinition->getHash() as $singleChange) {
@@ -237,7 +243,7 @@ trait BrowserTrait
         }
 
         $server = [
-            'HTTP_X_FLOW_CSRFTOKEN' => $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
+            'HTTP_X_FLOW_CSRFTOKEN' => $this->getObject(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
         ];
         $this->currentResponse = $this->browser->request('http://localhost/neos/ui-services/change', 'POST', ['changes' => $changes], [], $server);
         $this->currentResponseContents = $this->currentResponse->getBody()->getContents();
@@ -250,7 +256,7 @@ trait BrowserTrait
      */
     public function iPublishTheFollowingNodes(string $targetWorkspaceName, TableNode $nodesToPublish)
     {
-        $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
+        $this->getObject(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
 
         $nodeContextPaths = [];
         foreach ($nodesToPublish->getHash() as $singleChange) {
@@ -258,7 +264,7 @@ trait BrowserTrait
         }
 
         $server = [
-            'HTTP_X_FLOW_CSRFTOKEN' => $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
+            'HTTP_X_FLOW_CSRFTOKEN' => $this->getObject(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
         ];
         $payload = [
             'nodeContextPaths' => $nodeContextPaths,

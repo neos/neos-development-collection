@@ -6,49 +6,59 @@ Feature: Remove NodeAggregate
   These are the base test cases for the NodeAggregateCommandHandler to block invalid commands.
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values      | Generalizations |
       | language   | de, gsw, en | gsw->de, en     |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:Tethered': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         tethered:
           type: 'Neos.ContentRepository.Testing:Tethered'
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName | tetheredDescendantNodeAggregateIds |
-      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document | {"tethered":"nodewyn-tetherton"}           |
+      | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName | tetheredDescendantNodeAggregateIds |
+      | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document | {"tethered":"nodewyn-tetherton"}   |
 
   Scenario: Try to remove a node aggregate in a non-existing content stream
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
-      | contentStreamId      | "i-do-not-exist"         |
-      | nodeAggregateId      | "sir-david-nodenborough" |
+      | workspaceName                | "i-do-not-exist"         |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language":"de"}        |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
+
+  Scenario: Try to remove a node aggregate in a workspace whose content stream is closed
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"language":"de"}        |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
 
   Scenario: Try to remove a non-existing node aggregate
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value             |
-      | nodeAggregateId      | "i-do-not-exist"  |
+      | nodeAggregateId              | "i-do-not-exist"  |
       | coveredDimensionSpacePoint   | {"language":"de"} |
       | nodeVariantSelectionStrategy | "allVariants"     |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
@@ -56,7 +66,7 @@ Feature: Remove NodeAggregate
   Scenario: Try to remove a tethered node aggregate
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value               |
-      | nodeAggregateId      | "nodewyn-tetherton" |
+      | nodeAggregateId              | "nodewyn-tetherton" |
       | nodeVariantSelectionStrategy | "allVariants"       |
       | coveredDimensionSpacePoint   | {"language":"de"}   |
     Then the last command should have thrown an exception of type "TetheredNodeAggregateCannotBeRemoved"
@@ -64,23 +74,23 @@ Feature: Remove NodeAggregate
   Scenario: Try to remove a node aggregate in a non-existing dimension space point
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                       |
-      | nodeAggregateId      | "sir-david-nodenborough"    |
+      | nodeAggregateId              | "sir-david-nodenborough"    |
       | coveredDimensionSpacePoint   | {"undeclared": "undefined"} |
       | nodeVariantSelectionStrategy | "allVariants"               |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to remove a node aggregate in a dimension space point the node aggregate does not cover
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                       |
-      | nodeAggregateId      | "sir-david-nodenborough"    |
-      | coveredDimensionSpacePoint   | {"language": "en"} |
-      | nodeVariantSelectionStrategy | "allVariants"               |
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"language": "en"}       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
 
   Scenario: Try to remove a node aggregate using a non-existent removalAttachmentPoint
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
-      | nodeAggregateId      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
       | coveredDimensionSpacePoint   | {"language":"de"}        |
       | removalAttachmentPoint       | "i-do-not-exist"         |

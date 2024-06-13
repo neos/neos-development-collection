@@ -12,16 +12,15 @@ namespace Neos\Fusion\Core;
  */
 
 use GuzzleHttp\Psr7\ServerRequest;
+use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**
  * @Flow\Scope("singleton")
- * @api
+ * @internal The Fusion Runtime is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
  */
 class RuntimeFactory
 {
@@ -32,48 +31,50 @@ class RuntimeFactory
     protected $fusionParser;
 
     /**
+     * @Flow\InjectConfiguration(path="defaultContext", package="Neos.Fusion")
+     * @var array<string, string>
+     */
+    protected ?array $defaultContextConfiguration;
+
+    /**
+     * @param array<int|string, mixed> $fusionConfiguration
      * @deprecated with Neos 8.3 might be removed with Neos 9.0 use {@link createFromConfiguration} instead.
      */
     public function create(array $fusionConfiguration, ControllerContext $controllerContext = null): Runtime
     {
-        if ($controllerContext === null) {
-            $controllerContext = self::createControllerContextFromEnvironment();
-        }
+        $defaultContextVariables = EelUtility::getDefaultContextVariables(
+            $this->defaultContextConfiguration ?? []
+        );
         return new Runtime(
             FusionConfiguration::fromArray($fusionConfiguration),
-            $controllerContext
+            FusionGlobals::fromArray(
+                [
+                    ...$defaultContextVariables,
+                    'request' => $controllerContext?->getRequest() ?? ActionRequest::fromHttpRequest(ServerRequest::fromGlobals()),
+                ]
+            )
         );
     }
 
-    public function createFromConfiguration(FusionConfiguration $fusionConfiguration, ControllerContext $controllerContext): Runtime
-    {
-        return new Runtime($fusionConfiguration, $controllerContext);
+    public function createFromConfiguration(
+        FusionConfiguration $fusionConfiguration,
+        FusionGlobals $fusionGlobals
+    ): Runtime {
+        $fusionGlobalHelpers = FusionGlobals::fromArray(
+            EelUtility::getDefaultContextVariables(
+                $this->defaultContextConfiguration ?? []
+            )
+        );
+        return new Runtime($fusionConfiguration, $fusionGlobalHelpers->merge($fusionGlobals));
     }
 
     public function createFromSourceCode(
         FusionSourceCodeCollection $sourceCode,
-        ControllerContext $controllerContext
+        FusionGlobals $fusionGlobals
     ): Runtime {
-        return new Runtime(
+        return $this->createFromConfiguration(
             $this->fusionParser->parseFromSource($sourceCode),
-            $controllerContext
-        );
-    }
-
-    private static function createControllerContextFromEnvironment(): ControllerContext
-    {
-        $httpRequest = ServerRequest::fromGlobals();
-
-        $request = ActionRequest::fromHttpRequest($httpRequest);
-
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($request);
-
-        return new ControllerContext(
-            $request,
-            new ActionResponse(),
-            new Arguments([]),
-            $uriBuilder
+            $fusionGlobals
         );
     }
 }

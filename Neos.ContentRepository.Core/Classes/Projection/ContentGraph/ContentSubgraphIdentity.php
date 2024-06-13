@@ -3,10 +3,9 @@
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
 /**
  * This describes a node's read model identity parts which are rooted in the {@see ContentSubgraphInterface}, namely:
@@ -16,10 +15,10 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
  * - {@see visibilityConstraints}
  *
  * In addition to the above subgraph identity, a Node's read model identity is further described
- * by {@see Node::$nodeAggregateId}.
+ * by {@see Node::$aggregateId}.
  *
  * With the above information, you can fetch a Subgraph directly by using
- * {@see ContentRepositoryRegistry::subgraphForNode()}.
+ * {@see \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry::subgraphForNode()}.
  *
  * (a bit lower-level): For Non-Neos/Flow installations, you can fetch a Subgraph using
  * {@see ContentGraphInterface::getSubgraph()}.
@@ -33,24 +32,22 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
  * usually need this method instead of the Origin DimensionSpacePoint inside the read model; and you'll
  * need the OriginDimensionSpacePoint when constructing commands on the write side.
  *
- * @api
+ * @deprecated please use the {@see NodeAddress} instead {@see Node::$subgraphIdentity}. Will be removed before the Final Neos 9 release.
+ * @internal
  */
-final class ContentSubgraphIdentity
+final readonly class ContentSubgraphIdentity implements \JsonSerializable
 {
     private function __construct(
-        public readonly ContentRepositoryId $contentRepositoryId,
-        public readonly ContentStreamId $contentStreamId,
+        public ContentRepositoryId $contentRepositoryId,
+        public ContentStreamId $contentStreamId,
         /**
          * DimensionSpacePoint a node has been accessed in.
          */
-        public readonly DimensionSpacePoint $dimensionSpacePoint,
-        public readonly VisibilityConstraints $visibilityConstraints,
+        public DimensionSpacePoint $dimensionSpacePoint,
+        public VisibilityConstraints $visibilityConstraints,
     ) {
     }
 
-    /**
-     * @api
-     */
     public static function create(
         ContentRepositoryId $contentRepositoryId,
         ContentStreamId $contentStreamId,
@@ -91,5 +88,18 @@ final class ContentSubgraphIdentity
             $this->dimensionSpacePoint,
             $visibilityConstraints
         );
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentRepositoryId' => $this->contentRepositoryId,
+            'contentStreamId' => $this->contentStreamId,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint,
+            'visibilityConstraints' => $this->visibilityConstraints
+        ];
     }
 }

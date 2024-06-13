@@ -7,11 +7,12 @@ use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 
 /**
  * @internal
+ * @implements ContentRepositoryServiceFactoryInterface<ExportService>
  */
 class ExportServiceFactory implements ContentRepositoryServiceFactoryInterface
 {

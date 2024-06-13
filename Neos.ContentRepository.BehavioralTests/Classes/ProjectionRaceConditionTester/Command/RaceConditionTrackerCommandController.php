@@ -16,8 +16,8 @@ namespace Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\C
 
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntries;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntry;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Utility\Files;
 use Symfony\Component\Console\Helper\Table;
@@ -35,12 +35,23 @@ final class RaceConditionTrackerCommandController extends CommandController
      */
     protected $configuration;
 
+    /**
+     * Reset the race condition tracker by clearing the stored traces in Redis.
+     * @internal
+     */
     public function resetCommand(): void
     {
         RedisInterleavingLogger::connect($this->configuration['redis']['host'], $this->configuration['redis']['port']);
         RedisInterleavingLogger::reset();
     }
 
+
+    /**
+     * Analyze the stored trace and detect race conditions and double-processed events.
+     *
+     * @param string|null $storeTrace The path to store the full trace in NDJSON format (optional).
+     * @internal
+     */
     public function analyzeTraceCommand(string $storeTrace = null): void
     {
         RedisInterleavingLogger::connect($this->configuration['redis']['host'], $this->configuration['redis']['port']);

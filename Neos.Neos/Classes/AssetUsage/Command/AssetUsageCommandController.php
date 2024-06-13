@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Command;
 
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Cli\CommandController;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 use Neos\Neos\AssetUsage\Service\AssetUsageSyncServiceFactory;
 
@@ -34,7 +34,7 @@ final class AssetUsageCommandController extends CommandController
     public function syncCommand(string $contentRepository = 'default', bool $quiet = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $assetUsageSyncService = $this->contentRepositoryRegistry->getService(
+        $assetUsageSyncService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new AssetUsageSyncServiceFactory(
                 $this->assetRepository,

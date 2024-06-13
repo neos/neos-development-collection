@@ -18,26 +18,29 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
+use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * A node generalization variant was created
  *
  * @api events are the persistence-API of the content repository
  */
-final class NodeGeneralizationVariantWasCreated implements
+final readonly class NodeGeneralizationVariantWasCreated implements
     EventInterface,
-    PublishableToOtherContentStreamsInterface,
+    PublishableToWorkspaceInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $sourceOrigin,
-        public readonly OriginDimensionSpacePoint $generalizationOrigin,
-        public readonly DimensionSpacePointSet $generalizationCoverage,
+        public WorkspaceName $workspaceName,
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $sourceOrigin,
+        public OriginDimensionSpacePoint $generalizationOrigin,
+        public InterdimensionalSiblings $variantSucceedingSiblings,
     ) {
     }
 
@@ -51,26 +54,31 @@ final class NodeGeneralizationVariantWasCreated implements
         return $this->nodeAggregateId;
     }
 
-    public function createCopyForContentStream(
-        ContentStreamId $targetContentStreamId
-    ): self {
+    public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
+    {
         return new NodeGeneralizationVariantWasCreated(
-            $targetContentStreamId,
+            $targetWorkspaceName,
+            $contentStreamId,
             $this->nodeAggregateId,
             $this->sourceOrigin,
             $this->generalizationOrigin,
-            $this->generalizationCoverage,
+            $this->variantSucceedingSiblings,
         );
     }
 
     public static function fromArray(array $values): self
     {
         return new self(
+            WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($values['generalizationOrigin']),
-            DimensionSpacePointSet::fromArray($values['generalizationCoverage']),
+            array_key_exists('variantSucceedingSiblings', $values)
+                ? InterdimensionalSiblings::fromArray($values['variantSucceedingSiblings'])
+                : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
+                    DimensionSpacePointSet::fromArray($values['generalizationCoverage']),
+                ),
         );
     }
 

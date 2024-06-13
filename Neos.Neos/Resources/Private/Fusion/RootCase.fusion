@@ -6,20 +6,17 @@
 root = Neos.Fusion:Case
 root {
   shortcut {
-    prototype(Neos.Neos:Page) {
-      body = Neos.Neos:Shortcut
-    }
-
+    # this code path will only be taken for backend views, as the node controller
+    # will take care of resolving the shortcut in the frontend
     @position = 'start'
     condition = ${q(node).is('[instanceof Neos.Neos:Shortcut]')}
-    type = 'Neos.Neos:Page'
+    renderer = Neos.Neos:Shortcut
   }
 
   editPreviewMode {
     @position = 'end 9996'
-    possibleEditPreviewModePath = ${documentNode.context.currentRenderingMode.fusionPath}
-    condition = ${Neos.Node.inBackend(documentNode) && this.possibleEditPreviewModePath != null && this.possibleEditPreviewModePath != ''}
-    renderPath = ${'/' + this.possibleEditPreviewModePath}
+    condition = ${(renderingMode.isEdit || renderingMode.isPreview) && renderingMode.fusionPath}
+    renderPath = ${'/' + renderingMode.fusionPath}
   }
 
   format {
@@ -31,9 +28,9 @@ root {
   documentType {
     @position = 'end 9998'
     condition = Neos.Fusion:CanRender {
-      type = ${documentNode.nodeType.name}
+      type = ${documentNode.nodeTypeName.value}
     }
-    type = ${documentNode.nodeType.name}
+    type = ${documentNode.nodeTypeName.value}
   }
 
   default {
@@ -46,7 +43,7 @@ root {
 
   rawContent {
     @position = 'end 10000'
-    condition = ${Neos.Node.inBackend(documentNode) && documentNode.context.currentRenderingMode.edit}
+    condition = ${renderingMode.isEdit}
     renderPath = '/rawContent'
   }
 
@@ -54,7 +51,7 @@ root {
   error {
     @position = 'end 10001'
     condition = true
-    type = ${documentNode.nodeType.name}
+    type = ${documentNode.nodeTypeName.value}
   }
 
   @cache {

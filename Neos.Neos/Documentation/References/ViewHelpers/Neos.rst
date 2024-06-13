@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 #########################
 
-This reference was automatically generated from code on 2023-05-01
+This reference was automatically generated from code on 2024-06-13
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -538,9 +538,9 @@ Arguments
 
 * ``additionalParams`` (array, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
 
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
+* ``addQueryString`` (boolean, *optional*): Deprecated with Neos 9. If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): Deprecated with Neos 9. arguments to be removed from the URI. Only active if $addQueryString = true
 
 
 
@@ -636,10 +636,6 @@ Arguments
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
 * ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
-
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
@@ -762,13 +758,6 @@ ViewHelper to find out if Neos is rendering the backend.
 
 
 
-Arguments
-*********
-
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Node
-
-
-
 
 Examples
 ********
@@ -806,8 +795,6 @@ ViewHelper to find out if Neos is rendering an edit mode.
 
 Arguments
 *********
-
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Optional Node to use context from
 
 * ``mode`` (string, *optional*): Optional rendering mode name to check if this specific mode is active
 
@@ -868,8 +855,6 @@ ViewHelper to find out if Neos is rendering a preview mode.
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Optional Node to use context from
-
 * ``mode`` (string, *optional*): Optional rendering mode name to check if this specific mode is active
 
 
@@ -925,13 +910,6 @@ the ViewHelper or have "node" set as template variable at least.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Rendering\\LiveViewHelper
 
-
-
-
-Arguments
-*********
-
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Node
 
 
 
@@ -1027,9 +1005,9 @@ Arguments
 
 * ``additionalParams`` (string, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
 
-* ``addQueryString`` (string, *optional*): If set, the current query parameters will be kept in the URI
+* ``addQueryString`` (string, *optional*): Deprecated with Neos 9. If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (string, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
+* ``argumentsToBeExcludedFromQueryString`` (string, *optional*): Deprecated with Neos 9. arguments to be removed from the URI. Only active if $addQueryString = true
 
 
 
@@ -1095,10 +1073,6 @@ Arguments
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
 * ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
-
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 

@@ -14,13 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
-use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
@@ -35,8 +33,9 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -91,12 +90,6 @@ class LinkingService
 
     /**
      * @Flow\Inject
-     * @var NodeShortcutResolver
-     */
-    protected $nodeShortcutResolver;
-
-    /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
     protected $propertyMapper;
@@ -134,7 +127,7 @@ class LinkingService
             $uri = (string)$uri;
         }
 
-        return preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
+        return $uri !== null && preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
     }
 
     /**
@@ -147,7 +140,7 @@ class LinkingService
             return $uri->getScheme();
         }
 
-        if (preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
+        if ($uri !== null && preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
             return $matches[1];
         }
 
@@ -261,9 +254,9 @@ class LinkingService
      * @param array<string,mixed> $arguments Additional arguments to be passed to the UriBuilder
      *                                       (e.g. pagination parameters)
      * @param string $section
-     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
+     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI @deprecated see https://github.com/neos/neos-development-collection/issues/5076
      * @param array<int,string> $argumentsToBeExcludedFromQueryString arguments to be removed from the URI.
-     *                                                    Only active if $addQueryString = true
+     *                                                    Only active if $addQueryString = true @deprecated see https://github.com/neos/neos-development-collection/issues/5076
      * @param boolean $resolveShortcuts @deprecated With Neos 7.0 this argument is no longer evaluated
      *                                  and log a message if set to FALSE
      * @return string The rendered URI
@@ -315,8 +308,7 @@ class LinkingService
                 $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
                 $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
-                $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                    $nodeAddress->contentStreamId,
+                $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
                     $nodeAddress->dimensionSpacePoint,
                     $workspace && !$workspace->isPublicWorkspace()
                         ? VisibilityConstraints::withoutRestrictions()
@@ -331,7 +323,7 @@ class LinkingService
                     );
                 }
                 $node = $this->contentRepositoryRegistry->subgraphForNode($baseNode)
-                    ->findNodeByPath(NodePath::fromString($nodeString), $baseNode->nodeAggregateId);
+                    ->findNodeByPath(NodePath::fromString($nodeString), $baseNode->aggregateId);
             }
             if (!$node instanceof Node) {
                 throw new NeosException(sprintf(
@@ -352,30 +344,32 @@ class LinkingService
         $this->lastLinkedNode = $node;
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->contentRepositoryId
         );
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $node->subgraphIdentity->contentStreamId
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+            $node->workspaceName
         );
-        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateFinder::class);
-        $hiddenState = $nodeHiddenStateFinder->findHiddenState(
-            $node->subgraphIdentity->contentStreamId,
-            $node->subgraphIdentity->dimensionSpacePoint,
-            $node->nodeAggregateId
-        );
-
-        $request = $controllerContext->getRequest()->getMainRequest();
+        $mainRequest = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
-        $uriBuilder->setRequest($request);
-        $action = $workspace && $workspace->isPublicWorkspace() && !$hiddenState->isHidden ? 'show' : 'preview';
+        $uriBuilder->setRequest($mainRequest);
+        $action = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::disabled()) ? 'show' : 'preview';
+
+        if ($addQueryString === true) {
+            // legacy feature see https://github.com/neos/neos-development-collection/issues/5076
+            $requestArguments = $mainRequest->getArguments();
+            foreach ($argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
+                unset($requestArguments[$argumentToBeExcluded]);
+            }
+            if ($requestArguments !== []) {
+                $arguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
+            }
+        }
 
         return $uriBuilder
             ->reset()
             ->setSection($section)
             ->setArguments($arguments)
-            ->setAddQueryString($addQueryString)
-            ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-            ->setFormat($format ?: $request->getFormat())
+            ->setFormat($format ?: $mainRequest->getFormat())
             ->setCreateAbsoluteUri($absolute)
             ->uriFor($action, ['node' => $node], 'Frontend\Node', 'Neos.Neos');
     }

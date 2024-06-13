@@ -14,14 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\Mapping;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\ContentRepository\Core\NodeType\NodeType;
 
 /**
- * Convert a boolean to a JavaScript compatible string representation.
- *
+ * @internal
+ * @deprecated todo still used?
  * @Flow\Scope("singleton")
  */
 class NodeTypeStringConverter extends AbstractTypeConverter
@@ -59,7 +59,7 @@ class NodeTypeStringConverter extends AbstractTypeConverter
         PropertyMappingConfigurationInterface $configuration = null
     ) {
         if ($source instanceof NodeType) {
-            return $source->getName();
+            return $source->name->value;
         }
 
         return '';

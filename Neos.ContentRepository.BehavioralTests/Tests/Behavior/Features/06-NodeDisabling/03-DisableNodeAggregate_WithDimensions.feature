@@ -6,17 +6,18 @@ Feature: Disable a node aggregate
   These are the test cases with dimensions being involved
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values                | Generalizations                     |
       | language   | mul, de, en, gsw, ltz | ltz->de->mul, gsw->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:Document':
       properties:
         references:
           type: references
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -24,13 +25,11 @@ Feature: Disable a node aggregate
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
+    And I am in workspace "live" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId         | nodeTypeName                            | parentNodeAggregateId  | nodeName            |
       | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | preceding-document  |
@@ -48,7 +47,6 @@ Feature: Disable a node aggregate
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"mul"}       |
       | targetOrigin    | {"language":"ltz"}       |
-    And the graph projection is fully up to date
     # Set the DSP to the "central" variant having variants of all kind
     And I am in dimension space point {"language":"de"}
 
@@ -59,14 +57,14 @@ Feature: Disable a node aggregate
       | nodeVariantSelectionStrategy | "allSpecializations"     |
 
     Then I expect exactly 9 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 8 is of type "NodeAggregateWasDisabled" with payload:
+    And event at index 8 is of type "SubtreeWasTagged" with payload:
       | Key                          | Expected                                                    |
       | contentStreamId              | "cs-identifier"                                             |
       | nodeAggregateId              | "sir-david-nodenborough"                                    |
       | affectedDimensionSpacePoints | [{"language":"de"}, {"language":"ltz"}, {"language":"gsw"}] |
+      | tag                          | "disabled"                                                  |
 
-    When the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 6 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{"language":"mul"} to exist in the content graph
@@ -310,14 +308,14 @@ Feature: Disable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 9 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 8 is of type "NodeAggregateWasDisabled" with payload:
+    And event at index 8 is of type "SubtreeWasTagged" with payload:
       | Key                          | Expected                                                                                           |
       | contentStreamId              | "cs-identifier"                                                                                    |
       | nodeAggregateId              | "sir-david-nodenborough"                                                                           |
       | affectedDimensionSpacePoints | [{"language":"ltz"}, {"language":"mul"}, {"language":"de"}, {"language":"en"}, {"language":"gsw"}] |
+      | tag                          | "disabled"                                                                                         |
 
-    When the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 6 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{"language":"mul"} to exist in the content graph

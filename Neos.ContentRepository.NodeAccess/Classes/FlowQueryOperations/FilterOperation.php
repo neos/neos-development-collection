@@ -12,7 +12,10 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -31,6 +34,11 @@ use Neos\Utility\ObjectAccess;
  */
 class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperation
 {
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     /**
      * {@inheritdoc}
      *
@@ -41,7 +49,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     /**
      * {@inheritdoc}
      *
-     * @param array $context $context onto which this operation should be applied (array or array-like object)
+     * @param array<int, mixed> $context $context onto which this operation should be applied (array or array-like object)
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
@@ -53,7 +61,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery
-     * @param array $arguments
+     * @param array<int, mixed> $arguments
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
@@ -86,13 +94,8 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function matchesPropertyNameFilter($element, $propertyNameFilter)
     {
-        /* @var Node $element */
-        try {
-            return ((string)$element->nodeName === $propertyNameFilter);
-        } catch (\InvalidArgumentException $e) {
-            // in case the Element has no valid node name, we do not match!
-            return false;
-        }
+        assert($element instanceof Node);
+        return $element->name?->value === $propertyNameFilter;
     }
 
     /**
@@ -104,7 +107,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function matchesIdentifierFilter($element, $identifier)
     {
-        return (strtolower($element->nodeAggregateId->value) === strtolower($identifier));
+        return (strtolower($element->aggregateId->value) === strtolower($identifier));
     }
 
     /**
@@ -118,8 +121,8 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     {
         if ($propertyPath === '_identifier') {
             // TODO: deprecated (Neos <9 case)
-            return $element->nodeAggregateId->value;
-        } elseif ($propertyPath[0] === '_' && $propertyPath !== '_hiddenInIndex') {
+            return $element->aggregateId->value;
+        } elseif ($propertyPath[0] === '_') {
             return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
         } else {
             return $element->getProperty($propertyPath);
@@ -142,7 +145,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
             } elseif ($operand === Node::class) {
                 return true;
             } else {
-                $isOfType = $value->nodeType->isOfType($operand[0] === '!' ? substr($operand, 1) : $operand);
+                $isOfType = $this->getNodeType($value)->isOfType($operand[0] === '!' ? substr($operand, 1) : $operand);
                 return $operand[0] === '!' ? $isOfType === false : $isOfType;
             }
         } elseif ($operator === '!instanceof' && $value instanceof Node) {

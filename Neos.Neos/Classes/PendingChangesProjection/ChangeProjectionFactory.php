@@ -14,15 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\PendingChangesProjection;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
-use Neos\Neos\PendingChangesProjection\ChangeProjection;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 
 /**
  * @implements ProjectionFactoryInterface<ChangeProjection>
@@ -30,31 +24,19 @@ use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 class ChangeProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
-        private readonly DbalClientInterface $dbalClient
+        private readonly Connection $dbal,
     ) {
     }
 
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar
     ): ChangeProjection {
-        $workspaceFinder = $projectionsSoFar->get(WorkspaceProjection::class)->getState();
-        assert($workspaceFinder instanceof WorkspaceFinder);
-        $projectionShortName = strtolower(str_replace(
-            'Projection',
-            '',
-            (new \ReflectionClass(ChangeProjection::class))->getShortName()
-        ));
         return new ChangeProjection(
-            $projectionFactoryDependencies->eventNormalizer,
-            $this->dbalClient,
-            $workspaceFinder,
+            $this->dbal,
             sprintf(
-                'cr_%s_p_neos_%s',
+                'cr_%s_p_neos_change',
                 $projectionFactoryDependencies->contentRepositoryId->value,
-                $projectionShortName
             ),
         );
     }

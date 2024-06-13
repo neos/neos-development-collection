@@ -4,22 +4,30 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\LegacyNodeMigration;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
 final class NodeDataToAssetsProcessor implements ProcessorInterface
 {
+    /**
+     * @var array<string, true>
+     */
     private array $processedAssetIds = [];
+    /**
+     * @var array<\Closure>
+     */
     private array $callbacks = [];
 
+    /**
+     * @param iterable<int, array<string, mixed>> $nodeDataRows
+     */
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly AssetExporter $assetExporter,
@@ -35,16 +43,16 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
     {
         $numberOfErrors = 0;
         foreach ($this->nodeDataRows as $nodeDataRow) {
-            $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
-            try {
-                $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-            } catch (NodeTypeNotFoundException $exception) {
-                $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, '%s. Node: "%s"', $exception->getMessage(), $nodeDataRow['identifier']);
+            if ($nodeDataRow['path'] === '/sites') {
+                // the sites node has no properties and is unstructured
                 continue;
             }
-            // HACK the following line is required in order to fully initialize the node type
-            $nodeType->getFullConfiguration();
+            $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+            if (!$nodeType) {
+                $this->dispatch(Severity::ERROR, 'The node type "%s" is not available. Node: "%s"', $nodeTypeName->value, $nodeDataRow['identifier']);
+                continue;
+            }
             try {
                 $properties = json_decode($nodeDataRow['properties'], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $exception) {
@@ -53,7 +61,12 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
                 continue;
             }
             foreach ($properties as $propertyName => $propertyValue) {
-                $propertyType = $nodeType->getPropertyType($propertyName);
+                try {
+                    $propertyType = $nodeType->getPropertyType($propertyName);
+                } catch (\InvalidArgumentException $exception) {
+                    $this->dispatch(Severity::WARNING, 'Skipped node data processing for the property "%s". The property name is not part of the NodeType schema for the NodeType "%s". (Node: %s)', $propertyName, $nodeType->name->value, $nodeDataRow['identifier']);
+                    continue;
+                }
                 foreach ($this->extractAssetIdentifiers($propertyType, $propertyValue) as $assetId) {
                     if (array_key_exists($assetId, $this->processedAssetIds)) {
                         continue;
@@ -84,12 +97,10 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
     private function extractAssetIdentifiers(string $type, mixed $value): array
     {
         if (($type === 'string' || is_subclass_of($type, \Stringable::class, true)) && is_string($value)) {
-            // @phpstan-ignore-next-line
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
             return array_map(static fn(array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class, true)) {
-            // @phpstan-ignore-next-line
             return isset($value['__identifier']) ? [$value['__identifier']] : [];
         }
 

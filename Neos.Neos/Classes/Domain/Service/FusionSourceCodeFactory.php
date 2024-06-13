@@ -14,17 +14,20 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Neos\Domain\Exception as NeosDomainException;
 use Neos\Neos\Domain\Model\Site;
-use Neos\Flow\Annotations as Flow;
 
+/**
+ * @internal For interacting with Fusion from the outside a FusionView should be used.
+ */
 class FusionSourceCodeFactory
 {
     /**

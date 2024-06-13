@@ -20,12 +20,13 @@ use Neos\Fusion;
  * This dsl factory takes care of instantiating a Fusion dsl transpilers.
  *
  * @Flow\Scope("singleton")
+ * @internal the factory is internal but implementing a DSL is api.
  */
 class DslFactory
 {
     /**
      * @Flow\InjectConfiguration("dsl")
-     * @var
+     * @var array<string, class-string<DslInterface>>|null
      */
     protected $dslSettings;
 
@@ -36,7 +37,7 @@ class DslFactory
      */
     public function create(string $identifier): DslInterface
     {
-        if (isset($this->dslSettings) && is_array($this->dslSettings) && isset($this->dslSettings[$identifier])) {
+        if (is_array($this->dslSettings) && isset($this->dslSettings[$identifier])) {
             $dslObjectName = $this->dslSettings[$identifier];
             if (!class_exists($dslObjectName)) {
                 throw new Fusion\Exception(sprintf('The fusion dsl-object %s was not found.', $dslObjectName), 1490776462);

@@ -4,40 +4,37 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Projection;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Exception\ORMException;
-use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
-use Neos\Neos\AssetUsage\Dto\NodeAddress;
-use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\EventStore\Model\Event;
+use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
+use Neos\ContentRepository\Core\Projection\CheckpointStorageStatusType;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStream\EventStreamInterface;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
+use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
+use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
-use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Doctrine\DBAL\Connection;
-use Neos\EventStore\CatchUp\CatchUp;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Media\Domain\Model\AssetVariantInterface;
-use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 
 /**
  * @implements ProjectionInterface<AssetUsageFinder>
@@ -47,19 +44,18 @@ final class AssetUsageProjection implements ProjectionInterface
 {
     private ?AssetUsageFinder $stateAccessor = null;
     private AssetUsageRepository $repository;
-    private DoctrineCheckpointStorage $checkpointStorage;
+    private DbalCheckpointStorage $checkpointStorage;
     /** @var array<string, string|null> */
     private array $originalAssetIdMappingRuntimeCache = [];
 
     public function __construct(
-        private readonly EventNormalizer $eventNormalizer,
         private readonly AssetRepository $assetRepository,
         ContentRepositoryId $contentRepositoryId,
         Connection $dbal,
         AssetUsageRepositoryFactory $assetUsageRepositoryFactory,
     ) {
         $this->repository = $assetUsageRepositoryFactory->build($contentRepositoryId);
-        $this->checkpointStorage = new DoctrineCheckpointStorage(
+        $this->checkpointStorage = new DbalCheckpointStorage(
             $dbal,
             $this->repository->getTableNamePrefix() . '_checkpoint',
             self::class
@@ -88,7 +84,7 @@ final class AssetUsageProjection implements ProjectionInterface
                 $e
             );
         }
-        $nodeAddress = new NodeAddress(
+        $nodeAddress = new AssetUsageNodeAddress(
             $event->getContentStreamId(),
             $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
             $event->getNodeAggregateId()
@@ -111,7 +107,7 @@ final class AssetUsageProjection implements ProjectionInterface
                 $e
             );
         }
-        $nodeAddress = new NodeAddress(
+        $nodeAddress = new AssetUsageNodeAddress(
             $event->getContentStreamId(),
             $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
             $event->getNodeAggregateId()
@@ -182,10 +178,6 @@ final class AssetUsageProjection implements ProjectionInterface
         /** @var array<string, array<AssetIdAndOriginalAssetId>> $assetIds */
         $assetIds = [];
         foreach ($propertyValues as $propertyName => $propertyValue) {
-            // skip removed properties ({@see SerializedPropertyValues})
-            if ($propertyValue === null) {
-                continue;
-            }
             $extractedAssetIds = $this->extractAssetIds(
                 $propertyValue->type,
                 $propertyValue->value,
@@ -237,14 +229,33 @@ final class AssetUsageProjection implements ProjectionInterface
 
     public function setUp(): void
     {
-        $this->repository->setup();
-        $this->checkpointStorage->setup();
+        $this->repository->setUp();
+        $this->checkpointStorage->setUp();
     }
 
-    public function canHandle(Event $event): bool
+    public function status(): ProjectionStatus
     {
-        $eventClassName = $this->eventNormalizer->getEventClassName($event);
-        return in_array($eventClassName, [
+        $checkpointStorageStatus = $this->checkpointStorage->status();
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::ERROR) {
+            return ProjectionStatus::error($checkpointStorageStatus->details);
+        }
+        if ($checkpointStorageStatus->type === CheckpointStorageStatusType::SETUP_REQUIRED) {
+            return ProjectionStatus::setupRequired($checkpointStorageStatus->details);
+        }
+        try {
+            $falseOrDetailsString = $this->repository->isSetupRequired();
+            if (is_string($falseOrDetailsString)) {
+                return ProjectionStatus::setupRequired($falseOrDetailsString);
+            }
+        } catch (\Throwable $e) {
+            return ProjectionStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
+        }
+        return ProjectionStatus::ok();
+    }
+
+    public function canHandle(EventInterface $event): bool
+    {
+        return in_array($event::class, [
             NodeAggregateWithNodeWasCreated::class,
             NodePropertiesWereSet::class,
             NodeAggregateWasRemoved::class,
@@ -259,39 +270,27 @@ final class AssetUsageProjection implements ProjectionInterface
         ]);
     }
 
-    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
-        $catchUp->run($eventStream);
-    }
-
-    private function apply(EventEnvelope $eventEnvelope): void
-    {
-        if (!$this->canHandle($eventEnvelope->event)) {
-            return;
-        }
-
-        $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
-
-        match ($eventInstance::class) {
-            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($eventInstance, $eventEnvelope),
-            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($eventInstance, $eventEnvelope),
-            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($eventInstance),
-            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($eventInstance),
-            ContentStreamWasForked::class => $this->whenContentStreamWasForked($eventInstance),
-            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($eventInstance),
-            WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($eventInstance),
-            WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($eventInstance),
-            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($eventInstance),
-            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($eventInstance),
-            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($eventInstance),
-            default => null,
+        match ($event::class) {
+            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
+            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
+            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
+            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
+            ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
+            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
+            WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
+            WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),
+            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
+            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
+            ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 
-    public function getSequenceNumber(): SequenceNumber
+    public function getCheckpointStorage(): DbalCheckpointStorage
     {
-        return $this->checkpointStorage->getHighestAppliedSequenceNumber();
+        return $this->checkpointStorage;
     }
 
     public function getState(): AssetUsageFinder

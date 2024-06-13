@@ -3,11 +3,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger;
 
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Pragmatic performance booster for some "batch" operations needed by the Neos UI.
@@ -22,6 +23,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
  * We will hopefully get rid of this class at some point; by introducing a NodeAggregate
  * which will take care of constraint enforcement then.
  *
+ * @deprecated remove me https://github.com/neos/neos-development-collection/pull/4988
  * @internal
  */
 class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInterface
@@ -32,12 +34,15 @@ class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInt
      */
     protected $contentRepositoryRegistry;
 
-    private static bool $synchronousEnabled = false;
+    /**
+     * Hack by setting to true to be always sync mode: https://github.com/neos/neos-development-collection/pull/4988
+     */
+    private static bool $synchronousEnabled = true;
 
     /**
      * INTERNAL
      */
-    public static function enableSynchonityForSpeedingUpTesting(): void
+    public static function enableSynchronicityForSpeedingUpTesting(): void
     {
         self::$synchronousEnabled = true;
     }
@@ -56,8 +61,7 @@ class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInt
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly SubprocessProjectionCatchUpTrigger $inner
-    )
-    {
+    ) {
     }
 
     public function triggerCatchUp(Projections $projections): void
@@ -66,7 +70,7 @@ class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInt
             $contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
             foreach ($projections as $projection) {
                 $projectionClassName = get_class($projection);
-                $contentRepository->catchUpProjection($projectionClassName);
+                $contentRepository->catchUpProjection($projectionClassName, CatchUpOptions::create());
             }
         } else {
             $this->inner->triggerCatchUp($projections);

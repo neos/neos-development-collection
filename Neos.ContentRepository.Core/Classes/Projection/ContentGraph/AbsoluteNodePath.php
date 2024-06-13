@@ -24,17 +24,26 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  * Example:
  * root path: '/<Neos.ContentRepository:Root>' results in
  *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": []}
- * non-root path: '/<Neos.ContentRepository:Root>/my/site' results in
- *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": ["my","site"]}
+ * non-root path: '/<Neos.ContentRepository:Root>/my-site/main' results in
+ *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": ["my-site", "main"]}
  *
  * It describes the hierarchy path of a node to and including its root node in a subgraph.
+ *
+ * To fetch a node via an absolute path use the subgraph: {@see ContentSubgraphInterface::findNodeByAbsolutePath()}
+ *
+ * ```php
+ * $subgraph->findNodeByAbsolutePath(
+ *     AbsoluteNodePath::fromString("/<Neos.Neos:Sites>/my-site/main")
+ * )
+ * ```
+ *
  * @api
  */
-final class AbsoluteNodePath implements \JsonSerializable
+final readonly class AbsoluteNodePath implements \JsonSerializable
 {
     private function __construct(
-        public readonly NodeTypeName $rootNodeTypeName,
-        public readonly NodePath $path
+        public NodeTypeName $rootNodeTypeName,
+        public NodePath $path
     ) {
     }
 
@@ -49,8 +58,14 @@ final class AbsoluteNodePath implements \JsonSerializable
     }
 
     /**
-     * The ancestors must be ordered with the root node first, so if you call this using
-     * {@see ContentSubgraphInterface::findAncestorNodes()}, you need to call ${@see Nodes::reverse()} first
+     * The ancestors must be ordered with the root node first.
+     *
+     * If you want to retrieve the path of a node using {@see ContentSubgraphInterface::findAncestorNodes()}, you need to reverse the order first {@see Nodes::reverse()}
+     *
+     * ```php
+     * $ancestors = $this->findAncestorNodes($leafNode->nodeAggregateId, FindAncestorNodesFilter::create())->reverse();
+     * $absoluteNodePath = AbsoluteNodePath::fromLeafNodeAndAncestors($leafNode, $ancestors);
+     * ```
      */
     public static function fromLeafNodeAndAncestors(Node $leafNode, Nodes $ancestors): self
     {
@@ -71,14 +86,14 @@ final class AbsoluteNodePath implements \JsonSerializable
             if ($ancestor->classification->isRoot()) {
                 continue;
             }
-            if (!$ancestor->nodeName) {
+            if (!$ancestor->name) {
                 throw new \InvalidArgumentException(
-                    'Could not resolve node path for node ' . $leafNode->nodeAggregateId->value
-                    . ', ancestor ' . $ancestor->nodeAggregateId->value . ' is unnamed.',
+                    'Could not resolve node path for node ' . $leafNode->aggregateId->value
+                    . ', ancestor ' . $ancestor->aggregateId->value . ' is unnamed.',
                     1687509348
                 );
             }
-            $nodeNames[] = $ancestor->nodeName;
+            $nodeNames[] = $ancestor->name;
         }
 
         return new self(

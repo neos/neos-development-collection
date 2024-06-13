@@ -9,15 +9,14 @@ Feature: Add Dimension Specialization
   !! Constraint: the Target Dimension Space should be empty.
 
   Background:
-    Given I have the following content dimensions:
-      | Identifier | Values      | Generalizations |
-      | language   | mul, de, en | de->mul         |
-
     ########################
     # SETUP
     ########################
-    And I have the following NodeTypes configuration:
-    """
+    Given using the following content dimensions:
+      | Identifier | Values      | Generalizations |
+      | language   | mul, de, en | de->mul         |
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -30,39 +29,36 @@ Feature: Add Dimension Specialization
           type: string
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "sir-david-nodenborough"                  |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {"language": "de"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
       | initialPropertyValues     | {"text": "hello" }                        |
-    And the graph projection is fully up to date
-
 
   Scenario: Success Case - simple
     # we change the dimension configuration
-    When I have the following content dimensions:
+    ########################
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
-
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -73,13 +69,14 @@ Feature: Add Dimension Specialization
               to: { language: 'ch' }
     """
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "live"
+    And I am in dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
     And I expect this node to have the following properties:
       | Key  | Value   |
       | text | "hello" |
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
 
@@ -103,13 +100,13 @@ Feature: Add Dimension Specialization
 
     # finally, we MODIFY the node and ensure that the modification is visible in both DSPs (as otherwise the shine through would not have worked
     # as expected)
+    # migration-cs is the actual name of the temporary workspace
+    And I am in workspace "migration-cs"
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                    |
-      | contentStreamId           | "migration-cs"           |
       | nodeAggregateId           | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {"language": "de"}       |
       | propertyValues            | {"text": "changed"}      |
-    And the graph projection is fully up to date
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
@@ -123,12 +120,12 @@ Feature: Add Dimension Specialization
       | text | "changed" |
 
     # the original content stream was untouched
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     And I expect this node to have the following properties:
       | Key  | Value   |
       | text | "hello" |
-    When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
+    When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
     When I run integrity violation detection
@@ -138,26 +135,24 @@ Feature: Add Dimension Specialization
 
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "de"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the graph projection is fully up to date
 
     # ensure the node is disabled
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
-    When I have the following content dimensions:
+    When I change the content dimensions in content repository "default" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -188,20 +183,19 @@ Feature: Add Dimension Specialization
 
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
-    When I have the following content dimensions:
+    When I change the content dimensions in content repository "default" to:
       | Identifier | Values          | Generalizations |
       | language   | mul, de, ch, en | ch->de->mul     |
 
     # we create a node in CH
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |
-      | contentStreamId | "cs-identifier"          |
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"de"}        |
       | targetOrigin    | {"language":"en"}        |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -215,7 +209,7 @@ Feature: Add Dimension Specialization
 
   Scenario: Error case - the target dimension is not configured
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -229,12 +223,12 @@ Feature: Add Dimension Specialization
 
 
   Scenario: Error case - the target dimension is not a specialization of the source dimension (1)
-    Given I have the following content dimensions:
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values       | Generalizations |
       | language   | mul, de, foo | de->mul         |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -248,12 +242,12 @@ Feature: Add Dimension Specialization
 
 
   Scenario: Error case - the target dimension is not a specialization of the source dimension (2)
-    Given I have the following content dimensions:
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values       | Generalizations   |
       | language   | mul, de, foo | de->mul, foo->mul |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:

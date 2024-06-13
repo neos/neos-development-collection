@@ -9,20 +9,21 @@ use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 
-final class SerializedImageAdjustment implements \JsonSerializable
+final readonly class SerializedImageAdjustment implements \JsonSerializable
 {
     /** @param array<string, mixed> $properties */
     private function __construct(
-        public readonly ImageAdjustmentType $type,
-        public readonly array $properties,
+        public ImageAdjustmentType $type,
+        public array $properties,
     ) {}
 
     public static function fromImageAdjustment(ImageAdjustmentInterface $adjustment): self
     {
-        $type = match(TypeHandling::getTypeForValue($adjustment)) {
+        $type = match($typeForValue = TypeHandling::getTypeForValue($adjustment)) {
             ResizeImageAdjustment::class => ImageAdjustmentType::RESIZE_IMAGE,
             CropImageAdjustment::class => ImageAdjustmentType::CROP_IMAGE,
             QualityImageAdjustment::class => ImageAdjustmentType::QUALITY_IMAGE,
+            default => throw new \InvalidArgumentException(sprintf('Invalid image adjustment type "%s"', $typeForValue), 1698584402)
         };
         return new self($type, $type->convertProperties(ObjectAccess::getGettableProperties($adjustment)));
     }

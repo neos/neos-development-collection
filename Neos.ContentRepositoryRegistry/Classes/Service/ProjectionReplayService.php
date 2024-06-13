@@ -5,7 +5,10 @@ namespace Neos\ContentRepositoryRegistry\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
@@ -25,30 +28,47 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
     ) {
     }
 
-    public function replayProjection(string $projectionAliasOrClassName, ?SequenceNumber $maximumSequenceNumber = null): void
+    public function replayProjection(string $projectionAliasOrClassName, CatchUpOptions $options): void
     {
         $projectionClassName = $this->resolveProjectionClassName($projectionAliasOrClassName);
         $this->contentRepository->resetProjectionState($projectionClassName);
-
-        // the logic below is from ContentRepository::catchUpProjection,
-        // but adjusted with the maximumSequenceNumber restriction
-        $projection = $this->projections->get($projectionClassName);
-        $streamName = VirtualStreamName::all();
-        $eventStream = $this->eventStore->load($streamName);
-        if ($maximumSequenceNumber !== null) {
-            $eventStream = $eventStream->withMaximumSequenceNumber($maximumSequenceNumber);
-        }
-        $projection->catchUp($eventStream, $this->contentRepository);
+        $this->contentRepository->catchUpProjection($projectionClassName, $options);
     }
 
-    public function replayAllProjections(): void
+    public function replayAllProjections(CatchUpOptions $options, ?\Closure $progressCallback = null): void
+    {
+        foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
+            if ($progressCallback) {
+                $progressCallback($classNamesAndAlias['alias']);
+            }
+            $this->contentRepository->resetProjectionState($classNamesAndAlias['className']);
+            $this->contentRepository->catchUpProjection($classNamesAndAlias['className'], $options);
+        }
+    }
+
+    public function resetAllProjections(): void
     {
         foreach ($this->projectionClassNamesAndAliases() as $classNamesAndAlias) {
             $this->contentRepository->resetProjectionState($classNamesAndAlias['className']);
-            $this->contentRepository->catchUpProjection($classNamesAndAlias['className']);
         }
     }
 
+    public function highestSequenceNumber(): SequenceNumber
+    {
+        foreach ($this->eventStore->load(VirtualStreamName::all())->backwards()->limit(1) as $eventEnvelope) {
+            return $eventEnvelope->sequenceNumber;
+        }
+        return SequenceNumber::none();
+    }
+
+    public function numberOfProjections(): int
+    {
+        return count($this->projections);
+    }
+
+    /**
+     * @return class-string<ProjectionInterface<ProjectionStateInterface>>
+     */
     private function resolveProjectionClassName(string $projectionAliasOrClassName): string
     {
         $lowerCaseProjectionName = strtolower($projectionAliasOrClassName);
@@ -66,7 +86,7 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
     }
 
     /**
-     * @return array<array{className: class-string, alias: string}>
+     * @return array<array{className: class-string<ProjectionInterface<ProjectionStateInterface>>, alias: string}>
      */
     private function projectionClassNamesAndAliases(): array
     {
@@ -75,7 +95,7 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
                 'className' => $projectionClassName,
                 'alias' => self::projectionAlias($projectionClassName),
             ],
-            array_keys(iterator_to_array($this->projections))
+            $this->projections->getClassNames()
         );
     }
 
@@ -87,6 +107,4 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
         }
         return $alias;
     }
-
-
 }

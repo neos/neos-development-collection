@@ -14,9 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\BehavioralTests\Command;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Cli\CommandController;
 use Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushing;
 
@@ -28,7 +27,7 @@ final class PerformanceMeasurementCommandController extends CommandController
         ContentRepositoryRegistry $contentRepositoryRegistry,
         PerformanceMeasurementServiceFactory $performanceMeasurementServiceFactory
     ) {
-        $this->performanceMeasurementService = $contentRepositoryRegistry->getService(
+        $this->performanceMeasurementService = $contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString('default'),
             $performanceMeasurementServiceFactory
         );
@@ -37,28 +36,30 @@ final class PerformanceMeasurementCommandController extends CommandController
     }
 
     /**
-     * @throws \Throwable
+     * Prepare the performance test by removing existing data and creating nodes for the test.
+     *
+     * @param int $nodesPerLevel The number of nodes to create per level.
+     * @param int $levels The number of levels in the node tree.
+     * @internal
      */
     public function preparePerformanceTestCommand(int $nodesPerLevel, int $levels): void
     {
         $this->performanceMeasurementService->removeEverything();
         $this->outputLine("All removed. Starting to fill.");
-        CatchUpTriggerWithSynchronousOption::synchronously(
-            fn() => GraphProjectorCatchUpHookForCacheFlushing::disabled(
-                fn() => $this->performanceMeasurementService->createNodesForPerformanceTest($nodesPerLevel, $levels)
-            )
+        GraphProjectorCatchUpHookForCacheFlushing::disabled(
+            fn() => $this->performanceMeasurementService->createNodesForPerformanceTest($nodesPerLevel, $levels)
         );
     }
 
     /**
-     * @throws \Throwable
+     * Test the performance of forking a content stream and measure the time taken.
+     *
+     * @internal
      */
     public function testPerformanceCommand(): void
     {
         $time = microtime(true);
-        CatchUpTriggerWithSynchronousOption::synchronously(
-            fn() => $this->performanceMeasurementService->forkContentStream()
-        );
+        $this->performanceMeasurementService->forkContentStream();
 
         $timeElapsed = microtime(true) - $time;
         $this->outputLine('Time: ' . $timeElapsed);

@@ -18,15 +18,14 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\ConnectionException;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
-use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -35,17 +34,9 @@ use Neos\Flow\Utility\Environment;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 class CrCommandController extends CommandController
 {
-
-    /**
-     * @var array
-     */
-    #[Flow\InjectConfiguration(package: 'Neos.Flow')]
-    protected array $flowSettings;
-
     public function __construct(
         private readonly Connection $connection,
         private readonly Environment $environment,
@@ -95,6 +86,7 @@ class CrCommandController extends CommandController
 
         $siteRows = $connection->fetchAllAssociativeIndexed('SELECT nodename, name, siteresourcespackagekey FROM neos_neos_domain_model_site');
         $siteNodeName = $this->output->select('Which site to migrate?', array_map(static fn (array $siteRow) => $siteRow['name'] . ' (' . $siteRow['siteresourcespackagekey'] . ')', $siteRows));
+        assert(is_string($siteNodeName));
         $siteRow = $siteRows[$siteNodeName];
 
         $site = $this->siteRepository->findOneByNodeName($siteNodeName);
@@ -127,15 +119,14 @@ class CrCommandController extends CommandController
             $this->quit();
         }
         $this->connection->executeStatement('TRUNCATE ' . $connection->quoteIdentifier($eventTableName));
-        // we also need to reset the projections; in order to ensure the system runs deterministically. We
-        // do this by replaying the just-truncated event stream.
-        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionReplayServiceFactory);
-        $projectionService->replayAllProjections();
+        // we also need to reset the projections; in order to ensure the system runs deterministically
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory);
+        $projectionService->resetAllProjections();
         $this->outputLine('Truncated events');
 
         $liveContentStreamId = ContentStreamId::create();
 
-        $legacyMigrationService = $this->contentRepositoryRegistry->getService(
+        $legacyMigrationService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new LegacyMigrationServiceFactory(
                 $connection,
@@ -156,7 +147,7 @@ class CrCommandController extends CommandController
         $this->outputLine();
 
         $this->outputLine('Replaying projections');
-        $projectionService->replayAllProjections();
+        $projectionService->replayAllProjections(CatchUpOptions::create());
         $this->outputLine('<success>Done</success>');
     }
 

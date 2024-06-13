@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\Projection;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
+use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 
 /**
  * @implements ProjectionFactoryInterface<DocumentUriPathProjection>
@@ -39,16 +37,12 @@ final class DocumentUriPathProjectionFactory implements ProjectionFactoryInterfa
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar
     ): DocumentUriPathProjection {
 
         return new DocumentUriPathProjection(
-            $projectionFactoryDependencies->eventNormalizer,
             $projectionFactoryDependencies->nodeTypeManager,
             $this->dbal,
             self::projectionTableNamePrefix($projectionFactoryDependencies->contentRepositoryId),
-            $catchUpHookFactory
         );
     }
 }

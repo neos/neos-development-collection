@@ -10,15 +10,14 @@ Feature: Move dimension space point
   !! Constraint: the Target Dimension Space should be empty.
 
   Background:
-    Given I have the following content dimensions:
-      | Identifier | Values          | Generalizations      |
-      | language   | mul, de, en, ch | ch->de->mul, en->mul |
-
     ########################
     # SETUP
     ########################
-    And I have the following NodeTypes configuration:
-    """
+    Given using the following content dimensions:
+      | Identifier | Values          | Generalizations      |
+      | language   | mul, de, en, ch | ch->de->mul, en->mul |
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -28,38 +27,36 @@ Feature: Move dimension space point
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
-    And the graph projection is fully up to date
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                       | Value                                     |
-      | contentStreamId           | "cs-identifier"                           |
       | nodeAggregateId           | "sir-david-nodenborough"                  |
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {"language": "de"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
-    And the graph projection is fully up to date
 
 
   Scenario: Success Case - simple
     # we change the dimension configuration
-    When I have the following content dimensions:
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -90,26 +87,24 @@ Feature: Move dimension space point
 
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "de"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the graph projection is fully up to date
 
     # ensure the node is disabled
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
-    When I have the following content dimensions:
+    When I change the content dimensions in content repository "default" to:
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -121,7 +116,7 @@ Feature: Move dimension space point
     """
 
     # the original content stream has not been touched
-    When I am in content stream "cs-identifier" and dimension space point {"language": "de"}
+    When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language": "de"}
@@ -139,12 +134,12 @@ Feature: Move dimension space point
 
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
-    When I have the following content dimensions:
+    When I change the content dimensions in content repository "default" to:
       | Identifier | Values  | Generalizations |
       | language   | mul, ch | ch->mul         |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -158,7 +153,7 @@ Feature: Move dimension space point
 
   Scenario: Error case - the target dimension is not configured
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:

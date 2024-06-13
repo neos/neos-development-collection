@@ -14,11 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\Asset;
@@ -65,22 +64,24 @@ class SiteService
      */
     protected $assetCollectionRepository;
 
-    #[Flow\Inject]
-    protected SiteNodeUtility $siteNodeUtility;
-
-    #[Flow\Inject]
-    protected UserService $domainUserService;
-
     /**
      * Remove given site all nodes for that site and all domains associated.
      */
     public function pruneSite(Site $site): void
     {
-        $siteServiceInternals = $this->contentRepositoryRegistry->getService(
+        $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
             $site->getConfiguration()->contentRepositoryId,
             new SiteServiceInternalsFactory()
         );
-        $siteServiceInternals->removeSiteNode($site->getNodeName());
+
+        try {
+            $siteServiceInternals->removeSiteNode($site->getNodeName());
+        } catch (\Doctrine\DBAL\Exception $exception) {
+            throw new \RuntimeException(sprintf(
+                'Could not remove site nodes for site "%s", please ensure the content repository is setup.',
+                $site->getName()
+            ), 1707302419, $exception);
+        }
 
         $site->setPrimaryDomain(null);
         $this->siteRepository->update($site);
@@ -121,16 +122,16 @@ class SiteService
      */
     public function assignUploadedAssetToSiteAssetCollection(Asset $asset, Node $node, string $propertyName)
     {
-        try {
-            $siteNode = $this->siteNodeUtility->findSiteNode($node);
-        } catch (\InvalidArgumentException $exception) {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+        $siteNode = $subgraph->findClosestNode($node->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
+        if (!$siteNode) {
+            // should not happen
             return;
         }
-
-        if ($siteNode->nodeName === null) {
+        if ($siteNode->name === null) {
             return;
         }
-        $site = $this->siteRepository->findOneByNodeName($siteNode->nodeName->value);
+        $site = $this->siteRepository->findOneByNodeName($siteNode->name->value);
         if ($site === null) {
             return;
         }
@@ -173,7 +174,7 @@ class SiteService
         $site->setName($siteName);
         $this->siteRepository->add($site);
 
-        $siteServiceInternals = $this->contentRepositoryRegistry->getService(
+        $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
             $site->getConfiguration()->contentRepositoryId,
             new SiteServiceInternalsFactory()
         );

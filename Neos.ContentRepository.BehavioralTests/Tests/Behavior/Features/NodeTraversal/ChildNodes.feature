@@ -4,12 +4,11 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
 
   Background:
     Given the current date and time is "2023-03-16T12:00:00+01:00"
-    And I have the following content dimensions:
+    And using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
       properties:
@@ -56,6 +55,8 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       superTypes:
         'Neos.ContentRepository.Testing:AbstractPage': true
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -63,13 +64,11 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                               | parentNodeAggregateId  | initialPropertyValues                                                                                                                                                                                | tetheredDescendantNodeAggregateIds       |
       | home            | Neos.ContentRepository.Testing:Homepage    | lady-eleonode-rootford | {}                                                                                                                                                                                                   | {"terms": "terms", "contact": "contact"} |
@@ -79,22 +78,20 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       | a2a             | Neos.ContentRepository.Testing:SpecialPage | a2                     | {"text": "a2a"}                                                                                                                                                                                      | {}                                       |
       | a2a1            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1", "stringProperty": "the brown fox", "booleanProperty": true, "integerProperty": 33, "floatProperty": 12.345, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13"}} | {}                                       |
       | a2a2            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2", "stringProperty": "the red fox", "booleanProperty": false, "integerProperty": 22, "floatProperty": 12.34, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-14"}}   | {}                                       |
-      | a2a3            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a3", "stringProperty": "the red bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-12"}}                                                    | {}                                       |
-      | a2a4            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a4", "stringProperty": "the brown bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-12"}}                                                  | {}                                       |
+      | a2a3            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a3", "stringProperty": "the red Bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-12"}}                                                    | {}                                       |
+      | a2a4            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a4", "stringProperty": "the brown Bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-12"}}                                                  | {}                                       |
       | a2a5            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a5", "stringProperty": "the brown bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13"}}                                                  | {}                                       |
       | b               | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}                                                                                                                                                                                        | {}                                       |
       | b1              | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}                                                                                                                                                                                       | {}                                       |
     And the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeProperties is executed with payload:
       | Key             | Value                   |
-      | contentStreamId | "cs-identifier"         |
       | nodeAggregateId | "a2a5"                  |
       | propertyValues  | {"integerProperty": 20} |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a3"        |
       | nodeVariantSelectionStrategy | "allVariants" |
-    And the graph projection is fully up to date
 
   Scenario:
       # Child nodes without filter
@@ -104,11 +101,11 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
     When I execute the findChildNodes query for parent node aggregate id "a2a" I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned
 
       # Child nodes filtered by node type
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage"}' I expect the nodes "terms,contact,a,b" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "contact" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "contact" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "terms,a,b" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExistingNodeType"}' I expect no nodes to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:AbstractPage"}' I expect the nodes "terms,contact,a,b" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "contact" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "contact" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "terms,a,b" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:NonExistingNodeType"}' I expect no nodes to be returned
 
      # Child nodes filtered by search term
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "brown"}' I expect the nodes "a2a1,a2a4,a2a5" to be returned
@@ -120,9 +117,9 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
     When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"pagination": {"offset": 1}}' I expect the nodes "contact,a,b" to be returned and the total count to be 4
 
      # Child nodes filtered by node type, paginated
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage", "pagination": {"limit": 3}}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin", "pagination": {"limit": 2, "offset": 1}}' I expect the nodes "a,b" to be returned and the total count to be 3
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:Contact", "pagination": {"limit": 5}}' I expect the nodes "terms,a,b" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:AbstractPage", "pagination": {"limit": 3}}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin", "pagination": {"limit": 2, "offset": 1}}' I expect the nodes "a,b" to be returned and the total count to be 3
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypes": "!Neos.ContentRepository.Testing:Contact", "pagination": {"limit": 5}}' I expect the nodes "terms,a,b" to be returned
 
      # Child nodes filtered by property value
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty ^= \"the\""}' I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned
@@ -133,6 +130,14 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty ^= \"the\" AND (floatProperty = 12.345 OR integerProperty = 19)"}' I expect the nodes "a2a1,a2a4" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "integerProperty > 22 OR integerProperty <= 19"}' I expect the nodes "a2a1,a2a4" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "booleanProperty = true"}' I expect the nodes "a2a1" to be returned
+    # Test case sensitivity behavior (see https://github.com/neos/neos-development-collection/issues/4721)
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty = \"the brown Bear\""}' I expect the nodes "a2a4" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty =~ \"the brown Bear\""}' I expect the nodes "a2a4,a2a5" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty *= \"bear\""}' I expect the nodes "a2a5" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty *=~ \"bear\""}' I expect the nodes "a2a4,a2a5" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty $= \"bear\""}' I expect the nodes "a2a5" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty $= \"Bear\""}' I expect the nodes "a2a4" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty $=~ \"Bear\""}' I expect the nodes "a2a4,a2a5" to be returned
 
     #  Child nodes with custom ordering
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "text", "direction": "ASCENDING"}]}' I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned

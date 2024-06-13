@@ -37,17 +37,11 @@ final class OriginByCoverage implements \IteratorAggregate, \JsonSerializable
     private array $origins;
 
     /**
-     * @var \ArrayIterator<string,OriginDimensionSpacePoint>
-     */
-    private \ArrayIterator $iterator;
-
-    /**
      * @param array<string,OriginDimensionSpacePoint> $coverage
      */
     private function __construct(array $coverage)
     {
         $this->origins = $coverage;
-        $this->iterator = new \ArrayIterator($coverage);
     }
 
     /**
@@ -83,11 +77,11 @@ final class OriginByCoverage implements \IteratorAggregate, \JsonSerializable
     }
 
     /**
-     * @return \ArrayIterator<string,OriginDimensionSpacePoint>
+     * @return \Traversable<string,OriginDimensionSpacePoint>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        yield from $this->origins;
     }
 
     /**

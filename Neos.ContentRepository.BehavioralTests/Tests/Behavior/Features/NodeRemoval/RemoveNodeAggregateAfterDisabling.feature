@@ -6,66 +6,62 @@ Feature: Disable a node aggregate
   These are the test cases without dimensions being involved
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:Document':
       properties:
         references:
           type: references
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {}
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName            |
-      | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | preceding-document  |
-      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document            |
-      | succeeding-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | succeeding-document |
-      | nody-mc-nodeface        | Neos.ContentRepository.Testing:Document | sir-david-nodenborough        | child-document      |
+      | nodeAggregateId         | nodeTypeName                            | parentNodeAggregateId  | nodeName            |
+      | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | preceding-document  |
+      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document            |
+      | succeeding-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | succeeding-document |
+      | nody-mc-nodeface        | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | child-document      |
     And the command SetNodeReferences is executed with payload:
-      | Key                           | Value                                  |
+      | Key                   | Value                                  |
       | sourceNodeAggregateId | "preceding-nodenborough"               |
-      | referenceName                 | "references"                           |
-      | references                    | [{"target": "sir-david-nodenborough"}] |
-    And the graph projection is fully up to date
+      | referenceName         | "references"                           |
+      | references            | [{"target": "sir-david-nodenborough"}] |
 
   Scenario: Restore a hidden node by removing and recreating it
     Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | nodeAggregateId      | "nody-mc-nodeface" |
+      | nodeAggregateId              | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants"      |
     And the event NodeAggregateWasRemoved was published with payload:
       | Key                                  | Value              |
-      | contentStreamId              | "cs-identifier"    |
-      | nodeAggregateId              | "nody-mc-nodeface" |
+      | workspaceName                        | "live"             |
+      | contentStreamId                      | "cs-identifier"    |
+      | nodeAggregateId                      | "nody-mc-nodeface" |
       | affectedOccupiedDimensionSpacePoints | [{}]               |
       | affectedCoveredDimensionSpacePoints  | [{}]               |
-    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "nody-mc-nodeface"                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | parentNodeAggregateId | "sir-david-nodenborough"                  |
-      | nodeName                      | "child-document"                          |
+      | Key                       | Value                                     |
+      | nodeAggregateId           | "nody-mc-nodeface"                        |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint | {}                                        |
+      | parentNodeAggregateId     | "sir-david-nodenborough"                  |
+      | nodeName                  | "child-document"                          |
 
-    When the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
+    And I am in workspace "live"
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;preceding-nodenborough;{} to exist in the content graph
@@ -76,10 +72,10 @@ Feature: Disable a node aggregate
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to disable dimension space points []
 
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
     Then the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | sir-david-nodenborough  |
@@ -87,8 +83,8 @@ Feature: Disable a node aggregate
       | 1     | succeeding-nodenborough |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And the subtree for node aggregate "sir-david-nodenborough" with node types "" and 1 levels deep should be:
-      | Level | nodeAggregateId |
-      | 0     | sir-david-nodenborough  |
-      | 1     | nody-mc-nodeface        |
+      | Level | nodeAggregateId        |
+      | 0     | sir-david-nodenborough |
+      | 1     | nody-mc-nodeface       |
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}

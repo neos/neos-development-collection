@@ -16,34 +16,26 @@ namespace Neos\Neos\Controller\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Ui\Domain\Service\NodePropertyConverterService;
 use Neos\Neos\View\Service\NodeJsonView;
@@ -114,7 +106,7 @@ class NodesController extends ActionController
         array|string $nodeIds = [],
         string $workspaceName = 'live',
         array $dimensions = [],
-        array $nodeTypes = ['Neos.Neos:Document'],
+        array $nodeTypes = [NodeTypeNameFactory::NAME_DOCUMENT],
         string $contextNode = null,
         array|string $nodeIdentifiers = []
     ): void {
@@ -136,23 +128,12 @@ class NodesController extends ActionController
 
         unset($contextNode);
         if (is_null($nodeAddress)) {
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-                WorkspaceName::fromString($workspaceName)
-            );
-            if (is_null($workspace)) {
-                throw new \InvalidArgumentException(
-                    'Could not resolve a node address for the given parameters.',
-                    1645631728
-                );
-            }
-            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $workspace->currentContentStreamId,
+            $subgraph = $contentRepository->getContentGraph(WorkspaceName::fromString($workspaceName))->getSubgraph(
                 DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
                 VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
             );
         } else {
-            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $nodeAddress->contentStreamId,
+            $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
             );
@@ -167,9 +148,9 @@ class NodesController extends ActionController
             }
 
             $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
-                $entryNode->nodeAggregateId,
+                $entryNode->aggregateId,
                 FindDescendantNodesFilter::create(
-                    nodeTypeConstraints: NodeTypeConstraints::create(
+                    nodeTypes: NodeTypeCriteria::create(
                         NodeTypeNames::fromStringArray($nodeTypes),
                         NodeTypeNames::createEmpty()
                     ),
@@ -211,14 +192,11 @@ class NodesController extends ActionController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspace = $contentRepository->getWorkspaceFinder()
-            ->findOneByName(WorkspaceName::fromString($workspaceName));
-        assert($workspace instanceof Workspace);
+        $workspaceName = WorkspaceName::fromString($workspaceName);
 
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
-        $subgraph = $contentRepository->getContentGraph()
+        $subgraph = $contentRepository->getContentGraph($workspaceName)
             ->getSubgraph(
-                $workspace->currentContentStreamId,
                 $dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
@@ -228,13 +206,14 @@ class NodesController extends ActionController
         if ($node === null) {
             $this->addExistingNodeVariantInformationToResponse(
                 $nodeAggregateId,
-                $workspace->currentContentStreamId,
+                $workspaceName,
                 $dimensionSpacePoint,
                 $contentRepository
             );
             $this->throwStatus(404);
         }
 
+        // @todo illegal dependency direction. Neos Neos has no business calling the ui
         $convertedNodeProperties = $this->nodePropertyConverterService->getPropertiesArray($node);
         array_walk($convertedNodeProperties, function (&$value) {
             if (is_array($value)) {
@@ -280,40 +259,36 @@ class NodesController extends ActionController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspace = $contentRepository->getWorkspaceFinder()
-            ->findOneByName(WorkspaceName::fromString($workspaceName));
-        assert($workspace instanceof Workspace);
+        $workspaceName = WorkspaceName::fromString($workspaceName);
 
-        $sourceSubgraph = $contentRepository->getContentGraph()
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
+        $sourceSubgraph = $contentGraph
             ->getSubgraph(
-                $workspace->currentContentStreamId,
                 DimensionSpacePoint::fromLegacyDimensionArray($sourceDimensions),
                 VisibilityConstraints::withoutRestrictions()
             );
 
         $targetDimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
-        $targetSubgraph = $contentRepository->getContentGraph()
+        $targetSubgraph = $contentGraph
             ->getSubgraph(
-                $workspace->currentContentStreamId,
                 $targetDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
 
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
-            CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
-                $this->adoptNodeAndParents(
-                    $workspace->currentContentStreamId,
-                    $nodeAggregateId,
-                    $sourceSubgraph,
-                    $targetSubgraph,
-                    $targetDimensionSpacePoint,
-                    $contentRepository,
-                    $mode === 'adoptFromAnotherDimensionAndCopyContent'
-                ));
+            $this->adoptNodeAndParents(
+                $workspaceName,
+                $nodeAggregateId,
+                $sourceSubgraph,
+                $targetSubgraph,
+                $targetDimensionSpacePoint,
+                $contentRepository,
+                $mode === 'adoptFromAnotherDimensionAndCopyContent'
+            );
 
             $this->redirect('show', null, null, [
                 'identifier' => $nodeAggregateId->value,
-                'workspaceName' => $workspaceName,
+                'workspaceName' => $workspaceName->value,
                 'dimensions' => $dimensions
             ]);
         } else {
@@ -327,13 +302,13 @@ class NodesController extends ActionController
      */
     protected function addExistingNodeVariantInformationToResponse(
         NodeAggregateId $identifier,
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
         ContentRepository $contentRepository
     ): void {
-        $contentGraph = $contentRepository->getContentGraph();
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
-        $nodeAggregate = $contentGraph->findNodeAggregateById($contentStreamId, $identifier);
+        $nodeAggregate = $contentGraph->findNodeAggregateById($identifier);
 
         if ($nodeAggregate && $nodeAggregate->coveredDimensionSpacePoints->count() > 0) {
             $this->response->setHttpHeader('X-Neos-Node-Exists-In-Other-Dimensions', 'true');
@@ -343,14 +318,14 @@ class NodesController extends ActionController
             // materialized recursively upwards in the rootline. To find the node path for the given identifier,
             // we just use the first result. This is a safe assumption at least for "Document" nodes (aggregate=true),
             // because they are always moved in-sync.
-            if ($nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName)->isAggregate()) {
+            if ($nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName)?->isAggregate()) {
                 // TODO: we would need the SourceDimensions parameter (as in Create()) to ensure the correct
                 // rootline is traversed. Here, we, as a workaround, simply use the 1st aggregate for now.
 
                 $missingNodesOnRootline = 0;
                 while (
                     $parentAggregate = self::firstNodeAggregate(
-                        $contentGraph->findParentNodeAggregates($contentStreamId, $identifier)
+                        $contentGraph->findParentNodeAggregates($identifier)
                     )
                 ) {
                     if (!$parentAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
@@ -386,22 +361,24 @@ class NodesController extends ActionController
     /**
      * Adopt (translate) the given node and parents that are not yet visible to the given context
      *
+     * @param WorkspaceName $workspaceName
      * @param NodeAggregateId $nodeAggregateId
      * @param ContentSubgraphInterface $sourceSubgraph
      * @param ContentSubgraphInterface $targetSubgraph
+     * @param DimensionSpacePoint $targetDimensionSpacePoint
      * @param ContentRepository $contentRepository
      * @param boolean $copyContent true if the content from the nodes that are translated should be copied
      * @return void
      */
     protected function adoptNodeAndParents(
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
         ContentSubgraphInterface $sourceSubgraph,
         ContentSubgraphInterface $targetSubgraph,
         DimensionSpacePoint $targetDimensionSpacePoint,
         ContentRepository $contentRepository,
         bool $copyContent
-    ) {
+    ): void {
         $identifiersFromRootlineToTranslate = [];
         while (
             $nodeAggregateId
@@ -409,7 +386,7 @@ class NodesController extends ActionController
         ) {
             $identifiersFromRootlineToTranslate[] = $nodeAggregateId;
             $nodeAggregateId = $sourceSubgraph->findParentNode($nodeAggregateId)
-                ?->nodeAggregateId;
+                ?->aggregateId;
         }
         // $identifiersFromRootlineToTranslate is now bottom-to-top; so we need to reverse
         // them to know what we need to create.
@@ -426,18 +403,18 @@ class NodesController extends ActionController
                     . ' not found. This should never happen.', 1660905374);
             }
             $contentRepository->handle(
-                new CreateNodeVariant(
-                    $contentStreamId,
+                CreateNodeVariant::create(
+                    $workspaceName,
                     $identifier,
                     $sourceNode->originDimensionSpacePoint,
                     OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
                 )
-            )->block();
+            );
 
             if ($copyContent === true) {
-                $contentNodeConstraint = NodeTypeConstraints::fromFilterString('!Neos.Neos:Document');
+                $contentNodeConstraint = NodeTypeCriteria::fromFilterString('!' . NodeTypeNameFactory::NAME_DOCUMENT);
                 $this->createNodeVariantsForChildNodes(
-                    $contentStreamId,
+                    $workspaceName,
                     $identifier,
                     $contentNodeConstraint,
                     $sourceSubgraph,
@@ -450,9 +427,9 @@ class NodesController extends ActionController
     }
 
     private function createNodeVariantsForChildNodes(
-        ContentStreamId $contentStreamId,
+        WorkspaceName $workspaceName,
         NodeAggregateId $parentNodeId,
-        NodeTypeConstraints $constraints,
+        NodeTypeCriteria $constraints,
         ContentSubgraphInterface $sourceSubgraph,
         ContentSubgraphInterface $targetSubgraph,
         DimensionSpacePoint $targetDimensionSpacePoint,
@@ -461,25 +438,25 @@ class NodesController extends ActionController
         foreach (
             $sourceSubgraph->findChildNodes(
                 $parentNodeId,
-                FindChildNodesFilter::create(nodeTypeConstraints: $constraints)
+                FindChildNodesFilter::create(nodeTypes: $constraints)
             ) as $childNode
         ) {
             if ($childNode->classification->isRegular()) {
                 // Tethered nodes' variants are automatically created when the parent is translated.
                 // TODO: DOES THIS MAKE SENSE?
                 $contentRepository->handle(
-                    new CreateNodeVariant(
-                        $contentStreamId,
-                        $childNode->nodeAggregateId,
+                    CreateNodeVariant::create(
+                        $workspaceName,
+                        $childNode->aggregateId,
                         $childNode->originDimensionSpacePoint,
                         OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
                     )
-                )->block();
+                );
             }
 
             $this->createNodeVariantsForChildNodes(
-                $contentStreamId,
-                $childNode->nodeAggregateId,
+                $workspaceName,
+                $childNode->aggregateId,
                 $constraints,
                 $sourceSubgraph,
                 $targetSubgraph,

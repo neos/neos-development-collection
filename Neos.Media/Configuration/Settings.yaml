@@ -65,7 +65,7 @@ Neos:
     # Variant presets
     variantPresets: []
     # Automatically create asset variants for configured presets when assets are added
-    autoCreateImageVariantPresets: false
+    autoCreateImageVariantPresets: true
 
     thumbnailGenerators:
 

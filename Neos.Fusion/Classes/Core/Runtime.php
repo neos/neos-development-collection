@@ -11,23 +11,30 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Message;
+use GuzzleHttp\Psr7\Response;
+use Neos\Http\Factories\StreamFactoryTrait;
+use Psr\Http\Message\ResponseInterface;
+use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
-use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Utility\Arrays;
-use Neos\Utility\ObjectAccess;
-use Neos\Utility\PositionalArraySorter;
+use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Cache\RuntimeContentCache;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
-use Neos\Fusion\Exception as Exceptions;
+use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Fusion\Exception;
-use Neos\Flow\Security\Exception as SecurityException;
+use Neos\Fusion\Exception as Exceptions;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Eel\Utility as EelUtility;
+use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\PositionalArraySorter;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Fusion Runtime
@@ -43,22 +50,31 @@ use Neos\Eel\Utility as EelUtility;
  * The Fusion object can then add or replace variables to this context using pushContext()
  * or pushContextArray(), before rendering sub-Fusion objects. After rendering
  * these, it must call popContext() to reset the context to the last state.
+ *
+ * @internal The Fusion Runtime is considered internal.
+ *           For interacting with Fusion from the outside a FusionView should be used.
+ *           But custom Fusion object implementations might rely on manipulating/calling the Runtime directly,
+ *           if the abstractions in the AbstractFusionObject doesn't suffice.
+ *           TODO For that use case we should implement a more powerful and clean abstraction:
+ *           https://github.com/neos/neos-development-collection/issues/4910
  */
 class Runtime
 {
+    use StreamFactoryTrait;
+
     /**
      * Internal constants defining how evaluate should work in case of an error
      */
-    const BEHAVIOR_EXCEPTION = 'Exception';
+    public const BEHAVIOR_EXCEPTION = 'Exception';
 
-    const BEHAVIOR_RETURNNULL = 'NULL';
+    public const BEHAVIOR_RETURNNULL = 'NULL';
 
     /**
      * Internal constants defining a status of how evaluate was evaluated
      */
-    const EVALUATION_EXECUTED = 'Executed';
+    public const EVALUATION_EXECUTED = 'Executed';
 
-    const EVALUATION_SKIPPED = 'Skipped';
+    public const EVALUATION_SKIPPED = 'Skipped';
 
     /**
      * @var \Neos\Eel\CompilingEvaluator
@@ -94,21 +110,19 @@ class Runtime
     protected $currentApplyValues = [];
 
     /**
-     * Default context with helper definitions
-     *
-     * @var array
+     * Fusion global variables like EEL helper definitions {@see FusionGlobals}
      */
-    protected $defaultContextVariables;
+    public readonly FusionGlobals $fusionGlobals;
 
     /**
-     * @var array
+     * @var RuntimeConfiguration
      */
     protected $runtimeConfiguration;
 
     /**
-     * @var ControllerContext
+     * @deprecated legacy layer {@see self::getControllerContext()}
      */
-    protected $controllerContext;
+    private ?ActionResponse $legacyActionResponseForCurrentRendering = null;
 
     /**
      * @var array
@@ -130,15 +144,21 @@ class Runtime
      */
     protected $lastEvaluationStatus;
 
-    public function __construct(FusionConfiguration|array $fusionConfiguration, ControllerContext $controllerContext)
-    {
+    /** {@see Runtime::overrideExceptionHandler} */
+    protected ?AbstractRenderingExceptionHandler $overriddenExceptionHandler = null;
+
+    /**
+     * @internal the {@see RuntimeFactory} must be used for instantiating, to make the EEL helpers available.
+     */
+    public function __construct(
+        FusionConfiguration $fusionConfiguration,
+        FusionGlobals $fusionGlobals
+    ) {
         $this->runtimeConfiguration = new RuntimeConfiguration(
-            $fusionConfiguration instanceof FusionConfiguration
-                ? $fusionConfiguration->toArray()
-                : $fusionConfiguration
+            $fusionConfiguration->toArray()
         );
-        $this->controllerContext = $controllerContext;
         $this->runtimeContentCache = new RuntimeContentCache($this);
+        $this->fusionGlobals = $fusionGlobals;
     }
 
     /**
@@ -163,24 +183,24 @@ class Runtime
      *
      * During Fusion rendering the method can be used to add tag dynamicaly for the current cache segment.
      *
-     * @param string $key
-     * @param string $value
-     * @return void
-     * @api
+     * @throws Exceptions
      */
-    public function addCacheTag($key, $value)
+    public function addCacheTag(string $tag): void
     {
         if ($this->runtimeContentCache->getEnableContentCache() === false) {
             return;
         }
-        $this->runtimeContentCache->addTag($key, $value);
+        $this->runtimeContentCache->addTag($tag);
     }
 
     /**
      * Completely replace the context array with the new $contextArray.
      *
-     * Purely internal method, should not be called outside of Neos.Fusion.
+     * Warning unlike in Fusion's \@context or {@see Runtime::pushContext()},
+     * no checks are imposed to prevent overriding Fusion globals like "request".
+     * Relying on this behaviour is highly discouraged but leveraged by Neos.Fusion.Form {@see FusionGlobals}.
      *
+     * @internal purely internal method, should not be called outside Neos.Fusion.
      * @param array $contextArray
      * @return void
      */
@@ -191,7 +211,8 @@ class Runtime
     }
 
     /**
-     * Push a new context object to the rendering stack
+     * Push a new context object to the rendering stack.
+     * It is disallowed to replace global variables {@see FusionGlobals}.
      *
      * @param string $key the key inside the context
      * @param mixed $context
@@ -199,6 +220,9 @@ class Runtime
      */
     public function pushContext($key, $context)
     {
+        if ($this->fusionGlobals->has($key)) {
+            throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1694284229044);
+        }
         $newContext = $this->currentContext;
         $newContext[$key] = $context;
         $this->contextStack[] = $newContext;
@@ -218,7 +242,9 @@ class Runtime
     }
 
     /**
-     * Get the current context array
+     * Get the current context array.
+     * This PHP context api unlike Fusion, doesn't include the Fusion globals {@see FusionGlobals}.
+     * The globals can be accessed via {@see Runtime::$fusionGlobals}.
      *
      * @return array the array of current context objects
      */
@@ -240,6 +266,58 @@ class Runtime
     public function getLastEvaluationStatus()
     {
         return $this->lastEvaluationStatus;
+    }
+
+    /**
+     * Entry point to render a Fusion path with the context.
+     *
+     * A ResponseInterface will be returned, if a Neos.Fusion:Http.Message was defined in the entry path,
+     * or if Neos.Fusion.Form or Neos.Neos:Plugin were used in the path.
+     *
+     * In all other simple cases a StreamInterface will be returned.
+     *
+     * @param string $entryFusionPath the absolute fusion path to render (without leading slash)
+     * @param array $contextVariables the context variables that will be available during the rendering.
+     * @throws IllegalEntryFusionPathValueException The Fusion path rendered to a value that is not a compatible http response body: string|\Stringable|null
+     */
+    public function renderEntryPathWithContext(string $entryFusionPath, array $contextVariables): ResponseInterface|StreamInterface
+    {
+        // Like in pushContext, we don't allow to overrule fusion globals
+        foreach ($contextVariables as $key => $_) {
+            if ($this->fusionGlobals->has($key)) {
+                throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1706452063);
+            }
+        }
+        // replace any previously assigned values
+        $this->pushContextArray($contextVariables);
+
+        return $this->withSimulatedLegacyControllerContext(function () use ($entryFusionPath) {
+            try {
+                $output = $this->render($entryFusionPath);
+            } catch (RuntimeException $exception) {
+                throw $exception->getWrappedException();
+            } finally {
+                $this->popContext();
+            }
+
+            // Parse potential raw http response possibly rendered via "Neos.Fusion:Http.Message"
+            /** {@see \Neos\Fusion\FusionObjects\HttpResponseImplementation} */
+            $outputStringHasHttpPreamble = is_string($output) && str_starts_with($output, 'HTTP/');
+            if ($outputStringHasHttpPreamble) {
+                return Message::parseResponse($output);
+            }
+
+            if ($output instanceof StreamInterface) {
+                // if someone manages to return a stream *g
+                return $output;
+            }
+
+            if (!is_string($output) && !$output instanceof \Stringable && $output !== null) {
+                throw new IllegalEntryFusionPathValueException(sprintf('Fusion entry path "%s" is expected to render a compatible http response body: string|\Stringable|null. Got %s instead.', $entryFusionPath, get_debug_type($output)), 1706454898);
+            }
+
+            return $this->createStream((string)$output);
+        });
     }
 
     /**
@@ -289,6 +367,11 @@ class Runtime
      */
     public function handleRenderingException(string $fusionPath, \Exception $exception, bool $useInnerExceptionHandler = false)
     {
+        if ($exceptionHandler = $this->overriddenExceptionHandler) {
+            $exceptionHandler->setRuntime($this);
+            return $exceptionHandler->handleRenderingException($fusionPath, $exception);
+        }
+
         $fusionConfiguration = $this->runtimeConfiguration->forPath($fusionPath);
 
         $useLocalExceptionHandler = isset($fusionConfiguration['__meta']['exceptionHandler']);
@@ -452,7 +535,7 @@ class Runtime
     {
         $output = null;
         $evaluationStatus = self::EVALUATION_SKIPPED;
-        list($cacheHit, $cachedResult) = $this->runtimeContentCache->preEvaluate($cacheContext, $fusionObject);
+        [$cacheHit, $cachedResult] = $this->runtimeContentCache->preEvaluate($cacheContext, $fusionObject);
         if ($cacheHit) {
             return $cachedResult;
         }
@@ -563,6 +646,9 @@ class Runtime
         if (isset($fusionConfiguration['__meta']['context'])) {
             $newContextArray ??= $this->currentContext;
             foreach ($fusionConfiguration['__meta']['context'] as $contextKey => $contextValue) {
+                if ($this->fusionGlobals->has($contextKey)) {
+                    throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $contextKey), 1706452069);
+                }
                 $newContextArray[$contextKey] = $this->evaluate($fusionPath . '/__meta/context/' . $contextKey, $fusionObject, self::BEHAVIOR_EXCEPTION);
             }
         }
@@ -601,7 +687,7 @@ class Runtime
                 MESSAGE, 1347952109);
         }
 
-        /** @var $fusionObject AbstractFusionObject */
+        /** @var AbstractFusionObject $fusionObject */
         $fusionObject = new $fusionObjectClassName($this, $fusionPath, $fusionObjectType);
         if ($this->shouldAssignPropertiesToFusionObject($fusionObject)) {
             /** @var $fusionObject AbstractArrayFusionObject */
@@ -684,13 +770,14 @@ class Runtime
             $expression = '${' . $expression . '}';
         }
 
-        $contextVariables = array_merge($this->getDefaultContextVariables(), $this->currentContext);
+        $contextVariables = array_merge($this->fusionGlobals->value, $this->currentContext);
 
         if (isset($contextVariables['this'])) {
             throw new Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current Fusion object.', 1344325044);
         }
         $contextVariables['this'] = $contextObject;
 
+        /** @phpstan-ignore-next-line the mind of the great phpstan can and will not comprehend this */
         if ($this->eelEvaluator instanceof \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy) {
             $this->eelEvaluator->_activateDependency();
         }
@@ -753,7 +840,7 @@ class Runtime
                                 'value' => $value
                             ];
                         }
-                    } elseif ($singleApplyValues instanceof \Traversable && $singleApplyValues instanceof \ArrayAccess) {
+                    } elseif ($singleApplyValues instanceof \Iterator && $singleApplyValues instanceof \ArrayAccess) {
                         for ($singleApplyValues->rewind(); ($key = $singleApplyValues->key()) !== null; $singleApplyValues->next()) {
                             $combinedApplyValues[$fusionPath . '/' . $key] = [
                                 'key' => $key,
@@ -832,34 +919,6 @@ class Runtime
     }
 
     /**
-     * Returns the context which has been passed by the currently active MVC Controller
-     *
-     * @return ControllerContext
-     */
-    public function getControllerContext()
-    {
-        return $this->controllerContext;
-    }
-
-    /**
-     * Get variables from configuration that should be set in the context by default.
-     * For example Eel helpers are made available by this.
-     *
-     * @return array Array with default context variable objects.
-     */
-    protected function getDefaultContextVariables()
-    {
-        if ($this->defaultContextVariables === null) {
-            $this->defaultContextVariables = [];
-            if (isset($this->settings['defaultContext']) && is_array($this->settings['defaultContext'])) {
-                $this->defaultContextVariables = EelUtility::getDefaultContextVariables($this->settings['defaultContext']);
-            }
-            $this->defaultContextVariables['request'] = $this->controllerContext->getRequest();
-        }
-        return $this->defaultContextVariables;
-    }
-
-    /**
      * Checks and throws an exception for an unrenderable path.
      *
      * @param string $fusionPath The Fusion path that cannot be rendered
@@ -867,6 +926,7 @@ class Runtime
      * @param string $behaviorIfPathNotFound One of the BEHAVIOR_* constants
      * @throws Exception\MissingFusionImplementationException
      * @throws Exception\MissingFusionObjectException
+     * @return void
      */
     protected function throwExceptionForUnrenderablePathIfNeeded($fusionPath, $fusionConfiguration, $behaviorIfPathNotFound)
     {
@@ -889,6 +949,91 @@ class Runtime
                 Please make sure to define one in your Fusion configuration.
                 MESSAGE, 1332493990);
         }
+    }
+
+    /**
+     * Implements the legacy controller context simulation {@see self::getControllerContext()}
+     *
+     * Initially it was possible to mutate the current response of the active MVC controller through $response.
+     * While HIGHLY internal behaviour and ONLY to be used by Neos.Fusion.Form or Neos.Neos:Plugin
+     * this legacy layer is in place to still allow this functionality.
+     *
+     * @param \Closure(): (ResponseInterface|StreamInterface) $renderer
+     */
+    private function withSimulatedLegacyControllerContext(\Closure $renderer): ResponseInterface|StreamInterface
+    {
+        if ($this->legacyActionResponseForCurrentRendering !== null) {
+            throw new Exception('Recursion detected in `Runtime::renderResponse`. This entry point is only allowed to be invoked once per rendering.', 1706993940);
+        }
+        $this->legacyActionResponseForCurrentRendering = new ActionResponse();
+
+        // actual rendering
+        $httpResponseOrStream = null;
+        try {
+            $httpResponseOrStream = $renderer();
+        } finally {
+            $toBeMergedLegacyActionResponse = $this->legacyActionResponseForCurrentRendering;
+            // reset for next render
+            $this->legacyActionResponseForCurrentRendering = null;
+        }
+
+        // transfer possible headers that have been set dynamically
+        foreach ($toBeMergedLegacyActionResponse->buildHttpResponse()->getHeaders() as $name => $values) {
+            if ($httpResponseOrStream instanceof StreamInterface) {
+                $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+            }
+            $httpResponseOrStream = $httpResponseOrStream->withAddedHeader($name, $values);
+        }
+        // if the status code is 200 we assume it's the default and will not overrule it
+        if ($toBeMergedLegacyActionResponse->getStatusCode() !== 200) {
+            if ($httpResponseOrStream instanceof StreamInterface) {
+                $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+            }
+            $httpResponseOrStream = $httpResponseOrStream->withStatus($toBeMergedLegacyActionResponse->getStatusCode());
+        }
+
+        return $httpResponseOrStream;
+    }
+
+    /**
+     * The concept of the controller context inside Fusion has been deprecated.
+     *
+     * For further information and migration strategies, please look into {@see LegacyFusionControllerContext}
+     *
+     * WARNING:
+     *      Invoking this backwards-compatible layer is possibly unsafe, if the rendering was not started
+     *      in {@see self::renderEntryPathWithContext()} or no `request` global is available. This will raise an exception.
+     *
+     * @deprecated with Neos 9.0
+     * @internal
+     * @throws Exception if unsafe call
+     */
+    public function getControllerContext(): LegacyFusionControllerContext
+    {
+        // legacy controller context layer
+        $actionRequest = $this->fusionGlobals->get('request');
+        if ($this->legacyActionResponseForCurrentRendering === null || !$actionRequest instanceof ActionRequest) {
+            throw new Exception(sprintf('Fusions simulated legacy controller context is only available inside `Runtime::renderResponse` and when the Fusion global "request" is an ActionRequest.'), 1706458355);
+        }
+
+        return new LegacyFusionControllerContext(
+            $actionRequest,
+            // expose action response to be possibly mutated in neos forms or fusion plugins.
+            // this behaviour is highly internal and deprecated!
+            $this->legacyActionResponseForCurrentRendering
+        );
+    }
+
+    /**
+     * Configures this runtime to override the default exception handler configured in the settings
+     * or via Fusion's \@exceptionHandler {@see AbstractRenderingExceptionHandler}.
+     *
+     * In combination with the throwing handler {@see ThrowingHandler} this can be used to rethrow all exceptions.
+     * This is helpfully for renderings in CLI context or testing.
+     */
+    public function overrideExceptionHandler(AbstractRenderingExceptionHandler $exceptionHandler): void
+    {
+        $this->overriddenExceptionHandler = $exceptionHandler;
     }
 
     /**

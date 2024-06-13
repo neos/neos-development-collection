@@ -20,6 +20,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -61,7 +62,7 @@ class PropertyOperation extends AbstractOperation
      *
      * We can only handle ContentRepository Nodes.
      *
-     * @param array $context $context onto which this operation should be applied (array or array-like object)
+     * @param array<int, mixed> $context $context onto which this operation should be applied (array or array-like object)
      * @return boolean
      */
     public function canEvaluate($context): bool
@@ -95,7 +96,7 @@ class PropertyOperation extends AbstractOperation
         if ($propertyName === '_path') {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             $ancestors = $subgraph->findAncestorNodes(
-                $element->nodeAggregateId,
+                $element->aggregateId,
                 FindAncestorNodesFilter::create()
             )->reverse();
 
@@ -103,29 +104,33 @@ class PropertyOperation extends AbstractOperation
         }
         if ($propertyName === '_identifier') {
             // TODO: deprecated (Neos <9 case)
-            return $element->nodeAggregateId->value;
+            return $element->aggregateId->value;
         }
 
         if ($propertyName[0] === '_') {
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
-        if ($element->nodeType->getPropertyType($propertyName) === 'reference') {
-            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            return (
-                $subgraph->findReferences(
-                    $element->nodeAggregateId,
-                    FindReferencesFilter::create(referenceName: $propertyName)
-                )[0] ?? null
-            )?->node;
-        }
+        $contentRepository = $this->contentRepositoryRegistry->get($element->contentRepositoryId);
+        $nodeTypeManager = $contentRepository->getNodeTypeManager();
 
-        if ($element->nodeType->getPropertyType($propertyName) === 'references') {
+        if ($nodeTypeManager->getNodeType($element->nodeTypeName)?->hasReference($propertyName)) {
+            // legacy access layer for references
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            return $subgraph->findReferences(
-                $element->nodeAggregateId,
+            $references = $subgraph->findReferences(
+                $element->aggregateId,
                 FindReferencesFilter::create(referenceName: $propertyName)
             )->getNodes();
+
+            $maxItems = $nodeTypeManager->getNodeType($element->nodeTypeName)->getReferences()[$propertyName]['constraints']['maxItems'] ?? null;
+            if ($maxItems === 1) {
+                // legacy layer references with only one item like the previous `type: reference`
+                // (the node type transforms that to constraints.maxItems = 1)
+                // users still expect the property operation to return a single node instead of an array.
+                return $references->first();
+            }
+
+            return $references;
         }
 
         return $element->getProperty($propertyName);

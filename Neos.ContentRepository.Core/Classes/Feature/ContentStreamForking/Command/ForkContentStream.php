@@ -16,24 +16,31 @@ namespace Neos\ContentRepository\Core\Feature\ContentStreamForking\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * ForkContentStream for creating a new fork of a content stream.
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class ForkContentStream implements CommandInterface
+final readonly class ForkContentStream implements CommandInterface
 {
-    public function __construct(
-        /**
-         * Content stream id for the new content stream
-         *
-         * @var ContentStreamId
-         */
-        public readonly ContentStreamId $newContentStreamId,
-        public readonly ContentStreamId $sourceContentStreamId,
+    /**
+     * @param ContentStreamId $newContentStreamId The id of the new content stream
+     * @param ContentStreamId $sourceContentStreamId The id of the content stream to fork
+     */
+    private function __construct(
+        public ContentStreamId $newContentStreamId,
+        public ContentStreamId $sourceContentStreamId,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $newContentStreamId The id of the new content stream
+     * @param ContentStreamId $sourceContentStreamId The id of the content stream to fork
+     */
+    public static function create(ContentStreamId $newContentStreamId, ContentStreamId $sourceContentStreamId): self
+    {
+        return new self($newContentStreamId, $sourceContentStreamId);
     }
 
     /**

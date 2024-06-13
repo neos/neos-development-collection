@@ -3,20 +3,20 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Export\Processors;
 
 use League\Flysystem\Filesystem;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedAsset;
 use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
-use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 
 /**
  * Processor that exports all assets and resources used in the Neos live workspace to the file system
@@ -25,6 +25,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
  */
 final class AssetExportProcessor implements ProcessorInterface
 {
+    /** @var array<int, \Closure> */
     private array $callbacks = [];
 
     public function __construct(

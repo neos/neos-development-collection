@@ -16,17 +16,18 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
-use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Node aggregate read model. Returned mainly from {@see ContentGraphInterface}.
@@ -48,45 +49,92 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
  * This interface is called *Readable* because it exposes read operations on the set of nodes inside
  * a single NodeAggregate; often used for constraint checks (in command handlers).
  *
- * @api
+ * @api Note: The constructor is not part of the public API
  */
-final class NodeAggregate
+final readonly class NodeAggregate
 {
-    public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeAggregateClassification $classification,
-        public readonly NodeTypeName $nodeTypeName,
-        public readonly ?NodeName $nodeName,
-        public readonly OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
-        /** @var array<string,Node> */
-        private readonly array $nodesByOccupiedDimensionSpacePoint,
-        private readonly CoverageByOrigin $coverageByOccupant,
-        public readonly DimensionSpacePointSet $coveredDimensionSpacePoints,
-        /** @var array<string,Node> */
-        private readonly array $nodesByCoveredDimensionSpacePoint,
-        private readonly OriginByCoverage $occupationByCovered,
-        /**
-         * The dimension space point set this node aggregate disables.
-         * This is *not* necessarily the set it is disabled in, since that is determined by its ancestors
-         */
-        public readonly DimensionSpacePointSet $disabledDimensionSpacePoints
+    /**
+     * This was intermediate part of the node aggregate. Please use {@see $workspaceName} instead.
+     * @deprecated will be removed before the final 9.0 release
+     */
+    public ContentStreamId $contentStreamId;
+
+    /**
+     * @param ContentRepositoryId $contentRepositoryId The content-repository this node aggregate belongs to
+     * @param WorkspaceName $workspaceName The workspace of this node aggregate
+     * @param NodeAggregateId $nodeAggregateId ID of this node aggregate
+     * @param NodeAggregateClassification $classification whether this node aggregate represents a root, regular or tethered node
+     * @param NodeTypeName $nodeTypeName name of the node type of this node aggregate
+     * @param NodeName|null $nodeName optional name of this node aggregate
+     * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints dimension space points this node aggregate occupies
+     * @param non-empty-array<string,Node> $nodesByOccupiedDimensionSpacePoint At least one node will be occupied.
+     * @param CoverageByOrigin $coverageByOccupant
+     * @param DimensionSpacePointSet $coveredDimensionSpacePoints This node aggregate will cover at least one dimension space.
+     * @param non-empty-array<string,Node> $nodesByCoveredDimensionSpacePoint At least one node will be covered.
+     * @param OriginByCoverage $occupationByCovered
+     * @param DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags dimension space points for every subtree tag this node aggregate is *explicitly* tagged with (excluding inherited tags)
+     */
+    private function __construct(
+        public ContentRepositoryId $contentRepositoryId,
+        public WorkspaceName $workspaceName,
+        public NodeAggregateId $nodeAggregateId,
+        public NodeAggregateClassification $classification,
+        public NodeTypeName $nodeTypeName,
+        public ?NodeName $nodeName,
+        public OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
+        private array $nodesByOccupiedDimensionSpacePoint,
+        private CoverageByOrigin $coverageByOccupant,
+        public DimensionSpacePointSet $coveredDimensionSpacePoints,
+        private array $nodesByCoveredDimensionSpacePoint,
+        private OriginByCoverage $occupationByCovered,
+        private DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
+        ContentStreamId $contentStreamId,
     ) {
+        $this->contentStreamId = $contentStreamId;
+    }
+
+    /**
+     * @param non-empty-array<string,Node> $nodesByOccupiedDimensionSpacePoint
+     * @param non-empty-array<string,Node> $nodesByCoveredDimensionSpacePoint
+     * @internal The signature of this method can change in the future!
+     */
+    public static function create(
+        ContentRepositoryId $contentRepositoryId,
+        WorkspaceName $workspaceName,
+        NodeAggregateId $nodeAggregateId,
+        NodeAggregateClassification $classification,
+        NodeTypeName $nodeTypeName,
+        ?NodeName $nodeName,
+        OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
+        array $nodesByOccupiedDimensionSpacePoint,
+        CoverageByOrigin $coverageByOccupant,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        array $nodesByCoveredDimensionSpacePoint,
+        OriginByCoverage $occupationByCovered,
+        DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
+        ContentStreamId $contentStreamId,
+    ): self {
+        return new self(
+            $contentRepositoryId,
+            $workspaceName,
+            $nodeAggregateId,
+            $classification,
+            $nodeTypeName,
+            $nodeName,
+            $occupiedDimensionSpacePoints,
+            $nodesByOccupiedDimensionSpacePoint,
+            $coverageByOccupant,
+            $coveredDimensionSpacePoints,
+            $nodesByCoveredDimensionSpacePoint,
+            $occupationByCovered,
+            $dimensionSpacePointsBySubtreeTags,
+            $contentStreamId,
+        );
     }
 
     public function occupiesDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): bool
     {
         return $this->occupiedDimensionSpacePoints->contains($originDimensionSpacePoint);
-    }
-
-    /**
-     * Returns the nodes belonging to this aggregate, i.e. the "real materialized" node rows.
-     *
-     * @return iterable<int,Node>
-     */
-    public function getNodes(): iterable
-    {
-        return array_values($this->nodesByOccupiedDimensionSpacePoint);
     }
 
     public function getNodeByOccupiedDimensionSpacePoint(
@@ -146,8 +194,25 @@ final class NodeAggregate
         return $occupation;
     }
 
-    public function disablesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
+    /**
+     * Returns the dimension space points this aggregate is *explicitly* tagged in with the specified $subtreeTag
+     * NOTE: This won't respect inherited subtree tags!
+     *
+     * @internal This is a low level concept that is not meant to be used outside the core or tests
+     */
+    public function getDimensionSpacePointsTaggedWith(SubtreeTag $subtreeTag): DimensionSpacePointSet
     {
-        return $this->disabledDimensionSpacePoints->contains($dimensionSpacePoint);
+        return $this->dimensionSpacePointsBySubtreeTags->forSubtreeTag($subtreeTag);
+    }
+
+    /**
+     * Returns the nodes belonging to this aggregate, i.e. the "real materialized" node rows.
+     *
+     * @internal Using this method to access all occupied nodes or possibly extract a single arbitrary node is not intended for use outside the core.
+     * @return iterable<int,Node>
+     */
+    public function getNodes(): iterable
+    {
+        return array_values($this->nodesByOccupiedDimensionSpacePoint);
     }
 }

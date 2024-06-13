@@ -14,9 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
  * Renders the Node Type Schema in a format the User Interface understands;
@@ -66,14 +67,19 @@ class NodeTypeSchemaBuilder
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             if ($nodeType->isAbstract() === false) {
                 $configuration = $nodeType->getFullConfiguration();
+                $configuration['properties'] = array_merge(
+                    $configuration['properties'] ?? [],
+                    $configuration['references'] ?? [],
+                );
+                unset($configuration['references']);
                 $schema['nodeTypes'][$nodeTypeName] = $configuration;
                 $schema['nodeTypes'][$nodeTypeName]['label'] = $nodeType->getLabel();
             }
 
             $schema['inheritanceMap']['subTypes'][$nodeTypeName] = [];
-            foreach ($this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), true) as $subNodeType) {
+            foreach ($this->nodeTypeManager->getSubNodeTypes($nodeType->name, true) as $subNodeType) {
                 /** @var NodeType $subNodeType */
-                $schema['inheritanceMap']['subTypes'][$nodeTypeName][] = $subNodeType->getName();
+                $schema['inheritanceMap']['subTypes'][$nodeTypeName][] = $subNodeType->name->value;
             }
         }
 
@@ -89,7 +95,6 @@ class NodeTypeSchemaBuilder
     {
         $constraints = [];
         $nodeTypes = $this->nodeTypeManager->getNodeTypes(true);
-        /** @var NodeType $nodeType */
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             if ($nodeType->isAbstract()) {
                 continue;
@@ -104,10 +109,10 @@ class NodeTypeSchemaBuilder
                 }
             }
 
-            foreach ($nodeType->getAutoCreatedChildNodes() as $key => $_x) {
-                foreach ($nodeTypes as $innerNodeTypeName => $innerNodeType) {
-                    if ($nodeType->allowsGrandchildNodeType($key, $innerNodeType)) {
-                        $constraints[$nodeTypeName]['childNodes'][$key]['nodeTypes'][$innerNodeTypeName] = true;
+            foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
+                foreach ($nodeTypes as $innerNodeTypeName => $_x) {
+                    if ($this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode($nodeType->name, $tetheredNodeTypeDefinition->name, NodeTypeName::fromString($innerNodeTypeName))) {
+                        $constraints[$nodeTypeName]['childNodes'][$tetheredNodeTypeDefinition->name->value]['nodeTypes'][$innerNodeTypeName] = true;
                     }
                 }
             }

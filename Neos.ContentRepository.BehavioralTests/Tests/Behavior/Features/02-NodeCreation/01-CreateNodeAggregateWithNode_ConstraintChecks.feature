@@ -8,10 +8,9 @@ Feature: Create node aggregate with node
   and its soon-to-be child node aggregate Sir David Nodenborough
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository.Testing:Node':
       properties:
         postalAddress:
@@ -29,6 +28,8 @@ Feature: Create node aggregate with node
     'Neos.ContentRepository.Testing:AbstractNode':
       abstract: true
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -36,27 +37,37 @@ Feature: Create node aggregate with node
       | workspaceTitle       | "Live"               |
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
-    And the graph projection is fully up to date
-    And I am in content stream "cs-identifier"
-    And I am in dimension space point {}
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And the graph projection is fully up to date
 
-  Scenario: Try to create a node aggregate in a content stream that currently does not exist:
+  Scenario: Try to create a node aggregate in a workspace that currently does not exist:
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                 |
-      | contentStreamId       | "non-existent-cs-identifier"          |
+      | workspaceName         | "non-existent"                        |
       | nodeAggregateId       | "sir-david-nodenborough"              |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
       | nodeName              | "document"                            |
 
-    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+    Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
-  Scenario: Try to create a node aggregate in a content stream where it is already present:
+  Scenario: Try to create a node aggregate in a workspace whose content stream is closed:
+    When the command CloseContentStream is executed with payload:
+      | Key             | Value           |
+      | contentStreamId | "cs-identifier" |
+    And the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key                   | Value                                 |
+      | nodeAggregateId       | "sir-david-nodenborough"              |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"              |
+      | nodeName              | "document"                            |
+
+    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
+
+  Scenario: Try to create a node aggregate in a workspace where it is already present:
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                 |
       | nodeAggregateId       | "lady-eleonode-rootford"              |
@@ -131,21 +142,18 @@ Feature: Create node aggregate with node
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
       | nodeName              | "document"                            |
-    And the graph projection is fully up to date
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                       | Value                                 |
-      | nodeAggregateId           | "nody-mc-nodeface"                    |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
-      | originDimensionSpacePoint | {}                                    |
-      | parentNodeAggregateId     | "lady-eleonode-rootford"              |
-      | nodeName                  | "document"                            |
+      | Key                   | Value                                 |
+      | nodeAggregateId       | "nody-mc-nodeface"                    |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"              |
+      | nodeName              | "document"                            |
 
-    Then the last command should have thrown an exception of type "NodeNameIsAlreadyOccupied"
+    Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
   Scenario: Try to create a node aggregate with a property the node type does not declare
     When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key                   | Value                                 |
-      | contentStreamId       | "cs-identifier"                       |
       | nodeAggregateId       | "nody-mc-nodeface"                    |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node" |
       | parentNodeAggregateId | "lady-eleonode-rootford"              |
@@ -177,17 +185,3 @@ Feature: Create node aggregate with node
       | nodeTypeName          | "Neos.ContentRepository.Testing:NodeWithInvalidDefaultValue" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                                     |
     Then the last command should have thrown an exception of type "CallErrorException"
-
-  Scenario: Try to create a node aggregate in an origin dimension space point the parent node does not cover:
-    Given I have the following content dimensions:
-      | Identifier | Values       | Generalizations |
-      | language   | mul, de, gsw | gsw->de->mul    |
-    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                       | Value                                 |
-      | nodeAggregateId           | "nody-mc-nodeface"                    |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
-      | originDimensionSpacePoint | {"language": "de"}                    |
-      | parentNodeAggregateId     | "lady-eleonode-rootford"              |
-      | nodeName                  | "child-node"                          |
-
-    Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"

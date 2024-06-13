@@ -24,7 +24,7 @@ final class ProjectionReplayServiceFactory implements ContentRepositoryServiceFa
         return new ProjectionReplayService(
             $serviceFactoryDependencies->projections,
             $serviceFactoryDependencies->contentRepository,
-            $serviceFactoryDependencies->eventStore
+            $serviceFactoryDependencies->eventStore,
         );
     }
 }

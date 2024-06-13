@@ -12,20 +12,21 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\UserService;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
-use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Neos\Domain\Model\Site;
 
 /**
@@ -66,12 +67,6 @@ class UsageController extends ActionController
     protected $domainUserService;
 
     /**
-     * @Flow\Inject
-     * @var SiteNodeUtility
-     */
-    protected $siteNodeUtility;
-
-    /**
      * Get Related Nodes for an asset
      *
      * @param AssetInterface $asset
@@ -103,16 +98,18 @@ class UsageController extends ActionController
 
             $contentRepository = $this->contentRepositoryRegistry->get($usage->getContentRepositoryId());
 
-            $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
-                $usage->getContentStreamId(),
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
+
+            // FIXME: AssetUsageReference->workspaceName ?
+            $nodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(
                 $usage->getNodeAggregateId()
             );
             try {
                 $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName);
-            } catch (NodeTypeNotFoundException $e) {
+            } catch (NodeTypeNotFound $e) {
                 $nodeType = null;
             }
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
+
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
             $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeAggregateId()->value;
@@ -126,31 +123,34 @@ class UsageController extends ActionController
                 continue;
             }
 
-            $node = $contentRepository->getContentGraph()->findNodeByIdAndOriginDimensionSpacePoint(
-                $usage->getContentStreamId(),
-                $usage->getNodeAggregateId(),
-                $usage->getOriginDimensionSpacePoint()
+            $subgraph = $contentRepository->getContentGraph($workspace->workspaceName)->getSubgraph(
+                $usage->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
             );
 
+            $node = $subgraph->findNodeById($usage->getNodeAggregateId());
             // this should actually never happen.
             if (!$node) {
                 $inaccessibleRelations[] = $inaccessibleRelation;
                 continue;
             }
 
-            $flowQuery = new FlowQuery([$node]);
-            $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+            $documentNode = $subgraph->findClosestNode($node->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_DOCUMENT));
             // this should actually never happen, too.
             if (!$documentNode) {
                 $inaccessibleRelations[] = $inaccessibleRelation;
                 continue;
             }
 
-
-            $siteNode = $this->siteNodeUtility->findSiteNode($node);
+            $siteNode = $subgraph->findClosestNode($node->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
+            // this should actually never happen, too. :D
+            if (!$siteNode) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
+            }
             foreach ($existingSites as $existingSite) {
                 /** @var Site $existingSite * */
-                if ($siteNode->nodeName->equals($existingSite->getNodeName()->toNodeName())) {
+                if ($siteNode->name->equals($existingSite->getNodeName()->toNodeName())) {
                     $site = $existingSite;
                 }
             }

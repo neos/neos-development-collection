@@ -14,11 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\Workspace;
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<WorkspaceProjection>
@@ -27,15 +25,13 @@ use Neos\ContentRepository\Core\Projection\Projections;
 class WorkspaceProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
-        private readonly DbalClientInterface $dbalClient
+        private readonly Connection $dbal,
     ) {
     }
 
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar
     ): WorkspaceProjection {
         $projectionShortName = strtolower(str_replace(
             'Projection',
@@ -43,8 +39,7 @@ class WorkspaceProjectionFactory implements ProjectionFactoryInterface
             (new \ReflectionClass(WorkspaceProjection::class))->getShortName()
         ));
         return new WorkspaceProjection(
-            $projectionFactoryDependencies->eventNormalizer,
-            $this->dbalClient,
+            $this->dbal,
             sprintf(
                 'cr_%s_p_%s',
                 $projectionFactoryDependencies->contentRepositoryId->value,

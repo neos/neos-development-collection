@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\EventStore;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
@@ -13,10 +13,10 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
 {
     public function __construct(
         private readonly Connection $connection,
-    )
-    {
+    ) {
     }
 
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options, ClockInterface $clock): EventStoreInterface
     {
         return new DoctrineEventStore(

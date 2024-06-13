@@ -23,18 +23,21 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class DiscardWorkspace implements CommandInterface
+final readonly class DiscardWorkspace implements CommandInterface
 {
+    /**
+     * @param WorkspaceName $workspaceName Name of the affected workspace
+     * @param ContentStreamId $newContentStreamId The id of the newly created content stream that will contain the remaining changes that were not discarded
+     */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
-        /**
-         * Content Stream ID of the newly created fork, which contains the remaining changes
-         * which were not removed
-         */
-        public readonly ContentStreamId $newContentStreamId
+        public WorkspaceName $workspaceName,
+        public ContentStreamId $newContentStreamId
     ) {
     }
 
+    /**
+     * @param WorkspaceName $workspaceName Name of the affected workspace
+     */
     public static function create(WorkspaceName $workspaceName): self
     {
         return new self($workspaceName, ContentStreamId::create());
@@ -43,10 +46,8 @@ final class DiscardWorkspace implements CommandInterface
     /**
      * Call this method if you want to run this command fully deterministically, f.e. during test cases
      */
-    public static function createFullyDeterministic(
-        WorkspaceName $workspaceName,
-        ContentStreamId $newContentStreamId
-    ): self {
-        return new self($workspaceName, $newContentStreamId);
+    public function withNewContentStreamId(ContentStreamId $newContentStreamId): self
+    {
+        return new self($this->workspaceName, $newContentStreamId);
     }
 }

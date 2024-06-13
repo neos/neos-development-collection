@@ -17,62 +17,62 @@ namespace Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\Dimension;
 
 /**
- * The inter dimensional variation graph domain model
+ * The interdimensional variation graph domain model
  * Represents the specialization and generalization mechanism between dimension space points
  * @api
  */
-class InterDimensionalVariationGraph
+final class InterDimensionalVariationGraph
 {
     /**
      * Weighed dimension space points, indexed by identity (DSP) hash
      *
-     * @var array<string,WeightedDimensionSpacePoint>|null
+     * @var array<string,WeightedDimensionSpacePoint>
      */
-    protected ?array $weightedDimensionSpacePoints = null;
+    private array $weightedDimensionSpacePoints;
 
     /**
      * Generalization dimension space point sets, indexed by specialization hash
      *
-     * @var array<string,DimensionSpacePointSet>|null
+     * @var array<string,DimensionSpacePointSet>
      */
-    protected ?array $indexedGeneralizations = null;
+    private array $indexedGeneralizations;
 
     /**
      * Specialization dimension space point sets, indexed by generalization hash
      *
-     * @var array<string,DimensionSpacePointSet>|null
+     * @var array<string,DimensionSpacePointSet>
      */
-    protected ?array $indexedSpecializations = null;
+    private array $indexedSpecializations;
 
     /**
      * Weighed generalizations, indexed by specialization hash and relative weight
      *
-     * @var array<string,array<int,DimensionSpacePoint>>|null
+     * @var array<string,array<int,DimensionSpacePoint>>
      */
-    protected ?array $weightedGeneralizations = null;
+    private array $weightedGeneralizations;
 
     /**
      * Weighed specializations, indexed by generalization hash, relative weight and specialization hash
-     * @var array<string,array<int,array<string,DimensionSpacePoint>>>|null
+     * @var array<string,array<int,array<string,DimensionSpacePoint>>>
      */
-    protected ?array $weightedSpecializations = null;
+    private array $weightedSpecializations;
 
     /**
      * Primary generalization dimension space points, indexed by specialization hash
      *
      * @var array<string,DimensionSpacePoint>
      */
-    protected ?array $primaryGeneralizations = null;
+    private array $primaryGeneralizations;
 
-    protected ?int $weightNormalizationBase = null;
+    private int $weightNormalizationBase;
 
     public function __construct(
-        private Dimension\ContentDimensionSourceInterface $contentDimensionSource,
-        private ContentDimensionZookeeper $contentDimensionZookeeper
+        private readonly Dimension\ContentDimensionSourceInterface $contentDimensionSource,
+        private readonly ContentDimensionZookeeper $contentDimensionZookeeper
     ) {
     }
 
-    protected function initializeWeightedDimensionSpacePoints(): void
+    private function initializeWeightedDimensionSpacePoints(): void
     {
         $this->weightedDimensionSpacePoints = [];
         foreach ($this->contentDimensionZookeeper->getAllowedCombinations() as $dimensionValues) {
@@ -93,13 +93,10 @@ class InterDimensionalVariationGraph
      */
     public function getWeightedDimensionSpacePoints(): array
     {
-        if (is_null($this->weightedDimensionSpacePoints)) {
+        if (!isset($this->weightedDimensionSpacePoints)) {
             $this->initializeWeightedDimensionSpacePoints();
         }
-        /** @var array<string,WeightedDimensionSpacePoint> $weighedDimensionSpacePoints */
-        $weighedDimensionSpacePoints = $this->weightedDimensionSpacePoints;
-
-        return $weighedDimensionSpacePoints;
+        return $this->weightedDimensionSpacePoints;
     }
 
     public function getWeightedDimensionSpacePointByDimensionSpacePoint(
@@ -110,7 +107,7 @@ class InterDimensionalVariationGraph
 
     public function getWeightedDimensionSpacePointByHash(string $hash): ?WeightedDimensionSpacePoint
     {
-        if (is_null($this->weightedDimensionSpacePoints)) {
+        if (!isset($this->weightedDimensionSpacePoints)) {
             $this->initializeWeightedDimensionSpacePoints();
         }
 
@@ -120,7 +117,10 @@ class InterDimensionalVariationGraph
     /**
      * Returns the root generalizations indexed by hash
      *
-     * @return array<string,DimensionSpacePoint>
+     * Even in a zero-dimensional content repository the array will have at least one entry
+     * of an empty dimension space point {@see DimensionSpacePoint::createWithoutDimensions()}
+     *
+     * @return non-empty-array<string,DimensionSpacePoint>
      */
     public function getRootGeneralizations(): array
     {
@@ -130,13 +130,19 @@ class InterDimensionalVariationGraph
                 $rootGeneralizations[$dimensionSpacePointHash] = $weightedDimensionSpacePoint->dimensionSpacePoint;
             }
         }
-
+        if (empty($rootGeneralizations)) {
+            // safeguard, should not happen here:
+            throw new \RuntimeException(
+                'The dimension space is empty, please check your configuration.',
+                1710613747
+            );
+        }
         return $rootGeneralizations;
     }
 
-    protected function determineWeightNormalizationBase(): int
+    private function determineWeightNormalizationBase(): int
     {
-        if (is_null($this->weightNormalizationBase)) {
+        if (!isset($this->weightNormalizationBase)) {
             $base = 0;
             foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
                 $base = max($base, $contentDimension->getMaximumDepth()->value + 1);
@@ -148,13 +154,15 @@ class InterDimensionalVariationGraph
         return $this->weightNormalizationBase;
     }
 
-    protected function initializeVariations(): void
+    private function initializeVariations(): void
     {
         $normalizedVariationWeights = [];
         $lowestVariationWeights = [];
         $this->weightedGeneralizations = [];
 
+        /** @var array<string,array<string,DimensionSpacePoint>> $indexedGeneralizations */
         $indexedGeneralizations = [];
+        /** @var array<string,array<string,DimensionSpacePoint>> $indexedSpecializations */
         $indexedSpecializations = [];
 
         foreach ($this->getWeightedDimensionSpacePoints() as $generalizationHash => $generalization) {
@@ -165,8 +173,8 @@ class InterDimensionalVariationGraph
 
             foreach ($generalization->dimensionValues as $rawDimensionId => $contentDimensionValue) {
                 $dimensionId = new Dimension\ContentDimensionId($rawDimensionId);
-                /** @var Dimension\ContentDimension $dimension */
                 $dimension = $this->contentDimensionSource->getDimension($dimensionId);
+                assert($dimension !== null);
                 foreach ($dimension->getSpecializations($contentDimensionValue) as $specializedValue) {
                     $specializedDimensionSpacePoint = $generalization->dimensionSpacePoint
                         ->vary($dimensionId, $specializedValue->value);
@@ -206,16 +214,13 @@ class InterDimensionalVariationGraph
             }
         }
 
-        /** @var array<string,array<string,DimensionSpacePoint>> $indexedGeneralizations */
         foreach ($indexedGeneralizations as $specializationHash => $generalizations) {
             $this->indexedGeneralizations[$specializationHash] = new DimensionSpacePointSet($generalizations);
         }
-        /** @var array<string,array<string,DimensionSpacePoint>> $indexedSpecializations */
         foreach ($indexedSpecializations as $generalizationHash => $specializations) {
             $this->indexedSpecializations[$generalizationHash] = new DimensionSpacePointSet($specializations);
         }
 
-        /** @phpstan-ignore-next-line */
         foreach ($this->weightedGeneralizations as $specializationHash => &$generalizationsByWeight) {
             ksort($generalizationsByWeight);
         }
@@ -225,8 +230,10 @@ class InterDimensionalVariationGraph
      * @param array<string,int> $normalizedVariationWeights
      * @param array<string,array<string,DimensionSpacePoint>>& $indexedGeneralizations
      * @param array<string,array<string,DimensionSpacePoint>>& $indexedSpecializations
+     * @param-out array<string,array<string,DimensionSpacePoint>> $indexedGeneralizations
+     * @param-out array<string,array<string,DimensionSpacePoint>> $indexedSpecializations
      */
-    protected function initializeVariationsForDimensionSpacePointPair(
+    private function initializeVariationsForDimensionSpacePointPair(
         WeightedDimensionSpacePoint $specialization,
         WeightedDimensionSpacePoint $generalization,
         array $normalizedVariationWeights,
@@ -237,9 +244,9 @@ class InterDimensionalVariationGraph
         if (isset($indexedGeneralizations[$generalization->getIdentityHash()])) {
             $generalizations = $indexedGeneralizations[$generalization->getIdentityHash()];
             foreach ($generalizations as $parentGeneralizationHash => $parentGeneralization) {
-                /** @var WeightedDimensionSpacePoint $weighedParent */
-                $weighedParent = $this->getWeightedDimensionSpacePointByHash($parentGeneralizationHash);
-                $generalizationsToProcess[$parentGeneralizationHash] = $weighedParent;
+                $weightedParent = $this->getWeightedDimensionSpacePointByHash($parentGeneralizationHash);
+                assert($weightedParent !== null);
+                $generalizationsToProcess[$parentGeneralizationHash] = $weightedParent;
             }
         }
 
@@ -265,7 +272,7 @@ class InterDimensionalVariationGraph
      */
     public function getIndexedSpecializations(DimensionSpacePoint $generalization): DimensionSpacePointSet
     {
-        if (is_null($this->indexedSpecializations)) {
+        if (!isset($this->indexedSpecializations)) {
             $this->initializeVariations();
         }
 
@@ -277,7 +284,7 @@ class InterDimensionalVariationGraph
      */
     public function getIndexedGeneralizations(DimensionSpacePoint $specialization): DimensionSpacePointSet
     {
-        if (is_null($this->indexedGeneralizations)) {
+        if (!isset($this->indexedGeneralizations)) {
             $this->initializeVariations();
         }
 
@@ -291,7 +298,7 @@ class InterDimensionalVariationGraph
      */
     public function getWeightedSpecializations(DimensionSpacePoint $generalization): array
     {
-        if (is_null($this->weightedSpecializations)) {
+        if (!isset($this->weightedSpecializations)) {
             $this->initializeVariations();
         }
 
@@ -305,7 +312,7 @@ class InterDimensionalVariationGraph
      */
     public function getWeightedGeneralizations(DimensionSpacePoint $specialization): array
     {
-        if (is_null($this->weightedGeneralizations)) {
+        if (!isset($this->weightedGeneralizations)) {
             $this->initializeVariations();
         }
 
@@ -344,7 +351,7 @@ class InterDimensionalVariationGraph
      */
     public function getPrimaryGeneralization(DimensionSpacePoint $specialization): ?DimensionSpacePoint
     {
-        if (is_null($this->primaryGeneralizations)) {
+        if (!isset($this->primaryGeneralizations)) {
             $this->initializeVariations();
         }
 
@@ -360,7 +367,7 @@ class InterDimensionalVariationGraph
             return VariantType::TYPE_SAME;
         }
 
-        if (is_null($this->indexedGeneralizations)) {
+        if (!isset($this->indexedGeneralizations)) {
             $this->initializeVariations();
         }
 

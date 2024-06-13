@@ -19,6 +19,10 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Export\Asset\Adapters\DbalAssetLoader;
 use Neos\ContentRepository\Export\Asset\Adapters\FileSystemResourceLoader;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
@@ -26,11 +30,7 @@ use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
 use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
 use Neos\ContentRepository\Export\Severity;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\NodeDataLoader;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -58,8 +58,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
         private readonly PropertyConverter $propertyConverter,
         private readonly EventStoreInterface $eventStore,
         private readonly ContentStreamId $contentStreamId,
-    )
-    {
+    ) {
     }
 
     public function runAllProcessors(\Closure $outputLineFn, bool $verbose = false): void
@@ -88,7 +87,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
             });
             $result = $processor->run();
             if ($result->severity === Severity::ERROR) {
-                throw new \RuntimeException($label . ': ' . $result->message ?? '');
+                throw new \RuntimeException($label . ': ' . $result->message);
             }
             $outputLineFn('  ' . $result->message);
             $outputLineFn();

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Workspace.Ui" source-language="en" datatype="plaintext" target-language="de">
+    <body>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+        <target state="final">Zurück</target>
+      </trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
+				<source>Cancel</source>
+        <target state="final">Abbrechen</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
+        <source>Path</source>
+        <target state="final">Pfad</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
+        <source>Relative Path</source>
+        <target state="final">Relativer Pfad</target>
+      </trans-unit>
+      <!-- Management -->
+      <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
+				<source>Workspaces</source>
+        <target state="final">Arbeitsbereiche</target>
+      </trans-unit>
+      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
+				<source>Details for "{0}"</source>
+        <target state="final">Details für "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
+				<source>Create new workspace</source>
+        <target state="final">Neuen Arbeitsbereich erstellen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.createWorkspace" xml:space="preserve" approved="yes">
+				<source>Create workspace</source>
+        <target state="final">Arbeitsbereich erstellen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
+				<source>Delete workspace</source>
+        <target state="final">Arbeitsbereich löschen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
+				<source>Edit workspace</source>
+        <target state="final">Arbeitsbereich bearbeiten</target>
+      </trans-unit>
+      <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve" approved="yes">
+				<source>Yes, delete the workspace</source>
+        <target state="final">Ja, den Arbeitsbereich löschen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="no">
+				<source>Edit workspace "{0}"</source>
+        <target state="translated">Arbeitsbereich "{0}" bearbeiten</target>
+      </trans-unit>
+      <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
+				<source>Personal workspace</source>
+        <target state="final">Persönlicher Arbeitsbereich</target>
+      </trans-unit>
+      <trans-unit id="workspaces.privateWorkspace" xml:space="preserve" approved="yes">
+				<source>Private workspace</source>
+        <target state="final">Privater Arbeitsbereich</target>
+      </trans-unit>
+      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
+				<source>Internal workspace</source>
+        <target state="final">Interner Arbeitsbereich</target>
+      </trans-unit>
+      <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
+				<source>Read-only workspace</source>
+        <target state="final">Nur-Lese Arbeitsbereich</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+        <target state="final">Titel</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.description" xml:space="preserve" approved="yes">
+				<source>Description</source>
+        <target state="final">Beschreibung</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve" approved="yes">
+				<source>Base workspace</source>
+        <target state="final">Basis-Arbeitsbereich</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
+				<source>Owner</source>
+        <target state="final">Besitzer</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve" approved="yes">
+				<source>Visibility</source>
+        <target state="final">Sichtbarkeit</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve" approved="yes">
+				<source>Private</source>
+        <target state="final">Privat</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
+				<source>Only reviewers and administrators can access and modify this workspace</source>
+        <target state="final">Nur Reviewer und Administratoren können auf diesen Arbeitsbereich zugreifen und ihn bearbeiten</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
+				<source>Internal</source>
+        <target state="final">Intern</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
+				<source>Any logged in editor can see and modify this workspace.</source>
+        <target state="final">Jeder angemeldete Redakteur kann diesen Arbeitsbereich sehen und bearbeiten.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
+				<source>Changes</source>
+        <target state="final">Änderungen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve" approved="yes">
+				<source>Open page in "{0}" workspace</source>
+        <target state="final">Seite in Arbeitsbereich "{0}" öffnen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
+				<source>This is your personal workspace which you can't delete.</source>
+        <target state="final">Dies ist Ihr persönlicher Arbeitsbereich, welcher nicht gelöscht werden kann.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve" approved="yes">
+				<source>The workspace contains changes. To delete, discard the changes first.</source>
+        <target state="final">Der Arbeitsbereich enthält Änderungen. Um ihn zu löschen, müssen die Änderungen zuerst verworfen werden.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve" approved="yes">
+				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
+        <target state="final">Der Arbeitsbereich kann nicht auf einen anderen Basis-Arbeitsbereich umgestellt werden, da er noch Änderungen enthält.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve" approved="yes">
+				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
+        <target state="final">Der Arbeitsbereich kann nicht gelöscht werden, da andere Arbeitsbereiche auf ihm basieren.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve" approved="yes">
+				<source>You don't have the permissions for deleting this workspace.</source>
+        <target state="final">Sie haben nicht die Berechtigung diesen Arbeitsbereich zu löschen.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve" approved="yes">
+				<source>Do you really want to delete the workspace "{0}"?</source>
+        <target state="final">Wollen Sie wirklich den Arbeitsbereich "{0}" löschen?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve" approved="yes">
+				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
+        <target state="final">Dadurch wird der Arbeitsbereich einschließlich aller unveröffentlichten Inhalte gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
+				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
+        <target state="final">Dieses Modul bietet einen Überblick aller geänderter Inhalte des aktuellen Workspaces und ermöglicht deren Kontrolle und Veröffentlichung.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
+				<source>Unpublished changes in workspace "{0}"</source>
+        <target state="final">Unveröffentlichte Änderungen im Arbeitsbereich "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
+				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
+        <target state="final">Ergänzungen: {new}, Änderungen: {changed}, Entfernungen: {removed}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.review" xml:space="preserve" approved="yes">
+				<source>Review</source>
+        <target state="final">Überprüfen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
+				<source>Discard selected changes</source>
+        <target state="final">Ausgewählte Änderungen verwerfen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve" approved="yes">
+				<source>Publish selected changes to {0}</source>
+        <target state="final">Ausgewählte Änderungen nach {0} veröffentlichen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
+				<source>Discard all changes</source>
+        <target state="final">Alle Änderungen verwerfen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
+				<source>Publish all changes</source>
+        <target state="final">Alle Änderungen veröffentlichen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve" approved="yes">
+				<source>Publish all changes to {0}</source>
+        <target state="final">Alle Änderungen nach {0} veröffentlichen</target>
+      </trans-unit>
+      <trans-unit id="changedContentCaption" xml:space="preserve" approved="yes">
+				<source>Changed Content</source>
+        <target state="final">Geänderter Inhalt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
+				<source>deleted</source>
+        <target state="final">gelöscht</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.created" xml:space="preserve" approved="yes">
+				<source>created</source>
+        <target state="final">erstellt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
+				<source>moved</source>
+        <target state="final">erstellt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
+				<source>hidden</source>
+        <target state="final">erstellt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
+				<source>edited</source>
+        <target state="final">erstellt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
+				<source>There are no unpublished changes in this workspace.</source>
+        <target state="final">In diesem Arbeitsbereich gibt es keine unveröffentlichten Änderungen.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
+        <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
+        <target state="final">Möchten Sie wirklich die ausgewählten Änderungen im Arbeitsbereich "{0}" verwerfen?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
+        <source>Do you really want to discard all changes in the "{0}" workspace?</source>
+        <target state="final">Möchten Sie wirklich alle Änderungen im Arbeitsbereich "{0}" verwerfen?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
+        <source>A workspace with this title already exists.</source>
+        <target state="final">Ein Arbeitsbereich mit diesem Titel ist bereits vorhanden.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenUpdated" approved="yes">
+        <source>The workspace "{0}" has been updated.</source>
+        <target state="final">Der Arbeitsbereich "{0}" wurde aktualisiert.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies" approved="yes">
+        <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
+        <target state="final">Arbeitsbereich "{0}" kann nicht gelöscht werden, da die folgenden Arbeitsbereiche auf ihm basieren: {1}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes" approved="yes">
+        <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
+        <target state="final">Fehler beim Abrufen der unveröffentlichten Elemente des Arbeitsbereichs "{0}", es wurde nichts gelöscht.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges" approved="yes">
+        <source>Your personal workspace contains changes, please publish or discard them first.</source>
+        <target state="final">Ihr persönlicher Arbeitsbereich enthält Änderungen, bitte veröffentlichen oder verwerfen Sie diese zuerst.</target>
+      </trans-unit>
+      <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
+          <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
+          <target state="final">Arbeitsbereich "{0}" wurde nicht gelöscht, da er derzeit {1} Element enthält.</target> </trans-unit>
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
+          <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
+          <target state="final">Arbeitsbereich "{0}" wurde nicht gelöscht, da er derzeit {1} Elemente enthält.</target> </trans-unit>
+      </group>
+      <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
+        <source>The workspace "{0}" has been removed.</source>
+        <target state="final">Der Arbeitsbereich "{0}" wurde entfernt.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenPublished" approved="yes">
+        <source>The selected change has been published.</source>
+        <target state="final">Die ausgewählte Änderung wurde veröffentlicht.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenDiscarded" approved="yes">
+        <source>The selected change has been discarded.</source>
+        <target state="final">Die ausgewählte Änderung wurde verworfen.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenPublished" approved="yes">
+        <source>The selected changes have been published.</source>
+        <target state="final">Die ausgewählten Änderungen wurden veröffentlicht.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded" approved="yes">
+        <source>The selected changes have been discarded.</source>
+        <target state="final">Die ausgewählten Änderungen wurden verworfen.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished" approved="yes">
+        <source>All changes from workspace "{0}" have been published to {1}.</source>
+        <target state="final">Alle Änderungen aus dem Arbeitsbereich "{0}" wurden in {1} veröffentlicht.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded" approved="yes">
+        <source>All changes from workspace "{0}" have been discarded.</source>
+        <target state="final">Alle Änderungen aus dem Arbeitsbereich "{0}" wurden verworfen.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectAllCurrentChanges" approved="yes">
+        <source>Select all current changes</source>
+        <target state="final">Alle aktuellen Änderungen auswählen</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

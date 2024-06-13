@@ -17,29 +17,28 @@ use Neos\Fusion\Exception;
  */
 class RuntimeException extends Exception
 {
-    /**
-     * @var string
-     */
-    protected $fusionPath;
+    private string $fusionPath;
 
-    /**
-     * @param string $message
-     * @param int $code
-     * @param \Exception $previous
-     * @param null $fusionPath
-     */
-    public function __construct($message = '', $code = 0, \Exception $previous = null, $fusionPath = null)
+    public function __construct(string $message, int $code, \Exception $previous, string $fusionPath)
     {
         parent::__construct($message, $code, $previous);
-
         $this->fusionPath = $fusionPath;
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getFusionPath()
     {
         return $this->fusionPath;
+    }
+
+    /**
+     * Unwrap this Fusion RuntimeException
+     */
+    public function getWrappedException(): \Exception
+    {
+        /** @phpstan-ignore-next-line due to overridden construction, we are sure that the previous exists. */
+        return $this->getPrevious();
     }
 }

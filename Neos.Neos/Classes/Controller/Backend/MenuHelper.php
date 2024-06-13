@@ -12,23 +12,17 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
-use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\Domain\Service\ContentContextFactory;
-use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
-use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
-use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
-use Neos\Neos\Service\IconNameMappingService;
-use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
+use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
+use Neos\Neos\Service\IconNameMappingService;
+use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 
 /**
@@ -93,10 +87,15 @@ class MenuHelper
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
-            // TODO: we need to check permissions here, a.k.a
-            // TODO: $node = $context->getNode(\Neos\ContentRepository\Domain\Utility\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
-            // TODO: if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
-            // TODO: unfortunately, it's not so easy; because we do not know what dimension we are in...
+            // TODO: we need to check permissions here see https://github.com/neos/neos-development-collection/pull/4269
+            /*
+            foreach ($siteNodesInAllDimensions as $siteNode) {
+                if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($siteNode))) {
+                    $granted = true;
+                    break;
+                }
+            }
+            */
             $uri = null;
             $active = false;
             /** @var $site Site */

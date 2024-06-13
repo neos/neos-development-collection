@@ -17,15 +17,11 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\Neos\Domain\Model\SiteConfiguration;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -41,13 +37,15 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\SiteConfiguration;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
@@ -59,10 +57,16 @@ use Psr\Http\Message\UriInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Routing related Behat steps
+ * Routing related Behat steps. This trait is impure and resets the SiteRepository
+ *
+ * Requires the {@see \Neos\Flow\Core\Bootstrap::getActiveRequestHandler()} to be a {@see FunctionalTestRequestHandler}.
+ * For this the {@see BrowserTrait} can be used.
+ *
+ * @internal only for behat tests within the Neos.Neos package
  */
 trait RoutingTrait
 {
+    use CRTestSuiteRuntimeVariables;
 
     /**
      * @var Uri
@@ -70,11 +74,12 @@ trait RoutingTrait
     private $requestUrl;
 
     /**
-     * @return ObjectManagerInterface
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
      */
-    abstract protected function getObjectManager();
-
-    abstract protected function getContentRepositoryId(): ContentRepositoryId;
+    abstract private function getObject(string $className): object;
 
     /**
      * @Given A site exists for node name :nodeName
@@ -82,10 +87,8 @@ trait RoutingTrait
      */
     public function theSiteExists(string $nodeName, string $domain = null): void
     {
-        /** @var SiteRepository $siteRepository */
-        $siteRepository = $this->getObjectManager()->get(SiteRepository::class);
-        /** @var PersistenceManagerInterface $persistenceManager */
-        $persistenceManager = $this->getObjectManager()->get(PersistenceManagerInterface::class);
+        $siteRepository = $this->getObject(SiteRepository::class);
+        $persistenceManager = $this->getObject(PersistenceManagerInterface::class);
 
         $site = new Site($nodeName);
         $site->setSiteResourcesPackageKey('Neos.Neos');
@@ -100,7 +103,7 @@ trait RoutingTrait
             $domainModel->setScheme($domainUri->getScheme());
             $domainModel->setSite($site);
             /** @var DomainRepository $domainRepository */
-            $domainRepository = $this->getObjectManager()->get(DomainRepository::class);
+            $domainRepository = $this->getObject(DomainRepository::class);
             $domainRepository->add($domainModel);
         }
 
@@ -115,7 +118,7 @@ trait RoutingTrait
      */
     public function theSiteConfigurationIs(\Behat\Gherkin\Node\PyStringNode $configYaml): void
     {
-        $entityManager = $this->getObjectManager()->get(EntityManagerInterface::class);
+        $entityManager = $this->getObject(EntityManagerInterface::class);
         // clean up old PostLoad Hook
         if ($this->routingTraitSiteConfigurationPostLoadHook !== null) {
             $entityManager->getEventManager()->removeEventListener('postLoad', $this->routingTraitSiteConfigurationPostLoadHook);
@@ -146,9 +149,9 @@ trait RoutingTrait
     public function anAssetExists(string $assetIdentifier, string $fileName, string $content): void
     {
         /** @var ResourceManager $resourceManager */
-        $resourceManager = $this->getObjectManager()->get(ResourceManager::class);
+        $resourceManager = $this->getObject(ResourceManager::class);
         /** @var AssetRepository $assetRepository */
-        $assetRepository = $this->getObjectManager()->get(AssetRepository::class);
+        $assetRepository = $this->getObject(AssetRepository::class);
 
         $resource = $resourceManager->importResourceFromContent($content, $fileName);
         $asset = new Asset($resource);
@@ -156,19 +159,9 @@ trait RoutingTrait
         $assetRepository->add($asset);
 
         /** @var PersistenceManagerInterface $persistenceManager */
-        $persistenceManager = $this->getObjectManager()->get(PersistenceManagerInterface::class);
+        $persistenceManager = $this->getObject(PersistenceManagerInterface::class);
         $persistenceManager->persistAll();
         $persistenceManager->clearState();
-    }
-
-    abstract protected function getContentRepository(): ContentRepository;
-
-    /**
-     * @When The documenturipath projection is up to date
-     */
-    public function theDocumenturipathProjectionIsUpToDate(): void
-    {
-        $this->getContentRepository()->catchUpProjection(DocumentUriPathProjection::class);
     }
 
     /**
@@ -215,12 +208,25 @@ trait RoutingTrait
         Assert::assertNull($matchedNodeAddress, 'Expected no node to be found, but instead the following node address was matched: ' . $matchedNodeAddress ?? '- none -');
     }
 
+    /**
+     * @Then The URL :url should match the node :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint
+     */
+    public function theUrlShouldMatchTheNodeInContentStreamAndDimension(string $url, $nodeAggregateId, $contentStreamId, $dimensionSpacePoint): void
+    {
+        $matchedNodeAddress = $this->match(new Uri($url));
+
+        Assert::assertNotNull($matchedNodeAddress, 'Expected node to be found, but instead nothing was found.');
+        Assert::assertEquals(NodeAggregateId::fromString($nodeAggregateId), $matchedNodeAddress->nodeAggregateId, 'Expected nodeAggregateId doesn\'t match.');
+        Assert::assertEquals(ContentStreamId::fromString($contentStreamId), $matchedNodeAddress->contentStreamId, 'Expected contentStreamId doesn\'t match.');
+        Assert::assertTrue($matchedNodeAddress->dimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), 'Expected dimensionSpacePoint doesn\'t match.');
+    }
+
     private $eventListenerRegistered = false;
 
     private function match(UriInterface $uri): ?NodeAddress
     {
-        $router = $this->getObjectManager()->get(RouterInterface::class);
-        $serverRequestFactory = $this->getObjectManager()->get(ServerRequestFactoryInterface::class);
+        $router = $this->getObject(RouterInterface::class);
+        $serverRequestFactory = $this->getObject(ServerRequestFactoryInterface::class);
         $httpRequest = $serverRequestFactory->createServerRequest('GET', $uri);
         $httpRequest = $this->addRoutingParameters($httpRequest);
 
@@ -235,7 +241,7 @@ trait RoutingTrait
             return null;
         }
 
-        $nodeAddressFactory = NodeAddressFactory::create($this->getContentRepository());
+        $nodeAddressFactory = NodeAddressFactory::create($this->currentContentRepository);
         return $nodeAddressFactory->createFromUriString($routeValues['node']);
     }
 
@@ -271,10 +277,10 @@ trait RoutingTrait
     public function tableContainsExactly(TableNode $expectedRows): void
     {
         /** @var Connection $dbal */
-        $dbal = $this->getObjectManager()->get(EntityManagerInterface::class)->getConnection();
+        $dbal = $this->getObject(EntityManagerInterface::class)->getConnection();
         $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
         $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
-            $this->getContentRepositoryId()
+            $this->currentContentRepository->id
         );
         $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidpath');
         $expectedResult = array_map(static function (array $row) {
@@ -293,10 +299,12 @@ trait RoutingTrait
         $nodeAddress = new NodeAddress(
             ContentStreamId::fromString($contentStreamId),
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            NodeAggregateId::fromString($nodeAggregateId),
+            \str_starts_with($nodeAggregateId, '$')
+                ? $this->rememberedNodeAggregateIds[\mb_substr($nodeAggregateId, 1)]
+                : NodeAggregateId::fromString($nodeAggregateId),
             WorkspaceName::forLive()
         );
-        $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);
+        $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);
         $httpRequest = $this->addRoutingParameters($httpRequest);
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         return NodeUriBuilder::fromRequest($actionRequest)->uriFor($nodeAddress);
@@ -320,14 +328,17 @@ trait RoutingTrait
         $rawSiteConfiguration = Yaml::parse($rawSiteConfigurationYaml->getRaw()) ?? [];
         $siteConfiguration = SiteConfiguration::fromArray($rawSiteConfiguration);
 
-        $dimensionResolverFactory = $this->getObjectManager()->get($siteConfiguration->contentDimensionResolverFactoryClassName);
+        $dimensionResolverFactory = $this->getObject($siteConfiguration->contentDimensionResolverFactoryClassName);
         assert($dimensionResolverFactory instanceof DimensionResolverFactoryInterface);
         $dimensionResolver = $dimensionResolverFactory->create($siteConfiguration->contentRepositoryId, $siteConfiguration);
 
-        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), $siteConfiguration->contentRepositoryId);
+        $siteNodeName = SiteNodeName::fromString("site-node");
+        $siteDetectionResult = SiteDetectionResult::create($siteNodeName, $siteConfiguration->contentRepositoryId);
         $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
 
-        $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);
+        $site = new Site($siteNodeName->value);
+
+        $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParametersAndResolvedSite($this->requestUrl->getPath(), $routeParameters, $site);
         $dimensionResolverContext = $dimensionResolver->fromRequestToDimensionSpacePoint($dimensionResolverContext);
         $this->dimensionResolverContext = $dimensionResolverContext;
     }

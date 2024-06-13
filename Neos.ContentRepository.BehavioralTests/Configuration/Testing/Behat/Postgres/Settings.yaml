@@ -1,0 +1,8 @@
+Neos:
+  ContentRepositoryRegistry:
+    presets:
+      'default':
+        projections:
+          'Neos.ContentRepository:ContentGraph':
+            factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory
+

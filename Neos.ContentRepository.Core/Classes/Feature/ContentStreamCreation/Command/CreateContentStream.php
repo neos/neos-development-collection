@@ -23,10 +23,21 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class CreateContentStream implements CommandInterface
+final readonly class CreateContentStream implements CommandInterface
 {
-    public function __construct(
-        public readonly ContentStreamId $contentStreamId,
+    /**
+     * @param ContentStreamId $contentStreamId The id of the content stream to create
+     */
+    private function __construct(
+        public ContentStreamId $contentStreamId,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The id of the content stream to create
+     */
+    public static function create(ContentStreamId $contentStreamId): self
+    {
+        return new self($contentStreamId);
     }
 }

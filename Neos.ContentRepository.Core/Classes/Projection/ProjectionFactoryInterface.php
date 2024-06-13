@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\Core\Projection;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 
 /**
- * @template T of ProjectionInterface
+ * @template-covariant T of ProjectionInterface
  * @api
  */
 interface ProjectionFactoryInterface
@@ -19,7 +19,5 @@ interface ProjectionFactoryInterface
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar
     ): ProjectionInterface;
 }

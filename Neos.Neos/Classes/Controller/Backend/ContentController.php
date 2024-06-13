@@ -14,15 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Backend;
 
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
@@ -43,9 +38,10 @@ use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Neos\Service\PluginService;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * The Neos ContentModule controller; providing backend functionality for the Content Module.
@@ -55,6 +51,10 @@ use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 class ContentController extends ActionController
 {
     use BackendUserTranslationTrait;
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -81,14 +81,6 @@ class ContentController extends ActionController
     protected $resourceManager;
 
     /**
-     * The pluginService
-     *
-     * @var PluginService
-     * @Flow\Inject
-     */
-    protected $pluginService;
-
-    /**
      * @Flow\Inject
      * @var ImageInterfaceArrayPresenter
      */
@@ -111,9 +103,6 @@ class ContentController extends ActionController
      * @var PropertyMapper
      */
     protected $propertyMapper;
-
-    #[Flow\Inject]
-    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Initialize property mapping as the upload usually comes from the Inspector JavaScript
@@ -163,9 +152,8 @@ class ContentController extends ActionController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($nodeAddressString);
 
-        $node = $contentRepository->getContentGraph()
+        $node = $contentRepository->getContentGraph($nodeAddress->workspaceName)
             ->getSubgraph(
-                $nodeAddress->contentStreamId,
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             )
@@ -379,137 +367,6 @@ class ContentController extends ActionController
         }
 
         return $assetProperties;
-    }
-
-    /**
-     * Fetch the configured views for the given master plugin
-     *
-     * @param string $identifier Specifies the node to look up
-     * @param string $workspaceName Name of the workspace to use for querying the node
-     * @param array<string,string> $dimensions Optional list of dimensions and their values which should be used
-     *                          for querying the specified node
-     * @return string
-     * @throws \Neos\Eel\Exception
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
-     */
-    public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
-    {
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-
-        $this->response->setContentType('application/json');
-
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
-        if (is_null($workspace)) {
-            throw new \InvalidArgumentException('Could not resolve workspace "' . $workspaceName . '"', 1651848878);
-        }
-        $subgraph = $contentRepository->getContentGraph()
-            ->getSubgraph(
-                $workspace->currentContentStreamId,
-                DimensionSpacePoint::fromArray($dimensions),
-                VisibilityConstraints::withoutRestrictions()
-            );
-        $node = $identifier
-            ? $subgraph->findNodeById(NodeAggregateId::fromString($identifier))
-            : null;
-
-        $views = [];
-        if ($node instanceof Node) {
-            $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType(
-                $node->nodeType
-            );
-            foreach ($pluginViewDefinitions as $pluginViewDefinition) {
-                $label = $pluginViewDefinition->getLabel();
-
-                $views[$pluginViewDefinition->getName()] = ['label' => $label];
-
-                $pluginViewNode = $this->pluginService->getPluginViewNodeByMasterPlugin(
-                    $node,
-                    $pluginViewDefinition->getName()
-                );
-                if ($pluginViewNode === null) {
-                    continue;
-                }
-                $documentNode = $this->findClosestDocumentNode($pluginViewNode);
-                if ($documentNode === null) {
-                    continue;
-                }
-                $contentRepository = $this->contentRepositoryRegistry->get(
-                    $documentNode->subgraphIdentity->contentRepositoryId
-                );
-                $documentAddress = NodeAddressFactory::create($contentRepository)->createFromNode($documentNode);
-                $uri = $this->uriBuilder
-                    ->reset()
-                    ->uriFor('show', ['node' => $documentAddress->serializeForUri()], 'Frontend\Node', 'Neos.Neos');
-                $views[$pluginViewDefinition->getName()] = [
-                    'label' => $label,
-                    'pageNode' => [
-                        'title' => $documentNode->getLabel(),
-                        'uri' => $uri
-                    ]
-                ];
-            }
-        }
-        return json_encode((object)$views, JSON_THROW_ON_ERROR);
-    }
-
-    /**
-     * Fetch all master plugins that are available in the current
-     * workspace.
-     *
-     * @param string $workspaceName Name of the workspace to use for querying the node
-     * @param array<string,string> $dimensions Optional list of dimensions and their values
-     *                          which should be used for querying the specified node
-     * @return string JSON encoded array of node path => label
-     * @throws \Neos\Eel\Exception
-     */
-    public function masterPluginsAction(string $workspaceName = 'live', array $dimensions = [])
-    {
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-
-        $this->response->setContentType('application/json');
-
-        $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions(
-            WorkspaceName::fromString($workspaceName),
-            DimensionSpacePoint::fromArray($dimensions),
-            $contentRepositoryId
-        );
-
-        $masterPlugins = [];
-        foreach ($pluginNodes as $pluginNode) {
-            $documentNode = $this->findClosestDocumentNode($pluginNode);
-            if ($documentNode === null) {
-                continue;
-            }
-            $translationHelper = new TranslationHelper();
-            $masterPlugins[$pluginNode->nodeAggregateId->value] = $translationHelper->translate(
-                'masterPlugins.nodeTypeOnPageLabel',
-                null,
-                [
-                    'nodeTypeName' => $translationHelper->translate($pluginNode->nodeType->getLabel()),
-                    'pageLabel' => $documentNode->getLabel()
-                ],
-                'Main',
-                'Neos.Neos'
-            );
-        }
-
-        return json_encode((object)$masterPlugins, JSON_THROW_ON_ERROR);
-    }
-
-    final protected function findClosestDocumentNode(Node $node): ?Node
-    {
-        while ($node instanceof Node) {
-            if ($node->nodeType->isOfType('Neos.Neos:Document')) {
-                return $node;
-            }
-            $node = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findParentNode($node->nodeAggregateId);
-        }
-
-        return null;
     }
 
     /**

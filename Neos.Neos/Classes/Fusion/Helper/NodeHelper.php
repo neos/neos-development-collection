@@ -14,28 +14,34 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\Presentation\VisualNodePath;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * Eel helper for ContentRepository Nodes
  */
 class NodeHelper implements ProtectedContextAwareInterface
 {
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
+    use NodeTypeWithFallbackProvider {
+        getNodeType as getNodeTypeInternal;
+    }
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
@@ -45,8 +51,8 @@ class NodeHelper implements ProtectedContextAwareInterface
      */
     public function nearestContentCollection(Node $node, string $nodePath): Node
     {
-        $contentCollectionType = 'Neos.Neos:ContentCollection';
-        if ($node->nodeType->isOfType($contentCollectionType)) {
+        $contentCollectionType = NodeTypeNameFactory::NAME_CONTENT_COLLECTION;
+        if ($this->isOfType($node, $contentCollectionType)) {
             return $node;
         } else {
             if ($nodePath === '') {
@@ -64,45 +70,42 @@ class NodeHelper implements ProtectedContextAwareInterface
 
             $subNode = $nodePath instanceof AbsoluteNodePath
                 ? $subgraph->findNodeByAbsolutePath($nodePath)
-                : $subgraph->findNodeByPath($nodePath, $node->nodeAggregateId);
+                : $subgraph->findNodeByPath($nodePath, $node->aggregateId);
 
-            if ($subNode !== null && $subNode->nodeType->isOfType($contentCollectionType)) {
+            if ($subNode !== null && $this->isOfType($subNode, $contentCollectionType)) {
                 return $subNode;
             } else {
                 $nodePathOfNode = VisualNodePath::fromAncestors(
                     $node,
                     $this->contentRepositoryRegistry->subgraphForNode($node)
                         ->findAncestorNodes(
-                            $node->nodeAggregateId,
+                            $node->aggregateId,
                             FindAncestorNodesFilter::create()
                         )
                 );
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
                     . ' You might want to adjust your node type configuration and create the missing child node'
-                    . ' through the "flow node:repair --node-type %s" command.',
+                    . ' through the "flow structureadjustments:fix --node-type %s" command.',
                     $contentCollectionType,
                     $nodePathOfNode->value,
                     $nodePath->serializeToString(),
-                    $node->nodeType->name->value
+                    $node->nodeTypeName->value
                 ), 1389352984);
             }
         }
     }
 
     /**
-     * Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
+     * Generate a label for a node with a chaining mechanism. To be used in NodeType definition:
+     *
+     *     'Vendor.Site:MyContent':
+     *       label: "${Neos.Node.labelForNode(node).prefix('foo')}"
+     *
      */
     public function labelForNode(Node $node): NodeLabelToken
     {
         return new NodeLabelToken($node);
-    }
-
-    public function inBackend(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return !$nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
     }
 
     /**
@@ -113,7 +116,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function depth(Node $node): int
     {
         return $this->contentRepositoryRegistry->subgraphForNode($node)
-            ->countAncestorNodes($node->nodeAggregateId, CountAncestorNodesFilter::create());
+            ->countAncestorNodes($node->aggregateId, CountAncestorNodesFilter::create());
     }
 
     /**
@@ -123,40 +126,45 @@ class NodeHelper implements ProtectedContextAwareInterface
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         $ancestors = $subgraph->findAncestorNodes(
-            $node->nodeAggregateId,
+            $node->aggregateId,
             FindAncestorNodesFilter::create()
         )->reverse();
 
         return AbsoluteNodePath::fromLeafNodeAndAncestors($node, $ancestors)->serializeToString();
     }
 
-    public function isLive(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return $nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
-    }
-
     /**
      * If this node type or any of the direct or indirect super types
      * has the given name.
-     *
-     * @param Node $node
-     * @param string $nodeType
-     * @return bool
      */
     public function isOfType(Node $node, string $nodeType): bool
     {
-        return $node->nodeType->isOfType($nodeType);
+        return $this->getNodeTypeInternal($node)->isOfType($nodeType);
+    }
+
+    public function getNodeType(Node $node): NodeType
+    {
+        return $this->getNodeTypeInternal($node);
+    }
+
+    public function isNodeTypeExistent(Node $node): bool
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
+        return $contentRepository->getNodeTypeManager()->hasNodeType($node->nodeTypeName);
     }
 
     public function serializedNodeAddress(Node $node): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
+            $node->contentRepositoryId
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         return $nodeAddressFactory->createFromNode($node)->serializeForUri();
+    }
+
+    public function subgraphForNode(Node $node): ContentSubgraphInterface
+    {
+        return $this->contentRepositoryRegistry->subgraphForNode($node);
     }
 
     /**

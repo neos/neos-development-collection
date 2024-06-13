@@ -15,9 +15,11 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
  * The property scope to be used in NodeType property declarations.
@@ -56,6 +58,15 @@ enum PropertyScope: string implements \JsonSerializable
             )->getIntersection($nodeAggregate->occupiedDimensionSpacePoints),
             PropertyScope::SCOPE_NODE_AGGREGATE => $nodeAggregate->occupiedDimensionSpacePoints
         };
+    }
+
+    public static function tryFromDeclaration(NodeType $nodeType, PropertyName $propertyName): self
+    {
+        $declaration = $nodeType->getProperties()[$propertyName->value]['scope'] ?? null;
+        if (is_string($declaration)) {
+            return PropertyScope::from($declaration);
+        }
+        return PropertyScope::SCOPE_NODE;
     }
 
     public function jsonSerialize(): string

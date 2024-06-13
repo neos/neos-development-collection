@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Neos\Domain\Model\Site;
 
 /**
  * See {@see DimensionResolverInterface} for documentation.
@@ -14,23 +15,25 @@ use Neos\Flow\Annotations as Flow;
  * @Flow\Proxy(false)
  * @api
  */
-final class RequestToDimensionSpacePointContext
+final readonly class RequestToDimensionSpacePointContext
 {
     private function __construct(
-        public readonly string $initialUriPath,
-        public readonly RouteParameters $routeParameters,
-        public readonly string $remainingUriPath,
-        public readonly DimensionSpacePoint $resolvedDimensionSpacePoint,
+        public string $initialUriPath,
+        public RouteParameters $routeParameters,
+        public string $remainingUriPath,
+        public DimensionSpacePoint $resolvedDimensionSpacePoint,
+        public Site $resolvedSite,
     ) {
     }
 
-    public static function fromUriPathAndRouteParameters(string $initialUriPath, RouteParameters $routeParameters): self
+    public static function fromUriPathAndRouteParametersAndResolvedSite(string $initialUriPath, RouteParameters $routeParameters, Site $resolvedSite): self
     {
         return new self(
             $initialUriPath,
             $routeParameters,
             $initialUriPath,
-            DimensionSpacePoint::fromArray([])
+            DimensionSpacePoint::createWithoutDimensions(),
+            $resolvedSite,
         );
     }
 
@@ -45,7 +48,8 @@ final class RequestToDimensionSpacePointContext
             $this->initialUriPath,
             $this->routeParameters,
             $this->remainingUriPath,
-            DimensionSpacePoint::fromArray($coordinatesSoFar)
+            DimensionSpacePoint::fromArray($coordinatesSoFar),
+            $this->resolvedSite,
         );
     }
 
@@ -55,7 +59,8 @@ final class RequestToDimensionSpacePointContext
             $this->initialUriPath,
             $this->routeParameters,
             $remainingUriPath,
-            $this->resolvedDimensionSpacePoint
+            $this->resolvedDimensionSpacePoint,
+            $this->resolvedSite,
         );
     }
 }

@@ -16,11 +16,12 @@ namespace Neos\ContentRepository\Core\Feature\NodeRenaming\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * All variants in a NodeAggregate have the same NodeName - and this can be changed here.
@@ -29,17 +30,32 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class ChangeNodeAggregateName implements
+final readonly class ChangeNodeAggregateName implements
     CommandInterface,
     \JsonSerializable,
-    RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeIdToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface,
+    RebasableToOtherWorkspaceInterface
 {
-    public function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeName $newNodeName,
+    /**
+     * @param WorkspaceName $workspaceName The workspace in which the operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to rename
+     * @param NodeName $newNodeName The new name of the node aggregate
+     */
+    private function __construct(
+        public WorkspaceName $workspaceName,
+        public NodeAggregateId $nodeAggregateId,
+        public NodeName $newNodeName,
     ) {
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName The workspace in which the operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to rename
+     * @param NodeName $newNodeName The new name of the node aggregate
+     */
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeName $newNodeName): self
+    {
+        return new self($workspaceName, $nodeAggregateId, $newNodeName);
     }
 
     /**
@@ -48,7 +64,7 @@ final class ChangeNodeAggregateName implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamId::fromString($array['contentStreamId']),
+            WorkspaceName::fromString($array['workspaceName']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeName::fromString($array['newNodeName']),
         );
@@ -62,20 +78,18 @@ final class ChangeNodeAggregateName implements
         return get_object_vars($this);
     }
 
-    public function createCopyForContentStream(ContentStreamId $target): self
-    {
-        return new ChangeNodeAggregateName(
-            $target,
-            $this->nodeAggregateId,
-            $this->newNodeName,
-        );
-    }
-
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
-        return (
-            $this->contentStreamId->equals($nodeIdToPublish->contentStreamId)
-                && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
+        return $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId);
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+    ): self {
+        return new self(
+            $targetWorkspaceName,
+            $this->nodeAggregateId,
+            $this->newNodeName,
         );
     }
 }

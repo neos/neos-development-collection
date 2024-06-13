@@ -12,14 +12,13 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandController;
 
 final class StructureAdjustmentsCommandController extends CommandController
 {
@@ -29,10 +28,17 @@ final class StructureAdjustmentsCommandController extends CommandController
      */
     protected $contentRepositoryRegistry;
 
-    public function detectCommand(string $nodeType = null, string $contentRepositoryIdentifier = 'default'): void
+
+    /**
+     * Detect required structure adjustments for the specified node type in the given content repository.
+     *
+     * @param string|null $nodeType The node type to find structure adjustments for. If not provided, all adjustments will be shown. (Default: null)
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
+     */
+    public function detectCommand(string $nodeType = null, string $contentRepository = 'default'): void
     {
-        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryId, new StructureAdjustmentServiceFactory());
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $structureAdjustmentService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new StructureAdjustmentServiceFactory());
 
         if ($nodeType !== null) {
             $errors = $structureAdjustmentService->findAdjustmentsForNodeType(
@@ -45,10 +51,17 @@ final class StructureAdjustmentsCommandController extends CommandController
         $this->printErrors($errors);
     }
 
-    public function fixCommand(string $nodeType = null, string $contentRepositoryIdentifier = 'default'): void
+    /**
+     * Apply required structure adjustments for the specified node type in the given content repository.
+     *
+     * @param string|null $nodeType The node type to apply structure adjustments for. If not provided, all found adjustments will be applied. (Default: null)
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
+     * @return void
+     */
+    public function fixCommand(string $nodeType = null, string $contentRepository = 'default'): void
     {
-        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryId, new StructureAdjustmentServiceFactory());
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $structureAdjustmentService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new StructureAdjustmentServiceFactory());
 
         if ($nodeType !== null) {
             $errors = $structureAdjustmentService->findAdjustmentsForNodeType(

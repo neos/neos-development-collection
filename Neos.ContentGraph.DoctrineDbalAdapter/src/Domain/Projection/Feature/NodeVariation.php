@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
-use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -27,346 +21,314 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 trait NodeVariation
 {
-    abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
-
-    abstract protected function getTableNamePrefix(): string;
-
-    /**
-     * @param NodeSpecializationVariantWasCreated $event
-     * @throws \Exception
-     * @throws \Throwable
-     */
-    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
+    private function createNodeSpecializationVariant(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $specializationOrigin, InterdimensionalSiblings $specializationSiblings, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event, $eventEnvelope) {
-            // Do the actual specialization
-            $sourceNode = $this->getProjectionContentGraph()->findNodeInAggregate(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->sourceOrigin->toDimensionSpacePoint()
-            );
-            if (is_null($sourceNode)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
-            }
+        // Do the actual specialization
+        $sourceNode = $this->projectionContentGraph->findNodeInAggregate(
+            $contentStreamId,
+            $nodeAggregateId,
+            $sourceOrigin->toDimensionSpacePoint()
+        );
+        if (is_null($sourceNode)) {
+            throw new \RuntimeException(sprintf('Failed to create node specialization variant for node "%s" in sub graph %s@%s because the source node is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value), 1716498651);
+        }
 
-            $specializedNode = $this->copyNodeToDimensionSpacePoint(
-                $sourceNode,
-                $event->specializationOrigin,
-                $eventEnvelope
-            );
+        $specializedNode = $this->copyNodeToDimensionSpacePoint(
+            $sourceNode,
+            $specializationOrigin,
+            $eventEnvelope
+        );
 
-            $uncoveredDimensionSpacePoints = $event->specializationCoverage->points;
-            foreach (
-                $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamId,
-                    $sourceNode->nodeAggregateId,
-                    $event->specializationCoverage
-                ) as $hierarchyRelation
-            ) {
-                $hierarchyRelation->assignNewChildNode(
-                    $specializedNode->relationAnchorPoint,
-                    $this->getDatabaseConnection(),
-                    $this->tableNamePrefix
-                );
-                unset($uncoveredDimensionSpacePoints[$hierarchyRelation->dimensionSpacePointHash]);
+        $uncoveredDimensionSpacePoints = $specializationSiblings->toDimensionSpacePointSet()->points;
+        foreach (
+            $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
+                $contentStreamId,
+                $sourceNode->nodeAggregateId,
+                $specializationSiblings->toDimensionSpacePointSet()
+            ) as $hierarchyRelation
+        ) {
+            $hierarchyRelation->assignNewChildNode(
+                $specializedNode->relationAnchorPoint,
+                $this->dbal,
+                $this->tableNames
+            );
+            unset($uncoveredDimensionSpacePoints[$hierarchyRelation->dimensionSpacePointHash]);
+        }
+        if (!empty($uncoveredDimensionSpacePoints)) {
+            $sourceParent = $this->projectionContentGraph->findParentNode(
+                $contentStreamId,
+                $nodeAggregateId,
+                $sourceOrigin,
+            );
+            if (is_null($sourceParent)) {
+                throw new \RuntimeException(sprintf('Failed to create node specialization variant for node "%s" in sub graph %s@%s because the source parent node is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value), 1716498695);
             }
-            if (!empty($uncoveredDimensionSpacePoints)) {
-                $sourceParent = $this->projectionContentGraph->findParentNode(
-                    $event->contentStreamId,
-                    $event->nodeAggregateId,
-                    $event->sourceOrigin,
+            foreach ($uncoveredDimensionSpacePoints as $uncoveredDimensionSpacePoint) {
+                $parentNode = $this->projectionContentGraph->findNodeInAggregate(
+                    $contentStreamId,
+                    $sourceParent->nodeAggregateId,
+                    $uncoveredDimensionSpacePoint
                 );
-                if (is_null($sourceParent)) {
-                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(get_class($event));
+                if (is_null($parentNode)) {
+                    throw new \RuntimeException(sprintf('Failed to create node specialization variant for node "%s" in sub graph %s@%s because the target parent node "%s" is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value, $sourceParent->nodeAggregateId->value), 1716498734);
                 }
-                foreach ($uncoveredDimensionSpacePoints as $uncoveredDimensionSpacePoint) {
-                    $parentNode = $this->projectionContentGraph->findNodeInAggregate(
-                        $event->contentStreamId,
-                        $sourceParent->nodeAggregateId,
-                        $uncoveredDimensionSpacePoint
-                    );
-                    if (is_null($parentNode)) {
-                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
-                            get_class($event)
-                        );
-                    }
+                $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamId, $parentNode->relationAnchorPoint, $uncoveredDimensionSpacePoint);
 
-                    $hierarchyRelation = new HierarchyRelation(
+                $specializationSucceedingSiblingNodeAggregateId = $specializationSiblings
+                    ->getSucceedingSiblingIdForDimensionSpacePoint($uncoveredDimensionSpacePoint);
+                $specializationSucceedingSiblingNode = $specializationSucceedingSiblingNodeAggregateId
+                    ? $this->projectionContentGraph->findNodeInAggregate(
+                        $contentStreamId,
+                        $specializationSucceedingSiblingNodeAggregateId,
+                        $uncoveredDimensionSpacePoint
+                    )
+                    : null;
+
+                $hierarchyRelation = new HierarchyRelation(
+                    $parentNode->relationAnchorPoint,
+                    $specializedNode->relationAnchorPoint,
+                    $contentStreamId,
+                    $uncoveredDimensionSpacePoint,
+                    $uncoveredDimensionSpacePoint->hash,
+                    $this->projectionContentGraph->determineHierarchyRelationPosition(
                         $parentNode->relationAnchorPoint,
                         $specializedNode->relationAnchorPoint,
-                        $sourceNode->nodeName,
-                        $event->contentStreamId,
-                        $uncoveredDimensionSpacePoint,
-                        $uncoveredDimensionSpacePoint->hash,
-                        $this->projectionContentGraph->determineHierarchyRelationPosition(
-                            $parentNode->relationAnchorPoint,
-                            $specializedNode->relationAnchorPoint,
-                            null,
-                            $event->contentStreamId,
-                            $uncoveredDimensionSpacePoint
-                        )
-                    );
-                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->getTableNamePrefix());
-                }
-            }
-
-            foreach (
-                $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamId,
-                    $sourceNode->nodeAggregateId,
-                    $event->specializationCoverage
-                ) as $hierarchyRelation
-            ) {
-                $hierarchyRelation->assignNewParentNode(
-                    $specializedNode->relationAnchorPoint,
-                    null,
-                    $this->getDatabaseConnection(),
-                    $this->getTableNamePrefix()
+                        $specializationSucceedingSiblingNode?->relationAnchorPoint,
+                        $contentStreamId,
+                        $uncoveredDimensionSpacePoint
+                    ),
+                    NodeTags::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all()),
                 );
+                $hierarchyRelation->addToDatabase($this->dbal, $this->tableNames);
             }
+        }
 
-            // Copy Reference Edges
-            $this->copyReferenceRelations(
-                $sourceNode->relationAnchorPoint,
-                $specializedNode->relationAnchorPoint
+        foreach (
+            $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
+                $contentStreamId,
+                $sourceNode->nodeAggregateId,
+                $specializationSiblings->toDimensionSpacePointSet()
+            ) as $hierarchyRelation
+        ) {
+            $hierarchyRelation->assignNewParentNode(
+                $specializedNode->relationAnchorPoint,
+                null,
+                $this->dbal,
+                $this->tableNames
             );
-        });
+        }
+
+        // Copy Reference Edges
+        $this->copyReferenceRelations(
+            $sourceNode->relationAnchorPoint,
+            $specializedNode->relationAnchorPoint
+        );
     }
 
-    /**
-     * @param NodeGeneralizationVariantWasCreated $event
-     * @throws \Exception
-     * @throws \Throwable
-     */
-    public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
+    public function createNodeGeneralizationVariant(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $generalizationOrigin, InterdimensionalSiblings $variantSucceedingSiblings, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event, $eventEnvelope) {
-            // do the generalization
-            $sourceNode = $this->getProjectionContentGraph()->findNodeInAggregate(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->sourceOrigin->toDimensionSpacePoint()
+        // do the generalization
+        $sourceNode = $this->projectionContentGraph->findNodeInAggregate(
+            $contentStreamId,
+            $nodeAggregateId,
+            $sourceOrigin->toDimensionSpacePoint()
+        );
+        if (is_null($sourceNode)) {
+            throw new \RuntimeException(sprintf('Failed to create node generalization variant for node "%s" in sub graph %s@%s because the source node is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value), 1716498802);
+        }
+        $sourceParentNode = $this->projectionContentGraph->findParentNode(
+            $contentStreamId,
+            $nodeAggregateId,
+            $sourceOrigin
+        );
+        if (is_null($sourceParentNode)) {
+            throw new \RuntimeException(sprintf('Failed to create node generalization variant for node "%s" in sub graph %s@%s because the source parent node is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value), 1716498857);
+        }
+        $generalizedNode = $this->copyNodeToDimensionSpacePoint(
+            $sourceNode,
+            $generalizationOrigin,
+            $eventEnvelope
+        );
+
+        $unassignedIngoingDimensionSpacePoints = $variantSucceedingSiblings->toDimensionSpacePointSet();
+        foreach (
+            $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
+                $contentStreamId,
+                $nodeAggregateId,
+                $variantSucceedingSiblings->toDimensionSpacePointSet()
+            ) as $existingIngoingHierarchyRelation
+        ) {
+            $existingIngoingHierarchyRelation->assignNewChildNode(
+                $generalizedNode->relationAnchorPoint,
+                $this->dbal,
+                $this->tableNames
             );
-            if (is_null($sourceNode)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
-            }
-            $sourceParentNode = $this->getProjectionContentGraph()->findParentNode(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->sourceOrigin
+            $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
+                new DimensionSpacePointSet([
+                    $existingIngoingHierarchyRelation->dimensionSpacePoint
+                ])
             );
-            if (is_null($sourceParentNode)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(get_class($event));
-            }
-            $generalizedNode = $this->copyNodeToDimensionSpacePoint(
-                $sourceNode,
-                $event->generalizationOrigin,
-                $eventEnvelope
+        }
+
+        foreach (
+            $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
+                $contentStreamId,
+                $nodeAggregateId,
+                $variantSucceedingSiblings->toDimensionSpacePointSet()
+            ) as $existingOutgoingHierarchyRelation
+        ) {
+            $existingOutgoingHierarchyRelation->assignNewParentNode(
+                $generalizedNode->relationAnchorPoint,
+                null,
+                $this->dbal,
+                $this->tableNames
             );
+        }
 
-            $unassignedIngoingDimensionSpacePoints = $event->generalizationCoverage;
-            foreach (
-                $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamId,
-                    $event->nodeAggregateId,
-                    $event->generalizationCoverage
-                ) as $existingIngoingHierarchyRelation
-            ) {
-                $existingIngoingHierarchyRelation->assignNewChildNode(
-                    $generalizedNode->relationAnchorPoint,
-                    $this->getDatabaseConnection(),
-                    $this->tableNamePrefix
-                );
-                $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
-                    new DimensionSpacePointSet([
-                        $existingIngoingHierarchyRelation->dimensionSpacePoint
-                    ])
-                );
-            }
-
-            foreach (
-                $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamId,
-                    $event->nodeAggregateId,
-                    $event->generalizationCoverage
-                ) as $existingOutgoingHierarchyRelation
-            ) {
-                $existingOutgoingHierarchyRelation->assignNewParentNode(
-                    $generalizedNode->relationAnchorPoint,
-                    null,
-                    $this->getDatabaseConnection(),
-                    $this->getTableNamePrefix()
-                );
-            }
-
-            if (count($unassignedIngoingDimensionSpacePoints) > 0) {
-                $projectionContentGraph = $this->getProjectionContentGraph();
-                $ingoingSourceHierarchyRelation = $projectionContentGraph->findIngoingHierarchyRelationsForNode(
-                    $sourceNode->relationAnchorPoint,
-                    $event->contentStreamId,
-                    new DimensionSpacePointSet([$event->sourceOrigin->toDimensionSpacePoint()])
-                )[$event->sourceOrigin->hash] ?? null;
-                if (is_null($ingoingSourceHierarchyRelation)) {
-                    throw EventCouldNotBeAppliedToContentGraph::becauseTheIngoingSourceHierarchyRelationIsMissing(
-                        get_class($event)
-                    );
-                }
-                // the null case is caught by the NodeAggregate or its command handler
-                foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
-                    // The parent node aggregate might be varied as well,
-                    // so we need to find a parent node for each covered dimension space point
-                    $generalizationParentNode = $this->getProjectionContentGraph()->findNodeInAggregate(
-                        $event->contentStreamId,
-                        $sourceParentNode->nodeAggregateId,
-                        $unassignedDimensionSpacePoint
-                    );
-                    if (is_null($generalizationParentNode)) {
-                        throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
-                            get_class($event)
-                        );
-                    }
-
-                    $this->copyHierarchyRelationToDimensionSpacePoint(
-                        $ingoingSourceHierarchyRelation,
-                        $event->contentStreamId,
-                        $unassignedDimensionSpacePoint,
-                        $generalizationParentNode->relationAnchorPoint,
-                        $generalizedNode->relationAnchorPoint
-                    );
-                }
-            }
-
-            // Copy Reference Edges
-            $this->copyReferenceRelations(
+        if (count($unassignedIngoingDimensionSpacePoints) > 0) {
+            $ingoingSourceHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
                 $sourceNode->relationAnchorPoint,
-                $generalizedNode->relationAnchorPoint
-            );
-        });
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event, EventEnvelope $eventEnvelope): void
-    {
-        $this->transactional(function () use ($event, $eventEnvelope) {
-            // Do the peer variant creation itself
-            $sourceNode = $this->getProjectionContentGraph()->findNodeInAggregate(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->sourceOrigin->toDimensionSpacePoint()
-            );
-            if (is_null($sourceNode)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
+                $contentStreamId,
+                new DimensionSpacePointSet([$sourceOrigin->toDimensionSpacePoint()])
+            )[$sourceOrigin->hash] ?? null;
+            if (is_null($ingoingSourceHierarchyRelation)) {
+                throw new \RuntimeException(sprintf('Failed to create node generalization variant for node "%s" in sub graph %s@%s because the ingoing hierarchy relation is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value), 1716498940);
             }
-            $sourceParentNode = $this->getProjectionContentGraph()->findParentNode(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->sourceOrigin
-            );
-            if (is_null($sourceParentNode)) {
-                throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing(get_class($event));
-            }
-            $peerNode = $this->copyNodeToDimensionSpacePoint(
-                $sourceNode,
-                $event->peerOrigin,
-                $eventEnvelope
-            );
-
-            $unassignedIngoingDimensionSpacePoints = $event->peerCoverage;
-            foreach (
-                $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamId,
-                    $event->nodeAggregateId,
-                    $event->peerCoverage
-                ) as $existingIngoingHierarchyRelation
-            ) {
-                $existingIngoingHierarchyRelation->assignNewChildNode(
-                    $peerNode->relationAnchorPoint,
-                    $this->getDatabaseConnection(),
-                    $this->tableNamePrefix
-                );
-                $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
-                    new DimensionSpacePointSet([
-                        $existingIngoingHierarchyRelation->dimensionSpacePoint
-                    ])
-                );
-            }
-
-            foreach (
-                $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamId,
-                    $event->nodeAggregateId,
-                    $event->peerCoverage
-                ) as $existingOutgoingHierarchyRelation
-            ) {
-                $existingOutgoingHierarchyRelation->assignNewParentNode(
-                    $peerNode->relationAnchorPoint,
-                    null,
-                    $this->getDatabaseConnection(),
-                    $this->getTableNamePrefix()
-                );
-            }
-
-            foreach ($unassignedIngoingDimensionSpacePoints as $coveredDimensionSpacePoint) {
+            // the null case is caught by the NodeAggregate or its command handler
+            foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                 // The parent node aggregate might be varied as well,
                 // so we need to find a parent node for each covered dimension space point
-                $peerParentNode = $this->getProjectionContentGraph()->findNodeInAggregate(
-                    $event->contentStreamId,
+                $generalizationParentNode = $this->projectionContentGraph->findNodeInAggregate(
+                    $contentStreamId,
                     $sourceParentNode->nodeAggregateId,
-                    $coveredDimensionSpacePoint
+                    $unassignedDimensionSpacePoint
                 );
-                if (is_null($peerParentNode)) {
-                    throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
+                if (is_null($generalizationParentNode)) {
+                    throw new \RuntimeException(sprintf('Failed to create node generalization variant for node "%s" in sub graph %s@%s because the target parent node "%s" is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value, $sourceParentNode->nodeAggregateId->value), 1716498961);
                 }
 
-                $this->connectHierarchy(
-                    $event->contentStreamId,
-                    $peerParentNode->relationAnchorPoint,
-                    $peerNode->relationAnchorPoint,
-                    new DimensionSpacePointSet([$coveredDimensionSpacePoint]),
-                    null, // @todo fetch appropriate sibling
-                    $sourceNode->nodeName
+                $generalizationSucceedingSiblingNodeAggregateId = $variantSucceedingSiblings
+                    ->getSucceedingSiblingIdForDimensionSpacePoint($unassignedDimensionSpacePoint);
+                $generalizationSucceedingSiblingNode = $generalizationSucceedingSiblingNodeAggregateId
+                    ? $this->projectionContentGraph->findNodeInAggregate(
+                        $contentStreamId,
+                        $generalizationSucceedingSiblingNodeAggregateId,
+                        $unassignedDimensionSpacePoint
+                    )
+                    : null;
+
+                $this->copyHierarchyRelationToDimensionSpacePoint(
+                    $ingoingSourceHierarchyRelation,
+                    $contentStreamId,
+                    $unassignedDimensionSpacePoint,
+                    $generalizationParentNode->relationAnchorPoint,
+                    $generalizedNode->relationAnchorPoint,
+                    $generalizationSucceedingSiblingNode?->relationAnchorPoint
                 );
             }
+        }
 
-            // Copy Reference Edges
-            $this->copyReferenceRelations(
-                $sourceNode->relationAnchorPoint,
-                $peerNode->relationAnchorPoint
-            );
-        });
+        // Copy Reference Edges
+        $this->copyReferenceRelations(
+            $sourceNode->relationAnchorPoint,
+            $generalizedNode->relationAnchorPoint
+        );
     }
 
-    abstract protected function copyNodeToDimensionSpacePoint(
-        NodeRecord $sourceNode,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-        EventEnvelope $eventEnvelope,
-    ): NodeRecord;
+    public function createNodePeerVariant(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $peerOrigin, InterdimensionalSiblings $peerSucceedingSiblings, EventEnvelope $eventEnvelope): void
+    {
+        // Do the peer variant creation itself
+        $sourceNode = $this->projectionContentGraph->findNodeInAggregate(
+            $contentStreamId,
+            $nodeAggregateId,
+            $sourceOrigin->toDimensionSpacePoint()
+        );
+        if (is_null($sourceNode)) {
+            throw new \RuntimeException(sprintf('Failed to create node peer variant for node "%s" in sub graph %s@%s because the source node is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value), 1716498802);
+        }
+        $peerNode = $this->copyNodeToDimensionSpacePoint(
+            $sourceNode,
+            $peerOrigin,
+            $eventEnvelope
+        );
 
-    abstract protected function copyHierarchyRelationToDimensionSpacePoint(
-        HierarchyRelation $sourceHierarchyRelation,
-        ContentStreamId $contentStreamId,
-        DimensionSpacePoint $dimensionSpacePoint,
-        ?NodeRelationAnchorPoint $newParent = null,
-        ?NodeRelationAnchorPoint $newChild = null
-    ): HierarchyRelation;
+        $unassignedIngoingDimensionSpacePoints = $peerSucceedingSiblings->toDimensionSpacePointSet();
+        foreach (
+            $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
+                $contentStreamId,
+                $nodeAggregateId,
+                $peerSucceedingSiblings->toDimensionSpacePointSet()
+            ) as $existingIngoingHierarchyRelation
+        ) {
+            $existingIngoingHierarchyRelation->assignNewChildNode(
+                $peerNode->relationAnchorPoint,
+                $this->dbal,
+                $this->tableNames
+            );
+            $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
+                new DimensionSpacePointSet([
+                    $existingIngoingHierarchyRelation->dimensionSpacePoint
+                ])
+            );
+        }
 
-    abstract protected function connectHierarchy(
-        ContentStreamId $contentStreamId,
-        NodeRelationAnchorPoint $parentNodeAnchorPoint,
-        NodeRelationAnchorPoint $childNodeAnchorPoint,
-        DimensionSpacePointSet $dimensionSpacePointSet,
-        ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
-        NodeName $relationName = null
-    ): void;
+        foreach (
+            $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
+                $contentStreamId,
+                $nodeAggregateId,
+                $peerSucceedingSiblings->toDimensionSpacePointSet()
+            ) as $existingOutgoingHierarchyRelation
+        ) {
+            $existingOutgoingHierarchyRelation->assignNewParentNode(
+                $peerNode->relationAnchorPoint,
+                null,
+                $this->dbal,
+                $this->tableNames
+            );
+        }
 
-    abstract protected function copyReferenceRelations(
-        NodeRelationAnchorPoint $sourceRelationAnchorPoint,
-        NodeRelationAnchorPoint $destinationRelationAnchorPoint
-    ): void;
+        $sourceParentNode = $this->projectionContentGraph->findParentNode(
+            $contentStreamId,
+            $nodeAggregateId,
+            $sourceOrigin
+        );
+        if (is_null($sourceParentNode)) {
+            throw new \RuntimeException(sprintf('Failed to create node peer variant for node "%s" in sub graph %s@%s because the source parent node is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value), 1716498881);
+        }
+        foreach ($unassignedIngoingDimensionSpacePoints as $coveredDimensionSpacePoint) {
+            // The parent node aggregate might be varied as well,
+            // so we need to find a parent node for each covered dimension space point
+            $peerParentNode = $this->projectionContentGraph->findNodeInAggregate(
+                $contentStreamId,
+                $sourceParentNode->nodeAggregateId,
+                $coveredDimensionSpacePoint
+            );
+            if (is_null($peerParentNode)) {
+                throw new \RuntimeException(sprintf('Failed to create node peer variant for node "%s" in sub graph %s@%s because the target parent node "%s" is missing', $nodeAggregateId->value, $sourceOrigin->toJson(), $contentStreamId->value, $sourceParentNode->nodeAggregateId->value), 1716499016);
+            }
+            $peerSucceedingSiblingNodeAggregateId = $peerSucceedingSiblings
+                ->getSucceedingSiblingIdForDimensionSpacePoint($coveredDimensionSpacePoint);
+            $peerSucceedingSiblingNode = $peerSucceedingSiblingNodeAggregateId
+                ? $this->projectionContentGraph->findNodeInAggregate(
+                    $contentStreamId,
+                    $peerSucceedingSiblingNodeAggregateId,
+                    $coveredDimensionSpacePoint
+                )
+                : null;
 
-    abstract protected function getDatabaseConnection(): Connection;
+            $this->connectHierarchy(
+                $contentStreamId,
+                $peerParentNode->relationAnchorPoint,
+                $peerNode->relationAnchorPoint,
+                new DimensionSpacePointSet([$coveredDimensionSpacePoint]),
+                $peerSucceedingSiblingNode?->relationAnchorPoint,
+            );
+        }
 
-    abstract protected function transactional(\Closure $operations): void;
+        // Copy Reference Edges
+        $this->copyReferenceRelations(
+            $sourceNode->relationAnchorPoint,
+            $peerNode->relationAnchorPoint
+        );
+    }
 }

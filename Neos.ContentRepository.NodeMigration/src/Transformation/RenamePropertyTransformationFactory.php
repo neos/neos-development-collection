@@ -17,13 +17,12 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Remove the property
@@ -60,22 +59,21 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
+                WorkspaceName $workspaceNameForWriting,
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult
             {
-                if ($node->hasProperty($this->from)) {
-                    /** @var PropertyCollectionInterface $properties */
-                    $properties = $node->properties;
+                $serializedPropertyValue = $node->properties->serialized()->getProperty($this->from);
+                if ($serializedPropertyValue !== null) {
                     return $this->contentRepository->handle(
-                        new SetSerializedNodeProperties(
-                            $contentStreamForWriting,
-                            $node->nodeAggregateId,
+                        SetSerializedNodeProperties::create(
+                            $workspaceNameForWriting,
+                            $node->aggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
-                                $this->to => $properties->serialized()
-                                    ->getProperty($this->from),
-                                $this->from => null
+                                $this->to => $serializedPropertyValue
                             ]),
+                            PropertyNames::fromArray([$this->from])
                         )
                     );
                 }

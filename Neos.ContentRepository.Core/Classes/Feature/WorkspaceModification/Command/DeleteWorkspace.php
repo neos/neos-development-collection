@@ -12,10 +12,21 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class DeleteWorkspace implements CommandInterface
+final readonly class DeleteWorkspace implements CommandInterface
 {
-    public function __construct(
-        public readonly WorkspaceName $workspaceName,
+    /**
+     * @param WorkspaceName $workspaceName Name of the workspace to delete
+     */
+    private function __construct(
+        public WorkspaceName $workspaceName,
     ) {
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName Name of the workspace to delete
+     */
+    public static function create(WorkspaceName $workspaceName): self
+    {
+        return new self($workspaceName);
     }
 }

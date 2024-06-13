@@ -19,8 +19,6 @@ use Neos\ContentRepository\Core\Dimension;
 /**
  * A point in the dimension space with coordinates DimensionName => DimensionValue.
  * E.g.: ["language" => "es", "country" => "ar"]
- *
- * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
  * @api
  */
 final class DimensionSpacePoint extends AbstractDimensionSpacePoint
@@ -62,9 +60,20 @@ final class DimensionSpacePoint extends AbstractDimensionSpacePoint
     }
 
     /**
+     * Creates a dimension space point for a zero-dimensional content repository.
+     *
+     * This applies to content repositories without any dimensions configured.
+     */
+    public static function createWithoutDimensions(): self
+    {
+        return self::fromArray([]);
+    }
+
+    /**
      * Creates a dimension space point from a legacy dimension array in format
      * ['language' => ['es'], 'country' => ['ar']]
      *
+     * @deprecated should be only used for conversion from Neos <= 8.x to 9.x upwards. never use this in "modern" code.
      * @param array<string,array<int,string>> $legacyDimensionValues
      */
     final public static function fromLegacyDimensionArray(array $legacyDimensionValues): self

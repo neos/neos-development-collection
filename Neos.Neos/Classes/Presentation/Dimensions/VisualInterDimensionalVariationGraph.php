@@ -25,15 +25,15 @@ use Neos\Flow\Annotations as Flow;
  * The visualization model for the interdimensional variation graph
  */
 #[Flow\Proxy(false)]
-final class VisualInterDimensionalVariationGraph
+final readonly class VisualInterDimensionalVariationGraph
 {
     private function __construct(
         /** @var array<string,VisualWeightedDimensionSpacePoint> */
-        public readonly array $nodes,
+        public array $nodes,
         /** @var array<int,VisualInterDimensionalEdge> */
-        public readonly array $edges,
-        public readonly int $width,
-        public readonly int $height
+        public array $edges,
+        public int $width,
+        public int $height
     ) {
     }
 

@@ -7,23 +7,15 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 /**
  * @api returned by {@see ContentSubgraphInterface}
  */
-final class Subtree
+final readonly class Subtree
 {
     /**
-     * @param Subtree[] $children
+     * @param array<int,Subtree> $children
      */
     public function __construct(
-        public readonly int $level,
-        public readonly Node $node,
-        public array $children = []
+        public int $level,
+        public Node $node,
+        public array $children
     ) {
-    }
-
-    /**
-     * @internal
-     */
-    public function add(Subtree $subtree): void
-    {
-        $this->children[] = $subtree;
     }
 }

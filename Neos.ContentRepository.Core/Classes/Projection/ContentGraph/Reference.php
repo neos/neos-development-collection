@@ -14,19 +14,21 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
  * A reference to a given node by a name and with optional reference properties
  *
+ * {@see References}
+ *
  * @api
  */
-final class Reference
+final readonly class Reference
 {
     public function __construct(
-        public readonly Node $node,
-        public readonly PropertyName $name,
-        public readonly ?PropertyCollectionInterface $properties
+        public Node $node,
+        public ReferenceName $name,
+        public ?PropertyCollection $properties
     ) {
     }
 }

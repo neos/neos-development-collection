@@ -3,12 +3,6 @@ Neos\ContentRepositoryRegistry\ContentRepositoryRegistry:
     1:
       setting: Neos.ContentRepositoryRegistry
 
-Neos\ContentRepository\Core\Infrastructure\DbalClientInterface:
-  className: Neos\ContentRepositoryRegistry\Infrastructure\DbalClient
-
-Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface:
-  className: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\ObjectManagerBasedNodeLabelGeneratorFactory
-
 # !!! UGLY WORKAROUNDS, because we cannot wire non-Flow class constructor arguments here.
 Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory:
   scope: singleton
@@ -17,27 +11,7 @@ Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFact
     1:
       value: Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory
     2:
-      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
-
-
-Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
-  scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
-  arguments:
-    1:
-      value: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
-    2:
-      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
-
-Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory:
-  scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
-  arguments:
-    1:
-      value: Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory
-    2:
-      object: 'Neos\ContentRepositoryRegistry\Infrastructure\PostgresDbalClient'
-
+      object: 'Doctrine\DBAL\Connection'
 
 Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
   scope: singleton
@@ -46,16 +20,14 @@ Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
     1:
       value: Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory
     2:
-      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
+      object: 'Doctrine\DBAL\Connection'
 
-
-Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory:
+# This adds a soft-dependency to the neos/contentgraph-doctrinedbaladapter package
+Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
   scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
+  factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
   arguments:
     1:
-      value: Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
+      value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory'
     2:
-      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
-
-
+      object: 'Doctrine\DBAL\Connection'

@@ -81,7 +81,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
                 $this->contentDimensions[$rawDimensionId] = new ContentDimension(
                     $dimensionId,
                     new ContentDimensionValues($values),
-                    new ContentDimensionValueVariationEdges($variationEdges),
+                    new ContentDimensionValueVariationEdges(...$variationEdges),
                     $additionalConfiguration
                 );
             }

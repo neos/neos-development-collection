@@ -17,9 +17,10 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * This is the most important read model of a content repository.
@@ -33,7 +34,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * From the central Content Repository instance, you can fetch the singleton
  * {@see ContentGraphInterface}. There, you can call
  * {@see ContentGraphInterface::getSubgraph()} and pass in
- * the {@see ContentStreamId}, {@see DimensionSpacePoint} and
+ * the {@see DimensionSpacePoint} and
  * {@see VisibilityConstraints} you want to have.
  *
  *
@@ -46,8 +47,16 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api
  */
-interface ContentSubgraphInterface extends \JsonSerializable
+interface ContentSubgraphInterface
 {
+    public function getContentRepositoryId(): ContentRepositoryId;
+
+    public function getWorkspaceName(): WorkspaceName;
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint;
+
+    public function getVisibilityConstraints(): VisibilityConstraints;
+
     /**
      * Find a single node by its aggregate id
      *
@@ -92,13 +101,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, Filter\FindPrecedingSiblingNodesFilter $filter): Nodes;
 
     /**
-     * Find a single child node by its name
-     *
-     * @return Node|null the node that is connected to its parent with the specified $edgeName, or NULL if no matching node exists or the parent node is not accessible
-     */
-    public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node;
-
-    /**
      * Recursively find all nodes above the $entryNodeAggregateId that match the specified $filter and return them as a flat list
      */
     public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\FindAncestorNodesFilter $filter): Nodes;
@@ -108,6 +110,14 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @see findAncestorNodes
      */
     public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountAncestorNodesFilter $filter): int;
+
+    /**
+     * Find the closest matching node, the entry node itself or the first ancestors of the $entryNodeAggregateId, that match the specified $filter and return it
+     * Note: in contrast to {@see findAncestorNodes()} the resulting node will be the entry node if it matches the filter!
+     *
+     * @return Node|null the closest node that matches the given $filter, or NULL if no matching node was found
+     */
+    public function findClosestNode(NodeAggregateId $entryNodeAggregateId, Filter\FindClosestNodeFilter $filter): ?Node;
 
     /**
      * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a flat list
@@ -134,9 +144,8 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Find all "outgoing" references of a given node that match the specified $filter
      *
-     * A reference is a node property of type "reference" or "references"
      * Because each reference has a name and can contain properties itself, this method does not return the target nodes
-     * directly, but actual {@see \Neos\ContentRepository\Core\Projection\ContentGraph\Reference} instances.
+     * directly, but a collection of references {@see References}.
      * The corresponding nodes can be retrieved via {@see References::getNodes()}
      */
     public function findReferences(NodeAggregateId $nodeAggregateId, Filter\FindReferencesFilter $filter): References;
@@ -164,10 +173,12 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Find a single node underneath $startingNodeAggregateId that matches the specified $path
      *
+     * If a node name as $path is given it will be treated as path with a single segment.
+     *
      * NOTE: This operation is most likely to be deprecated since the concept of node paths is not really used in the core, and it has some logical issues
      * @return Node|null the node that matches the given $path, or NULL if no node on that path is accessible
      */
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node;
+    public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node;
 
     /**
      * Find a single node underneath that matches the specified absolute $path
@@ -180,7 +191,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Determine the absolute path of a node
      *
-     * @deprecated use ${@see self::findAncestorNodes()} instead
+     * @deprecated use {@see self::findAncestorNodes()} in combination with {@see AbsoluteNodePath::fromLeafNodeAndAncestors()} instead
      * @throws \InvalidArgumentException if the node path could not be retrieved because it is inaccessible or contains no valid path. The latter can happen if any node in the hierarchy has no name
      */
     public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath;
