@@ -101,14 +101,8 @@ The normal mode is running PHP locally, but running Mariadb / Postgres in contai
 we use the right versions etc).
 
 ```shell
-bin/behat -c Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
-```
-
-Running all tests can take a long time, depending on the hardware.
-To speed up the process, Behat tests can be executed in a "synchronous" mode by setting the `CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION` environment variable:
-
-```shell
-CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1 bin/behat -c Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
+ cd Packages/Neos
+ composer test:behavioral
 ```
 
 Alternatively, if you want to reproduce errors as they happen inside the CI system, but you
@@ -126,9 +120,6 @@ docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository
 FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:reset
 
 ../../../../../bin/behat -c behat.yml.dist
-
-# To run tests in speed mode, run CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1
-CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1 ../../../../../bin/behat -c behat.yml.dist
 
 FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:analyzeTrace
 ```
