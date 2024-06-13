@@ -24,7 +24,7 @@ The code of the CMS can then be found inside `Packages/Neos`, which itself is th
 
 In the root directory of the development distribution, you can do the following things:
 
-To run tests, run `./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xml` for unit tests or `./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/FunctionalTests.xml` for functional/integration tests.
+To run tests, run `composer run test-unit` for unit tests or `composer test-functional` for functional/integration tests.
 
 ---
 
@@ -32,7 +32,7 @@ To run tests, run `./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xm
 
 We use an upmerging strategy: create all bugfixes to the lowest maintained branch that contains the issue. Typically, this is the second last LTS release - see the diagram at https://www.neos.io/features/release-process.html.
 
-  For new features, pull requests should be made against the branch for the next minor version (named like `x.y`). Breaking changes must only go into the branch for the next major version.
+For new features, pull requests should be made against the branch for the next minor version (named like `x.y`). Breaking changes must only go into the branch for the next major version.
 
 ---
 
@@ -97,6 +97,8 @@ Do the following for setting up everything:
 
 ### Running the Tests
 
+#### Behavioural tests (Behat)
+
 The normal mode is running PHP locally, but running Mariadb / Postgres in containers (so we know
 we use the right versions etc).
 
@@ -122,4 +124,20 @@ FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:reset
 ../../../../../bin/behat -c behat.yml.dist
 
 FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:analyzeTrace
+```
+
+#### Benchmark tests
+
+For those you need to install `phive` first, see https://phar.io/#Install, and then run
+
+```shell
+phive install phpbench
+```
+
+to install the needed [PHPBench]([url](https://github.com/phpbench/phpbench)) tool.
+
+Then run
+
+```shell
+composer run benchmark
 ```
