@@ -55,7 +55,7 @@ window.addEventListener('DOMContentLoaded', () => {
 				}
 
 				const localAssetIdentifier = asset.dataset.localAssetIdentifier;
-				if (localAssetIdentifier !== '' && !NeosCMS.isNil(localAssetIdentifier)) {
+				if (localAssetIdentifier !== '' && !NeosCMS.Helper.isNil(localAssetIdentifier)) {
 					NeosMediaBrowserCallbacks.assetChosen(localAssetIdentifier);
 				} else {
 					if (asset.dataset.importInProcess !== 'true') {
