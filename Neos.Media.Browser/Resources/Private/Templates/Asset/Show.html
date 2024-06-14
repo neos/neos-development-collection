@@ -83,6 +83,11 @@
                             </tr>
                         </tbody>
                     </table>
+                    <f:if condition="{assetProxy.asset.inUse}">
+                        <f:link.action action="relatedNodes" arguments="{asset:assetProxy.asset}" addQueryString="true" class="neos-button">
+                            {neos:backend.translate(id: 'relatedNodes', quantity: '{assetProxy.asset.usageCount}', arguments: {0: assetProxy.asset.usageCount}, package: 'Neos.Media.Browser')}
+                        </f:link.action>
+                    </f:if>
                 </fieldset>
             </div>
             <div class="neos-span6 neos-image-example">
