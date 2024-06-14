@@ -476,10 +476,6 @@
         <source>Select a document nodeType</source>
         <target state="translated">Selecteer een document nodeType</target>
       </trans-unit>
-      <trans-unit id="sites.generatorClass" xml:space="preserve">
-        <source>Select a site generator</source>
-        <target state="translated">Selecteer een site generator</target>
-      </trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
         <source>Site name</source>
         <target state="translated">Naam site</target>
@@ -488,21 +484,9 @@
         <source>Create empty site</source>
         <target state="translated">Maak een lege site</target>
       </trans-unit>
-      <trans-unit id="sites.createPackage" xml:space="preserve">
-        <source>Create a new site package</source>
-        <target state="translated">Maak een nieuw site pakket aan</target>
-      </trans-unit>
-      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
-        <source>VendorName.MyPackageKey</source>
-        <target state="translated">VendorName.MyPackageKey</target>
-      </trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
         <source>No sites available</source>
         <target state="translated">Geen sites beschikbaar</target>
-      </trans-unit>
-      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
-        <source>The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</source>
-        <target state="translated">Het &lt;em&gt;Neos Kickstarter&lt;/em&gt; pakket is niet geïnstalleerd, installeer het om nieuwe sites te starten.</target>
       </trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
         <source>New site</source>
@@ -700,26 +684,6 @@ Hoe hoger de prioriteit, des te groter de ondoorzichtbaarheid. Klik op een van d
       <trans-unit id="sites.update.body" xml:space="preserve">
         <source>The site "{0}" has been updated.</source>
         <target state="translated">De site "{0}" is bijgewerkt.</target>
-      </trans-unit>
-      <trans-unit id="sites.missingPackage.title" xml:space="preserve">
-        <source>Missing Package</source>
-        <target state="translated">Ontbrekend pakket</target>
-      </trans-unit>
-      <trans-unit id="sites.missingPackage.body" xml:space="preserve">
-        <source>The package "{0}" is required to create new site packages.</source>
-        <target state="translated">Het pakket "{0}" is benodigd om een nieuwe site pakket te kunnen maken.</target>
-      </trans-unit>
-      <trans-unit id="sites.invalidPackageKey.title" xml:space="preserve">
-        <source>Invalid package key</source>
-        <target state="translated">Ongeldige pakketcode</target>
-      </trans-unit>
-      <trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
-        <source>The package key "{0}" already exists.</source>
-        <target state="translated">Sitepakket "{0}" bestaat al.</target>
-      </trans-unit>
-      <trans-unit id="sites.sitePackagesWasCreated.body" xml:space="preserve">
-        <source>Site package {0} was created.</source>
-        <target state="translated">Sitepakket "{0}" is aangemaakt.</target>
       </trans-unit>
       <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
         <source>The site has been imported.</source>

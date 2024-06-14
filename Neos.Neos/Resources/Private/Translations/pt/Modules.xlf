@@ -476,10 +476,6 @@
         <source>Select a document nodeType</source>
         <target state="translated">Selecione um documento nodeType</target>
       </trans-unit>
-      <trans-unit id="sites.generatorClass" xml:space="preserve">
-        <source>Select a site generator</source>
-        <target state="needs-translation">Select a site generator</target>
-      </trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
         <source>Site name</source>
         <target state="translated">Nome do site</target>
@@ -488,22 +484,10 @@
         <source>Create empty site</source>
         <target state="translated">Criar um site vazio</target>
       </trans-unit>
-      <trans-unit id="sites.createPackage" xml:space="preserve">
-        <source>Create a new site package</source>
-        <target state="translated">Criar um novo pacote de site</target>
-      </trans-unit>
-      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
-        <source>VendorName.MyPackageKey</source>
-        <target state="translated">Nomedofornecedor.MyPackageKey</target>
-      </trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
         <source>No sites available</source>
         <target state="translated">
 Nenhum site disponível.</target>
-      </trans-unit>
-      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
-        <source>The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</source>
-        <target state="translated">O pacote &lt;em&gt;Neos Kickstarter&lt;/em&gt; não está instalado, instale-o para iniciar novos sites.</target>
       </trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
         <source>New site</source>
@@ -701,26 +685,6 @@ Clique em um dos nodes para ver apenas os seus fallbacks e variantes. Clique nov
       <trans-unit id="sites.update.body" xml:space="preserve">
         <source>The site "{0}" has been updated.</source>
         <target state="needs-translation">The site "{0}" has been updated.</target>
-      </trans-unit>
-      <trans-unit id="sites.missingPackage.title" xml:space="preserve">
-        <source>Missing Package</source>
-        <target state="needs-translation">Missing Package</target>
-      </trans-unit>
-      <trans-unit id="sites.missingPackage.body" xml:space="preserve">
-        <source>The package "{0}" is required to create new site packages.</source>
-        <target state="needs-translation">The package "{0}" is required to create new site packages.</target>
-      </trans-unit>
-      <trans-unit id="sites.invalidPackageKey.title" xml:space="preserve">
-        <source>Invalid package key</source>
-        <target state="needs-translation">Invalid package key</target>
-      </trans-unit>
-      <trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
-        <source>Site Packages {0} was created.</source>
-        <target state="needs-translation">Site Packages {0} was created.</target>
-      </trans-unit>
-      <trans-unit id="sites.sitePackagesWasCreated.body" xml:space="preserve">
-        <source>The package key "{0}" already exists.</source>
-        <target state="needs-translation">The package key "{0}" already exists.</target>
       </trans-unit>
       <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
         <source>The site has been imported.</source>
