@@ -476,10 +476,6 @@
         <source>Select a document nodeType</source>
         <target state="final">Selecciona el tipo de documento nodoTipo</target>
       </trans-unit>
-      <trans-unit id="sites.generatorClass" xml:space="preserve">
-        <source>Select a site generator</source>
-        <target state="translated">Seleccione un generador de sitios</target>
-      </trans-unit>
       <trans-unit id="sites.name" xml:space="preserve" approved="yes">
         <source>Site name</source>
         <target state="final">Nombre del sitio</target>
@@ -488,21 +484,9 @@
         <source>Create empty site</source>
         <target state="final">Crear un sitio vacío</target>
       </trans-unit>
-      <trans-unit id="sites.createPackage" xml:space="preserve" approved="yes">
-        <source>Create a new site package</source>
-        <target state="final">Crear un nuevo sitio de paquete</target>
-      </trans-unit>
-      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve" approved="yes">
-        <source>VendorName.MyPackageKey</source>
-        <target state="final">VendorName.MyPackageKey</target>
-      </trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
         <source>No sites available</source>
         <target state="translated">No hay sitios disponibles</target>
-      </trans-unit>
-      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="no">
-        <source>The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</source>
-        <target state="translated">El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no está instalado, instálelo para iniciar los nuevos sitios.</target>
       </trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
         <source>New site</source>
@@ -700,26 +684,6 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
       <trans-unit id="sites.update.body" xml:space="preserve">
         <source>The site "{0}" has been updated.</source>
         <target state="translated">El sitio "{0}" ha sido actualizado.</target>
-      </trans-unit>
-      <trans-unit id="sites.missingPackage.title" xml:space="preserve">
-        <source>Missing Package</source>
-        <target state="translated">Paquete perdido</target>
-      </trans-unit>
-      <trans-unit id="sites.missingPackage.body" xml:space="preserve">
-        <source>The package "{0}" is required to create new site packages.</source>
-        <target state="translated">El paquete "{0}" es necesario para crear nuevos paquetes para el sitio.</target>
-      </trans-unit>
-      <trans-unit id="sites.invalidPackageKey.title" xml:space="preserve">
-        <source>Invalid package key</source>
-        <target state="translated">Clave del paquete no válida</target>
-      </trans-unit>
-      <trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
-        <source>The package key "{0}" already exists.</source>
-        <target state="translated">La clave de paquete "{0}" ya existe.</target>
-      </trans-unit>
-      <trans-unit id="sites.sitePackagesWasCreated.body" xml:space="preserve">
-        <source>Site package {0} was created.</source>
-        <target state="translated">Se ha creado el paquete de sitio {0}.</target>
       </trans-unit>
       <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
         <source>The site has been imported.</source>
