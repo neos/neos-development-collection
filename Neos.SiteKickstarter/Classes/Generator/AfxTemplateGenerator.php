@@ -43,7 +43,6 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
      * Generate a site package and fill it with boilerplate data.
      *
      * @param string $packageKey
-     * @param string $siteName
      * @return list<string>
      * @throws \Neos\Flow\Composer\Exception\InvalidConfigurationException
      * @throws \Neos\Flow\Package\Exception
@@ -54,7 +53,7 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
      * @throws \Neos\FluidAdaptor\Core\Exception
      * @throws \Neos\Utility\Exception\FilesException
      */
-    public function generateSitePackage(string $packageKey, string $siteName) : array
+    public function generateSitePackage(string $packageKey) : array
     {
         $package = $this->packageManager->createPackage($packageKey, [
             'type' => 'neos-site',
@@ -67,7 +66,7 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
             throw new \RuntimeException('Expected to generate flow site package for "' . $packageKey . '" but got ' . get_class($package));
         }
 
-        $this->generateSitesFusionDirectory($package, $siteName);
+        $this->generateSitesFusionDirectory($package);
         $this->generateNodeTypesConfiguration($package);
         $this->generateAdditionalFolders($package);
 
@@ -77,17 +76,11 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
     /**
      * Render the whole directory of the fusion part
      */
-    protected function generateSitesFusionDirectory(FlowPackageInterface $package, string $siteName) : void
+    protected function generateSitesFusionDirectory(FlowPackageInterface $package) : void
     {
-        $packageKey = $package->getPackageKey();
-        $contextVariables = [];
-        $contextVariables['packageKey'] = $packageKey;
-        $contextVariables['siteName'] = $siteName;
-        $packageKeyDomainPart = $packageKey;
-        if ($lastPackagePartWithDot = strrchr($packageKey, '.')) {
-            $packageKeyDomainPart = substr($lastPackagePartWithDot, 1) ?: $packageKey;
-        }
-        $contextVariables['siteNodeName'] = $packageKeyDomainPart;
+        $contextVariables = [
+            'packageKey' => $package->getPackageKey(),
+        ];
 
         $fusionRecursiveDirectoryRenderer = new FusionRecursiveDirectoryRenderer();
         $fusionRecursiveDirectoryRenderer->renderDirectory(
