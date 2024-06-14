@@ -27,7 +27,7 @@ use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\FrontendRouting\NodeUri\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\Fusion\ConvertUrisImplementation;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;

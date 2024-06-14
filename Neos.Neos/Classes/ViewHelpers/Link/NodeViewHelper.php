@@ -32,8 +32,8 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
-use Neos\Neos\FrontendRouting\NodeUri\NodeUriBuilderFactory;
-use Neos\Neos\FrontendRouting\NodeUri\Options;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\Options;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**

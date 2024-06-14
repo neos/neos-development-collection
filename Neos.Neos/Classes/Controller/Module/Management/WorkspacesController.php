@@ -65,7 +65,7 @@ use Neos\Neos\Domain\Workspace\PublishAllChanges;
 use Neos\Neos\Domain\Workspace\WorkspaceProvider;
 use Neos\Neos\FrontendRouting\NodeAddress as LegacyNodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\FrontendRouting\NodeUri\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;

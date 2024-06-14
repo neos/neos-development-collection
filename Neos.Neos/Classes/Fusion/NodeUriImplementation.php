@@ -23,8 +23,8 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Neos\FrontendRouting\NodeUri\NodeUriBuilderFactory;
-use Neos\Neos\FrontendRouting\NodeUri\Options;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\Options;
 use Psr\Log\LoggerInterface;
 
 /**

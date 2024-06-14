@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\FrontendRouting\NodeUri;
+namespace Neos\Neos\FrontendRouting;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;

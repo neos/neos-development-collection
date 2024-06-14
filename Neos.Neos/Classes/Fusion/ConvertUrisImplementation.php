@@ -29,8 +29,8 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
 use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Neos\FrontendRouting\NodeUri\NodeUriBuilderFactory;
-use Neos\Neos\FrontendRouting\NodeUri\Options;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\Options;
 use Neos\Neos\Fusion\Cache\CacheTag;
 use Psr\Log\LoggerInterface;
 
