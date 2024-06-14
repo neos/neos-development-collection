@@ -25,6 +25,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
 use Neos\Neos\Fusion\Cache\CacheTag;
 use Neos\Neos\Fusion\Cache\CacheTagSet;
+use Neos\Neos\Fusion\Cache\CacheTagWorkspaceName;
 
 /**
  * Caching helper to make cache tag generation easier.
@@ -53,7 +54,10 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodes = iterator_to_array($nodes);
         }
 
-        return CacheTagSet::forNodeAggregatesFromNodes(Nodes::fromArray($nodes))->toStringArray();
+        return array_merge(
+            CacheTagSet::forNodeAggregatesFromNodes(Nodes::fromArray($nodes))->toStringArray(),
+            CacheTagSet::forNodeAggregatesFromNodesWithoutWorkspace(Nodes::fromArray($nodes))->toStringArray(),
+        );
     }
 
     public function entryIdentifierForNode(Node $node): NodeCacheEntryIdentifier
@@ -94,11 +98,18 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodeTypes = iterator_to_array($nodeTypes);
         }
 
-        return CacheTagSet::forNodeTypeNames(
-            $contextNode->contentRepositoryId,
-            $contextNode->workspaceName,
-            NodeTypeNames::fromStringArray($nodeTypes)
-        )->toStringArray();
+        return array_merge(
+            CacheTagSet::forNodeTypeNames(
+                $contextNode->contentRepositoryId,
+                $contextNode->workspaceName,
+                NodeTypeNames::fromStringArray($nodeTypes)
+            )->toStringArray(),
+            CacheTagSet::forNodeTypeNames(
+                $contextNode->contentRepositoryId,
+                CacheTagWorkspaceName::ANY,
+                NodeTypeNames::fromStringArray($nodeTypes)
+            )->toStringArray(),
+        );
     }
 
     /**
@@ -118,9 +129,10 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodes = iterator_to_array($nodes);
         }
 
-        return CacheTagSet::forDescendantOfNodesFromNodes(
-            Nodes::fromArray($nodes)
-        )->toStringArray();
+        return array_merge(
+            CacheTagSet::forDescendantOfNodesFromNodes(Nodes::fromArray($nodes))->toStringArray(),
+            CacheTagSet::forDescendantOfNodesFromNodesWithoutWorkspace(Nodes::fromArray($nodes))->toStringArray(),
+        );
     }
 
     /**
