@@ -30,7 +30,7 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
- * A test helper, to include behat step traits, beeing executed by
+ * A test helper, to include behat step traits, being executed by
  * the BehatHelperCommandController.
  *
  * @Flow\Scope("singleton")
