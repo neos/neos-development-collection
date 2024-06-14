@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Domain\Model;
+namespace Neos\Neos\Fusion\Cache;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
@@ -32,7 +32,7 @@ final class NodeCacheEntryIdentifier implements CacheAwareInterface
 
     public static function fromNode(Node $node): self
     {
-        return new self('Node_' . $node->subgraphIdentity->contentStreamId->value
+        return new self('Node_' . $node->workspaceName->value
             . '_' . $node->dimensionSpacePoint->hash
             . '_' .  $node->aggregateId->value);
     }
