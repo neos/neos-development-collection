@@ -18,6 +18,11 @@ use Neos\Flow\Annotations as Flow;
 class CacheTag
 {
     protected const PATTERN = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
+    protected const PREFIX_NODE = 'Node';
+    protected const PREFIX_DESCENDANT_OF = 'DescendantOf';
+    protected const PREFIX_ANCESTOR = 'Ancestor';
+    protected const PREFIX_NODE_TYPE = 'NodeType';
+    protected const PREFIX_DYNAMIC_NODE_TAG = 'DynamicNodeTag';
 
     private function __construct(
         public readonly string $value
@@ -30,15 +35,20 @@ class CacheTag
         }
     }
 
+    private static function fromSegments(string ...$segments): self
+    {
+        return new self(implode('_', $segments));
+    }
+
     final public static function forNodeAggregate(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        WorkspaceName|CacheTagWorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
-        return new self(
-            'Node_'
-            . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
-            . '_' . $nodeAggregateId->value
+        return self::fromSegments(
+            self::PREFIX_NODE,
+            self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId),
+            $nodeAggregateId->value,
         );
     }
 
@@ -53,13 +63,13 @@ class CacheTag
 
     final public static function forDescendantOfNode(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        WorkspaceName|CacheTagWorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
-        return new self(
-            'DescendantOf_'
-            . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
-            . '_' . $nodeAggregateId->value
+        return self::fromSegments(
+            self::PREFIX_DESCENDANT_OF,
+            self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId),
+            $nodeAggregateId->value,
         );
     }
 
@@ -74,13 +84,13 @@ class CacheTag
 
     final public static function forAncestorNode(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        WorkspaceName|CacheTagWorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
-        return new self(
-            'Ancestor_'
-            . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
-            . '_' . $nodeAggregateId->value
+        return self::fromSegments(
+            self::PREFIX_ANCESTOR,
+            self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId),
+            $nodeAggregateId->value,
         );
     }
 
@@ -95,25 +105,25 @@ class CacheTag
 
     final public static function forNodeTypeName(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        WorkspaceName|CacheTagWorkspaceName $workspaceName,
         NodeTypeName $nodeTypeName,
     ): self {
-        return new self(
-            'NodeType_'
-            . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
-            . '_' . \strtr($nodeTypeName->value, '.:', '_-')
+        return self::fromSegments(
+            self::PREFIX_NODE_TYPE,
+            self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId),
+            \strtr($nodeTypeName->value, '.:', '_-'),
         );
     }
 
     final public static function forDynamicNodeAggregate(
         ContentRepositoryId $contentRepositoryId,
-        WorkspaceName $workspaceName,
+        WorkspaceName|CacheTagWorkspaceName $workspaceName,
         NodeAggregateId $nodeAggregateId,
     ): self {
-        return new self(
-            'DynamicNodeTag_'
-            . self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId)
-            . '_' . $nodeAggregateId->value
+        return self::fromSegments(
+            self::PREFIX_DYNAMIC_NODE_TAG,
+            self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId),
+            $nodeAggregateId->value,
         );
     }
 
@@ -123,9 +133,11 @@ class CacheTag
     }
 
     protected static function getHashForWorkspaceNameAndContentRepositoryId(
-        WorkspaceName $workspaceName,
+        WorkspaceName|CacheTagWorkspaceName $workspaceName,
         ContentRepositoryId $contentRepositoryId,
     ): string {
-        return sha1($workspaceName->value . '@' . $contentRepositoryId->value);
+        return sha1(
+            $workspaceName === CacheTagWorkspaceName::ANY ? $contentRepositoryId->value : $workspaceName->value . '@' . $contentRepositoryId->value
+        );
     }
 }

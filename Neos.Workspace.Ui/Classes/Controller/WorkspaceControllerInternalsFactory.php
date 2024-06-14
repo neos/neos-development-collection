@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.Workspace.Ui package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,20 +12,20 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Controller\Module\Management;
+namespace Neos\Workspace\Ui\Controller;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 
 /**
- * @implements ContentRepositoryServiceFactoryInterface<WorkspacesControllerInternals>
+ * @implements ContentRepositoryServiceFactoryInterface<WorkspaceControllerInternals>
  */
-class WorkspacesControllerInternalsFactory implements ContentRepositoryServiceFactoryInterface
+class WorkspaceControllerInternalsFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function build(
         ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
-    ): WorkspacesControllerInternals {
-        return new WorkspacesControllerInternals(
+    ): WorkspaceControllerInternals {
+        return new WorkspaceControllerInternals(
             $serviceFactoryDependencies->contentDimensionSource,
         );
     }

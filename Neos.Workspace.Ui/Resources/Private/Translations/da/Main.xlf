@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Workspace.Ui" source-language="en" datatype="plaintext" target-language="da">
+    <body>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+        <target state="final">Tilbage</target>
+      </trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
+				<source>Cancel</source>
+        <target state="final">Annullér</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
+        <source>Path</source>
+        <target state="final">Sti</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
+        <source>Relative Path</source>
+        <target state="final">Relativ sti</target>
+      </trans-unit>
+      <!-- Management -->
+      <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
+				<source>Workspaces</source>
+        <target state="final">Arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
+				<source>Details for "{0}"</source>
+        <target state="final">Detaljer for "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
+				<source>Create new workspace</source>
+        <target state="final">Opret nyt arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.createWorkspace" xml:space="preserve" approved="yes">
+				<source>Create workspace</source>
+        <target state="final">Opret arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
+				<source>Delete workspace</source>
+        <target state="final">Slet arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
+				<source>Edit workspace</source>
+        <target state="final">Redigér arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve" approved="yes">
+				<source>Yes, delete the workspace</source>
+        <target state="final">Ja, slette arbejdsrummet</target>
+      </trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="no">
+				<source>Edit workspace "{0}"</source>
+        <target state="translated">Redigér arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
+				<source>Personal workspace</source>
+        <target state="final">Personligt arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.privateWorkspace" xml:space="preserve" approved="yes">
+				<source>Private workspace</source>
+        <target state="final">Privat arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
+				<source>Internal workspace</source>
+        <target state="final">Internt arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
+				<source>Read-only workspace</source>
+        <target state="final">Skrivebeskyttet arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+        <target state="final">Titel</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.description" xml:space="preserve" approved="yes">
+				<source>Description</source>
+        <target state="final">Beskrivelse</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve" approved="yes">
+				<source>Base workspace</source>
+        <target state="final">Basisarbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
+				<source>Owner</source>
+        <target state="final">Ejer</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve" approved="yes">
+				<source>Visibility</source>
+        <target state="final">Synlighed</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve" approved="yes">
+				<source>Private</source>
+        <target state="final">Privat</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
+				<source>Only reviewers and administrators can access and modify this workspace</source>
+        <target state="final">Kun korrekturlæsere og administratorer kan få adgang til og ændre dette arbejdsrum</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
+				<source>Internal</source>
+        <target state="final">Internt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
+				<source>Any logged in editor can see and modify this workspace.</source>
+        <target state="final">Enhver redaktør som er logget ind kan se og ændre dette arbejdsrum.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
+				<source>Changes</source>
+        <target state="final">Ændringer</target>
+      </trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve" approved="yes">
+				<source>Open page in "{0}" workspace</source>
+        <target state="final">Åbn side i arbejdsrummet "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
+				<source>This is your personal workspace which you can't delete.</source>
+        <target state="final">Dette er dit personlige arbejdsrum, som du ikke kan slette.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve" approved="yes">
+				<source>The workspace contains changes. To delete, discard the changes first.</source>
+        <target state="final">Arbejdsrummet indeholder ændringer. Hvis du vil slette, slet ændringerne først.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve" approved="yes">
+				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
+        <target state="final">Arbejdsrummet kan ikke sammenflettes med et andet arbejdsrum, fordi den stadig indeholder ændringer.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve" approved="yes">
+				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
+        <target state="final">Arbejdsrummet kan ikke slettes, fordi andre arbejdsrum er afhængige af det.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve" approved="yes">
+				<source>You don't have the permissions for deleting this workspace.</source>
+        <target state="final">Du har ikke tilladelse til at slette dette arbejdsrum.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve" approved="yes">
+				<source>Do you really want to delete the workspace "{0}"?</source>
+        <target state="final">Vil du slette arbejdsrummet "{0}"?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve" approved="yes">
+				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
+        <target state="final">Dette vil slette arbejdsrummet inklusiv alle ikke-publicerede ændringer. Denne handling kan ikke fortrydes.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
+				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
+        <target state="final">Dette modul indeholder en oversigt over alle elementer i det aktuelle arbejdsrum, og det gør det muligt at fortsætte korrektur- og udgivelsesarbejdsgangen for dem.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
+				<source>Unpublished changes in workspace "{0}"</source>
+        <target state="final">Ikke publiceret ændringer</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
+				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
+        <target state="final">tilføjelser: {new}, ændringer: {changed}, flyttede: {removed}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.review" xml:space="preserve" approved="yes">
+				<source>Review</source>
+        <target state="final">Gennemgå</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
+				<source>Discard selected changes</source>
+        <target state="final">Kassér valgte ændringer</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
+				<source>Discard all changes</source>
+        <target state="final">Kassér alle ændringer</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
+				<source>Publish all changes</source>
+        <target state="final">Publicér alle ændringer</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve" approved="yes">
+				<source>Publish all changes to {0}</source>
+        <target state="final">Publicér alle ændringer til {0}</target>
+      </trans-unit>
+      <trans-unit id="changedContentCaption" xml:space="preserve" approved="yes">
+				<source>Changed Content</source>
+        <target state="final">Ændret indhold</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
+				<source>deleted</source>
+        <target state="final">slettet</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.created" xml:space="preserve" approved="yes">
+				<source>created</source>
+        <target state="final">oprettet</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
+				<source>moved</source>
+        <target state="final">flytted</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
+				<source>hidden</source>
+        <target state="final">skjult</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
+				<source>edited</source>
+        <target state="final">redigeret</target>
+      </trans-unit>
+      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
+				<source>There are no unpublished changes in this workspace.</source>
+        <target state="final">Der er ingen upublicerede ændringer i dette arbejdsrum.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
+				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
+        <target state="final">Er du sikker på du virkelig vil slette alle ændringer i "{0}" arbejdsrum?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
+        <source>A workspace with this title already exists.</source>
+        <target state="final">Der findes allerede et arbejdsrum med denne titel.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenUpdated" approved="yes">
+        <source>The workspace "{0}" has been updated.</source>
+        <target state="final">Arbejdsrummet "{0}" er blevet opdateret.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies" approved="yes">
+        <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
+        <target state="final">Arbejdsrummet "{0}" kan ikke slettes, fordi de følgende arbejdsrum er baseret på det: {1}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes" approved="yes">
+        <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
+        <target state="final">Der opstod en fejl under hentning upublicerede indhold fra arbejdsrummet "{0}", intet blev slettet.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges" approved="yes">
+        <source>Your personal workspace contains changes, please publish or discard them first.</source>
+        <target state="final">Dit personlige arbejdsrum indeholder ændringer, venligst publicér eller kassér dem først.</target>
+      </trans-unit>
+      <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
+          <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
+          <target state="final">Slettede ikke arbejdsrummet "{0}", fordi det i øjeblikket indeholder {1} ændring.</target>
+        </trans-unit>
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
+          <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
+          <target state="final">Slettede ikke arbejdsrummet "{0}", fordi det i øjeblikket indeholder {1} ændringer.</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
+        <source>The workspace "{0}" has been removed.</source>
+        <target state="final">Arbejdsrummet "{0}" er blevet fjernet.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenPublished" approved="yes">
+        <source>The selected change has been published.</source>
+        <target state="final">Den valgte ændring er blevet publiceret.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenDiscarded" approved="yes">
+        <source>The selected change has been discarded.</source>
+        <target state="final">Den valgte ændring er blevet kasseret.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenPublished" approved="yes">
+        <source>The selected changes have been published.</source>
+        <target state="final">De valgte ændringer er blevet publiceret.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded" approved="yes">
+        <source>The selected changes have been discarded.</source>
+        <target state="final">De valgte ændringer er blevet kasseret.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished" approved="yes">
+        <source>All changes from workspace "{0}" have been published to {1}.</source>
+        <target state="final">Alle ændringer fra arbejdsrummet "{0}" er blevet publiceret til {1}.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded" approved="yes">
+        <source>All changes from workspace "{0}" have been discarded.</source>
+        <target state="final">Alle ændringer fra arbejdsrummet "{0}" er blevet kasseret.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

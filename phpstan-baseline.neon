@@ -231,7 +231,7 @@ parameters:
 			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
 
 		-
-			message: "#^Parameter \\#2 \\$length of function fread expects int\\<0, max\\>, int given\\.$#"
+			message: "#^Parameter \\#2 \\$length of function fread expects int\\<1, max\\>, int given\\.$#"
 			count: 1
 			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
 

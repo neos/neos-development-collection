@@ -102,7 +102,6 @@ class UsageController extends ActionController
 
             // FIXME: AssetUsageReference->workspaceName ?
             $nodeAggregate = $contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(
-                $usage->getContentStreamId(),
                 $usage->getNodeAggregateId()
             );
             try {
@@ -125,7 +124,6 @@ class UsageController extends ActionController
             }
 
             $subgraph = $contentRepository->getContentGraph($workspace->workspaceName)->getSubgraph(
-                $usage->getContentStreamId(),
                 $usage->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
                 VisibilityConstraints::withoutRestrictions()
             );
