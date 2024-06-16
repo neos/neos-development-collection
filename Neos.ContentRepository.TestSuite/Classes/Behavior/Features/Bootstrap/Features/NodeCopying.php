@@ -59,7 +59,7 @@ trait NodeCopying
         $command = CopyNodesRecursively::createFromSubgraphAndStartNode(
             $subgraph,
             $workspaceName,
-            $this->currentNode,
+            $this->currentNode->instance,
             $targetDimensionSpacePoint,
             NodeAggregateId::fromString($commandArguments['targetParentNodeAggregateId']),
             $targetSucceedingSiblingNodeAggregateId,

@@ -19,7 +19,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -30,6 +29,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeClock;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeUserIdProvider;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\NodeWithContentStreamId;
+use PHPUnit\Framework\Assert;
 
 /**
  * The node creation trait for behavioral tests
@@ -50,7 +51,11 @@ trait CRTestSuiteRuntimeVariables
 
     protected ?\Exception $lastCommandException = null;
 
-    protected ?Node $currentNode = null;
+    /**
+     * The Node's content stream id doesn't necessarily have to match with {@see $currentContentStreamId} if the node was initialized via the content graph from another workspace
+     * thus we have to track it as well.
+     */
+    protected ?NodeWithContentStreamId $currentNode = null;
 
     protected ?NodeAggregate $currentNodeAggregate = null;
 
@@ -182,7 +187,12 @@ trait CRTestSuiteRuntimeVariables
 
     protected function getCurrentNodeAggregateId(): NodeAggregateId
     {
-        assert($this->currentNode instanceof Node);
+        $this->expectCurrentNode();
         return $this->currentNode->aggregateId;
+    }
+
+    protected function expectCurrentNode(): void
+    {
+        Assert::assertNotNull($this->currentNode, 'No current node present');
     }
 }
