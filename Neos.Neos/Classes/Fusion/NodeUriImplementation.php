@@ -150,7 +150,7 @@ class NodeUriImplementation extends AbstractFusionObject
             $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest(ActionRequest::fromHttpRequest(ServerRequest::fromGlobals()));
         }
 
-        $options = Options::create(forceAbsolute: $this->isAbsolute());
+        $options = $this->isAbsolute() ? Options::createForceAbsolute() : Options::createEmpty();
         $format = $this->getFormat() ?: $possibleRequest->getFormat();
         if ($format && $format !== 'html') {
             $options = $options->withCustomFormat($format);

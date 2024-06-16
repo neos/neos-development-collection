@@ -9,7 +9,7 @@ namespace Neos\Neos\FrontendRouting;
  *
  * Example:
  *
- *   Options::create(forceAbsolute: true);
+ *   Options::createForceAbsolute()->withCustomFormat('json');
  *
  * @api for the factory methods; NOT for the inner state.
  */
@@ -27,32 +27,35 @@ final readonly class Options
     }
 
     /**
-     * Creates an instance with the specified options
-     *
-     * Note: The signature of this method might be extended in the future, so it should always be used with named arguments
-     * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
+     * Creates empty options. Chain any of the with* methods to create a new option set with different values.
      */
-    public static function create(
-        bool $forceAbsolute = null
-    ): self {
-        return new self(
-            $forceAbsolute ?? false,
-            '',
-            []
-        );
+    public static function createEmpty(): self
+    {
+        return new self(false, '', []);
     }
 
     /**
-     * Returns a new instance with the specified additional options
+     * Creates options with option to enforced absolute urls for non cross-linked nodes.
      *
-     * Note: The signature of this method might be extended in the future, so it should always be used with named arguments
-     * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
+     * Alias for:
+     *
+     *     Options::createEmpty()->withForceAbsolute();
+     *
      */
-    public function with(
-        bool $forceAbsolute = null
-    ): self {
+    public static function createForceAbsolute(): self
+    {
+        return new self(true, '', []);
+    }
+
+    /**
+     * Option to enforce absolute urls for non cross-linked nodes.
+     *
+     * Absolute urls are fully qualified with protocol and host.
+     */
+    public function withForceAbsolute(): self
+    {
         return new self(
-            $forceAbsolute ?? $this->forceAbsolute,
+            true,
             $this->format,
             $this->routingArguments
         );

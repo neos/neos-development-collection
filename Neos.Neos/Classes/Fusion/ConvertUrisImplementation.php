@@ -142,7 +142,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $nodeAddress = NodeAddress::fromNode($node);
 
         $unresolvedUris = [];
-        $options = Options::create(forceAbsolute: $this->fusionValue('absolute'));
+        $options = $this->fusionValue('absolute') ? Options::createForceAbsolute() : Options::createEmpty();
 
         $possibleRequest = $this->runtime->fusionGlobals->get('request');
         if ($possibleRequest instanceof ActionRequest) {

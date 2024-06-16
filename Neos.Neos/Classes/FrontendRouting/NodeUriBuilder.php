@@ -94,7 +94,7 @@ final readonly class NodeUriBuilder
      * These options will not be considered when building a preview uri {@see previewUriFor}
      *
      * - forceAbsolute:
-     *   Absolute urls for non cross-linked nodes can be enforced via {@see Options::$forceAbsolute}.
+     *   Absolute urls for non cross-linked nodes can be enforced via {@see Options::withForceAbsolute()}.
      *   In which case the base uri determined by the request is used as host
      *   instead of a possibly configured site domain's host.
      *
@@ -123,7 +123,7 @@ final readonly class NodeUriBuilder
      */
     public function uriFor(NodeAddress $nodeAddress, Options $options = null): UriInterface
     {
-        $options ??= Options::create();
+        $options ??= Options::createEmpty();
 
         if (!$nodeAddress->workspaceName->isLive()) {
             // we cannot build a human-readable uri using the showAction as

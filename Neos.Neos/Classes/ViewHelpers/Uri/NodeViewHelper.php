@@ -213,7 +213,7 @@ class NodeViewHelper extends AbstractViewHelper
 
         $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($this->controllerContext->getRequest());
 
-        $options = Options::create(forceAbsolute: $this->arguments['absolute']);
+        $options = $this->arguments['absolute'] ? Options::createForceAbsolute() : Options::createEmpty();
         $format = $this->arguments['format'] ?: $this->controllerContext->getRequest()->getFormat();
         if ($format && $format !== 'html') {
             $options = $options->withCustomFormat($format);

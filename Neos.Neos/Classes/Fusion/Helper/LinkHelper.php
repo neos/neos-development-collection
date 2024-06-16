@@ -110,7 +110,7 @@ class LinkHelper implements ProtectedContextAwareInterface
 
         $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($controllerContext->getRequest());
 
-        $options = Options::create();
+        $options = Options::createEmpty();
         $format = $controllerContext->getRequest()->getFormat();
         if ($format && $format !== 'html') {
             $options = $options->withCustomFormat($format);
