@@ -46,10 +46,7 @@ class PackagesController extends AbstractModuleController
                 'isFrozen' => $this->packageManager->isPackageFrozen($package->getPackageKey())
             ];
         }
-        ksort($packageGroups);
-        foreach (array_keys($packageGroups) as $packageGroup) {
-            ksort($packageGroups[$packageGroup]);
-        }
+
         $this->view->assignMultiple([
             'packageGroups' => $packageGroups,
             'isDevelopmentContext' => $this->objectManager->getContext()->isDevelopment()
