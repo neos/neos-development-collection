@@ -291,7 +291,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
     {
-        $this->markWorkspaceAsOutdatedConflict($event->workspaceName);
+        $this->markWorkspaceAsOutdated($event->workspaceName);
     }
 
     private function whenWorkspaceWasRemoved(WorkspaceWasRemoved $event): void
@@ -370,20 +370,6 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
                 workspacename = :workspaceName
         ', [
             'outdated' => WorkspaceStatus::OUTDATED->value,
-            'workspaceName' => $workspaceName->value
-        ]);
-    }
-
-    private function markWorkspaceAsOutdatedConflict(WorkspaceName $workspaceName): void
-    {
-        $this->dbal->executeUpdate('
-            UPDATE ' . $this->tableName . '
-            SET
-                status = :outdatedConflict
-            WHERE
-                workspacename = :workspaceName
-        ', [
-            'outdatedConflict' => WorkspaceStatus::OUTDATED_CONFLICT->value,
             'workspaceName' => $workspaceName->value
         ]);
     }
