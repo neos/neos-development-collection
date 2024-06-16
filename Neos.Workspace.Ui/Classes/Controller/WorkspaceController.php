@@ -447,11 +447,13 @@ class WorkspaceController extends AbstractModuleController
      * Rebase the current users personal workspace onto the given $targetWorkspace and then
      * redirects to the $targetNode in the content module.
      */
-    public function rebaseAndRedirectAction(Node $targetNode, Workspace $targetWorkspace): void
+    public function rebaseAndRedirectAction(string $targetNode, Workspace $targetWorkspace): void
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
+        $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString($targetNode);
 
         /** @var ?Account $currentAccount */
         $currentAccount = $this->securityContext->getAccount();
@@ -482,10 +484,10 @@ class WorkspaceController extends AbstractModuleController
          */
 
         $targetNodeAddressInPersonalWorkspace = NodeAddress::create(
-            $targetNode->contentRepositoryId,
+            $targetNodeAddress->contentRepositoryId,
             $personalWorkspace->workspaceName,
-            $targetNode->dimensionSpacePoint,
-            $targetNode->aggregateId
+            $targetNodeAddress->dimensionSpacePoint,
+            $targetNodeAddress->aggregateId
         );
 
         if ($this->packageManager->isPackageAvailable('Neos.Neos.Ui')) {
@@ -526,13 +528,14 @@ class WorkspaceController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        $nodeAddress = $nodeAddressFactory->createFromUriString($nodeAddress);
+        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
+        $nodeAddress = $nodeAddressFactory->createCoreNodeAddressFromLegacyUriString($nodeAddress);
 
         $command = PublishIndividualNodesFromWorkspace::create(
             $selectedWorkspace,
             NodeIdsToPublishOrDiscard::create(
                 new NodeIdToPublishOrDiscard(
-                    $nodeAddress->nodeAggregateId,
+                    $nodeAddress->aggregateId,
                     $nodeAddress->dimensionSpacePoint
                 )
             ),
@@ -563,13 +566,14 @@ class WorkspaceController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        $nodeAddress = $nodeAddressFactory->createFromUriString($nodeAddress);
+        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
+        $nodeAddress = $nodeAddressFactory->createCoreNodeAddressFromLegacyUriString($nodeAddress);
 
         $command = DiscardIndividualNodesFromWorkspace::create(
             $selectedWorkspace,
             NodeIdsToPublishOrDiscard::create(
                 new NodeIdToPublishOrDiscard(
-                    $nodeAddress->nodeAggregateId,
+                    $nodeAddress->aggregateId,
                     $nodeAddress->dimensionSpacePoint
                 )
             ),
@@ -604,9 +608,10 @@ class WorkspaceController extends AbstractModuleController
 
         $nodesToPublishOrDiscard = [];
         foreach ($nodes as $node) {
-            $nodeAddress = $nodeAddressFactory->createFromUriString($node);
+            // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
+            $nodeAddress = $nodeAddressFactory->createCoreNodeAddressFromLegacyUriString($node);
             $nodesToPublishOrDiscard[] = new NodeIdToPublishOrDiscard(
-                $nodeAddress->nodeAggregateId,
+                $nodeAddress->aggregateId,
                 $nodeAddress->dimensionSpacePoint
             );
         }
