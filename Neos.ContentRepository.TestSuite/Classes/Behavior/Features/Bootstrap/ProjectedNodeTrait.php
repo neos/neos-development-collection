@@ -456,15 +456,16 @@ trait ProjectedNodeTrait
      */
     public function iExpectThisNodeToBeReferencedBy(TableNode $expectedReferences): void
     {
-        $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedReferences) {
-            $actualReferences = $this->getCurrentSubgraph()
+        $contentGraph = $this->getCurrentContentGraph();
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedReferences, $contentGraph) {
+            $actualReferences = $this->getCurrentSubgraph($contentGraph)
                 ->findBackReferences($currentNode->aggregateId, FindBackReferencesFilter::create());
 
-            $this->assertReferencesMatch($expectedReferences, $actualReferences);
+            $this->assertReferencesMatch($expectedReferences, $actualReferences, $contentGraph);
         });
     }
 
-    private function assertReferencesMatch(TableNode $expectedReferencesTable, References $actualReferences): void
+    private function assertReferencesMatch(TableNode $expectedReferencesTable, References $actualReferences, ContentGraphInterface $contentGraph): void
     {
         $expectedReferences = $expectedReferencesTable->getHash();
         Assert::assertSame(
@@ -480,7 +481,7 @@ trait ProjectedNodeTrait
                 $actualReferences[$index]->name->value
             );
             $expectedReferenceDiscriminator = NodeDiscriminator::fromShorthand($row['Node']);
-            $actualReferenceDiscriminator = NodeDiscriminator::fromNode($actualReferences[$index]->node);
+            $actualReferenceDiscriminator = NodeDiscriminator::fromNodeAndContentGraph($actualReferences[$index]->node, $contentGraph);
             Assert::assertTrue(
                 $expectedReferenceDiscriminator->equals($actualReferenceDiscriminator),
                 'Reference discriminator does not match.'

@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 use Neos\ContentRepository\Core\ContentGraphFinder;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -147,16 +148,22 @@ trait CRTestSuiteRuntimeVariables
         };
     }
 
-    public function getCurrentSubgraph(): ContentSubgraphInterface
+    public function getCurrentContentGraph(): ContentGraphInterface
     {
+        // todo cache content graph per test run??? Otherwise it will be flushed too often?
         $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
         $contentGraphFinder->forgetInstances();
-        if (isset($this->currentContentStreamId)) {
+        if ($this->currentContentStreamId !== null) {
             // This must still be supported for low level tests, e.g. for content stream forking
-            return $contentGraphFinder->getByWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
+            return $contentGraphFinder->getByWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId);
         }
 
-        return $contentGraphFinder->getByWorkspaceName($this->currentWorkspaceName)->getSubgraph(
+        return $contentGraphFinder->getByWorkspaceName($this->currentWorkspaceName);
+    }
+
+    public function getCurrentSubgraph(?ContentGraphInterface $contentGraphToUse = null): ContentSubgraphInterface
+    {
+        return ($contentGraphToUse ?? $this->getCurrentContentGraph())->getSubgraph(
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints
         );

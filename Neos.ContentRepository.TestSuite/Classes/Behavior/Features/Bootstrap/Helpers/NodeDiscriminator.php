@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers;
 
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -47,10 +48,24 @@ final readonly class NodeDiscriminator implements \JsonSerializable
         );
     }
 
+    /** @deprecated will be removed */
     public static function fromNode(Node $node): self
     {
         return new self(
             $node->subgraphIdentity->contentStreamId,
+            $node->aggregateId,
+            $node->originDimensionSpacePoint
+        );
+    }
+
+    public static function fromNodeAndContentGraph(Node $node, ContentGraphInterface $contentGraph): self
+    {
+        if (!$node->workspaceName->equals($contentGraph->getWorkspaceName())) {
+            throw new \InvalidArgumentException(sprintf('Expected nodes workspace %s to match given subgraph workspace %s.', $node->workspaceName->value, $contentGraph->getWorkspaceName()->value), 1718554466);
+        }
+
+        return new self(
+            $contentGraph->getContentStreamId(),
             $node->aggregateId,
             $node->originDimensionSpacePoint
         );
