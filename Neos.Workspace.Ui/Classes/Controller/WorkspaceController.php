@@ -493,7 +493,7 @@ class WorkspaceController extends AbstractModuleController
         if ($this->packageManager->isPackageAvailable('Neos.Neos.Ui')) {
             // todo remove me legacy
             $legacyTargetNodeAddressInPersonalWorkspace = new LegacyNodeAddress(
-                $personalWorkspace->currentContentStreamId,
+                null,
                 $targetNodeAddressInPersonalWorkspace->dimensionSpacePoint,
                 $targetNodeAddressInPersonalWorkspace->aggregateId,
                 $targetNodeAddressInPersonalWorkspace->workspaceName
@@ -839,7 +839,7 @@ class WorkspaceController extends AbstractModuleController
                     // we can't create `serializedNodeAddress` from the node.
                     // Instead, we use the original stored values.
                     $nodeAddress = new LegacyNodeAddress(
-                        $change->contentStreamId,
+                        null,
                         $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                         $change->nodeAggregateId,
                         $selectedWorkspace->workspaceName
