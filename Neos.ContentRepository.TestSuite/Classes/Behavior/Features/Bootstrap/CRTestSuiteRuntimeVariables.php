@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeClock;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeUserIdProvider;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\NodeWithContentStreamId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\ContentStreamAwareNode;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -55,7 +55,7 @@ trait CRTestSuiteRuntimeVariables
      * The Node's content stream id doesn't necessarily have to match with {@see $currentContentStreamId} if the node was initialized via the content graph from another workspace
      * thus we have to track it as well.
      */
-    protected ?NodeWithContentStreamId $currentNode = null;
+    protected ?ContentStreamAwareNode $currentNode = null;
 
     protected ?NodeAggregate $currentNodeAggregate = null;
 
@@ -166,9 +166,9 @@ trait CRTestSuiteRuntimeVariables
         return $contentGraphFinder->getByWorkspaceName($this->currentWorkspaceName);
     }
 
-    public function getCurrentSubgraph(?ContentGraphInterface $contentGraphToUse = null): ContentSubgraphInterface
+    public function getCurrentSubgraph(): ContentSubgraphInterface
     {
-        return ($contentGraphToUse ?? $this->getCurrentContentGraph())->getSubgraph(
+        return $this->getCurrentContentGraph()->getSubgraph(
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints
         );

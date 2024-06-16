@@ -37,15 +37,6 @@ final readonly class NodeDiscriminator implements \JsonSerializable
     ) {
     }
 
-    public static function create(ContentStreamId $contentStreamId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $aggregateId): self
-    {
-        return new self(
-            $contentStreamId,
-            $aggregateId,
-            $originDimensionSpacePoint
-        );
-    }
-
     public static function fromShorthand(string $shorthand): self
     {
         list($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint) = explode(';', $shorthand);
@@ -57,12 +48,12 @@ final readonly class NodeDiscriminator implements \JsonSerializable
         );
     }
 
-    public static function fromNode(NodeWithContentStreamId $decorated): self
+    public static function fromNode(ContentStreamAwareNode $contentStreamAwareNode): self
     {
         return new self(
-            $decorated->contentStreamId,
-            $decorated->instance->aggregateId,
-            $decorated->instance->originDimensionSpacePoint
+            $contentStreamAwareNode->contentStreamId,
+            $contentStreamAwareNode->nodeInstance->aggregateId,
+            $contentStreamAwareNode->nodeInstance->originDimensionSpacePoint
         );
     }
 
