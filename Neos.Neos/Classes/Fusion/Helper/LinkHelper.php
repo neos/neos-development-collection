@@ -28,6 +28,7 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\Options;
 use Neos\Neos\Fusion\ConvertUrisImplementation;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -109,8 +110,13 @@ class LinkHelper implements ProtectedContextAwareInterface
 
         $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($controllerContext->getRequest());
 
+        $options = Options::create();
+        $format = $controllerContext->getRequest()->getFormat();
+        if ($format && $format !== 'html') {
+            $options = $options->withCustomFormat($format);
+        }
         try {
-            $targetUri = $nodeUriBuilder->uriFor(NodeAddress::fromNode($targetNode));
+            $targetUri = $nodeUriBuilder->uriFor(NodeAddress::fromNode($targetNode), $options);
         } catch (NoMatchingRouteException $e) {
             $this->systemLogger->info(sprintf(
                 'Failed to build URI for node "%s": %e',

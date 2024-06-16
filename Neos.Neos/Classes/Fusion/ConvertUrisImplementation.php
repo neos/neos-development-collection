@@ -144,22 +144,27 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $unresolvedUris = [];
         $options = Options::create(forceAbsolute: $this->fusionValue('absolute'));
 
-        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $options) {
+        $possibleRequest = $this->runtime->fusionGlobals->get('request');
+        if ($possibleRequest instanceof ActionRequest) {
+            $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($possibleRequest);
+            $format = $possibleRequest->getFormat();
+            if ($format && $format !== 'html') {
+                $options = $options->withCustomFormat($format);
+            }
+        } else {
+            // unfortunately, the uri-builder always needs a request at hand and cannot build uris without it
+            // this will improve with a reformed uri building:
+            // https://github.com/neos/flow-development-collection/issues/3354
+            $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest(ActionRequest::fromHttpRequest(ServerRequest::fromGlobals()));
+        }
+
+        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $nodeUriBuilder, $options) {
             $resolvedUri = null;
             switch ($matches[1]) {
                 case 'node':
                     $nodeAddress = $nodeAddress->withAggregateId(
                         NodeAggregateId::fromString($matches[2])
                     );
-                    $possibleRequest = $this->runtime->fusionGlobals->get('request');
-                    if ($possibleRequest instanceof ActionRequest) {
-                        $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($possibleRequest);
-                    } else {
-                        // unfortunately, the uri-builder always needs a request at hand and cannot build uris without it
-                        // this will improve with a reformed uri building:
-                        // https://github.com/neos/flow-development-collection/issues/3354
-                        $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest(ActionRequest::fromHttpRequest(ServerRequest::fromGlobals()));
-                    }
                     try {
                         $resolvedUri = (string)$nodeUriBuilder->uriFor($nodeAddress, $options);
                     } catch (NoMatchingRouteException) {
