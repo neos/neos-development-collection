@@ -316,11 +316,11 @@ final class AssetUsageProjection implements ProjectionInterface
     {
         match ($event::class) {
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
-            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
-            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
-            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
+            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
+            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
+            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
             WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
             WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
             WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),

@@ -211,8 +211,8 @@ final class AssetUsageRepository
         OriginDimensionSpacePoint $targetOriginDimensionSpacePoint,
     ): void {
         try {
-            $baseWorkspaces = $this->getBaseWorkspaces($workspaceName);
-            foreach ($baseWorkspaces as $baseWorkspace) {
+            $workspaceChain = [$workspaceName, ...$this->getBaseWorkspaces($workspaceName)];
+            foreach ($workspaceChain as $baseWorkspace) {
                 $affectedRows = $this->dbal->executeStatement(
                     'INSERT INTO ' . $this->tableNamePrefix . ' (assetid, originalassetid, workspacename, nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, propertyname)'
                     . ' SELECT assetid, originalassetid, :workspaceName, nodeaggregateid,'

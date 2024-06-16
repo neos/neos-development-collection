@@ -1,11 +1,11 @@
 @contentrepository @adapters=DoctrineDBAL
 @flowEntities
-Feature: Create node peer variant
+Feature: Create node generalization variant
 
   Background:
     Given using the following content dimensions:
-      | Identifier | Values    | Generalizations |
-      | language   | de,gsw,fr | gsw->de, fr     |
+      | Identifier | Values       | Generalizations |
+      | language   | de,gsw,fr,en | gsw->de->en, fr |
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:NodeWithAssetProperties':
@@ -53,19 +53,31 @@ Feature: Create node peer variant
       | Key           | Value            |
       | workspaceName | "user-workspace" |
 
-  Scenario: Create node peer variant of node with asset in property
+  Scenario: Create node generalization variant of node with asset in property
     When I am in workspace "user-workspace" and dimension space point {"language":"de"}
     And the command CreateNodeVariant is executed with payload:
-      | Key             | Value              |
-      | nodeAggregateId | "nody-mc-nodeface" |
-      | sourceOrigin    | {"language":"de"}  |
-      | targetOrigin    | {"language":"gsw"} |
+      | Key             | Value                    |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"language":"de"}        |
+      | targetOrigin    | {"language":"en"}        |
 
     Then I expect the AssetUsageProjection to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
       | asset-1 | sir-david-nodenborough     | asset        | live           | {"language": "de"}        |
-      | asset-1 | nody-mc-nodeface           | asset       | live           | {"language": "de"}        |
+      | asset-1 | sir-david-nodenborough     | asset        | user-workspace | {"language": "en"}        |
+      | asset-1 | nody-mc-nodeface           | asset        | live           | {"language": "de"}        |
       | asset-2 | nody-mc-nodeface           | assets       | live           | {"language": "de"}        |
-      | asset-1 | nody-mc-nodeface           | asset        | user-workspace | {"language": "gsw"}       |
-      | asset-2 | nody-mc-nodeface           | assets       | user-workspace | {"language": "gsw"}       |
       | asset-3 | sir-nodeward-nodington-iii | text         | live           | {"language": "de"}        |
+
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value                      |
+      | workspaceName      | "user-workspace"           |
+      | newContentStreamId | "new-user-workspace-cs-id" |
+
+    Then I expect the AssetUsageProjection to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live          | {"language": "de"}        |
+      | asset-1 | sir-david-nodenborough     | asset        | live          | {"language": "en"}        |
+      | asset-1 | nody-mc-nodeface           | asset        | live          | {"language": "de"}        |
+      | asset-2 | nody-mc-nodeface           | assets       | live          | {"language": "de"}        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live          | {"language": "de"}        |
