@@ -202,9 +202,7 @@ final class AssetUsageProjection implements ProjectionInterface
     private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event): void
     {
         $this->repository->updateWorkspace($event->workspaceName, $event->baseWorkspaceName);
-
     }
-
 
     // ----------------
 
