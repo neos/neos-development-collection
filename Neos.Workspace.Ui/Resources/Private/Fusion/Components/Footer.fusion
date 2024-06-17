@@ -1,26 +1,9 @@
 prototype(Neos.Workspace.Ui:Component.Footer) < prototype(Neos.Fusion:Component) {
-  workspaceCount = ${{}}
-
-  @private {
-    newAction = Neos.Fusion:UriBuilder {
-      action = 'new'
-    }
-  }
+  children = ''
 
   renderer = afx`
     <div class="neos-footer">
-      <a
-        id="createButton"
-        type="button"
-        class="neos-button neos-button-success"
-        href={private.newAction}
-        @if={Security.hasAccess('Neos.Workspace.Ui:Backend.CreateWorkspaces')}
-      >
-        {I18n.translate('footer.action.create', 'Create new workspace', [], 'Main', 'Neos.Workspace.Ui')}
-      </a>
-      <div class="workspace-count">
-        {I18n.translate('footer.workspaceCount', workspaceCount.total + ' workspaces (' + workspaceCount.internal + ' public, ' + workspaceCount.private + ' private)', props.workspaceCount, 'Main', 'Neos.Workspace.Ui')}
-      </div>
+      {props.content}
     </div>
   `
 }

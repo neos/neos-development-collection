@@ -1,20 +1,39 @@
-Neos.Workspace.Ui.WorkspaceController {
-  index = Neos.Fusion:Component {
-    userWorkspace = ${userWorkspace}
-    workspacesAndChangeCounts = ${workspacesAndChangeCounts}
-    flashMessages = ${flashMessages}
+Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
+  userWorkspace = ${userWorkspace}
+  workspacesAndChangeCounts = ${workspacesAndChangeCounts}
+  flashMessages = ${flashMessages}
 
-    renderer = afx`
-      <div class="neos-content neos-container-fluid">
-        <div class="neos-row-fluid">
-          <Neos.Workspace.Ui:Component.WorkspaceTable
-            userWorkspace={props.userWorkspace}
-            workspacesAndChangeCounts={props.workspacesAndChangeCounts}
-          />
-          <Neos.Workspace.Ui:Component.Footer workspacesAndChangeCounts={props.workspacesAndChangeCounts}/>
-          <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
-        </div>
-      </div>
-    `
+  totalNumberOfWorkspaces = ${Array.length(this.workspacesAndChangeCounts)}
+  numberOfPrivateWorkspaces = 0
+  numberOfPublicWorkspaces = 0
+
+  newAction = Neos.Fusion:UriBuilder {
+    action = 'new'
   }
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
+    <main class="neos-content neos-container-fluid">
+      <div class="neos-row-fluid">
+        <Neos.Workspace.Ui:Component.WorkspaceTable
+          userWorkspace={props.userWorkspace}
+          workspacesAndChangeCounts={props.workspacesAndChangeCounts}
+        />
+      </div>
+    </main>
+    <Neos.Workspace.Ui:Component.Footer>
+      <a
+        id="createButton"
+        type="button"
+        class="neos-button neos-button-success"
+        href={props.newAction}
+        @if={Security.hasAccess('Neos.Workspace.Ui:Backend.CreateWorkspaces')}
+      >
+        {I18n.translate('footer.action.create', 'Create new workspace', [], 'Main', 'Neos.Workspace.Ui')}
+      </a>
+      <div class="workspace-count">
+        {I18n.translate('footer.workspaceCount', props.totalNumberOfWorkspaces + ' workspaces (' + props.numberOfPublicWorkspaces + ' public, ' + props.numberOfPrivateWorkspaces + ' private)', [props.numberOfPublicWorkspaces, props.numberOfPrivateWorkspaces], 'Main', 'Neos.Workspace.Ui')}
+      </div>
+    </Neos.Workspace.Ui:Component.Footer>
+  `
 }

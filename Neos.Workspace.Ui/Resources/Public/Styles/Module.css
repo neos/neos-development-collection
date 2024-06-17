@@ -64,6 +64,15 @@ td.workspace-action-column {
   user-select: none;
 }
 
+.workspace-count {
+  display: inline-block;
+  color: var(--textSubtleLight);
+  font-size: var(--generalFontSize);
+  line-height: var(--unit);
+  vertical-align: middle;
+  margin-left: var(--spacing-Full);
+}
+
 .icon-button {
   background: none;
   border: none;
@@ -141,4 +150,18 @@ td.workspace-action-column {
   display: flex;
   gap: var(--spacing-Full);
   justify-content: flex-end;
+}
+
+/**
+ * Form styles
+ */
+.neos-control-label {
+  margin-bottom: var(--spacing-Full);
+}
+
+.neos-control-group textarea,
+.neos-control-group select,
+.neos-control-group input[type="text"] {
+  width: 100%;
+  max-width: 500px;
 }
