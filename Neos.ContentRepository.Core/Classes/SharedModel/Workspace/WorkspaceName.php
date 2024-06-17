@@ -23,6 +23,8 @@ use Behat\Transliterator\Transliterator;
  */
 final class WorkspaceName implements \JsonSerializable
 {
+    private const PATTERN = '/^[a-z0-9\-]{1,30}$/';
+
     public const WORKSPACE_NAME_LIVE = 'live';
 
     /**
@@ -33,7 +35,7 @@ final class WorkspaceName implements \JsonSerializable
     private function __construct(
         public readonly string $value
     ) {
-        if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $value) !== 1) {
+        if (!self::hasValidFormat($value)) {
             throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610318);
         }
     }
@@ -46,6 +48,11 @@ final class WorkspaceName implements \JsonSerializable
     public static function fromString(string $value): self
     {
         return self::instance($value);
+    }
+
+    public static function tryFromString(string $value): ?self
+    {
+        return self::hasValidFormat($value) ? self::instance($value) : null;
     }
 
     public static function forLive(): self
@@ -61,19 +68,16 @@ final class WorkspaceName implements \JsonSerializable
      */
     public static function transliterateFromString(string $name): self
     {
-        try {
-            // Check if name already match name pattern to prevent unnecessary transliteration
+        if (self::hasValidFormat($name)) {
             return self::fromString($name);
-        } catch (\InvalidArgumentException $e) {
-            // Okay, let's transliterate
         }
 
-        $originalName = $name;
+        $originalName = strtolower($name);
 
         // Transliterate (transform 北京 to 'Bei Jing')
         $name = Transliterator::transliterate($name);
 
-        // Urlization (replace spaces with dash, special special characters)
+        // Urlization (replace spaces with dash, special characters)
         $name = Transliterator::urlize($name);
 
         // Ensure only allowed characters are left
@@ -84,7 +88,7 @@ final class WorkspaceName implements \JsonSerializable
             $name = 'workspace-' . strtolower(md5($originalName));
         }
 
-        return new self($name);
+        return self::fromString($name);
     }
 
     public function isLive(): bool
@@ -100,5 +104,10 @@ final class WorkspaceName implements \JsonSerializable
     public function equals(self $other): bool
     {
         return $this === $other;
+    }
+
+    private static function hasValidFormat(string $value): bool
+    {
+        return preg_match(self::PATTERN, $value) === 1;
     }
 }

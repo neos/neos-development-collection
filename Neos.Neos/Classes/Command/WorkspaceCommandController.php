@@ -36,8 +36,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\Domain\Workspace\WorkspaceProvider;
+use Neos\Neos\Domain\Service\WorkspaceService;
+use Neos\Neos\Domain\Service\WorkspacePublishingService;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 
 /**
@@ -56,7 +58,10 @@ class WorkspaceCommandController extends CommandController
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
-    protected WorkspaceProvider $workspaceProvider;
+    protected WorkspacePublishingService $workspacePublishingService;
+
+    #[Flow\Inject]
+    protected WorkspaceService $workspaceService;
 
     /**
      * Publish changes of a workspace
@@ -68,16 +73,14 @@ class WorkspaceCommandController extends CommandController
      */
     public function publishCommand(string $workspace, string $contentRepository = 'default'): void
     {
-        // @todo: bypass access control
-        $workspace = $this->workspaceProvider->provideForWorkspaceName(
+        $this->workspacePublishingService->publishWorkspace(
             ContentRepositoryId::fromString($contentRepository),
             WorkspaceName::fromString($workspace)
         );
-        $workspace->publishAllChanges();
 
         $this->outputLine(
             'Published all nodes in workspace %s to its base workspace',
-            [$workspace->name->value]
+            [$workspace]
         );
     }
 
@@ -92,19 +95,17 @@ class WorkspaceCommandController extends CommandController
      */
     public function discardCommand(string $workspace, string $contentRepository = 'default'): void
     {
-        // @todo: bypass access control
-        $workspace = $this->workspaceProvider->provideForWorkspaceName(
-            ContentRepositoryId::fromString($contentRepository),
-            WorkspaceName::fromString($workspace)
-        );
-
         try {
-            $workspace->discardAllChanges();
+            // @todo: bypass access control
+            $this->workspacePublishingService->discardAllWorkspaceChanges(
+                ContentRepositoryId::fromString($contentRepository),
+                WorkspaceName::fromString($workspace)
+            );
         } catch (WorkspaceDoesNotExist $exception) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspace->name->value]);
+            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
             $this->quit(1);
         }
-        $this->outputLine('Discarded all nodes in workspace %s', [$workspace->name->value]);
+        $this->outputLine('Discarded all nodes in workspace %s', [$workspace]);
     }
 
     /**
@@ -121,11 +122,11 @@ class WorkspaceCommandController extends CommandController
     {
         try {
             // @todo: bypass access control
-            $workspace = $this->workspaceProvider->provideForWorkspaceName(
+            $this->workspacePublishingService->rebaseWorkspace(
                 ContentRepositoryId::fromString($contentRepository),
-                WorkspaceName::fromString($workspace)
+                WorkspaceName::fromString($workspace),
+                $force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL,
             );
-            $workspace->rebase($force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL);
         } catch (WorkspaceDoesNotExist $exception) {
             $this->outputLine('Workspace "%s" does not exist', [$workspace]);
             $this->quit(1);
@@ -134,7 +135,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(1);
         }
 
-        $this->outputLine('Rebased workspace %s', [$workspace->name->value]);
+        $this->outputLine('Rebased workspace %s', [$workspace]);
     }
 
     /**
@@ -178,13 +179,23 @@ class WorkspaceCommandController extends CommandController
         string $contentRepository = 'default'
     ): void {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+
+        $this->workspaceService->createWorkspace(
+            $contentRepositoryId,
+            \Neos\Neos\Domain\Model\WorkspaceTitle::fromString($title),
+            \Neos\Neos\Domain\Model\WorkspaceDescription::fromString($description ?? ''),
+            WorkspaceName::fromString($baseWorkspace),
+            \Neos\Neos\Domain\Model\UserId::fromString($owner),
+            WorkspaceClassification::PERSONAL,
+        );
+
         $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         if ($owner === '') {
             $workspaceOwnerUserId = null;
         } else {
             $workspaceOwnerUserId = UserId::fromString($owner);
-            $workspaceOwner = $this->userService->findByUserIdentifier($workspaceOwnerUserId);
+            $workspaceOwner = $this->userService->findUserById($workspaceOwnerUserId);
             if ($workspaceOwner === null) {
                 $this->outputLine('The user "%s" specified as owner does not exist', [$owner]);
                 $this->quit(3);
@@ -243,13 +254,14 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        $workspace = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName($workspaceName);
-        if (!$workspace instanceof Workspace) {
+        $crWorkspace = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName($workspaceName);
+        if ($crWorkspace === null) {
             $this->outputLine('Workspace "%s" does not exist', [$workspaceName->value]);
             $this->quit(1);
         }
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
 
-        if ($workspace->isPersonalWorkspace()) {
+        if ($workspaceMetadata->classification === WorkspaceClassification::PERSONAL) {
             $this->outputLine(
                 'Did not delete workspace "%s" because it is a personal workspace.'
                     . ' Personal workspaces cannot be deleted manually.',
@@ -264,28 +276,28 @@ class WorkspaceCommandController extends CommandController
                 'Workspace "%s" cannot be deleted because the following workspaces are based on it:',
                 [$workspaceName->value]
             );
+
             $this->outputLine();
             $tableRows = [];
             $headerRow = ['Name', 'Title', 'Description'];
 
             foreach ($dependentWorkspaces as $dependentWorkspace) {
+                $dependentWorkspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $dependentWorkspace->workspaceName);
                 $tableRows[] = [
                     $dependentWorkspace->workspaceName->value,
-                    $dependentWorkspace->workspaceTitle->value,
-                    $dependentWorkspace->workspaceDescription->value
+                    $dependentWorkspaceMetadata->title->value,
+                    $dependentWorkspaceMetadata->description->value
                 ];
             }
             $this->output->outputTable($tableRows, $headerRow);
             $this->quit(3);
         }
 
+
         try {
-            $nodesCount = $contentRepositoryInstance->projectionState(ChangeFinder::class)
-                ->countByContentStreamId(
-                    $workspace->currentContentStreamId
-                );
+            $nodesCount = $this->workspacePublishingService->countPendingWorkspaceChanges($contentRepositoryId, $workspaceName);
         } catch (\Exception $exception) {
-            $this->outputLine('Could not fetch unpublished nodes for workspace %s, nothing was deleted. %s', [$workspace->workspaceName->value, $exception->getMessage()]);
+            $this->outputLine('Could not fetch unpublished nodes for workspace %s, nothing was deleted. %s', [$workspaceName->value, $exception->getMessage()]);
             $this->quit(4);
         }
 
@@ -299,11 +311,7 @@ class WorkspaceCommandController extends CommandController
                 $this->quit(5);
             }
             // @todo bypass access control?
-            $workspace = $this->workspaceProvider->provideForWorkspaceName(
-                $contentRepositoryId,
-                $workspaceName
-            );
-            $workspace->discardAllChanges();
+            $this->workspacePublishingService->discardAllWorkspaceChanges($contentRepositoryId, $workspaceName);
         }
 
         $contentRepositoryInstance->handle(
@@ -359,16 +367,18 @@ class WorkspaceCommandController extends CommandController
         }
 
         $tableRows = [];
-        $headerRow = ['Name', 'Base Workspace', 'Title', 'Owner', 'Description', 'Status', 'Content Stream'];
+        $headerRow = ['Name', 'Classification', 'Base Workspace', 'Title', 'Description', 'Status', 'Content Stream'];
 
         foreach ($workspaces as $workspace) {
+            $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
+
             /* @var Workspace $workspace */
             $tableRows[] = [
                 $workspace->workspaceName->value,
+                $workspaceMetadata->classification->name,
                 $workspace->baseWorkspaceName?->value ?: '',
-                $workspace->workspaceTitle->value,
-                $workspace->workspaceOwner ?: '',
-                $workspace->workspaceDescription->value,
+                $workspaceMetadata->title->value,
+                $workspaceMetadata->description->value,
                 $workspace->status->value,
                 $workspace->currentContentStreamId->value,
             ];

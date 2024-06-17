@@ -82,6 +82,14 @@ final class ContentRepositoryRegistry
     }
 
     /**
+     * @return array<ContentRepositoryId>
+     */
+    public function getContentRepositoryIds(): array
+    {
+        return array_map(ContentRepositoryId::fromString(...), array_keys($this->settings['contentRepositories']));
+    }
+
+    /**
      * @internal for test cases only
      */
     public function resetFactoryInstance(ContentRepositoryId $contentRepositoryId): void

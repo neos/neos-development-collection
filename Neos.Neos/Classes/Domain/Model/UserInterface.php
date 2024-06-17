@@ -21,6 +21,12 @@ namespace Neos\Neos\Domain\Model;
  */
 interface UserInterface
 {
+
+    /**
+     * Returns the globally unique identifier for this user
+     */
+    public function getId(): UserId;
+
     /**
      * Returns a label which can be used as a human-friendly identifier for this user, for example his or her first
      * and last name.
