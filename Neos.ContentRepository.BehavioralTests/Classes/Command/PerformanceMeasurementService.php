@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -142,6 +143,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
                     null,
                     SerializedPropertyValues::createEmpty(),
                     NodeAggregateClassification::CLASSIFICATION_REGULAR,
+                    SerializedNodeReferences::createEmpty(),
                 );
                 $sumSoFar++;
                 $this->createHierarchy(

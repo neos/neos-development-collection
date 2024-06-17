@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -34,7 +35,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final readonly class CreateNodeAggregateWithNode implements CommandInterface
 {
-    /**
+    /**x
      * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of the node type of the new node
@@ -44,6 +45,7 @@ final readonly class CreateNodeAggregateWithNode implements CommandInterface
      * @param NodeAggregateId|null $succeedingSiblingNodeAggregateId Node aggregate id of the node's succeeding sibling (optional). If not given, the node will be added as the parent's first child
      * @param NodeName|null $nodeName The node's optional name. Set if there is a meaningful relation to its parent that should be named.
      * @param NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds Predefined aggregate ids of tethered child nodes per path. For any tethered node that has no matching entry in this set, the node aggregate id is generated randomly. Since tethered nodes may have tethered child nodes themselves, this works for multiple levels ({@see self::withTetheredDescendantNodeAggregateIds()})
+     * @param NodeReferencesToWrite|null $references Initial references this node will have (optional). If not given, no references are created
      */
     private function __construct(
         public WorkspaceName $workspaceName,
@@ -55,6 +57,7 @@ final readonly class CreateNodeAggregateWithNode implements CommandInterface
         public ?NodeAggregateId $succeedingSiblingNodeAggregateId,
         public ?NodeName $nodeName,
         public NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds,
+        public ?NodeReferencesToWrite $references,
     ) {
     }
 
@@ -66,10 +69,11 @@ final readonly class CreateNodeAggregateWithNode implements CommandInterface
      * @param NodeAggregateId $parentNodeAggregateId The id of the node aggregate underneath which the new node is added
      * @param NodeAggregateId|null $succeedingSiblingNodeAggregateId Node aggregate id of the node's succeeding sibling (optional). If not given, the node will be added as the parent's first child
      * @param PropertyValuesToWrite|null $initialPropertyValues The node's initial property values. Will be merged over the node type's default property values
+     * @param NodeReferencesToWrite|null $references Initial references this node will have (optional). If not given, no references are created
      */
-    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, ?NodeAggregateId $succeedingSiblingNodeAggregateId = null, ?PropertyValuesToWrite $initialPropertyValues = null): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, ?NodeAggregateId $succeedingSiblingNodeAggregateId = null, ?PropertyValuesToWrite $initialPropertyValues = null, ?NodeReferencesToWrite $references = null): self
     {
-        return new self($workspaceName, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $parentNodeAggregateId, $initialPropertyValues ?: PropertyValuesToWrite::createEmpty(), $succeedingSiblingNodeAggregateId, null, NodeAggregateIdsByNodePaths::createEmpty());
+        return new self($workspaceName, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $parentNodeAggregateId, $initialPropertyValues ?: PropertyValuesToWrite::createEmpty(), $succeedingSiblingNodeAggregateId, null, NodeAggregateIdsByNodePaths::createEmpty(), $references);
     }
 
     public function withInitialPropertyValues(PropertyValuesToWrite $newInitialPropertyValues): self
@@ -84,6 +88,7 @@ final readonly class CreateNodeAggregateWithNode implements CommandInterface
             $this->succeedingSiblingNodeAggregateId,
             $this->nodeName,
             $this->tetheredDescendantNodeAggregateIds,
+            $this->references,
         );
     }
 
@@ -127,6 +132,7 @@ final readonly class CreateNodeAggregateWithNode implements CommandInterface
             $this->succeedingSiblingNodeAggregateId,
             $this->nodeName,
             $tetheredDescendantNodeAggregateIds,
+            $this->references,
         );
     }
 
@@ -148,6 +154,26 @@ final readonly class CreateNodeAggregateWithNode implements CommandInterface
             $this->succeedingSiblingNodeAggregateId,
             $nodeName,
             $this->tetheredDescendantNodeAggregateIds,
+            $references,
+        );
+    }
+
+    /**
+     * Adds references to this creation command
+     */
+    public function withReferences(NodeReferencesToWrite $references): self
+    {
+        return new self(
+            $this->workspaceName,
+            $this->nodeAggregateId,
+            $this->nodeTypeName,
+            $this->originDimensionSpacePoint,
+            $this->parentNodeAggregateId,
+            $this->initialPropertyValues,
+            $this->succeedingSiblingNodeAggregateId,
+            $this->nodeName,
+            $this->tetheredDescendantNodeAggregateIds,
+            $references,
         );
     }
 }

@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
@@ -275,6 +276,12 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
         $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
 
+        $references = SerializedNodeReferences::createEmpty();
+        foreach ($serializedPropertyValuesAndReferences->references as $referencePropertyName => $destinationNodeAggregateIds) {
+            $localReferences = SerializedNodeReferences::fromReferenceNameAndNodeAggregateIds(ReferenceName::fromString($referencePropertyName), $destinationNodeAggregateIds);
+            $references = $references->merge($localReferences);
+        }
+
         if ($this->isAutoCreatedChildNode($parentNodeAggregate->nodeTypeName, $nodeName) && !$this->visitedNodes->containsNodeAggregate($nodeAggregateId)) {
             // Create tethered node if the node was not found before.
             // If the node was already visited, we want to create a node variant (and keep the tethering status)
@@ -291,6 +298,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     $nodeName,
                     $serializedPropertyValuesAndReferences->serializedPropertyValues,
                     NodeAggregateClassification::CLASSIFICATION_TETHERED,
+                    $references,
                 )
             );
         } elseif ($this->visitedNodes->containsNodeAggregate($nodeAggregateId)) {
@@ -314,6 +322,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     $nodeName,
                     $serializedPropertyValuesAndReferences->serializedPropertyValues,
                     NodeAggregateClassification::CLASSIFICATION_REGULAR,
+                    $references,
                 )
             );
         }
@@ -322,7 +331,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $this->exportEvent(new SubtreeWasTagged($this->workspaceName, $this->contentStreamId, $nodeAggregateId, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->toDimensionSpacePointSet()), SubtreeTag::disabled()));
         }
         foreach ($serializedPropertyValuesAndReferences->references as $referencePropertyName => $destinationNodeAggregateIds) {
-            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->workspaceName, $this->contentStreamId, $nodeAggregateId, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), ReferenceName::fromString($referencePropertyName), SerializedNodeReferences::fromNodeAggregateIds($destinationNodeAggregateIds));
+            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->workspaceName, $this->contentStreamId, $nodeAggregateId, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), SerializedNodeReferences::fromReferences(array_map(static function ($nodeAggregateId) use ($referencePropertyName) {return new SerializedNodeReference(ReferenceName::fromString($referencePropertyName), $nodeAggregateId, null);}, iterator_to_array($destinationNodeAggregateIds->getIterator()))));
         }
 
         $this->visitedNodes->add($nodeAggregateId, new DimensionSpacePointSet([$originDimensionSpacePoint->toDimensionSpacePoint()]), $nodeTypeName, $nodePath, $parentNodeAggregate->nodeAggregateId);

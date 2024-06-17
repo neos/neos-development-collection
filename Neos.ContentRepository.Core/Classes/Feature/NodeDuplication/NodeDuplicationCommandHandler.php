@@ -214,6 +214,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             $targetNodeName,
             $nodeToInsert->propertyValues,
             $nodeToInsert->nodeAggregateClassification,
+            $nodeToInsert->nodeReferences,
         );
 
         foreach ($nodeToInsert->childNodes as $childNodeToInsert) {

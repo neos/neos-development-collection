@@ -43,8 +43,7 @@ Feature: Node References with Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName         | "referenceProperty"               |
-      | references            | [{"target": "anthony-destinode"}] |
+      | references            | {"referenceProperty": [{"target": "anthony-destinode"}]} |
 
     When I am in workspace "live" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}

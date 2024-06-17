@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeDuplication\Dto;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
@@ -30,7 +31,7 @@ final readonly class NodeSubtreeSnapshot implements \JsonSerializable
         public ?NodeName $nodeName,
         public NodeAggregateClassification $nodeAggregateClassification,
         public SerializedPropertyValues $propertyValues,
-        public NodeReferencesSnapshot $nodeReferences,
+        public SerializedNodeReferences $nodeReferences,
         public array $childNodes
     ) {
         foreach ($childNodes as $childNode) {
@@ -58,7 +59,7 @@ final readonly class NodeSubtreeSnapshot implements \JsonSerializable
             $sourceNode->name,
             $sourceNode->classification,
             $properties->serialized(),
-            NodeReferencesSnapshot::fromReferences(
+            SerializedNodeReferences::fromReadReferences(
                 $subgraph->findReferences($sourceNode->aggregateId, FindReferencesFilter::create())
             ),
             $childNodes
@@ -105,7 +106,7 @@ final readonly class NodeSubtreeSnapshot implements \JsonSerializable
             isset($array['nodeName']) ? NodeName::fromString($array['nodeName']) : null,
             NodeAggregateClassification::from($array['nodeAggregateClassification']),
             SerializedPropertyValues::fromArray($array['propertyValues']),
-            NodeReferencesSnapshot::fromArray($array['nodeReferences']),
+            SerializedNodeReferences::fromArray($array['nodeReferences']),
             $childNodes
         );
     }

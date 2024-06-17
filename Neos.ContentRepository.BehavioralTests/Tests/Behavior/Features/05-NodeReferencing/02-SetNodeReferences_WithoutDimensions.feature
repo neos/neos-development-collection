@@ -67,8 +67,7 @@ Feature: Node References without Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName         | "referenceProperty"               |
-      | references            | [{"target": "anthony-destinode"}] |
+      | references            | {"referenceProperty": [{"target": "anthony-destinode"}]} |
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
@@ -84,8 +83,7 @@ Feature: Node References without Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                                                                                                                                                        |
       | sourceNodeAggregateId | "source-nodandaise"                                                                                                                                          |
-      | referenceName         | "referencePropertyWithProperty"                                                                                                                              |
-      | references            | [{"target": "anthony-destinode", "properties":{"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:dummy"}}] |
+      | references            | {"referencePropertyWithProperty": [{"target": "anthony-destinode", "properties":{"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:dummy"}}]} |
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
@@ -101,8 +99,7 @@ Feature: Node References without Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                                                         |
       | sourceNodeAggregateId | "source-nodandaise"                                           |
-      | referenceName         | "referencesProperty"                                          |
-      | references            | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
+      | references            | {"referencesProperty": [{"target": "berta-destinode"}, {"target": "carl-destinode"}]} |
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
@@ -124,8 +121,7 @@ Feature: Node References without Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                                                                                                                                                                                                                                                                                                                             |
       | sourceNodeAggregateId | "source-nodandaise"                                                                                                                                                                                                                                                                                                               |
-      | referenceName         | "referencesPropertyWithProperty"                                                                                                                                                                                                                                                                                                  |
-      | references            | [{"target":"berta-destinode", "properties":{"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Wednesday", "postalAddress":"PostalAddress:dummy"}}, {"target":"carl-destinode", "properties":{"text":"my other text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:anotherDummy"}}] |
+      | references            | {"referencesPropertyWithProperty": [{"target":"berta-destinode", "properties":{"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Wednesday", "postalAddress":"PostalAddress:dummy"}}, {"target":"carl-destinode", "properties":{"text":"my other text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:anotherDummy"}}]} |
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
@@ -147,14 +143,12 @@ Feature: Node References without Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                                                         |
       | sourceNodeAggregateId | "source-nodandaise"                                           |
-      | references            | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
-      | referenceName         | "referencesProperty"                                          |
+      | references            | {"referencesProperty": [{"target": "berta-destinode"}, {"target": "carl-destinode"}]} |
 
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | references            | [{"target": "anthony-destinode"}] |
-      | referenceName         | "referencesProperty"              |
+      | references            | {"referencesProperty": [{"target": "anthony-destinode"}]} |
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
@@ -177,14 +171,12 @@ Feature: Node References without Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                                                         |
       | sourceNodeAggregateId | "source-nodandaise"                                           |
-      | references            | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
-      | referenceName         | "referencesProperty"                                          |
+      | references            | {"referencesProperty": [{"target": "berta-destinode"}, {"target": "carl-destinode"}]} |
 
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                                         |
       | sourceNodeAggregateId | "source-nodandaise"                                           |
-      | references            | [{"target": "carl-destinode"}, {"target": "berta-destinode"}] |
-      | referenceName         | "referencesProperty"                                          |
+      | references            | {"referencesProperty": [{"target": "carl-destinode"}, {"target": "berta-destinode"}]} |
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
@@ -197,14 +189,12 @@ Feature: Node References without Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                                                         |
       | sourceNodeAggregateId | "source-nodandaise"                                           |
-      | references            | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
-      | referenceName         | "referencesProperty"                                          |
+      | references            | {"referencesProperty": [{"target": "berta-destinode"}, {"target": "carl-destinode"}]} |
 
     And the command SetNodeReferences is executed with payload:
-      | Key                   | Value                |
-      | sourceNodeAggregateId | "source-nodandaise"  |
-      | references            | []                   |
-      | referenceName         | "referencesProperty" |
+      | Key                   | Value                       |
+      | sourceNodeAggregateId | "source-nodandaise"         |
+      | references            | {"referencesProperty": []}  |
 
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -221,14 +211,12 @@ Feature: Node References without Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | references            | [{"target": "anthony-destinode"}] |
-      | referenceName         | "referenceProperty"               |
+      | references            | {"referenceProperty": [{"target": "anthony-destinode"}]} |
 
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "node-wan-kenodi"                 |
-      | references            | [{"target": "anthony-destinode"}] |
-      | referenceName         | "referenceProperty"               |
+      | references            | {"referenceProperty": [{"target": "anthony-destinode"}]} |
 
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
     And I expect this node to be referenced by:
@@ -240,8 +228,7 @@ Feature: Node References without Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                   | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | references            | [{"target": "anthony-destinode"}] |
-      | referenceName         | "restrictedReferenceProperty"     |
+      | references            | {"restrictedReferenceProperty": [{"target": "anthony-destinode"}]} |
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
