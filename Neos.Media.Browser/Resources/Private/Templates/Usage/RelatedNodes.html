@@ -121,7 +121,7 @@
                         </f:if>
                         </td>
                         <td>
-                            <f:if condition="{userWorkspace} == {nodeInformation.workspace}">
+                            <f:if condition="{userWorkspaceName} == {nodeInformation.workspace.workspaceName.value}">
                                 <f:then>
                                     <i class="fas fa-user"
                                        title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}"

@@ -46,9 +46,6 @@ use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Security\Account;
-use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
@@ -58,7 +55,6 @@ use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
 use Neos\Neos\Domain\Workspace\DiscardAllChanges;
 use Neos\Neos\Domain\Workspace\PublishAllChanges;
 use Neos\Neos\Domain\Workspace\WorkspaceProvider;
@@ -84,12 +80,6 @@ class WorkspaceController extends AbstractModuleController
     protected SiteRepository $siteRepository;
 
     #[Flow\Inject]
-    protected PropertyMapper $propertyMapper;
-
-    #[Flow\Inject]
-    protected Context $securityContext;
-
-    #[Flow\Inject]
     protected UserService $domainUserService;
 
     #[Flow\Inject]
@@ -107,26 +97,18 @@ class WorkspaceController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        /** @var ?Account $currentAccount */
-        $currentAccount = $this->securityContext->getAccount();
-        if ($currentAccount === null) {
-            throw new \RuntimeException('No account is authenticated', 1710068839);
-        }
-        $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-            WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
-        );
-        if (is_null($userWorkspace)) {
-            throw new \RuntimeException('Current user has no workspace', 1645485990);
-        }
+        $personalWorkspace = $this->workspaceProvider->providePrimaryPersonalWorkspaceForCurrentUser($contentRepositoryId);
+        $personalContentRepositoryWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($personalWorkspace->name);
+        assert($personalContentRepositoryWorkspace instanceof Workspace);
 
         $workspacesAndCounts = [
-            $userWorkspace->workspaceName->value => [
-                'workspace' => $userWorkspace,
-                'changesCounts' => $this->computeChangesCount($userWorkspace, $contentRepository),
+            $personalWorkspace->name->value => [
+                'workspace' => $personalContentRepositoryWorkspace,
+                'changesCounts' => $this->computeChangesCount($personalContentRepositoryWorkspace, $contentRepository),
                 'canPublish' => false,
                 'canManage' => false,
                 'canDelete' => false,
-                'workspaceOwnerHumanReadable' => $userWorkspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(UserId::fromString($userWorkspace->workspaceOwner))?->getLabel() : null
+                'workspaceOwnerHumanReadable' => $this->domainUserService->getCurrentUser()?->getLabel()
             ]
         ];
 
@@ -149,7 +131,7 @@ class WorkspaceController extends AbstractModuleController
             }
         }
 
-        $this->view->assign('userWorkspace', $userWorkspace);
+        $this->view->assign('userWorkspace', $personalContentRepositoryWorkspace);
         $this->view->assign('workspacesAndChangeCounts', $workspacesAndCounts);
     }
 
@@ -446,16 +428,9 @@ class WorkspaceController extends AbstractModuleController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        /** @var ?Account $currentAccount */
-        $currentAccount = $this->securityContext->getAccount();
-        if ($currentAccount === null) {
-            throw new \RuntimeException('No account is authenticated', 1710068880);
-        }
-        $personalWorkspaceName = WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier());
-        /** @var Workspace $personalWorkspace */
-        $personalWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($personalWorkspaceName);
+        $personalWorkspace = $this->workspaceProvider->providePrimaryPersonalWorkspaceForCurrentUser($contentRepositoryId);
+        $personalWorkspace->changeBaseWorkspace($targetWorkspace->workspaceName);
 
         /** @todo do something else
          * if ($personalWorkspace !== $targetWorkspace) {
@@ -477,10 +452,10 @@ class WorkspaceController extends AbstractModuleController
          */
 
         $targetNodeAddressInPersonalWorkspace = new NodeAddress(
-            $personalWorkspace->currentContentStreamId,
+            $personalWorkspace->getCurrentContentStreamId(),
             $targetNode->dimensionSpacePoint,
             $targetNode->aggregateId,
-            $personalWorkspace->workspaceName
+            $personalWorkspace->name
         );
 
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
