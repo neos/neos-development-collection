@@ -66,12 +66,12 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           ({I18n.translate('badge.isUserWorkspace', 'This is your workspace', [], 'Main', 'Neos.Workspace.Ui')})
         </span>
       </td>
-      <td>{props.workspaceData.workspace.workspaceDescription.value || '–'}</td>
+      <td class="workspace-description-column">{props.workspaceData.workspace.workspaceDescription.value || '–'}</td>
       <td>{props.workspaceData.workspaceOwnerHumanReadable || '–'}</td>
       <td>–</td>
       <td>{props.workspaceData.workspace.status.value || '–'}</td>
       <td>–</td>
-      <td>
+      <td class="workspace-action-column">
         <a class="neos-button"
           title={I18n.translate(workspace.changesCounts.total ? 'table.column.action.show.title' : 'table.column.action.show.disabled.title', 'Show changes in workspace ' + workspace.title, { workspace: workspace.title }, 'Main', 'Neos.Workspace.Ui')}
           disabled={workspace.changesCounts.total == 0}

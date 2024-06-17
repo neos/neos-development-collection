@@ -1,5 +1,5 @@
 .workspace-table {
-  --column-color: var(--grayDark);
+  --column-color: var(--grayMedium);
   --indent-level: 0;
 
   margin-top: 1em;
@@ -37,14 +37,24 @@
   width: 20px !important;
 }
 
-  /**
-   * The arrow icon to show sub-workspace indentation
-   */
-.workspace-label-column .fas {
+/**
+ * The arrow icon to show sub-workspace indentation
+ */
+td.workspace-description-column,
+td.workspace-label-column {
+  width: 25%;
+}
+td.workspace-label-column .fas {
   transform: rotate(90deg);
   vertical-align: middle;
-  margin-left: calc((var(--indent-level) - 2) * 1.2ch);
+  margin-left: calc((var(--indent-level, 0) - 2) * 1.2ch);
   margin-right: 0.5ch;
+}
+
+td.workspace-action-column {
+  background-color: var(--grayMedium);
+  width: 1%;
+  white-space: nowrap;
 }
 
 .workspace__info-text {
@@ -70,6 +80,9 @@
   text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4);
 }
 
+/**
+ * Workspace entry states and types
+ */
 .workspace--stale {
   --column-color: var(--grayDark);
 }
