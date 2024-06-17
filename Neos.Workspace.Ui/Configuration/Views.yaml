@@ -10,4 +10,5 @@
   options:
     fusionPathPatterns:
       - 'resource://Neos.Fusion/Private/Fusion'
+      - 'resource://Neos.Fusion.Form/Private/Fusion'
       - 'resource://Neos.Workspace.Ui/Private/Fusion'

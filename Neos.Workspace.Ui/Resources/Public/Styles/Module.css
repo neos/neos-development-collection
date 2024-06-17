@@ -89,3 +89,56 @@ td.workspace-action-column {
 .workspace--personal-workspace {
   --column-color: var(--blueDark);
 }
+
+/**
+ * Popover styles
+ */
+[popover] {
+  /* Undo css reset */
+  margin: auto;
+
+  /* Component styles */
+  color: white;
+  background: var(--grayDark);
+  border: 1px solid var(--grayLight);
+  padding: 0;
+  border-radius: 0;
+  outline: none;
+}
+
+[popover]::backdrop {
+  backdrop-filter: blur(3px);
+}
+
+[popover] header {
+  font-size: calc(var(--generalFontSize) + 2px);
+  margin: var(--defaultMargin);
+  line-height: calc(var(--generalFontSize) + 4px);
+  box-sizing: border-box;
+}
+
+[popover] section {
+  margin: var(--defaultMargin);
+  color: var(--textSubtleLight);
+}
+
+[popover] .neos-close {
+  color: white;
+  font-size: calc(var(--generalFontSize) + 4px);
+  background: transparent;
+  width: var(--unit);
+  height: var(--unit);
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-left: none;
+  text-shadow: none;
+}
+
+[popover] footer {
+  background: transparent;
+  margin: var(--defaultMargin);
+  display: flex;
+  gap: var(--spacing-Full);
+  justify-content: flex-end;
+}

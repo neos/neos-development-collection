@@ -2,6 +2,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
   userWorkspace = ''
   workspaceName = ''
   workspaceData = ${{}}
+  canManage = false
   level = 0
 
   @private {
@@ -73,19 +74,33 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
       <td>–</td>
       <td class="workspace-action-column">
         <a class="neos-button"
-          title={I18n.translate(workspace.changesCounts.total ? 'table.column.action.show.title' : 'table.column.action.show.disabled.title', 'Show changes in workspace ' + workspace.title, { workspace: workspace.title }, 'Main', 'Neos.Workspace.Ui')}
-          disabled={workspace.changesCounts.total == 0}
-          href={private.showWorkspaceUri}
+           title={I18n.translate(workspace.changesCounts.total ? 'table.column.action.show.title' : 'table.column.action.show.disabled.title', 'Show changes in workspace ' + workspace.title, { workspace: workspace.title }, 'Main', 'Neos.Workspace.Ui')}
+           disabled={workspace.changesCounts.total == 0}
+           href={private.showWorkspaceUri}
         >
-          <i class="fas fa-review"></i> {I18n.translate('table.column.action.show', 'Show', [], 'Main', 'Neos.Workspace.Ui')}
+          <i
+            class="fas fa-review"></i> {I18n.translate('table.column.action.show', 'Show', [], 'Main', 'Neos.Workspace.Ui')}
         </a>
-        <button class="neos-button" type="button"
-            title={I18n.translate('table.column.action.edit', 'Edit workspace ' + workspace.title, {workspace: workspace.title}, 'Main', 'Neos.Workspace.Ui')}
-            onClick=""
-            disabled={!workspace.canManage || workspace.changesCounts == null}
+        <button
+          class="neos-button"
+          type="button"
+          title={I18n.translate('table.column.action.edit', 'Edit workspace ' + workspace.title, {workspace: workspace.title}, 'Main', 'Neos.Workspace.Ui')}
+          onClick=""
+          disabled={!props.canManage || props.workspaceData.changesCounts == null}
         >
           <i class="fas fa-pencil-alt"></i>
         </button>
+        <button
+          class="neos-button neos-button-danger"
+          title={I18n.translate('workspaces.deleteWorkspace', 'Delete workspace', [], 'Main', 'Neos.Workspace.Ui')}
+          popovertarget={'workspace-modal-delete-' + props.workspaceName}
+        >
+          <i class="fas fa-trash-alt icon-white"></i>
+        </button>
+        <Neos.Workspace.Ui:Component.Modal.Delete
+          workspaceName={props.workspaceName}
+          workspaceTitle={props.workspaceData.workspace.workspaceTitle.value}
+        />
       </td>
     </tr>
   `

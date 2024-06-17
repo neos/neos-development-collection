@@ -1,0 +1,50 @@
+prototype(Neos.Workspace.Ui:Component.Modal.Delete) < prototype(Neos.Fusion:Component) {
+  workspaceName = ''
+
+  @private {
+    popoverId = ${'workspace-modal-delete-' + props.workspaceName}
+  }
+
+  renderer = afx`
+    <div popover id={private.popoverId}>
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          {I18n.translate('workspaces.dialog.confirmWorkspaceDeletion', 'Do you really want to delete the workspace?', [props.workspaceTitle], 'Main', 'Neos.Workspace.Ui')}
+        </div>
+      </header>
+      <section>
+        <p>{I18n.translate('workspaces.dialog.thisWillDeleteTheWorkspace', 'This will delete the workspace including all unpublished content. This operation cannot be undone.', [], 'Modules', 'Neos.Workspace.Ui')}</p>
+      </section>
+      <footer>
+        <button
+          type="button"
+          class="neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          {I18n.translate('cancel', 'Cancel', [], 'Modules', 'Neos.Workspace.Ui')}
+        </button>
+        <Neos.Fusion.Form:Form
+          form.target.action="delete"
+          form.target.arguments.workspaceName={props.workspaceName}
+          class="neos-inline"
+        >
+          <button
+            type="submit"
+            class="neos-button neos-button-danger"
+          >
+            {I18n.translate('workspaces.yesDeleteWorkspace', 'Yes, delete the workspace', [], 'Modules', 'Neos.Workspace.Ui')}
+          </button>
+        </Neos.Fusion.Form:Form>
+      </footer>
+    </div>
+  `
+}
