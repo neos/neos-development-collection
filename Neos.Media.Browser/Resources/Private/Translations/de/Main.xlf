@@ -2,9 +2,9 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Media.Browser" source-language="en" datatype="plaintext" target-language="de">
     <body>
-      <trans-unit id="dragHelp" xml:space="preserve" approved="yes">
+      <trans-unit id="dragHelp" xml:space="preserve" approved="no">
         <source>Drag and drop an asset on a collection / tag to add them to it.</source>
-        <target state="final">Asset per Drag &amp; Drop auf eine Sammlung / einen Tag ziehen, um es hinzuzufügen.</target>
+        <target state="translated">Datei per Drag &amp; Drop auf eine Sammlung / einen Tag ziehen, um es hinzuzufügen.</target>
       </trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
         <source>Keep the filename "{0}"</source>
@@ -94,21 +94,21 @@
         <source>View</source>
         <target state="final">Ansicht</target>
       </trans-unit>
-      <trans-unit id="viewAsset" xml:space="preserve" approved="yes">
+      <trans-unit id="viewAsset" xml:space="preserve" approved="no">
         <source>View asset</source>
-        <target state="final">Asset anzeigen</target>
+        <target state="translated">Datei anzeigen</target>
       </trans-unit>
-      <trans-unit id="editAsset" xml:space="preserve" approved="yes">
+      <trans-unit id="editAsset" xml:space="preserve" approved="no">
         <source>Edit asset</source>
-        <target state="final">Asset bearbeiten</target>
+        <target state="translated">Datei bearbeiten</target>
       </trans-unit>
-      <trans-unit id="deleteAsset" xml:space="preserve" approved="yes">
+      <trans-unit id="deleteAsset" xml:space="preserve" approved="no">
         <source>Delete asset</source>
-        <target state="final">Asset löschen</target>
+        <target state="translated">Datei löschen</target>
       </trans-unit>
-      <trans-unit id="message.reallyDeleteAsset" xml:space="preserve" approved="yes">
+      <trans-unit id="message.reallyDeleteAsset" xml:space="preserve" approved="no">
         <source>Do you really want to delete asset "{0}"?</source>
-        <target state="final">Wollen Sie das Asset "{0}" wirklich löschen?</target>
+        <target state="translated">Wollen Sie das Datei "{0}" wirklich löschen?</target>
       </trans-unit>
       <trans-unit id="message.reallyDeleteCollection" xml:space="preserve" approved="yes">
         <source>Do you really want to delete collection "{0}"?</source>
@@ -118,17 +118,17 @@
         <source>Do you really want to delete tag "{0}"?</source>
         <target state="final">Wollen Sie das Tag "{0}" wirklich löschen?</target>
       </trans-unit>
-      <trans-unit id="message.willBeDeleted" xml:space="preserve" approved="yes">
+      <trans-unit id="message.willBeDeleted" xml:space="preserve" approved="no">
         <source>This will delete the asset.</source>
-        <target state="final">Dadurch wird das Asset gelöscht.</target>
+        <target state="translated">Dadurch wird die Datei gelöscht.</target>
       </trans-unit>
-      <trans-unit id="message.willDeleteCollection" xml:space="preserve" approved="yes">
+      <trans-unit id="message.willDeleteCollection" xml:space="preserve" approved="no">
         <source>This will delete the collection, but not the assets that it contains.</source>
-        <target state="final">Dadurch wird die Sammlung gelöscht, aber nicht die darin enthaltenen Assets.</target>
+        <target state="translated">Dadurch wird die Sammlung gelöscht, aber nicht die darin enthaltenen Dateien.</target>
       </trans-unit>
-      <trans-unit id="message.willDeleteTag" xml:space="preserve" approved="yes">
+      <trans-unit id="message.willDeleteTag" xml:space="preserve" approved="no">
         <source>This will delete the tag, but not the assets that has it.</source>
-        <target state="final">Dadurch wird das Tag gelöscht, aber nicht die Assets denen es zugeordnet wurde.</target>
+        <target state="translated">Dadurch wird das Tag gelöscht, aber nicht die Dateien denen es zugeordnet wurde.</target>
       </trans-unit>
       <trans-unit id="message.operationCannotBeUndone" xml:space="preserve" approved="yes">
         <source>This operation cannot be undone.</source>
@@ -150,9 +150,9 @@
         <source>Save</source>
         <target state="final">Speichern</target>
       </trans-unit>
-      <trans-unit id="message.confirmDelete" xml:space="preserve" approved="yes">
+      <trans-unit id="message.confirmDelete" xml:space="preserve" approved="no">
         <source>Yes, delete the asset</source>
-        <target state="final">Ja, Asset löschen</target>
+        <target state="translated">Ja, Datei löschen</target>
       </trans-unit>
       <trans-unit id="message.confirmDeleteCollection" xml:space="preserve" approved="yes">
         <source>Yes, delete the collection</source>
@@ -166,9 +166,9 @@
         <source>Edit {0}</source>
         <target state="final">{0} bearbeiten</target>
       </trans-unit>
-      <trans-unit id="search.title" xml:space="preserve" approved="yes">
+      <trans-unit id="search.title" xml:space="preserve" approved="no">
         <source>Search in assets</source>
-        <target state="final">Assets durchsuchen</target>
+        <target state="translated">Dateien durchsuchen</target>
       </trans-unit>
       <trans-unit id="search.placeholder" xml:space="preserve" approved="yes">
         <source>Search</source>
@@ -190,9 +190,9 @@
         <source>Filter options</source>
         <target state="final">Filteroptionen</target>
       </trans-unit>
-      <trans-unit id="filter.title.all" xml:space="preserve" approved="yes">
+      <trans-unit id="filter.title.all" xml:space="preserve" approved="no">
         <source>Display all asset types</source>
-        <target state="final">Alle Asset-Typen anzeigen</target>
+        <target state="translated">Alle Datei-Typen anzeigen</target>
       </trans-unit>
       <trans-unit id="filter.title.images" xml:space="preserve" approved="yes">
         <source>Only display image assets</source>
@@ -306,17 +306,17 @@
         <source>Create tag</source>
         <target state="final">Tag erstellen</target>
       </trans-unit>
-      <trans-unit id="tags.title.all" xml:space="preserve" approved="yes">
+      <trans-unit id="tags.title.all" xml:space="preserve" approved="no">
         <source>All assets</source>
-        <target state="final">Alle Assets</target>
+        <target state="translated">Alle Dateien</target>
       </trans-unit>
       <trans-unit id="tags.all" xml:space="preserve" approved="yes">
         <source>All</source>
         <target state="final">Alle</target>
       </trans-unit>
-      <trans-unit id="untaggedAssets" xml:space="preserve" approved="yes">
+      <trans-unit id="untaggedAssets" xml:space="preserve" approved="no">
         <source>Untagged assets</source>
-        <target state="final">Assets ohne Tags</target>
+        <target state="translated">Dateien ohne Tags</target>
       </trans-unit>
       <trans-unit id="untagged" xml:space="preserve" approved="yes">
         <source>Untagged</source>
@@ -338,9 +338,9 @@
         <source>Choose file</source>
         <target state="final">Datei auswählen</target>
       </trans-unit>
-      <trans-unit id="noAssetsFound" xml:space="preserve" approved="yes">
+      <trans-unit id="noAssetsFound" xml:space="preserve" approved="no">
         <source>No Assets found.</source>
-        <target state="final">Es wurden keine Assets gefunden.</target>
+        <target state="translated">Es wurden keine Dateien gefunden.</target>
       </trans-unit>
       <trans-unit id="basics" xml:space="preserve" approved="yes">
         <source>Basics</source>
@@ -408,7 +408,7 @@
       </trans-unit>
       <trans-unit id="next" xml:space="preserve">
         <source>Next</source>
-        <target state="translated">Nächste</target>
+        <target state="translated">Nächster</target>
       </trans-unit>
       <trans-unit id="previous" xml:space="preserve">
         <source>Previous</source>
@@ -438,17 +438,17 @@
         <source>Tagging the asset failed.</source>
         <target state="final">Beim Zuordnen des Tags ist ein Fehler aufgetreten.</target>
       </trans-unit>
-      <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve" approved="yes">
+      <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve" approved="no">
         <source>Adding the asset to the collection failed.</source>
-        <target state="final">Beim Hinzufügen des Assets zur Sammlung ist ein Fehler aufgetreten.</target>
+        <target state="translated">Beim Hinzufügen der Datei zur Sammlung ist ein Fehler aufgetreten.</target>
       </trans-unit>
       <trans-unit id="creating" xml:space="preserve" approved="yes">
         <source>Creating</source>
         <target state="final">Erstelle</target>
       </trans-unit>
-      <trans-unit id="deleteRelatedNodes" xml:space="preserve" approved="yes">
+      <trans-unit id="deleteRelatedNodes" xml:space="preserve" approved="no">
         <source>Asset could not be deleted, because there are still Nodes using it</source>
-        <target state="final">Asset konnte nicht gelöscht werden, da es noch von Knoten verwendet wird</target>
+        <target state="translated">Datei konnte nicht gelöscht werden, da es noch von Knoten verwendet wird</target>
       </trans-unit>
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]" approved="yes">
@@ -500,29 +500,29 @@
         <source>Preview current file</source>
         <target state="final">Vorschau der aktuellen Datei</target>
       </trans-unit>
-      <trans-unit id="couldNotReplaceAsset" xml:space="preserve" approved="yes">
+      <trans-unit id="couldNotReplaceAsset" xml:space="preserve" approved="no">
         <source>Could not replace asset</source>
-        <target state="final">Asset konnte nicht ersetzt werden</target>
+        <target state="translated">Datei konnte nicht ersetzt werden</target>
       </trans-unit>
-      <trans-unit id="assetHasBeenReplaced" xml:space="preserve" approved="yes">
+      <trans-unit id="assetHasBeenReplaced" xml:space="preserve" approved="no">
         <source>Asset "{0}" has been replaced.</source>
-        <target state="final">Asset "{0}" wurde ersetzt.</target>
+        <target state="translated">Datei "{0}" wurde ersetzt.</target>
       </trans-unit>
-      <trans-unit id="assetHasBeenUpdated" xml:space="preserve" approved="yes">
+      <trans-unit id="assetHasBeenUpdated" xml:space="preserve" approved="no">
         <source>Asset "{0}" has been updated.</source>
-        <target state="final">Asset "{0}" wurde aktualisiert.</target>
+        <target state="translated">Datei "{0}" wurde aktualisiert.</target>
       </trans-unit>
-      <trans-unit id="assetHasBeenAdded" xml:space="preserve" approved="yes">
+      <trans-unit id="assetHasBeenAdded" xml:space="preserve" approved="no">
         <source>Asset "{0}" has been added.</source>
-        <target state="final">Asset "{0}" wurde hinzugefügt.</target>
+        <target state="translated">Datei "{0}" wurde hinzugefügt.</target>
       </trans-unit>
-      <trans-unit id="assetHasBeenDeleted" xml:space="preserve" approved="yes">
+      <trans-unit id="assetHasBeenDeleted" xml:space="preserve" approved="no">
         <source>Asset "{0}" has been deleted.</source>
-        <target state="final">Asset "{0}" wurde gelöscht.</target>
+        <target state="translated">Datei "{0}" wurde gelöscht.</target>
       </trans-unit>
-      <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve" approved="yes">
+      <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve" approved="no">
         <source>Asset could not be deleted.</source>
-        <target state="final">Asset konnte nicht gelöscht werden.</target>
+        <target state="translated">Datei konnte nicht gelöscht werden.</target>
       </trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve" approved="yes">
         <source>Tag "{0}" already exists and was added to collection.</source>

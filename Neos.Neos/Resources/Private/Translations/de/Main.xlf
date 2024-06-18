@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="final">Inhaltstyp</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
-        <source>Path</source>
-        <target state="final">Pfad</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
-        <source>Relative Path</source>
-        <target state="final">Relativer Pfad</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve" approved="yes">
         <source>Version</source>
         <target state="final">Version</target>
@@ -519,29 +511,9 @@
         <source>Discard all</source>
         <target state="final">Alle verwerfen</target>
       </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
-        <source>Discard all changes</source>
-        <target state="final">Alle Änderungen verwerfen</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to discard all changes in this workspace?</source>
-        <target state="final">Sind Sie sicher, dass Sie alle Änderungen in diesem Workspace verwerfen möchten?</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-        <target state="final">Sind Sie sicher, dass Sie {numberOfChanges} Änderung(en) in diesem Arbeitsbereich verwerfen möchten?</target>
-      </trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
         <source>Publish all</source>
         <target state="final">Alles veröffentlichen</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
-        <source>Publish all changes</source>
-        <target state="final">Alle Änderungen veröffentlichen</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
-        <source>Are you sure that you want to publish all changes?</source>
-        <target state="final">Sind Sie sicher, dass Sie alle Änderungen veröffentlichen möchten?</target>
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
         <source>Pending changes</source>
@@ -1113,6 +1085,14 @@
       <trans-unit id="impersonate.label.restoreUserButton" xml:space="preserve" approved="no">
         <source>Back to user "{0}"</source>
         <target state="translated">Zurück zu Benutzer "{0}"</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="translated">Pfad</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="translated">Relativer Pfad</target>
       </trans-unit>
     </body>
   </file>

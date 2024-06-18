@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Workspace.Ui" source-language="en" datatype="plaintext" target-language="ru">
+    <body>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+        <target state="final">Назад</target>
+      </trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
+				<source>Cancel</source>
+        <target state="final">Отмена</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
+        <source>Path</source>
+        <target state="final">Путь</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
+        <source>Relative Path</source>
+        <target state="final">Относительный путь</target>
+      </trans-unit>
+      <!-- Management -->
+      <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
+				<source>Workspaces</source>
+        <target state="final">Рабочие области</target>
+      </trans-unit>
+      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
+				<source>Details for "{0}"</source>
+        <target state="final">Подробно об "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
+				<source>Create new workspace</source>
+        <target state="final">Создать новую рабочую область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.createWorkspace" xml:space="preserve" approved="yes">
+				<source>Create workspace</source>
+        <target state="final">Создать рабочую область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
+				<source>Delete workspace</source>
+        <target state="final">Удалить рабочую область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
+				<source>Edit workspace</source>
+        <target state="final">Редактировать рабочую область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve" approved="yes">
+				<source>Yes, delete the workspace</source>
+        <target state="final">Да, удалить рабочую область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="no">
+				<source>Edit workspace "{0}"</source>
+        <target state="translated">Редактировать рабочую область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
+				<source>Personal workspace</source>
+        <target state="final">Персональная рабочая область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.privateWorkspace" xml:space="preserve" approved="yes">
+				<source>Private workspace</source>
+        <target state="final">Приватная рабочая область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
+				<source>Internal workspace</source>
+        <target state="final">Внутренняя рабочая область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
+				<source>Read-only workspace</source>
+        <target state="final">Неизменяемая рабочая область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+        <target state="final">Название</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.description" xml:space="preserve" approved="yes">
+				<source>Description</source>
+        <target state="final">Описание</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve" approved="yes">
+				<source>Base workspace</source>
+        <target state="final">Базовая рабочая область</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
+				<source>Owner</source>
+        <target state="final">Владелец</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve" approved="yes">
+				<source>Visibility</source>
+        <target state="final">Видимость</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve" approved="yes">
+				<source>Private</source>
+        <target state="final">Приватный</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
+				<source>Only reviewers and administrators can access and modify this workspace</source>
+        <target state="final">Только рецензенты и администраторы имеют доступ к этой рабочей области и могут изменять её</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
+				<source>Internal</source>
+        <target state="final">Внутренняя</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
+				<source>Any logged in editor can see and modify this workspace.</source>
+        <target state="final">Любой вошедший в систему редактор может просматривать и редактировать эту рабочую область.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
+				<source>Changes</source>
+        <target state="final">Изменения</target>
+      </trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve" approved="yes">
+				<source>Open page in "{0}" workspace</source>
+        <target state="final">Открыть страницу в рабочей области "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
+				<source>This is your personal workspace which you can't delete.</source>
+        <target state="final">Это ваша личная рабочяя область, которую вы не можете удалить.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve" approved="yes">
+				<source>The workspace contains changes. To delete, discard the changes first.</source>
+        <target state="final">Рабочая область содержит изменения. Чтобы её удалить, отмените сначала эти изменения.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve" approved="yes">
+				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
+        <target state="final">Рабочая область не может быть перебазирована поверх другой, так как она всё ещё содержит изменения.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve" approved="yes">
+				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
+        <target state="final">Рабочая область не может быть удалена, поскольку другие рабочие области зависят от неё.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve" approved="yes">
+				<source>You don't have the permissions for deleting this workspace.</source>
+        <target state="final">У вас нет прав на удаление этой рабочей области.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve" approved="yes">
+				<source>Do you really want to delete the workspace "{0}"?</source>
+        <target state="final">Вы действительно хотите удалить рабочую область "{0}"?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve" approved="yes">
+				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
+        <target state="final">Это безвозвратно удалит рабочую область, включая все неопубликованные изменения. Эта операция не может быть отменена.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
+				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
+        <target state="final">Этот модуль содержит обзор всех элементов текущей рабочей области, позволяющий продолжать рецензирование и процесс публикации этих элементов.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
+				<source>Unpublished changes in workspace "{0}"</source>
+        <target state="final">Неопубликованные изменения в рабочей области "{0}"</target>
+      </trans-unit>
+      <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
+				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
+        <target state="final">дополнения: {new}, изменения: {changed}, удаления: {removed}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.review" xml:space="preserve" approved="yes">
+				<source>Review</source>
+        <target state="final">Проверить</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
+				<source>Discard selected changes</source>
+        <target state="final">Отклонить выбранные изменения</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
+				<source>Discard all changes</source>
+        <target state="final">Отменить все изменения</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
+				<source>Publish all changes</source>
+        <target state="final">Опубликовать все изменения</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve" approved="yes">
+				<source>Publish all changes to {0}</source>
+        <target state="final">Публиковать все изменения в {0}</target>
+      </trans-unit>
+      <trans-unit id="changedContentCaption" xml:space="preserve" approved="yes">
+				<source>Changed Content</source>
+        <target state="final">Измененное содержимое</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
+				<source>deleted</source>
+        <target state="final">удалено</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.created" xml:space="preserve" approved="yes">
+				<source>created</source>
+        <target state="final">создано</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
+				<source>moved</source>
+        <target state="final">перемещен</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
+				<source>hidden</source>
+        <target state="final">скрыт</target>
+      </trans-unit>
+      <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
+				<source>edited</source>
+        <target state="final">отредактирован</target>
+      </trans-unit>
+      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
+				<source>There are no unpublished changes in this workspace.</source>
+        <target state="final">Существуют неопубликованные изменения в этой рабочей области.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
+				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
+        <target state="final">Вы действительно хотите отменить все изменения в рабочей области "{0}"?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
+        <source>A workspace with this title already exists.</source>
+        <target state="final">Рабочая область с этим названием уже существует.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenUpdated" approved="yes">
+        <source>The workspace "{0}" has been updated.</source>
+        <target state="final">Рабочая область "{0}" была обновлена.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies" approved="yes">
+        <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
+        <target state="final">Рабочая область "{0}" не может быть удалена, потому что на ней основанны следующие рабочие области: {1}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes" approved="yes">
+        <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
+        <target state="final">Произошла ошибка при получении неопубликованных элементов из рабочей области "{0}", ничего не было удалено.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges" approved="yes">
+        <source>Your personal workspace contains changes, please publish or discard them first.</source>
+        <target state="final">Ваша персональная рабочая область содержит изменения, пожалуйста опубликуйте или отмените их сначала.</target>
+      </trans-unit>
+      <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
+          <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
+          <target state="final">Рабочая область "{0}" не была удалена, потому что она содержит {1} элемент.</target>
+        </trans-unit>
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
+          <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
+          <target state="final">Рабочая область "{0}" не была удалена, потому что она содержит {1} элемента.</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
+        <source>The workspace "{0}" has been removed.</source>
+        <target state="final">Рабочая область "{0}" была удалена.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenPublished" approved="yes">
+        <source>The selected change has been published.</source>
+        <target state="final">Выбранные изменения были опубликованы.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenDiscarded" approved="yes">
+        <source>The selected change has been discarded.</source>
+        <target state="final">Выбранное изменение было отменено.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenPublished" approved="yes">
+        <source>The selected changes have been published.</source>
+        <target state="final">Выбранные изменения были опубликованы.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded" approved="yes">
+        <source>The selected changes have been discarded.</source>
+        <target state="final">Выбранные изменения были отменены.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished" approved="yes">
+        <source>All changes from workspace "{0}" have been published to {1}.</source>
+        <target state="final">Все изменения из рабочей области "{0}" были опубликованы в {1}.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded" approved="yes">
+        <source>All changes from workspace "{0}" have been discarded.</source>
+        <target state="final">Все изменения из рабочей области "{0}" были отменены.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

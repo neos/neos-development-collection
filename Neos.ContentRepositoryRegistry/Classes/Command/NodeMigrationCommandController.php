@@ -51,16 +51,16 @@ class NodeMigrationCommandController extends CommandController
      * @param string $sourceWorkspace The workspace where the migration should be applied; by default "live"
      * @param bool $publishOnSuccess If true, the changes get published automatically after successful apply (default: true).
      * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
-     * @param string $contentRepositoryIdentifier
+     * @param string $contentRepository Identifier of the content repository. (Default: 'default')
      * @return void
      * @throws StopCommandException
      * @see neos.contentrepositoryregistry:nodemigration:execute
      */
-    public function executeCommand(string $version, string $sourceWorkspace = 'live', bool $publishOnSuccess = true, bool $force = false, string $contentRepositoryIdentifier = 'default'): void
+    public function executeCommand(string $version, string $sourceWorkspace = 'live', bool $publishOnSuccess = true, bool $force = false, string $contentRepository = 'default'): void
     {
         $sourceWorkspaceName = WorkspaceName::fromString($sourceWorkspace);
         $targetWorkspaceName = WorkspaceName::fromString(sprintf('migration-%s-%s', $sourceWorkspaceName->value, $version));
-        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
         try {
             $migrationConfiguration = $this->migrationFactory->getMigrationForVersion($version);
