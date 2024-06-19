@@ -13,6 +13,9 @@ namespace Neos\SiteKickstarter\Service;
  * source code.
  */
 
+/**
+ * @internal
+ */
 class SimpleTemplateRenderer
 {
     /**
