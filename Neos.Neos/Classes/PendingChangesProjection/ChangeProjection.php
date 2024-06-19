@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\PendingChangesProjection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
@@ -35,7 +34,6 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
@@ -54,18 +52,12 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 class ChangeProjection implements ProjectionInterface
 {
-    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
-
     /**
      * @var ChangeFinder|null Cache for the ChangeFinder returned by {@see getState()},
      * so that always the same instance is returned
      */
     private ?ChangeFinder $changeFinder = null;
 
-    /**
-     * @var array<string>|null
-     */
-    private ?array $liveContentStreamIdsRuntimeCache = null;
     private DbalCheckpointStorage $checkpointStorage;
 
     public function __construct(
@@ -143,20 +135,13 @@ class ChangeProjection implements ProjectionInterface
             'originDimensionSpacePointHash'
         ]);
 
-        $liveContentStreamsTable = new Table($this->tableNamePrefix . '_livecontentstreams', [
-            DbalSchemaFactory::ColumnForContentStreamId('contentstreamid')->setNotNull(true),
-            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setDefault('')->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION)
-        ]);
-        $liveContentStreamsTable->setPrimaryKey(['contentstreamid']);
-
-        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $liveContentStreamsTable]);
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable]);
         return DbalSchemaDiff::determineRequiredSqlStatements($connection, $schema);
     }
 
     public function reset(): void
     {
         $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix);
-        $this->dbal->exec('TRUNCATE ' . $this->tableNamePrefix . '_livecontentstreams');
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
@@ -164,7 +149,6 @@ class ChangeProjection implements ProjectionInterface
     public function canHandle(EventInterface $event): bool
     {
         return in_array($event::class, [
-            RootWorkspaceWasCreated::class,
             NodeAggregateWasMoved::class,
             NodePropertiesWereSet::class,
             NodeReferencesWereSet::class,
@@ -182,7 +166,6 @@ class ChangeProjection implements ProjectionInterface
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
-            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
             NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
             NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event),
@@ -214,24 +197,12 @@ class ChangeProjection implements ProjectionInterface
         return $this->changeFinder;
     }
 
-    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
-    {
-        try {
-            $this->dbal->insert($this->tableNamePrefix . '_livecontentstreams', [
-                'contentStreamId' => $event->newContentStreamId->value,
-                'workspaceName' => $event->workspaceName->value,
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf(
-                'Failed to insert root content stream id of the root workspace "%s": %s',
-                $event->workspaceName->value,
-                $e->getMessage()
-            ), 1689933563, $e);
-        }
-    }
-
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
+        if ($event->workspaceName->isLive()) {
+            return;
+        }
+
         $affectedDimensionSpacePoints = iterator_to_array($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet());
         $arbitraryDimensionSpacePoint = reset($affectedDimensionSpacePoints);
         if ($arbitraryDimensionSpacePoint instanceof DimensionSpacePoint) {
@@ -251,6 +222,9 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
+        if ($event->workspaceName->isLive()) {
+            return;
+        }
         $this->markAsChanged(
             $event->contentStreamId,
             $event->nodeAggregateId,
@@ -260,6 +234,9 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
     {
+        if ($event->workspaceName->isLive()) {
+            return;
+        }
         foreach ($event->affectedSourceOriginDimensionSpacePoints as $dimensionSpacePoint) {
             $this->markAsChanged(
                 $event->contentStreamId,
@@ -271,6 +248,9 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
+        if ($event->workspaceName->isLive()) {
+            return;
+        }
         $this->markAsCreated(
             $event->contentStreamId,
             $event->nodeAggregateId,
@@ -280,6 +260,9 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
+        if ($event->workspaceName->isLive()) {
+            return;
+        }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
             $this->markAsChanged(
                 $event->contentStreamId,
@@ -291,6 +274,9 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
+        if ($event->workspaceName->isLive()) {
+            return;
+        }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
             $this->markAsChanged(
                 $event->contentStreamId,
@@ -302,7 +288,7 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        if ($this->isLiveContentStream($event->contentStreamId)) {
+        if ($event->workspaceName->isLive()) {
             return;
         }
 
@@ -376,6 +362,9 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
+        if ($event->workspaceName->isLive()) {
+            return;
+        }
         $this->markAsCreated(
             $event->contentStreamId,
             $event->nodeAggregateId,
@@ -385,6 +374,9 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
+        if ($event->workspaceName->isLive()) {
+            return;
+        }
         $this->markAsCreated(
             $event->contentStreamId,
             $event->nodeAggregateId,
@@ -394,6 +386,9 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
+        if ($event->workspaceName->isLive()) {
+            return;
+        }
         $this->markAsCreated(
             $event->contentStreamId,
             $event->nodeAggregateId,
@@ -453,10 +448,6 @@ class ChangeProjection implements ProjectionInterface
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         callable $modifyFn
     ): void {
-        if ($this->isLiveContentStream($contentStreamId)) {
-            return;
-        }
-
         $change = $this->getChange($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint);
 
         if ($change === null) {
@@ -488,13 +479,5 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
 
         // We always allow root nodes
         return $changeRow ? Change::fromDatabaseRow($changeRow) : null;
-    }
-
-    private function isLiveContentStream(ContentStreamId $contentStreamId): bool
-    {
-        if ($this->liveContentStreamIdsRuntimeCache === null) {
-            $this->liveContentStreamIdsRuntimeCache = $this->dbal->fetchFirstColumn('SELECT contentstreamid FROM ' . $this->tableNamePrefix . '_livecontentstreams');
-        }
-        return in_array($contentStreamId->value, $this->liveContentStreamIdsRuntimeCache, true);
     }
 }
