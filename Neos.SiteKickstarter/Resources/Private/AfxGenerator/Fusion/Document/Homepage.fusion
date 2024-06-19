@@ -1,0 +1,1 @@
+prototype({packageKey}:Document.Homepage) < prototype({packageKey}:Document.AbstractPage)
