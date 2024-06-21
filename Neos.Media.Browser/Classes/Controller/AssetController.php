@@ -70,8 +70,11 @@ use Neos\Utility\MediaTypes;
  */
 class AssetController extends ActionController
 {
-    use CreateContentContextTrait;
     use BackendUserTranslationTrait;
+    use BackendUserTranslationTrait {
+        BackendUserTranslationTrait::initializeObject as BackendUserTranslationTraitInitializeObject;
+    }
+    use CreateContentContextTrait;
     use AddTranslatedFlashMessageTrait;
 
     protected const TAG_GIVEN = 0;
@@ -170,6 +173,8 @@ class AssetController extends ActionController
      */
     public function initializeObject(): void
     {
+        $this->backendUserTranslationTraitInitializeObject();
+
         $domain = $this->domainRepository->findOneByActiveRequest();
 
         // Set active asset collection to the current site's asset collection, if it has one, on the first view if a matching domain is found
