@@ -433,6 +433,12 @@
 			<trans-unit id="createMissingVariants" xml:space="preserve">
 				<source>Create missing variants</source>
 			</trans-unit>
+      <trans-unit id="assetImport.importInfo" xml:space="preserve">
+				<source>Asset is being imported. Please wait.</source>
+			</trans-unit>
+      <trans-unit id="assetImport.importInProcess" xml:space="preserve">
+				<source>Import still in process. Please wait.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
