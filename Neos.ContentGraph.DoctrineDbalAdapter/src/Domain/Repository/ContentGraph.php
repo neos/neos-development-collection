@@ -34,7 +34,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -117,17 +116,15 @@ final class ContentGraph implements ContentGraphInterface
         return $this->subgraphs[$index];
     }
 
-    /**
-     * @throws RootNodeAggregateDoesNotExist
-     */
     public function findRootNodeAggregateByType(
         NodeTypeName $nodeTypeName
-    ): NodeAggregate {
+    ): ?NodeAggregate {
         $rootNodeAggregates = $this->findRootNodeAggregates(
             FindRootNodeAggregatesFilter::create(nodeTypeName: $nodeTypeName)
         );
 
         if ($rootNodeAggregates->count() > 1) {
+            // todo drop this check as this is enforced by the write side? https://github.com/neos/neos-development-collection/pull/4339
             $ids = [];
             foreach ($rootNodeAggregates as $rootNodeAggregate) {
                 $ids[] = $rootNodeAggregate->nodeAggregateId->value;
@@ -139,12 +136,7 @@ final class ContentGraph implements ContentGraphInterface
             ));
         }
 
-        $rootNodeAggregate = $rootNodeAggregates->first();
-        if ($rootNodeAggregate === null) {
-            throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
-        }
-
-        return $rootNodeAggregate;
+        return $rootNodeAggregates->first();
     }
 
     public function findRootNodeAggregates(

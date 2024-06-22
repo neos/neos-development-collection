@@ -30,7 +30,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -95,7 +94,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
     public function findRootNodeAggregateByType(
         NodeTypeName $nodeTypeName
-    ): NodeAggregate {
+    ): ?NodeAggregate {
         $rootNodeAggregates = $this->findRootNodeAggregates(
             FindRootNodeAggregatesFilter::create(nodeTypeName: $nodeTypeName)
         );
@@ -112,13 +111,7 @@ final class ContentHypergraph implements ContentGraphInterface
             ));
         }
 
-        $rootNodeAggregate = $rootNodeAggregates->first();
-
-        if ($rootNodeAggregate === null) {
-            throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
-        }
-
-        return $rootNodeAggregate;
+        return $rootNodeAggregates->first();
     }
 
     public function findRootNodeAggregates(

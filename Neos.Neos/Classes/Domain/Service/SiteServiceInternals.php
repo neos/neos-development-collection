@@ -60,6 +60,10 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
                 NodeTypeNameFactory::forSites()
             );
+            if (!$sitesNodeAggregate) {
+                // nothing to prune, we could probably also return here directly?
+                continue;
+            }
             $siteNodeAggregate = $contentGraph->findChildNodeAggregateByName(
                 $sitesNodeAggregate->nodeAggregateId,
                 $siteNodeName->toNodeName()

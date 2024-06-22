@@ -28,7 +28,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
-use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamState;
@@ -241,13 +240,9 @@ trait CRTestSuiteTrait
             return $this->currentRootNodeAggregateId;
         }
 
-        try {
-            return $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findRootNodeAggregateByType(
-                NodeTypeName::fromString('Neos.Neos:Sites')
-            )->nodeAggregateId;
-        } catch (RootNodeAggregateDoesNotExist) {
-            return null;
-        }
+        return $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->findRootNodeAggregateByType(
+            NodeTypeName::fromString('Neos.Neos:Sites')
+        )->nodeAggregateId;
     }
 
     /**
