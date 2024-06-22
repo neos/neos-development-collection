@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
@@ -240,16 +241,21 @@ final class NodeFactory
     }
 
     /**
-     * @param iterable<int,array<string,string>> $nodeRows
-     * @return iterable<int,NodeAggregate>
+     * @param array<int,array<string,string>> $nodeRows
      * @throws NodeTypeNotFound
      */
     public function mapNodeRowsToNodeAggregates(
-        iterable $nodeRows,
+        array $nodeRows,
         WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
-    ): iterable {
+    ): NodeAggregates {
+        if (empty($nodeRows)) {
+            return NodeAggregates::createEmpty();
+        }
+
+        $nodeAggregates = [];
+
         $nodeTypeNames = [];
         $nodeNames = [];
         $occupiedDimensionSpacePointsByNodeAggregate = [];
@@ -315,7 +321,7 @@ final class NodeFactory
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateId => $nodes) {
             /** @var string $rawNodeAggregateId */
-            yield NodeAggregate::create(
+            $nodeAggregates[] = NodeAggregate::create(
                 $this->contentRepositoryId,
                 $workspaceName,
                 NodeAggregateId::fromString($rawNodeAggregateId),
@@ -341,6 +347,8 @@ final class NodeFactory
                 $contentStreamId,
             );
         }
+
+        return NodeAggregates::fromArray($nodeAggregates);
     }
 
     public static function extractNodeTagsFromJson(string $subtreeTagsJson): NodeTags
