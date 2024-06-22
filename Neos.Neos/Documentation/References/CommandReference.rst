@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-06-05
+The following reference was automatically generated from code on 2024-06-19
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -2967,15 +2967,13 @@ Package *NEOS.SITEKICKSTARTER*
 
 **Kickstart a new site package**
 
-This command generates a new site package with basic Fusion and Sites.xml
+This command generates a new site package with basic Fusion
 
 Arguments
 ^^^^^^^^^
 
 ``--package-key``
   The packageKey for your site
-``--site-name``
-  The siteName of your site
 
 
 
