@@ -259,10 +259,10 @@ final class CrCommandController extends CommandController
      */
     public function listCommand(bool $verbose = false): void
     {
-        /** @var list<Site> $sites */
-        $sites = [];
+        /** @var list<Site> $neosSiteEntities */
+        $neosSiteEntities = [];
         try {
-            $sites = iterator_to_array($this->siteRepository->findAll());
+            $neosSiteEntities = iterator_to_array($this->siteRepository->findAll());
         } catch (DatabaseException) {
             // doctrine might have not been migrated yet or no database is connected.
             $this->outputLine('<comment>Site repository is not accessible.</comment>');
@@ -285,7 +285,7 @@ final class CrCommandController extends CommandController
                 $this->outputLine('<comment>Live workspace in content repository %s not existing.</comment>', [$contentRepositoryId->value]);
             }
 
-            $siteNodes = [];
+            $currenSiteNodes = [];
             // todo wrap in catch runtime exception
             if ($liveContentGraph && $verbose) {
                 $sitesAggregate = null;
@@ -298,25 +298,30 @@ final class CrCommandController extends CommandController
                 if ($sitesAggregate) {
                     $siteNodeAggregates = $liveContentGraph->findChildNodeAggregates($sitesAggregate->nodeAggregateId);
                     foreach ($siteNodeAggregates as $siteNodeAggregate) {
-                        $siteNodes[] = $siteNodeAggregate->nodeName->value;
+                        $currenSiteNodes[] = $siteNodeAggregate->nodeName->value;
                     }
                 }
             }
 
-            $configuredSites = [];
-            foreach ($sites as $site) {
+            $currentNeosSiteEntities = [];
+            foreach ($neosSiteEntities as $site) {
                 if (!$site->getConfiguration()->contentRepositoryId->equals($contentRepositoryId)) {
                     continue;
                 }
-                $configuredSites[] = $site->getNodeName()->value;
+                $currentNeosSiteEntities[] = $site->getNodeName()->value;
             }
 
             if ($verbose) {
-                $connectedSites = array_intersect($configuredSites, $siteNodes);
-                $unconnectedSiteNodes = array_diff($configuredSites, $siteNodes);
-                $sitesString = ltrim((join(', ', $connectedSites) . ($unconnectedSiteNodes ? (', (detached: ' . join(', ', $unconnectedSiteNodes) . ')') : '')), ' ,') ?: '-';
+                $connectedWorkingSites = array_intersect($currentNeosSiteEntities, $currenSiteNodes);
+                $siteNodesWithoutMatchingNeosSiteEntity = array_diff($currenSiteNodes, $currentNeosSiteEntities);
+                $neosSiteEntitiesWithoutMatchingSiteNode = array_diff($currentNeosSiteEntities, $currenSiteNodes);
+                $sitesString = ltrim(
+                    (join(', ', $connectedWorkingSites)
+                        . ($siteNodesWithoutMatchingNeosSiteEntity ? (', (only node: ' . join(', ', $siteNodesWithoutMatchingNeosSiteEntity) . ')') : '')
+                        . ($neosSiteEntitiesWithoutMatchingSiteNode ? (', (only neos site: ' . join(', ', $neosSiteEntitiesWithoutMatchingSiteNode) . ')') : '')
+                    ), ' ,') ?: '-';
             } else {
-                $sitesString = join(', ', $configuredSites) ?: '-';
+                $sitesString = join(', ', $currentNeosSiteEntities) ?: '-';
             }
 
             $statusString = '-';
