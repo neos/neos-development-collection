@@ -17,6 +17,7 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
@@ -132,6 +133,16 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             // performance optimization: on full replay, we assume all caches to be flushed anyways
             // - so we do not need to do it individually here.
             return;
+        }
+
+        if ($eventInstance instanceof WorkspaceWasPartiallyDiscarded) {
+            foreach ($eventInstance->discardedNodes as $discardedNode) {
+                $this->scheduleCacheFlushJobForNodeAggregate(
+                    $this->contentRepository,
+                    $eventInstance->workspaceName,
+                    $discardedNode->nodeAggregateId
+                );
+            }
         }
 
         if (
