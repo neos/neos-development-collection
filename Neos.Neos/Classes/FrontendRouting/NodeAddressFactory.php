@@ -15,9 +15,11 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\Neos\FrontendRouting\NodeAddress as LegacyNodeAddress;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
@@ -40,7 +42,7 @@ class NodeAddressFactory
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
-    ): NodeAddress {
+    ): LegacyNodeAddress {
         $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
             $contentStreamId
         );
@@ -51,7 +53,7 @@ class NodeAddressFactory
                 . ' is not assigned to a workspace.'
             );
         }
-        return new NodeAddress(
+        return new LegacyNodeAddress(
             $contentStreamId,
             $dimensionSpacePoint,
             $nodeAggregateId,
@@ -59,7 +61,7 @@ class NodeAddressFactory
         );
     }
 
-    public function createFromNode(Node $node): NodeAddress
+    public function createFromNode(Node $node): LegacyNodeAddress
     {
         return $this->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
             $node->subgraphIdentity->contentStreamId,
@@ -68,7 +70,19 @@ class NodeAddressFactory
         );
     }
 
-    public function createFromUriString(string $serializedNodeAddress): NodeAddress
+    public function createCoreNodeAddressFromLegacyUriString(string $serializedNodeAddress): NodeAddress
+    {
+        $legacy = $this->createFromUriString($serializedNodeAddress);
+
+        return NodeAddress::create(
+            $this->contentRepository->id,
+            $legacy->workspaceName,
+            $legacy->dimensionSpacePoint,
+            $legacy->nodeAggregateId
+        );
+    }
+
+    public function createFromUriString(string $serializedNodeAddress): LegacyNodeAddress
     {
         // the reverse method is {@link NodeAddress::serializeForUri} - ensure to adjust it
         // when changing the serialization here
@@ -76,7 +90,7 @@ class NodeAddressFactory
         list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdSerialized)
             = explode('__', $serializedNodeAddress);
         $workspaceName = WorkspaceName::fromString($workspaceNameSerialized);
-        $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
+        $dimensionSpacePoint = DimensionSpacePoint::fromArray(json_decode(base64_decode($dimensionSpacePointSerialized), true));
         $nodeAggregateId = NodeAggregateId::fromString($nodeAggregateIdSerialized);
 
         $contentStreamId = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
@@ -88,7 +102,7 @@ class NodeAddressFactory
             );
         }
 
-        return new NodeAddress(
+        return new LegacyNodeAddress(
             $contentStreamId,
             $dimensionSpacePoint,
             $nodeAggregateId,
