@@ -128,6 +128,8 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
     When the command DiscardWorkspace is executed with payload:
       | Key           | Value         |
       | workspaceName | "user-editor" |
+    # FIXME we have to reevaluated the step as we cache the $currentContentStreamId and it will be outdated after the discard
+    # see https://github.com/neos/neos-development-collection/pull/5162
     And I am in workspace "user-editor" and dimension space point {}
     Then I expect node aggregate identifier "text-node-middle" to lead to no node
 
