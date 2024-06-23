@@ -280,7 +280,7 @@ final class CrCommandController extends CommandController
 
             $liveContentGraph = null;
             try {
-                $liveContentGraph = $contentRepository->getContentGraph(WorkspaceName::forLive());
+                $liveContentGraph = $contentRepository?->getContentGraph(WorkspaceName::forLive());
             } catch (WorkspaceDoesNotExist) {
                 $this->outputLine('<comment>Live workspace in content repository %s not existing.</comment>', [$contentRepositoryId->value]);
             }
@@ -298,6 +298,7 @@ final class CrCommandController extends CommandController
                 if ($sitesAggregate) {
                     $siteNodeAggregates = $liveContentGraph->findChildNodeAggregates($sitesAggregate->nodeAggregateId);
                     foreach ($siteNodeAggregates as $siteNodeAggregate) {
+                        assert($siteNodeAggregate->nodeName !== null);
                         $currenSiteNodes[] = $siteNodeAggregate->nodeName->value;
                     }
                 }
@@ -340,6 +341,7 @@ final class CrCommandController extends CommandController
 
                 if ($verbose) {
                     try {
+                        /** @phpstan-ignore neos.internal */
                         $contentStreamsString = sprintf('%d found', iterator_count($contentRepository->getContentStreamFinder()->findAllIds()));
                     } catch (\RuntimeException $e) {
                         $this->outputLine('<comment>ContentStreamFinder of %s not functional: %s.</comment>', [$contentRepositoryId->value, $e->getMessage()]);

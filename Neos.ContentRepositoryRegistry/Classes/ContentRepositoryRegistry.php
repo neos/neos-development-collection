@@ -86,6 +86,7 @@ final class ContentRepositoryRegistry
      */
     public function getContentRepositoryIds(): iterable
     {
+        /** @phpstan-ignore argument.type */
         return array_map(ContentRepositoryId::fromString(...), array_keys($this->settings['contentRepositories'] ?? []));
     }
 
