@@ -55,7 +55,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         try {
             $disconnectedHierarchyRelationRecords = $this->dbal->executeQuery($disconnectedHierarchyRelationStatement, [
                 'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value
-            ]);
+            ])->fetchAllAssociative();
         } catch (DbalException $e) {
             throw new \RuntimeException(sprintf('Failed to load disconnected hierarchy relations: %s', $e->getMessage()), 1716491735, $e);
         }
@@ -155,7 +155,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             FROM {$this->tableNames->node()}
             WHERE relationanchorpoint = :relationAnchorPoint
         SQL;
-        foreach ($ambiguouslySortedHierarchyRelationRecords as $hierarchyRelationRecord) {
+        foreach ($ambiguouslySortedHierarchyRelationRecords->fetchAllAssociative() as $hierarchyRelationRecord) {
             try {
                 $ambiguouslySortedNodeRecords = $this->dbal->fetchAllAssociative($ambiguouslySortedNodesStatement, [
                     'relationAnchorPoint' => $hierarchyRelationRecord['childnodeanchor']
