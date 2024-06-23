@@ -140,12 +140,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             // cleared, leading to presumably duplicate nodes in the UI.
             || $eventInstance instanceof NodeAggregateWasMoved
         ) {
-            $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId());
-            if ($workspace === null) {
-                return;
-            }
-            // FIXME: EventInterface->workspaceName
-            $contentGraph = $this->contentRepository->getContentGraph($workspace->workspaceName);
+            $contentGraph = $this->contentRepository->getContentGraph($eventInstance->workspaceName);
             $nodeAggregate = $contentGraph->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
@@ -157,7 +152,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
                     assert($parentNodeAggregate instanceof NodeAggregate);
                     $this->scheduleCacheFlushJobForNodeAggregate(
                         $this->contentRepository,
-                        $workspace->workspaceName,
+                        $eventInstance->workspaceName,
                         $parentNodeAggregate->nodeAggregateId
                     );
                 }
@@ -177,19 +172,20 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             !($eventInstance instanceof NodeAggregateWasRemoved)
             && $eventInstance instanceof EmbedsContentStreamAndNodeAggregateId
         ) {
-            $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId());
-            if ($workspace === null) {
-                return;
-            }
-            // FIXME: EventInterface->workspaceName
-            $nodeAggregate = $this->contentRepository->getContentGraph($workspace->workspaceName)->findNodeAggregateById(
+            // Hack, we don't declare the `workspaceName` as part of the `EmbedsContentStreamAndNodeAggregateId` events,
+            // but it will always exist!
+            // See https://github.com/neos/neos-development-collection/issues/5152
+            /** @phpstan-ignore property.notFound */
+            $workspaceName = $eventInstance->workspaceName;
+
+            $nodeAggregate = $this->contentRepository->getContentGraph($workspaceName)->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
 
             if ($nodeAggregate) {
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
-                    $workspace->workspaceName,
+                    $workspaceName,
                     $nodeAggregate->nodeAggregateId
                 );
             }
