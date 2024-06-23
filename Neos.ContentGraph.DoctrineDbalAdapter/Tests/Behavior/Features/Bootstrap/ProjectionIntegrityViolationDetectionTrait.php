@@ -16,7 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstra
 
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
@@ -68,7 +68,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     /**
      * @When /^I remove the following subtree tag:$/
      * @param TableNode $payloadTable
-     * @throws DBALException
+     * @throws Exception
      * @throws InvalidArgumentException
      */
     public function iRemoveTheFollowingSubtreeTag(TableNode $payloadTable): void
@@ -91,7 +91,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     /**
      * @When /^I add the following hierarchy relation:$/
-     * @throws DBALException
+     * @throws Exception
      */
     public function iAddTheFollowingHierarchyRelation(TableNode $payloadTable): void
     {
@@ -106,7 +106,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     /**
      * @When /^I change the following hierarchy relation's dimension space point hash:$/
      * @param TableNode $payloadTable
-     * @throws DBALException
+     * @throws Exception
      */
     public function iChangeTheFollowingHierarchyRelationsDimensionSpacePointHash(TableNode $payloadTable): void
     {
@@ -126,7 +126,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     /**
      * @When /^I change the following node's name:$/
      * @param TableNode $payloadTable
-     * @throws DBALException
+     * @throws Exception
      */
     public function iChangeTheFollowingNodesName(TableNode $payloadTable): void
     {
@@ -159,7 +159,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     /**
      * @When /^I set the following position:$/
      * @param TableNode $payloadTable
-     * @throws DBALException
+     * @throws Exception
      */
     public function iSetTheFollowingPosition(TableNode $payloadTable): void
     {
@@ -183,7 +183,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     /**
      * @When /^I detach the following reference relation from its source:$/
      * @param TableNode $payloadTable
-     * @throws DBALException
+     * @throws Exception
      */
     public function iDetachTheFollowingReferenceRelationFromItsSource(TableNode $payloadTable): void
     {
@@ -201,7 +201,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     /**
      * @When /^I set the following reference position:$/
      * @param TableNode $payloadTable
-     * @throws DBALException
+     * @throws Exception
      */
     public function iSetTheFollowingReferencePosition(TableNode $payloadTable): void
     {

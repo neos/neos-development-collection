@@ -163,7 +163,9 @@ class CrCommandController extends CommandController
         $connectionParams['port'] = isset($port) ? (int)$port : null;
         $connectionParams['dbname'] = $this->output->ask(sprintf('DB name? [%s] ',$connectionParams['dbname'] ?? ''), $connectionParams['dbname'] ?? null);
         $connectionParams['user'] = $this->output->ask(sprintf('DB user? [%s] ',$connectionParams['user'] ?? ''), $connectionParams['user'] ?? null);
+        /** @phpstan-ignore-next-line */
         $connectionParams['password'] = $this->output->askHiddenResponse(sprintf('DB password? [%s]', str_repeat('*', strlen($connectionParams['password'] ?? '')))) ?? $connectionParams['password'];
+        /** @phpstan-ignore-next-line  */
         return DriverManager::getConnection($connectionParams, new Configuration());
     }
 

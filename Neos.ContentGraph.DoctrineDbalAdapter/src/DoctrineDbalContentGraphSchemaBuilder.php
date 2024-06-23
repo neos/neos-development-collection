@@ -3,6 +3,7 @@
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
@@ -23,6 +24,10 @@ class DoctrineDbalContentGraphSchemaBuilder
     ) {
     }
 
+    /**
+     * @param AbstractSchemaManager<AbstractPlatform> $schemaManager
+     * @return Schema
+     */
     public function buildSchema(AbstractSchemaManager $schemaManager): Schema
     {
         return DbalSchemaFactory::createSchemaWithTables($schemaManager, [

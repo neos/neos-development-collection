@@ -17,7 +17,7 @@
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
-        "doctrine/dbal": "^2.13",
+        "doctrine/dbal": "^3.2",
         "symfony/serializer": "^6.3",
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",

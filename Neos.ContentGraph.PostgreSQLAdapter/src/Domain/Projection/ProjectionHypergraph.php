@@ -223,7 +223,7 @@ final class ProjectionHypergraph
         }
 
         $hierarchyHyperrelations = [];
-        foreach ($this->dbal->executeQuery($query, $parameters, $types) as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters, $types)->fetchAllAssociative() as $row) {
             $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
         }
 
@@ -258,7 +258,7 @@ final class ProjectionHypergraph
         $types['affectedDimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
 
         $hierarchyHyperrelations = [];
-        foreach ($this->dbal->executeQuery($query, $parameters, $types) as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters, $types)->fetchAllAssociative() as $row) {
             $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
         }
 
@@ -282,7 +282,7 @@ final class ProjectionHypergraph
         ];
 
         $referenceHyperrelations = [];
-        foreach ($this->dbal->executeQuery($query, $parameters) as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters)->fetchAllAssociative() as $row) {
             $referenceHyperrelations[] = ReferenceRelationRecord::fromDatabaseRow($row);
         }
 
@@ -290,7 +290,6 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException
      */
     public function findHierarchyHyperrelationRecordByParentNodeAnchor(

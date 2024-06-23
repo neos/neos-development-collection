@@ -344,9 +344,9 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @return iterable<NodeAggregate>
+     * @return \Traversable<NodeAggregate>
      */
-    private function mapQueryBuilderToNodeAggregates(QueryBuilder $queryBuilder): iterable
+    private function mapQueryBuilderToNodeAggregates(QueryBuilder $queryBuilder): \Traversable
     {
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $this->fetchRows($queryBuilder),

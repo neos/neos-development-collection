@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Workspace\Ui\Controller;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DbalException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
@@ -351,7 +351,7 @@ class WorkspaceController extends AbstractModuleController
      * @throws IndexOutOfBoundsException
      * @throws InvalidFormatPlaceholderException
      * @throws StopActionException
-     * @throws DBALException
+     * @throws DbalException
      */
     public function deleteAction(WorkspaceName $workspaceName): void
     {

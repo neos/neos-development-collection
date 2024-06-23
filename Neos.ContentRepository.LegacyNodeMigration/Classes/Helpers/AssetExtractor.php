@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
-use Doctrine\DBAL\Platforms\PostgreSQL100Platform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\LegacyNodeMigration\Exception\MigrationException;
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
@@ -32,7 +32,7 @@ final class AssetExtractor
             $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
             try {
                 // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
-                $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQL100Platform());
+                $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQLPlatform());
             } catch (\Throwable $e) {
                 throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s"): %s', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeTypeName->value, $e->getMessage()), 1656057030, $e);
             }

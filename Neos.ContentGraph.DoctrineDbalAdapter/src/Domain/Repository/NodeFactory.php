@@ -42,6 +42,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Traversable;
 
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
@@ -241,7 +242,7 @@ final class NodeFactory
 
     /**
      * @param iterable<int,array<string,string>> $nodeRows
-     * @return iterable<int,NodeAggregate>
+     * @return Traversable<int,NodeAggregate>
      * @throws NodeTypeNotFound
      */
     public function mapNodeRowsToNodeAggregates(
@@ -249,7 +250,7 @@ final class NodeFactory
         WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
-    ): iterable {
+    ): Traversable {
         $nodeTypeNames = [];
         $nodeNames = [];
         $occupiedDimensionSpacePointsByNodeAggregate = [];

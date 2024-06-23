@@ -2,9 +2,12 @@
 
 namespace Neos\Neos\FrontendRouting\Projection;
 
+use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -19,6 +22,12 @@ class DocumentUriPathSchemaBuilder
     ) {
     }
 
+    /**
+     * @param AbstractSchemaManager<AbstractPlatform> $schemaManager
+     * @return Schema
+     * @throws DbalException
+     * @throws SchemaException
+     */
     public function buildSchema(AbstractSchemaManager $schemaManager): Schema
     {
         $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [

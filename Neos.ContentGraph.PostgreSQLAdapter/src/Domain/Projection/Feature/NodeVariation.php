@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception as DbalException;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
@@ -197,7 +198,7 @@ trait NodeVariation
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DbalException
      */
     protected function copyNodeToOriginDimensionSpacePoint(
         NodeRecord $sourceNode,
@@ -219,7 +220,7 @@ trait NodeVariation
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception
+     * @throws DbalException
      */
     protected function replaceNodeRelationAnchorPoint(
         ContentStreamId $contentStreamId,
@@ -346,7 +347,7 @@ trait NodeVariation
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception
+     * @throws DbalException
      */
     protected function assignNewChildNodeToAffectedHierarchyRelations(
         ContentStreamId $contentStreamId,
@@ -371,7 +372,7 @@ trait NodeVariation
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception
+     * @throws DbalException
      */
     protected function assignNewParentNodeToAffectedHierarchyRelations(
         ContentStreamId $contentStreamId,
