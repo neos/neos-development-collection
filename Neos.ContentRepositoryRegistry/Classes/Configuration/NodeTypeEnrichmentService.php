@@ -66,7 +66,7 @@ class NodeTypeEnrichmentService
             $this->setLabels($nodeTypeName, $configuration['properties'], $superTypeConfigResolver, 'properties');
         }
         if (isset($configuration['references'])) {
-            $this->setLabels($nodeTypeName, $configuration['references'] , $superTypeConfigResolver, 'references');
+            $this->setLabels($nodeTypeName, $configuration['references'], $superTypeConfigResolver, 'references');
         }
     }
 
@@ -144,7 +144,7 @@ class NodeTypeEnrichmentService
                 );
             }
             if (isset($propertyConfiguration['properties'])) {
-                $this->setLabels($nodeTypeName, $propertyConfiguration['properties'] , $superTypeConfigResolver, $propertyName.'.properties');
+                $this->setLabels($nodeTypeName, $propertyConfiguration['properties'], $superTypeConfigResolver, $propertyName . '.properties');
             }
         }
     }
