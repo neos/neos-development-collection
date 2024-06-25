@@ -33,6 +33,11 @@ class ContentStreamCommandController extends CommandController
      */
     public function pruneCommand(string $contentRepository = 'default', bool $removeTemporary = false): void
     {
+        if (!$this->output->askConfirmation(sprintf('> This operation in "%s" cannot be reverted. Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentStreamPruner = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentStreamPrunerFactory());
 
@@ -54,6 +59,11 @@ class ContentStreamCommandController extends CommandController
      */
     public function pruneRemovedFromEventStreamCommand(string $contentRepository = 'default'): void
     {
+        if (!$this->output->askConfirmation(sprintf('> This operation in "%s" cannot be reverted. Are you sure to proceed? (y/n) ', $contentRepository), false)) {
+            $this->outputLine('<comment>Abort.</comment>');
+            return;
+        }
+
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentStreamPruner = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentStreamPrunerFactory());
 

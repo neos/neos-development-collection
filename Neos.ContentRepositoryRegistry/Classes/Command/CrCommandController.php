@@ -8,13 +8,21 @@ use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Cli\CommandController;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
 use Symfony\Component\Console\Output\Output;
 
 final class CrCommandController extends CommandController
@@ -23,6 +31,7 @@ final class CrCommandController extends CommandController
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly ProjectionReplayServiceFactory $projectionServiceFactory,
+        private readonly SiteRepository $siteRepository,
     ) {
         parent::__construct();
     }
@@ -243,5 +252,120 @@ final class CrCommandController extends CommandController
         $projectionService->resetAllProjections();
 
         $this->outputLine('<success>Done.</success>');
+    }
+
+    /**
+     * @param bool $verbose shows additional internal output regarding content-streams and nodes in the projection
+     */
+    public function listCommand(bool $verbose = false): void
+    {
+        /** @var list<Site> $neosSiteEntities */
+        $neosSiteEntities = [];
+        try {
+            $neosSiteEntities = iterator_to_array($this->siteRepository->findAll());
+        } catch (DatabaseException) {
+            // doctrine might have not been migrated yet or no database is connected.
+            $this->outputLine('<comment>Site repository is not accessible.</comment>');
+        }
+
+        $rows = [];
+        foreach ($this->contentRepositoryRegistry->getContentRepositoryIds() as $contentRepositoryId) {
+            $contentRepository = null;
+            try {
+                $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+            } catch (InvalidConfigurationException $exception) {
+                $this->outputLine('<comment>Content repository %s is not well configures: %s.</comment>', [$contentRepositoryId->value, $exception->getMessage()]);
+            }
+
+
+            $liveContentGraph = null;
+            try {
+                $liveContentGraph = $contentRepository?->getContentGraph(WorkspaceName::forLive());
+            } catch (WorkspaceDoesNotExist) {
+                $this->outputLine('<comment>Live workspace in content repository %s not existing.</comment>', [$contentRepositoryId->value]);
+            }
+
+            $currenSiteNodes = [];
+            // todo wrap in catch runtime exception
+            if ($liveContentGraph && $verbose) {
+                $sitesAggregate = null;
+                try {
+                    $sitesAggregate = $liveContentGraph->findRootNodeAggregateByType(NodeTypeNameFactory::forSites());
+                } catch (RootNodeAggregateDoesNotExist) {
+                    $this->outputLine('<comment>Sites root node does not exist in content repository %s.</comment>', [$contentRepositoryId->value]);
+                }
+
+                if ($sitesAggregate) {
+                    $siteNodeAggregates = $liveContentGraph->findChildNodeAggregates($sitesAggregate->nodeAggregateId);
+                    foreach ($siteNodeAggregates as $siteNodeAggregate) {
+                        assert($siteNodeAggregate->nodeName !== null);
+                        $currenSiteNodes[] = $siteNodeAggregate->nodeName->value;
+                    }
+                }
+            }
+
+            $currentNeosSiteEntities = [];
+            foreach ($neosSiteEntities as $site) {
+                if (!$site->getConfiguration()->contentRepositoryId->equals($contentRepositoryId)) {
+                    continue;
+                }
+                $currentNeosSiteEntities[] = $site->getNodeName()->value;
+            }
+
+            if ($verbose) {
+                $connectedWorkingSites = array_intersect($currentNeosSiteEntities, $currenSiteNodes);
+                $siteNodesWithoutMatchingNeosSiteEntity = array_diff($currenSiteNodes, $currentNeosSiteEntities);
+                $neosSiteEntitiesWithoutMatchingSiteNode = array_diff($currentNeosSiteEntities, $currenSiteNodes);
+                $sitesString = ltrim(
+                    (join(', ', $connectedWorkingSites)
+                        . ($siteNodesWithoutMatchingNeosSiteEntity ? (', (only node: ' . join(', ', $siteNodesWithoutMatchingNeosSiteEntity) . ')') : '')
+                        . ($neosSiteEntitiesWithoutMatchingSiteNode ? (', (only neos site: ' . join(', ', $neosSiteEntitiesWithoutMatchingSiteNode) . ')') : '')
+                    ), ' ,') ?: '-';
+            } else {
+                $sitesString = join(', ', $currentNeosSiteEntities) ?: '-';
+            }
+
+            $statusString = '-';
+            $workspacesString = '-';
+            $contentStreamsString = '-';
+            $nodesString = '-';
+
+            if ($contentRepository) {
+                $statusString = $contentRepository->status()->isOk() ? 'okay' : 'not okay';
+
+                try {
+                    $workspacesString = sprintf('%d found', count($contentRepository->getWorkspaceFinder()->findAll()));
+                } catch (\RuntimeException $e) {
+                    $this->outputLine('<comment>WorkspaceFinder of %s not functional: %s.</comment>', [$contentRepositoryId->value, $e->getMessage()]);
+                }
+
+                if ($verbose) {
+                    try {
+                        /** @phpstan-ignore neos.internal */
+                        $contentStreamsString = sprintf('%d found', iterator_count($contentRepository->getContentStreamFinder()->findAllIds()));
+                    } catch (\RuntimeException $e) {
+                        $this->outputLine('<comment>ContentStreamFinder of %s not functional: %s.</comment>', [$contentRepositoryId->value, $e->getMessage()]);
+                    }
+
+                    try {
+                        if ($liveContentGraph) {
+                            $nodesString = sprintf('%d found', $liveContentGraph->countNodes());
+                        }
+                    } catch (\RuntimeException $e) {
+                        $this->outputLine('<comment>ContentGraph of %s not functional: %s.</comment>', [$contentRepositoryId->value, $e->getMessage()]);
+                    }
+                }
+            }
+
+            $rows[] = [
+                $contentRepositoryId->value,
+                $statusString,
+                $sitesString,
+                $workspacesString,
+                ...($verbose ? [$contentStreamsString, $nodesString] : [])
+            ];
+        }
+
+        $this->output->outputTable($rows, ['Identifier', 'Status', 'Sites', 'Workspaces', ...($verbose ? ['Contentstreams', 'Nodes'] : [])]);
     }
 }
