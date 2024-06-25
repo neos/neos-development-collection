@@ -12,12 +12,14 @@ use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\Filter\FiltersFactory;
 use Neos\ContentRepository\NodeMigration\Filter\InvalidMigrationFilterSpecified;
 use Neos\ContentRepository\NodeMigration\Transformation\TransformationsFactory;
+use Neos\Neos\PendingChangesProjection\ChangeFinder;
 
 /**
  * Node Migrations are manually written adjustments to the Node tree;
@@ -59,33 +61,57 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
 
     public function executeMigration(ExecuteMigration $command): void
     {
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getWorkspaceName());
-        if ($workspace === null) {
+        $sourceWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->sourceWorkspaceName);
+        if ($sourceWorkspace === null) {
             throw new WorkspaceDoesNotExist(sprintf(
                 'The workspace %s does not exist',
-                $command->getWorkspaceName()->value
+                $command->sourceWorkspaceName->value
             ), 1611688225);
         }
 
-        foreach ($command->getMigrationConfiguration()->getMigration() as $step => $migrationDescription) {
-            $contentStreamForWriting = $command->getOrCreateContentStreamIdForWriting($step);
-            $workspaceNameForWriting = WorkspaceName::fromString($contentStreamForWriting->value);
+        $targetWorkspaceWasCreated = false;
+        if ($targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->targetWorkspaceName)) {
+            if (!$this->workspaceIsEmpty($targetWorkspace)) {
+                throw new MigrationException(sprintf('Target workspace "%s" already exists an is not empty. Please clear the workspace before.', $targetWorkspace->workspaceName->value));
+            }
+
+        } else {
             $this->contentRepository->handle(
                 CreateWorkspace::create(
-                    $workspaceNameForWriting,
-                    $workspace->workspaceName,
-                    WorkspaceTitle::fromString($contentStreamForWriting->value),
+                    $command->targetWorkspaceName,
+                    $sourceWorkspace->workspaceName,
+                    WorkspaceTitle::fromString($command->targetWorkspaceName->value),
                     WorkspaceDescription::fromString(''),
-                    $contentStreamForWriting,
+                    $command->contentStreamId,
                 )
             );
+            $targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->targetWorkspaceName);
+            $targetWorkspaceWasCreated = true;
+        }
+
+        if($targetWorkspace === null) {
+            throw new MigrationException(sprintf('Target workspace "%s" could not loaded nor created.', $command->targetWorkspaceName->value));
+        }
+
+        foreach ($command->migrationConfiguration->getMigration() as $migrationDescription) {
             /** array $migrationDescription */
             $this->executeSubMigrationAndBlock(
                 $migrationDescription,
-                $workspace,
-                $workspaceNameForWriting,
-                $contentStreamForWriting
+                $sourceWorkspace,
+                $targetWorkspace
             );
+        }
+
+        if ($command->publishOnSuccess === true) {
+            $this->contentRepository->handle(
+                PublishWorkspace::create($command->targetWorkspaceName)
+            );
+
+            if ($targetWorkspaceWasCreated === true) {
+                $this->contentRepository->handle(
+                    DeleteWorkspace::create($command->targetWorkspaceName)
+                );
+            }
         }
     }
 
@@ -98,8 +124,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
     protected function executeSubMigrationAndBlock(
         array $migrationDescription,
         Workspace $workspaceForReading,
-        WorkspaceName $workspaceNameForWriting,
-        ContentStreamId $contentStreamForWriting
+        Workspace $workspaceForWriting,
     ): void {
         $filters = $this->filterFactory->buildFilterConjunction($migrationDescription['filters'] ?? []);
         $transformations = $this->transformationFactory->buildTransformation(
@@ -128,7 +153,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
         }
 
         if ($transformations->containsGlobal()) {
-            $transformations->executeGlobalAndBlock($workspaceNameForWriting);
+            $transformations->executeGlobalAndBlock($workspaceForWriting->workspaceName);
         } elseif ($transformations->containsNodeAggregateBased()) {
             $contentGraph = $this->contentRepository->getContentGraph($workspaceForReading->workspaceName);
             foreach ($contentGraph->findUsedNodeTypeNames() as $nodeTypeName) {
@@ -138,7 +163,7 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
                     ) as $nodeAggregate
                 ) {
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
-                        $transformations->executeNodeAggregateBasedAndBlock($nodeAggregate, $workspaceNameForWriting, $contentStreamForWriting);
+                        $transformations->executeNodeAggregateBasedAndBlock($nodeAggregate, $workspaceForWriting->workspaceName, $workspaceForWriting->currentContentStreamId);
                     }
                 }
             }
@@ -167,8 +192,8 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
                                 $transformations->executeNodeBasedAndBlock(
                                     $node,
                                     $coveredDimensionSpacePoints,
-                                    $workspaceNameForWriting,
-                                    $contentStreamForWriting
+                                    $workspaceForWriting->workspaceName,
+                                    $workspaceForWriting->currentContentStreamId
                                 );
                             }
                         }
@@ -176,5 +201,12 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
                 }
             }
         }
+    }
+
+    private function workspaceIsEmpty(Workspace $workspace): bool
+    {
+        return $this->contentRepository
+                ->projectionState(ChangeFinder::class)
+                ->countByContentStreamId($workspace->currentContentStreamId) === 0;
     }
 }
