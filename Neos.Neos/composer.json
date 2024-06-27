@@ -13,14 +13,14 @@
     "require": {
         "php": "^8.0",
         "neos/diff": "self.version",
-        "neos/flow": "^8.3",
+        "neos/flow": "~8.4.0",
         "neos/media-browser": "self.version",
         "neos/party": "*",
         "neos/content-repository": "self.version",
         "neos/fusion": "self.version",
         "neos/fusion-afx": "self.version",
         "neos/fusion-form": "^1.0 || ^2.0",
-        "neos/fluid-adaptor": "^8.3",
+        "neos/fluid-adaptor": "~8.4.0",
         "behat/transliterator": "~1.0",
         "neos/media": "self.version"
     },
