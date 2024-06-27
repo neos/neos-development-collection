@@ -7,7 +7,7 @@
     "type": "neos-package-collection",
     "require": {
         "neos/flow-development-collection": "8.4.x-dev",
-        "php": "^8.0",
+        "php": "^8.2",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
