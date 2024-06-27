@@ -8,6 +8,9 @@
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			</trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve">
+				<source>Apply changes</source>
+			</trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
 			</trans-unit>

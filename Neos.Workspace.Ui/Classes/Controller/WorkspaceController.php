@@ -288,14 +288,14 @@ class WorkspaceController extends AbstractModuleController
      * @param WorkspaceName $workspaceName
      * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
-     * @param string $workspaceOwner Id of the owner of the workspace
+     * @param string|null $workspaceOwner Id of the owner of the workspace
      * @return void
      */
     public function updateAction(
         WorkspaceName $workspaceName,
         WorkspaceTitle $title,
         WorkspaceDescription $description,
-        ?string $workspaceOwner
+        ?string $workspaceOwner = null
     ): void {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;

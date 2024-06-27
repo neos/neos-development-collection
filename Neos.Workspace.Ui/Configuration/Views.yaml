@@ -5,7 +5,7 @@
       - 'resource://Neos.Workspace.Ui/Private/Partials'
       - 'resource://Neos.Neos/Private/Partials'
 
-- requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspace") && isFormat("html") && (isAction("index") || isAction("new"))'
+- requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspace") && isFormat("html") && (isAction("index") || isAction("new") || isAction("edit"))'
   viewObjectName: 'Neos\Fusion\View\FusionView'
   options:
     fusionPathPatterns:

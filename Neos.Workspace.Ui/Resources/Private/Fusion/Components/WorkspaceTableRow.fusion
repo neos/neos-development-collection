@@ -50,6 +50,12 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
         workspace = ${props.workspaceName}
       }
     }
+    editWorkspaceUri = Neos.Fusion:UriBuilder {
+      action = 'edit'
+      arguments {
+        workspaceName = ${props.workspaceName}
+      }
+    }
   }
 
   renderer = afx`
@@ -81,15 +87,14 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           <i
             class="fas fa-review"></i> {I18n.translate('table.column.action.show', 'Show', [], 'Main', 'Neos.Workspace.Ui')}
         </a>
-        <button
+        <a
           class="neos-button"
-          type="button"
           title={I18n.translate('table.column.action.edit', 'Edit workspace ' + workspace.title, {workspace: workspace.title}, 'Main', 'Neos.Workspace.Ui')}
-          onClick=""
-          disabled={!props.canManage || props.workspaceData.changesCounts == null}
+          href={private.editWorkspaceUri}
+          @if={!props.canManage || props.workspaceData.changesCounts == null}
         >
           <i class="fas fa-pencil-alt"></i>
-        </button>
+        </a>
         <button
           class="neos-button neos-button-danger"
           title={I18n.translate('workspaces.deleteWorkspace', 'Delete workspace', [], 'Main', 'Neos.Workspace.Ui')}
