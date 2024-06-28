@@ -46,12 +46,11 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in workspace "live"
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value             |
       | nodeAggregateId | "root"            |
       | nodeTypeName    | "Neos.Neos:Sites" |
-    And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  | initialPropertyValues                                                | nodeName |
       | a               | root                  | Neos.Neos:Site                | {"title": "Node a"}                                                  | a        |
