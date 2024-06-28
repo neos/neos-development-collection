@@ -40,6 +40,10 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
 
     public function buildForWorkspace(WorkspaceName $workspaceName): ContentGraph
     {
+        if ($workspaceName->isReferencingUnusedContentStream()) {
+            return $this->buildForWorkspaceAndContentStream($workspaceName, $workspaceName->getReferencingUnusedContentStreamId());
+        }
+
         // FIXME: Should be part of this projection, this is forbidden
         $tableName = strtolower(sprintf(
             'cr_%s_p_%s',
@@ -71,7 +75,7 @@ final readonly class ContentGraphFactory implements ContentGraphFactoryInterface
         return $this->buildForWorkspaceAndContentStream($workspaceName, ContentStreamId::fromString($currentContentStreamId));
     }
 
-    public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraph
+    private function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraph
     {
         return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $contentStreamId);
     }

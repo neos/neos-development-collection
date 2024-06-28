@@ -31,6 +31,10 @@ final readonly class ContentHyperGraphFactory implements ContentGraphFactoryInte
 
     public function buildForWorkspace(WorkspaceName $workspaceName): ContentGraphInterface
     {
+        if ($workspaceName->isReferencingUnusedContentStream()) {
+            return $this->buildForWorkspaceAndContentStream($workspaceName, $workspaceName->getReferencingUnusedContentStreamId());
+        }
+
         // FIXME: Should be part of this projection, this is forbidden
         $tableName = strtolower(sprintf(
             'cr_%s_p_%s',
@@ -55,7 +59,7 @@ final readonly class ContentHyperGraphFactory implements ContentGraphFactoryInte
         return $this->buildForWorkspaceAndContentStream($workspaceName, ContentStreamId::fromString($row['currentcontentstreamid']));
     }
 
-    public function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
+    private function buildForWorkspaceAndContentStream(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
     {
         return new ContentHyperGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNamePrefix, $workspaceName, $contentStreamId);
     }

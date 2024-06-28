@@ -67,16 +67,4 @@ final class ContentGraphFinder implements ProjectionStateInterface
     {
         $this->contentGraphInstances = [];
     }
-
-    /**
-     * For testing we allow getting an instance set by both parameters, effectively overriding the relationship at will
-     *
-     * @param WorkspaceName $workspaceName
-     * @param ContentStreamId $contentStreamId
-     * @internal Only for testing
-     */
-    public function getByWorkspaceNameAndContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
-    {
-        return $this->contentGraphFactory->buildForWorkspaceAndContentStream($workspaceName, $contentStreamId);
-    }
 }

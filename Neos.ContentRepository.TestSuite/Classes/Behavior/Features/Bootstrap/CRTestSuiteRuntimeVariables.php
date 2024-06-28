@@ -37,8 +37,6 @@ trait CRTestSuiteRuntimeVariables
 {
     protected ?ContentRepository $currentContentRepository = null;
 
-    protected ?ContentStreamId $currentContentStreamId = null;
-
     protected ?WorkspaceName $currentWorkspaceName = null;
 
     protected ?DimensionSpacePoint $currentDimensionSpacePoint = null;
@@ -92,7 +90,7 @@ trait CRTestSuiteRuntimeVariables
      */
     public function iAmInContentStream(string $contentStreamId): void
     {
-        $this->currentContentStreamId = ContentStreamId::fromString($contentStreamId);
+        $this->currentWorkspaceName = WorkspaceName::createReferenceForUnusedContentStream(ContentStreamId::fromString($contentStreamId));
     }
 
     /**
@@ -101,7 +99,6 @@ trait CRTestSuiteRuntimeVariables
     public function iAmInWorkspace(string $workspaceName): void
     {
         $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
-        $this->currentContentStreamId = null;
     }
 
     /**
@@ -147,11 +144,6 @@ trait CRTestSuiteRuntimeVariables
     {
         $contentGraphFinder = $this->currentContentRepository->projectionState(ContentGraphFinder::class);
         $contentGraphFinder->forgetInstances();
-        if (isset($this->currentContentStreamId)) {
-            // This must still be supported for low level tests, e.g. for content stream forking
-            return $contentGraphFinder->getByWorkspaceNameAndContentStreamId($this->currentWorkspaceName, $this->currentContentStreamId)->getSubgraph($this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
-        }
-
         return $contentGraphFinder->getByWorkspaceName($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
             $this->currentVisibilityConstraints

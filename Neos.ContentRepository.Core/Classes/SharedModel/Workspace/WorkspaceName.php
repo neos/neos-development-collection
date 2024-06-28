@@ -48,6 +48,11 @@ final class WorkspaceName implements \JsonSerializable
         return self::instance($value);
     }
 
+    public static function createReferenceForUnusedContentStream(ContentStreamId $contentStreamId): self
+    {
+        return self::instance('cs:' . $contentStreamId->value);
+    }
+
     public static function forLive(): self
     {
         return self::instance(self::WORKSPACE_NAME_LIVE);
@@ -90,6 +95,19 @@ final class WorkspaceName implements \JsonSerializable
     public function isLive(): bool
     {
         return $this->value === self::WORKSPACE_NAME_LIVE;
+    }
+
+    /**
+     * @phpstan-assert-if-true ContentStreamId $this->getReferencingUnusedContentStreamId()
+     */
+    public function isReferencingUnusedContentStream(): bool
+    {
+        return str_starts_with($this->value, 'cs:');
+    }
+
+    public function getReferencingUnusedContentStreamId(): ?ContentStreamId
+    {
+        return $this->isReferencingUnusedContentStream() ? ContentStreamId::fromString(substr($this->value, 3)) : null;
     }
 
     public function jsonSerialize(): string
