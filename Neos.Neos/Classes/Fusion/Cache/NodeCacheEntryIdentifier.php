@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Cache;
 
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -22,17 +23,18 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
  * The cache entry identifier data transfer object for nodes
  *
  * @Flow\Proxy(false)
+ * @internal
  */
-final class NodeCacheEntryIdentifier implements CacheAwareInterface
+final readonly class NodeCacheEntryIdentifier implements CacheAwareInterface
 {
     private function __construct(
-        private readonly string $value
+        private string $value
     ) {
     }
 
-    public static function fromNode(Node $node): self
+    public static function fromNode(Node $node, ContentStreamId $contentStreamId): self
     {
-        return new self('Node_' . $node->workspaceName->value
+        return new self('Node_' . $contentStreamId->value
             . '_' . $node->dimensionSpacePoint->hash
             . '_' .  $node->aggregateId->value);
     }

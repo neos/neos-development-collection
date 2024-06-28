@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -47,16 +48,6 @@ final readonly class NodeAddress
         public NodeAggregateId $nodeAggregateId,
         public WorkspaceName $workspaceName
     ) {
-    }
-
-    public function withNodeAggregateId(NodeAggregateId $nodeAggregateId): self
-    {
-        return new self(
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $nodeAggregateId,
-            $this->workspaceName
-        );
     }
 
     public function serializeForUri(): string

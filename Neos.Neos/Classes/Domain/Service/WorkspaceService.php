@@ -96,8 +96,6 @@ final class WorkspaceService
         return $this->requireWorkspace($contentRepositoryId, $workspaceName);
     }
 
-
-
     public function createRootWorkspace(
         ContentRepositoryId $contentRepositoryId,
         WorkspaceTitle $title,
