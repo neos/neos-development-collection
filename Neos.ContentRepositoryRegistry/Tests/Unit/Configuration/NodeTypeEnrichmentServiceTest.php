@@ -13,32 +13,19 @@ namespace Neos\ContentRepositoryRegistry\Tests\Unit\Configuration;
  */
 
 use Neos\ContentRepositoryRegistry\Configuration\NodeTypeEnrichmentService;
-use Neos\ContentRepositoryRegistry\Configuration\NodeTypesLoader;
-use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\Files;
+use Symfony\Component\Yaml\Yaml;
 
 class NodeTypeEnrichmentServiceTest extends UnitTestCase
 {
     private ?NodeTypeEnrichmentService $nodeTypeEnrichmentService;
 
-    private ?ApplicationContext $applicationContext;
-
-
     public function setUp(): void
     {
         $this->nodeTypeEnrichmentService = new NodeTypeEnrichmentService();
-        $this->applicationContext = new ApplicationContext('Testing/SubContext');    }
-
-    private function mockPackage(string $packageKey): FlowPackageInterface
-    {
-        $mockPackage = $this->getMockBuilder(FlowPackageInterface::class)->getMock();
-        $packagePath = Files::concatenatePaths([__DIR__, 'Fixture', 'Packages', $packageKey]) . '/';
-        $mockPackage->method('getPackagePath')->willReturn($packagePath);
-        $mockPackage->method('getConfigurationPath')->willReturn(Files::concatenatePaths([$packagePath, 'Configuration']) . '/');
-        return $mockPackage;
     }
 
 
@@ -47,39 +34,44 @@ class NodeTypeEnrichmentServiceTest extends UnitTestCase
      */
     public function EnrichNodeTypeLabelsConfig(): void
     {
-        $mockEnrichmentPackage = $this->mockPackage('Neos.Enrichment');
+        $nodeConfiguration = YAML::parse(<<<'YAML'
+        'Neos.Enrichment:Translation':
+          properties:
+            title:
+              type: string
+              ui:
+                label: i18n
+          references:
+            docReference:
+              type: reference
+              ui:
+                label: i18n
+              properties:
+                referenceProperty:
+                  type: text
+                  ui:
+                    label: i18n
+        YAML);
 
-        $nodeTypesLoader = new NodeTypesLoader(new YamlSource(), __DIR__);
-        $nodeConfiguration = $nodeTypesLoader->load([$mockEnrichmentPackage], $this->applicationContext);
+        $expectedResult = YAML::parse(<<<'YAML'
+        'Neos.Enrichment:Translation':
+          properties:
+            title:
+              type: string
+              ui:
+                label: Neos.Enrichment:NodeTypes.Translation:properties.title
+          references:
+            docReference:
+              type: reference
+              ui:
+                label: Neos.Enrichment:NodeTypes.Translation:references.docReference
+              properties:
+                referenceProperty:
+                  type: text
+                  ui:
+                    label: Neos.Enrichment:NodeTypes.Translation:docReference.properties.referenceProperty
+        YAML);
 
-        $expectedResult = [
-            'Neos.Enrichment:Translation' => [
-                'properties' => [
-                    'title' => [
-                        'type' => 'string',
-                        'ui' => [
-                            'label' => 'Neos.Enrichment:NodeTypes.Translation:properties.title'
-                        ]
-                    ]
-                ],
-                'references' => [
-                    'docReference' => [
-                        'ui' => [
-                            'label' => 'Neos.Enrichment:NodeTypes.Translation:references.docReference'
-                        ],
-                        'properties' => [
-                            'referenceProperty' => [
-                                'type' => 'text',
-                                'ui' => [
-                                    'label' => 'Neos.Enrichment:NodeTypes.Translation:docReference.properties.referenceProperty'
-                                ]
-                            ]
-                        ],
-                        'type' => 'reference'
-                    ]
-                ]
-            ]
-        ];
         $actualResult = $this->nodeTypeEnrichmentService->enrichNodeTypeLabelsConfiguration($nodeConfiguration);
 
         self::assertEquals($expectedResult, $actualResult);
