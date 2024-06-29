@@ -65,6 +65,10 @@ final class CommandHandlingDependencies
             return $this->overridenContentGraphInstances[$workspaceName->value];
         }
 
+        if ($workspaceName->isReferencingUnusedContentStream()) {
+            throw new \RuntimeException(sprintf('Expected actual workspace name. Got a workspace name referencing an unused content stream: "%s" instead.', $workspaceName->getReferencingUnusedContentStreamId()->value), 1719648458);
+        }
+
         return $this->contentRepository->getContentGraph($workspaceName);
     }
 

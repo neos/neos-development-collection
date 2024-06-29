@@ -900,6 +900,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
     private function requireWorkspaceToNotExist(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): void
     {
+        if ($workspaceName->isReferencingUnusedContentStream()) {
+            throw new \RuntimeException(sprintf('Expected actual workspace name. Got a workspace name referencing an unused content stream: "%s" instead.', $workspaceName->getReferencingUnusedContentStreamId()->value), 1719648458);
+        }
+
         try {
             $commandHandlingDependencies->getContentGraph($workspaceName);
         } catch (WorkspaceDoesNotExist) {
@@ -918,6 +922,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function requireWorkspace(WorkspaceName $workspaceName, WorkspaceFinder $workspaceFinder): Workspace
     {
+        if ($workspaceName->isReferencingUnusedContentStream()) {
+            throw new \RuntimeException(sprintf('Expected actual workspace name. Got a workspace name referencing an unused content stream: "%s" instead.', $workspaceName->getReferencingUnusedContentStreamId()->value), 1719648458);
+        }
+
         $workspace = $workspaceFinder->findOneByName($workspaceName);
         if (is_null($workspace)) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
