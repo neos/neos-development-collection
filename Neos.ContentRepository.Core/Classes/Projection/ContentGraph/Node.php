@@ -80,17 +80,6 @@ final readonly class Node
     public ContentSubgraphIdentity $subgraphIdentity;
 
     /**
-     * In PHP please use {@see $name} instead.
-     *
-     * For Fusion use:
-     * ```
-     * ${node.name.value}
-     * ```
-     * @deprecated will be removed before the final 9.0 release
-     */
-    public ?NodeName $nodeName;
-
-    /**
      * @param ContentRepositoryId $contentRepositoryId The content-repository this Node belongs to
      * @param WorkspaceName $workspaceName The workspace of this Node
      * @param DimensionSpacePoint $dimensionSpacePoint DimensionSpacePoint a node has been accessed in
@@ -123,7 +112,6 @@ final readonly class Node
             throw new \InvalidArgumentException('The NodeName must be set if the Node is tethered.', 1695118377);
         }
         // legacy to be removed before Neos9
-        $this->nodeName = $this->name;
         $this->subgraphIdentity = ContentSubgraphIdentity::create(
             $contentRepositoryId,
             $contentStreamId,
