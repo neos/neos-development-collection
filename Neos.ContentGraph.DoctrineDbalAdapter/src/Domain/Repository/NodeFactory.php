@@ -230,7 +230,6 @@ final class NodeFactory
             $nodesByCoveredDimensionSpacePoints,
             OriginByCoverage::fromArray($occupationByCovering),
             $dimensionSpacePointsBySubtreeTags,
-            $contentStreamId,
         );
     }
 
@@ -338,7 +337,6 @@ final class NodeFactory
                     $occupationByCoveringByNodeAggregate[$rawNodeAggregateId]
                 ),
                 $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId],
-                $contentStreamId,
             );
         }
 

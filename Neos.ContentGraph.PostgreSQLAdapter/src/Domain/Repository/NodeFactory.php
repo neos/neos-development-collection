@@ -247,7 +247,6 @@ final class NodeFactory
             OriginByCoverage::fromArray($occupationByCovered),
             // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregate())
             DimensionSpacePointsBySubtreeTags::create(),
-            $contentStreamId,
         );
     }
 
@@ -346,7 +345,6 @@ final class NodeFactory
                 OriginByCoverage::fromArray($occupationByCovered[$key]),
                 // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregates())
                 DimensionSpacePointsBySubtreeTags::create(),
-                $contentStreamId,
             );
         }
 
