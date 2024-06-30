@@ -67,10 +67,11 @@ class PrevOperation extends AbstractOperation
     {
         $output = [];
         $outputNodePaths = [];
+        /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $previousNode = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                 ->findPrecedingSiblingNodes(
-                    $contextNode->nodeAggregateId,
+                    $contextNode->aggregateId,
                     FindPrecedingSiblingNodesFilter::create()
                 )->first();
             if ($previousNode !== null && !isset($outputNodePaths[$previousNode->aggregateId->value])) {
