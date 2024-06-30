@@ -132,6 +132,8 @@ jobs:
           git -C ../${{ env.NEOS_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
+          # temporary hack to turn CI green, remove after merge of https://github.com/neos/flow-development-collection/pull/2637
+          composer require --no-update neos/flow-development-collection:"dev-dependabot/composer/doctrine/dbal-tw-3.2 as ${{ env.NEOS_BRANCH_ALIAS }}"
 
       - name: Cache Composer packages
         id: composer-cache
