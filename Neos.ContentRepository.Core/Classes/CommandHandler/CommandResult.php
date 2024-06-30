@@ -12,16 +12,12 @@ use Neos\ContentRepository\Core\ContentRepository;
  *
  * This will no longer be required in the future see https://github.com/neos/neos-development-collection/pull/4988
  *
- * @deprecated this b/c layer will be removed with the next beta or before Neos 9 final release
- * @api
+ * TODO decide whether it might be useful to have some return type that tells something about the published events
+ * (e.g. last sequence number) and maybe even about the updated/skipped projections
+ * see discussion: https://github.com/neos/neos-development-collection/pull/5061#issuecomment-2117643465
+ *
+ * @internal this object will either be transformed into something useful and made API or deleted.
  */
 final readonly class CommandResult
 {
-    /**
-     * We block by default thus you must not call this method or use this legacy stub
-     * @deprecated this b/c layer will be removed with the next beta or before Neos 9 final release
-     */
-    public function block(): void
-    {
-    }
 }
