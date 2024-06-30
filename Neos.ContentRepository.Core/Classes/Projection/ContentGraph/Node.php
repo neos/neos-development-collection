@@ -80,17 +80,6 @@ final readonly class Node
     public ContentSubgraphIdentity $subgraphIdentity;
 
     /**
-     * In PHP please use {@see $aggregateId} instead.
-     *
-     * For Fusion please use the upcoming FlowQuery operation:
-     * ```
-     * ${q(node).id()}
-     * ```
-     * @deprecated will be removed before the final 9.0 release
-     */
-    public NodeAggregateId $nodeAggregateId;
-
-    /**
      * In PHP please use {@see $name} instead.
      *
      * For Fusion use:
@@ -134,7 +123,6 @@ final readonly class Node
             throw new \InvalidArgumentException('The NodeName must be set if the Node is tethered.', 1695118377);
         }
         // legacy to be removed before Neos9
-        $this->nodeAggregateId = $this->aggregateId;
         $this->nodeName = $this->name;
         $this->subgraphIdentity = ContentSubgraphIdentity::create(
             $contentRepositoryId,
