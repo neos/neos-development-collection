@@ -88,14 +88,6 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
-     * @Given /^I am in content stream "([^"]*)"$/
-     */
-    public function iAmInContentStream(string $contentStreamId): void
-    {
-        $this->currentContentStreamId = ContentStreamId::fromString($contentStreamId);
-    }
-
-    /**
      * @Given /^I am in workspace "([^"]*)"$/
      */
     public function iAmInWorkspace(string $workspaceName): void
@@ -127,7 +119,7 @@ trait CRTestSuiteRuntimeVariables
      */
     public function iAmInContentStreamAndDimensionSpacePoint(string $contentStreamId, string $dimensionSpacePoint): void
     {
-        $this->iAmInContentStream($contentStreamId);
+        $this->currentContentStreamId = ContentStreamId::fromString($contentStreamId);
         $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
     }
 
