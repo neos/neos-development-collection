@@ -38,7 +38,7 @@ Feature: Publishing hide/show scenario of nodes
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And I am in workspace "live"
+    And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -104,12 +104,13 @@ Feature: Publishing hide/show scenario of nodes
       | contentStreamIdForRemainingPart | "remaining-cs-id"                                                                                        |
       | contentStreamIdForMatchingPart  | "matching-cs-id"                                                                                         |
 
-    When I am in workspace "live" and dimension space point {}
+    When I am in workspace "live"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
 
-    When I am in content stream "remaining-cs-id" and dimension space point {}
+    When I am in workspace "user-test"
+    Then I expect the workspace to point to content stream "remaining-cs-id"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
