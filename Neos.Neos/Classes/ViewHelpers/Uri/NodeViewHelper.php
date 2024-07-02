@@ -14,12 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Uri;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -27,9 +23,10 @@ use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\Options;
+use Neos\Neos\Utility\LegacyNodePathNormalizer;
+use Neos\Neos\Utility\NodeAddressNormalizer;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -47,8 +44,6 @@ use Neos\Neos\FrontendRouting\Options;
  * The given path is treated as a path relative to the current node.
  * Examples: given that the current node is ``/sites/acmecom/products/``,
  * ``stapler`` results in ``/sites/acmecom/products/stapler``,
- * ``../about`` results in ``/sites/acmecom/about/``,
- * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
  *
  * *``node`` starts with a tilde character (``~``):*
  * The given path is treated as a path relative to the current site node.
@@ -121,6 +116,17 @@ class NodeViewHelper extends AbstractViewHelper
      */
     protected $nodeUriBuilderFactory;
 
+    /**
+     * @Flow\Inject
+     * @var NodeAddressNormalizer
+     */
+    protected $nodeAddressNormalizer;
+
+    /**
+     * @Flow\Inject
+     * @var LegacyNodePathNormalizer
+     */
+    protected $legacyNodePathNormalizer;
 
     /**
      * Initialize arguments
@@ -196,13 +202,16 @@ class NodeViewHelper extends AbstractViewHelper
             $node = $this->getContextVariable($this->arguments['baseNodeName']);
         }
 
-        /* @var Node $documentNode */
-        $documentNode = $this->getContextVariable('documentNode');
-
         if ($node instanceof Node) {
             $nodeAddress = NodeAddress::fromNode($node);
         } elseif (is_string($node)) {
-            $nodeAddress = $this->resolveNodeAddressFromString($node, $documentNode);
+            /* @var Node $documentNode */
+            $documentNode = $this->getContextVariable('documentNode');
+            $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $documentNode);
+            $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressFromPath(
+                $possibleAbsoluteNodePath ?? $node,
+                $documentNode
+            );
         } else {
             throw new ViewHelperException(sprintf(
                 'The "node" argument can only be a string or an instance of %s. Given: %s',
@@ -237,63 +246,5 @@ class NodeViewHelper extends AbstractViewHelper
             ), 1601372594, $e));
         }
         return (string)$uri;
-    }
-
-    /**
-     * Converts strings like "relative/path", "/absolute/path", "~/site-relative/path" and "~"
-     * to the corresponding NodeAddress
-     *
-     * @param string $path
-     * @throws ViewHelperException
-     */
-    private function resolveNodeAddressFromString(string $path, Node $documentNode): NodeAddress
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $documentNode->contentRepositoryId
-        );
-        $documentNodeAddress = NodeAddress::fromNode($documentNode);
-        if (strncmp($path, 'node://', 7) === 0) {
-            return $documentNodeAddress->withAggregateId(
-                NodeAggregateId::fromString(\mb_substr($path, 7))
-            );
-        }
-        $subgraph = $contentRepository->getContentGraph($documentNodeAddress->workspaceName)->getSubgraph(
-            $documentNodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        );
-        if (strncmp($path, '~', 1) === 0) {
-            $siteNode = $subgraph->findClosestNode($documentNodeAddress->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
-            if ($siteNode === null) {
-                throw new ViewHelperException(sprintf(
-                    'Failed to determine site node for aggregate node "%s" in workspace "%s" and dimension %s',
-                    $documentNodeAddress->aggregateId->value,
-                    $subgraph->getWorkspaceName()->value,
-                    $subgraph->getDimensionSpacePoint()->toJson()
-                ), 1601366598);
-            }
-            if ($path === '~') {
-                $targetNode = $siteNode;
-            } else {
-                $targetNode = $subgraph->findNodeByPath(
-                    NodePath::fromString(substr($path, 1)),
-                    $siteNode->aggregateId
-                );
-            }
-        } else {
-            $targetNode = $subgraph->findNodeByPath(
-                NodePath::fromString($path),
-                $documentNode->aggregateId
-            );
-        }
-        if ($targetNode === null) {
-            throw new ViewHelperException(sprintf(
-                'Node on path "%s" could not be found for aggregate node "%s" in workspace "%s" and dimension %s',
-                $path,
-                $documentNodeAddress->aggregateId->value,
-                $subgraph->getWorkspaceName()->value,
-                $subgraph->getDimensionSpacePoint()->toJson()
-            ), 1601311789);
-        }
-        return $documentNodeAddress->withAggregateId($targetNode->aggregateId);
     }
 }

@@ -14,12 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Link;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -34,6 +30,8 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\Options;
+use Neos\Neos\Utility\LegacyNodePathNormalizer;
+use Neos\Neos\Utility\NodeAddressNormalizer;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
@@ -154,6 +152,18 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
+     * @var NodeAddressNormalizer
+     */
+    protected $nodeAddressNormalizer;
+
+    /**
+     * @Flow\Inject
+     * @var LegacyNodePathNormalizer
+     */
+    protected $legacyNodePathNormalizer;
+
+    /**
+     * @Flow\Inject
      * @var NodeLabelGeneratorInterface
      */
     protected $nodeLabelGenerator;
@@ -252,9 +262,13 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         if ($node instanceof Node) {
             $nodeAddress = NodeAddress::fromNode($node);
         } elseif (is_string($node)) {
+            /* @var Node $documentNode */
             $documentNode = $this->getContextVariable('documentNode');
-            assert($documentNode instanceof Node);
-            $nodeAddress = $this->resolveNodeAddressFromString($node, $documentNode);
+            $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $documentNode);
+            $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressFromPath(
+                $possibleAbsoluteNodePath ?? $node,
+                $documentNode
+            );
             $node = $documentNode;
         } else {
             throw new ViewHelperException(sprintf(
@@ -337,63 +351,5 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $this->tag->setContent($content);
         $this->tag->forceClosingTag(true);
         return $this->tag->render();
-    }
-
-    /**
-     * Converts strings like "relative/path", "/absolute/path", "~/site-relative/path"
-     * and "~" to the corresponding NodeAddress
-     *
-     * @param string $path
-     * @throws ViewHelperException
-     */
-    private function resolveNodeAddressFromString(string $path, Node $documentNode): NodeAddress
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $documentNode->contentRepositoryId
-        );
-        $documentNodeAddress = NodeAddress::fromNode($documentNode);
-        if (strncmp($path, 'node://', 7) === 0) {
-            return $documentNodeAddress->withAggregateId(
-                NodeAggregateId::fromString(\mb_substr($path, 7))
-            );
-        }
-        $subgraph = $contentRepository->getContentGraph($documentNodeAddress->workspaceName)->getSubgraph(
-            $documentNodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        );
-        if (strncmp($path, '~', 1) === 0) {
-            $siteNode = $subgraph->findClosestNode($documentNodeAddress->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
-            if ($siteNode === null) {
-                throw new ViewHelperException(sprintf(
-                    'Failed to determine site node for aggregate node "%s" in workspace "%s" and dimension %s',
-                    $documentNodeAddress->aggregateId->value,
-                    $subgraph->getWorkspaceName()->value,
-                    $subgraph->getDimensionSpacePoint()->toJson()
-                ), 1601366598);
-            }
-            if ($path === '~') {
-                $targetNode = $siteNode;
-            } else {
-                $targetNode = $subgraph->findNodeByPath(
-                    NodePath::fromString(substr($path, 1)),
-                    $siteNode->aggregateId
-                );
-            }
-        } else {
-            $targetNode = $subgraph->findNodeByPath(
-                NodePath::fromString($path),
-                $documentNode->aggregateId
-            );
-        }
-        if ($targetNode === null) {
-            throw new ViewHelperException(sprintf(
-                'Node on path "%s" could not be found for aggregate node "%s" in workspace "%s" and dimension %s',
-                $path,
-                $documentNodeAddress->aggregateId->value,
-                $subgraph->getWorkspaceName()->value,
-                $subgraph->getDimensionSpacePoint()->toJson()
-            ), 1601311789);
-        }
-        return $documentNodeAddress->withAggregateId($targetNode->aggregateId);
     }
 }
