@@ -110,8 +110,10 @@ Feature: Publishing hide/show scenario of nodes
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
 
     When I am in workspace "user-test"
-    Then I expect the workspace to point to content stream "remaining-cs-id"
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
+    # Ensure that we are in content stream remaining-cs-id
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node remaining-cs-id;lady-eleonode-rootford;{}
+
+    And I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to no node
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to no node
 

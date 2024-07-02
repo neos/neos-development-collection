@@ -54,7 +54,8 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | baseWorkspaceName  | "live"               |
       | newContentStreamId | "user-cs-identifier" |
     When I am in workspace "user-test" and dimension space point {}
-    Then I expect the workspace to point to content stream "user-cs-identifier"
+    # Ensure that we are in content user-cs-identifier
+    Then I expect node aggregate identifier "root-node" to lead to node user-cs-identifier;root-node;{}
 
     When the command RebaseWorkspace is executed with payload:
       | Key                    | Value                        |
@@ -66,7 +67,6 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     Then I expect the content stream "user-cs-identifier" to not exist
 
     When I am in workspace "user-test" and dimension space point {}
-    Then I expect the workspace to point to content stream "user-cs-identifier-rebased"
     Then I expect node aggregate identifier "root-node" to lead to node user-cs-identifier-rebased;root-node;{}
 
   Scenario: NO_LONGER_IN_USE content streams can be cleaned up completely (simple case)

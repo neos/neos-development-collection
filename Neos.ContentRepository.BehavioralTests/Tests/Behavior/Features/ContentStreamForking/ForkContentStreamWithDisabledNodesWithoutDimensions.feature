@@ -66,7 +66,6 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
     When I am in workspace "user-test" and dimension space point {}
-    Then I expect the workspace to point to content stream "user-cs-identifier"
     And VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:

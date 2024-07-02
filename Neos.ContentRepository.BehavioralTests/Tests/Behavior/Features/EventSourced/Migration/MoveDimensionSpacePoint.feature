@@ -68,14 +68,12 @@ Feature: Move dimension space point
     """
     # the original content stream has not been touched
     When I am in workspace "live" and dimension space point {"language": "de"}
-    Then I expect the workspace to point to content stream "cs-identifier"
     Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
 
 
     # we find the node underneath the new DimensionSpacePoint, but not underneath the old.
     When I am in workspace "migration-workspace" and dimension space point {"language": "de"}
-    Then I expect the workspace to point to content stream "migration-cs"
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When I am in workspace "migration-workspace" and dimension space point {"language": "de_DE"}
     Then I expect a node identified by migration-cs;sir-david-nodenborough;{"language": "de_DE"} to exist in the content graph

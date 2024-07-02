@@ -58,8 +58,6 @@ Feature: ForkContentStream Without Dimensions
       | newContentStreamId | "user-cs-identifier" |
 
     When I am in workspace "user-test" and dimension space point {}
-    Then I expect the workspace to point to content stream "user-cs-identifier"
-
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
 
   Scenario: When a change is applied to the forked content stream AFTER the fork, it is not visible in the live content stream.
@@ -82,7 +80,6 @@ Feature: ForkContentStream Without Dimensions
 
     # live
     When I am in workspace "live" and dimension space point {}
-    Then I expect the workspace to point to content stream "cs-identifier"
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value            |
@@ -90,7 +87,6 @@ Feature: ForkContentStream Without Dimensions
 
     # forked content stream
     When I am in workspace "user-test" and dimension space point {}
-    Then I expect the workspace to point to content stream "user-cs-identifier"
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value            |
@@ -116,7 +112,6 @@ Feature: ForkContentStream Without Dimensions
 
     # live
     When I am in workspace "live" and dimension space point {}
-    Then I expect the workspace to point to content stream "cs-identifier"
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value            |
@@ -124,7 +119,6 @@ Feature: ForkContentStream Without Dimensions
 
     # forked content stream
     When I am in workspace "user-test" and dimension space point {}
-    Then I expect the workspace to point to content stream "user-cs-identifier"
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value            |

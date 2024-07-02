@@ -142,23 +142,6 @@ trait CRTestSuiteTrait
     }
 
     /**
-     * @Then /^I expect the workspace to point to content stream "([^"]*)"$/
-     */
-    public function iExpectTheWorkspaceToPointToContentStream(string $rawContentStreamId): void
-    {
-        if ($this->currentContentStreamId !== null) {
-            throw new \RuntimeException('programming error. invalid case.');
-        }
-
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName($this->currentWorkspaceName);
-
-        Assert::assertTrue(
-            ContentStreamId::fromString($rawContentStreamId)->equals($workspace->currentContentStreamId),
-            sprintf('The workspace %s was expected to point to %s but points to %s actually.', $this->currentWorkspaceName->value, $rawContentStreamId, $workspace->currentContentStreamId->value)
-        );
-    }
-
-    /**
      * @Then /^workspace ([^"]*) has status ([^"]*)$/
      */
     public function workspaceHasStatus(string $rawWorkspaceName, string $status): void
