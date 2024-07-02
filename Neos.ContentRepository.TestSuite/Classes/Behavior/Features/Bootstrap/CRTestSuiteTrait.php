@@ -96,7 +96,6 @@ trait CRTestSuiteTrait
         $this->currentVisibilityConstraints = VisibilityConstraints::frontend();
         $this->currentDimensionSpacePoint = null;
         $this->currentRootNodeAggregateId = null;
-        $this->currentContentStreamId = null;
         $this->currentWorkspaceName = null;
         $this->currentNodeAggregate = null;
         $this->currentNode = null;
