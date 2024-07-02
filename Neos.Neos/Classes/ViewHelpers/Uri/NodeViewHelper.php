@@ -198,25 +198,27 @@ class NodeViewHelper extends AbstractViewHelper
     public function render(): string
     {
         $node = $this->arguments['node'];
-        if (!$node instanceof Node) {
-            $node = $this->getContextVariable($this->arguments['baseNodeName']);
-        }
+        if (is_string($node)) {
+            $baseNode = $this->getContextVariable($this->arguments['baseNodeName']);
+            if (!$baseNode instanceof Node) {
+                throw new ViewHelperException(sprintf(
+                    'If "node" is passed as string a base node in must be set in "%s". Given: %s',
+                    $this->arguments['baseNodeName'],
+                    get_debug_type($baseNode)
+                ), 1719953186);
+            }
 
-        if ($node instanceof Node) {
-            $nodeAddress = NodeAddress::fromNode($node);
-        } elseif (is_string($node)) {
-            /* @var Node $documentNode */
-            $documentNode = $this->getContextVariable('documentNode');
-            $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $documentNode);
+            $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $baseNode);
             $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressFromPath(
                 $possibleAbsoluteNodePath ?? $node,
-                $documentNode
+                $baseNode
             );
+        } elseif ($node instanceof Node) {
+            $nodeAddress = NodeAddress::fromNode($node);
         } else {
             throw new ViewHelperException(sprintf(
-                'The "node" argument can only be a string or an instance of %s. Given: %s',
-                Node::class,
-                is_object($node) ? get_class($node) : gettype($node)
+                'The "node" argument can only be a string or an instance of `Node`. Given: %s',
+                get_debug_type($node)
             ), 1601372376);
         }
 

@@ -244,46 +244,43 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      */
     public function render(): string
     {
+        $resolvedNode = null;
         $node = $this->arguments['node'];
-        if (!$node instanceof Node) {
-            $node = $this->getContextVariable($this->arguments['baseNodeName']);
-        }
+        if (is_string($node)) {
+            $baseNode = $this->getContextVariable($this->arguments['baseNodeName']);
+            if (!$baseNode instanceof Node) {
+                throw new ViewHelperException(sprintf(
+                    'If "node" is passed as string a base node in must be set in "%s". Given: %s',
+                    $this->arguments['baseNodeName'],
+                    get_debug_type($baseNode)
+                ), 1719953186);
+            }
 
-        if ($node instanceof Node) {
-            $nodeAddress = NodeAddress::fromNode($node);
-            $currentVisibility = $node->visibilityConstraints;
-        } elseif (is_string($node)) {
-            /* @var Node $documentNode */
-            $documentNode = $this->getContextVariable('documentNode');
-            $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $documentNode);
+            $possibleAbsoluteNodePath = $this->legacyNodePathNormalizer->tryResolveLegacyPathSyntaxToAbsoluteNodePath($node, $baseNode);
             $nodeAddress = $this->nodeAddressNormalizer->resolveNodeAddressFromPath(
                 $possibleAbsoluteNodePath ?? $node,
-                $documentNode
+                $baseNode
             );
-            $currentVisibility = $documentNode->visibilityConstraints;
+
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($baseNode);
+            $resolvedNode = $subgraph->findNodeById($nodeAddress->aggregateId);
+            if ($resolvedNode === null) {
+                $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
+                    'Failed to resolve node "%s" in workspace "%s" and dimension %s',
+                    $nodeAddress->aggregateId->value,
+                    $subgraph->getWorkspaceName()->value,
+                    $subgraph->getDimensionSpacePoint()->toJson()
+                ), 1601372444));
+            }
+
+        } elseif ($node instanceof Node) {
+            $nodeAddress = NodeAddress::fromNode($node);
+            $resolvedNode = $node;
         } else {
             throw new ViewHelperException(sprintf(
-                'The "node" argument can only be a string or an instance of %s. Given: %s',
-                Node::class,
-                is_object($node) ? get_class($node) : gettype($node)
+                'The "node" argument can only be a string or an instance of `Node`. Given: %s',
+                get_debug_type($node)
             ), 1601372376);
-        }
-
-        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
-        $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)
-            ->getSubgraph(
-                $nodeAddress->dimensionSpacePoint,
-                $currentVisibility
-            );
-
-        $resolvedNode = $subgraph->findNodeById($nodeAddress->aggregateId);
-        if ($resolvedNode === null) {
-            $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
-                'Failed to resolve node "%s" in workspace "%s" and dimension %s',
-                $nodeAddress->aggregateId->value,
-                $subgraph->getWorkspaceName()->value,
-                $subgraph->getDimensionSpacePoint()->toJson()
-            ), 1601372444));
         }
 
         $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($this->controllerContext->getRequest());
