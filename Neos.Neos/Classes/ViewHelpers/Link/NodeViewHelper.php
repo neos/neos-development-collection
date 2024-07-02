@@ -24,10 +24,6 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
-use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\Options;
 use Neos\Neos\Utility\LegacyNodePathNormalizer;
@@ -131,12 +127,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @var string
      */
     protected $tagName = 'a';
-
-    /**
-     * @Flow\Inject
-     * @var NodeShortcutResolver
-     */
-    protected $nodeShortcutResolver;
 
     /**
      * @Flow\Inject
@@ -261,6 +251,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
         if ($node instanceof Node) {
             $nodeAddress = NodeAddress::fromNode($node);
+            $currentVisibility = $node->visibilityConstraints;
         } elseif (is_string($node)) {
             /* @var Node $documentNode */
             $documentNode = $this->getContextVariable('documentNode');
@@ -269,7 +260,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 $possibleAbsoluteNodePath ?? $node,
                 $documentNode
             );
-            $node = $documentNode;
+            $currentVisibility = $documentNode->visibilityConstraints;
         } else {
             throw new ViewHelperException(sprintf(
                 'The "node" argument can only be a string or an instance of %s. Given: %s',
@@ -282,7 +273,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)
             ->getSubgraph(
                 $nodeAddress->dimensionSpacePoint,
-                $node->visibilityConstraints
+                $currentVisibility
             );
 
         $resolvedNode = $subgraph->findNodeById($nodeAddress->aggregateId);
@@ -293,24 +284,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 $subgraph->getWorkspaceName()->value,
                 $subgraph->getDimensionSpacePoint()->toJson()
             ), 1601372444));
-        }
-        if ($resolvedNode && $this->getNodeType($resolvedNode)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
-            try {
-                $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget(
-                    $nodeAddress
-                );
-                if ($shortcutNodeAddress instanceof NodeAddress) {
-                    $resolvedNode = $subgraph
-                        ->findNodeById($shortcutNodeAddress->aggregateId);
-                }
-            } catch (NodeNotFoundException | InvalidShortcutException $e) {
-                $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
-                    'Failed to resolve shortcut node "%s" in workspace "%s" and dimension %s',
-                    $resolvedNode->aggregateId->value,
-                    $subgraph->getWorkspaceName()->value,
-                    $subgraph->getDimensionSpacePoint()->toJson()
-                ), 1601370239, $e));
-            }
         }
 
         $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($this->controllerContext->getRequest());
