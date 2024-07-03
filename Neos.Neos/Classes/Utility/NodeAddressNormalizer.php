@@ -26,6 +26,10 @@ final class NodeAddressNormalizer
      */
     public function resolveNodeAddressFromPath(AbsoluteNodePath|NodePath|string $path, Node $documentNode): NodeAddress
     {
+        if ($path === '') {
+            throw new \RuntimeException('Empty strings can not be resolved to nodes.', 1719999872);
+        }
+
         if (is_string($path) && str_starts_with($path, 'node://')) {
             return NodeAddress::fromNode($documentNode)->withAggregateId(
                 NodeAggregateId::fromString(substr($path, strlen('node://')))
