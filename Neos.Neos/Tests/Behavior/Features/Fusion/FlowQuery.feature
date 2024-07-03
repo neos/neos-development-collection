@@ -409,6 +409,8 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       unsorted = ${q([a1a3, a1a4, a1a1, a1a2]).get()}
       sortByTitleAsc = ${q([a1a3, a1a4, a1a1, a1a2]).sort("title", "ASC").get()}
       sortByUriDesc = ${q([a1a3, a1a4, a1a1, a1a2]).sort("uriPathSegment", "DESC").get()}
+      # todo find out how to test time related logic
+      sortByDateAsc = ${q([a1a1]).sort("_creationDateTime", "ASC").get()}
       @process.render = Neos.Neos:Test.RenderNodesDataStructure
     }
     """
@@ -417,6 +419,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     unsorted: a1a3,a1a4,a1a1,a1a2
     sortByTitleAsc: a1a1,a1a2,a1a3,a1a4
     sortByUriDesc: a1a4,a1a3,a1a2,a1a1
+    sortByDateAsc: a1a1
     """
 
   Scenario: Node accessors (final Node access operations)
