@@ -18,7 +18,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
@@ -26,15 +25,12 @@ use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\Fusion\Helper\LinkHelper;
 use Neos\Neos\Utility\LegacyNodePathNormalizer;
 use Neos\Neos\Utility\NodeAddressNormalizer;
 use Neos\Utility\Arrays;
@@ -64,37 +60,11 @@ use Psr\Log\LoggerInterface;
  * ``~/about/us`` results in ``/sites/acmecom/about/us``,
  * ``~`` results in ``/sites/acmecom``.
  *
- * @deprecated with Neos 9. Please use the new {@see NodeUriBuilder} instead and for resolving a relative node path {@see NodeAddressNormalizer::resolveNodeAddressFromPath()}
+ * @deprecated with Neos 9. Please use the new {@see NodeUriBuilder} instead and for resolving a relative node path {@see NodeAddressNormalizer::resolveNodeAddressFromPath()} or utilize the {@see LinkHelper} from Fusion
  * @Flow\Scope("singleton")
  */
 class LinkingService
 {
-    /**
-     * Pattern to match supported URIs.
-     *
-     * @var string
-     */
-    public const PATTERN_SUPPORTED_URIS
-        = '/(node|asset):\/\/([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
-
-    /**
-     * @Flow\Inject
-     * @var AssetRepository
-     */
-    protected $assetRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ResourceManager
-     */
-    protected $resourceManager;
-
-    /**
-     * @Flow\Inject
-     * @var PropertyMapper
-     */
-    protected $propertyMapper;
-
     protected ?Node $lastLinkedNode;
 
     /**
@@ -127,37 +97,33 @@ class LinkingService
      */
     protected $legacyNodePathNormalizer;
 
+    /**
+     * @Flow\Inject
+     * @var LinkHelper
+     */
+    protected $newLinkHelper;
+
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @param string|UriInterface $uri
      * @return boolean
+     * @deprecated with Neos 9
      */
     public function hasSupportedScheme($uri): bool
     {
-        if ($uri instanceof UriInterface) {
-            $uri = (string)$uri;
-        }
-
-        return $uri !== null && preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
+        return $this->newLinkHelper->hasSupportedScheme($uri);
     }
 
     /**
      * @param string|UriInterface $uri
      * @return string
+     * @deprecated with Neos 9
      */
     public function getScheme($uri): string
     {
-        if ($uri instanceof UriInterface) {
-            return $uri->getScheme();
-        }
-
-        if ($uri !== null && preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
-            return $matches[1];
-        }
-
-        return '';
+        return $this->newLinkHelper->getScheme($uri);
     }
 
     /**
@@ -172,6 +138,7 @@ class LinkingService
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
+     * @deprecated with Neos 9
      */
     public function resolveNodeUri(
         string $uri,
@@ -179,7 +146,21 @@ class LinkingService
         ControllerContext $controllerContext,
         bool $absolute = false
     ): ?string {
-        return $this->createNodeUri($controllerContext, $uri, $contextNode, null, $absolute);
+        try {
+            if ($this->newLinkHelper->getScheme($uri) !== 'node') {
+                throw new \RuntimeException(sprintf(
+                    'Invalid node uri "%s" provided. It must start with node://',
+                    $uri
+                ), 1720004437);
+            }
+            return $this->createNodeUri($controllerContext, $uri, $contextNode, null, $absolute);
+        } catch (\RuntimeException $e) {
+            $this->systemLogger->info(
+                sprintf('Could not resolve "%s" to an existing node; %s', $uri, $e->getMessage()),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
+            return null;
+        }
     }
 
     /**
@@ -187,24 +168,19 @@ class LinkingService
      *
      * @param string $uri
      * @return string|null If the URI cannot be resolved, null is returned
+     * @deprecated with Neos 9
      */
     public function resolveAssetUri(string $uri): ?string
     {
-        $targetObject = $this->convertUriToObject($uri);
-        if (!$targetObject instanceof Asset) {
+        try {
+            return $this->newLinkHelper->resolveAssetUri($uri);
+        } catch (\RuntimeException $e) {
             $this->systemLogger->info(
-                sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri),
+                sprintf('Could not resolve "%s" to an existing asset; %s', $uri, $e->getMessage()),
                 LogEnvironment::fromMethodName(__METHOD__)
             );
-
             return null;
         }
-
-        $assetUri = $this->resourceManager->getPublicPersistentResourceUri($targetObject->getResource());
-
-        return is_string($assetUri)
-            ? $assetUri
-            : null;
     }
 
     /**
@@ -213,36 +189,11 @@ class LinkingService
      * @param string|UriInterface $uri
      * @param Node $contextNode
      * @return Node|AssetInterface|NULL
+     * @deprecated with Neos 9
      */
     public function convertUriToObject($uri, Node $contextNode = null)
     {
-        if ($uri instanceof UriInterface) {
-            $uri = (string)$uri;
-        }
-
-        if (preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
-            switch ($matches[1]) {
-                case 'node':
-                    if (!$contextNode instanceof Node) {
-                        throw new \RuntimeException(
-                            'node:// URI conversion requires a context node to be passed',
-                            1409734235
-                        );
-                    }
-                    return $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                        ->findNodeById(
-                            NodeAggregateId::fromString($matches[2])
-                        );
-                case 'asset':
-                    /** @var ?AssetInterface $asset */
-                    $asset = $this->assetRepository->findByIdentifier($matches[2]);
-
-                    return $asset;
-                default:
-            }
-        }
-
-        return null;
+        return $this->newLinkHelper->convertUriToObject($uri, $contextNode);
     }
 
     /**
@@ -269,6 +220,7 @@ class LinkingService
      * @throws \Neos\Flow\Security\Exception
      * @throws HttpException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @deprecated with Neos 9
      */
     public function createNodeUri(
         ControllerContext $controllerContext,
@@ -381,6 +333,7 @@ class LinkingService
      * @return string
      * @throws NeosException
      * @throws HttpException
+     * @deprecated with Neos 9 - todo find alternative
      */
     public function createSiteUri(ControllerContext $controllerContext, Site $site): string
     {
@@ -411,6 +364,7 @@ class LinkingService
      * May return NULL in case no link has been generated or an error occurred on the last linking run.
      *
      * @return Node
+     * @deprecated with Neos 9
      */
     public function getLastLinkedNode(): ?Node
     {
