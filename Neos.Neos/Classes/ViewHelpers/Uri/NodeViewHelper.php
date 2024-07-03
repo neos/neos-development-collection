@@ -182,14 +182,6 @@ class NodeViewHelper extends AbstractViewHelper
             false,
             'linkedNode'
         );
-        $this->registerArgument(
-            'resolveShortcuts',
-            'boolean',
-            'INTERNAL Parameter - if false, shortcuts are not redirected to their target.'
-            . ' Only needed on rare backend occasions when we want to link to the shortcut itself',
-            false,
-            true
-        );
     }
 
     /**
