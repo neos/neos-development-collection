@@ -102,18 +102,6 @@ final readonly class Node
     public ?NodeName $nodeName;
 
     /**
-     * In PHP please fetch the NodeType via the NodeTypeManager or the NodeTypeWithFallbackProvider trait instead.
-     * {@see $nodeTypeName}
-     *
-     * For Fusion please use the EEL Helper:
-     * ```
-     * ${Neos.Node.getNodeType(node)}
-     * ```
-     * @deprecated will be removed before the final 9.0 release
-     */
-    public ?NodeType $nodeType;
-
-    /**
      * @param ContentRepositoryId $contentRepositoryId The content-repository this Node belongs to
      * @param WorkspaceName $workspaceName The workspace of this Node
      * @param DimensionSpacePoint $dimensionSpacePoint DimensionSpacePoint a node has been accessed in
@@ -121,7 +109,6 @@ final readonly class Node
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint The DimensionSpacePoint the node originates in. Usually needed to address a Node in a NodeAggregate in order to update it.
      * @param NodeAggregateClassification $classification The classification (regular, root, tethered) of this node
      * @param NodeTypeName $nodeTypeName The node's node type name; always set, even if unknown to the NodeTypeManager
-     * @param NodeType|null $nodeType The node's node type, null if unknown to the NodeTypeManager - @deprecated Don't rely on this too much, as the capabilities of the NodeType here will probably change a lot; Ask the {@see NodeTypeManager} instead
      * @param PropertyCollection $properties All properties of this node. References are NOT part of this API; To access references, {@see ContentSubgraphInterface::findReferences()} can be used; To read the serialized properties use {@see PropertyCollection::serialized()}.
      * @param NodeName|null $name The optional name of the node, describing its relation to its parent
      * @param NodeTags $tags explicit and inherited SubtreeTags of this node
@@ -141,7 +128,6 @@ final readonly class Node
         public NodeTags $tags,
         public Timestamps $timestamps,
         public VisibilityConstraints $visibilityConstraints,
-        ?NodeType $nodeType,
         ContentStreamId $contentStreamId
     ) {
         if ($this->classification->isTethered() && $this->name === null) {
@@ -150,7 +136,6 @@ final readonly class Node
         // legacy to be removed before Neos9
         $this->nodeAggregateId = $this->aggregateId;
         $this->nodeName = $this->name;
-        $this->nodeType = $nodeType;
         $this->subgraphIdentity = ContentSubgraphIdentity::create(
             $contentRepositoryId,
             $contentStreamId,
@@ -162,9 +147,9 @@ final readonly class Node
     /**
      * @internal The signature of this method can change in the future!
      */
-    public static function create(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $aggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, PropertyCollection $properties, ?NodeName $nodeName, NodeTags $tags, Timestamps $timestamps, VisibilityConstraints $visibilityConstraints, ?NodeType $nodeType, ContentStreamId $contentStreamId): self
+    public static function create(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $aggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, PropertyCollection $properties, ?NodeName $nodeName, NodeTags $tags, Timestamps $timestamps, VisibilityConstraints $visibilityConstraints, ContentStreamId $contentStreamId): self
     {
-        return new self($contentRepositoryId, $workspaceName, $dimensionSpacePoint, $aggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $properties, $nodeName, $tags, $timestamps, $visibilityConstraints, $nodeType, $contentStreamId);
+        return new self($contentRepositoryId, $workspaceName, $dimensionSpacePoint, $aggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $properties, $nodeName, $tags, $timestamps, $visibilityConstraints, $contentStreamId);
     }
 
     /**
