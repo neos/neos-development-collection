@@ -39,7 +39,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
      * @var string
      */
     protected $expression = <<<'EEL'
-    ${(Neos.Node.getNodeType(node).label || node.nodeTypeName.value) + (node.nodeName ? ' (' + node.nodeName.value + ')' : '')}
+    ${(Neos.Node.getNodeType(node).label || q(node).nodeTypeName()) + (node.nodeName ? ' (' + node.nodeName.value + ')' : '')}
     EEL;
 
     /**
