@@ -67,8 +67,7 @@ use Psr\Log\LoggerInterface;
  */
 class ConvertUrisImplementation extends AbstractFusionObject
 {
-    public const PATTERN_SUPPORTED_URIS
-        = '/(node|asset):\/\/([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
+    private const PATTERN_SUPPORTED_URIS = '/(node|asset):\/\/([a-z0-9\-]+)/';
 
     /**
      * @Flow\Inject
