@@ -21,12 +21,17 @@ final class LegacyNodePathNormalizer
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
-     * Converts legacy paths like "/sites/site/absolute/path", "~/site-relative/path" and "~" to the corresponding
-     * AbsoluteNodePath depending on the passed base node.
+     * Converts legacy paths to the corresponding AbsoluteNodePath depending on the passed base node.
+     *
+     * Supported legacy syntax:
+     *
+     *  - /sites/site/absolute/path
+     *  - ~/site-relative/path
+     *  - ~
      *
      * The following syntax is not implemented and handled here:
      *
-     *  - node://
+     *  - node://my-node-identifier
      *  - /<Neos.Neos:Sites>/my-site/main
      *  - some/relative/path
      *

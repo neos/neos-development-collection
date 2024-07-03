@@ -31,6 +31,25 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Create a link to a node
+ *
+ * If the node is passed as string the base node is required.
+ * Following string syntax is allowed:
+ *
+ *  - node://my-node-identifier
+ *  - /<Neos.Neos:Sites>/my-site/main
+ *  - some/relative/path
+ *
+ * Deprecated syntax:
+ *
+ *  - /sites/site/absolute/path
+ *  - ~/site-relative/path
+ *  - ~
+ *
+ * Not supported syntax:
+ *
+ *  - ./neos/info
+ *  - ../foo/../../bar
+ *
  */
 class NodeUriImplementation extends AbstractFusionObject
 {

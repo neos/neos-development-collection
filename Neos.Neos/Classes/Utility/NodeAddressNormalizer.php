@@ -18,25 +18,37 @@ final class NodeAddressNormalizer
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
-     * Converts strings like "relative/path", ...
-     * to the corresponding NodeAddress
+     * Converts string-like node representations based the base node to the corresponding NodeAddress.
      *
-     * For handling legacy paths like "/sites/site/absolute/path", "~/site-relative/path" and "~",
-     * please combine with {@see LegacyNodePathNormalizer::tryResolveLegacyPathSyntaxToAbsoluteNodePath()}
+     * Following string syntax is allowed, as well as passing a NodePath or AbsoluteNodePath value object:
+     *
+     *  - node://my-node-identifier
+     *  - /<Neos.Neos:Sites>/my-site/main
+     *  - some/relative/path
+     *
+     * The following legacy syntax is not implemented and handled here:
+     *
+     *  - /sites/site/absolute/path
+     *  - ~/site-relative/path
+     *  - ~
+     *  - ./neos/info
+     *  - ../foo/../../bar
+     *
+     * For handling partially legacy paths please preprocess the path using {@see LegacyNodePathNormalizer::tryResolveLegacyPathSyntaxToAbsoluteNodePath()}
      */
-    public function resolveNodeAddressFromPath(AbsoluteNodePath|NodePath|string $path, Node $documentNode): NodeAddress
+    public function resolveNodeAddressFromPath(AbsoluteNodePath|NodePath|string $path, Node $baseNode): NodeAddress
     {
         if ($path === '') {
             throw new \RuntimeException('Empty strings can not be resolved to nodes.', 1719999872);
         }
 
         if (is_string($path) && str_starts_with($path, 'node://')) {
-            return NodeAddress::fromNode($documentNode)->withAggregateId(
+            return NodeAddress::fromNode($baseNode)->withAggregateId(
                 NodeAggregateId::fromString(substr($path, strlen('node://')))
             );
         }
 
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($documentNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($baseNode);
 
         if (is_string($path) && AbsoluteNodePath::patternIsMatchedByString($path)) {
             $path = AbsoluteNodePath::fromString($path);
@@ -57,13 +69,13 @@ final class NodeAddressNormalizer
         if (is_string($path)) {
             $path = NodePath::fromString($path);
         }
-        $targetNode = $subgraph->findNodeByPath($path, $documentNode->aggregateId);
+        $targetNode = $subgraph->findNodeByPath($path, $baseNode->aggregateId);
 
         if ($targetNode === null) {
             throw new \RuntimeException(sprintf(
                 'Node on path "%s" could not be found for base node "%s" in workspace "%s" and dimension %s',
                 $path->serializeToString(),
-                $documentNode->aggregateId->value,
+                $baseNode->aggregateId->value,
                 $subgraph->getWorkspaceName()->value,
                 $subgraph->getDimensionSpacePoint()->toJson()
             ), 1719950342);
