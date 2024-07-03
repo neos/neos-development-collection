@@ -266,13 +266,13 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             $resolvedNode = $subgraph->findNodeById($nodeAddress->aggregateId);
             if ($resolvedNode === null) {
                 $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
-                    'Failed to resolve node "%s" in workspace "%s" and dimension %s',
+                    'Failed to resolve node "%s" (path %s) in workspace "%s" and dimension %s',
                     $nodeAddress->aggregateId->value,
+                    $node,
                     $subgraph->getWorkspaceName()->value,
                     $subgraph->getDimensionSpacePoint()->toJson()
                 ), 1601372444));
             }
-
         } elseif ($node instanceof Node) {
             $nodeAddress = NodeAddress::fromNode($node);
             $resolvedNode = $node;

@@ -170,7 +170,7 @@ class NodeUriImplementation extends AbstractFusionObject
             $resolvedUri = $nodeUriBuilder->uriFor($nodeAddress, $options);
         } catch (NoMatchingRouteException) {
             // todo log arguments?
-            $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri.', $node->aggregateId->value), LogEnvironment::fromMethodName(__METHOD__));
+            $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri.', $nodeAddress->aggregateId->value), LogEnvironment::fromMethodName(__METHOD__));
             return '';
         }
 
