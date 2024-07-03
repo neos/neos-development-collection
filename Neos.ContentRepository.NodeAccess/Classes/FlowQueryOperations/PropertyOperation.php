@@ -90,6 +90,9 @@ class PropertyOperation extends AbstractOperation
 
         /* @var $element Node */
         $element = $context[0];
+        if ($element->hasProperty($propertyName)) {
+            return $element->getProperty($propertyName);
+        }
 
         $contentRepository = $this->contentRepositoryRegistry->get($element->contentRepositoryId);
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
@@ -113,6 +116,6 @@ class PropertyOperation extends AbstractOperation
             return $references;
         }
 
-        return $element->getProperty($propertyName);
+        return null;
     }
 }
