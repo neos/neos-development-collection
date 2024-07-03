@@ -396,6 +396,29 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     nothingToRemove: a1a4,a1a4,a1a4
     """
 
+  Scenario: Sort
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      @context {
+        a1a1 = ${q(site).find('#a1a1').get(0)}
+        a1a2 = ${q(site).find('#a1a2').get(0)}
+        a1a3 = ${q(site).find('#a1a3').get(0)}
+        a1a4 = ${q(site).find('#a1a4').get(0)}
+      }
+      unsorted = ${q([a1a3, a1a4, a1a1, a1a2]).get()}
+      sortByTitleAsc = ${q([a1a3, a1a4, a1a1, a1a2]).sort("title", "ASC").get()}
+      sortByUriDesc = ${q([a1a3, a1a4, a1a1, a1a2]).sort("uriPathSegment", "DESC").get()}
+      @process.render = Neos.Neos:Test.RenderNodesDataStructure
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    unsorted: a1a3,a1a4,a1a1,a1a2
+    sortByTitleAsc: a1a1,a1a2,a1a3,a1a4
+    sortByUriDesc: a1a4,a1a3,a1a2,a1a1
+    """
+
   Scenario: Node accessors (final Node access operations)
     When the Fusion context node is "a1"
     When I execute the following Fusion code:
