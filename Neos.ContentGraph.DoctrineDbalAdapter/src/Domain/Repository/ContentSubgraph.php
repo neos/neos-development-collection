@@ -300,7 +300,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $node = $this->nodeFactory->mapNodeRowToNode(
                 $nodeData,
                 $this->workspaceName,
-                $this->contentStreamId,
                 $this->dimensionSpacePoint,
                 $this->visibilityConstraints
             );
@@ -333,7 +332,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->nodeFactory->mapNodeRowsToNodes(
             $nodeRows,
             $this->workspaceName,
-            $this->contentStreamId,
             $this->dimensionSpacePoint,
             $this->visibilityConstraints
         );
@@ -387,7 +385,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->nodeFactory->mapNodeRowsToNodes(
             $nodeRows,
             $this->workspaceName,
-            $this->contentStreamId,
             $this->dimensionSpacePoint,
             $this->visibilityConstraints
         )->first();
@@ -407,7 +404,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->nodeFactory->mapNodeRowsToNodes(
             $nodeRows,
             $this->workspaceName,
-            $this->contentStreamId,
             $this->dimensionSpacePoint,
             $this->visibilityConstraints
         );
@@ -679,7 +675,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->nodeFactory->mapNodeRowToNode(
             $nodeRow,
             $this->workspaceName,
-            $this->contentStreamId,
             $this->dimensionSpacePoint,
             $this->visibilityConstraints
         );
@@ -695,7 +690,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->nodeFactory->mapNodeRowsToNodes(
             $nodeRows,
             $this->workspaceName,
-            $this->contentStreamId,
             $this->dimensionSpacePoint,
             $this->visibilityConstraints
         );
@@ -717,7 +711,12 @@ final class ContentSubgraph implements ContentSubgraphInterface
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch references: %s', $e->getMessage()), 1678364944, $e);
         }
-        return $this->nodeFactory->mapReferenceRowsToReferences($referenceRows, $this->workspaceName, $this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        return $this->nodeFactory->mapReferenceRowsToReferences(
+            $referenceRows,
+            $this->workspaceName,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     /**

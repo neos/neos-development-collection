@@ -64,7 +64,6 @@ final class NodeFactory
     public function mapNodeRowToNode(
         array $nodeRow,
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
@@ -85,8 +84,7 @@ final class NodeFactory
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
-            $visibilityConstraints,
-            $contentStreamId
+            $visibilityConstraints
         );
     }
 
@@ -96,7 +94,6 @@ final class NodeFactory
     public function mapNodeRowsToNodes(
         array $nodeRows,
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Nodes {
@@ -104,7 +101,6 @@ final class NodeFactory
             array_map(fn (array $nodeRow) => $this->mapNodeRowToNode(
                 $nodeRow,
                 $workspaceName,
-                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             ), $nodeRows)
@@ -125,7 +121,6 @@ final class NodeFactory
     public function mapReferenceRowsToReferences(
         array $nodeRows,
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): References {
@@ -134,7 +129,6 @@ final class NodeFactory
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $workspaceName,
-                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             );
@@ -157,7 +151,6 @@ final class NodeFactory
     public function mapNodeRowsToNodeAggregate(
         array $nodeRows,
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
     ): ?NodeAggregate {
         if (empty($nodeRows)) {
@@ -184,7 +177,6 @@ final class NodeFactory
                 $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
                     $workspaceName,
-                    $contentStreamId,
                     $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                     $visibilityConstraints
                 );
@@ -240,7 +232,6 @@ final class NodeFactory
     public function mapNodeRowsToNodeAggregates(
         array $nodeRows,
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
     ): NodeAggregates {
         if (empty($nodeRows)) {
@@ -273,7 +264,6 @@ final class NodeFactory
                     [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                         $nodeRow,
                         $workspaceName,
-                        $contentStreamId,
                         $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                         $visibilityConstraints
                     );

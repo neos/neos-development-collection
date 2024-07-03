@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
@@ -24,7 +23,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -70,16 +68,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class Node
 {
     /**
-     * This was intermediate part of the node's "Read Model" identity.
-     * Please use {@see $contentRepositoryId} {@see $workspaceName} {@see $dimensionSpacePoint} and {@see $aggregateId} instead,
-     * or see {@see NodeAddress::fromNode()} for passing the identity around.
-     * The visibility-constraints now reside in {@see $visibilityConstraints}.
-     * There is no replacement for the previously attached content-stream-id. Please refactor the code to use the newly available workspace-name.
-     * @deprecated will be removed before the final 9.0 release
-     */
-    public ContentSubgraphIdentity $subgraphIdentity;
-
-    /**
      * @param ContentRepositoryId $contentRepositoryId The content-repository this Node belongs to
      * @param WorkspaceName $workspaceName The workspace of this Node
      * @param DimensionSpacePoint $dimensionSpacePoint DimensionSpacePoint a node has been accessed in
@@ -105,27 +93,19 @@ final readonly class Node
         public ?NodeName $name,
         public NodeTags $tags,
         public Timestamps $timestamps,
-        public VisibilityConstraints $visibilityConstraints,
-        ContentStreamId $contentStreamId
+        public VisibilityConstraints $visibilityConstraints
     ) {
         if ($this->classification->isTethered() && $this->name === null) {
             throw new \InvalidArgumentException('The NodeName must be set if the Node is tethered.', 1695118377);
         }
-        // legacy to be removed before Neos9
-        $this->subgraphIdentity = ContentSubgraphIdentity::create(
-            $contentRepositoryId,
-            $contentStreamId,
-            $dimensionSpacePoint,
-            $visibilityConstraints
-        );
     }
 
     /**
      * @internal The signature of this method can change in the future!
      */
-    public static function create(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $aggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, PropertyCollection $properties, ?NodeName $nodeName, NodeTags $tags, Timestamps $timestamps, VisibilityConstraints $visibilityConstraints, ContentStreamId $contentStreamId): self
+    public static function create(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $aggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, PropertyCollection $properties, ?NodeName $name, NodeTags $tags, Timestamps $timestamps, VisibilityConstraints $visibilityConstraints): self
     {
-        return new self($contentRepositoryId, $workspaceName, $dimensionSpacePoint, $aggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $properties, $nodeName, $tags, $timestamps, $visibilityConstraints, $contentStreamId);
+        return new self($contentRepositoryId, $workspaceName, $dimensionSpacePoint, $aggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $properties, $name, $tags, $timestamps, $visibilityConstraints);
     }
 
     /**
