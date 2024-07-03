@@ -72,7 +72,7 @@ final readonly class ContentRepositoryBootstrapper
         $rootNodeAggregate = $this->contentRepository->getContentGraph($workspace->workspaceName)->findRootNodeAggregateByType(
             $rootNodeTypeName
         );
-        if ($rootNodeAggregate) {
+        if ($rootNodeAggregate !== null) {
             return $rootNodeAggregate->nodeAggregateId;
         }
         $rootNodeAggregateId = NodeAggregateId::create();

@@ -187,7 +187,7 @@ class SitesController extends AbstractModuleController
             $sitesNode = $contentRepository->getContentGraph($liveWorkspace->workspaceName)->findRootNodeAggregateByType(
                 NodeTypeNameFactory::forSites()
             );
-            if (!$sitesNode) {
+            if ($sitesNode === null) {
                 throw new \InvalidArgumentException(
                     'Cannot update a site without the sites note being present.',
                     1651958452
