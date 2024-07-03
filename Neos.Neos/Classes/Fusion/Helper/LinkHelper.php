@@ -70,20 +70,13 @@ class LinkHelper implements ProtectedContextAwareInterface
      */
     protected $linkingService;
 
-    /**
-     * @param string|Uri $uri
-     * @return boolean
-     */
-    public function hasSupportedScheme($uri): bool
+    public function hasSupportedScheme(string|UriInterface|null $uri): bool
     {
         $scheme = $this->getScheme($uri);
         return $scheme === self::NODE_SCHEME || $scheme === self::ASSET_SCHEME;
     }
 
-    /**
-     * @param string|UriInterface $uri
-     */
-    public function getScheme($uri): ?string
+    public function getScheme(string|UriInterface|null $uri): ?string
     {
         if ($uri === null || $uri === '') {
             return null;
@@ -98,15 +91,15 @@ class LinkHelper implements ProtectedContextAwareInterface
      * @param string|UriInterface $uri
      * @param Node $contextNode
      * @param ControllerContext $controllerContext
-     * @return string
+     * @return string|null
      * @deprecated with Neos 9 as the linking service is deprecated and this helper cannot be invoked from Fusion either way as the $controllerContext is not available.
      */
-    public function resolveNodeUri(string|UriInterface $uri, Node $contextNode, ControllerContext $controllerContext)
+    public function resolveNodeUri(string|UriInterface $uri, Node $contextNode, ControllerContext $controllerContext): ?string
     {
-        return $this->linkingService->resolveNodeUri($uri, $contextNode, $controllerContext);
+        return $this->linkingService->resolveNodeUri((string)$uri, $contextNode, $controllerContext);
     }
 
-    public function resolveAssetUri(string|Uri $uri): string
+    public function resolveAssetUri(string|UriInterface $uri): string
     {
         if (!$uri instanceof UriInterface) {
             $uri = new Uri($uri);
@@ -132,7 +125,7 @@ class LinkHelper implements ProtectedContextAwareInterface
     }
 
     public function convertUriToObject(
-        string|Uri $uri,
+        string|UriInterface $uri,
         Node $contextNode = null
     ): Node|AssetInterface|null {
         if (is_string($uri)) {

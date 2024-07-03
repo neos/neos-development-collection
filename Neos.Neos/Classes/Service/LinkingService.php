@@ -123,7 +123,7 @@ class LinkingService
      */
     public function getScheme($uri): string
     {
-        return $this->newLinkHelper->getScheme($uri);
+        return $this->newLinkHelper->getScheme($uri) ?? '';
     }
 
     /**
