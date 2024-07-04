@@ -100,8 +100,10 @@ Options Reference:
 
 ``minRows`` (integer)
 	Optional number to set the minRows of the TextArea if not expanded; Default ``2``.
+
 ``maxRows`` (integer)
 	Optional number to set the maxRows of the TextArea if expanded; Default ``24``.
+
 ``expandedRows`` (integer)
 	Optional number to set the expandedRows of the TextArea if expanded; Default ``6``.
 
