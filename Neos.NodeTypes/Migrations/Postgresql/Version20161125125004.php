@@ -18,7 +18,7 @@ class Version20161125125004 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['neos_contentrepository_domain_model_nodedata']);
         if ($hasTables) {
             $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET nodetype=REPLACE(nodetype, 'TYPO3.Neos.NodeTypes:', 'Neos.NodeTypes:')");
@@ -33,7 +33,7 @@ class Version20161125125004 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['neos_contentrepository_domain_model_nodedata']);
         if ($hasTables) {
             $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET nodetype=REPLACE(nodetype, 'Neos.NodeTypes:', 'TYPO3.Neos.NodeTypes:')");

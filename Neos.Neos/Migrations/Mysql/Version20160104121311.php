@@ -19,7 +19,7 @@ class Version20160104121311 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['typo3_typo3cr_domain_model_workspace']);
         if ($hasTables) {
             $workspacesWithoutOwnerQuery
@@ -52,7 +52,7 @@ class Version20160104121311 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['typo3_typo3cr_domain_model_workspace']);
         if ($hasTables) {
             $this->addSql('UPDATE typo3_typo3cr_domain_model_workspace SET owner = NULL');

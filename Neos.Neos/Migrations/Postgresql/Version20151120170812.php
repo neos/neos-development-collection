@@ -18,7 +18,7 @@ class Version20151120170812 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['typo3_typo3cr_domain_model_nodedata']);
         if ($hasTables) {
             $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ALTER dimensionvalues TYPE jsonb USING dimensionvalues::jsonb");
@@ -36,7 +36,7 @@ class Version20151120170812 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['typo3_typo3cr_domain_model_nodedata']);
         if ($hasTables) {
             $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ALTER dimensionvalues TYPE JSON USING dimensionvalues::json");

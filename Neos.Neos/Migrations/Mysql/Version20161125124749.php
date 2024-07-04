@@ -18,7 +18,7 @@ class Version20161125124749 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
 
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['neos_contentrepository_domain_model_nodedata']);
         if ($hasTables) {
             $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET nodetype = REPLACE(nodetype, 'TYPO3.Neos:', 'Neos.Neos:')");
@@ -39,7 +39,7 @@ class Version20161125124749 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
 
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['neos_contentrepository_domain_model_nodedata']);
         if ($hasTables) {
             $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET nodetype = REPLACE(nodetype, 'Neos.Neos:', 'TYPO3.Neos:')");

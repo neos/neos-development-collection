@@ -60,10 +60,7 @@ final class AssetUsageRepository
 
     private function databaseSchema(): Schema
     {
-        $schemaManager = $this->dbal->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
-        }
+        $schemaManager = $this->dbal->createSchemaManager();
         $table = new Table($this->tableNamePrefix, [
             (new Column('assetid', Type::getType(Types::STRING)))->setLength(40)->setNotnull(true)->setDefault(''),
             (new Column('originalassetid', Type::getType(Types::STRING)))->setLength(40)->setNotnull(false)->setDefault(null),

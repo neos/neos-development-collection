@@ -111,11 +111,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $schemaManager = $this->dbal->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
-        }
-
+        $schemaManager = $this->dbal->createSchemaManager();
         $workspaceTable = new Table($this->tableName, [
             (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
             (new Column('baseworkspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),

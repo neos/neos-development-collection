@@ -150,10 +150,7 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $schemaManager = $this->connection->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1705681161);
-        }
+        $schemaManager = $this->connection->createSchemaManager();
         $tableSchema = new Table(
             $this->tableName,
             [

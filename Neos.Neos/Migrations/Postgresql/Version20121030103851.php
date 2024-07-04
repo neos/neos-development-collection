@@ -25,7 +25,7 @@ class Version20121030103851 extends AbstractMigration
 
         $this->addSql("UPDATE typo3_party_domain_model_abstractparty SET dtype = 'typo3_neos_user' WHERE dtype = 'typo3_typo3_user'");
 
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['typo3_typo3cr_domain_model_contentobjectproxy']);
         if ($hasTables) {
             $this->addSql("UPDATE typo3_typo3cr_domain_model_contentobjectproxy SET targettype = 'TYPO3\\Neos\\Domain\\Model\\Site' WHERE targettype = 'TYPO3\\TYPO3\\Domain\\Model\\Site'");
@@ -46,7 +46,7 @@ class Version20121030103851 extends AbstractMigration
         $this->addSql("ALTER TABLE typo3_neos_domain_model_user RENAME TO typo3_typo3_domain_model_user");
 
         $this->addSql("UPDATE typo3_party_domain_model_abstractparty SET dtype = 'typo3_typo3_user' WHERE dtype = 'typo3_neos_user'");
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['typo3_typo3cr_domain_model_contentobjectproxy']);
         if ($hasTables) {
             $this->addSql("UPDATE typo3_typo3cr_domain_model_contentobjectproxy SET targettype = 'TYPO3\\TYPO3\\Domain\\Model\\Site' WHERE targettype = 'TYPO3\\Neos\\Domain\\Model\\Site'");
