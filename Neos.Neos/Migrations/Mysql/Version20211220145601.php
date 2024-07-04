@@ -2,7 +2,7 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Migrations\AbortMigrationException;
+use Doctrine\Migrations\Exception\AbortMigration as AbortMigrationException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 

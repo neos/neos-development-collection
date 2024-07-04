@@ -4,7 +4,7 @@ namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Migrations\AbortMigrationException;
+use Doctrine\Migrations\Exception\AbortMigration as AbortMigrationException;
 
 class Version20200307122055 extends AbstractMigration
 {
