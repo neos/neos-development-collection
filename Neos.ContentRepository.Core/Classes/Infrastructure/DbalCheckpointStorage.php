@@ -11,7 +11,6 @@ use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
@@ -94,7 +93,7 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
             ]);
         } catch (DBALException $exception) {
             $this->connection->rollBack();
-            if ($exception instanceof LockWaitTimeoutException) {
+            if ($exception instanceof LockWaitTimeoutException || ($exception instanceof DBALDriverException && ($exception->getCode() === 3572 || $exception->getCode() === 7))) {
                 throw new \RuntimeException(sprintf('Failed to acquire checkpoint lock for subscriber "%s" because it is acquired already', $this->subscriberId), 1652279016);
             }
             throw new \RuntimeException($exception->getMessage(), 1544207778, $exception);
