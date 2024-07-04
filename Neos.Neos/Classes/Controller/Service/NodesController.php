@@ -121,8 +121,9 @@ class NodesController extends ActionController
             : null;
         $nodeAddress = null;
         if (!$nodePath) {
+            // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
             $nodeAddress = $contextNode
-                ? NodeAddressFactory::create($contentRepository)->createFromUriString($contextNode)
+                ? NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString($contextNode)
                 : null;
         }
 
@@ -141,7 +142,7 @@ class NodesController extends ActionController
 
         if ($nodeIds === [] && (!is_null($nodeAddress) || !is_null($nodePath))) {
             if (!is_null($nodeAddress)) {
-                $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+                $entryNode = $subgraph->findNodeById($nodeAddress->aggregateId);
             } else {
                 /** @var AbsoluteNodePath $nodePath */
                 $entryNode = $subgraph->findNodeByAbsolutePath($nodePath);

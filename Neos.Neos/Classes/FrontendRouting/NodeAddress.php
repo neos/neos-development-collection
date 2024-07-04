@@ -22,16 +22,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A persistent, external "address" of a node; used to link to it.
- *
- * Describes the intention of the user making the current request:
- * Show me
- *  node $nodeAggregateId
- *  in dimensions $dimensionSpacePoint
- *  in contentStreamId $contentStreamId
- *
- * It is used in Neos Routing to build a URI to a node.
- *
  * @deprecated will be removed before Final 9.0
  * The NodeAddress was added 6 years ago without the concept of multiple crs
  * Its usages will be replaced by the new node attached node address
@@ -42,8 +32,9 @@ final readonly class NodeAddress
     /**
      * @internal use NodeAddressFactory, if you want to create a NodeAddress
      */
+    /** @phpstan-ignore-next-line its all just temporary */
     public function __construct(
-        public ContentStreamId $contentStreamId,
+        ?ContentStreamId $_contentStreamId,
         public DimensionSpacePoint $dimensionSpacePoint,
         public NodeAggregateId $nodeAggregateId,
         public WorkspaceName $workspaceName
@@ -59,16 +50,10 @@ final readonly class NodeAddress
             . '__' . $this->nodeAggregateId->value;
     }
 
-    public function isInLiveWorkspace(): bool
-    {
-        return $this->workspaceName->isLive();
-    }
-
     public function __toString(): string
     {
         return sprintf(
-            'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateId=%s, workspaceName=%s]',
-            $this->contentStreamId->value,
+            'NodeAddress[dimensionSpacePoint=%s, nodeAggregateId=%s, workspaceName=%s]',
             $this->dimensionSpacePoint->toJson(),
             $this->nodeAggregateId->value,
             $this->workspaceName->value

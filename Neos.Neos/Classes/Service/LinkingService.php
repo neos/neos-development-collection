@@ -36,7 +36,6 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
@@ -309,7 +308,7 @@ class LinkingService
                     $controllerContext->getRequest()->getHttpRequest()
                 )->contentRepositoryId;
                 $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-                $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
+                $nodeAddress = NodeAddress::fromJsonString($nodeString);
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
                 $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
                     $nodeAddress->dimensionSpacePoint,
@@ -317,7 +316,7 @@ class LinkingService
                         ? VisibilityConstraints::withoutRestrictions()
                         : VisibilityConstraints::frontend()
                 );
-                $node = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+                $node = $subgraph->findNodeById($nodeAddress->aggregateId);
             } catch (\Throwable $exception) {
                 if ($baseNode === null) {
                     throw new NeosException(
