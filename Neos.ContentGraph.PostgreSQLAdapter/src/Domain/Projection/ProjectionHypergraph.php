@@ -223,7 +223,7 @@ final class ProjectionHypergraph
         }
 
         $hierarchyHyperrelations = [];
-        foreach ($this->dbal->executeQuery($query, $parameters, $types) as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters, $types)->iterateAssociative() as $row) {
             $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
         }
 
