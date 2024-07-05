@@ -224,7 +224,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     {
         if ($this->liveContentStreamIdRuntimeCache === null) {
             try {
-                $contentStreamId = $this->dbal->fetchColumn(
+                $contentStreamId = $this->dbal->fetchOne(
                     'SELECT contentStreamId FROM '
                         . $this->tableNamePrefix . '_livecontentstreams LIMIT 1'
                 );
