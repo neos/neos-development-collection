@@ -98,13 +98,10 @@ trait CommonGraphQueryOperations
     }
 
     /**
-     * @return QueryResult&iterable<string, mixed>
+     * @return QueryResult
      */
     final public function execute(Connection $databaseConnection): QueryResult
     {
-        /** @var QueryResult&iterable<string, mixed> $result */
-        $result = $databaseConnection->executeQuery($this->query, $this->parameters, $this->types);
-
-        return $result;
+        return $databaseConnection->executeQuery($this->query, $this->parameters, $this->types);
     }
 }

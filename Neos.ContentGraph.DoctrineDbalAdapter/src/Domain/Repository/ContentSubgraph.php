@@ -659,7 +659,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @return Result<mixed>
+     * @return Result
      * @throws DbalException
      */
     private function executeQuery(QueryBuilder $queryBuilder): Result

@@ -21,10 +21,10 @@ class Version20190314150744 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
 
@@ -41,10 +41,10 @@ class Version20190314150744 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
 

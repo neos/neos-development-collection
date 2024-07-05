@@ -13,7 +13,7 @@ class Version20190314150745 extends AbstractMigration
     /**
      * @return string
      */
-    public function getDescription(): string 
+    public function getDescription(): string
     {
         return 'Introduce variant presets';
     }
@@ -21,10 +21,10 @@ class Version20190314150745 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
@@ -43,13 +43,13 @@ class Version20190314150745 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
-        
+
         $this->addSql('ALTER TABLE neos_media_domain_model_asset ALTER assetsourceidentifier SET DEFAULT \'neos\'');
         $this->addSql('ALTER TABLE neos_media_domain_model_asset ALTER assetsourceidentifier DROP NOT NULL');
         $this->addSql('ALTER TABLE neos_media_domain_model_imagevariant DROP presetidentifier');

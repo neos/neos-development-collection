@@ -15,7 +15,7 @@ namespace Neos\Media\Command;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;

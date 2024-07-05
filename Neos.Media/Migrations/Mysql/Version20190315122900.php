@@ -21,7 +21,7 @@ class Version20190315122900 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
     public function up(Schema $schema): void
@@ -33,7 +33,7 @@ class Version20190315122900 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
      */
     public function down(Schema $schema): void

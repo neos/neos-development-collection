@@ -1,7 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Migrations\AbortMigrationException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
