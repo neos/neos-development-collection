@@ -165,3 +165,40 @@ td.workspace-action-column {
   width: 100%;
   max-width: 500px;
 }
+
+/**
+ * Indicator styles
+ */
+.loadingIndicator__container {
+  left: 0;
+  top: var(--unit);
+  height: 2px;
+  position: absolute;
+  width: 100vw;
+  z-index: var(--zIndex-LoadingIndicatorContainer);
+}
+
+.loadingIndicator {
+  height: 2px;
+  position: relative;
+  width: 100%;
+}
+.loadingIndicator__bar {
+  height: 100%;
+  position: relative;
+  background-color: #ff8700;
+  animation: cssload-width 2s cubic-bezier(.45, 0, 1, 1) infinite;
+}
+
+@keyframes cssload-width {
+  0%,
+  100% {
+    transition-timing-function: cubic-bezier(1, 0, .65, .85);
+  }
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}

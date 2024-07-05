@@ -10,6 +10,8 @@ Neos:
             icon: fas fa-th-large
             mainStylesheet: 'Lite'
             additionalResources:
+              javaScripts:
+                'Neos.Workspace.Ui': 'resource://Neos.Workspace.Ui/Public/Scripts/htmx.min.js'
               styleSheets:
                 'Neos.Workspace.Ui': 'resource://Neos.Workspace.Ui/Public/Styles/Module.css'
 

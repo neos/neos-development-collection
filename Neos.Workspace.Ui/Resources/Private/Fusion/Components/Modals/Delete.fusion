@@ -34,8 +34,13 @@ prototype(Neos.Workspace.Ui:Component.Modal.Delete) < prototype(Neos.Fusion:Comp
         </button>
         <Neos.Fusion.Form:Form
           form.target.action="delete"
+          form.target.format="htmx"
           form.target.arguments.workspaceName={props.workspaceName}
           class="neos-inline"
+          attributes.hx-post={form.getTarget()}
+          attributes.hx-target="closest tr"
+          attributes.hx-swap="delete"
+          attributes.hx-indicator="#indicator"
         >
           <button
             type="submit"

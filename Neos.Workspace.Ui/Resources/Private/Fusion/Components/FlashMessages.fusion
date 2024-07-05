@@ -2,7 +2,11 @@ prototype(Neos.Workspace.Ui:Component.FlashMessages) < prototype(Neos.Fusion:Com
     flashMessages = ${[]}
 
     renderer = afx`
-        <div id="neos-notification-container" class="neos-notification-top" @if.hasMessages={props.flashMessages}>
+        <div
+          id="neos-notification-container"
+          class="neos-notification-top"
+          hx-swap-oob="true"
+        >
             <Neos.Fusion:Loop items={props.flashMessages} itemName="message">
                 <Neos.Workspace.Ui:Component.FlashMessages.Message message={message}/>
             </Neos.Fusion:Loop>

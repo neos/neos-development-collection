@@ -1,0 +1,7 @@
+Neos.Workspace.Ui.WorkspaceController.index.htmx = Neos.Fusion:Component {
+  flashMessages = ${flashMessages}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
+  `
+}

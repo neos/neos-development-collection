@@ -46,10 +46,12 @@ use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
+use Neos\Fusion\View\FusionView;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
@@ -79,6 +81,8 @@ class WorkspaceController extends AbstractModuleController
     use ModuleTranslationTrait;
     use NodeTypeWithFallbackProvider;
 
+    protected $defaultViewObjectName = FusionView::class;
+
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
@@ -102,6 +106,18 @@ class WorkspaceController extends AbstractModuleController
 
     #[Flow\Inject]
     protected WorkspaceProvider $workspaceProvider;
+
+    protected function initializeView(ViewInterface $view): void
+    {
+        parent::initializeView($view);
+        // If we're in a HTMX-request...
+        if ($this->request->getHttpRequest()->hasHeader('HX-Request')) {
+            // We append an "/htmx" segment to the fusion path, changing it from "<PackageKey>/<ControllerName>/<ActionName>" to "<PackageKey>/<ControllerName>/<ActionName>/htmx"
+            $htmxFusionPath = str_replace(['\\Controller\\', '\\'], ['\\', '/'], $this->request->getControllerObjectName());
+            $htmxFusionPath .= '/' . $this->request->getControllerActionName() . '/htmx';
+            $view->setOption('fusionPath', $htmxFusionPath);
+        }
+    }
 
     /**
      * Display a list of unpublished content
