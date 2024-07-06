@@ -965,6 +965,10 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
         <source>Sort by user accounts and roles</source>
         <target state="translated">Ordenar por cuentas de usuario y funciones</target>
       </trans-unit>
+      <trans-unit id="branding.link.title" xml:space="preserve">
+        <source>Go back to your starting module</source>
+        <target state="needs-translation">Volver al módulo de inicio</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
