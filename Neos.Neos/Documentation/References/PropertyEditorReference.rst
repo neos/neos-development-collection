@@ -92,20 +92,12 @@ In case the text input should span multiple lines, a ``TextAreaEditor`` should b
             group: 'document'
             editor: 'Neos.Neos/Inspector/Editors/TextAreaEditor'
             editorOptions:
-              minRows: 5
-              expandedRows: 10
-              maxRows: 20
+              rows: 7
 
 Options Reference:
 
-``minRows`` (integer)
-	Optional number to set the minRows of the TextArea if not expanded; Default ``2``.
-
-``maxRows`` (integer)
-	Optional number to set the maxRows of the TextArea if expanded; Default ``24``.
-
-``expandedRows`` (integer)
-	Optional number to set the expandedRows of the TextArea if expanded; Default ``6``.
+``rows`` (integer)
+	Number of lines this textarea should have; Default ``5``.
 
 ** and all options from Text Field Editor -- see above**
 
