@@ -1309,7 +1309,7 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
       </trans-unit>
       <trans-unit id="branding.link.title" xml:space="preserve">
         <source>Go back to your starting module</source>
-        <target state="translated">Volver al módulo de inicio</target>
+        <target state="translated">Regresa a tu módulo inicial</target>
       </trans-unit>
     </body>
   </file>
