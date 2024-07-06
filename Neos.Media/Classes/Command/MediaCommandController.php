@@ -145,8 +145,7 @@ class MediaCommandController extends CommandController
             WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
         ';
         $statement = $this->dbalConnection->prepare($sql);
-        $statement->execute();
-        $resourceInfos = $statement->fetchAll();
+        $resourceInfos = $statement->execute()->fetchAllAssociative();
 
         if ($resourceInfos === []) {
             !$quiet || $this->outputLine('Found no resources which need to be imported.');
