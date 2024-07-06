@@ -2,6 +2,7 @@
 
 namespace Neos\Neos\FrontendRouting\Projection;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
@@ -19,6 +20,10 @@ class DocumentUriPathSchemaBuilder
     ) {
     }
 
+    /**
+     * @param AbstractSchemaManager<AbstractPlatform> $schemaManager
+     * @return Schema
+     */
     public function buildSchema(AbstractSchemaManager $schemaManager): Schema
     {
         $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [

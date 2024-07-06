@@ -9,8 +9,8 @@ use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\DriverException as DBALDriverException;
 use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
@@ -36,7 +36,7 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
     ) {
         $platform = $this->connection->getDatabasePlatform();
         if (!($platform instanceof MySqlPlatform || $platform instanceof PostgreSqlPlatform)) {
-            throw new \InvalidArgumentException(sprintf('The %s only supports the platforms %s and %s currently. Given: %s', $this::class, MySqlPlatform::class, PostgreSqlPlatform::class, get_debug_type($platform)), 1660556004);
+            throw new \InvalidArgumentException(sprintf('The %s only supports the platforms %s and %s currently. Given: %s', $this::class, MySQLPlatform::class, PostgreSQLPlatform::class, get_debug_type($platform)), 1660556004);
         }
         if (strlen($this->subscriberId) > 255) {
             throw new \InvalidArgumentException('The subscriberId must not exceed 255 characters', 1705673456);
@@ -94,7 +94,7 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
             ]);
         } catch (DBALException $exception) {
             $this->connection->rollBack();
-            if ($exception instanceof LockWaitTimeoutException || ($exception instanceof DBALDriverException && ($exception->getErrorCode() === 3572 || $exception->getErrorCode() === 7))) {
+            if ($exception instanceof LockWaitTimeoutException || ($exception instanceof DBALDriverException && ($exception->getCode() === 3572 || $exception->getCode() === 7))) {
                 throw new \RuntimeException(sprintf('Failed to acquire checkpoint lock for subscriber "%s" because it is acquired already', $this->subscriberId), 1652279016);
             }
             throw new \RuntimeException($exception->getMessage(), 1544207778, $exception);

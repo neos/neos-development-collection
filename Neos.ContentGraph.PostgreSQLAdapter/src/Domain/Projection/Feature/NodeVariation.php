@@ -197,7 +197,7 @@ trait NodeVariation
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function copyNodeToOriginDimensionSpacePoint(
         NodeRecord $sourceNode,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
@@ -116,7 +117,7 @@ final class DbalSchemaFactory
     }
 
     /**
-     * @param AbstractSchemaManager $schemaManager
+     * @param AbstractSchemaManager<AbstractPlatform> $schemaManager
      * @param Table[] $tables
      * @return Schema
      */

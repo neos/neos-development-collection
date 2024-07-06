@@ -91,7 +91,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
 
     /**
      * @return array<string,Workspace>
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function findByBaseWorkspace(WorkspaceName $baseWorkspace): array
     {
