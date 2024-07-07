@@ -27,11 +27,6 @@ class FeatureContext implements Context
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
 
-    protected $isolated = false;
-
-
-    private ContentRepository $contentRepository;
-
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public function __construct()
