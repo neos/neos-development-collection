@@ -36,6 +36,6 @@ final readonly class ProjectionStatuses implements \IteratorAggregate
 
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->statuses);
+        yield from $this->statuses;
     }
 }
