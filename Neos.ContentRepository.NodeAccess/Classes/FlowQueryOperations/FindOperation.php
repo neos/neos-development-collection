@@ -34,6 +34,8 @@ use Neos\Flow\Annotations as Flow;
  * "find" operation working on ContentRepository nodes. This operation allows for retrieval
  * of nodes specified by a path, identifier or node type (recursive).
  *
+ * Relative examples depending on the node's workspace, dimension space point, visibility constraints and location in the graph:
+ *
  * Example (node name):
  *
  *  q(node).find('main')
@@ -41,14 +43,6 @@ use Neos\Flow\Annotations as Flow;
  * Example (relative path):
  *
  *  q(node).find('main/text1')
- *
- * Example (absolute path):
- *
- *  q(node).find('/<Neos.Neos:Sites>/my-site/home')
- *
- * Example (identifier):
- *
- *  q(node).find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')
  *
  * Example (node type):
  *
@@ -62,6 +56,15 @@ use Neos\Flow\Annotations as Flow;
  *
  *  q(node).find('[instanceof Neos.NodeTypes:Text][text*="Neos"]')
  *
+ * Absolute / global examples depending only on the node's workspace and dimension space point as well as visibility constraints:
+ *
+ * Example (absolute path):
+ *
+ *  q(site).find('/<Neos.Neos:Sites>/my-site/home')
+ *
+ * Example (global identifier):
+ *
+ *  q(site).find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')
  */
 class FindOperation extends AbstractOperation
 {
