@@ -248,6 +248,7 @@ class UserService
         }
 
         foreach ($this->securityContext->getAuthenticationTokens() as $token) {
+            /** @var Account|null $account */
             $account = $token->getAccount();
             if ($account === null) {
                 continue;

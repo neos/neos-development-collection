@@ -21,7 +21,6 @@ namespace Neos\Neos\Domain\Model;
  */
 interface UserInterface
 {
-
     /**
      * Returns the globally unique identifier for this user
      */

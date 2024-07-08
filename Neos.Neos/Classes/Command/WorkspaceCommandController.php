@@ -22,11 +22,9 @@ use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWork
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceStatus;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -36,11 +34,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Neos\Domain\Service\WorkspacePublishingService;
-use Neos\Neos\PendingChangesProjection\ChangeFinder;
+use Neos\Neos\Domain\Service\WorkspaceService;
 
 /**
  * The Workspace Command Controller
@@ -182,7 +180,7 @@ class WorkspaceCommandController extends CommandController
 
         $this->workspaceService->createWorkspace(
             $contentRepositoryId,
-            \Neos\Neos\Domain\Model\WorkspaceTitle::fromString($title),
+            \Neos\Neos\Domain\Model\WorkspaceTitle::fromString($title ?? $workspace),
             \Neos\Neos\Domain\Model\WorkspaceDescription::fromString($description ?? ''),
             WorkspaceName::fromString($baseWorkspace),
             \Neos\Neos\Domain\Model\UserId::fromString($owner),
@@ -209,7 +207,7 @@ class WorkspaceCommandController extends CommandController
                 WorkspaceTitle::fromString($title ?: $workspace),
                 WorkspaceDescription::fromString($description ?: $workspace),
                 ContentStreamId::create(),
-                $workspaceOwnerUserId
+                $workspaceOwnerUserId !== null ? \Neos\ContentRepository\Core\SharedModel\User\UserId::fromString($workspaceOwnerUserId->value) : null,
             ));
         } catch (WorkspaceAlreadyExists $workspaceAlreadyExists) {
             $this->outputLine('Workspace "%s" already exists', [$workspace]);
@@ -219,7 +217,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        if ($workspaceOwnerUserId instanceof UserId) {
+        if ($workspaceOwnerUserId !== null) {
             $this->outputLine(
                 'Created a new workspace "%s", based on workspace "%s", owned by "%s".',
                 [$workspace, $baseWorkspace, $owner]

@@ -29,9 +29,10 @@ final class Version20240425223901 extends AbstractMigration
         $tableWorkspaceRole = $schema->createTable('neos_neos_workspace_role');
         $tableWorkspaceRole->addColumn('content_repository_id', 'string', ['length' => 16]);
         $tableWorkspaceRole->addColumn('workspace_name', 'string', ['length' => 255]);
+        $tableWorkspaceRole->addColumn('subject_type', 'string', ['length' => 20]);
         $tableWorkspaceRole->addColumn('subject', 'string', ['length' => 255]);
-        $tableWorkspaceRole->addColumn('role', 'string', ['length' => 255]);
-        $tableWorkspaceRole->setPrimaryKey(['content_repository_id', 'workspace_name', 'subject']);
+        $tableWorkspaceRole->addColumn('role', 'string', ['length' => 20]);
+        $tableWorkspaceRole->setPrimaryKey(['content_repository_id', 'workspace_name', 'subject_type', 'subject']);
     }
 
     public function down(Schema $schema): void

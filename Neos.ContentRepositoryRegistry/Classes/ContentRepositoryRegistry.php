@@ -17,6 +17,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryIds;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
@@ -81,12 +82,9 @@ final class ContentRepositoryRegistry
         return $this->getFactory($contentRepositoryId)->getOrBuild();
     }
 
-    /**
-     * @return array<ContentRepositoryId>
-     */
-    public function getContentRepositoryIds(): array
+    public function getContentRepositoryIds(): ContentRepositoryIds
     {
-        return array_map(ContentRepositoryId::fromString(...), array_keys($this->settings['contentRepositories']));
+        return ContentRepositoryIds::fromArray(array_keys($this->settings['contentRepositories'] ?? []));
     }
 
     /**

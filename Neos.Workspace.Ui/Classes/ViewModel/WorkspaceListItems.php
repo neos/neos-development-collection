@@ -22,6 +22,9 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final readonly class WorkspaceListItems implements \IteratorAggregate, \Countable
 {
+    /**
+     * @param array<WorkspaceListItem> $items
+     */
     private function __construct(
         private array $items,
     ) {

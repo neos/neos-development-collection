@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
@@ -24,16 +26,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Account;
-use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
-use Neos\Neos\Domain\Model\UserInterface;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceMetadata;
 use Neos\Neos\Domain\Model\WorkspacePermissions;
+use Neos\Neos\Domain\Model\WorkspaceRole;
+use Neos\Neos\Domain\Model\WorkspaceSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 
 /**
@@ -47,7 +48,6 @@ final class WorkspaceService
 
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly PrivilegeManagerInterface $privilegeManager,
         private readonly UserService $userService,
         private readonly Connection $dbal,
     ) {
@@ -87,6 +87,27 @@ final class WorkspaceService
         );
     }
 
+    public function updateWorkspaceMetadata(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, WorkspaceTitle $newWorkspaceTitle, WorkspaceDescription $newWorkspaceDescription): void
+    {
+        $this->requireWorkspace($contentRepositoryId, $workspaceName);
+        try {
+            $this->dbal->insert(self::TABLE_NAME_WORKSPACE_METADATA, [
+                'content_repository_id' => $contentRepositoryId->value,
+                'workspace_name' => $workspaceName->value,
+                'title' => $newWorkspaceTitle->value,
+                'description' => $newWorkspaceDescription->value,
+            ]);
+        } catch (UniqueConstraintViolationException $e) {
+            $this->dbal->update(self::TABLE_NAME_WORKSPACE_METADATA, [
+                'title' => $newWorkspaceTitle->value,
+                'description' => $newWorkspaceDescription->value,
+            ], [
+                'content_repository_id' => $contentRepositoryId->value,
+                'workspace_name' => $workspaceName->value,
+            ]);
+        }
+    }
+
     public function getPersonalWorkspaceForUser(ContentRepositoryId $contentRepositoryId, UserId $userId): Workspace
     {
         $workspaceName = $this->findPrimaryWorkspaceNameForUser($contentRepositoryId, $userId);
@@ -100,8 +121,7 @@ final class WorkspaceService
         ContentRepositoryId $contentRepositoryId,
         WorkspaceTitle $title,
         WorkspaceDescription $description,
-    ): WorkspaceName
-    {
+    ): WorkspaceName {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $workspaceName = self::getUniqueWorkspaceName($contentRepository, $title->value);
         $contentRepository->handle(
@@ -115,12 +135,13 @@ final class WorkspaceService
 
         // TODO catch exceptions
 
-        $this->dbal->insert(self::TABLE_NAME_WORKSPACE_ROLE, [
-            'content_repository_id' => $contentRepositoryId->value,
-            'workspace_name' => $workspaceName->value,
-            'subject' => 'group:EVERYBODY',
-            'role' => 'OWNER',
-        ]);
+//        $this->dbal->insert(self::TABLE_NAME_WORKSPACE_ROLE, [
+//            'content_repository_id' => $contentRepositoryId->value,
+//            'workspace_name' => $workspaceName->value,
+//            'subject_type' => WorkspaceSubjectType::GROUP->name,
+//            'subject' => 'Neos.Flow:Everybody',
+//            'role' => WorkspaceRole::COLLABORATOR,
+//        ]);
 
         // TODO catch exceptions
 
@@ -161,8 +182,9 @@ final class WorkspaceService
             $this->dbal->insert(self::TABLE_NAME_WORKSPACE_ROLE, [
                 'content_repository_id' => $contentRepositoryId->value,
                 'workspace_name' => $workspaceName->value,
-                'subject' => 'user:' . $ownerId->value,
-                'role' => 'OWNER',
+                'subject_type' => WorkspaceSubjectType::USER->name,
+                'subject' => $ownerId->value,
+                'role' => WorkspaceRole::OWNER->name,
             ]);
         }
 
@@ -198,82 +220,16 @@ final class WorkspaceService
 
     public function getWorkspacePermissionsForUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, User $user): WorkspacePermissions
     {
-        $workspaceMetadata = $this->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
-
         $userRoles = $this->userService->getAllRoles($user);
         $userIsAdmin = array_key_exists('Neos.Neos:Administrator', $userRoles);
 
-        $userWorkspaceRoles = $this->getUserWorkspaceRoles($contentRepositoryId, $workspaceName, $user->getId(), array_keys($userRoles));
+        $userWorkspaceRole = $this->getWorkspaceRoleOfUser($contentRepositoryId, $workspaceName, $user->getId(), array_keys($userRoles));
 
-        return match ($workspaceMetadata->classification) {
-            WorkspaceClassification::UNKNOWN => WorkspacePermissions::create(
-                read: $userIsAdmin,
-                publish: false,
-                manage: $userIsAdmin,
-            ),
-            WorkspaceClassification::ROOT => WorkspacePermissions::create(
-                read: true,
-                publish: $this->privilegeManager->isPrivilegeTargetGrantedForRoles($userRoles, 'Neos.Workspace.Ui:Backend.PublishAllToLiveWorkspace'),
-                manage: $userIsAdmin,
-            ),
-            WorkspaceClassification::PERSONAL => WorkspacePermissions::create(
-                read: $this->findPrimaryWorkspaceNameForUser($contentRepositoryId, $user->getId())?->equals($workspaceName) ?: false,
-                publish: in_array('MANAGER', $userWorkspaceRoles, true),
-                manage: $userIsAdmin || in_array('MANAGER', $userWorkspaceRoles, true),
-            ),
-            WorkspaceClassification::SHARED => WorkspacePermissions::create(
-                read: $userIsAdmin || in_array('MANAGER', $userWorkspaceRoles, true),
-                publish: $userIsAdmin || in_array('MANAGER', $userWorkspaceRoles, true),
-                manage: $userIsAdmin || in_array('MANAGER', $userWorkspaceRoles, true),
-            ),
-        };
-
-//        $this->privilegeManager->isPrivilegeTargetGrantedForRoles($user->getAllRoles)
-//
-//            // can manage
-//
-//        if ($workspace->isInternalWorkspace()) {
-//            return $this->privilegeManager->isPrivilegeTargetGranted(
-//                'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
-//            );
-//        }
-//
-//
-//        $currentUser = $this->getCurrentUser();
-//        if ($workspace->isPrivateWorkspace() && $currentUser !== null && $workspace->workspaceOwner === $this->persistenceManager->getIdentifierByObject($currentUser)) {
-//            return $this->privilegeManager->isPrivilegeTargetGranted(
-//                'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
-//            );
-//        }
-//
-//        if ($workspace->isPrivateWorkspace() &&  $currentUser !== null && $workspace->workspaceOwner !== $this->persistenceManager->getIdentifierByObject($currentUser)) {
-//            return $this->privilegeManager->isPrivilegeTargetGranted(
-//                'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
-//            );
-//        }
-//
-//
-//        // can publish
-//
-//                if ($workspace->isPublicWorkspace()) {
-//                    return $this->securityContext->hasRole('Neos.Neos:LivePublisher');
-//                }
-//
-//        $currentUser = $this->getCurrentUser();
-//        $ownerIdentifier = $currentUser
-//            ? $this->persistenceManager->getIdentifierByObject($currentUser)
-//            : null;
-//
-//        if ($workspace->workspaceOwner === null || $workspace->workspaceOwner === $ownerIdentifier) {
-//            return true;
-//        }
-//
-//
-//        return WorkspacePermissions::create(
-//            read: false,
-//            publish: false,
-//            manage: false,
-//        );
+        return WorkspacePermissions::create(
+            read: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
+            write: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::COLLABORATOR),
+            manage: $userIsAdmin || $userWorkspaceRole->isAtLeast(WorkspaceRole::MANAGER),
+        );
     }
 
     private function findPrimaryWorkspaceNameForUser(ContentRepositoryId $contentRepositoryId, UserId $userId): ?WorkspaceName
@@ -297,7 +253,10 @@ final class WorkspaceService
         return $workspaceName === false ? null : WorkspaceName::fromString($workspaceName);
     }
 
-    private function getUserWorkspaceRoles(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, UserId $userId, array $userRoles): array
+    /**
+     * @param array<string> $userRoles
+     */
+    private function getWorkspaceRoleOfUser(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, UserId $userId, array $userRoles): WorkspaceRole
     {
         $table = self::TABLE_NAME_WORKSPACE_ROLE;
         $query = <<<SQL
@@ -309,14 +268,25 @@ final class WorkspaceService
                 content_repository_id = :contentRepositoryId
                 AND workspace_name = :workspaceName
                 AND subject IN (:subjects)
+            ORDER BY
+                CASE
+                    WHEN role='OWNER' THEN 1
+                    WHEN role='MANAGER' THEN 2
+                    WHEN role='COLLABORATOR' THEN 3
+                END
+            LIMIT 1
         SQL;
-        return $this->dbal->fetchFirstColumn($query, [
+        $role = $this->dbal->fetchOne($query, [
             'contentRepositoryId' => $contentRepositoryId->value,
             'workspaceName' => $workspaceName->value,
             'subjects' => ['user:' . $userId->value, ...array_map(fn (string $role) => 'group:' . $role, $userRoles)],
         ], [
             'subjects' => Connection::PARAM_STR_ARRAY,
         ]);
+        if ($role === false) {
+            return WorkspaceRole::NONE;
+        }
+        return WorkspaceRole::from($role);
     }
 
     private static function getUniqueWorkspaceName(ContentRepository $contentRepository, string $candidate): WorkspaceName
@@ -343,5 +313,4 @@ final class WorkspaceService
         }
         return $workspace;
     }
-
 }

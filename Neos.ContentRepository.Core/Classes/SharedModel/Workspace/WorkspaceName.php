@@ -23,7 +23,9 @@ use Behat\Transliterator\Transliterator;
  */
 final class WorkspaceName implements \JsonSerializable
 {
-    private const PATTERN = '/^[a-z0-9\-]{1,30}$/';
+    public const MAX_LENGTH = 30;
+
+    private const PATTERN = '/^[a-z][a-z0-9\-]{0,' . (self::MAX_LENGTH - 1) . '}$/';
 
     public const WORKSPACE_NAME_LIVE = 'live';
 
@@ -36,7 +38,7 @@ final class WorkspaceName implements \JsonSerializable
         public readonly string $value
     ) {
         if (!self::hasValidFormat($value)) {
-            throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610318);
+            throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610);
         }
     }
 
@@ -77,15 +79,18 @@ final class WorkspaceName implements \JsonSerializable
         // Transliterate (transform 北京 to 'Bei Jing')
         $name = Transliterator::transliterate($name);
 
-        // Urlization (replace spaces with dash, special characters)
-        $name = Transliterator::urlize($name);
-
         // Ensure only allowed characters are left
-        $name = preg_replace('/[^a-z0-9\-]/', '', $name);
+        $name = (string)preg_replace('/[^a-z0-9\-]/', '', $name);
 
-        // Make sure we don't have an empty string left.
-        if (empty($name)) {
-            $name = 'workspace-' . strtolower(md5($originalName));
+        // Ensure max length...
+        if (strlen($name) > self::MAX_LENGTH) {
+            $name = substr($name, 0, self::MAX_LENGTH);
+        }
+
+        // If the name is still invalid at this point, we fall back to md5
+        if (!self::hasValidFormat($name)) {
+            $prefix = 'workspace-';
+            $name = $prefix . substr(md5($originalName), 0, self::MAX_LENGTH - strlen($prefix));
         }
 
         return self::fromString($name);

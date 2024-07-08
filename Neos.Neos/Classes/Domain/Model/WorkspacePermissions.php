@@ -14,16 +14,16 @@ final readonly class WorkspacePermissions
 {
     private function __construct(
         public bool $read,
-        public bool $publish,
+        public bool $write,
         public bool $manage,
     ) {
     }
 
     public static function create(
         bool $read,
-        bool $publish,
+        bool $write,
         bool $manage,
     ): self {
-        return new self($read, $publish, $manage);
+        return new self($read, $write, $manage);
     }
 }
