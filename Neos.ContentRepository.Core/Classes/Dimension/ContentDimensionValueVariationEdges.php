@@ -37,9 +37,6 @@ final class ContentDimensionValueVariationEdges implements \IteratorAggregate
         return new self();
     }
 
-    /**
-     * @return \Traversable<ContentDimensionValueVariationEdge>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->edges;

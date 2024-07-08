@@ -15,9 +15,6 @@ final class NodeDataLoader implements \IteratorAggregate
     ) {
     }
 
-    /**
-     * @return \Traversable<int, array<string, mixed>>
-     */
     public function getIterator(): \Traversable
     {
         $query = $this->connection->executeQuery('

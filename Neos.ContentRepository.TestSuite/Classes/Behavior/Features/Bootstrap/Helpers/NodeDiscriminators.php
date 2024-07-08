@@ -68,9 +68,6 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \Jso
         return $theseDiscriminators == $otherDiscriminators;
     }
 
-    /**
-     * @return \Traversable<int|string,NodeDiscriminator>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->discriminators;

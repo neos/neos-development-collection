@@ -97,9 +97,6 @@ final class Workspaces implements \IteratorAggregate, \Countable
         );
     }
 
-    /**
-     * @return \Traversable<Workspace>
-     */
     public function getIterator(): \Traversable
     {
         yield from array_values($this->workspaces);

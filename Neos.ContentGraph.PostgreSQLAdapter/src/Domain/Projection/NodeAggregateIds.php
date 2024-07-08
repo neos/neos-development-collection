@@ -97,9 +97,6 @@ final class NodeAggregateIds implements \IteratorAggregate
         return count($this->ids) === 0;
     }
 
-    /**
-     * @return \Traversable<string,NodeAggregateId>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->ids;

@@ -46,9 +46,6 @@ final readonly class Changes implements \IteratorAggregate, \Countable
         return new self($changes);
     }
 
-    /**
-     * @return \Traversable<Change>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->changes;

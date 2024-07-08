@@ -86,9 +86,6 @@ final class Projections implements \IteratorAggregate, \Countable
         return array_keys($this->projections);
     }
 
-    /**
-     * @return \Traversable<ProjectionInterface<ProjectionStateInterface>>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->projections;

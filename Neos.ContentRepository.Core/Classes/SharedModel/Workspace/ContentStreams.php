@@ -57,9 +57,6 @@ final class ContentStreams implements \IteratorAggregate, \Countable
         return new self([]);
     }
 
-    /**
-     * @return \Traversable<ContentStream>
-     */
     public function getIterator(): \Traversable
     {
         yield from array_values($this->contentStreams);

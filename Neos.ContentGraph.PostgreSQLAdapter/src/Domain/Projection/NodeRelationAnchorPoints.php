@@ -99,9 +99,6 @@ final readonly class NodeRelationAnchorPoints implements \IteratorAggregate, \Co
         return new self(...$childNodeAnchors);
     }
 
-    /**
-     * @return \Traversable<NodeRelationAnchorPoint>
-     */
     public function getIterator(): \Traversable
     {
         yield from $this->nodeRelationAnchorPoints;
