@@ -486,7 +486,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
             $nodeAnchorPoint = $this->projectionContentGraph
                 ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
-                    $event->sourceNodeAggregateId,
+                    $event->nodeAggregateId,
                     $originDimensionSpacePoint,
                     $event->contentStreamId
                 );
@@ -514,7 +514,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
             $nodeAnchorPoint = $this->projectionContentGraph
                 ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
-                    $event->sourceNodeAggregateId,
+                    $event->nodeAggregateId,
                     $originDimensionSpacePoint,
                     $event->contentStreamId
                 );

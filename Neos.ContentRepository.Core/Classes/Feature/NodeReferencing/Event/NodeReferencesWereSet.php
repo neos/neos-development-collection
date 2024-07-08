@@ -29,7 +29,7 @@ final readonly class NodeReferencesWereSet implements
     public function __construct(
         public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
-        public NodeAggregateId $sourceNodeAggregateId,
+        public NodeAggregateId $nodeAggregateId,
         /**
          * While only one origin dimension space point is selected when initializing the command,
          * a whole set of origin dimension space points might be affected depending on the
@@ -47,15 +47,9 @@ final readonly class NodeReferencesWereSet implements
         return $this->contentStreamId;
     }
 
-    /**
-     * this method is implemented for fulfilling the {@see EmbedsContentStreamAndNodeAggregateId} interface,
-     * needed for proper content cache flushing in Neos.
-     *
-     * @return NodeAggregateId
-     */
     public function getNodeAggregateId(): NodeAggregateId
     {
-        return $this->sourceNodeAggregateId;
+        return $this->nodeAggregateId;
     }
 
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
@@ -63,7 +57,7 @@ final readonly class NodeReferencesWereSet implements
         return new self(
             $targetWorkspaceName,
             $contentStreamId,
-            $this->sourceNodeAggregateId,
+            $this->nodeAggregateId,
             $this->affectedSourceOriginDimensionSpacePoints,
             $this->referenceName,
             $this->references,
@@ -75,7 +69,9 @@ final readonly class NodeReferencesWereSet implements
         return new self(
             WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['contentStreamId']),
-            NodeAggregateId::fromString($values['sourceNodeAggregateId']),
+            array_key_exists('sourceNodeAggregateId', $values)
+                ? NodeAggregateId::fromString($values['sourceNodeAggregateId'])
+                : NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePointSet::fromArray($values['affectedSourceOriginDimensionSpacePoints']),
             ReferenceName::fromString($values['referenceName']),
             SerializedNodeReferences::fromArray($values['references']),

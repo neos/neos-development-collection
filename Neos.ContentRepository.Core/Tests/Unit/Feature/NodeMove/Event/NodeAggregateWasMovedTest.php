@@ -28,7 +28,7 @@ class NodeAggregateWasMovedTest extends TestCase
 {
     /**
      * @param array<string,mixed> $payload
-     * @dataProvider eventPayloadProvider
+     * @dataProvider eventPayloadProviderWithLegacyNodeMoveMappingsFormat
      */
     public function testFromArray(array $payload, NodeAggregateWasMoved $expectedEvent): void
     {
@@ -36,9 +36,16 @@ class NodeAggregateWasMovedTest extends TestCase
     }
 
     /**
-     * @return \Traversable<string,array<string,mixed>>
+     * The `MoveNodeMappings` were replaced with `InterdimensionalSiblings`.
+     * A runtime migration was added to {@see NodeAggregateWasMoved::fromArray()} to handle the legacy format.
+     *
+     * Via #4993: https://github.com/neos/neos-development-collection/pull/4993
+     *
+     * Included in April 2024
+     *
+     * @return iterable<mixed>
      */
-    public static function eventPayloadProvider(): \Traversable
+    public static function eventPayloadProviderWithLegacyNodeMoveMappingsFormat(): iterable
     {
         yield 'singleNodeMoveMappingWithSibling' => [
             'payload' => [
