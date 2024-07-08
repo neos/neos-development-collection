@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
@@ -252,14 +253,14 @@ final class NodeFactory
 
     /**
      * @param array<int,array<string,mixed>> $nodeRows
-     * @return iterable<int,\Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate>
      */
-    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): iterable
+    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): NodeAggregates
     {
-        $nodeAggregates = [];
         if (empty($nodeRows)) {
-            return $nodeAggregates;
+            return NodeAggregates::createEmpty();
         }
+
+        $nodeAggregates = [];
 
         $contentStreamId = null;
         /** @var NodeAggregateId[] $nodeAggregateIds */
@@ -330,7 +331,7 @@ final class NodeFactory
         }
 
         foreach ($nodeAggregateIds as $key => $nodeAggregateId) {
-            yield NodeAggregate::create(
+            $nodeAggregates[] = NodeAggregate::create(
                 $this->contentRepositoryId,
                 WorkspaceName::fromString('missing'), // todo
                 $nodeAggregateId,
@@ -348,6 +349,8 @@ final class NodeFactory
                 $contentStreamId,
             );
         }
+
+        return NodeAggregates::fromArray($nodeAggregates);
     }
 
     private static function parseDateTimeString(string $string): \DateTimeImmutable

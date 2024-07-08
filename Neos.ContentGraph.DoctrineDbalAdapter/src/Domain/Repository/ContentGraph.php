@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -132,6 +133,9 @@ final class ContentGraph implements ContentGraphInterface
             foreach ($rootNodeAggregates as $rootNodeAggregate) {
                 $ids[] = $rootNodeAggregate->nodeAggregateId->value;
             }
+
+            // We throw if multiple root node aggregates of the given $nodeTypeName were found,
+            // as this would lead to nondeterministic results. Must not happen.
             throw new \RuntimeException(sprintf(
                 'More than one root node aggregate of type "%s" found (IDs: %s).',
                 $nodeTypeName->value,
@@ -151,12 +155,12 @@ final class ContentGraph implements ContentGraphInterface
         FindRootNodeAggregatesFilter $filter,
     ): NodeAggregates {
         $rootNodeAggregateQueryBuilder = $this->nodeQueryBuilder->buildFindRootNodeAggregatesQuery($this->contentStreamId, $filter);
-        return NodeAggregates::fromArray(iterator_to_array($this->mapQueryBuilderToNodeAggregates($rootNodeAggregateQueryBuilder)));
+        return $this->mapQueryBuilderToNodeAggregates($rootNodeAggregateQueryBuilder);
     }
 
     public function findNodeAggregatesByType(
         NodeTypeName $nodeTypeName
-    ): iterable {
+    ): NodeAggregates {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery();
         $queryBuilder
             ->andWhere('n.nodetypename = :nodeTypeName')
@@ -190,12 +194,10 @@ final class ContentGraph implements ContentGraphInterface
      * Parent node aggregates can have a greater dimension space coverage than the given child.
      * Thus, it is not enough to just resolve them from the nodes and edges connected to the given child node aggregate.
      * Instead, we resolve all parent node aggregate ids instead and fetch the complete aggregates from there.
-     *
-     * @return iterable<NodeAggregate>
      */
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
-    ): iterable {
+    ): NodeAggregates {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
             ->innerJoin('n', $this->nodeQueryBuilder->tableNames->hierarchyRelation(), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
             ->innerJoin('ch', $this->nodeQueryBuilder->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
@@ -209,12 +211,9 @@ final class ContentGraph implements ContentGraphInterface
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
-    /**
-     * @return iterable<NodeAggregate>
-     */
     public function findChildNodeAggregates(
         NodeAggregateId $parentNodeAggregateId
-    ): iterable {
+    ): NodeAggregates {
         $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamId);
         return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
@@ -252,7 +251,7 @@ final class ContentGraph implements ContentGraphInterface
         );
     }
 
-    public function findTetheredChildNodeAggregates(NodeAggregateId $parentNodeAggregateId): iterable
+    public function findTetheredChildNodeAggregates(NodeAggregateId $parentNodeAggregateId): NodeAggregates
     {
         $queryBuilder = $this->nodeQueryBuilder->buildChildNodeAggregateQuery($parentNodeAggregateId, $this->contentStreamId)
             ->andWhere('cn.classification = :tetheredClassification')
@@ -319,12 +318,12 @@ final class ContentGraph implements ContentGraphInterface
         }
     }
 
-    public function findUsedNodeTypeNames(): iterable
+    public function findUsedNodeTypeNames(): NodeTypeNames
     {
-        return array_map(
+        return NodeTypeNames::fromArray(array_map(
             static fn (array $row) => NodeTypeName::fromString($row['nodetypename']),
             $this->fetchRows($this->nodeQueryBuilder->buildFindUsedNodeTypeNamesQuery())
-        );
+        ));
     }
 
     private function createQueryBuilder(): QueryBuilder
@@ -344,9 +343,8 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @return iterable<NodeAggregate>
      */
-    private function mapQueryBuilderToNodeAggregates(QueryBuilder $queryBuilder): iterable
+    private function mapQueryBuilderToNodeAggregates(QueryBuilder $queryBuilder): NodeAggregates
     {
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $this->fetchRows($queryBuilder),
