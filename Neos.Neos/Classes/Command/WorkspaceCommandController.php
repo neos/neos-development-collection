@@ -127,10 +127,10 @@ class WorkspaceCommandController extends CommandController
             );
             $workspace->rebase($force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL);
         } catch (WorkspaceDoesNotExist $exception) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
+            $this->outputLine('Workspace "%s" does not exist', [$workspace->name->value]);
             $this->quit(1);
         } catch (WorkspaceRebaseFailed $exception) {
-            $this->outputLine('Rebasing of workspace %s is not possible due to conflicts. You can try the --force option.', [$workspace]);
+            $this->outputLine('Rebasing of workspace %s is not possible due to conflicts. You can try the --force option.', [$workspace->name->value]);
             $this->quit(1);
         }
 
