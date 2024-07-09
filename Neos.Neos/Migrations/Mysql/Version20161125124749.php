@@ -2,8 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Rename node names in neos_contentrepository_domain_model_nodedata
@@ -16,7 +17,7 @@ class Version20161125124749 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['neos_contentrepository_domain_model_nodedata']);
@@ -37,7 +38,7 @@ class Version20161125124749 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['neos_contentrepository_domain_model_nodedata']);

@@ -2,8 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Remove the site content object proxy from all site nodes and change their node type to "TYPO3.Neos:Shortcut"
@@ -16,7 +17,7 @@ class Version20131111235827 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
         $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['typo3_typo3cr_domain_model_nodedata']);
         if ($hasTables) {
@@ -30,7 +31,7 @@ class Version20131111235827 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
         $schemaManager = $this->connection->createSchemaManager();
         $hasTables = $schemaManager->tablesExist(['typo3_typo3cr_domain_model_nodedata']);
         if ($hasTables) {

@@ -1,8 +1,9 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Adjustments for the rewritten Flow resource management and the new domain model structure
@@ -13,9 +14,9 @@ class Version20141118174900 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("CREATE TABLE typo3_media_domain_model_adjustment_abstractimageadjustment (persistence_object_identifier VARCHAR(40) NOT NULL, imagevariant VARCHAR(40) DEFAULT NULL, dtype VARCHAR(255) NOT NULL, x INT DEFAULT NULL, y INT DEFAULT NULL, width INT DEFAULT NULL, height INT DEFAULT NULL, maximumwidth INT DEFAULT NULL, maximumheight INT DEFAULT NULL, minimumwidth INT DEFAULT NULL, minimumheight INT DEFAULT NULL, ratiomode INT DEFAULT NULL, PRIMARY KEY(persistence_object_identifier))");
         $this->addSql("CREATE INDEX IDX_84416FDCA76D06E6 ON typo3_media_domain_model_adjustment_abstractimageadjustment (imagevariant)");
@@ -39,9 +40,9 @@ class Version20141118174900 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_media_domain_model_adjustment_abstractimageadjustment DROP CONSTRAINT FK_84416FDCA76D06E6");
         $this->addSql("DROP TABLE typo3_media_domain_model_adjustment_abstractimageadjustment");

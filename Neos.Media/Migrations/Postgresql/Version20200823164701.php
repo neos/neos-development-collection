@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\Migrations\Exception\AbortMigration as AbortMigrationException;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -32,7 +32,7 @@ class Version20200823164701 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         foreach (self::TYPES as $type) {
             $this->addSql(sprintf(
@@ -50,7 +50,7 @@ class Version20200823164701 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         foreach (self::TYPES as $type) {
             $this->addSql(sprintf(

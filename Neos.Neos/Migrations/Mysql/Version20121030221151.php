@@ -2,8 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Rename from TYPO3 and/or Phoenix to Neos as needed
@@ -16,7 +17,7 @@ class Version20121030221151 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_site RENAME TO typo3_neos_domain_model_site");
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain RENAME TO typo3_neos_domain_model_domain");
@@ -38,7 +39,7 @@ class Version20121030221151 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_neos_domain_model_site RENAME TO typo3_typo3_domain_model_site");
         $this->addSql("ALTER TABLE typo3_neos_domain_model_domain RENAME TO typo3_typo3_domain_model_domain");

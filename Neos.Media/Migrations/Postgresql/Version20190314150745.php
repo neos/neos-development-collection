@@ -1,8 +1,10 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Introduce variant presets
@@ -21,11 +23,11 @@ class Version20190314150745 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         // It is now safe the remove the default value from the database schema, as we only needed it during migration of earlier Neos versions:
         $this->addSql('ALTER TABLE neos_media_domain_model_asset ALTER assetsourceidentifier DROP DEFAULT');
@@ -42,11 +44,11 @@ class Version20190314150745 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         $this->addSql('ALTER TABLE neos_media_domain_model_asset ALTER assetsourceidentifier SET DEFAULT \'neos\'');
         $this->addSql('ALTER TABLE neos_media_domain_model_asset ALTER assetsourceidentifier DROP NOT NULL');

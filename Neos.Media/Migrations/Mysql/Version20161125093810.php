@@ -1,8 +1,9 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Adjust table names to the renaming of TYPO3.Media to Neos.Media.
@@ -13,9 +14,9 @@ class Version20161125093810 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $this->addSql('RENAME TABLE typo3_media_domain_model_adjustment_abstractimageadjustment TO neos_media_domain_model_adjustment_abstractimageadjustment');
         $this->addSql('RENAME TABLE typo3_media_domain_model_asset TO neos_media_domain_model_asset');
@@ -36,9 +37,9 @@ class Version20161125093810 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $this->addSql('RENAME TABLE neos_media_domain_model_adjustment_abstractimageadjustment TO typo3_media_domain_model_adjustment_abstractimageadjustment');
         $this->addSql('RENAME TABLE neos_media_domain_model_asset TO typo3_media_domain_model_asset');

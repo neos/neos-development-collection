@@ -2,8 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Rename TYPO3 tables to follow FQCN
@@ -16,7 +17,7 @@ class Version20110824125035 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("RENAME TABLE typo3_domain TO typo3_typo3_domain_model_domain");
         $this->addSql("RENAME TABLE typo3_site TO typo3_typo3_domain_model_site");
@@ -30,7 +31,7 @@ class Version20110824125035 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("RENAME TABLE typo3_typo3_domain_model_domain TO typo3_domain");
         $this->addSql("RENAME TABLE typo3_typo3_domain_model_site TO typo3_site");
