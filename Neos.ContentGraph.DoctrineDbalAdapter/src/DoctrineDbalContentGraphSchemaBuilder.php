@@ -2,7 +2,7 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
@@ -111,7 +111,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         try {
             return new Table($tableName, $columns);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to create table "%s": %s', $tableName, $e->getMessage()), 1716490913, $e);
         }
     }
@@ -120,7 +120,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         try {
             return Type::getType($type);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to create database type "%s": %s', $type, $e->getMessage()), 1716491053, $e);
         }
     }

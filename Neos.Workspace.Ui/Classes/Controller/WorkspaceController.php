@@ -351,7 +351,7 @@ class WorkspaceController extends AbstractModuleController
      * @throws IndexOutOfBoundsException
      * @throws InvalidFormatPlaceholderException
      * @throws StopActionException
-     * @throws DbalException
+     * @throws DBALException
      */
     public function deleteAction(WorkspaceName $workspaceName): void
     {

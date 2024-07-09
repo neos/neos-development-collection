@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -56,7 +56,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             $disconnectedHierarchyRelationRecords = $this->dbal->executeQuery($disconnectedHierarchyRelationStatement, [
                 'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value
             ])->fetchAllAssociative();
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load disconnected hierarchy relations: %s', $e->getMessage()), 1716491735, $e);
         }
 
@@ -78,7 +78,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         SQL;
         try {
             $invalidlyHashedHierarchyRelationRecords = $this->dbal->fetchAllAssociative($invalidlyHashedHierarchyRelationStatement);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load invalid hashed hierarchy relations: %s', $e->getMessage()), 1716491994, $e);
         }
 
@@ -107,7 +107,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             $hierarchyRelationRecordsAppearingMultipleTimes = $this->dbal->fetchAllAssociative($hierarchyRelationsAppearingMultipleTimesStatement, [
                 'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load hierarchy relations that appear multiple times: %s', $e->getMessage()), 1716495277, $e);
         }
         foreach ($hierarchyRelationRecordsAppearingMultipleTimes as $record) {
@@ -141,7 +141,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         SQL;
         try {
             $ambiguouslySortedHierarchyRelationRecords = $this->dbal->executeQuery($ambiguouslySortedHierarchyRelationStatement);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load ambiguously sorted hierarchy relations: %s', $e->getMessage()), 1716492251, $e);
         }
         if ($ambiguouslySortedHierarchyRelationRecords->columnCount() === 0) {
@@ -160,7 +160,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 $ambiguouslySortedNodeRecords = $this->dbal->fetchAllAssociative($ambiguouslySortedNodesStatement, [
                     'relationAnchorPoint' => $hierarchyRelationRecord['childnodeanchor']
                 ]);
-            } catch (DbalException $e) {
+            } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to load ambiguously sorted nodes: %s', $e->getMessage()), 1716492358, $e);
             }
 
@@ -194,7 +194,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             $unnamedTetheredNodeRecords = $this->dbal->fetchAllAssociative($unnamedTetheredNodesStatement, [
                 'tethered' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load unnamed tethered nodes: %s', $e->getMessage()), 1716492549, $e);
         }
 
@@ -232,7 +232,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         SQL;
         try {
             $hierarchyRelationsWithMissingSubtreeTags = $this->dbal->fetchAllAssociative($hierarchyRelationsWithMissingSubtreeTagsStatement);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load hierarchy relations with missing subtree tags: %s', $e->getMessage()), 1716492658, $e);
         }
 
@@ -263,7 +263,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         SQL;
         try {
             $referenceRelationRecordsDetachedFromSource = $this->dbal->fetchAllAssociative($referenceRelationRecordsDetachedFromSourceStatement);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load detached reference relations: %s', $e->getMessage()), 1716492786, $e);
         }
 
@@ -297,7 +297,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         SQL;
         try {
             $referenceRelationRecordsWithInvalidTarget = $this->dbal->fetchAllAssociative($referenceRelationRecordsWithInvalidTargetStatement);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load reference relations with invalid target: %s', $e->getMessage()), 1716492909, $e);
         }
 
@@ -368,7 +368,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                         'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]);
-                } catch (DbalException $e) {
+                } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load cyclic node relations: %s', $e->getMessage()), 1716493090, $e);
                 }
 
@@ -423,7 +423,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                         'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]);
-                } catch (DbalException $e) {
+                } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load ambiguous node aggregates: %s', $e->getMessage()), 1716494110, $e);
                 }
                 foreach ($ambiguousNodeAggregateRecords as $ambiguousRecord) {
@@ -465,7 +465,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                         'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]);
-                } catch (DbalException $e) {
+                } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load nodes with multiple parents: %s', $e->getMessage()), 1716494223, $e);
                 }
 
@@ -507,7 +507,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                         'contentStreamId' => $contentStreamId->value,
                         'nodeAggregateId' => $nodeAggregateId->value
                     ]);
-                } catch (DbalException $e) {
+                } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load node type names: %s', $e->getMessage()), 1716494446, $e);
                 }
 
@@ -549,7 +549,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                         'contentStreamId' => $contentStreamId->value,
                         'nodeAggregateId' => $nodeAggregateId->value
                     ]);
-                } catch (DbalException $e) {
+                } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load node classifications: %s', $e->getMessage()), 1716494466, $e);
                 }
 
@@ -588,7 +588,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 $excessivelyCoveringNodeRecords = $this->dbal->fetchAllAssociative($excessivelyCoveringStatement, [
                     'contentStreamId' => $contentStreamId->value
                 ]);
-            } catch (DbalException $e) {
+            } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to load excessively covering nodes: %s', $e->getMessage()), 1716494618, $e);
             }
             foreach ($excessivelyCoveringNodeRecords as $excessivelyCoveringNodeRecord) {
@@ -636,7 +636,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     'contentStreamId' => $contentStreamId->value,
                     'rootClassification' => NodeAggregateClassification::CLASSIFICATION_ROOT->value
                 ]);
-            } catch (DbalException $e) {
+            } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to load nodes with missing origin coverage: %s', $e->getMessage()), 1716494752, $e);
             }
 
@@ -666,7 +666,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         SQL;
         try {
             $contentStreamIds = $this->dbal->fetchFirstColumn($contentStreamIdsStatement);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load content stream ids: %s', $e->getMessage()), 1716494814, $e);
         }
         return array_map(ContentStreamId::fromString(...), $contentStreamIds);
@@ -682,7 +682,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         SQL;
         try {
             $dimensionSpacePoints = $this->dbal->fetchFirstColumn($dimensionSpacePointsStatement);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load dimension space points: %s', $e->getMessage()), 1716494888, $e);
         }
         return new DimensionSpacePointSet(array_map(DimensionSpacePoint::fromJsonString(...), $dimensionSpacePoints));
@@ -707,7 +707,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             $nodeAggregateIds = $this->dbal->fetchFirstColumn($nodeAggregateIdsStatement, [
                 'contentStreamId' => $contentStreamId->value,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load node aggregate ids for content stream: %s', $e->getMessage()), 1716495988, $e);
         }
         return array_map(NodeAggregateId::fromString(...), $nodeAggregateIds);

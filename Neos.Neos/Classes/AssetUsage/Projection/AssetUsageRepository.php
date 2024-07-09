@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\AssetUsage\Projection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
@@ -260,7 +260,7 @@ final class AssetUsageRepository
     }
 
     /**
-     * @throws DbalException
+     * @throws DBALException
      */
     public function reset(): void
     {

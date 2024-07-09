@@ -11,7 +11,7 @@ namespace Neos\Flow\Persistence\Doctrine\Migrations;
  * source code.
  */
 
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\Migrations\Exception\AbortMigration as AbortMigrationException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;

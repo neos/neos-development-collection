@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\Workspace;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
@@ -92,7 +92,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
 
     /**
      * @return array<string,Workspace>
-     * @throws DbalException
+     * @throws DBALException
      */
     public function findByBaseWorkspace(WorkspaceName $baseWorkspace): array
     {
@@ -156,7 +156,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
     /**
      * @return array<string,Workspace>
      * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws DbalException
+     * @throws DBALException
      */
     public function findOutdated(): array
     {
