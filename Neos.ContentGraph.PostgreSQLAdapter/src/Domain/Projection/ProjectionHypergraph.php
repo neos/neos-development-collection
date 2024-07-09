@@ -223,7 +223,7 @@ final class ProjectionHypergraph
         }
 
         $hierarchyHyperrelations = [];
-        foreach ($this->dbal->executeQuery($query, $parameters, $types)->fetchAllAssociative() as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters, $types)->iterateAssociative() as $row) {
             $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
         }
 
@@ -258,7 +258,7 @@ final class ProjectionHypergraph
         $types['affectedDimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
 
         $hierarchyHyperrelations = [];
-        foreach ($this->dbal->executeQuery($query, $parameters, $types)->fetchAllAssociative() as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters, $types)->iterateAssociative() as $row) {
             $hierarchyHyperrelations[] = HierarchyHyperrelationRecord::fromDatabaseRow($row);
         }
 
@@ -282,7 +282,7 @@ final class ProjectionHypergraph
         ];
 
         $referenceHyperrelations = [];
-        foreach ($this->dbal->executeQuery($query, $parameters)->fetchAllAssociative() as $row) {
+        foreach ($this->dbal->executeQuery($query, $parameters)->iterateAssociative() as $row) {
             $referenceHyperrelations[] = ReferenceRelationRecord::fromDatabaseRow($row);
         }
 
@@ -316,7 +316,6 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException
      */
     public function findHierarchyHyperrelationRecordByChildNodeAnchor(
@@ -344,7 +343,6 @@ final class ProjectionHypergraph
 
     /**
      * @return array|HierarchyHyperrelationRecord[]
-     * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException
      */
     public function findHierarchyHyperrelationRecordsByChildNodeAnchor(
@@ -369,7 +367,6 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @throws \Doctrine\DBAL\Driver\Exception
      * @throws DBALException
      */
     public function findChildHierarchyHyperrelationRecord(
@@ -401,7 +398,6 @@ final class ProjectionHypergraph
      * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint
      * @return DimensionSpacePointSet
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findCoverageByNodeRelationAnchorPoint(
         ContentStreamId $contentStreamId,
@@ -431,7 +427,6 @@ final class ProjectionHypergraph
      * @param NodeAggregateId $nodeAggregateId
      * @return DimensionSpacePointSet
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findCoverageByNodeAggregateId(
         ContentStreamId $contentStreamId,
@@ -462,7 +457,6 @@ final class ProjectionHypergraph
      * @param NodeAggregateId $originNodeAggregateId
      * @return array|RestrictionHyperrelationRecord[]
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findOutgoingRestrictionRelations(
         ContentStreamId $contentStreamId,
@@ -499,7 +493,6 @@ final class ProjectionHypergraph
     /**
      * @return array|RestrictionHyperrelationRecord[]
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findIngoingRestrictionRelations(
         ContentStreamId $contentStreamId,
@@ -534,7 +527,6 @@ final class ProjectionHypergraph
      * @param NodeAggregateId $nodeAggregateId
      * @return array|NodeAggregateIds[]
      * @throws DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findDescendantNodeAggregateIds(
         ContentStreamId $contentStreamId,

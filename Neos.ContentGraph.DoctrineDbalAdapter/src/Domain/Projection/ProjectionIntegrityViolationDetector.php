@@ -155,7 +155,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             FROM {$this->tableNames->node()}
             WHERE relationanchorpoint = :relationAnchorPoint
         SQL;
-        foreach ($ambiguouslySortedHierarchyRelationRecords->fetchAllAssociative() as $hierarchyRelationRecord) {
+        foreach ($ambiguouslySortedHierarchyRelationRecords->iterateAssociative() as $hierarchyRelationRecord) {
             try {
                 $ambiguouslySortedNodeRecords = $this->dbal->fetchAllAssociative($ambiguouslySortedNodesStatement, [
                     'relationAnchorPoint' => $hierarchyRelationRecord['childnodeanchor']

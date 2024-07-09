@@ -100,12 +100,8 @@ trait CRTestSuiteRuntimeVariables
      */
     public function iAmInWorkspace(string $workspaceName): void
     {
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
-        if ($workspace === null) {
-            throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
-        }
         $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
-        $this->currentContentStreamId = $workspace->currentContentStreamId;
+        $this->currentContentStreamId = null;
     }
 
     /**

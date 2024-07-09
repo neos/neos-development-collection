@@ -20,12 +20,12 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
@@ -53,7 +53,6 @@ final class NodeFactory
 {
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
-        private readonly NodeTypeManager $nodeTypeManager,
         private readonly PropertyConverter $propertyConverter,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointRepository
     ) {
@@ -69,10 +68,6 @@ final class NodeFactory
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
-        $nodeType = $this->nodeTypeManager->hasNodeType($nodeRow['nodetypename'])
-            ? $this->nodeTypeManager->getNodeType($nodeRow['nodetypename'])
-            : null;
-
         return Node::create(
             $this->contentRepositoryId,
             $workspaceName,
@@ -91,7 +86,6 @@ final class NodeFactory
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
             $visibilityConstraints,
-            $nodeType,
             $contentStreamId
         );
     }
@@ -241,16 +235,21 @@ final class NodeFactory
     }
 
     /**
-     * @param iterable<int,array<string,string>> $nodeRows
-     * @return Traversable<int,NodeAggregate>
+     * @param array<int,array<string,string>> $nodeRows
      * @throws NodeTypeNotFound
      */
     public function mapNodeRowsToNodeAggregates(
-        iterable $nodeRows,
+        array $nodeRows,
         WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
-    ): Traversable {
+    ): NodeAggregates {
+        if (empty($nodeRows)) {
+            return NodeAggregates::createEmpty();
+        }
+
+        $nodeAggregates = [];
+
         $nodeTypeNames = [];
         $nodeNames = [];
         $occupiedDimensionSpacePointsByNodeAggregate = [];
@@ -316,7 +315,7 @@ final class NodeFactory
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateId => $nodes) {
             /** @var string $rawNodeAggregateId */
-            yield NodeAggregate::create(
+            $nodeAggregates[] = NodeAggregate::create(
                 $this->contentRepositoryId,
                 $workspaceName,
                 NodeAggregateId::fromString($rawNodeAggregateId),
@@ -342,6 +341,8 @@ final class NodeFactory
                 $contentStreamId,
             );
         }
+
+        return NodeAggregates::fromArray($nodeAggregates);
     }
 
     public static function extractNodeTagsFromJson(string $subtreeTagsJson): NodeTags

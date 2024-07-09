@@ -3,7 +3,7 @@
 TYPO3 Fluid ViewHelper Reference
 ################################
 
-This reference was automatically generated from code on 2024-06-23
+This reference was automatically generated from code on 2024-07-08
 
 
 .. _`TYPO3 Fluid ViewHelper Reference: f:alias`:
@@ -317,6 +317,56 @@ Will be nothing.
 
 :Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\CommentViewHelper
 
+
+
+
+
+.. _`TYPO3 Fluid ViewHelper Reference: f:constant`:
+
+f:constant
+----------
+
+Wrapper for PHPs :php:`constant` function.
+See https://www.php.net/manual/function.constant.php.
+
+Examples
+========
+
+Get built-in PHP constant
+-------------------------
+
+::
+
+   {f:constant(value: 'PHP_INT_MAX')}
+
+Output::
+
+   9223372036854775807
+   (Depending on CPU architecture).
+
+Get class constant
+------------------
+
+::
+
+   {f:constant(value: '\Vendor\Package\Class::CONSTANT')}
+
+Get enum value
+--------------
+
+::
+
+   {f:constant(value: '\Vendor\Package\Enum::CASE')}
+
+:Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\ConstantViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``name`` (string, *optional*): String representation of a PHP constant or enum
 
 
 

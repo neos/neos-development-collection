@@ -150,14 +150,15 @@ class ContentController extends ActionController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($nodeAddressString);
+        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString($nodeAddressString);
 
         $node = $contentRepository->getContentGraph($nodeAddress->workspaceName)
             ->getSubgraph(
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             )
-            ->findNodeById($nodeAddress->nodeAggregateId);
+            ->findNodeById($nodeAddress->aggregateId);
 
 
         $this->response->setContentType('application/json');

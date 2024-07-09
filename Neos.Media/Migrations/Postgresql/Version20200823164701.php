@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\Migrations\Exception\AbortMigration as AbortMigrationException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
@@ -29,7 +29,6 @@ class Version20200823164701 extends AbstractMigration
      * @param Schema $schema
      * @return void
      * @throws DBALException
-     * @throws AbortMigrationException
      */
     public function up(Schema $schema): void
     {
@@ -48,7 +47,6 @@ class Version20200823164701 extends AbstractMigration
      * @param Schema $schema
      * @return void
      * @throws DBALException
-     * @throws AbortMigrationException
      */
     public function down(Schema $schema): void
     {

@@ -21,13 +21,12 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNode
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\Presentation\VisualNodePath;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
@@ -155,11 +154,7 @@ class NodeHelper implements ProtectedContextAwareInterface
 
     public function serializedNodeAddress(Node $node): string
     {
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->contentRepositoryId
-        );
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return $nodeAddressFactory->createFromNode($node)->serializeForUri();
+        return NodeAddress::fromNode($node)->toJson();
     }
 
     public function subgraphForNode(Node $node): ContentSubgraphInterface

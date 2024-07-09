@@ -16,25 +16,16 @@ namespace Neos\Neos\TypeConverter;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
- * To be removed legacy fragment for property mapping nodes in controllers.
- * MUST not be used and MUST be removed before Neos 9 release.
- * See issue: https://github.com/neos/neos-development-collection/issues/4873
- *
  * @Flow\Scope("singleton")
- * @deprecated must be removed before Neos 9 release!!!
  */
-class HackyNodeAddressToNodeConverter extends AbstractTypeConverter
+class NodeAddressToNodeConverter extends AbstractTypeConverter
 {
     /**
      * @var array<int,string>
@@ -53,8 +44,6 @@ class HackyNodeAddressToNodeConverter extends AbstractTypeConverter
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
-    #[Flow\Inject]
-    protected Bootstrap $bootstrap;
 
     /**
      * @param string $source
@@ -68,26 +57,16 @@ class HackyNodeAddressToNodeConverter extends AbstractTypeConverter
         array $subProperties = [],
         PropertyMappingConfigurationInterface $configuration = null
     ) {
-        $activeRequestHandler = $this->bootstrap->getActiveRequestHandler();
-        $contentRepositoryId = ContentRepositoryId::fromString('default');
-        if ($activeRequestHandler instanceof RequestHandler) {
-            $httpRequest = $activeRequestHandler->getHttpRequest();
-            $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
-            $contentRepositoryId = $siteDetectionResult->contentRepositoryId;
-        }
-
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        $nodeAddress = $nodeAddressFactory->createFromUriString($source);
-
+        $nodeAddress = NodeAddress::fromJsonString($source);
+        $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
         $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)
             ->getSubgraph(
                 $nodeAddress->dimensionSpacePoint,
-                $nodeAddress->isInLiveWorkspace()
+                $nodeAddress->workspaceName->isLive()
                     ? VisibilityConstraints::frontend()
                     : VisibilityConstraints::withoutRestrictions()
             );
 
-        return $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        return $subgraph->findNodeById($nodeAddress->aggregateId);
     }
 }

@@ -266,7 +266,7 @@ class ChangeProjection implements ProjectionInterface
         foreach ($event->affectedSourceOriginDimensionSpacePoints as $dimensionSpacePoint) {
             $this->markAsChanged(
                 $event->contentStreamId,
-                $event->sourceNodeAggregateId,
+                $event->nodeAggregateId,
                 $dimensionSpacePoint
             );
         }

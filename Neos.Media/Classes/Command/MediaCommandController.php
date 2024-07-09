@@ -15,7 +15,7 @@ namespace Neos\Media\Command;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
@@ -145,8 +145,7 @@ class MediaCommandController extends CommandController
             WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
         ';
         $statement = $this->dbalConnection->prepare($sql);
-        $statement->execute();
-        $resourceInfos = $statement->fetchAll();
+        $resourceInfos = $statement->execute()->fetchAllAssociative();
 
         if ($resourceInfos === []) {
             !$quiet || $this->outputLine('Found no resources which need to be imported.');

@@ -20,6 +20,7 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
+use Neos\Neos\Service\BackendRedirectionService;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
@@ -54,6 +55,12 @@ class ModuleController extends ActionController
      * @var PartyService
      */
     protected $partyService;
+
+    /**
+     * @Flow\Inject
+     * @var BackendRedirectionService
+     */
+    protected $backendRedirectionService;
 
     /**
      * @param array $module
@@ -133,7 +140,8 @@ class ModuleController extends ActionController
                 'moduleBreadcrumb' => $moduleBreadcrumb,
                 'user' => $user,
                 'modules' => $this->menuHelper->buildModuleList($this->controllerContext),
-                'sites' => $sites
+                'sites' => $sites,
+                'primaryModuleUri' => $this->backendRedirectionService->getAfterLoginRedirectionUri($this->controllerContext),
             ]);
         }
     }
