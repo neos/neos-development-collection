@@ -364,8 +364,8 @@ class MediaCommandController extends CommandController
         !$quiet && $this->output->progressStart($thumbnailCount);
         foreach ($iterator as $iteration => $thumbnail) {
             $this->thumbnailRepository->remove($thumbnail);
-        $this->persistAll($iteration);
-        !$quiet && $this->output->progressAdvance(1);
+            $this->persistAll($iteration);
+            !$quiet && $this->output->progressAdvance(1);
         }
         !$quiet && $this->output->progressFinish();
         !$quiet && $this->output->outputLine();
