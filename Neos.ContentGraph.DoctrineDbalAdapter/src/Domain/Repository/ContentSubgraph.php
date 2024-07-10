@@ -704,7 +704,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function fetchCount(QueryBuilder $queryBuilder): int
     {
         try {
-            return (int)$this->executeQuery($queryBuilder->select('COUNT(*)')->resetQueryPart('orderBy')->setFirstResult(0)->setMaxResults(1))->fetchOne();
+            return (int)$this->executeQuery($queryBuilder->select('COUNT(*)')->resetOrderBy()->setFirstResult(0)->setMaxResults(1))->fetchOne();
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch count: %s', $e->getMessage()), 1679048349, $e);
         }
@@ -750,7 +750,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 UNION
                 {$queryBuilderRecursive->getSQL()}
             )
-            {$queryBuilderCte->select('COUNT(*)')->resetQueryPart('orderBy')->setFirstResult(0)->setMaxResults(1)}
+            {$queryBuilderCte->select('COUNT(*)')->resetOrderBy()->setFirstResult(0)->setMaxResults(1)}
         SQL;
         $parameters = array_merge($queryBuilderInitial->getParameters(), $queryBuilderRecursive->getParameters(), $queryBuilderCte->getParameters());
         $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());

@@ -40,8 +40,8 @@ final class DbalSchemaFactory
     {
         return (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(64)
-            ->setCustomSchemaOption('charset', 'ascii')
-            ->setCustomSchemaOption('collation', 'ascii_general_ci');
+            ->setPlatformOption('charset', 'ascii')
+            ->setPlatformOption('collation', 'ascii_general_ci');
     }
 
     /**
@@ -86,7 +86,7 @@ final class DbalSchemaFactory
     {
         return (new Column($columnName, Type::getType(Types::TEXT)))
             ->setDefault('{}')
-            ->setCustomSchemaOption('collation', 'utf8mb4_unicode_520_ci');
+            ->setPlatformOption('collation', 'utf8mb4_unicode_520_ci');
     }
 
     /**
@@ -114,8 +114,8 @@ final class DbalSchemaFactory
         return (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(255)
             ->setNotnull(true)
-            ->setCustomSchemaOption('charset', 'ascii')
-            ->setCustomSchemaOption('collation', 'ascii_general_ci');
+            ->setPlatformOption('charset', 'ascii')
+            ->setPlatformOption('collation', 'ascii_general_ci');
     }
 
     /**

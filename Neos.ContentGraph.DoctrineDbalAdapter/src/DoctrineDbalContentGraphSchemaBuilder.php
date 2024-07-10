@@ -45,8 +45,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotnull(false),
             DbalSchemaFactory::columnForNodeTypeName('nodetypename'),
-            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
-            (new Column('properties', self::type(Types::TEXT)))->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(false)->setPlatformOption('charset', 'ascii')->setPlatformOption('collation', 'ascii_general_ci'),
+            (new Column('properties', self::type(Types::TEXT)))->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
             (new Column('classification', self::type(Types::BINARY)))->setLength(20)->setNotnull(true),
             (new Column('created', self::type(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
             (new Column('originalcreated', self::type(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
@@ -93,10 +93,10 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createReferenceRelationTable(): Table
     {
         $table = self::createTable($this->contentGraphTableNames->referenceRelation(), [
-            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
+            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true)->setPlatformOption('charset', 'ascii')->setPlatformOption('collation', 'ascii_general_ci'),
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('nodeanchorpoint'),
-            (new Column('properties', self::type(Types::TEXT)))->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('properties', self::type(Types::TEXT)))->setNotnull(false)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
             DbalSchemaFactory::columnForNodeAggregateId('destinationnodeaggregateid')->setNotnull(true)
         ]);
 

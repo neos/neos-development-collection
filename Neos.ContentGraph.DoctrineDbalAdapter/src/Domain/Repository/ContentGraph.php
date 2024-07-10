@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\Exception as DBALException;
@@ -292,7 +293,7 @@ final class ContentGraph implements ContentGraphInterface
                 'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
                 'nodeName' => $nodeName->value
             ], [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
         $dimensionSpacePoints = [];
         foreach ($this->fetchRows($queryBuilder) as $hierarchyRelationData) {
@@ -308,12 +309,9 @@ final class ContentGraph implements ContentGraphInterface
             ->select('COUNT(*)')
             ->from($this->nodeQueryBuilder->tableNames->node());
         try {
-            $result = $queryBuilder->execute();
-            if (!$result instanceof Result) {
-                throw new \RuntimeException(sprintf('Failed to count nodes. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);
-            }
+            $result = $queryBuilder->executeQuery();
             return (int)$result->fetchOne();
-        } catch (DriverException | DBALException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to count rows in database: %s', $e->getMessage()), 1701444590, $e);
         }
     }
@@ -361,12 +359,8 @@ final class ContentGraph implements ContentGraphInterface
     private function fetchRows(QueryBuilder $queryBuilder): array
     {
         try {
-            $result = $queryBuilder->execute();
-            if (!$result instanceof Result) {
-                throw new \RuntimeException(sprintf('Failed to execute query. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701443535);
-            }
-            return $result->fetchAllAssociative();
-        } catch (DriverException | DBALException $e) {
+            return $queryBuilder->executeQuery()->fetchAllAssociative();
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
         }
     }

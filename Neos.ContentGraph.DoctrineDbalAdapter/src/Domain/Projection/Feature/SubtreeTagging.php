@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
@@ -58,7 +58,7 @@ trait SubtreeTagging
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'tagPath' => '$.' . $tag->value,
             ], [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamId->value, $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479749, $e);
@@ -80,7 +80,7 @@ trait SubtreeTagging
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'tagPath' => '$.' . $tag->value,
             ], [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to add subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamId->value, $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716479840, $e);
@@ -135,7 +135,7 @@ trait SubtreeTagging
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'tagPath' => '$.' . $tag->value,
             ], [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to remove subtree tag %s for content stream %s, node aggregate id %s and dimension space points %s: %s', $tag->value, $contentStreamId->value, $nodeAggregateId->value, $affectedDimensionSpacePoints->toJson(), $e->getMessage()), 1716482293, $e);

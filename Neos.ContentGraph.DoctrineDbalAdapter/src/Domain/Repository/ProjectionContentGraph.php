@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
@@ -411,7 +412,7 @@ class ProjectionContentGraph
         if ($restrictToSet) {
             $ingoingHierarchyRelationsStatement .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
             $parameters['dimensionSpacePointHashes'] = $restrictToSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
+            $types['dimensionSpacePointHashes'] = ArrayParameterType::STRING;
         }
         try {
             $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, $parameters, $types);
@@ -451,7 +452,7 @@ class ProjectionContentGraph
         if ($restrictToSet) {
             $outgoingHierarchyRelationsStatement .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
             $parameters['dimensionSpacePointHashes'] = $restrictToSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
+            $types['dimensionSpacePointHashes'] = ArrayParameterType::STRING;
         }
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, $parameters, $types);
@@ -490,7 +491,7 @@ class ProjectionContentGraph
                 'contentStreamId' => $contentStreamId->value,
                 'dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes()
             ], [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, node aggregate id %s and dimension space points %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $dimensionSpacePointSet->toJson(), $e->getMessage()), 1716476690, $e);
@@ -524,7 +525,7 @@ class ProjectionContentGraph
         if ($dimensionSpacePointSet !== null) {
             $ingoingHierarchyRelationsStatement .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
             $parameters['dimensionSpacePointHashes'] = $dimensionSpacePointSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
+            $types['dimensionSpacePointHashes'] = ArrayParameterType::STRING;
         }
         try {
             $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, $parameters, $types);
