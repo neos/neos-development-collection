@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-07-08
+The following reference was automatically generated from code on 2024-07-11
 
 
 .. _`Neos Command Reference: NEOS.FLOW`:
@@ -620,6 +620,8 @@ Options
   Whether to do a dry run or not
 ``--quiet``
   If set, only the executed migration versions will be output, one per line
+``--migration-folder``
+  Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
 
 
 
@@ -663,6 +665,8 @@ Options
   A file to write SQL to, instead of executing it
 ``--dry-run``
   Whether to do a dry run or not
+``--migration-folder``
+  Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
 
 
 
@@ -714,6 +718,8 @@ Options
   Only include tables/sequences matching the filter expression regexp
 ``--force``
   Generate migrations even if there are migrations left to execute
+``--migration-folder``
+  Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
 
 
 
@@ -748,6 +754,8 @@ Options
 
 ``--show-migrations``
   Output a list of all migrations and their status
+``--migration-folder``
+  Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
 
 
 
@@ -790,6 +798,8 @@ Options
   The migration to mark as migrated
 ``--delete``
   The migration to mark as not migrated
+``--migration-folder``
+  Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
 
 
 
