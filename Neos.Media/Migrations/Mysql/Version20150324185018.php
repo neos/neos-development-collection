@@ -1,8 +1,9 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Note: The migrations date predates the actual change because for Neos it needs to be executed before some other migrations to make everything work correctly.
@@ -15,9 +16,9 @@ class Version20150324185018 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
         $this->addSql("ALTER TABLE typo3_media_domain_model_adjustment_abstractimageadjustment ADD allowupscaling TINYINT(1) DEFAULT NULL");
         $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail ADD allowupscaling TINYINT(1) DEFAULT NULL");
     }
@@ -26,9 +27,9 @@ class Version20150324185018 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
         $this->addSql("ALTER TABLE typo3_media_domain_model_adjustment_abstractimageadjustment DROP allowupscaling");
         $this->addSql("ALTER TABLE typo3_media_domain_model_thumbnail DROP allowupscaling");
     }

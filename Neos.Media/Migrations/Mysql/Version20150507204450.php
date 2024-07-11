@@ -1,8 +1,9 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Add asset collections
@@ -13,9 +14,9 @@ class Version20150507204450 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("CREATE TABLE typo3_media_domain_model_assetcollection (persistence_object_identifier VARCHAR(40) NOT NULL, title VARCHAR(255) NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
         $this->addSql("CREATE TABLE typo3_media_domain_model_assetcollection_assets_join (media_assetcollection VARCHAR(40) NOT NULL, media_asset VARCHAR(40) NOT NULL, INDEX IDX_E90D72512A965871 (media_assetcollection), INDEX IDX_E90D72511DB69EED (media_asset), PRIMARY KEY(media_assetcollection, media_asset)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
@@ -30,9 +31,9 @@ class Version20150507204450 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_media_domain_model_assetcollection_assets_join DROP FOREIGN KEY FK_E90D72512A965871");
         $this->addSql("ALTER TABLE typo3_media_domain_model_assetcollection_tags_join DROP FOREIGN KEY FK_A41705672A965871");

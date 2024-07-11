@@ -1,8 +1,9 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Allow NULL values for image dimensions
@@ -13,9 +14,9 @@ class Version20150701113247 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_media_domain_model_image ALTER width DROP NOT NULL");
         $this->addSql("ALTER TABLE typo3_media_domain_model_image ALTER height DROP NOT NULL");
@@ -29,9 +30,9 @@ class Version20150701113247 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_media_domain_model_image ALTER width SET NOT NULL");
         $this->addSql("ALTER TABLE typo3_media_domain_model_image ALTER height SET NOT NULL");

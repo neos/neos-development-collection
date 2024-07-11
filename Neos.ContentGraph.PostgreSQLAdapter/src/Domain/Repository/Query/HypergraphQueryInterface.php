@@ -25,6 +25,7 @@ use Doctrine\DBAL\Result;
 interface HypergraphQueryInterface
 {
     /**
+     * @param Connection $databaseConnection
      * @return Result
      */
     public function execute(Connection $databaseConnection): Result;

@@ -1,8 +1,9 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 class Version20170110133136 extends AbstractMigration
 {
@@ -10,7 +11,7 @@ class Version20170110133136 extends AbstractMigration
     /**
      * @return string
      */
-    public function getDescription(): string 
+    public function getDescription(): string
     {
         return 'Adjust foreign key and index names to the renaming of TYPO3.Media to Neos.Media';
     }
@@ -19,9 +20,9 @@ class Version20170110133136 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         $this->addSql('ALTER INDEX idx_84416fdca76d06e6 RENAME TO IDX_8B2F26F8A76D06E6');
         $this->addSql('ALTER INDEX uniq_b8306b8ebc91f416 RENAME TO UNIQ_675F9550BC91F416');
@@ -41,9 +42,9 @@ class Version20170110133136 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         $this->addSql('ALTER INDEX uniq_675f9550bc91f416 RENAME TO uniq_b8306b8ebc91f416');
         $this->addSql('ALTER INDEX idx_915bc7a21db69eed RENAME TO idx_daf7a1eb1db69eed');

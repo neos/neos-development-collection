@@ -15,10 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Exception as DbalDriverException;
-use Doctrine\DBAL\Exception as DbalException;
-use Doctrine\DBAL\Result;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -425,7 +424,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->contentStreamId, $this->dimensionSpacePoint, 'n', 'COUNT(*)');
         try {
             $result = $this->executeQuery($queryBuilder)->fetchOne();
-        } catch (DbalDriverException | DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to count all nodes: %s', $e->getMessage()), 1678364741, $e);
         }
 
@@ -660,22 +659,18 @@ final class ContentSubgraph implements ContentSubgraphInterface
     /**
      * @param QueryBuilder $queryBuilder
      * @return Result
-     * @throws DbalException
+     * @throws DBALException
      */
     private function executeQuery(QueryBuilder $queryBuilder): Result
     {
-        $result = $queryBuilder->execute();
-        if (!$result instanceof Result) {
-            throw new \RuntimeException(sprintf('Expected instance of %s, got %s', Result::class, get_debug_type($result)), 1678370012);
-        }
-        return $result;
+        return $queryBuilder->executeQuery();
     }
 
     private function fetchNode(QueryBuilder $queryBuilder): ?Node
     {
         try {
             $nodeRow = $this->executeQuery($queryBuilder)->fetchAssociative();
-        } catch (DbalDriverException | DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch node: %s', $e->getMessage()), 1678286030, $e);
         }
         if ($nodeRow === false) {
@@ -694,7 +689,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         try {
             $nodeRows = $this->executeQuery($queryBuilder)->fetchAllAssociative();
-        } catch (DbalDriverException | DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch nodes: %s', $e->getMessage()), 1678292896, $e);
         }
         return $this->nodeFactory->mapNodeRowsToNodes(
@@ -709,8 +704,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function fetchCount(QueryBuilder $queryBuilder): int
     {
         try {
-            return (int)$this->executeQuery($queryBuilder->select('COUNT(*)')->resetQueryPart('orderBy')->setFirstResult(0)->setMaxResults(1))->fetchOne();
-        } catch (DbalDriverException | DbalException $e) {
+            return (int)$this->executeQuery($queryBuilder->select('COUNT(*)')->resetOrderBy()->setFirstResult(0)->setMaxResults(1))->fetchOne();
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch count: %s', $e->getMessage()), 1679048349, $e);
         }
     }
@@ -719,7 +714,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         try {
             $referenceRows = $this->executeQuery($queryBuilder)->fetchAllAssociative();
-        } catch (DbalDriverException | DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch references: %s', $e->getMessage()), 1678364944, $e);
         }
         return $this->nodeFactory->mapReferenceRowsToReferences($referenceRows, $this->workspaceName, $this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
@@ -742,7 +737,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());
         try {
             return $this->dbal->fetchAllAssociative($query, $parameters, $parameterTypes);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch CTE result: %s', $e->getMessage()), 1678358108, $e);
         }
     }
@@ -755,13 +750,13 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 UNION
                 {$queryBuilderRecursive->getSQL()}
             )
-            {$queryBuilderCte->select('COUNT(*)')->resetQueryPart('orderBy')->setFirstResult(0)->setMaxResults(1)}
+            {$queryBuilderCte->select('COUNT(*)')->resetOrderBy()->setFirstResult(0)->setMaxResults(1)}
         SQL;
         $parameters = array_merge($queryBuilderInitial->getParameters(), $queryBuilderRecursive->getParameters(), $queryBuilderCte->getParameters());
         $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());
         try {
             return (int)$this->dbal->fetchOne($query, $parameters, $parameterTypes);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch CTE count result: %s', $e->getMessage()), 1679047841, $e);
         }
     }

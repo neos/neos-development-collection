@@ -2,7 +2,7 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
@@ -45,8 +45,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash')->setNotnull(false),
             DbalSchemaFactory::columnForNodeTypeName('nodetypename'),
-            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
-            (new Column('properties', self::type(Types::TEXT)))->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(false)->setPlatformOption('charset', 'ascii')->setPlatformOption('collation', 'ascii_general_ci'),
+            (new Column('properties', self::type(Types::TEXT)))->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
             (new Column('classification', self::type(Types::BINARY)))->setLength(20)->setNotnull(true),
             (new Column('created', self::type(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
             (new Column('originalcreated', self::type(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
@@ -93,10 +93,10 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createReferenceRelationTable(): Table
     {
         $table = self::createTable($this->contentGraphTableNames->referenceRelation(), [
-            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('charset', 'ascii')->setCustomSchemaOption('collation', 'ascii_general_ci'),
+            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true)->setPlatformOption('charset', 'ascii')->setPlatformOption('collation', 'ascii_general_ci'),
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('nodeanchorpoint'),
-            (new Column('properties', self::type(Types::TEXT)))->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('properties', self::type(Types::TEXT)))->setNotnull(false)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
             DbalSchemaFactory::columnForNodeAggregateId('destinationnodeaggregateid')->setNotnull(true)
         ]);
 
@@ -111,7 +111,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         try {
             return new Table($tableName, $columns);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to create table "%s": %s', $tableName, $e->getMessage()), 1716490913, $e);
         }
     }
@@ -120,7 +120,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         try {
             return Type::getType($type);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to create database type "%s": %s', $type, $e->getMessage()), 1716491053, $e);
         }
     }

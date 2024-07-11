@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -38,8 +40,8 @@ final class DbalSchemaFactory
     {
         return (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(64)
-            ->setCustomSchemaOption('charset', 'ascii')
-            ->setCustomSchemaOption('collation', 'ascii_general_ci');
+            ->setPlatformOption('charset', 'ascii')
+            ->setPlatformOption('collation', 'ascii_general_ci');
     }
 
     /**
@@ -84,7 +86,7 @@ final class DbalSchemaFactory
     {
         return (new Column($columnName, Type::getType(Types::TEXT)))
             ->setDefault('{}')
-            ->setCustomSchemaOption('collation', 'utf8mb4_unicode_520_ci');
+            ->setPlatformOption('collation', 'utf8mb4_unicode_520_ci');
     }
 
     /**
@@ -112,14 +114,16 @@ final class DbalSchemaFactory
         return (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(255)
             ->setNotnull(true)
-            ->setCustomSchemaOption('charset', 'ascii')
-            ->setCustomSchemaOption('collation', 'ascii_general_ci');
+            ->setPlatformOption('charset', 'ascii')
+            ->setPlatformOption('collation', 'ascii_general_ci');
     }
 
     /**
      * @param AbstractSchemaManager<AbstractPlatform> $schemaManager
      * @param Table[] $tables
      * @return Schema
+     * @throws Exception
+     * @throws SchemaException
      */
     public static function createSchemaWithTables(AbstractSchemaManager $schemaManager, array $tables): Schema
     {

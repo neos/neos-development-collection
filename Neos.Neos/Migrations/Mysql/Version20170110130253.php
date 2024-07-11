@@ -2,9 +2,10 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Platforms\MySQL57Platform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 class Version20170110130253 extends AbstractMigration
 {
@@ -22,7 +23,7 @@ class Version20170110130253 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         // Renaming of indexes is only possible with MySQL version 5.7+
         if ($this->connection->getDatabasePlatform() instanceof MySQL57Platform) {
@@ -69,7 +70,7 @@ class Version20170110130253 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         // Renaming of indexes is only possible with MySQL version 5.7+
         if ($this->connection->getDatabasePlatform() instanceof MySQL57Platform) {

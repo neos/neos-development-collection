@@ -97,9 +97,6 @@ trait CommonGraphQueryOperations
         return $this->types;
     }
 
-    /**
-     * @return QueryResult
-     */
     final public function execute(Connection $databaseConnection): QueryResult
     {
         return $databaseConnection->executeQuery($this->query, $this->parameters, $this->types);

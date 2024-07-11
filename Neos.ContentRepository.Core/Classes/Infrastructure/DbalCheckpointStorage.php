@@ -11,7 +11,6 @@ use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
@@ -26,7 +25,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
  */
 final class DbalCheckpointStorage implements CheckpointStorageInterface
 {
-    private MySqlPlatform|PostgreSqlPlatform $platform;
+    private MySQLPlatform|PostgreSQLPlatform $platform;
     private SequenceNumber|null $lockedSequenceNumber = null;
 
     public function __construct(
@@ -35,7 +34,7 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
         private readonly string $subscriberId,
     ) {
         $platform = $this->connection->getDatabasePlatform();
-        if (!($platform instanceof MySqlPlatform || $platform instanceof PostgreSqlPlatform)) {
+        if (!($platform instanceof MySQLPlatform || $platform instanceof PostgreSqlPlatform)) {
             throw new \InvalidArgumentException(sprintf('The %s only supports the platforms %s and %s currently. Given: %s', $this::class, MySQLPlatform::class, PostgreSQLPlatform::class, get_debug_type($platform)), 1660556004);
         }
         if (strlen($this->subscriberId) > 255) {
@@ -150,10 +149,7 @@ final class DbalCheckpointStorage implements CheckpointStorageInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $schemaManager = $this->connection->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1705681161);
-        }
+        $schemaManager = $this->connection->createSchemaManager();
         $tableSchema = new Table(
             $this->tableName,
             [
