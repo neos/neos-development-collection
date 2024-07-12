@@ -3,7 +3,7 @@
 TYPO3 Fluid ViewHelper Reference
 ################################
 
-This reference was automatically generated from code on 2024-07-11
+This reference was automatically generated from code on 2024-07-12
 
 
 .. _`TYPO3 Fluid ViewHelper Reference: f:alias`:
@@ -337,7 +337,7 @@ Get built-in PHP constant
 
 ::
 
-   {f:constant(value: 'PHP_INT_MAX')}
+   {f:constant(name: 'PHP_INT_MAX')}
 
 Output::
 
@@ -349,14 +349,14 @@ Get class constant
 
 ::
 
-   {f:constant(value: '\Vendor\Package\Class::CONSTANT')}
+   {f:constant(name: '\Vendor\Package\Class::CONSTANT')}
 
 Get enum value
 --------------
 
 ::
 
-   {f:constant(value: '\Vendor\Package\Enum::CASE')}
+   {f:constant(name: '\Vendor\Package\Enum::CASE')}
 
 :Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\ConstantViewHelper
 
