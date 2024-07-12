@@ -13,6 +13,8 @@ namespace Neos\Media\Domain\Model;
  * source code.
  */
 
+use Imagine\Image\PointInterface;
+
 /**
  * Interface for assets which provide methods for focal points
  */
@@ -25,4 +27,8 @@ interface FocalPointSupportInterface
     public function getFocalPointY(): ?int;
 
     public function setFocalPointY(?int $y): void;
+
+    public function hasFocalPoint(): bool;
+
+    public function getFocalPoint(): ?PointInterface;
 }

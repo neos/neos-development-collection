@@ -18,6 +18,7 @@ use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Model\Adjustment\ResizeDimensionCalculator;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\FocalPointSupportInterface;
 use Neos\Media\Domain\Model\ImageInterface;
@@ -25,6 +26,7 @@ use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Neos\Media\Exception\ThumbnailServiceException;
+use Neos\Media\Imagine\Box;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
 use Psr\Log\LoggerInterface;
@@ -84,6 +86,12 @@ class ThumbnailService
      * @var ThrowableStorageInterface
      */
     protected $throwableStorage;
+
+    /**
+     * @var ResizeDimensionCalculator
+     * @Flow\Inject
+     */
+    protected $imageDimensionCalculationHelperThingy;
 
     /**
      * Returns a thumbnail of the given asset
@@ -148,15 +156,37 @@ class ThumbnailService
         if ($thumbnail === null) {
             $thumbnail = new Thumbnail($asset, $configuration);
 
-            if ($asset instanceof FocalPointSupportInterface) {
-                // @todo: needs common understanding of dimension change with resize adjustment
-                // - if a focal point was set
-                // - calculate target dimensions here
-                // - calculate new focalPointAfter transformation
-                // - store focal point in new image
-                // has to work closely with: Packages/Neos/Neos.Media/Classes/Domain/Model/ThumbnailGenerator/ImageThumbnailGenerator.php:58
-                $thumbnail->setFocalPointX($asset->getFocalPointX() ? $asset->getFocalPointX() + 1 : null);
-                $thumbnail->setFocalPointY($asset->getFocalPointY() ? $asset->getFocalPointY() + 1 : null);
+            // predict dimensions async image thumbnails, this is not needed for immediately calculated images as those
+            // values are stored again after calculating
+            if ($async === true && $asset instanceof ImageInterface) {
+                $originalDimensions = new Box($asset->getWidth(), $asset->getHeight());
+
+                $requestedDimensions = ResizeDimensionCalculator::calculateRequestedDimensions(
+                    originalDimensions: $originalDimensions,
+                    width: $configuration->getWidth(),
+                    maximumWidth: $configuration->getMaximumWidth(),
+                    height: $configuration->getHeight(),
+                    maximumHeight: $configuration->getMaximumHeight(),
+                    ratioMode: $configuration->getRatioMode(),
+                    allowUpScaling: $configuration->isUpScalingAllowed()
+                );
+
+                $thumbnail->setWidth($requestedDimensions->getWidth());
+                $thumbnail->setHeight($requestedDimensions->getHeight());
+
+                // calculate focal point for new thumbnails
+                if ($asset instanceof FocalPointSupportInterface && $asset->hasFocalPoint()) {
+                    $originalFocalPoint = $asset->getFocalPoint();
+
+                    $preliminaryCropSpecification = ResizeDimensionCalculator::calculatePreliminaryCropSpecification(
+                        originalDimensions: $originalDimensions,
+                        originalFocalPoint: $originalFocalPoint,
+                        targetDimensions: $requestedDimensions,
+                    );
+
+                    $thumbnail->setFocalPointX($preliminaryCropSpecification->focalPoint->getX());
+                    $thumbnail->setFocalPointY($preliminaryCropSpecification->focalPoint->getY());
+                }
             }
 
             // If the thumbnail strategy failed to generate a valid thumbnail

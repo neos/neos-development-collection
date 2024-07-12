@@ -14,10 +14,22 @@ namespace Neos\Media\Domain\Model\Adjustment;
  */
 
 use Imagine\Image\BoxInterface;
+use Imagine\Image\Point;
+use Imagine\Image\PointInterface;
+use Neos\Media\Domain\Model\Dto\PreliminaryCropSpecification;
 use Neos\Media\Domain\Model\ImageInterface;
+use Neos\Media\Domain\ValueObject\Configuration\AspectRatio;
 use Neos\Media\Imagine\Box;
 
-class ImageDimensionCalculationHelperThingy
+/**
+ * Container for static methods to calculate the target dimensions for resizing images
+ *
+ * @see: ResizeImageAdjustment, ImageThumbnailGenerator(to calculte a preliminary crop for images with focal point),
+ *       ThumbnailService(to calculate dimensions and focal points for async thumbnails)
+ *
+ * @internal
+ */
+class ResizeDimensionCalculator
 {
     /**
      * @param BoxInterface $originalDimensions
@@ -173,7 +185,7 @@ class ImageDimensionCalculationHelperThingy
      * @param BoxInterface $requestedDimensions
      * @return BoxInterface
      */
-    public static function calculateFinalDimensions(BoxInterface $imageSize, BoxInterface $requestedDimensions, string $ratioMode = ImageInterface::RATIOMODE_INSET): BoxInterface
+    public static function calculateOutboundScalingDimensions(BoxInterface $imageSize, BoxInterface $requestedDimensions, string $ratioMode = ImageInterface::RATIOMODE_INSET): BoxInterface
     {
         if ($ratioMode === ImageInterface::RATIOMODE_OUTBOUND) {
             $ratios = [
@@ -184,5 +196,57 @@ class ImageDimensionCalculationHelperThingy
             return $imageSize->scale(max($ratios));
         }
         return $requestedDimensions;
+    }
+
+    /**
+     * Calculate the informations for a preliminary crop to ensure that the given focal point stays inside the final image
+     * with the requested dimensions
+     *
+     * - The cropDimensions have the aspect of requested dimensions and have the maximal possible dimensions
+     * - The cropOffset will position the crop with the focal point as close to the center as possible
+     * - The returned focal point is the position of the focal point after the crop inside the requested dimensions
+     */
+    public static function calculatePreliminaryCropSpecification(
+        BoxInterface $originalDimensions,
+        PointInterface $originalFocalPoint,
+        BoxInterface $targetDimensions,
+    ): PreliminaryCropSpecification {
+        $originalAspect = new AspectRatio($originalDimensions->getWidth(), $originalDimensions->getHeight());
+        $targetAspect = new AspectRatio($targetDimensions->getWidth(), $targetDimensions->getHeight());
+
+        if ($originalAspect->getRatio() >= $targetAspect->getRatio()) {
+            // target-aspect is wider as original-aspect or same: use full height, width is cropped
+            $factor = $originalDimensions->getHeight() / $targetDimensions->getHeight();
+            $cropDimensions = new \Imagine\Image\Box((int)($targetDimensions->getWidth() * $factor), $originalDimensions->getHeight());
+            $cropOffsetX = $originalFocalPoint->getX() - (int)($cropDimensions->getWidth() / 2);
+            $cropOffsetXMax = $originalDimensions->getWidth() - $cropDimensions->getWidth();
+            if ($cropOffsetX < 0) {
+                $cropOffsetX = 0;
+            } elseif ($cropOffsetX > $cropOffsetXMax) {
+                $cropOffsetX = $cropOffsetXMax;
+            }
+            $cropOffset = new Point($cropOffsetX, 0);
+        } else {
+            // target-aspect is higher than original-aspect: use full width, height is cropped
+            $factor = $originalDimensions->getWidth() / $targetDimensions->getWidth();
+            $cropDimensions = new Box($originalDimensions->getWidth(), (int)($targetDimensions->getHeight() * $factor));
+            $cropOffsetY = $originalFocalPoint->getY() - (int)($cropDimensions->getHeight() / 2);
+            $cropOffsetYMax = $originalDimensions->getHeight() - $cropDimensions->getHeight();
+            if ($cropOffsetY < 0) {
+                $cropOffsetY = 0;
+            } elseif ($cropOffsetY > $cropOffsetYMax) {
+                $cropOffsetY = $cropOffsetYMax;
+            }
+            $cropOffset = new Point(0, $cropOffsetY);
+        }
+
+        return new PreliminaryCropSpecification(
+            $cropOffset,
+            $cropDimensions,
+            new Point(
+                (int)round(($originalFocalPoint->getX() - $cropOffset->getX()) / $factor),
+                (int)round(($originalFocalPoint->getY() - $cropOffset->getY()) / $factor)
+            )
+        );
     }
 }

@@ -288,7 +288,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function canBeApplied(ImagineImageInterface $image)
     {
-        $expectedDimensions = ImageDimensionCalculationHelperThingy::calculateRequestedDimensions(
+        $expectedDimensions = ResizeDimensionCalculator::calculateRequestedDimensions(
             $image->getSize(),
             $this->width,
             $this->height,
@@ -319,11 +319,11 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      *
      * @param BoxInterface $originalDimensions Dimensions of the unadjusted image
      * @return BoxInterface
-     * @deprecated use ImageDimensionCalculationHelperThingy::calculateRequestedDimensions instead
+     * @deprecated use ResizeDimensionCalculator::calculateRequestedDimensions instead
      */
     protected function calculateDimensions(BoxInterface $originalDimensions): BoxInterface
     {
-        return ImageDimensionCalculationHelperThingy::calculateRequestedDimensions(
+        return ResizeDimensionCalculator::calculateRequestedDimensions(
             $originalDimensions,
             $this->width,
             $this->height,
@@ -353,7 +353,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
 
         $originalDimensions = $image->getSize();
 
-        $requestedDimensions = ImageDimensionCalculationHelperThingy::calculateRequestedDimensions(
+        $requestedDimensions = ResizeDimensionCalculator::calculateRequestedDimensions(
             $originalDimensions,
             $this->width,
             $this->height,
@@ -363,7 +363,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
             $this->ratioMode ?? ImageInterface::RATIOMODE_INSET
         );
 
-        $finalDimensions = ImageDimensionCalculationHelperThingy::calculateFinalDimensions(
+        $finalDimensions = ResizeDimensionCalculator::calculateOutboundScalingDimensions(
             $originalDimensions,
             $requestedDimensions,
             $this->ratioMode
@@ -389,11 +389,11 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @param BoxInterface $imageSize
      * @param BoxInterface $requestedDimensions
      * @return BoxInterface
-     * @deprecated use ImageDimensionCalculationHelperThingy::calculateFinalDimensions instead
+     * @deprecated use ResizeDimensionCalculator::calculateOutboundScalingDimensions instead
      */
     protected function calculateOutboundScalingDimensions(BoxInterface $imageSize, BoxInterface $requestedDimensions): BoxInterface
     {
-        return ImageDimensionCalculationHelperThingy::calculateFinalDimensions(
+        return ResizeDimensionCalculator::calculateOutboundScalingDimensions(
             $imageSize,
             $requestedDimensions,
             $this->ratioMode

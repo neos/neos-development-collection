@@ -11,15 +11,18 @@ namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
  * source code.
  */
 
-use Neos\Media\Domain\Model\Adjustment\ImageDimensionCalculationHelperThingy;
+use Imagine\Image\BoxInterface;
+use Imagine\Image\Point;
+use Imagine\Image\PointInterface;
+use Neos\Media\Domain\Model\Adjustment\ResizeDimensionCalculator;
 use Neos\Media\Imagine\Box;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\ImageInterface;
 
 /**
- * Test case for the ImageDimensionCalculationHelperThingy
+ * Test case for the ResizeDimensionCalculator
  */
-class ImageDimensionCalculationHelperThingyTest extends UnitTestCase
+class ResizeDimensionCalculatorTest extends UnitTestCase
 {
     /**
      * @test
@@ -31,7 +34,7 @@ class ImageDimensionCalculationHelperThingyTest extends UnitTestCase
 
         self::assertEquals(
             $expectedDimensions,
-            ImageDimensionCalculationHelperThingy::calculateRequestedDimensions(
+            ResizeDimensionCalculator::calculateRequestedDimensions(
                 originalDimensions: $originalDimensions,
                 width: 110,
                 height: 110,
@@ -49,7 +52,7 @@ class ImageDimensionCalculationHelperThingyTest extends UnitTestCase
 
         self::assertEquals(
             $expectedDimensions,
-            ImageDimensionCalculationHelperThingy::calculateRequestedDimensions(
+            ResizeDimensionCalculator::calculateRequestedDimensions(
                 originalDimensions: $originalDimensions,
                 width: 110,
                 height: 110,
@@ -68,7 +71,7 @@ class ImageDimensionCalculationHelperThingyTest extends UnitTestCase
 
         self::assertEquals(
             $expectedDimensions,
-            ImageDimensionCalculationHelperThingy::calculateRequestedDimensions(
+            ResizeDimensionCalculator::calculateRequestedDimensions(
                 originalDimensions: $originalDimensions,
                 width: 110
             )
@@ -85,7 +88,7 @@ class ImageDimensionCalculationHelperThingyTest extends UnitTestCase
 
         self::assertEquals(
             $expectedDimensions,
-            ImageDimensionCalculationHelperThingy::calculateRequestedDimensions(
+            ResizeDimensionCalculator::calculateRequestedDimensions(
                 originalDimensions: $originalDimensions,
                 height: 95
             )
@@ -102,7 +105,7 @@ class ImageDimensionCalculationHelperThingyTest extends UnitTestCase
 
         self::assertEquals(
             $expectedDimensions,
-            ImageDimensionCalculationHelperThingy::calculateRequestedDimensions(
+            ResizeDimensionCalculator::calculateRequestedDimensions(
                 originalDimensions: $originalDimensions,
                 maximumWidth: 250,
                 maximumHeight: 250,
@@ -121,7 +124,7 @@ class ImageDimensionCalculationHelperThingyTest extends UnitTestCase
 
         self::assertEquals(
             $expectedDimensions,
-            ImageDimensionCalculationHelperThingy::calculateRequestedDimensions(
+            ResizeDimensionCalculator::calculateRequestedDimensions(
                 originalDimensions: $originalDimensions,
                 maximumWidth: 250,
                 maximumHeight: 250,
@@ -163,7 +166,7 @@ class ImageDimensionCalculationHelperThingyTest extends UnitTestCase
 
         self::assertEquals(
             $expectedDimensions,
-            ImageDimensionCalculationHelperThingy::calculateRequestedDimensions(
+            ResizeDimensionCalculator::calculateRequestedDimensions(
                 originalDimensions: $originalDimensions,
                 width: $width,
                 height: $height,
@@ -173,5 +176,116 @@ class ImageDimensionCalculationHelperThingyTest extends UnitTestCase
                 allowUpScaling: $allowUpScaling
             )
         );
+    }
+
+    public static function calculateCropConfigurationCentersFocalPointDataProvider(): \Generator
+    {
+        yield 'square to square' => [
+            new \Imagine\Image\Box(400, 400),
+            new Point(200, 200),
+            new Box(200, 200),
+
+            new Point(0, 0),
+            new Box(400, 400),
+            new Point(100, 100),
+        ];
+
+        yield 'portrait to portrait' => [
+            new Box(800, 400),
+            new Point(400, 200),
+            new Box(400, 200),
+
+            new Point(0, 0),
+            new Box(800, 400),
+            new Point(200, 100),
+        ];
+
+        yield 'portrait to square fp left' => [
+            new Box(800, 400),
+            new Point(50, 200),
+            new Box(400, 400),
+
+            new Point(0, 0),
+            new Box(400, 400),
+            new Point(50, 200),
+        ];
+
+        yield 'portrait to square fp center' => [
+            new Box(800, 400),
+            new Point(400, 200),
+            new Box(400, 400),
+
+            new Point(200, 0),
+            new Box(400, 400),
+            new Point(200, 200),
+        ];
+
+        yield 'portrait to square fp right' => [
+            new Box(800, 400),
+            new Point(700, 100),
+            new Box(400, 400),
+
+            new Point(400, 0),
+            new Box(400, 400),
+            new Point(300, 100),
+        ];
+
+        yield 'landscape to square fp center' => [
+            new Box(400, 800),
+            new Point(200, 400),
+            new Box(400, 400),
+
+            new Point(0, 200),
+            new Box(400, 400),
+            new Point(200, 200),
+        ];
+
+        yield 'landscape to square fp top' => [
+            new Box(400, 800),
+            new Point(350, 50),
+            new Box(400, 400),
+
+            new Point(0, 0),
+            new Box(400, 400),
+            new Point(350, 50),
+        ];
+
+        yield 'landscape to square fp bottom' => [
+            new Box(400, 800),
+            new Point(300, 750),
+            new Box(200, 200),
+
+            new Point(0, 400),
+            new Box(400, 400),
+            new Point(150, 175),
+        ];
+    }
+
+    /**
+     * @dataProvider calculateCropConfigurationCentersFocalPointDataProvider
+     * @test
+     */
+    public function calculateCropConfigurationCentersFocalPoint(
+        BoxInterface $originalDimensions,
+        PointInterface $originalFocalPoint,
+        BoxInterface $requestedDimensions,
+        PointInterface $expectedCropOffset,
+        BoxInterface $expectedCropDimensions,
+        PointInterface $expectedCroppedFocalPoint
+    ): void {
+        $preliminaryCropSpecification = ResizeDimensionCalculator::calculatePreliminaryCropSpecification(
+            $originalDimensions,
+            $originalFocalPoint,
+            $requestedDimensions
+        );
+
+        $this->assertEquals($expectedCropDimensions->getWidth(), $preliminaryCropSpecification->cropDimensions->getWidth());
+        $this->assertEquals($expectedCropDimensions->getHeight(), $preliminaryCropSpecification->cropDimensions->getHeight());
+
+        $this->assertEquals($expectedCropOffset->getX(), $preliminaryCropSpecification->cropOffset->getX());
+        $this->assertEquals($expectedCropOffset->getY(), $preliminaryCropSpecification->cropOffset->getY());
+
+        $this->assertEquals($expectedCroppedFocalPoint->getX(), $preliminaryCropSpecification->focalPoint->getX());
+        $this->assertEquals($expectedCroppedFocalPoint->getY(), $preliminaryCropSpecification->focalPoint->getY());
     }
 }
