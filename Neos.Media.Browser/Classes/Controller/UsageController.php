@@ -20,6 +20,7 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Controller\CreateContentContextTrait;
@@ -81,6 +82,18 @@ class UsageController extends ActionController
     protected $domainUserService;
 
     /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\InjectConfiguration(package="Neos.Media.Browser", path="features.showWorkspaceOwnerOrName")
+     * @var array
+     */
+    protected $showWorkspaceOwnerOrNameConfiguration;
+
+    /**
      * Get Related Nodes for an asset
      *
      * @param AssetInterface $asset
@@ -89,6 +102,19 @@ class UsageController extends ActionController
     public function relatedNodesAction(AssetInterface $asset)
     {
         $userWorkspace = $this->userService->getPersonalWorkspace();
+        $currentAccount = $this->securityContext->getAccount();
+
+        $isPrivilegedRole = false;
+        if ($currentAccount != null && $this->showWorkspaceOwnerOrNameConfiguration['enable']) {
+            $roles = array_keys($currentAccount->getRoles());
+
+            foreach ($this->showWorkspaceOwnerOrNameConfiguration['privilegedRoles'] as $role) {
+                if (in_array($role, $roles)) {
+                    $isPrivilegedRole = true;
+                    break;
+                }
+            }
+        }
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
         $relatedNodes = [];
@@ -165,7 +191,8 @@ class UsageController extends ActionController
             'inaccessibleRelations' => $inaccessibleRelations,
             'relatedNodes' => $relatedNodes,
             'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets(),
-            'userWorkspace' => $userWorkspace
+            'userWorkspace' => $userWorkspace,
+            'isPrivilegedRole' => $isPrivilegedRole,
         ]);
     }
 

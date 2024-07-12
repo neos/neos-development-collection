@@ -39,6 +39,7 @@
                                    title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}"
                                    data-neos-toggle="tooltip"></i>
                                 {neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}
+															  <f:if condition="{isPrivilegedRole}">({inaccessibleRelation.workspace.title})</f:if>
                             </f:case>
                             <f:case value="{inaccessibleRelation.workspace.privateWorkspace}">
                                 <i class="fas fa-shield"
@@ -46,6 +47,7 @@
                                    data-neos-toggle="tooltip"></i>
                                 {neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package:
                                 'Neos.Neos')}
+																<f:if condition="{isPrivilegedRole}">({inaccessibleRelation.workspace.owner.name.fullName})</f:if>
                             </f:case>
                             <f:case value="{inaccessibleRelation.workspace.internalWorkspace}">
                                 <i class="fas fa-group"
@@ -53,6 +55,7 @@
                                    data-neos-toggle="tooltip"></i>
                                 {neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package:
                                 'Neos.Neos')}
+																<f:if condition="{isPrivilegedRole}">({inaccessibleRelation.workspace.title})</f:if>
                             </f:case>
                             <f:defaultCase>
                                 ---

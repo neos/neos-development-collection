@@ -27,6 +27,10 @@ Neos:
         # By default, enable the option to create redirects for replaced asset resources
         createAssetRedirectsOption:
           enable: true
+        # By default, disable showing the workspace owner/title in media browser usage tab
+        showWorkspaceOwnerOrName:
+          enable: false
+          privilegedRoles: ['Neos.Neos:Administrator']
 
   Flow:
     security:
