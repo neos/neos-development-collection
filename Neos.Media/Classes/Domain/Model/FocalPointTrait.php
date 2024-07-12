@@ -12,6 +12,8 @@ namespace Neos\Media\Domain\Model;
  */
 
 use Doctrine\ORM\Mapping as ORM;
+use Imagine\Image\Point;
+use Imagine\Image\PointInterface;
 
 /**
  * Trait for assets which provide methods for focal points
@@ -49,5 +51,21 @@ trait FocalPointTrait
     public function setFocalPointY(?int $y): void
     {
         $this->focalPointY = $y;
+    }
+
+    public function hasFocalPoint(): bool
+    {
+        if ($this->focalPointX !== null && $this->focalPointY !== null) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getFocalPoint(): ?PointInterface
+    {
+        if ($this->hasFocalPoint()) {
+            return new Point($this->focalPointX, $this->focalPointY);
+        }
+        return null;
     }
 }
