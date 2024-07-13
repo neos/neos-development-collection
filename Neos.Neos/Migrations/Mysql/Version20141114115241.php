@@ -2,8 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Create Event Log Table
@@ -16,7 +17,7 @@ class Version20141114115241 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("CREATE TABLE typo3_neos_eventlog_domain_model_event (persistence_object_identifier VARCHAR(40) NOT NULL, parentevent VARCHAR(40) DEFAULT NULL, timestamp DATETIME NOT NULL, uid INT(11) NOT NULL AUTO_INCREMENT UNIQUE, eventtype VARCHAR(255) NOT NULL, accountidentifier VARCHAR(255) DEFAULT NULL, data LONGTEXT NOT NULL COMMENT '(DC2Type:array)', dtype VARCHAR(255) NOT NULL, nodeidentifier VARCHAR(255) DEFAULT NULL, documentnodeidentifier VARCHAR(255) DEFAULT NULL, workspacename VARCHAR(255) DEFAULT NULL, dimension LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)', INDEX IDX_30AB3A75B684C08 (parentevent), PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event ADD CONSTRAINT FK_30AB3A75B684C08 FOREIGN KEY (parentevent) REFERENCES typo3_neos_eventlog_domain_model_event (persistence_object_identifier)");
@@ -28,7 +29,7 @@ class Version20141114115241 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP FOREIGN KEY FK_30AB3A75B684C08");
         $this->addSql("DROP TABLE typo3_neos_eventlog_domain_model_event");

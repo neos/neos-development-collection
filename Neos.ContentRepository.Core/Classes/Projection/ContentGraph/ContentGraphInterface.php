@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
@@ -71,12 +72,11 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): NodeAggregates;
 
     /**
-     * @return iterable<NodeAggregate>
      * @api
      */
     public function findNodeAggregatesByType(
         NodeTypeName $nodeTypeName
-    ): iterable;
+    ): NodeAggregates;
 
     /**
      * @throws NodeAggregatesTypeIsAmbiguous
@@ -89,10 +89,9 @@ interface ContentGraphInterface extends ProjectionStateInterface
     /**
      * Returns all node types in use, from the graph projection
      *
-     * @return iterable<NodeTypeName>
      * @api
      */
-    public function findUsedNodeTypeNames(): iterable;
+    public function findUsedNodeTypeNames(): NodeTypeNames;
 
     /**
      * @internal only for consumption inside the Command Handler
@@ -103,20 +102,18 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): ?NodeAggregate;
 
     /**
-     * @return iterable<NodeAggregate>
      * @internal only for consumption inside the Command Handler
      */
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId
-    ): iterable;
+    ): NodeAggregates;
 
     /**
-     * @return iterable<NodeAggregate>
      * @internal only for consumption inside the Command Handler
      */
     public function findChildNodeAggregates(
         NodeAggregateId $parentNodeAggregateId
-    ): iterable;
+    ): NodeAggregates;
 
     /**
      * A node aggregate can have no or exactly one child node aggregate with a given name as enforced by constraint checks
@@ -129,12 +126,11 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): ?NodeAggregate;
 
     /**
-     * @return iterable<NodeAggregate>
      * @internal only for consumption inside the Command Handler
      */
     public function findTetheredChildNodeAggregates(
         NodeAggregateId $parentNodeAggregateId
-    ): iterable;
+    ): NodeAggregates;
 
     /**
      * @internal only for consumption inside the Command Handler

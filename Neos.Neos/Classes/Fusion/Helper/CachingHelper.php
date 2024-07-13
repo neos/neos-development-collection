@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
@@ -37,6 +38,11 @@ class CachingHelper implements ProtectedContextAwareInterface
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
+
+    /**
+     * @var array<string, ContentStreamId>
+     */
+    private array $workspaceNameToContentStreamIdMapping = [];
 
     /**
      * Generate a `@cache` entry tag for a single node, array of nodes or a FlowQuery result
@@ -70,7 +76,11 @@ class CachingHelper implements ProtectedContextAwareInterface
      */
     public function entryIdentifierForNode(Node $node): NodeCacheEntryIdentifier
     {
-        return NodeCacheEntryIdentifier::fromNode($node);
+        // Todo adjust content caching to work with workspaces as entry identifier than the content stream id
+        $currentContentStreamId = $this->workspaceNameToContentStreamIdMapping[$node->contentRepositoryId->value . '@' . $node->workspaceName->value]
+            ??= $this->contentRepositoryRegistry->get($node->contentRepositoryId)->getContentGraph($node->workspaceName)->getContentStreamId();
+
+        return NodeCacheEntryIdentifier::fromNode($node, $currentContentStreamId);
     }
 
     /**

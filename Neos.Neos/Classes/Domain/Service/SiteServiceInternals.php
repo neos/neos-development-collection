@@ -120,11 +120,10 @@ readonly class SiteServiceInternals implements ContentRepositoryServiceInterface
             OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
             $sitesNodeIdentifier,
             null,
-            $site->getNodeName()->toNodeName(),
             PropertyValuesToWrite::fromArray([
                 'title' => $site->getName()
             ])
-        ));
+        )->withNodeName($site->getNodeName()->toNodeName()));
 
         // Handle remaining root dimension space points by creating peer variants
         foreach ($rootDimensionSpacePoints as $rootDimensionSpacePoint) {

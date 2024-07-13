@@ -16,21 +16,21 @@ namespace Neos\Neos\Fusion;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
 use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\Options;
 use Neos\Neos\Fusion\Cache\CacheTag;
 use Psr\Log\LoggerInterface;
 
@@ -95,6 +95,12 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected $systemLogger;
 
     /**
+     * @Flow\Inject
+     * @var NodeUriBuilderFactory
+     */
+    protected $nodeUriBuilderFactory;
+
+    /**
      * Convert URIs matching a supported scheme with generated URIs
      *
      * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
@@ -133,43 +139,40 @@ class ConvertUrisImplementation extends AbstractFusionObject
             return $text;
         }
 
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->contentRepositoryId
-        );
-
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
+        $nodeAddress = NodeAddress::fromNode($node);
 
         $unresolvedUris = [];
-        $absolute = $this->fusionValue('absolute');
+        $options = $this->fusionValue('absolute') ? Options::createForceAbsolute() : Options::createEmpty();
 
-        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($contentRepository, $nodeAddress, &$unresolvedUris, $absolute) {
+        $possibleRequest = $this->runtime->fusionGlobals->get('request');
+        if ($possibleRequest instanceof ActionRequest) {
+            $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($possibleRequest);
+            $format = $possibleRequest->getFormat();
+            if ($format && $format !== 'html') {
+                $options = $options->withCustomFormat($format);
+            }
+        } else {
+            // unfortunately, the uri-builder always needs a request at hand and cannot build uris without it
+            // this will improve with a reformed uri building:
+            // https://github.com/neos/flow-development-collection/issues/3354
+            $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest(ActionRequest::fromHttpRequest(ServerRequest::fromGlobals()));
+        }
+
+        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $nodeUriBuilder, $options) {
             $resolvedUri = null;
             switch ($matches[1]) {
                 case 'node':
-                    $nodeAddress = $nodeAddress->withNodeAggregateId(
+                    $nodeAddress = $nodeAddress->withAggregateId(
                         NodeAggregateId::fromString($matches[2])
                     );
-                    $uriBuilder = new UriBuilder();
-                    $possibleRequest = $this->runtime->fusionGlobals->get('request');
-                    if ($possibleRequest instanceof ActionRequest) {
-                        $uriBuilder->setRequest($possibleRequest);
-                    } else {
-                        // unfortunately, the uri-builder always needs a request at hand and cannot build uris without
-                        // even, if the default param merging would not be required
-                        // this will improve with a reformed uri building:
-                        // https://github.com/neos/flow-development-collection/pull/2744
-                        $uriBuilder->setRequest(
-                            ActionRequest::fromHttpRequest(ServerRequest::fromGlobals())
-                        );
-                    }
-                    $uriBuilder->setCreateAbsoluteUri($absolute);
                     try {
-                        $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
+                        $resolvedUri = (string)$nodeUriBuilder->uriFor($nodeAddress, $options);
                     } catch (NoMatchingRouteException) {
-                        $this->systemLogger->info(sprintf('Could not resolve "%s" to a live node uri. Arguments: %s', $matches[0], json_encode($uriBuilder->getLastArguments())), LogEnvironment::fromMethodName(__METHOD__));
+                        // todo log also arguments?
+                        $this->systemLogger->warning(sprintf('Could not resolve "%s" to a node uri.', $matches[0]), LogEnvironment::fromMethodName(__METHOD__));
                     }
                     $this->runtime->addCacheTag(
-                        CacheTag::forDynamicNodeAggregate($contentRepository->id, $nodeAddress->workspaceName, NodeAggregateId::fromString($matches[2]))->value
+                        CacheTag::forDynamicNodeAggregate($nodeAddress->contentRepositoryId, $nodeAddress->workspaceName, $nodeAddress->aggregateId)->value
                     );
                     break;
                 case 'asset':

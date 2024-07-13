@@ -43,7 +43,6 @@ Feature: Route cache invalidation
     #        earl-o-documentbourgh
     #      nody-mc-nodeface
     #
-    And I am in workspace "live" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                   | initialPropertyValues                    | nodeName |
       | shernode-homes         | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |

@@ -73,7 +73,7 @@ final class ContentGraphFinder implements ProjectionStateInterface
      *
      * @param WorkspaceName $workspaceName
      * @param ContentStreamId $contentStreamId
-     * @internal Only for testing
+     * @internal Only for the write side during publishing {@see \Neos\ContentRepository\Core\CommandHandlingDependencies::overrideContentStreamId}
      */
     public function getByWorkspaceNameAndContentStreamId(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
     {

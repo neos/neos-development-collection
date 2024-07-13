@@ -2,8 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Fix column names for direct associations
@@ -16,7 +17,7 @@ class Version20110923125538 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain DROP FOREIGN KEY typo3_typo3_domain_model_domain_ibfk_1");
         $this->addSql("DROP INDEX IDX_64D1A917E12C6E67 ON typo3_typo3_domain_model_domain");
@@ -43,7 +44,7 @@ class Version20110923125538 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_typo3_domain_model_domain DROP FOREIGN KEY typo3_typo3_domain_model_domain_ibfk_1");
         $this->addSql("DROP INDEX IDX_F227E8F6694309E4 ON typo3_typo3_domain_model_domain");

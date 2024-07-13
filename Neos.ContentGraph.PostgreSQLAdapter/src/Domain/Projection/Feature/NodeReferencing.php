@@ -39,7 +39,7 @@ trait NodeReferencing
             $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
                 $event->contentStreamId,
                 $originDimensionSpacePoint,
-                $event->sourceNodeAggregateId
+                $event->nodeAggregateId
             );
 
             if ($nodeRecord) {

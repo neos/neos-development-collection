@@ -67,11 +67,6 @@ class NodeTypeSchemaBuilder
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             if ($nodeType->isAbstract() === false) {
                 $configuration = $nodeType->getFullConfiguration();
-                $configuration['properties'] = array_merge(
-                    $configuration['properties'] ?? [],
-                    $configuration['references'] ?? [],
-                );
-                unset($configuration['references']);
                 $schema['nodeTypes'][$nodeTypeName] = $configuration;
                 $schema['nodeTypes'][$nodeTypeName]['label'] = $nodeType->getLabel();
             }

@@ -25,7 +25,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -96,7 +95,6 @@ trait CRTestSuiteTrait
         $this->currentVisibilityConstraints = VisibilityConstraints::frontend();
         $this->currentDimensionSpacePoint = null;
         $this->currentRootNodeAggregateId = null;
-        $this->currentContentStreamId = null;
         $this->currentWorkspaceName = null;
         $this->currentNodeAggregate = null;
         $this->currentNode = null;
@@ -131,31 +129,14 @@ trait CRTestSuiteTrait
     }
 
     /**
-     * @Then /^workspace "([^"]*)" points to another content stream than workspace "([^"]*)"$/
+     * @Then /^I expect the content stream "([^"]*)" to not exist$/
      */
-    public function workspacesPointToDifferentContentStreams(string $rawWorkspaceNameA, string $rawWorkspaceNameB): void
+    public function iExpectTheContentStreamToNotExist(string $rawContentStreamId): void
     {
-        $workspaceA = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameA));
-        Assert::assertInstanceOf(Workspace::class, $workspaceA, 'Workspace "' . $rawWorkspaceNameA . '" does not exist.');
-        $workspaceB = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameB));
-        Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
-        if ($workspaceA && $workspaceB) {
-            Assert::assertNotEquals(
-                $workspaceA->currentContentStreamId->value,
-                $workspaceB->currentContentStreamId->value,
-                'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"'
-            );
-        }
-    }
-
-    /**
-     * @Then /^workspace "([^"]*)" does not point to content stream "([^"]*)"$/
-     */
-    public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamId): void
-    {
-        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
-
-        Assert::assertNotEquals($rawContentStreamId, $workspace->currentContentStreamId->value);
+        Assert::assertTrue(
+            $this->currentContentRepository->getContentStreamFinder()->hasContentStream(ContentStreamId::fromString($rawContentStreamId)),
+            sprintf('The content stream "%s" does exist.', $rawContentStreamId)
+        );
     }
 
     /**

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -108,10 +108,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
      */
     private function determineRequiredSqlStatements(): array
     {
-        $schemaManager = $this->dbal->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
-        }
+        $schemaManager = $this->dbal->createSchemaManager();
         $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }

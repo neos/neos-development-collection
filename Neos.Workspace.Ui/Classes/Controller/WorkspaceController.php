@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Workspace\Ui\Controller;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -62,8 +63,9 @@ use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
 use Neos\Neos\Domain\Workspace\DiscardAllChanges;
 use Neos\Neos\Domain\Workspace\PublishAllChanges;
 use Neos\Neos\Domain\Workspace\WorkspaceProvider;
-use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddress as LegacyNodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
@@ -79,6 +81,9 @@ class WorkspaceController extends AbstractModuleController
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    #[Flow\Inject]
+    protected NodeUriBuilderFactory $nodeUriBuilderFactory;
 
     #[Flow\Inject]
     protected SiteRepository $siteRepository;
@@ -442,11 +447,13 @@ class WorkspaceController extends AbstractModuleController
      * Rebase the current users personal workspace onto the given $targetWorkspace and then
      * redirects to the $targetNode in the content module.
      */
-    public function rebaseAndRedirectAction(Node $targetNode, Workspace $targetWorkspace): void
+    public function rebaseAndRedirectAction(string $targetNode, Workspace $targetWorkspace): void
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
+        $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString($targetNode);
 
         /** @var ?Account $currentAccount */
         $currentAccount = $this->securityContext->getAccount();
@@ -476,31 +483,36 @@ class WorkspaceController extends AbstractModuleController
          * }
          */
 
-        $targetNodeAddressInPersonalWorkspace = new NodeAddress(
-            $personalWorkspace->currentContentStreamId,
-            $targetNode->dimensionSpacePoint,
-            $targetNode->aggregateId,
-            $personalWorkspace->workspaceName
+        $targetNodeAddressInPersonalWorkspace = NodeAddress::create(
+            $targetNodeAddress->contentRepositoryId,
+            $personalWorkspace->workspaceName,
+            $targetNodeAddress->dimensionSpacePoint,
+            $targetNodeAddress->aggregateId
         );
 
-        $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
-        /** @var ActionRequest $mainRequest */
-        $this->uriBuilder->setRequest($mainRequest);
-
         if ($this->packageManager->isPackageAvailable('Neos.Neos.Ui')) {
+            // todo remove me legacy
+            $legacyTargetNodeAddressInPersonalWorkspace = new LegacyNodeAddress(
+                null,
+                $targetNodeAddressInPersonalWorkspace->dimensionSpacePoint,
+                $targetNodeAddressInPersonalWorkspace->aggregateId,
+                $targetNodeAddressInPersonalWorkspace->workspaceName
+            );
+            $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
+            /** @var ActionRequest $mainRequest */
+            $this->uriBuilder->setRequest($mainRequest);
+
             $this->redirect(
                 'index',
                 'Backend',
                 'Neos.Neos.Ui',
-                ['node' => $targetNodeAddressInPersonalWorkspace]
+                ['node' => $legacyTargetNodeAddressInPersonalWorkspace]
             );
         }
 
-        $this->redirect(
-            'show',
-            'Frontend\\Node',
-            'Neos.Workspace.Ui',
-            ['node' => $targetNodeAddressInPersonalWorkspace]
+        $this->redirectToUri(
+            $this->nodeUriBuilderFactory->forActionRequest($this->request)
+                ->uriFor($targetNodeAddressInPersonalWorkspace)
         );
     }
 
@@ -516,13 +528,14 @@ class WorkspaceController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        $nodeAddress = $nodeAddressFactory->createFromUriString($nodeAddress);
+        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
+        $nodeAddress = $nodeAddressFactory->createCoreNodeAddressFromLegacyUriString($nodeAddress);
 
         $command = PublishIndividualNodesFromWorkspace::create(
             $selectedWorkspace,
             NodeIdsToPublishOrDiscard::create(
                 new NodeIdToPublishOrDiscard(
-                    $nodeAddress->nodeAggregateId,
+                    $nodeAddress->aggregateId,
                     $nodeAddress->dimensionSpacePoint
                 )
             ),
@@ -553,13 +566,14 @@ class WorkspaceController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        $nodeAddress = $nodeAddressFactory->createFromUriString($nodeAddress);
+        // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
+        $nodeAddress = $nodeAddressFactory->createCoreNodeAddressFromLegacyUriString($nodeAddress);
 
         $command = DiscardIndividualNodesFromWorkspace::create(
             $selectedWorkspace,
             NodeIdsToPublishOrDiscard::create(
                 new NodeIdToPublishOrDiscard(
-                    $nodeAddress->nodeAggregateId,
+                    $nodeAddress->aggregateId,
                     $nodeAddress->dimensionSpacePoint
                 )
             ),
@@ -594,9 +608,10 @@ class WorkspaceController extends AbstractModuleController
 
         $nodesToPublishOrDiscard = [];
         foreach ($nodes as $node) {
-            $nodeAddress = $nodeAddressFactory->createFromUriString($node);
+            // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
+            $nodeAddress = $nodeAddressFactory->createCoreNodeAddressFromLegacyUriString($node);
             $nodesToPublishOrDiscard[] = new NodeIdToPublishOrDiscard(
-                $nodeAddress->nodeAggregateId,
+                $nodeAddress->aggregateId,
                 $nodeAddress->dimensionSpacePoint
             );
         }
@@ -823,8 +838,8 @@ class WorkspaceController extends AbstractModuleController
                     // As for changes of type `delete` we are using nodes from the live content stream
                     // we can't create `serializedNodeAddress` from the node.
                     // Instead, we use the original stored values.
-                    $nodeAddress = new NodeAddress(
-                        $change->contentStreamId,
+                    $nodeAddress = new LegacyNodeAddress(
+                        null,
                         $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                         $change->nodeAggregateId,
                         $selectedWorkspace->workspaceName
