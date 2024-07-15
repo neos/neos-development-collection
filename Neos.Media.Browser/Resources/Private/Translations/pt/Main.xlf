@@ -12,7 +12,7 @@
       </trans-unit>
       <trans-unit id="module.label" xml:space="preserve">
         <source>Media</source>
-        <target state="translated">Media</target>
+        <target state="translated">Multimédia</target>
       </trans-unit>
       <trans-unit id="module.description" xml:space="preserve">
         <source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
@@ -432,7 +432,7 @@
       </trans-unit>
       <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve">
         <source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-        <target state="translated">Apenas alguns dos ficheiros foram enviados com sucesso. Atualize a página para vê-los.</target>
+        <target state="translated">Apenas alguns dos ficheiros foram carregados com sucesso. Atualize a página para vê-los.</target>
       </trans-unit>
       <trans-unit id="taggingAssetsFailed" xml:space="preserve">
         <source>Tagging the asset failed.</source>
@@ -448,16 +448,16 @@
       </trans-unit>
       <trans-unit id="deleteRelatedNodes" xml:space="preserve">
         <source>Asset could not be deleted, because there are still Nodes using it</source>
-        <target state="translated">O recurso não pode ser apagado porque está a ser utilizado pelo sistema</target>
+        <target state="translated">O recurso não pode ser apagado porque está a ser utilizado no sistema</target>
       </trans-unit>
       <group id="relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="relatedNodes[0]">
+        <trans-unit id="relatedNodes[0]" xml:space="preserve">
           <source>{0} usages</source>
-          <target state="translated">{0} uso</target>
+          <target state="translated">{0} utilização</target>
         </trans-unit>
-        <trans-unit id="relatedNodes[1]">
+        <trans-unit id="relatedNodes[1]" xml:space="preserve">
           <source>{0} usages</source>
-          <target state="translated">{0} usos</target>
+          <target state="translated">{0} utilizações</target>
         </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
@@ -470,7 +470,7 @@
       </trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
         <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-        <target state="translated">Pode substituir esse ativo fazendo o upload de um ficheiro novo. Uma vez substituído, o novo ativo será usado em todos os lugares onde o ativo é usado no seu site.</target>
+        <target state="translated">Pode substituir o conteúdo deste recurso carregando um novo ficheiro. O novo conteúdo será mostrado sempre que o recurso seja utilizado.</target>
       </trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve">
         <source>Note</source>
@@ -478,7 +478,7 @@
       </trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
         <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-        <target state="translated">Esta operação irá substituir o ativo em todos os espaços de trabalho publicados ou não publicados, incluindo o site ao vivo.</target>
+        <target state="translated">Esta operação irá substituir o conteúdo do recurso em todas as áreas de trabalho, publicadas ou não, incluindo o site público.</target>
       </trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
         <source>Choose a new file</source>
@@ -486,15 +486,15 @@
       </trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve">
         <source>Currently the asset is used {usageCount} times.</source>
-        <target state="translated">Atualmente, o ativo é usado {usageCount} vezes.</target>
+        <target state="translated">Neste momento o recurso é utilizado {usageCount} vezes.</target>
       </trans-unit>
       <trans-unit id="replace.allUsages" xml:space="preserve">
         <source>Show all usages</source>
-        <target state="translated">Exibir todos os usos</target>
+        <target state="translated">Mostrar todas as utilizações</target>
       </trans-unit>
       <trans-unit id="replace.notUsed" xml:space="preserve">
         <source>Currently the asset is not in used anywhere on the website.</source>
-        <target state="translated">Atualmente o ativo não é usado nenhum lugar no site.</target>
+        <target state="translated">De momento o recurso não é usado.</target>
       </trans-unit>
       <trans-unit id="replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
@@ -502,71 +502,71 @@
       </trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
         <source>Could not replace asset</source>
-        <target state="translated">Não foi possível substituir o ativo</target>
+        <target state="translated">Não foi possível substituir o recurso</target>
       </trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
         <source>Asset "{0}" has been replaced.</source>
-        <target state="translated">Mídia "{0}" foi substituída.</target>
+        <target state="translated">O recurso "{0}" foi substituído.</target>
       </trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
         <source>Asset "{0}" has been updated.</source>
-        <target state="translated">A mídia "{0}" foi atualizada.</target>
+        <target state="translated">O recurso "{0}" foi atualizado.</target>
       </trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
         <source>Asset "{0}" has been added.</source>
-        <target state="translated">A mídia "{0}" foi adicionada.</target>
+        <target state="translated">O recurso "{0}" foi adicionado.</target>
       </trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
         <source>Asset "{0}" has been deleted.</source>
-        <target state="translated">A mídia "{0}" foi apagada.</target>
+        <target state="translated">O recurso "{0}" foi apagado.</target>
       </trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
         <source>Asset could not be deleted.</source>
-        <target state="translated">A mídia não pode ser excluída.</target>
+        <target state="translated">Não foi possível apagar o recurso.</target>
       </trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
         <source>Tag "{0}" already exists and was added to collection.</source>
-        <target state="translated">A tag "{0}" já existe e foi adicionada à coleção.</target>
+        <target state="translated">A etiqueta "{0}" já existe e foi adicionada à coleção.</target>
       </trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
         <source>Tag "{0}" has been created.</source>
-        <target state="translated">Tag "{0}" foi criada.</target>
+        <target state="translated">A etiqueta "{0}" foi criada.</target>
       </trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
         <source>Tag "{0}" has been updated.</source>
-        <target state="translated">Tag "{0}" foi atualizada.</target>
+        <target state="translated">A etiqueta "{0}" foi atualizada.</target>
       </trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
         <source>Tag "{0}" has been deleted.</source>
-        <target state="translated">Tag "{0}" foi excluída.</target>
+        <target state="translated">A etiqueta "{0}" foi apagada.</target>
       </trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
         <source>Collection "{0}" has been created.</source>
-        <target state="translated">Coleção "{0}" foi criada.</target>
+        <target state="translated">A coleção "{0}" foi criada.</target>
       </trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
         <source>Collection "{0}" has been updated.</source>
-        <target state="translated">Coleção "{0}" foi atualizada.</target>
+        <target state="translated">A coleção "{0}" foi atualizada.</target>
       </trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
         <source>Collection "{0}" has been deleted.</source>
-        <target state="translated">Coleção "{0}" foi excluída.</target>
+        <target state="translated">A coleção "{0}" foi apagada.</target>
       </trans-unit>
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
         <source>Generate redirects from original file url to the new url</source>
-        <target state="translated">Gerar redirecionamentos da url do ficheiro original para a nova url</target>
+        <target state="translated">Criar redirecionamentos do endereço original do ficheiro para o novo endereço</target>
       </trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
         <source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-        <target state="translated">' Recursos do tipo "{0}" apenas podem ser substituídos por um recurso semelhante. Obter tipo "{1}"'</target>
+        <target state="translated">' Recursos do tipo "{0}" apenas podem ser substituídos por um recurso semelhante. Foi recebido o tipo "{1}"'</target>
       </trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
         <source>No access to workspace "{0}"</source>
-        <target state="translated">Sem acesso ao espaço de trabalho "{0}"</target>
+        <target state="translated">Não é possível aceder a área de trabalho "{0}"</target>
       </trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
         <source>No document node found for this node</source>
-        <target state="translated">Não foi encontrado nenhum documento de nó para este nó</target>
+        <target state="translated">O documento não foi encontrado</target>
       </trans-unit>
       <trans-unit id="message.assetContainsMaliciousContent" xml:space="preserve">
         <source>This asset might contain malicious content!</source>
@@ -574,7 +574,7 @@
       </trans-unit>
       <trans-unit id="createMissingVariants" xml:space="preserve">
         <source>Create missing variants</source>
-        <target state="translated">Criar variantes que faltam</target>
+        <target state="translated">Criar as variantes em falta</target>
       </trans-unit>
     </body>
   </file>
