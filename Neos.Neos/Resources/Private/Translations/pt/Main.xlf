@@ -504,7 +504,7 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
         <source>Full Screen</source>
-        <target state="translated">Tela Cheia</target>
+        <target state="translated">Ecrã Inteiro</target>
       </trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
         <source>Open page in live workspace</source>
