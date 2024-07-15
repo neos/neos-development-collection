@@ -73,7 +73,7 @@
       </trans-unit>
       <trans-unit id="delete" xml:space="preserve">
         <source>Delete</source>
-        <target state="translated">Excluir</target>
+        <target state="translated">Apagar</target>
       </trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
         <source>Yes, delete the element</source>
@@ -229,7 +229,7 @@
       </trans-unit>
       <trans-unit id="save" xml:space="preserve">
         <source>Save</source>
-        <target state="translated">Gravar</target>
+        <target state="translated">Guardar</target>
       </trans-unit>
       <trans-unit id="saving" xml:space="preserve">
         <source>Saving</source>
