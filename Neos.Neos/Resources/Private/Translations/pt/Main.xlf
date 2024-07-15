@@ -509,7 +509,7 @@
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
         <source>Open page in live workspace</source>
         <note>Deprecated, replaced by previewShortcutButton.title</note>
-        <target state="translated">Página aberta em espaço de trabalho ao vivo</target>
+        <target state="translated">Abrir a página na área de trabalho pública</target>
       </trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
         <source>Open page in target workspace</source>
