@@ -37,7 +37,7 @@
       </trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
         <source>Type to search</source>
-        <target state="translated">Digite para pesquisar</target>
+        <target state="translated">Escreva para pesquisar</target>
       </trans-unit>
       <trans-unit id="content" xml:space="preserve">
         <source>Content</source>
@@ -45,11 +45,11 @@
       </trans-unit>
       <trans-unit id="node" xml:space="preserve">
         <source>Node</source>
-        <target state="translated">Node</target>
+        <target state="translated">Nó</target>
       </trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
         <source>Content View</source>
-        <target state="translated">Visualização de Conteúdo</target>
+        <target state="translated">Vista de Conteúdo</target>
       </trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
         <source>Create after</source>
@@ -73,15 +73,15 @@
       </trans-unit>
       <trans-unit id="delete" xml:space="preserve">
         <source>Delete</source>
-        <target state="translated">Excluir</target>
+        <target state="translated">Apagar</target>
       </trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
         <source>Yes, delete the element</source>
-        <target state="translated">Sim, excluir o elemento</target>
+        <target state="translated">Sim, apagar o elemento</target>
       </trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
         <source>Delete the element</source>
-        <target state="translated">Excluir o elemento</target>
+        <target state="translated">Apagar o elemento</target>
       </trans-unit>
       <trans-unit id="discard" xml:space="preserve">
         <source>Discard</source>
@@ -109,11 +109,11 @@
       </trans-unit>
       <trans-unit id="hide" xml:space="preserve">
         <source>Hide</source>
-        <target state="translated">Esconder</target>
+        <target state="translated">Ocultar</target>
       </trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
         <source>Unhide</source>
-        <target state="translated">Tornar visível</target>
+        <target state="translated">Exibir</target>
       </trans-unit>
       <trans-unit id="into" xml:space="preserve">
         <source>into</source>
@@ -141,7 +141,7 @@
       </trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
         <source>New Into</source>
-        <target state="translated">Novo Em</target>
+        <target state="translated">Novo Dentro</target>
       </trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
         <source>Navigate</source>
@@ -169,11 +169,11 @@
       </trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
         <source>Paste Into</source>
-        <target state="translated">Colar Em</target>
+        <target state="translated">Colar Dentro</target>
       </trans-unit>
       <trans-unit id="password" xml:space="preserve">
         <source>Password</source>
-        <target state="translated">Senha</target>
+        <target state="translated">Palavra-Passe</target>
       </trans-unit>
       <trans-unit id="preview" xml:space="preserve">
         <source>Preview</source>
@@ -189,19 +189,19 @@
       </trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
         <source>Publish all changes for current page</source>
-        <target state="translated">Publicar todas as alterações para a página atual</target>
+        <target state="translated">Publicar todas as alterações da página atual</target>
       </trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
         <source>Can't publish because the target workspace is read-only</source>
-        <target state="translated">Não é possível publicar porque a área de trabalho alvo é somente para leitura</target>
+        <target state="translated">Não é possível publicar porque a área de trabalho escolhida é somente para leitura</target>
       </trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
         <source>Select target workspace</source>
-        <target state="translated">Selecione o espaço de trabalho de destino</target>
+        <target state="translated">Selecione a área de trabalho de destino</target>
       </trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
         <source>Publishing</source>
-        <target state="translated">A publicar</target>
+        <target state="translated">Publicando</target>
       </trans-unit>
       <trans-unit id="published" xml:space="preserve">
         <source>Published</source>
@@ -213,11 +213,11 @@
       </trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
         <source>Target workspace</source>
-        <target state="translated">Espaço de trabalho de destino</target>
+        <target state="translated">Área de trabalho de destino</target>
       </trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
         <source>Current workspace</source>
-        <target state="translated">Espaço de trabalho atual</target>
+        <target state="translated">Área de trabalho atual</target>
       </trans-unit>
       <trans-unit id="remove" xml:space="preserve">
         <source>Remove</source>
@@ -229,27 +229,27 @@
       </trans-unit>
       <trans-unit id="save" xml:space="preserve">
         <source>Save</source>
-        <target state="translated">Gravar</target>
+        <target state="translated">Guardar</target>
       </trans-unit>
       <trans-unit id="saving" xml:space="preserve">
         <source>Saving</source>
-        <target state="translated">Salvando...</target>
+        <target state="translated">Guardando</target>
       </trans-unit>
       <trans-unit id="saved" xml:space="preserve">
         <source>Saved</source>
-        <target state="translated">Salvo</target>
+        <target state="translated">Guardado</target>
       </trans-unit>
       <trans-unit id="search" xml:space="preserve">
         <source>Search</source>
-        <target state="translated">Procurar</target>
+        <target state="translated">Pesquisar</target>
       </trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
         <source>Toggle inspector</source>
-        <target state="translated">Ativar/Desativar inspetor</target>
+        <target state="translated">Exibir/Ocultar inspetor</target>
       </trans-unit>
       <trans-unit id="username" xml:space="preserve">
         <source>Username</source>
-        <target state="translated">Nome de Usuário</target>
+        <target state="translated">Nome de Utilizador</target>
       </trans-unit>
       <trans-unit id="you" xml:space="preserve">
         <source>You</source>
@@ -285,7 +285,7 @@
       </trans-unit>
       <trans-unit id="asset" xml:space="preserve">
         <source>Asset</source>
-        <target state="translated">Ítem</target>
+        <target state="translated">Recurso</target>
       </trans-unit>
       <trans-unit id="created" xml:space="preserve">
         <source>Created</source>
@@ -317,7 +317,7 @@
       </trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
         <source>Toggle context structure</source>
-        <target state="translated">Abrir/Fechar estrutura do contexto</target>
+        <target state="translated">Exibir/Ocultar estrutura do contexto</target>
       </trans-unit>
       <trans-unit id="filter" xml:space="preserve">
         <source>Filter</source>
@@ -325,7 +325,7 @@
       </trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
         <source>Toggle menu</source>
-        <target state="translated">Alternar o menu</target>
+        <target state="translated">Exibir/Ocultar o menu</target>
       </trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
         <source>Load error!</source>
@@ -333,23 +333,23 @@
       </trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
         <source>You have to select a node</source>
-        <target state="translated">Selecione um nó</target>
+        <target state="translated">Selecione um Nó</target>
       </trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
         <source>The Root node cannot be deleted.</source>
-        <target state="translated">O nó raíz não pode ser removido.</target>
+        <target state="translated">O Nó raíz não pode ser removido.</target>
       </trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
         <source>You cannot copy this node</source>
-        <target state="translated">Não pode copiar este nó</target>
+        <target state="translated">Não pode copiar este Nó</target>
       </trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
         <source>You cannot cut this node</source>
-        <target state="translated">Não pode cortar este nó</target>
+        <target state="translated">Não pode cortar este Nó</target>
       </trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
         <source>Content Dimensions</source>
-        <target state="translated">Dimensões de conteúdo</target>
+        <target state="translated">Dimensões do conteúdo</target>
       </trans-unit>
       <trans-unit id="site" xml:space="preserve">
         <source>Site</source>
@@ -433,11 +433,11 @@
       </trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
         <source>Yes, delete it!</source>
-        <target state="translated">Sim, elimine-o!</target>
+        <target state="translated">Sim, apagar!</target>
       </trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
         <source>Package Key</source>
-        <target state="translated">Chave de pacote</target>
+        <target state="translated">Chave do Pacote</target>
       </trans-unit>
       <trans-unit id="description" xml:space="preserve">
         <source>Description</source>
@@ -445,7 +445,7 @@
       </trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
         <source>Toggle content tree</source>
-        <target state="translated">Alternar painel de conteúdo</target>
+        <target state="translated">Exibir/Ocultar árvore de conteúdos</target>
       </trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
         <source>Show publish options</source>
@@ -461,7 +461,7 @@
       </trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
         <source>Show preview</source>
-        <target state="translated">Mostrar pré-visualização</target>
+        <target state="translated">Pré-visualizar</target>
       </trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
@@ -483,7 +483,7 @@
       </trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
         <source>Click {0} to see the file.</source>
-        <target state="translated">Clique aqui para continuar o recurso {0}.</target>
+        <target state="translated">Clique aqui para ver o recurso {0}.</target>
       </trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
         <source>Click {0} to open the link.</source>
@@ -818,7 +818,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
         <source>Workspace</source>
-        <target state="translated">Espaço de Trabalho</target>
+        <target state="translated">Área de Trabalho</target>
       </trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
         <source>Workspaces</source>
@@ -1121,7 +1121,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="shortcut.toSpecificTarget" xml:space="preserve">
         <source>This is a shortcut to a specific target:</source>
-        <target state="needs-translation">Este é um atalho para um alvo específico:</target>
+        <target state="translated">Este atalho aponta a um alvo específico:</target>
       </trans-unit>
       <trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="no">
         <source>Switched to the new user "{0}".</source>
