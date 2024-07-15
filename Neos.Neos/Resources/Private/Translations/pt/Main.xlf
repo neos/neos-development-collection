@@ -487,7 +487,7 @@
       </trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
         <source>Click {0} to open the link.</source>
-        <target state="translated">Clique aqui para continuar para a página de ext {0}.</target>
+        <target state="translated">Clique {0] para abrir a hiperligação.</target>
       </trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
         <source>(no target has been selected)</source>
