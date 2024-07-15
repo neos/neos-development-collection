@@ -491,7 +491,7 @@
       </trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
         <source>(no target has been selected)</source>
-        <target state="translated">(nenhum alvo foi selecionado)</target>
+        <target state="translated">(nenhum alvo foi escolhido)</target>
       </trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
         <source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
