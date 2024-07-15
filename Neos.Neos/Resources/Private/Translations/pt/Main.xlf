@@ -513,7 +513,7 @@
       </trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
         <source>Open page in target workspace</source>
-        <target state="translated">Abrir página em espaço de trabalho de destino</target>
+        <target state="translated">Abrir a página na área de trabalho de destino</target>
       </trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
         <source>Discard all</source>
