@@ -525,7 +525,7 @@
       </trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
         <source>Are you sure that you want to discard all changes in this workspace?</source>
-        <target state="translated">Tem certeza que deseja descartar todas as alterações neste espaço de trabalho?</target>
+        <target state="translated">Tem a certeza que deseja descartar todas as alterações nesta área de trabalho?</target>
       </trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
         <source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
