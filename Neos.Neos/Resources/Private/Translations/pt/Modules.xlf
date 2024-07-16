@@ -544,7 +544,7 @@
       </trans-unit>
       <trans-unit id="users.roles.directlyAssignedPrivileges" xml:space="preserve">
         <source>Directly assigned privilege</source>
-        <target state="translated">Privilégio atribuído diretamente</target>
+        <target state="needs-translation">Privilégio atribuído diretamente</target>
       </trans-unit>
       <trans-unit id="users.name" xml:space="preserve">
         <source>Name</source>
@@ -552,7 +552,7 @@
       </trans-unit>
       <trans-unit id="users.roles.fromParentRole" xml:space="preserve">
         <source>From Parent Role "{role}"</source>
-        <target state="translated">Do Cargo Precedente "{role}"</target>
+        <target state="needs-translation">Do Cargo Precedente "{role}"</target>
       </trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve">
         <source>Accounts and Roles</source>
@@ -568,11 +568,11 @@
       </trans-unit>
       <trans-unit id="users.tooltip.editDisallowed" xml:space="preserve">
         <source>Not enough privileges to edit this user</source>
-        <target state="translated">Não está autorizado a editar este utilizador</target>
+        <target state="needs-translation">Não está autorizado a editar este utilizador</target>
       </trans-unit>
       <trans-unit id="users.tooltip.deleteDisallowed" xml:space="preserve">
         <source>Not enough privileges to delete this user</source>
-        <target state="translated">Não está autorizado a apagar este utilizador</target>
+        <target state="needs-translation">Não está autorizado a apagar este utilizador</target>
       </trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
         <source>Delete user</source>
@@ -784,7 +784,7 @@
       </trans-unit>
       <trans-unit id="sites.generatorClass" xml:space="preserve">
         <source>Select a site generator</source>
-        <target state="translated">Escolha um gerador de sites</target>
+        <target state="needs-translation">Escolha um gerador de sites</target>
       </trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
         <source>Site name</source>
@@ -985,19 +985,19 @@ Ao clicar num nó verá unicamente as suas opções-base e variantes. Clique nov
       </trans-unit>
       <trans-unit id="configuration.anErrorOccurredDuringValidationOfTheConfiguration.title" xml:space="preserve">
         <source>An error occurred during validation of the configuration.</source>
-        <target state="translated">Ocorreu um erro durante a validação da configuração.</target>
+        <target state="needs-translation">Ocorreu um erro durante a validação da configuração.</target>
       </trans-unit>
       <trans-unit id="configuration.configurationTypeNotFound.body" xml:space="preserve">
         <source>Configuration type not found.</source>
-        <target state="translated">Não foi encontrado o tipo de configuração.</target>
+        <target state="needs-translation">Não foi encontrado o tipo de configuração.</target>
       </trans-unit>
       <trans-unit id="sites.sitePackageNotFound.title" xml:space="preserve">
         <source>Site package not found</source>
-        <target state="translated">Não foi encontrado o pacote de site</target>
+        <target state="needs-translation">Não foi encontrado o pacote de site</target>
       </trans-unit>
       <trans-unit id="sites.sitePackageNotFound.body" xml:space="preserve">
         <source>The site package with key "{0}" was not found.</source>
-        <target state="translated">O pacote de site com a chave "{0}" não foi encontrado.</target>
+        <target state="needs-translation">O pacote de site com a chave "{0}" não foi encontrado.</target>
       </trans-unit>
       <trans-unit id="sites.update.title" xml:space="preserve">
         <source>Update</source>
@@ -1005,271 +1005,271 @@ Ao clicar num nó verá unicamente as suas opções-base e variantes. Clique nov
       </trans-unit>
       <trans-unit id="sites.update.body" xml:space="preserve">
         <source>The site "{0}" has been updated.</source>
-        <target state="translated">O site "{0}" foi atualizado.</target>
+        <target state="needs-translation">O site "{0}" foi atualizado.</target>
       </trans-unit>
       <trans-unit id="sites.missingPackage.title" xml:space="preserve">
         <source>Missing Package</source>
-        <target state="translated">Pacote em Falta</target>
+        <target state="needs-translation">Pacote em Falta</target>
       </trans-unit>
       <trans-unit id="sites.missingPackage.body" xml:space="preserve">
         <source>The package "{0}" is required to create new site packages.</source>
-        <target state="translated">O pacote "{0}" é necessário para a criação de novos pacotes de site.</target>
+        <target state="needs-translation">O pacote "{0}" é necessário para a criação de novos pacotes de site.</target>
       </trans-unit>
       <trans-unit id="sites.invalidPackageKey.title" xml:space="preserve">
         <source>Invalid package key</source>
-        <target state="translated">Chave de pacote inválida</target>
+        <target state="needs-translation">Chave de pacote inválida</target>
       </trans-unit>
       <trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
         <source>The package key "{0}" already exists.</source>
-        <target state="translated">A chave de pacore {0} já existe.</target>
+        <target state="needs-translation">A chave de pacore {0} já existe.</target>
       </trans-unit>
       <trans-unit id="sites.sitePackagesWasCreated.body" xml:space="preserve">
         <source>Site package {0} was created.</source>
-        <target state="translated">O pacote de site "{0}" foi criado.</target>
+        <target state="needs-translation">O pacote de site "{0}" foi criado.</target>
       </trans-unit>
       <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
         <source>The site has been imported.</source>
-        <target state="translated">O site foi importado.</target>
+        <target state="needs-translation">O site foi importado.</target>
       </trans-unit>
       <trans-unit id="sites.importError.title" xml:space="preserve">
         <source>Import error</source>
-        <target state="translated">Erro de importação</target>
+        <target state="needs-translation">Erro de importação</target>
       </trans-unit>
       <trans-unit id="sites.importError.body" xml:space="preserve">
         <source>Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}</source>
-        <target state="translated">Erro: Durante a importação do "Sites.xml" do pacote "{0}" ocorreu a excepção: {1}</target>
+        <target state="needs-translation">Erro: Durante a importação do "Sites.xml" do pacote "{0}" ocorreu a excepção: {1}</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.title" xml:space="preserve">
         <source>Site creation error</source>
-        <target state="translated">Erro na criação do site</target>
+        <target state="needs-translation">Erro na criação do site</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.siteWithSiteNodeNameAlreadyExists.body" xml:space="preserve">
         <source>Error: A site with siteNodeName "{0}" already exists</source>
-        <target state="translated">Erro: Um site com o siteNodeName "{0}" já existe</target>
+        <target state="needs-translation">Erro: Um site com o siteNodeName "{0}" já existe</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.title" xml:space="preserve">
         <source>Site creation error</source>
-        <target state="translated">Erro na criação do site</target>
+        <target state="needs-translation">Erro na criação do site</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.body" xml:space="preserve">
         <source>Error: The given node type "{0}" was not found</source>
-        <target state="translated">Erro: O tipo de Nó fornecido "{0}" não foi encontrado</target>
+        <target state="needs-translation">Erro: O tipo de Nó fornecido "{0}" não foi encontrado</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title" xml:space="preserve">
         <source>Site creation error</source>
-        <target state="translated">Erro na criação do site</target>
+        <target state="needs-translation">Erro na criação do site</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body" xml:space="preserve">
         <source>Error: The given node type "%s" is not based on the superType "{0}"</source>
-        <target state="translated">Erro: O tipo de Nó fornecido "%s" não é baseado no superType "{0}"</target>
+        <target state="needs-translation">Erro: O tipo de Nó fornecido "%s" não é baseado no superType "{0}"</target>
       </trans-unit>
       <trans-unit id="sites.successfullyCreatedSite.body" xml:space="preserve">
         <source>Successfully created site "{0}" with siteNode "{1}", type "{2}" and packageKey "{3}"</source>
-        <target state="translated">Site "{0}" criado com sucesso com o siteNode "{1}", tipo "{2}" and packageKey "{3}"</target>
+        <target state="needs-translation">Site "{0}" criado com sucesso com o siteNode "{1}", tipo "{2}" and packageKey "{3}"</target>
       </trans-unit>
       <trans-unit id="sites.siteDeleted.title" xml:space="preserve">
         <source>Site deleted</source>
-        <target state="translated">Site apagado</target>
+        <target state="needs-translation">Site apagado</target>
       </trans-unit>
       <trans-unit id="sites.siteDeleted.body" xml:space="preserve">
         <source>The site "{0}" has been deleted.</source>
-        <target state="translated">O site "{0}" foi apagado.</target>
+        <target state="needs-translation">O site "{0}" foi apagado.</target>
       </trans-unit>
       <trans-unit id="sites.siteActivated.title" xml:space="preserve">
         <source>Site activated</source>
-        <target state="translated">Site ativado</target>
+        <target state="needs-translation">Site ativado</target>
       </trans-unit>
       <trans-unit id="sites.siteActivated.body" xml:space="preserve">
         <source>The site "{0}" has been activated.</source>
-        <target state="translated">O site "{0}" foi ativado.</target>
+        <target state="needs-translation">O site "{0}" foi ativado.</target>
       </trans-unit>
       <trans-unit id="sites.siteDeactivated.title" xml:space="preserve">
         <source>Site deactivated</source>
-        <target state="translated">Site desativado</target>
+        <target state="needs-translation">Site desativado</target>
       </trans-unit>
       <trans-unit id="sites.siteDeactivated.body" xml:space="preserve">
         <source>The site "{0}" has been deactivated.</source>
-        <target state="translated">O site "{0}" foi desativado.</target>
+        <target state="needs-translation">O site "{0}" foi desativado.</target>
       </trans-unit>
       <trans-unit id="sites.domainUpdated.title" xml:space="preserve">
         <source>Domain updated</source>
-        <target state="translated">Domínio atualizado</target>
+        <target state="needs-translation">Domínio atualizado</target>
       </trans-unit>
       <trans-unit id="sites.domainUpdated.body" xml:space="preserve">
         <source>The domain "{0}" has been updated.</source>
-        <target state="translated">O domínio "{0}" foi atualizado.</target>
+        <target state="needs-translation">O domínio "{0}" foi atualizado.</target>
       </trans-unit>
       <trans-unit id="sites.domainCreated.title" xml:space="preserve">
         <source>Domain created</source>
-        <target state="translated">Domínio criado</target>
+        <target state="needs-translation">Domínio criado</target>
       </trans-unit>
       <trans-unit id="sites.domainCreated.body" xml:space="preserve">
         <source>The domain "{0}" has been created.</source>
-        <target state="translated">O domínio "{0}" foi criado.</target>
+        <target state="needs-translation">O domínio "{0}" foi criado.</target>
       </trans-unit>
       <trans-unit id="sites.domainDeleted.title" xml:space="preserve">
         <source>Domain deleted</source>
-        <target state="translated">O domínio foi apagado</target>
+        <target state="needs-translation">O domínio foi apagado</target>
       </trans-unit>
       <trans-unit id="sites.domainDeleted.body" xml:space="preserve">
         <source>The domain "{0}" has been deleted.</source>
-        <target state="translated">O domínio "{0}" foi apagado.</target>
+        <target state="needs-translation">O domínio "{0}" foi apagado.</target>
       </trans-unit>
       <trans-unit id="sites.domainActivated.title" xml:space="preserve">
         <source>Domain activated</source>
-        <target state="translated">Domínio ativado</target>
+        <target state="needs-translation">Domínio ativado</target>
       </trans-unit>
       <trans-unit id="sites.domainActivated.body" xml:space="preserve">
         <source>The domain "{0}" has been activated.</source>
-        <target state="translated">O domínio "{0}" foi ativado.</target>
+        <target state="needs-translation">O domínio "{0}" foi ativado.</target>
       </trans-unit>
       <trans-unit id="sites.domainDeactivated.title" xml:space="preserve">
         <source>Domain deactivated</source>
-        <target state="translated">Domínio desativado</target>
+        <target state="needs-translation">Domínio desativado</target>
       </trans-unit>
       <trans-unit id="sites.domainDeactivated.body" xml:space="preserve">
         <source>The domain "{0}" has been deactivated.</source>
-        <target state="translated">O domínio "{0}" foi desativado.</target>
+        <target state="needs-translation">O domínio "{0}" foi desativado.</target>
       </trans-unit>
       <trans-unit id="users.userCreated.title" xml:space="preserve">
         <source>User created</source>
-        <target state="translated">Utilizador criado</target>
+        <target state="needs-translation">Utilizador criado</target>
       </trans-unit>
       <trans-unit id="users.userCreated.body" xml:space="preserve">
         <source>The user "{0}" has been created.</source>
-        <target state="translated">O utilizador "{0}" foi criado.</target>
+        <target state="needs-translation">O utilizador "{0}" foi criado.</target>
       </trans-unit>
       <trans-unit id="users.userCreationDenied.title" xml:space="preserve">
         <source>User creation denied</source>
-        <target state="translated">Criação de utilizador negada</target>
+        <target state="needs-translation">Criação de utilizador negada</target>
       </trans-unit>
       <trans-unit id="users.userCreationDenied.body" xml:space="preserve">
         <source>You are not allowed to create a user with roles "{0}".</source>
-        <target state="translated">Não tem autorização para criar um utilizador com os cargos "{0}".</target>
+        <target state="needs-translation">Não tem autorização para criar um utilizador com os cargos "{0}".</target>
       </trans-unit>
       <trans-unit id="users.userCreationError.title" xml:space="preserve">
         <source>Unable to create user.</source>
-        <target state="translated">Não foi possível criar utilizador.</target>
+        <target state="needs-translation">Não foi possível criar utilizador.</target>
       </trans-unit>
       <trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
         <source>User editing denied</source>
-        <target state="translated">Edição de utilizador negada</target>
+        <target state="needs-translation">Edição de utilizador negada</target>
       </trans-unit>
       <trans-unit id="users.userEditingDenied.editing.body" xml:space="preserve">
         <source>Not allowed to edit the user "{0}".</source>
-        <target state="translated">Não tem autorização para editar o utilizador "{0}".</target>
+        <target state="needs-translation">Não tem autorização para editar o utilizador "{0}".</target>
       </trans-unit>
       <trans-unit id="users.userUpdated.title" xml:space="preserve">
         <source>User updated</source>
-        <target state="translated">Utilizador atualizado</target>
+        <target state="needs-translation">Utilizador atualizado</target>
       </trans-unit>
       <trans-unit id="users.userUpdated.body" xml:space="preserve">
         <source>The user "{0}" has been updated.</source>
-        <target state="translated">O utilizador "{0}" foi atualizado.</target>
+        <target state="needs-translation">O utilizador "{0}" foi atualizado.</target>
       </trans-unit>
       <trans-unit id="users.userEditingDenied.deletion.title" xml:space="preserve">
         <source>User editing denied</source>
-        <target state="translated">Edição de utilizador negada</target>
+        <target state="needs-translation">Edição de utilizador negada</target>
       </trans-unit>
       <trans-unit id="users.userEditingDenied.deletion.body" xml:space="preserve">
         <source>Not allowed to delete the user "{0}".</source>
-        <target state="translated">Não tem autorização para apagar o utilizador "{0}".</target>
+        <target state="needs-translation">Não tem autorização para apagar o utilizador "{0}".</target>
       </trans-unit>
       <trans-unit id="users.currentUserCannotBeDeleted.title" xml:space="preserve">
         <source>Current user cannot be deleted</source>
-        <target state="translated">Utilizador atual não pode ser apagado</target>
+        <target state="needs-translation">Utilizador atual não pode ser apagado</target>
       </trans-unit>
       <trans-unit id="users.currentUserCannotBeDeleted.body" xml:space="preserve">
         <source>You cannot delete the currently logged in user</source>
-        <target state="translated">Não tem autorização para apagar o utilizador com o qual está autenticado</target>
+        <target state="needs-translation">Não tem autorização para apagar o utilizador com o qual está autenticado</target>
       </trans-unit>
       <trans-unit id="users.userDeleted.title" xml:space="preserve">
         <source>User deleted</source>
-        <target state="translated">Utilizador apagado</target>
+        <target state="needs-translation">Utilizador apagado</target>
       </trans-unit>
       <trans-unit id="users.userDeleted.body" xml:space="preserve">
         <source>The user "{0}" has been deleted.</source>
-        <target state="translated">O utilizador "{0}" foi apagado.</target>
+        <target state="needs-translation">O utilizador "{0}" foi apagado.</target>
       </trans-unit>
       <trans-unit id="users.userAccountEditingDenied.title" xml:space="preserve">
         <source>User account editing denied</source>
-        <target state="translated">Edição da conta do utilizador negada</target>
+        <target state="needs-translation">Edição da conta do utilizador negada</target>
       </trans-unit>
       <trans-unit id="users.userAccountEditingDenied.body" xml:space="preserve">
         <source>Not allowed to edit the account for the user "{0}".</source>
-        <target state="translated">Não tem autorização para editar a conta do utilizador "{0}".</target>
+        <target state="needs-translation">Não tem autorização para editar a conta do utilizador "{0}".</target>
       </trans-unit>
       <trans-unit id="users.doNotLockYourselfOut.title" xml:space="preserve">
         <source>Don\'t lock yourself out</source>
-        <target state="translated">Não se bloqueie</target>
+        <target state="needs-translation">Não se bloqueie</target>
       </trans-unit>
       <trans-unit id="users.doNotLockYourselfOut.body" xml:space="preserve">
         <source>With the selected roles the currently logged in user wouldn\'t have access to this module any longer. Please adjust the assigned roles!</source>
-        <target state="translated">Com os cargos selecionados atualmente, o utilizador autenticado deixaria de conseguir aceder a este módulo. Por favor, ajuste os cargos atribuídos!</target>
+        <target state="needs-translation">Com os cargos selecionados atualmente, o utilizador autenticado deixaria de conseguir aceder a este módulo. Por favor, ajuste os cargos atribuídos!</target>
       </trans-unit>
       <trans-unit id="users.accountUpdated.title" xml:space="preserve">
         <source>Account updated</source>
-        <target state="translated">Conta atualizada</target>
+        <target state="needs-translation">Conta atualizada</target>
       </trans-unit>
       <trans-unit id="users.accountUpdated.body" xml:space="preserve">
         <source>The account has been updated.</source>
-        <target state="translated">A conta foi atualizada.</target>
+        <target state="needs-translation">A conta foi atualizada.</target>
       </trans-unit>
       <trans-unit id="users.userEmailEditingDenied.title" xml:space="preserve">
         <source>User email editing denied</source>
-        <target state="translated">Edição do endereço de correio eletrónico do utilizador negada</target>
+        <target state="needs-translation">Edição do endereço de correio eletrónico do utilizador negada</target>
       </trans-unit>
       <trans-unit id="users.userEmailEditingDenied.body" xml:space="preserve">
         <source>Not allowed to create an electronic address for the user "{0}".</source>
-        <target state="translated">Não tem autorização para criar um endereço de correio eletrónico para o utilizador"{0}".</target>
+        <target state="needs-translation">Não tem autorização para criar um endereço de correio eletrónico para o utilizador"{0}".</target>
       </trans-unit>
       <trans-unit id="users.electronicAddressAdded.title" xml:space="preserve">
         <source>Electronic address added</source>
-        <target state="translated">Endereço de correio eletrónico adicionado</target>
+        <target state="needs-translation">Endereço de correio eletrónico adicionado</target>
       </trans-unit>
       <trans-unit id="users.electronicAddressAdded.body" xml:space="preserve">
         <source>An electronic address "{0}" ({1}) has been added.</source>
-        <target state="translated">O endereço de correio eletrónico "{0}" ({1}) foi adicionado.</target>
+        <target state="needs-translation">O endereço de correio eletrónico "{0}" ({1}) foi adicionado.</target>
       </trans-unit>
       <trans-unit id="users.userEmailDeletionDenied.title" xml:space="preserve">
         <source>User email deletion denied</source>
-        <target state="translated">Apagar endereço de correio eletrónico de utilizador negado</target>
+        <target state="needs-translation">Apagar endereço de correio eletrónico de utilizador negado</target>
       </trans-unit>
       <trans-unit id="users.userEmailDeletionDenied.body" xml:space="preserve">
         <source>Not allowed to delete an electronic address for the user "{0}".</source>
-        <target state="translated">Não tem autorização para apagar um endereço de correio eletrónico do utilizador "{0}".</target>
+        <target state="needs-translation">Não tem autorização para apagar um endereço de correio eletrónico do utilizador "{0}".</target>
       </trans-unit>
       <trans-unit id="users.electronicAddressRemoved.title" xml:space="preserve">
         <source>Electronic address removed</source>
-        <target state="translated">Endereço de correio eletrónico apagado</target>
+        <target state="needs-translation">Endereço de correio eletrónico apagado</target>
       </trans-unit>
       <trans-unit id="users.electronicAddressRemoved.body" xml:space="preserve">
         <source>The electronic address "{0}" ({1}) has been deleted for "{2}".</source>
-        <target state="translated">O endereço de correio eletrónico"{0}" ({1}) foi apagado de "{2}".</target>
+        <target state="needs-translation">O endereço de correio eletrónico"{0}" ({1}) foi apagado de "{2}".</target>
       </trans-unit>
       <trans-unit id="userSettings.UserUpdated.title" xml:space="preserve">
         <source>User updated</source>
-        <target state="translated">Utilizador atualizado</target>
+        <target state="needs-translation">Utilizador atualizado</target>
       </trans-unit>
       <trans-unit id="userSettings.UserUpdated.body" xml:space="preserve">
         <source>Your user has been updated.</source>
-        <target state="translated">O seu utilizador foi atualizado.</target>
+        <target state="needs-translation">O seu utilizador foi atualizado.</target>
       </trans-unit>
       <trans-unit id="userSettings.passwordUpdateFailed.title" xml:space="preserve">
         <source>Updating password failed</source>
-        <target state="translated">Falhou a atualização da palavra-passe</target>
+        <target state="needs-translation">Falhou a atualização da palavra-passe</target>
       </trans-unit>
       <trans-unit id="userAccount.passwordUpdateFailed.title" xml:space="preserve">
         <source>Updating password failed</source>
-        <target state="translated">Falhou a atualização da palavra-passe</target>
+        <target state="needs-translation">Falhou a atualização da palavra-passe</target>
       </trans-unit>
       <trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
         <source>Password updated</source>
-        <target state="translated">Palavra-Passe atualizada</target>
+        <target state="needs-translation">Palavra-Passe atualizada</target>
       </trans-unit>
       <trans-unit id="userSettings.passwordUpdated.body" xml:space="preserve">
         <source>The password has been updated.</source>
-        <target state="translated">A palavra-passe foi atualizada.</target>
+        <target state="needs-translation">A palavra-passe foi atualizada.</target>
       </trans-unit>
       <trans-unit id="userSettings.electronicAddressAdded.title" xml:space="preserve">
         <source>Edit User</source>
@@ -1277,15 +1277,15 @@ Ao clicar num nó verá unicamente as suas opções-base e variantes. Clique nov
       </trans-unit>
       <trans-unit id="userSettings.electronicAddressAdded.body" xml:space="preserve">
         <source>An electronic address "{0}" ({1}) has been added.</source>
-        <target state="translated">O endereço de correio eletrónico "{0}" ({1}) foi adicionado.</target>
+        <target state="needs-translation">O endereço de correio eletrónico "{0}" ({1}) foi adicionado.</target>
       </trans-unit>
       <trans-unit id="userSettings.electronicAddressRemoved.title" xml:space="preserve">
         <source>Electronic address removed</source>
-        <target state="translated">Endereço de correio eletrónico apagado</target>
+        <target state="needs-translation">Endereço de correio eletrónico apagado</target>
       </trans-unit>
       <trans-unit id="userSettings.electronicAddressRemoved.body" xml:space="preserve">
         <source>The electronic address "{0}" ({1}) has been deleted for "{2}".</source>
-        <target state="translated">O endereço de correio eletrónico "{0}" ({1}) foi apagado de "{2}".</target>
+        <target state="needs-translation">O endereço de correio eletrónico"{0}" ({1}) foi apagado de "{2}".</target>
       </trans-unit>
       <trans-unit id="users.lastLogin" xml:space="preserve">
         <source>Last Login</source>
@@ -1297,19 +1297,19 @@ Ao clicar num nó verá unicamente as suas opções-base e variantes. Clique nov
       </trans-unit>
       <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
         <source>Publish selected changes to {0}</source>
-        <target state="translated">Publicar as alterações selecionadas para {0}</target>
+        <target state="needs-translation">Publicar as alterações selecionadas para {0}</target>
       </trans-unit>
       <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
         <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
-        <target state="translated">Deseja descartar as alterações selecionadas na área de trabalho "{0}"?</target>
+        <target state="needs-translation">Deseja descartar as alterações selecionadas na área de trabalho "{0}"?</target>
       </trans-unit>
       <trans-unit id="branding.link.title" xml:space="preserve">
         <source>Go back to your starting module</source>
-        <target state="translated">Voltar ao seu módulo inicial</target>
+        <target state="needs-translation">Voltar ao seu módulo inicial</target>
       </trans-unit>
       <trans-unit id="user.description" xml:space="preserve">
         <source>Contains modules related to management of users</source>
-        <target state="translated">Contém módulos relacionados com a gestão de utilizadores</target>
+        <target state="needs-translation">Contém módulos relacionados com a gestão de utilizadores</target>
       </trans-unit>
     </body>
   </file>
