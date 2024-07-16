@@ -4,11 +4,11 @@
     <body>
       <trans-unit id="properties._hiddenBeforeDateTime" xml:space="preserve">
         <source>Hide before</source>
-        <target state="translated">Esconder antes</target>
+        <target state="translated">Esconder antes de</target>
       </trans-unit>
       <trans-unit id="properties._hiddenAfterDateTime" xml:space="preserve">
         <source>Hide after</source>
-        <target state="translated">Esconder depois</target>
+        <target state="translated">Esconder depois de</target>
       </trans-unit>
     </body>
   </file>
