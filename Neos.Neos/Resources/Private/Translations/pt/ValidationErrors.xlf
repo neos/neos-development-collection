@@ -10,16 +10,16 @@
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve">
         <source>The hostname "{0}" was not valid.</source>
-        <target state="translated">O nome do host "{0}" não era válido.</target>
+        <target state="translated">O nome do servidor "{0}" não é válido.</target>
       </trans-unit>
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve">
         <source>The given password was empty.</source>
-        <target state="translated">A senha fornecida estava vazia.</target>
+        <target state="translated">Não foi fornecida uma palavra-passe.</target>
       </trans-unit>
       <trans-unit id="1324640997" xml:space="preserve">
         <source>The passwords did not match.</source>
-        <target state="translated">As senhas não conferem.</target>
+        <target state="translated">As palavras-passe não coincidem.</target>
       </trans-unit>
     </body>
   </file>

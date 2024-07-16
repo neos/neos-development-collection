@@ -968,7 +968,7 @@
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
         <source>Link</source>
-        <target state="translated">Hiperligação</target>
+        <target state="translated">Criar Hiperligação</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
         <source>Ordered list</source>
@@ -1020,7 +1020,7 @@
       </trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
         <source>Please enter ###CHARACTERS### more character</source>
-        <target state="translated">Por favor, inserir mais ###CHARACTERS### carateres</target>
+        <target state="translated">Por favor, insira mais ###CHARACTERS### caracteres</target>
       </trans-unit>
       <trans-unit id="login.wrongCredentials.title" xml:space="preserve">
         <source>Wrong Credentials</source>
