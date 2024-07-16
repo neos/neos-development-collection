@@ -529,11 +529,11 @@
       </trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
         <source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-        <target state="translated">Tem certeza de que deseja descartar {numberOfChanges} mudança(s) neste espaço de trabalho?</target>
+        <target state="translated">Tem a certeza que deseja descartar {numberOfChanges} alterações nesta área de trabalho?</target>
       </trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
         <source>Publish all</source>
-        <target state="translated">Publicar todos</target>
+        <target state="translated">Publicar tudo</target>
       </trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
         <source>Publish all changes</source>
@@ -541,7 +541,7 @@
       </trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
         <source>Are you sure that you want to publish all changes?</source>
-        <target state="translated">Tem certeza que deseja publicar todas as alterações?</target>
+        <target state="translated">Tem a certeza que deseja publicar todas as alterações?</target>
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
         <source>Pending changes</source>
@@ -549,11 +549,11 @@
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
         <source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-        <target state="translated">O seu espaço de trabalho pessoal atualmente contém alterações inéditas. Para alternar para uma área de destino diferente, precisa publicar ou descartar as alterações pendentes primeiro.</target>
+        <target state="translated">A sua área de trabalho pessoal contém alterações pendentes. Antes de mudar para uma nova área de trabalho, precisa de publicar ou descartar as alterações realizadas.</target>
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
         <source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-        <target state="translated">Por favor reveja as suas alterações, publique ou descarte-as e em seguida escolha um novo espaço de trabalho de destino.</target>
+        <target state="translated">Por favor publique ou descarte as alterações pendentes, só assim poderá escolher uma área de trabalho diferente.</target>
       </trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
         <source>Editing Modes</source>
@@ -565,7 +565,7 @@
       </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
         <source>You still have changes. What do you want to do with them?</source>
-        <target state="translated">Você ainda tem mudanças. O que quer fazer com eles?</target>
+        <target state="translated">Ainda existem alterações. O que deseja fazer com elas?</target>
       </trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
         <source>Selected element</source>
@@ -577,15 +577,15 @@
       </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
         <source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-        <target state="translated">Os campos marcados com um erro ainda não estão corretamente preenchidos. Por favor preencha-os corretamente.</target>
+        <target state="translated">Os campos marcados com um erro ainda não foram corrigidos. Por favor confirme os dados fornecidos.</target>
       </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
         <source>Continue editing</source>
-        <target state="translated">Continuar editando</target>
+        <target state="translated">Continuar a editar</target>
       </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
         <source>Throw away</source>
-        <target state="translated">Jogar fora</target>
+        <target state="translated">Deitar fora</target>
       </trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
         <source>Apply</source>
@@ -593,19 +593,19 @@
       </trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
         <source>Select a Plugin</source>
-        <target state="translated">Selecione um plugin</target>
+        <target state="translated">Selecione uma Extensão</target>
       </trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
         <source>No plugin configured</source>
-        <target state="translated">Nenhum plugin configurado</target>
+        <target state="translated">Não existem extensões configuradas</target>
       </trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
         <source>view is displayed on page</source>
-        <target state="translated">modo de exibição é exibido na página</target>
+        <target state="translated">a apresentação é exibida na página</target>
       </trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
         <source>view is displayed on current page</source>
-        <target state="translated">modo de exibição é exibido na página atual</target>
+        <target state="translated">a apresentação é exibida na página atual</target>
       </trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
         <source>No date set</source>
@@ -617,15 +617,15 @@
       </trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
         <source>Paste a link, or type to search</source>
-        <target state="translated">Cole uma ligação ou digite para procurar</target>
+        <target state="translated">Cole uma hiperligação ou escreva para procurar</target>
       </trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
         <source>Unable to load sub node types of:</source>
-        <target state="translated">Não é possível carregar tipos de sub node:</target>
+        <target state="translated">Não é possível carregar sub-nós do tipo:</target>
       </trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
         <source>Change type</source>
-        <target state="translated">Mudar escrita</target>
+        <target state="translated">Alterar tipo</target>
       </trans-unit>
       <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
         <source>Additional info</source>
@@ -641,28 +641,27 @@
       </trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
         <source>The length of this text must be between {minimum} and {maximum} characters.</source>
-        <target state="translated">O comprimento deste texto deve estar entre {{minimum}} e {{maximum}} caracteres.</target>
+        <target state="translated">O texto deverá conter entre {minimum} e {maximum} caracteres.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
         <source>This field must contain at least {minimum} characters.</source>
-        <target state="translated">Este campo deve conter pelo menos {{minimum}} caracteres.</target>
+        <target state="translated">Este campo deve conter pelo menos {minimum} caracteres.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
         <source>This text may not exceed {maximum} characters.</source>
-        <target state="translated">Este texto não pode exceder {{maximum}} caracteres.</target>
+        <target state="translated">Este texto não pode exceder {maximum} caracteres.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
         <source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-        <target state="translated">
-Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</target>
+        <target state="translated">Apenas caracteres (a até z), podendo ser acentuados, e números são permitidos.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
         <source>The given subject was not countable.</source>
-        <target state="translated">O assunto fornecido não é contável.</target>
+        <target state="translated">O valor fornecido não é do tipo Countable.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
         <source>The count must be between {minimum} and {maximum}.</source>
-        <target state="translated">A contagem deve estar entre {{minimum}} e {{maximum}}.</target>
+        <target state="translated">O número de elementos deverá estar entre {minimum} e {maximum}.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
         <source>The given value was not a valid date.</source>
@@ -670,23 +669,23 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
         <source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
-        <target state="translated">A data deve estar entre {{formatEarliestDate}} e {{formatLatestDate}}</target>
+        <target state="translated">A data fornecida deverá estar entre {formatEarliestDate} e {formatLatestDate}</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
         <source>The given date must be after {formatEarliestDate}</source>
-        <target state="translated">A data deve ser depois de {{formatEarliestDate}}</target>
+        <target state="translated">A data fornecida deverá ser posterior a {formatEarliestDate}</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
         <source>The given date must be before {formatLatestDate}</source>
-        <target state="translated">A data deve ser antes de {{formatLatestDate}}</target>
+        <target state="translated">A data fornecida deverá ser anterior a {formatLatestDate}</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
         <source>Please specify a valid email address.</source>
-        <target state="translated">Por favor, especifique um endereço de email válido.</target>
+        <target state="translated">Por favor especifique um endereço de correio eletrónico válido.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
         <source>A valid float number is expected.</source>
-        <target state="translated">É esperado um número flutuador válido.</target>
+        <target state="translated">É esperado um Float válido.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
         <source>A valid integer number is expected.</source>
@@ -694,11 +693,11 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
         <source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-        <target state="translated">São esperados apenas letras, números, espaços e certas marcas de pontuação.</target>
+        <target state="translated">Apenas letras, números, espaços e certos sinais de pontuação são esperados.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
         <source>This property is required.</source>
-        <target state="translated">Esta propriedade é necessária.</target>
+        <target state="translated">Esta propriedade é obrigatória.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
         <source>A valid number is expected.</source>
@@ -706,27 +705,27 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
         <source>Please enter a valid number between {minimum} and {maximum}</source>
-        <target state="translated">Por favor, digite um número válido entre {{minimum}} e {{maximum}}</target>
+        <target state="translated">Por favor introduza um número válido entre {minimum} e {maximum}</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
         <source>The given subject did not match the pattern ({pattern})</source>
-        <target state="translated">O determinado assunto não corresponde ao padrão ({{pattern}})</target>
+        <target state="translated">O valor fornecido não coincide com o padrão de captura ({pattern})</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
         <source>A valid string is expected.</source>
-        <target state="translated">Espera-se uma cadeia de caracteres válida</target>
+        <target state="translated">É esperada uma cadeia de texto válida.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
         <source>Valid text without any XML tags is expected.</source>
-        <target state="translated">Texto válido sem quaisquer tags XML é esperado.</target>
+        <target state="translated">É esperado texto válido sem sintaxe XML.</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
         <source>The given subject is not a valid UUID.</source>
-        <target state="translated">O determinado assunto não é um válido UUID.</target>
+        <target state="translated">O valor fornecido não é um UUID válido.</target>
       </trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
         <source>Toggle content dimensions selector</source>
-        <target state="translated">Abrir/Fechar selecionador das dimensões de conteúdo</target>
+        <target state="translated">Exibir/Ocultar selecionador de dimensões de conteúdo</target>
       </trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
         <source>Start with an empty or pre-filled document?</source>
@@ -742,7 +741,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
         <source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
-        <target state="translated">Além disso, há {numberOfNodesMissingInRootline} documentos ancestrais que também não existem na variante escolhida e que serão igualmente criados.</target>
+        <target state="translated">Adicionalmente, há {numberOfNodesMissingInRootline} documentos ancestrais que também não existem na variante escolhida e que serão igualmente criados.</target>
       </trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
         <source>Create empty</source>
@@ -758,27 +757,27 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
         <source>Toggle menu group</source>
-        <target state="translated">Abrir/Fechar grupo de menus</target>
+        <target state="translated">Exibir/Ocultar grupo de menus</target>
       </trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
         <source>Toggle sticky menu mode</source>
-        <target state="translated">Ativar/Desativar modo de menú colado</target>
+        <target state="translated">Ativar/Desativar modo de menu permanente</target>
       </trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
         <source>Do you really want to delete</source>
-        <target state="translated">Deseja realmente excluir</target>
+        <target state="translated">Deseja realmente apagar</target>
       </trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
         <source>This will delete the element</source>
-        <target state="translated">Isto irá excluir o elemento</target>
+        <target state="translated">Isto irá apagar o elemento</target>
       </trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
         <source>and it's children</source>
-        <target state="translated">e seus filhos</target>
+        <target state="translated">e os seus filhos</target>
       </trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
         <source>This action can be undone in the workspace management.</source>
-        <target state="translated">Esta ação pode ser desfeita no gerenciamento do espaço de trabalho.</target>
+        <target state="translated">Esta ação poderá ser desfeita no gestor de áreas de trabalho.</target>
       </trans-unit>
       <trans-unit id="height" xml:space="preserve">
         <source>Height</source>
@@ -786,7 +785,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
         <source>Do you really want to delete</source>
-        <target state="translated">Deseja realmente excluir</target>
+        <target state="translated">Deseja realmente apagar</target>
       </trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
         <source>this element</source>
@@ -794,19 +793,19 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
         <source>This will delete the element.</source>
-        <target state="translated">Isto irá excluir o elemento.</target>
+        <target state="translated">Isto irá apagar o elemento.</target>
       </trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
         <source>This action can be undone in the workspace management.</source>
-        <target state="translated">Esta ação pode ser desfeita no gerenciamento do espaço de trabalho.</target>
+        <target state="translated">Esta ação poderá ser desfeita no gestor de áreas de trabalho.</target>
       </trans-unit>
       <trans-unit id="media" xml:space="preserve">
         <source>Media</source>
-        <target state="translated">Mídia</target>
+        <target state="translated">Multimédia</target>
       </trans-unit>
       <trans-unit id="crop" xml:space="preserve">
         <source>Crop</source>
-        <target state="translated">Corte</target>
+        <target state="translated">Cortar</target>
       </trans-unit>
       <trans-unit id="width" xml:space="preserve">
         <source>Width</source>
@@ -814,7 +813,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
         <source>Missing required property: </source>
-        <target state="translated">Faltando propriedade necessária: </target>
+        <target state="translated">Propriedades em falta: </target>
       </trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
         <source>Workspace</source>
@@ -822,11 +821,11 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
         <source>Workspaces</source>
-        <target state="translated">Espaços de Trabalho</target>
+        <target state="translated">Áreas de Trabalho</target>
       </trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
         <source>An error occurred during saving</source>
-        <target state="translated">Ocorreu um erro durante o salvamento</target>
+        <target state="translated">Ocorreu um erro ao guardar</target>
       </trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
         <source>Reload the page to attempt to fix the problem.</source>
@@ -843,24 +842,24 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       <!-- Edit / preview modes -->
       <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
         <source>In-Place</source>
-        <target state="translated">No local</target>
+        <target state="translated">In Situ</target>
       </trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
         <source>Raw Content</source>
-        <target state="translated">Conteúdo bruto</target>
+        <target state="translated">Conteúdo Bruto</target>
       </trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve">
         <source>Raw Content Mode</source>
-        <target state="translated">Modo de conteúdo nú</target>
+        <target state="translated">Modo de Conteúdo Bruto</target>
       </trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
         <source>Desktop</source>
-        <target state="translated">Área de Trabalho</target>
+        <target state="translated">Computador de Secretária</target>
       </trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
         <source>Login to</source>
-        <target state="translated">Typo3 Neos Login</target>
+        <target state="translated">Aceder a</target>
       </trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
         <source>Authenticating</source>
@@ -872,11 +871,11 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
         <source>The entered username or password was wrong</source>
-        <target state="translated">O nome de utilizador ou a palavra-passe estão incorretos</target>
+        <target state="translated">O nome de utilizador ou a palavra-passe são incorretos</target>
       </trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
         <source>Your login has expired. Please log in again.</source>
-        <target state="translated">O login expirou. Por favor faça um novo login.</target>
+        <target state="translated">O sua autorização expirou. Por favor aceda novamente ao sistema usando as suas credenciais.</target>
       </trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
@@ -885,7 +884,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
         <source>Go to setup</source>
-        <target state="translated">Ir para instalação</target>
+        <target state="translated">Configurar o sistema</target>
       </trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
         <source>Technical Information</source>
@@ -893,35 +892,35 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
         <source>Missing Homepage</source>
-        <target state="translated">Faltando Homepage</target>
+        <target state="translated">A Página Principal não foi encontrada</target>
       </trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
         <source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-        <target state="translated">O site não foi definido, o site não contém uma página inicial ou o site ativo não pôde ser determinado.</target>
+        <target state="translated">Ou não foi definido um site, o site não contém uma página inicial ou não foi possivel determinar qual o site ativo.</target>
       </trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
         <source>You might want to set the site's domain or import a new site in the setup.</source>
-        <target state="translated">Você pode querer definir o domínio do site, ou importar um novo site na configuração.</target>
+        <target state="translated">Poderá querer definir o domínio do site, ou importar um novo site através da configuração do sistema.</target>
       </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
         <source>Database Error</source>
-        <target state="translated">Erro no banco de dados</target>
+        <target state="translated">Erro na Base de Dados</target>
       </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
         <source>There is no database connection yet or the Neos database schema has not been created.</source>
-        <target state="translated">Ainda não existe uma conexão de banco de dados ou o esquema de banco de dados Neos não foi criado.</target>
+        <target state="translated">Ainda não existe uma ligação com a base de dados ou o esquema de dados do Neos não foi criado.</target>
       </trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
         <source>Run the setup to configure your database.</source>
-        <target state="translated">Execute a configuração para configurar o seu banco de dados.</target>
+        <target state="translated">Execute a configuração do sistema para definir a sua base de dados.</target>
       </trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
         <source>Page Not Found</source>
-        <target state="translated">Página Não Encontrada</target>
+        <target state="translated">A Página Não foi Encontrada</target>
       </trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
         <source>Sorry, the page you requested was not found.</source>
-        <target state="translated">Desculpe, a página que você solicitou não foi encontrada.</target>
+        <target state="translated">Desculpe, a página que solicitou não foi encontrada.</target>
       </trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
         <source>Invalid NodeType</source>
@@ -929,32 +928,32 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
         <source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-        <target state="translated">A configuração do NodeType que é suposto ser processado aqui não está disponível. Provavelmente renomeou o NodeType e falta uma migração ou simplesmente escreveu errado.</target>
+        <target state="translated">A configuração do NodeType que é suposto ser apresentado aqui, não está disponível. Provavelmente renomeou o NodeType e falta realizar uma migração ou simplesmente enganou-se no nome.</target>
       </trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
         <source>Unexpected error while creating node</source>
-        <target state="translated">Erro não esperado ao criar o nó</target>
+        <target state="translated">Erro inesperado ao criar o Nó</target>
       </trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
         <source>Unexpected error while deleting node</source>
-        <target state="translated">Erro não esperado ao apagar o nó</target>
+        <target state="translated">Erro inesperado ao apagar o Nó</target>
       </trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
         <source>Unexpected error while updating node</source>
-        <target state="translated">Erro não esperado ao atualizar o nó</target>
+        <target state="translated">Erro inesperado ao atualizar o Nó</target>
       </trans-unit>
       <trans-unit id="error.node.move.unexpected" xml:space="preserve">
         <source>Unexpected error while moving node</source>
-        <target state="translated">Erro não esperado ao mover o nó</target>
+        <target state="translated">Erro inesperado ao mover o Nó</target>
       </trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
         <source>Node Tree loading error.</source>
-        <target state="translated">Erro ao carregar a árvore de nós.</target>
+        <target state="translated">Ocorreu um erro ao carregar a árvore de Nós.</target>
       </trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
         <source>The entered username or password was wrong</source>
-        <target state="translated">O nome de utilizador ou a palavra-passe estão incorretos</target>
+        <target state="translated">O nome de utilizador ou a palavra-passe são incorretos</target>
       </trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
@@ -972,11 +971,11 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
         <source>This node cannot be accessed through a public URL</source>
-        <target state="translated">Este nó não pode ser acessado através de uma URL pública</target>
+        <target state="translated">Este Nó não pode ser acedido através de um URL público</target>
       </trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
         <source>Node Properties</source>
-        <target state="translated">Propriedades do nó</target>
+        <target state="translated">Propriedades do Nó</target>
       </trans-unit>
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
@@ -1001,7 +1000,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
         <source>Choose an Aspect Ratio</source>
-        <target state="translated">Escolha uma proporção</target>
+        <target state="translated">Escolha uma Proporção</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
         <source>Bold</source>
@@ -1029,7 +1028,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
         <source>Link</source>
-        <target state="translated">Link</target>
+        <target state="translated">Criar Hiperligação</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
         <source>Ordered list</source>
@@ -1065,11 +1064,11 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
         <source>Outdent</source>
-        <target state="translated">Diminuir o recuo</target>
+        <target state="translated">Reduzir indentação</target>
       </trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
         <source>Indent</source>
-        <target state="translated">Aumentar o recuo</target>
+        <target state="translated">Aumentar indentação</target>
       </trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
         <source>Create new</source>
@@ -1081,23 +1080,23 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
         <source>Please enter ###CHARACTERS### more character</source>
-        <target state="translated">Por favor, inserir ###CHARACTERS### mais carateres</target>
+        <target state="translated">Por favor, insira mais ###CHARACTERS### caracteres</target>
       </trans-unit>
       <trans-unit id="login.wrongCredentials.title" xml:space="preserve">
         <source>Wrong Credentials</source>
-        <target state="needs-translation">Credenciais Erradas</target>
+        <target state="translated">Credenciais Erradas</target>
       </trans-unit>
       <trans-unit id="login.wrongCredentials.body" xml:space="preserve">
         <source>The entered username or password was wrong</source>
-        <target state="translated">O nome de utilizador ou a palavra-passe estão incorretos</target>
+        <target state="translated">O nome de utilizador ou a palavra-passe são incorretos</target>
       </trans-unit>
       <trans-unit id="login.loggedOut.title" xml:space="preserve">
         <source>Logged Out</source>
-        <target state="needs-translation">Logged Out</target>
+        <target state="translated">Desautorizado</target>
       </trans-unit>
       <trans-unit id="login.loggedOut.body" xml:space="preserve">
         <source>Successfully logged out</source>
-        <target state="needs-translation">Successfully logged out</target>
+        <target state="translated">Saiu com sucesso do sistema</target>
       </trans-unit>
       <trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="no">
         <source>Switched to the new user "{0}".</source>
@@ -1125,11 +1124,11 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="no">
         <source>Switched to the new user "{0}".</source>
-        <target state="translated">Alternado para o novo utilizador "{0}".</target>
+        <target state="translated">Está a personificar o utilizador "{0}".</target>
       </trans-unit>
       <trans-unit id="impersonate.error.impersonateUser" xml:space="preserve" approved="no">
         <source>Could not switch to the selected user.</source>
-        <target state="translated">Não foi possível alternar para o utilizador selecionado.</target>
+        <target state="translated">Não foi possível personificar o utilizador selecionado.</target>
       </trans-unit>
       <trans-unit id="impersonate.error.restoreUser" xml:space="preserve" approved="no">
         <source>Could not switch back to the original user.</source>
@@ -1137,7 +1136,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="impersonate.success.restoreUser" xml:space="preserve" approved="no">
         <source>Switched back from "{0}" to the orginal user "{1}"</source>
-        <target state="translated">Voltado de "{0}" ao utilizador original "{1}"</target>
+        <target state="translated">Voltou de "{0}" ao utilizador original "{1}"</target>
       </trans-unit>
       <trans-unit id="impersonate.title.restoreUserButton" xml:space="preserve" approved="no">
         <source>Switch back to the orginal user account</source>
@@ -1145,7 +1144,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="contentTree" xml:space="preserve">
         <source>Content Tree</source>
-        <target state="translated">Árvore de conteúdo</target>
+        <target state="translated">Árvore de Conteúdo</target>
       </trans-unit>
       <trans-unit id="impersonate.label.restoreUserButton" xml:space="preserve" approved="no">
         <source>Back to user "{0}"</source>
@@ -1153,11 +1152,15 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="documentTree" xml:space="preserve">
         <source>Document Tree</source>
-        <target state="translated">Árvore do documento</target>
+        <target state="translated">Árvore do Documento</target>
       </trans-unit>
       <trans-unit id="cantPublishSingleNodeInNewPage" xml:space="preserve">
         <source>Can't publish a single node in a new page</source>
         <target state="translated">Não pode publicar um único nó numa página nova</target>
+      </trans-unit>
+      <trans-unit id="impersonate.tooltip.impersonateUserButton" xml:space="preserve" approved="no">
+        <source>Login as user</source>
+        <target state="translated">Aceder como utilizador</target>
       </trans-unit>
     </body>
   </file>
