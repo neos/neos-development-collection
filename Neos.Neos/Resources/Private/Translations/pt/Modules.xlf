@@ -711,7 +711,7 @@ Ao clicar num nó verá unicamente as suas opções-base e variantes. Clique nov
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.body" xml:space="preserve">
         <source>Error: The given node type "{0}" was not found</source>
-        <target state="translated">Erro: O tipo de Nó fornecido "{0}" não foi encontrado</target>
+        <target state="translated">Erro: O tipo de nó fornecido "{0}" não foi encontrado</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title" xml:space="preserve">
         <source>Site creation error</source>
@@ -719,7 +719,7 @@ Ao clicar num nó verá unicamente as suas opções-base e variantes. Clique nov
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body" xml:space="preserve">
         <source>Error: The given node type "%s" is not based on the superType "{0}"</source>
-        <target state="translated">Erro: O tipo de Nó fornecido "%s" não é baseado no superType "{0}"</target>
+        <target state="translated">Erro: O tipo de nó fornecido "%s" não é baseado no superType "{0}"</target>
       </trans-unit>
       <trans-unit id="sites.successfullyCreatedSite.body" xml:space="preserve">
         <source>Successfully created site "{0}" with siteNode "{1}", type "{2}" and packageKey "{3}"</source>
@@ -943,7 +943,7 @@ Ao clicar num nó verá unicamente as suas opções-base e variantes. Clique nov
       </trans-unit>
       <trans-unit id="userSettings.electronicAddressRemoved.body" xml:space="preserve">
         <source>The electronic address "{0}" ({1}) has been deleted for "{2}".</source>
-        <target state="translated">O endereço de correio eletrónico "{0}" ({1}) foi apagado de "{2}".</target>
+        <target state="translated">O endereço de correio eletrónico"{0}" ({1}) foi apagado de "{2}".</target>
       </trans-unit>
       <trans-unit id="users.lastLogin" xml:space="preserve">
         <source>Last Login</source>
