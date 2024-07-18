@@ -11,9 +11,10 @@ Neos:
             mainStylesheet: 'Lite'
             additionalResources:
               javaScripts:
-                'Neos.Workspace.Ui': 'resource://Neos.Workspace.Ui/Public/Scripts/htmx.min.js'
+                'HtmxLibrary': 'resource://Neos.Workspace.Ui/Public/Scripts/htmx.min.js'
+                'Module': 'resource://Neos.Workspace.Ui/Public/Scripts/Module.js'
               styleSheets:
-                'Neos.Workspace.Ui': 'resource://Neos.Workspace.Ui/Public/Styles/Module.css'
+                'Module': 'resource://Neos.Workspace.Ui/Public/Styles/Module.css'
 
     userInterface:
       translation:

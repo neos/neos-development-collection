@@ -46,7 +46,6 @@ use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Account;
@@ -106,18 +105,6 @@ class WorkspaceController extends AbstractModuleController
 
     #[Flow\Inject]
     protected WorkspaceProvider $workspaceProvider;
-
-    protected function initializeView(ViewInterface $view): void
-    {
-        parent::initializeView($view);
-        // If we're in a HTMX-request...
-        if ($this->request->getHttpRequest()->hasHeader('HX-Request')) {
-            // We append an "/htmx" segment to the fusion path, changing it from "<PackageKey>/<ControllerName>/<ActionName>" to "<PackageKey>/<ControllerName>/<ActionName>/htmx"
-            $htmxFusionPath = str_replace(['\\Controller\\', '\\'], ['\\', '/'], $this->request->getControllerObjectName());
-            $htmxFusionPath .= '/' . $this->request->getControllerActionName() . '/htmx';
-            $view->setOption('fusionPath', $htmxFusionPath);
-        }
-    }
 
     /**
      * Display a list of unpublished content
@@ -383,11 +370,11 @@ class WorkspaceController extends AbstractModuleController
                 '',
                 Message::SEVERITY_ERROR
             );
-            $this->redirect('index');
+            $this->throwStatus(404, 'Workspace does not exist');
         }
 
         if ($workspace->isPersonalWorkspace()) {
-            $this->redirect('index');
+            $this->throwStatus(403, 'Personal workspaces cannot be deleted');
         }
 
         $dependentWorkspaces = $contentRepository->getWorkspaceFinder()
@@ -408,7 +395,7 @@ class WorkspaceController extends AbstractModuleController
                 'Neos.Workspace.Ui'
             ) ?: 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies';
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
-            $this->redirect('index');
+            $this->throwStatus(403, 'Workspace has dependencies');
         }
 
         $nodesCount = 0;
@@ -428,7 +415,7 @@ class WorkspaceController extends AbstractModuleController
                 'Neos.Workspace.Ui'
             ) ?: 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes';
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
-            $this->redirect('index');
+            $this->throwStatus(500, 'Error while fetching unpublished nodes');
         }
         if ($nodesCount > 0) {
             $message = $this->translator->translateById(
@@ -440,7 +427,7 @@ class WorkspaceController extends AbstractModuleController
                 'Neos.Workspace.Ui'
             ) ?: 'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes';
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
-            $this->redirect('index');
+            $this->throwStatus(403, 'Workspace has unpublished nodes');
         }
 
         $contentRepository->handle(
@@ -457,7 +444,6 @@ class WorkspaceController extends AbstractModuleController
             'Main',
             'Neos.Workspace.Ui'
         ) ?: 'workspaces.workspaceHasBeenRemoved');
-        $this->redirect('index');
     }
 
     /**

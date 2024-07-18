@@ -1,0 +1,4 @@
+##
+# Empty template for the delete response as the payload is contained in the HTTP headers
+#
+Neos.Workspace.Ui.WorkspaceController.delete = ''

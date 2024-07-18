@@ -3,7 +3,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTable) < prototype(Neos.Fusion:Co
   workspacesAndChangeCounts = ${{}}
 
   renderer = afx`
-    <table id="workspaceTable" class="workspace-table">
+    <table id="workspaceTable" class="workspace-table" hx-swap-oob="true">
       <thead>
       <tr>
         <th></th>
