@@ -11,15 +11,8 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
     action = 'new'
   }
 
-  htmxConfig = '[
-    {"code": "204", "swap": false},
-    {"code": "[23]..", "swap": true},
-    {"code": "422", "swap": true},
-    {"code": "[45]..", "swap": false, "error":true}
-  ]'
-
   renderer = afx`
-    <meta name="htmx-config" content={props.htmxConfig}/>
+    <Neos.Workspace.Ui:Component.HTMXConfig/>
     <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
     <main class="neos-content neos-container-fluid">
       <div class="neos-row-fluid">

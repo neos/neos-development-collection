@@ -1,0 +1,29 @@
+prototype(Neos.Workspace.Ui:Component.HTMXConfig) < prototype(Neos.Fusion:Component) {
+  htmxConfig = Neos.Fusion:DataStructure {
+    // 204 - No Content by default does nothing, but is not an error
+        noContent {
+      code = 204
+      swap = false
+    }
+    // 200 & 300 responses are non-errors and are swapped
+        nonErrors {
+      code = '[23]..'
+      swap = true
+    }
+    // 422 responses are swapped
+        invalidRequest {
+      code = 422
+      swap = true
+    }
+    // 400 & 500 responses are not swapped and are errors
+        errors {
+      code = '[45]..'
+      swap = false
+      error = true
+    }
+  }
+
+  renderer = afx`
+    <meta name="htmx-config" content={Json.stringify(Array.values(props.htmxConfig))}/>
+  `
+}
