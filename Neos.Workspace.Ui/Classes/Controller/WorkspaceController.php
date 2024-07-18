@@ -253,9 +253,16 @@ class WorkspaceController extends AbstractModuleController
                 '',
                 Message::SEVERITY_WARNING
             );
-            $this->redirect('new');
+            $this->throwStatus(400, 'Workspace with this title already exists');
+        } catch (\Exception $exception) {
+            $this->addFlashMessage(
+                $exception->getMessage(),
+                $this->getModuleLabel('workspaces.workspaceCouldNotBeCreated'),
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(500, 'Workspace could not be created');
         }
-
+        $this->addFlashMessage($this->getModuleLabel('workspaces.workspaceHasBeenCreated', [$title->value]));
         $this->redirect('index');
     }
 
