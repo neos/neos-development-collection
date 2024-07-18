@@ -733,21 +733,21 @@ class UserService
 
         if ($workspace->isInternalWorkspace()) {
             return $this->privilegeManager->isPrivilegeTargetGranted(
-                'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+                'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces'
             );
         }
 
-
         $currentUser = $this->getCurrentUser();
+
         if ($workspace->isPrivateWorkspace() && $currentUser !== null && $workspace->workspaceOwner === $this->persistenceManager->getIdentifierByObject($currentUser)) {
             return $this->privilegeManager->isPrivilegeTargetGranted(
-                'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
+                'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageOwnWorkspaces'
             );
         }
 
         if ($workspace->isPrivateWorkspace() &&  $currentUser !== null && $workspace->workspaceOwner !== $this->persistenceManager->getIdentifierByObject($currentUser)) {
             return $this->privilegeManager->isPrivilegeTargetGranted(
-                'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
+                'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageAllPrivateWorkspaces'
             );
         }
 
@@ -771,7 +771,7 @@ class UserService
         // of their internal workspaces, even if it was technically possible, because they wouldn't be able to change
         // ownership back to themselves.
         return $this->privilegeManager->isPrivilegeTargetGranted(
-            'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+            'Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces'
         );
     }
 
