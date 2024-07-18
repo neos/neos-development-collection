@@ -1091,8 +1091,6 @@ class WorkspaceController extends AbstractModuleController
         $baseWorkspaceOptions = [];
         $workspaces = $contentRepository->getWorkspaceFinder()->findAll();
         foreach ($workspaces as $workspace) {
-
-            /** @var Workspace $workspace */
             if (
                 !$workspace->isPersonalWorkspace()
                 && $workspace !== $excludedWorkspace
@@ -1104,6 +1102,17 @@ class WorkspaceController extends AbstractModuleController
                 $baseWorkspaceOptions[$workspace->workspaceName->value] = $workspace->workspaceTitle->value;
             }
         }
+
+        // Sort the base workspaces by title, but make sure the live workspace is always on top
+        uksort($baseWorkspaceOptions, static function (string $a, string $b) {
+            if ($a === 'live') {
+                return -1;
+            }
+            if ($b === 'live') {
+                return 1;
+            }
+            return strcasecmp($a, $b);
+        });
 
         return $baseWorkspaceOptions;
     }
