@@ -40,7 +40,6 @@ prototype(Neos.Workspace.Ui:Component.Modal.Delete) < prototype(Neos.Fusion:Comp
           attributes.hx-post={form.getTarget()}
           attributes.hx-target="closest tr"
           attributes.hx-swap="delete"
-          attributes.hx-indicator="#indicator"
           attributes.hx-disabled-elt="find button"
           attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}
         >

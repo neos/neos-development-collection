@@ -9,7 +9,10 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
 
   newAction = Neos.Fusion:UriBuilder {
     action = 'new'
+    format = 'htmx'
   }
+
+  createNewPopoverId = 'create-workspace-popover'
 
   renderer = Neos.Fusion:Match {
     @subject = ${request.format}
@@ -30,22 +33,27 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
           </div>
         </main>
         <Neos.Workspace.Ui:Component.Footer>
-          <a
+          <button
             id="createButton"
             type="button"
             class="neos-button neos-button-success"
-            href={props.newAction}
+            hx-get={props.newAction}
+            hx-target="#popover-container"
+            hx-swap="innerHTML"
+            hx-on--after-request={'document.getElementById("' + props.createNewPopoverId + '").showPopover()'}
             @if={Security.hasAccess('Neos.Workspace.Ui:Backend.CreateWorkspaces')}
           >
             {I18n.translate('footer.action.create', 'Create new workspace', [], 'Main', 'Neos.Workspace.Ui')}
-          </a>
+          </button>
           <div class="workspace-count">
             {I18n.translate('footer.workspaceCount', props.totalNumberOfWorkspaces + ' workspaces (' + props.numberOfPublicWorkspaces + ' public, ' + props.numberOfPrivateWorkspaces + ' private)', [props.numberOfPublicWorkspaces, props.numberOfPrivateWorkspaces], 'Main', 'Neos.Workspace.Ui')}
           </div>
         </Neos.Workspace.Ui:Component.Footer>
       </section>
+      <section id="popover-container"></section>
     `
     htmx = afx`
+      <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
       <Neos.Workspace.Ui:Component.WorkspaceTable
         userWorkspace={props.userWorkspace}
         workspacesAndChangeCounts={props.workspacesAndChangeCounts}

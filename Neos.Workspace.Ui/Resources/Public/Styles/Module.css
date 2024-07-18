@@ -173,7 +173,7 @@ td.workspace-action-column {
   left: 0;
   top: var(--unit);
   height: 2px;
-  position: absolute;
+  position: fixed;
   width: 100vw;
   z-index: var(--zIndex-LoadingIndicatorContainer);
 }
