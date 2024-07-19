@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\AbstractDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -91,7 +91,7 @@ final class DimensionSpacePointsRepository
                     'dimensionspacepoint' => $dimensionSpacePointCoordinatesJson
                 ]
             );
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to insert dimension space point to database: %s', $e->getMessage()), 1716474073, $e);
         }
     }
@@ -108,7 +108,7 @@ final class DimensionSpacePointsRepository
         SQL;
         try {
             $allDimensionSpacePoints = $this->dbal->fetchAllAssociative($allDimensionSpacePointsStatement);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load dimension space points from database: %s', $e->getMessage()), 1716488678, $e);
         }
         foreach ($allDimensionSpacePoints as $dimensionSpacePointRow) {

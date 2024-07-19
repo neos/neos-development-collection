@@ -20,13 +20,12 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
@@ -37,7 +36,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -52,16 +50,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class NodeFactory
 {
-    private NodeTypeManager $nodeTypeManager;
-
     private PropertyConverter $propertyConverter;
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
-        NodeTypeManager $nodeTypeManager,
         PropertyConverter $propertyConverter
     ) {
-        $this->nodeTypeManager = $nodeTypeManager;
         $this->propertyConverter = $propertyConverter;
     }
 
@@ -74,10 +68,6 @@ final class NodeFactory
         ?DimensionSpacePoint $dimensionSpacePoint = null,
         ?ContentStreamId $contentStreamId = null
     ): Node {
-        $nodeType = $this->nodeTypeManager->hasNodeType($nodeRow['nodetypename'])
-            ? $this->nodeTypeManager->getNodeType($nodeRow['nodetypename'])
-            : null;
-
         return Node::create(
             $this->contentRepositoryId,
             // todo use actual workspace name
@@ -102,7 +92,6 @@ final class NodeFactory
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
             $visibilityConstraints,
-            $nodeType,
             $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
         );
     }
@@ -264,14 +253,14 @@ final class NodeFactory
 
     /**
      * @param array<int,array<string,mixed>> $nodeRows
-     * @return iterable<int,\Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate>
      */
-    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): iterable
+    public function mapNodeRowsToNodeAggregates(array $nodeRows, VisibilityConstraints $visibilityConstraints): NodeAggregates
     {
-        $nodeAggregates = [];
         if (empty($nodeRows)) {
-            return $nodeAggregates;
+            return NodeAggregates::createEmpty();
         }
+
+        $nodeAggregates = [];
 
         $contentStreamId = null;
         /** @var NodeAggregateId[] $nodeAggregateIds */
@@ -342,7 +331,7 @@ final class NodeFactory
         }
 
         foreach ($nodeAggregateIds as $key => $nodeAggregateId) {
-            yield NodeAggregate::create(
+            $nodeAggregates[] = NodeAggregate::create(
                 $this->contentRepositoryId,
                 WorkspaceName::fromString('missing'), // todo
                 $nodeAggregateId,
@@ -360,6 +349,8 @@ final class NodeFactory
                 $contentStreamId,
             );
         }
+
+        return NodeAggregates::fromArray($nodeAggregates);
     }
 
     private static function parseDateTimeString(string $string): \DateTimeImmutable

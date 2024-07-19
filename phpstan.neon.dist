@@ -17,7 +17,9 @@ parameters:
         - Neos.ContentRepository.TestSuite/Classes
         - Neos.ContentRepositoryRegistry/Classes
         - Neos.Neos/Classes
+        - Neos.Workspace.Ui/Classes
         - Neos.TimeableNodeVisibility/Classes
+        - Neos.SiteKickstarter/Classes
         - Neos.NodeTypes.Form/Classes
         # todo lint whole fusion package
         - Neos.Fusion/Classes/Core

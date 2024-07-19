@@ -28,10 +28,7 @@ final class DbalSchemaDiff
      */
     public static function determineRequiredSqlStatements(Connection $connection, Schema $schema): array
     {
-        $schemaManager = $connection->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1705679142);
-        }
+        $schemaManager = $connection->createSchemaManager();
         try {
             $platform = $connection->getDatabasePlatform();
         } catch (Exception $e) {

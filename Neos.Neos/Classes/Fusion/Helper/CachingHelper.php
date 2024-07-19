@@ -19,12 +19,14 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
+use Neos\Neos\Fusion\Cache\NodeCacheEntryIdentifier;
 use Neos\Neos\Fusion\Cache\CacheTag;
 use Neos\Neos\Fusion\Cache\CacheTagSet;
+use Neos\Neos\Fusion\Cache\CacheTagWorkspaceName;
 
 /**
  * Caching helper to make cache tag generation easier.
@@ -36,6 +38,11 @@ class CachingHelper implements ProtectedContextAwareInterface
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
+
+    /**
+     * @var array<string, ContentStreamId>
+     */
+    private array $workspaceNameToContentStreamIdMapping = [];
 
     /**
      * Generate a `@cache` entry tag for a single node, array of nodes or a FlowQuery result
@@ -53,12 +60,27 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodes = iterator_to_array($nodes);
         }
 
-        return CacheTagSet::forNodeAggregatesFromNodes(Nodes::fromArray($nodes))->toStringArray();
+        return array_merge(
+            CacheTagSet::forNodeAggregatesFromNodes(Nodes::fromArray($nodes))->toStringArray(),
+            CacheTagSet::forNodeAggregatesFromNodesWithoutWorkspace(Nodes::fromArray($nodes))->toStringArray(),
+        );
     }
 
+    /**
+     * Generate a `@cache` entry identifier for a given node:
+     *
+     *     entryIdentifier {
+     *       documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
+     *     }
+     *
+     */
     public function entryIdentifierForNode(Node $node): NodeCacheEntryIdentifier
     {
-        return NodeCacheEntryIdentifier::fromNode($node);
+        // Todo adjust content caching to work with workspaces as entry identifier than the content stream id
+        $currentContentStreamId = $this->workspaceNameToContentStreamIdMapping[$node->contentRepositoryId->value . '@' . $node->workspaceName->value]
+            ??= $this->contentRepositoryRegistry->get($node->contentRepositoryId)->getContentGraph($node->workspaceName)->getContentStreamId();
+
+        return NodeCacheEntryIdentifier::fromNode($node, $currentContentStreamId);
     }
 
     /**
@@ -94,11 +116,18 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodeTypes = iterator_to_array($nodeTypes);
         }
 
-        return CacheTagSet::forNodeTypeNames(
-            $contextNode->contentRepositoryId,
-            $contextNode->workspaceName,
-            NodeTypeNames::fromStringArray($nodeTypes)
-        )->toStringArray();
+        return array_merge(
+            CacheTagSet::forNodeTypeNames(
+                $contextNode->contentRepositoryId,
+                $contextNode->workspaceName,
+                NodeTypeNames::fromStringArray($nodeTypes)
+            )->toStringArray(),
+            CacheTagSet::forNodeTypeNames(
+                $contextNode->contentRepositoryId,
+                CacheTagWorkspaceName::ANY,
+                NodeTypeNames::fromStringArray($nodeTypes)
+            )->toStringArray(),
+        );
     }
 
     /**
@@ -118,9 +147,10 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodes = iterator_to_array($nodes);
         }
 
-        return CacheTagSet::forDescendantOfNodesFromNodes(
-            Nodes::fromArray($nodes)
-        )->toStringArray();
+        return array_merge(
+            CacheTagSet::forDescendantOfNodesFromNodes(Nodes::fromArray($nodes))->toStringArray(),
+            CacheTagSet::forDescendantOfNodesFromNodesWithoutWorkspace(Nodes::fromArray($nodes))->toStringArray(),
+        );
     }
 
     /**

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\ForwardCompatibility\Result as QueryResult;
+use Doctrine\DBAL\Result as QueryResult;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 
 /**
@@ -97,14 +97,8 @@ trait CommonGraphQueryOperations
         return $this->types;
     }
 
-    /**
-     * @return QueryResult&iterable<string, mixed>
-     */
     final public function execute(Connection $databaseConnection): QueryResult
     {
-        /** @var QueryResult&iterable<string, mixed> $result */
-        $result = $databaseConnection->executeQuery($this->query, $this->parameters, $this->types);
-
-        return $result;
+        return $databaseConnection->executeQuery($this->query, $this->parameters, $this->types);
     }
 }

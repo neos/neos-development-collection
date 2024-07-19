@@ -2,8 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Rename hostpattern to hostname
@@ -24,7 +25,7 @@ class Version20160711103441 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $this->addSql('DROP INDEX flow_identity_typo3_neos_domain_model_domain ON typo3_neos_domain_model_domain');
         $this->addSql('ALTER TABLE typo3_neos_domain_model_domain CHANGE hostpattern hostname VARCHAR(255) NOT NULL');
@@ -37,7 +38,7 @@ class Version20160711103441 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $this->addSql('DROP INDEX flow_identity_typo3_neos_domain_model_domain ON typo3_neos_domain_model_domain');
         $this->addSql('ALTER TABLE typo3_neos_domain_model_domain CHANGE hostname hostpattern VARCHAR(255) NOT NULL COLLATE utf8mb4_unicode_ci');

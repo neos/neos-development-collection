@@ -10,6 +10,7 @@
     'Neos.Neos:Document': true
   properties:
     uriPathSegment:
+      validation: null
       ui:
         inspector:
           hidden: true

@@ -44,12 +44,11 @@ class KickstartCommandController extends CommandController
     /**
      * Kickstart a new site package
      *
-     * This command generates a new site package with basic Fusion and Sites.xml
+     * This command generates a new site package with basic Fusion
      *
      * @param string $packageKey The packageKey for your site
-     * @param string $siteName The siteName of your site
      */
-    public function siteCommand($packageKey, $siteName)
+    public function siteCommand($packageKey): void
     {
         if (!$this->packageManager->isPackageKeyValid($packageKey)) {
             $this->outputLine('Package key "%s" is not valid. Only UpperCamelCase in the format "Vendor.PackageKey", please!', [$packageKey]);
@@ -72,6 +71,7 @@ class KickstartCommandController extends CommandController
             $nameToClassMap[$name] = $generatorClass;
         }
 
+        /** @var string $generatorName */
         $generatorName = $this->output->select(
             sprintf('What generator do you want to use? (<info>%s</info>): ', array_key_first($selection)),
             $selection,
@@ -82,7 +82,7 @@ class KickstartCommandController extends CommandController
 
         $generatorService = $this->objectManager->get($generatorClass);
 
-        $generatedFiles = $generatorService->generateSitePackage($packageKey, $siteName);
+        $generatedFiles = $generatorService->generateSitePackage($packageKey);
         $this->outputLine(implode(PHP_EOL, $generatedFiles));
     }
 }

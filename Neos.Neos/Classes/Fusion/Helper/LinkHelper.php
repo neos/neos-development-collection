@@ -16,27 +16,23 @@ namespace Neos\Neos\Fusion\Helper;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
+use Neos\Neos\FrontendRouting\Options;
 use Neos\Neos\Fusion\ConvertUrisImplementation;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * Eel helper for the linking service
- */
 class LinkHelper implements ProtectedContextAwareInterface
 {
     /**
@@ -62,6 +58,12 @@ class LinkHelper implements ProtectedContextAwareInterface
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
+
+    /**
+     * @Flow\Inject
+     * @var NodeUriBuilderFactory
+     */
+    protected $nodeUriBuilderFactory;
 
     /**
      * @param string|Uri $uri
@@ -105,18 +107,17 @@ class LinkHelper implements ProtectedContextAwareInterface
             );
             return null;
         }
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $targetNode->contentRepositoryId
-        );
-        $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($targetNode);
+
+        $nodeUriBuilder = $this->nodeUriBuilderFactory->forActionRequest($controllerContext->getRequest());
+
+        $options = Options::createEmpty();
+        $format = $controllerContext->getRequest()->getFormat();
+        if ($format && $format !== 'html') {
+            $options = $options->withCustomFormat($format);
+        }
         try {
-            $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())
-                ->uriFor($targetNodeAddress);
-        } catch (
-            HttpException
-            | NoMatchingRouteException
-            | MissingActionNameException $e
-        ) {
+            $targetUri = $nodeUriBuilder->uriFor(NodeAddress::fromNode($targetNode), $options);
+        } catch (NoMatchingRouteException $e) {
             $this->systemLogger->info(sprintf(
                 'Failed to build URI for node "%s": %e',
                 $targetNode->aggregateId->value,

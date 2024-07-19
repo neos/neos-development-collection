@@ -12,27 +12,23 @@ namespace Neos\Neos\Tests\Unit\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Service\Context;
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\Fusion\Helper\CachingHelper;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
-use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Tests\UnitTestCase;
+use Neos\Neos\Fusion\Helper\CachingHelper;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -57,12 +53,20 @@ class CachingHelperTest extends UnitTestCase
         $nodeTypeName3 = 'Neos.Neos:Moo';
 
         return [
-            [$nodeTypeName1, ['NodeType_364cfc8e70b2baa23dbd14503d2bd00e063829e7_Neos_Neos-Foo']],
+            [$nodeTypeName1,
+                [
+                    'NodeType_364cfc8e70b2baa23dbd14503d2bd00e063829e7_Neos_Neos-Foo',
+                    'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Foo',
+                ]
+            ],
             [[$nodeTypeName1, $nodeTypeName2, $nodeTypeName3],
                 [
                     'NodeType_364cfc8e70b2baa23dbd14503d2bd00e063829e7_Neos_Neos-Foo',
                     'NodeType_364cfc8e70b2baa23dbd14503d2bd00e063829e7_Neos_Neos-Bar',
                     'NodeType_364cfc8e70b2baa23dbd14503d2bd00e063829e7_Neos_Neos-Moo',
+                    'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Foo',
+                    'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Bar',
+                    'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Moo',
                 ]
             ],
             [(new \ArrayObject([$nodeTypeName1, $nodeTypeName2, $nodeTypeName3])),
@@ -70,6 +74,9 @@ class CachingHelperTest extends UnitTestCase
                     'NodeType_364cfc8e70b2baa23dbd14503d2bd00e063829e7_Neos_Neos-Foo',
                     'NodeType_364cfc8e70b2baa23dbd14503d2bd00e063829e7_Neos_Neos-Bar',
                     'NodeType_364cfc8e70b2baa23dbd14503d2bd00e063829e7_Neos_Neos-Moo',
+                    'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Foo',
+                    'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Bar',
+                    'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Moo',
                 ]
             ],
         ];
@@ -103,15 +110,25 @@ class CachingHelperTest extends UnitTestCase
         $node2 = $this->createNode(NodeAggregateId::fromString($nodeIdentifier2));
 
         return [
-            [$node1, ['Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306']],
-            [[$node1], ['Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306']],
+            [$node1, [
+                'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+            ]],
+            [[$node1], [
+                'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+            ]],
             [[$node1, $node2], [
                 'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
-                'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a'
+                'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a',
+                'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_7005c7cf-4d19-ce36-0873-476b6cadb71a',
             ]],
             [(new \ArrayObject([$node1, $node2])), [
                 'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
-                'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a'
+                'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a',
+                'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_7005c7cf-4d19-ce36-0873-476b6cadb71a',
             ]]
         ];
     }
@@ -169,15 +186,25 @@ class CachingHelperTest extends UnitTestCase
 
 
         return [
-            [$node1, ['DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306']],
-            [[$node1], ['DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306']],
+            [$node1, [
+                'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+            ]],
+            [[$node1], [
+                'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+            ]],
             [[$node1, $node2], [
                 'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
-                'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a'
+                'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a',
+                'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_7005c7cf-4d19-ce36-0873-476b6cadb71a',
             ]],
             [(new \ArrayObject([$node1, $node2])), [
                 'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
-                'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a'
+                'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a',
+                'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_7005c7cf-4d19-ce36-0873-476b6cadb71a',
             ]]
         ];
     }
@@ -212,7 +239,6 @@ class CachingHelperTest extends UnitTestCase
             NodeTags::createEmpty(),
             Timestamps::create($now, $now, null, null),
             VisibilityConstraints::withoutRestrictions(),
-            null,
             ContentStreamId::fromString("cs-identifier"),
         );
     }

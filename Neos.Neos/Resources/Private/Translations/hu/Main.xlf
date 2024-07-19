@@ -267,14 +267,6 @@
         <source>Content Type</source>
         <target state="translated">Tartalom típus</target>
       </trans-unit>
-      <trans-unit id="pathCaption" xml:space="preserve">
-        <source>Path</source>
-        <target state="translated">Elérési út</target>
-      </trans-unit>
-      <trans-unit id="relativePathCaption" xml:space="preserve">
-        <source>Relative Path</source>
-        <target state="translated">Relatív elérési út</target>
-      </trans-unit>
       <trans-unit id="version" xml:space="preserve">
         <source>Version</source>
         <target state="translated">Verzió</target>
@@ -519,29 +511,9 @@
         <source>Discard all</source>
         <target state="translated">Összes elvetése</target>
       </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
-        <source>Discard all changes</source>
-        <target state="translated">Összes változtatás elvetése</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
-        <source>Are you sure that you want to discard all changes in this workspace?</source>
-        <target state="translated">Biztos benne, hogy elveti az összes módosítást ezen a munkaterületen?</target>
-      </trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
-        <source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-        <target state="translated">Biztos elvet {numberOfChanges} módosítást a munkafelületen?</target>
-      </trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
         <source>Publish all</source>
         <target state="translated">Minden közzététele</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
-        <source>Publish all changes</source>
-        <target state="translated">Minden változtatás közzététele</target>
-      </trans-unit>
-      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
-        <source>Are you sure that you want to publish all changes?</source>
-        <target state="translated">Biztos benne, hogy közzéteszi az összes változást?</target>
       </trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
         <source>Pending changes</source>
@@ -1065,6 +1037,14 @@
       <trans-unit id="login.loggedOut.body" xml:space="preserve">
         <source>Successfully logged out</source>
         <target state="needs-translation">Successfully logged out</target>
+      </trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve">
+        <source>Path</source>
+        <target state="needs-translation">Elérési út</target>
+      </trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve">
+        <source>Relative Path</source>
+        <target state="needs-translation">Relatív elérési út</target>
       </trans-unit>
     </body>
   </file>

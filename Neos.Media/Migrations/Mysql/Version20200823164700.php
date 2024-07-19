@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Migrations\AbortMigrationException;
+use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -29,11 +29,10 @@ class Version20200823164700 extends AbstractMigration
      * @param Schema $schema
      * @return void
      * @throws DBALException
-     * @throws AbortMigrationException
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         foreach (self::TYPES as $type) {
             $this->addSql(sprintf(
@@ -48,11 +47,10 @@ class Version20200823164700 extends AbstractMigration
      * @param Schema $schema
      * @return void
      * @throws DBALException
-     * @throws AbortMigrationException
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         foreach (self::TYPES as $type) {
             $this->addSql(sprintf(

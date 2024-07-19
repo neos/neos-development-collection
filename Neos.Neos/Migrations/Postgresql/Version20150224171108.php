@@ -2,8 +2,10 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+use Neos\Flow\Utility\Algorithms;
 
 /**
  * Adjust event log table to schema valid table structure
@@ -16,7 +18,7 @@ class Version20150224171108 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP CONSTRAINT FK_30AB3A75B684C08");
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP CONSTRAINT typo3_neos_eventlog_domain_model_event_pkey");
@@ -38,7 +40,7 @@ class Version20150224171108 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP CONSTRAINT fk_30ab3a75b684c08");
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP CONSTRAINT typo3_neos_eventlog_domain_model_event_pkey");
@@ -50,7 +52,7 @@ class Version20150224171108 extends AbstractMigration
         } else {
             $result = $this->connection->executeQuery("SELECT uid FROM typo3_neos_eventlog_domain_model_event");
             while ($uid = $result->fetchColumn()) {
-                $this->addSql("UPDATE typo3_neos_eventlog_domain_model_event SET persistence_object_identifier = '" . \Neos\Flow\Utility\Algorithms::generateUUID() . "' WHERE uid = " . $uid);
+                $this->addSql("UPDATE typo3_neos_eventlog_domain_model_event SET persistence_object_identifier = '" . Algorithms::generateUUID() . "' WHERE uid = " . $uid);
             }
         }
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event ALTER COLUMN persistence_object_identifier SET NOT NULL");
