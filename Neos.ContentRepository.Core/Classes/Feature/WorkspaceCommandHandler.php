@@ -961,11 +961,11 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             throw new BaseWorkspaceEqualsWorkspaceException(sprintf('The base workspace of the target must be different from the given workspace "%s".', $workspace->workspaceName->value));
         }
         $nextBaseWorkspace = $baseWorkspace;
-        while (!is_null($nextBaseWorkspace->baseWorkspaceName) && !$nextBaseWorkspace->baseWorkspaceName->isLive()) {
+        while (!is_null($nextBaseWorkspace->baseWorkspaceName)) {
             if ($workspace->workspaceName->equals($nextBaseWorkspace->baseWorkspaceName)) {
                 throw new CircularRelationBetweenWorkspacesException(sprintf('The workspace "%s" is already on the path of the target workspace "%s".', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value));
             }
-            $nextBaseWorkspace = $this->requireBaseWorkspace($workspace, $workspaceFinder);
+            $nextBaseWorkspace = $this->requireBaseWorkspace($nextBaseWorkspace, $workspaceFinder);
         }
     }
 
