@@ -962,7 +962,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         $nextBaseWorkspace = $baseWorkspace;
-        while ($nextBaseWorkspace->baseWorkspaceName !== null) {
+        while ($nextBaseWorkspace->baseWorkspaceName->value !== 'live') {
             if ($workspace->workspaceName->equals($nextBaseWorkspace->baseWorkspaceName)) {
                 throw new CircularRelationBetweenWorkspacesException(sprintf('The workspace "%s" is already on the path of the target workspace "%s".', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value));
             }
