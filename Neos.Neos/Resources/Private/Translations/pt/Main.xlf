@@ -1092,11 +1092,11 @@
       </trans-unit>
       <trans-unit id="login.loggedOut.title" xml:space="preserve">
         <source>Logged Out</source>
-        <target state="needs-translation">Desautorizado</target>
+        <target state="translated">Desautorizado</target>
       </trans-unit>
       <trans-unit id="login.loggedOut.body" xml:space="preserve">
         <source>Successfully logged out</source>
-        <target state="needs-translation">Saiu com sucesso do sistema</target>
+        <target state="translated">Saiu com sucesso do sistema</target>
       </trans-unit>
       <trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="no">
         <source>Switched to the new user "{0}".</source>
@@ -1160,7 +1160,7 @@
       </trans-unit>
       <trans-unit id="impersonate.tooltip.impersonateUserButton" xml:space="preserve" approved="no">
         <source>Login as user</source>
-        <target state="needs-translation">Aceder como utilizador</target>
+        <target state="translated">Aceder como utilizador</target>
       </trans-unit>
     </body>
   </file>
