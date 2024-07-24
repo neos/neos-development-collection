@@ -1,35 +1,40 @@
 prototype(Neos.Workspace.Ui:Component.FlashMessages) < prototype(Neos.Fusion:Component) {
-    flashMessages = ${[]}
+  flashMessages = ${[]}
 
-    renderer = afx`
-        <div
-          id="neos-notification-container"
-          class="neos-notification-top"
-          hx-swap-oob="true"
-        >
-            <Neos.Fusion:Loop items={props.flashMessages} itemName="message">
-                <Neos.Workspace.Ui:Component.FlashMessages.Message message={message}/>
-            </Neos.Fusion:Loop>
-        </div>
-    `
+  renderer = afx`
+    <div
+      id="neos-notification-container"
+      class="neos-notification-top"
+      hx-swap-oob="true"
+    >
+      <Neos.Fusion:Loop items={props.flashMessages} itemName="message">
+        <Neos.Workspace.Ui:Component.FlashMessages.Message message={message}/>
+      </Neos.Fusion:Loop>
+    </div>
+  `
 }
 
 prototype(Neos.Workspace.Ui:Component.FlashMessages.Message) < prototype(Neos.Fusion:Component) {
-    message = ${{}}
+  message = ${{}}
 
-    severity = ${String.toLowerCase(this.message.severity)}
-    severity.@process.replaceOKStatus = ${value == 'ok' ? 'success' : value}
-    severity.@process.replaceNoticeStatus = ${value == 'notice' ? 'info' : value}
+  severity = ${String.toLowerCase(this.message.severity)}
+  severity.@process.replaceOKStatus = ${value == 'ok' ? 'success' : value}
+  severity.@process.replaceNoticeStatus = ${value == 'notice' ? 'info' : value}
 
-    renderer = afx`
-        <div class={'neos-notification neos-notification-' + props.severity}>
-            <div class={'neos-notification-content' + (props.message.message && props.message.title ? ' expandable' : '')}>
-                <i class={'fas fa-' + props.severity}></i>
-                <div class="neos-notification-heading">
-                    {props.message.title || props.message.message}
-                </div>
-                <div class="neos-expand-content" @if.hasMessageAndNoTitle={props.message.message && props.message.title}>{props.message.message}</div>
-            </div>
+  renderer = afx`
+    <div class={'neos-notification neos-notification-' + props.severity}>
+      <div class={'neos-notification-content' + (props.message.message && props.message.title ? ' expandable' : '')}>
+        <Neos.Workspace.Ui:Component.Icon icon={props.severity}/>
+        <div class="neos-notification-heading">
+          {props.message.title || props.message.message}
         </div>
-    `
+        <div
+          class="neos-expand-content"
+          @if.hasMessageAndNoTitle={props.message.message && props.message.title}
+        >
+          {props.message.message}
+        </div>
+      </div>
+    </div>
+  `
 }

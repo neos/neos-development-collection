@@ -1,11 +1,19 @@
 prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion:Component) {
+  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
   userWorkspace = ''
+  /// string
   workspaceName = ''
+  /// array{ workspace, changesCounts, canPublish, canManage, canDelete, workspaceOwnerHumanReadable }
   workspaceData = ${{}}
+  /// boolean
   canManage = false
+  /// integer
   level = 0
 
   @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    workspace = ${props.workspaceData.workspace}
+    workspaceTableRowId = ${'workspace-row-' + props.workspaceName}
     workspaceStatus = Neos.Fusion:Case {
       personal-workspace {
         condition = ${props.workspaceName == props.userWorkspace.workspaceName.value}
@@ -32,34 +40,42 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
     }
     workspaceStatusLabel = Neos.Fusion:Match {
       @subject = ${private.workspaceStatus}
-      personal-workspace = ${I18n.translate('badge.isPersonalWorkspace', 'This is your personal workspace', [], 'Main', 'Neos.Workspace.Ui')}
-      stale = ${I18n.translate('badge.isStale', 'This workspace has not been used for a long time', [], 'Main', 'Neos.Workspace.Ui')}
-      with-acl = ${I18n.translate('table.column.access.acl', 'This workspace is owned by ' + props.workspaceData.workspaceOwnerHumanReadable + ' but allows access to additional users', [], 'Main', 'Neos.Workspace.Ui')}
-      private = ${I18n.translate('table.column.access.private', 'This workspace is owned by ' + props.workspaceData.workspaceOwnerHumanReadable, {}, 'Main', 'Neos.Workspace.Ui')}
-      @default = ${I18n.translate('table.column.access.internal', 'Internal workspace', [], 'Main', 'Neos.Workspace.Ui')}
+      @default = ${private.i18n.id('table.column.access.internal').value('Internal workspace')}
+      personal-workspace = ${private.i18n.id('badge.isPersonalWorkspace').value('This is your personal workspace')}
+      stale = ${private.i18n.id('badge.isStale').value('This workspace has not been used for a long time')}
+      with-acl = ${private.i18n.id('table.column.access.acl').value('This workspace is owned by ' + props.workspaceData.workspaceOwnerHumanReadable + ' but allows access to additional users')}
+      private = ${private.i18n.id('table.column.access.private').value('This workspace is owned by ' + props.workspaceData.workspaceOwnerHumanReadable)}
     }
     workspaceStatusIcon = Neos.Fusion:Match {
       @subject = ${private.workspaceStatus}
+      @default = 'user'
       internal = 'users'
       with-acl = 'user-plus'
-      @default = 'user'
     }
-    showWorkspaceUri = Neos.Fusion:UriBuilder {
+    showWorkspaceUri = Neos.Fusion:ActionUri {
       action = 'show'
       arguments {
         workspace = ${props.workspaceName}
       }
     }
-    editWorkspaceUri = Neos.Fusion:UriBuilder {
+    editWorkspaceUri = Neos.Fusion:ActionUri {
       action = 'edit'
       arguments {
         workspaceName = ${props.workspaceName}
       }
     }
+    deleteWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'delete'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceName}
+      }
+    }
+    deleteWorkspacePopoverId = 'workspace-delete-modal'
   }
 
   renderer = afx`
-    <tr id={'workspace-' + props.workspaceName} class={'workspace--' + private.workspaceStatus}>
+    <tr id={private.workspaceTableRowId} class={'workspace--' + private.workspaceStatus}>
       <td class="workspace-type-column" title={private.workspaceStatusLabel}>
         <Neos.Workspace.Ui:Component.Icon
           icon={private.workspaceStatusIcon}
@@ -67,45 +83,47 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
         />
       </td>
       <td class="workspace-label-column" style={'--indent-level:' + props.level }>
-        <i class="fas fa-level-up-alt" @if={props.level > 1}></i>
+        <Neos.Workspace.Ui:Component.Icon icon="level-up-alt" @if={props.level > 1}/>
         {props.workspaceData.workspace.workspaceTitle.value}
         <span class="workspace__info-text" @if={props.workspaceName == props.userWorkspace.workspaceName.value}>
-          ({I18n.translate('badge.isUserWorkspace', 'This is your workspace', [], 'Main', 'Neos.Workspace.Ui')})
+          ({private.i18n.id('workspaces.workspace.userWorkspace')})
         </span>
       </td>
-      <td class="workspace-description-column">{props.workspaceData.workspace.workspaceDescription.value || '–'}</td>
+      <td class="workspace-description-column">
+        {props.workspaceData.workspace.workspaceDescription.value || '–'}
+      </td>
       <td>{props.workspaceData.workspaceOwnerHumanReadable || '–'}</td>
       <td>–</td>
       <td>{props.workspaceData.workspace.status.value || '–'}</td>
       <td>–</td>
       <td class="workspace-action-column">
         <a class="neos-button"
-           title={I18n.translate(workspace.changesCounts.total ? 'table.column.action.show.title' : 'table.column.action.show.disabled.title', 'Show changes in workspace ' + workspace.title, { workspace: workspace.title }, 'Main', 'Neos.Workspace.Ui')}
-           disabled={workspace.changesCounts.total == 0}
+           title={private.i18n.id(props.workspaceData.changesCounts.total ? 'workspaces.reviewWorkspace' : 'workspaces.reviewWorkspace.noChanges').arguments([private.workspace.workspaceTitle.value])}
+           disabled={props.workspaceData.changesCounts.total == 0}
            href={private.showWorkspaceUri}
         >
-          <i
-            class="fas fa-review"></i> {I18n.translate('table.column.action.show', 'Show', [], 'Main', 'Neos.Workspace.Ui')}
+          <Neos.Workspace.Ui:Component.Icon icon="review"/>{' '}
+          {private.i18n.id('workspaces.reviewWorkspace.label')}
         </a>
         <a
           class="neos-button"
-          title={I18n.translate('table.column.action.edit', 'Edit workspace ' + workspace.title, {workspace: workspace.title}, 'Main', 'Neos.Workspace.Ui')}
+          title={private.i18n.id('workspaces.editWorkspace').arguments([private.workspace.workspaceTitle.value])}
           href={private.editWorkspaceUri}
           @if={!props.canManage || props.workspaceData.changesCounts == null}
         >
-          <i class="fas fa-pencil-alt"></i>
+          <Neos.Workspace.Ui:Component.Icon icon="pencil-alt"/>
         </a>
         <button
           class="neos-button neos-button-danger"
-          title={I18n.translate('workspaces.deleteWorkspace', 'Delete workspace', [], 'Main', 'Neos.Workspace.Ui')}
-          popovertarget={'workspace-modal-delete-' + props.workspaceName}
+          title={private.i18n.id('workspaces.deleteWorkspace').arguments([private.workspace.workspaceTitle.value])}
+          disabled={props.workspaceData.changesCounts.total > 0}
+          hx-get={private.deleteWorkspaceUri}
+          hx-target='#popover-container'
+          hx-swap='innerHTML'
+          hx-on--after-request={'document.getElementById("' + private.deleteWorkspacePopoverId + '").showPopover()'}
         >
-          <i class="fas fa-trash-alt icon-white"></i>
+          <Neos.Workspace.Ui:Component.Icon icon="trash-alt icon-white"/>
         </button>
-        <Neos.Workspace.Ui:Component.Modal.Delete
-          workspaceName={props.workspaceName}
-          workspaceTitle={props.workspaceData.workspace.workspaceTitle.value}
-        />
       </td>
     </tr>
   `

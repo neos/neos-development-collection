@@ -1,4 +1,19 @@
 ##
-# Empty template for the delete response as the payload is contained in the HTTP headers
+# Delete confirmation modal with empty POST response
 #
-Neos.Workspace.Ui.WorkspaceController.delete = ''
+Neos.Workspace.Ui.WorkspaceController.delete = Neos.Fusion:Component {
+  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
+  workspace = ${workspace}
+
+  renderer = Neos.Fusion:Match {
+    @subject = ${request.httpRequest.method}
+    # Render the delete modal
+    @default = afx`
+      <Neos.Workspace.Ui:Component.Modal.Delete
+        workspace={props.workspace}
+      />
+    `
+    # Empty template for the delete response as the payload is contained in the HTTP headers
+    POST = ''
+  }
+}

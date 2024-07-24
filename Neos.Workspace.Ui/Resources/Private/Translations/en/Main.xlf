@@ -21,8 +21,14 @@
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
 			</trans-unit>
-      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
-				<source>Details for "{0}"</source>
+      <trans-unit id="workspaces.reviewWorkspace" xml:space="preserve">
+				<source>Review workspace "{0}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
+				<source>Review</source>
+			</trans-unit>
+      <trans-unit id="workspaces.reviewWorkspace.disabled" xml:space="preserve">
+				<source>Workspace "{0}" has no unpublished changes</source>
 			</trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
@@ -31,10 +37,13 @@
 				<source>Create workspace</source>
 			</trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
-				<source>Delete workspace</source>
+				<source>Delete workspace "{0}"</source>
+			</trans-unit>
       <trans-unit id="workspaces.numberOfWorkspaces" xml:space="preserve">
 				<source>{total} workspaces ({internal} internal, {private} private)</source>
 			</trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace.disabled" xml:space="preserve">
+				<source>Workspace "{0}" has unpublished changes</source>
 			</trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
 				<source>Yes, delete the workspace</source>
@@ -63,8 +72,14 @@
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
 			</trans-unit>
+      <trans-unit id="workspaces.workspace.userWorkspace" xml:space="preserve">
+				<source>This is your workspace</source>
+			</trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
+				<source>Last modified</source>
 			</trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
@@ -81,8 +96,14 @@
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
 			</trans-unit>
+      <trans-unit id="workspaces.workspace.status" xml:space="preserve">
+				<source>Status</source>
+			</trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
+			</trans-unit>
+      <trans-unit id="workspaces.workspace.actions" xml:space="preserve">
+				<source>Actions</source>
 			</trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>

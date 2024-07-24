@@ -1,8 +1,11 @@
 prototype(Neos.Workspace.Ui:Component.Modal.Delete) < prototype(Neos.Fusion:Component) {
-  workspaceName = ''
+  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
+  workspace = null
 
   @private {
-    popoverId = ${'workspace-modal-delete-' + props.workspaceName}
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'workspace-delete-modal'
+    workspaceTableRowId = ${'workspace-row-' + props.workspace.workspaceName.value}
   }
 
   renderer = afx`
@@ -17,11 +20,11 @@ prototype(Neos.Workspace.Ui:Component.Modal.Delete) < prototype(Neos.Fusion:Comp
           <Neos.Workspace.Ui:Component.Icon icon="times"/>
         </button>
         <div class="neos-header">
-          {I18n.translate('workspaces.dialog.confirmWorkspaceDeletion', 'Do you really want to delete the workspace?', [props.workspaceTitle], 'Main', 'Neos.Workspace.Ui')}
+          {private.i18n.id('workspaces.dialog.confirmWorkspaceDeletion').arguments([props.workspace.workspaceTitle.value])}
         </div>
       </header>
       <section>
-        <p>{I18n.translate('workspaces.dialog.thisWillDeleteTheWorkspace', 'This will delete the workspace including all unpublished content. This operation cannot be undone.', [], 'Modules', 'Neos.Workspace.Ui')}</p>
+        <p>{private.i18n.id('workspaces.dialog.thisWillDeleteTheWorkspace')}</p>
       </section>
       <footer>
         <button
@@ -30,15 +33,15 @@ prototype(Neos.Workspace.Ui:Component.Modal.Delete) < prototype(Neos.Fusion:Comp
           popovertarget={private.popoverId}
           popovertargetaction="close"
         >
-          {I18n.translate('cancel', 'Cancel', [], 'Modules', 'Neos.Workspace.Ui')}
+          {private.i18n.id('cancel', 'Cancel', [])}
         </button>
         <Neos.Fusion.Form:Form
           form.target.action="delete"
           form.target.format="htmx"
-          form.target.arguments.workspaceName={props.workspaceName}
+          form.target.arguments.workspaceName={props.workspace.workspaceName.value}
           attributes.class="neos-inline"
           attributes.hx-post={form.getTarget()}
-          attributes.hx-target="closest tr"
+          attributes.hx-target={'#' + private.workspaceTableRowId}
           attributes.hx-swap="delete"
           attributes.hx-disabled-elt="find button"
           attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}
@@ -47,7 +50,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Delete) < prototype(Neos.Fusion:Comp
             type="submit"
             class="neos-button neos-button-danger"
           >
-            {I18n.translate('workspaces.yesDeleteWorkspace', 'Yes, delete the workspace', [], 'Modules', 'Neos.Workspace.Ui')}
+            {private.i18n.id('workspaces.yesDeleteWorkspace')}
           </button>
         </Neos.Fusion.Form:Form>
       </footer>

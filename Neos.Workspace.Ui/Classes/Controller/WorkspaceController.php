@@ -366,6 +366,8 @@ class WorkspaceController extends AbstractModuleController
     /**
      * Delete a workspace
      *
+     * TODO: Add force delete option to ignore unpublished nodes or dependent workspaces, the later should be rebased instead
+     *
      * @param WorkspaceName $workspaceName A workspace to delete
      * @throws IndexOutOfBoundsException
      * @throws InvalidFormatPlaceholderException
@@ -445,20 +447,27 @@ class WorkspaceController extends AbstractModuleController
             $this->throwStatus(403, 'Workspace has unpublished nodes');
         }
 
-        $contentRepository->handle(
-            DeleteWorkspace::create(
-                $workspaceName,
-            )
-        );
+        // Render a confirmation form if the request is not a POST request
+        if ($this->request->getHttpRequest()->getMethod() === 'POST') {
+            $contentRepository->handle(
+                DeleteWorkspace::create(
+                    $workspaceName,
+                )
+            );
 
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.workspaceHasBeenRemoved',
-            [$workspace->workspaceTitle->value],
-            null,
-            null,
-            'Main',
-            'Neos.Workspace.Ui'
-        ) ?: 'workspaces.workspaceHasBeenRemoved');
+            $this->addFlashMessage(
+                $this->translator->translateById(
+                    'workspaces.workspaceHasBeenRemoved',
+                    [$workspace->workspaceTitle->value],
+                    null,
+                    null,
+                    'Main',
+                    'Neos.Workspace.Ui'
+                ) ?: 'workspaces.workspaceHasBeenRemoved'
+            );
+        } else {
+            $this->view->assign('workspace', $workspace);
+        }
     }
 
     /**

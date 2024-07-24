@@ -1,6 +1,12 @@
 prototype(Neos.Workspace.Ui:Component.WorkspaceTable) < prototype(Neos.Fusion:Component) {
-  userWorkspace = ''
+  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
+  /// array{ workspace, changesCounts, canPublish, canManage, canDelete, workspaceOwnerHumanReadable }[]
+  userWorkspace = null
   workspacesAndChangeCounts = ${{}}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+  }
 
   renderer = afx`
     <table id="workspaceTable" class="workspace-table" hx-swap-oob="true">
@@ -9,21 +15,21 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTable) < prototype(Neos.Fusion:Co
         <th></th>
         <th>
           <button type="button" class="icon-button">
-            {I18n.translate('table.header.title', 'Title', [], 'Main', 'Neos.Workspace.Ui')}
-            <i class="fas fa-sort-alpha-down"></i>
+            {private.i18n.id('workspaces.workspace.title').translate()}
+            <Neos.Workspace.Ui:Component.Icon icon="sort-alpha-down"/>
           </button>
         </th>
-        <th>{I18n.translate('table.header.description', 'Description', [], 'Main', 'Neos.Workspace.Ui')}</th>
-        <th>{I18n.translate('table.header.owner', 'Owner', [], 'Main', 'Neos.Workspace.Ui')}</th>
+        <th>{private.i18n.id('workspaces.workspace.description')}</th>
+        <th>{private.i18n.id('workspaces.workspace.owner')}</th>
         <th>
           <button type="button" class="icon-button">
-            {I18n.translate('table.header.lastModified', 'Last modified', [], 'Main', 'Neos.Workspace.Ui')}
-            <i class="fas fa-sort"></i>
+            {private.i18n.id('workspaces.workspace.lastModified')}
+            <Neos.Workspace.Ui:Component.Icon icon="sort"/>
           </button>
         </th>
-        <th>{I18n.translate('table.header.status', 'Status', [], 'Main', 'Neos.Workspace.Ui')}</th>
-        <th>{I18n.translate('table.header.changes', 'Changes', [], 'Main', 'Neos.Workspace.Ui')}</th>
-        <th>{I18n.translate('table.header.actions', 'Actions', [], 'Main', 'Neos.Workspace.Ui')}</th>
+        <th>{private.i18n.id('workspaces.workspace.status')}</th>
+        <th>{private.i18n.id('workspaces.workspace.changes')}</th>
+        <th>{private.i18n.id('workspaces.workspace.actions')}</th>
       </tr>
       </thead>
       <tbody>
