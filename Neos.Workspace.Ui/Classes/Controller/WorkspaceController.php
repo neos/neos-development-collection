@@ -127,6 +127,7 @@ class WorkspaceController extends AbstractModuleController
             throw new \RuntimeException('Current user has no workspace', 1645485990);
         }
 
+        /** @var array<string, array{workspace: string, changesCounts: array, canPublish: bool, canManage: bool, canDelete: bool, workspaceOwnerHumanReadable: string}> $workspacesAndCounts */
         $workspacesAndCounts = [
             $userWorkspace->workspaceName->value => [
                 'workspace' => $userWorkspace,
@@ -157,9 +158,16 @@ class WorkspaceController extends AbstractModuleController
             }
         }
 
-        $this->view->assign('userWorkspace', $userWorkspace);
-        $this->view->assign('workspacesAndChangeCounts', $workspacesAndCounts);
-        $this->view->assign('flashMessages', $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush());
+        $this->view->assignMultiple([
+            'userWorkspace' => $userWorkspace,
+            'workspacesAndChangeCounts' => $workspacesAndCounts,
+            'workspaceCount' => [
+                'total' => count($workspacesAndCounts),
+                'internal' => count(array_filter($workspacesAndCounts, static fn($data) => $data['workspace']->isInternalWorkspace())),
+                'private' => count(array_filter($workspacesAndCounts, static fn($data) => $data['workspace']->isPrivateWorkspace())),
+            ],
+            'flashMessages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
+        ]);
     }
 
 

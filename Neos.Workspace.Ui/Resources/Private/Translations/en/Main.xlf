@@ -32,6 +32,9 @@
 			</trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
 				<source>Delete workspace</source>
+      <trans-unit id="workspaces.numberOfWorkspaces" xml:space="preserve">
+				<source>{total} workspaces ({internal} internal, {private} private)</source>
+			</trans-unit>
 			</trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
 				<source>Yes, delete the workspace</source>

@@ -1,11 +1,12 @@
 Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
+  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
   userWorkspace = ${userWorkspace}
+  /// array
   workspacesAndChangeCounts = ${workspacesAndChangeCounts}
+  /// array
   flashMessages = ${flashMessages}
-
-  totalNumberOfWorkspaces = ${Array.length(this.workspacesAndChangeCounts)}
-  numberOfPrivateWorkspaces = 0
-  numberOfPublicWorkspaces = 0
+  /// array{ total: int, privat: int, internal: int }
+  workspaceCount = ${workspaceCount}
 
   newAction = Neos.Fusion:UriBuilder {
     action = 'new'
@@ -13,6 +14,8 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
   }
 
   createNewPopoverId = 'create-workspace-popover'
+
+  i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
 
   renderer = Neos.Fusion:Match {
     @subject = ${request.format}
@@ -43,10 +46,10 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
             hx-on--after-request={'document.getElementById("' + props.createNewPopoverId + '").showPopover()'}
             @if={Security.hasAccess('Neos.Workspace.Ui:Backend.CreateWorkspaces')}
           >
-            {I18n.translate('footer.action.create', 'Create new workspace', [], 'Main', 'Neos.Workspace.Ui')}
+            {props.i18n.id('workspaces.createNewWorkspace')}
           </button>
           <div class="workspace-count">
-            {I18n.translate('footer.workspaceCount', props.totalNumberOfWorkspaces + ' workspaces (' + props.numberOfPublicWorkspaces + ' public, ' + props.numberOfPrivateWorkspaces + ' private)', [props.numberOfPublicWorkspaces, props.numberOfPrivateWorkspaces], 'Main', 'Neos.Workspace.Ui')}
+            {props.i18n.id('workspaces.numberOfWorkspaces').arguments({ total: props.workspaceCount.total, internal: props.workspaceCount.internal, private: props.workspaceCount.private })}
           </div>
         </Neos.Workspace.Ui:Component.Footer>
       </section>
