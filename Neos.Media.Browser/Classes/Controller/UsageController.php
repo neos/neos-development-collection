@@ -21,6 +21,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Controller\CreateContentContextTrait;
@@ -88,6 +89,12 @@ class UsageController extends ActionController
     protected $securityContext;
 
     /**
+     * @Flow\Inject
+     * @var PolicyService
+     */
+    protected $policyService;
+
+    /**
      * @Flow\InjectConfiguration(package="Neos.Media.Browser", path="features.showWorkspaceOwnerOrName")
      * @var array
      */
@@ -106,14 +113,7 @@ class UsageController extends ActionController
 
         $isPrivilegedRole = false;
         if ($currentAccount != null && $this->showWorkspaceOwnerOrNameConfiguration['enable']) {
-            $roles = array_keys($currentAccount->getRoles());
-
-            foreach ($this->showWorkspaceOwnerOrNameConfiguration['privilegedRoles'] as $role) {
-                if (in_array($role, $roles)) {
-                    $isPrivilegedRole = true;
-                    break;
-                }
-            }
+            $isPrivilegedRole = $this->securityContext->hasRole('Neos.Media.Browser:WorkspaceName');
         }
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
@@ -204,10 +204,10 @@ class UsageController extends ActionController
     {
         $context = $this->_contextFactory->create(
             [
-            'workspaceName' => $assetUsage->getWorkspaceName(),
-            'dimensions' => $assetUsage->getDimensionValues(),
-            'invisibleContentShown' => true,
-            'removedContentShown' => true]
+                'workspaceName' => $assetUsage->getWorkspaceName(),
+                'dimensions' => $assetUsage->getDimensionValues(),
+                'invisibleContentShown' => true,
+                'removedContentShown' => true]
         );
         return $context->getNodeByIdentifier($assetUsage->getNodeIdentifier());
     }

@@ -29,6 +29,9 @@ privilegeTargets:
       matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(replaceAssetResource|updateAssetResource)Action())'
 
 roles:
+  'Neos.Media.Browser:WorkspaceName':
+    abstract: true
+
   'Neos.Neos:AbstractEditor':
     privileges:
       -

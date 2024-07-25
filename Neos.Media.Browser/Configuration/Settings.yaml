@@ -29,8 +29,7 @@ Neos:
           enable: true
         # By default, disable showing the workspace owner/title in media browser usage tab
         showWorkspaceOwnerOrName:
-          enable: false
-          privilegedRoles: ['Neos.Neos:Administrator']
+          enable: true
 
   Flow:
     security:

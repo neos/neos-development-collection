@@ -325,8 +325,7 @@ roles:
   'Neos.Neos:Administrator':
     label: Neos Administrator
     description: Grants access to all modules and functionalities of the Neos backend.
-
-    parentRoles: ['Neos.Neos:Editor']
+    parentRoles: ['Neos.Neos:Editor', 'Neos.Media.Browser:WorkspaceName']
     privileges:
       -
         privilegeTarget: 'Neos.Neos:Backend.Module.Administration'
