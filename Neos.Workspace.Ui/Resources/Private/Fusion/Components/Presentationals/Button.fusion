@@ -1,0 +1,27 @@
+prototype(Neos.Workspace.Ui:Component.Button) < prototype(Neos.Fusion:Component) {
+  /// string
+  title = ''
+  /// string
+  label = ''
+  /// boolean
+  isDanger = false
+  /// boolean
+  isWarning = false
+  /// boolean
+  isPrimary = false
+  /// boolean
+  disabled = false
+  /// string
+  icon = ''
+
+  renderer = afx`
+    <button
+      type="button"
+      class={['neos-button', props.isDanger && 'neos-button-danger', props.isWarning && 'neos-button-warning', props.isPrimary && 'neos-button-primary']}
+      @apply.props={props}
+    >
+      <Neos.Workspace.Ui:Component.Icon icon={props.icon} @if={props.icon}/>
+      {props.label}
+    </button>
+  `
+}

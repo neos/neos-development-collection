@@ -89,6 +89,11 @@ td.workspace-action-column {
   text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4);
 }
 
+/* Add space after icon in button if there is a label */
+button .icon:not(:last-child) {
+  margin-right: 1ch;
+}
+
 /**
  * Workspace entry states and types
  */
