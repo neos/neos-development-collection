@@ -20,6 +20,7 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
@@ -88,10 +89,10 @@ class UsageController extends ActionController
     protected $securityContext;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Media.Browser", path="features.showWorkspaceOwnerOrName")
-     * @var array
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
      */
-    protected $showWorkspaceOwnerOrNameConfiguration;
+    protected $privilegeManager;
 
     /**
      * Get Related Nodes for an asset
@@ -105,8 +106,8 @@ class UsageController extends ActionController
         $currentAccount = $this->securityContext->getAccount();
 
         $isPrivilegedRole = false;
-        if ($currentAccount != null && $this->showWorkspaceOwnerOrNameConfiguration['enable']) {
-            $isPrivilegedRole = $this->securityContext->hasRole('Neos.Media.Browser:WorkspaceName');
+        if ($currentAccount != null) {
+            $isPrivilegedRole = $this->privilegeManager->isPrivilegeTargetGranted('Neos.Media.Browser:WorkspaceName');
         }
 
         $usageReferences = $this->assetService->getUsageReferences($asset);

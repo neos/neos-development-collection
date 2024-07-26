@@ -28,10 +28,11 @@ privilegeTargets:
       label: Allowed to replace asset resources
       matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(replaceAssetResource|updateAssetResource)Action())'
 
-roles:
-  'Neos.Media.Browser:WorkspaceName':
-    abstract: true
+    'Neos.Media.Browser:WorkspaceName':
+      label: Allowed to see workspace owner
+      matcher: 'method(Neos\Media\Browser\Controller\UsageController->relatedNodesAction())'
 
+roles:
   'Neos.Neos:AbstractEditor':
     privileges:
       -
@@ -57,6 +58,9 @@ roles:
     privileges:
       -
         privilegeTarget: 'Neos.Media.Browser:ManageAssetCollections'
+        permission: GRANT
+      -
+        privilegeTarget: 'Neos.Media.Browser:WorkspaceName'
         permission: GRANT
 
   'Neos.Flow:Everybody':
