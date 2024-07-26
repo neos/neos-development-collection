@@ -132,11 +132,6 @@ final class HypergraphProjection implements ProjectionInterface
     private function determineRequiredSqlStatements(): array
     {
         HypergraphSchemaBuilder::registerTypes($this->dbal->getDatabasePlatform());
-        $schemaManager = $this->dbal->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
-        }
-
         $schema = (new HypergraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }

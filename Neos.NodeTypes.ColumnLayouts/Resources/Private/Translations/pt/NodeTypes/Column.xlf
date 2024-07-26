@@ -3,16 +3,16 @@
   <file original="" product-name="Neos.NodeTypes.ColumnLayouts" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-                <source>Column</source>
+        <source>Column</source>
         <target state="translated">Coluna</target>
       </trans-unit>
       <trans-unit id="groups.column" xml:space="preserve">
-                <source>Columns</source>
+        <source>Columns</source>
         <target state="translated">Colunas</target>
       </trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
-                <source>Layout</source>
-        <target state="needs-translation">Layout</target>
+        <source>Layout</source>
+        <target state="translated">Layout</target>
       </trans-unit>
     </body>
   </file>

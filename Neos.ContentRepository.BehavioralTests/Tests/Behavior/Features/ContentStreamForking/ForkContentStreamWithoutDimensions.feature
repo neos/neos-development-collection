@@ -50,19 +50,24 @@ Feature: ForkContentStream Without Dimensions
       | propertiesToUnset            | {}                                                      |
 
   Scenario: Ensure that the node is available in the forked content stream
-    When the command "ForkContentStream" is executed with payload:
-      | Key                   | Value                |
-      | contentStreamId       | "user-cs-identifier" |
-      | sourceContentStreamId | "cs-identifier"      |
-    And I am in content stream "user-cs-identifier" and dimension space point {}
+    # Uses ForkContentStream implicitly
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | baseWorkspaceName  | "live"               |
+      | workspaceName      | "user-test"          |
+      | newContentStreamId | "user-cs-identifier" |
 
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
 
   Scenario: When a change is applied to the forked content stream AFTER the fork, it is not visible in the live content stream.
-    When the command "ForkContentStream" is executed with payload:
-      | Key                   | Value                |
-      | contentStreamId       | "user-cs-identifier" |
-      | sourceContentStreamId | "cs-identifier"      |
+    # Uses ForkContentStream implicitly
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | baseWorkspaceName  | "live"               |
+      | workspaceName      | "user-test"          |
+      | newContentStreamId | "user-cs-identifier" |
+
     And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
       | workspaceName                | "user"                                                  |
@@ -73,15 +78,15 @@ Feature: ForkContentStream Without Dimensions
       | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
       | propertiesToUnset            | {}                                                      |
 
-      # live
-    When I am in content stream "cs-identifier" and dimension space point {}
+    # live
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value            |
       | text | "original value" |
 
     # forked content stream
-    When I am in content stream "user-cs-identifier" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value            |
@@ -89,10 +94,12 @@ Feature: ForkContentStream Without Dimensions
 
   # this is a "reverse" scenario of the scenario above.
   Scenario: When a change is applied on the live content stream AFTER the fork, it is NOT visible in the forked content stream.
-    When the command "ForkContentStream" is executed with payload:
-      | Key                   | Value                |
-      | contentStreamId       | "user-cs-identifier" |
-      | sourceContentStreamId | "cs-identifier"      |
+    # Uses ForkContentStream implicitly
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | baseWorkspaceName  | "live"               |
+      | workspaceName      | "user-test"          |
+      | newContentStreamId | "user-cs-identifier" |
     And the event NodePropertiesWereSet was published with payload:
       | Key                          | Value                                                   |
       | workspaceName                | "live"                                                  |
@@ -104,14 +111,14 @@ Feature: ForkContentStream Without Dimensions
       | propertiesToUnset            | {}                                                      |
 
     # live
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value            |
       | text | "modified value" |
 
     # forked content stream
-    When I am in content stream "user-cs-identifier" and dimension space point {}
+    When I am in workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have the following properties:
       | Key  | Value            |

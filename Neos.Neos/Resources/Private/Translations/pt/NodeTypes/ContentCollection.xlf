@@ -3,8 +3,8 @@
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>Content Collection</source>
-        <target state="translated">Coleção de conteúdo</target>
+        <source>Content Collection</source>
+        <target state="translated">Coleção de Conteúdo</target>
       </trans-unit>
     </body>
   </file>

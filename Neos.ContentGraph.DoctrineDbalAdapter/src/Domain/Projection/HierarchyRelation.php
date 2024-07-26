@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
@@ -59,7 +59,7 @@ final readonly class HierarchyRelation
                 'position' => $this->position,
                 'subtreetags' => $subtreeTagsJson,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to add hierarchy relation to database: %s', $e->getMessage()), 1716484789, $e);
         }
     }
@@ -68,7 +68,7 @@ final readonly class HierarchyRelation
     {
         try {
             $databaseConnection->delete($tableNames->hierarchyRelation(), $this->getDatabaseId());
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to remove hierarchy relation from database: %s', $e->getMessage()), 1716484823, $e);
         }
     }
@@ -86,7 +86,7 @@ final readonly class HierarchyRelation
                 ],
                 $this->getDatabaseId()
             );
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716484843, $e);
         }
     }
@@ -109,7 +109,7 @@ final readonly class HierarchyRelation
                 $data,
                 $this->getDatabaseId()
             );
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716478609, $e);
         }
     }
@@ -124,7 +124,7 @@ final readonly class HierarchyRelation
                 ],
                 $this->getDatabaseId()
             );
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to update hierarchy relation: %s', $e->getMessage()), 1716485014, $e);
         }
     }

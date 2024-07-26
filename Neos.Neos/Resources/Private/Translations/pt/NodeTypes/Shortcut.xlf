@@ -3,35 +3,35 @@
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>Shortcut</source>
+        <source>Shortcut</source>
         <target state="translated">Atalho</target>
       </trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve">
-				<source>Shortcut options</source>
+        <source>Shortcut options</source>
         <target state="translated">Opções de atalho</target>
       </trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
-				<source>Shortcut options</source>
+        <source>Shortcut options</source>
         <target state="translated">Opções de atalho</target>
       </trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve">
-				<source>Target mode</source>
+        <source>Target mode</source>
         <target state="translated">Modo alvo</target>
       </trans-unit>
       <trans-unit id="properties.target" xml:space="preserve">
-				<source>Target</source>
+        <source>Target</source>
         <target state="translated">Alvo</target>
       </trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve">
-				<source>First child node</source>
-        <target state="translated">Primeiro nó filho</target>
+        <source>First child node</source>
+        <target state="translated">Primeiro nó sucessor</target>
       </trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve">
-				<source>Parent node</source>
-        <target state="translated">Nó pai</target>
+        <source>Parent node</source>
+        <target state="translated">Nó precedente</target>
       </trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
-				<source>Selected target</source>
+        <source>Selected target</source>
         <target state="translated">Alvo selecionado</target>
       </trans-unit>
     </body>
