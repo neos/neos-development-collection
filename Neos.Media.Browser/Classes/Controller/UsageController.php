@@ -21,7 +21,6 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Security\Context;
-use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Controller\CreateContentContextTrait;
@@ -87,12 +86,6 @@ class UsageController extends ActionController
      * @var Context
      */
     protected $securityContext;
-
-    /**
-     * @Flow\Inject
-     * @var PolicyService
-     */
-    protected $policyService;
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Media.Browser", path="features.showWorkspaceOwnerOrName")
@@ -202,13 +195,12 @@ class UsageController extends ActionController
      */
     private function getNodeFrom(AssetUsageInNodeProperties $assetUsage)
     {
-        $context = $this->_contextFactory->create(
-            [
-                'workspaceName' => $assetUsage->getWorkspaceName(),
-                'dimensions' => $assetUsage->getDimensionValues(),
-                'invisibleContentShown' => true,
-                'removedContentShown' => true]
-        );
+        $context = $this->_contextFactory->create([
+            'workspaceName' => $assetUsage->getWorkspaceName(),
+            'dimensions' => $assetUsage->getDimensionValues(),
+            'invisibleContentShown' => true,
+            'removedContentShown' => true
+        ]);
         return $context->getNodeByIdentifier($assetUsage->getNodeIdentifier());
     }
 }
