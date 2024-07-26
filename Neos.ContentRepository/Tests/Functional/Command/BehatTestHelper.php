@@ -113,4 +113,15 @@ class BehatTestHelper
     {
         return $this->objectManager;
     }
+
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    private function getObject(string $className): object
+    {
+        return $this->objectManager->get($className);
+    }
 }
