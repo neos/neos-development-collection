@@ -47,6 +47,7 @@ use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\LegacyNodeMigration\Exception\MigrationException;
+use Neos\ContentRepository\LegacyNodeMigration\Helpers\InMemoryContentGraphFactory;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\SerializedPropertyValuesAndReferences;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\VisitedNodeAggregate;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\VisitedNodeAggregates;
@@ -123,6 +124,10 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     public function run(): ProcessorResult
     {
         $this->resetRuntimeState();
+
+        $contentGraphFactory = new InMemoryContentGraphFactory(
+            $this->co
+        )
 
         foreach ($this->nodeDataRows as $nodeDataRow) {
             if ($nodeDataRow['path'] === '/sites') {

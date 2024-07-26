@@ -1,198 +1,360 @@
 <?php
 
-/*
- * This file is part of the Neos.ContentRepository package.
- *
- * (c) Contributors of the Neos Project - www.neos.io
- *
- * This package is Open Source Software. For the full copyright and license
- * information, please view the LICENSE file which was distributed with this
- * source code.
- */
-
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+/*
+ * This file is part of the Neos.ContentRepository.InMemoryGraph package.
+ */
+
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\DimensionSpace\VariantType;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\Events;
-use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSibling;
-use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\InMemoryGraph\ContentSubgraph\ContentSubgraph;
+use Neos\ContentRepository\InMemoryGraph\ContentSubgraph\ContentSubgraphIdentifier;
+use Neos\ContentRepository\InMemoryGraph\ContentSubgraph\HierarchyRelation;
+use Neos\ContentRepository\InMemoryGraph\ContentSubgraph\NodeAssignmentRegistry;
+use Neos\ContentRepository\InMemoryGraph\ContentSubgraph\ReferenceRelation;
+use Neos\ContentRepository\InMemoryGraph\NodeAggregate\Node;
+use Neos\ContentRepository\InMemoryGraph\NodeAggregate\NodeAggregate;
+use Neos\Flow\Cli\ConsoleOutput;
 
 /**
- * @api To be used by external services
+ * The in-memory content graph
  */
-final class InMemoryContentGraph
+final class InMemoryContentGraph implements ContentGraphInterface
 {
     /**
-     * @param array<string,array<string,Node>> $parentByDimensionSpacePointAndChild
-     * @param array<string,array<string,Nodes>> $childrenByDimensionSpacePointAndParent
+     * @var array|ContentSubgraph[]
      */
-    public function __construct(
-        private readonly WorkspaceName $workspaceName,
-        private readonly ContentStreamId $contentStreamId,
-        private NodeAggregates $rootNodeAggregates,
-        private array $parentByDimensionSpacePointAndChild,
-        private array $childrenByDimensionSpacePointAndParent,
+    protected $subgraphs;
+
+    /**
+     * @var array|Node[]
+     */
+    protected $nodeIndex;
+
+    /**
+     * @var array|NodeAggregate[]
+     */
+    protected $nodeAggregateIndex;
+
+    /**
+     * @param array|ContentSubgraph[] $subgraphs
+     * @param array|Node[] $nodes
+     * @param array|NodeAggregate[] $nodeAggregates
+     * @param NodeAssignmentRegistry $nodeAssignments
+     * @param ConsoleOutput|null $output
+     */
+    public function __construct(array $subgraphs, array $nodes, array $nodeAggregates, NodeAssignmentRegistry $nodeAssignments, ConsoleOutput $output = null)
+    {
+        $this->subgraphs = $subgraphs;
+        $this->nodeAggregateIndex = $nodeAggregates;
+        $numberOfNodes = 0;
+        $numberOfHierarchyRelations = 0;
+
+        if ($output) {
+            $output->outputLine('Assigning hierarchy relations to nodes...');
+            $output->progressStart(count($nodes));
+        }
+        foreach ($nodes as $node) {
+            if ($node->getPath() !== '/') {
+                foreach ($nodeAssignments->getSubgraphIdentifiersByPathAndNodeIdentifier($node->getPath(), $node->getCacheEntryIdentifier()) as $subgraphIdentifier) {
+                    $parentNode = $nodeAssignments->getNodeByPathAndSubgraphIdentifier($node->getParentPath(), $subgraphIdentifier);
+                    if ($parentNode) {
+                        $hierarchyRelation = new HierarchyRelation(
+                            $parentNode,
+                            $node,
+                            $subgraphs[(string)$subgraphIdentifier],
+                            (string)$subgraphIdentifier,
+                            $node->getIndex(),
+                            $node->getNodeName(),
+                            [
+                                'accessRoles' => $node->getAccessRoles(),
+                                'hidden' => $node->isHidden(),
+                                'hiddenBeforeDateTime' => $node->getHiddenBeforeDateTime(),
+                                'hiddenAfterDateTime' => $node->getHiddenAfterDateTime(),
+                                'hiddenInIndex' => $node->isHiddenInIndex(),
+                            ]
+                        );
+                        $numberOfHierarchyRelations++;
+                        $node->registerIncomingHierarchyRelation($hierarchyRelation);
+                        $parentNode->registerOutgoingHierarchyRelation($hierarchyRelation);
+                    }
+                }
+            }
+
+            $this->nodeIndex[$node->getCacheEntryIdentifier()] = $node;
+
+            if ($output) {
+                $output->progressAdvance();
+            }
+            $numberOfNodes++;
+        }
+
+        if ($output) {
+            $output->progressFinish();
+            $output->outputLine('Successfully initialized content graph containing ' . count($this->nodeIndex) . ' nodes and ' . $numberOfHierarchyRelations . ' hierarchy relations.');
+        }
+
+        if ($output) {
+            $output->outputLine('Assigning reference relations to nodes...');
+            $output->progressStart(count($nodes));
+        }
+
+        $numberOfReferenceRelations = 0;
+        foreach ($nodes as $node) {
+            if ($node->getPath() !== '/') {
+                $numberOfReferenceRelations += $this->createReferenceRelations($node);
+            }
+
+            if ($output) {
+                $output->progressAdvance();
+            }
+        }
+
+        if ($output) {
+            $output->progressFinish();
+            $output->outputLine('Successfully created ' . $numberOfReferenceRelations . ' reference relations.');
+        }
+    }
+
+    public function createReferenceRelations(Node $sourceNode)
+    {
+        $numberOfReferenceRelations = 0;
+        foreach ($sourceNode->getNodeType()->getProperties() as $referenceName => $propertyConfiguration) {
+            if (isset($propertyConfiguration['type'])) {
+                if (in_array($propertyConfiguration['type'], ['references', 'reference'])) {
+                    $propertyValue = $sourceNode->getNodeData()->getProperty($referenceName);
+
+                    if (!$propertyValue) {
+                        $propertyValue = [];
+                    } else {
+                        if (!is_array($propertyValue)) {
+                            $propertyValue = [$propertyValue];
+                        }
+                    }
+
+                    foreach ($propertyValue as $index => $targetNodeAggregateIdentifier) {
+                        $targetNodeAggregate = $this->getNodeAggregate($targetNodeAggregateIdentifier);
+
+                        if ($targetNodeAggregate) {
+                            $this->createSingleReferenceRelation($sourceNode, $referenceName, $index, $targetNodeAggregate);
+                            $numberOfReferenceRelations++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $numberOfReferenceRelations;
+    }
+
+    public function createSingleReferenceRelation(
+        Node $sourceNode,
+        string $referenceName,
+        int $index,
+        NodeAggregate $targetNodeAggregate
     ) {
-    }
+        $referenceRelation = new ReferenceRelation($sourceNode, $targetNodeAggregate, $index, $referenceName, []);
 
-    public function toMinimalConstitutingEvents(InterDimensionalVariationGraph $variationGraph): Events
-    {
-        $events = [];
-        foreach ($this->rootNodeAggregates as $rootNodeAggregate) {
-            $events[] = new RootNodeAggregateWithNodeWasCreated(
-                $this->workspaceName,
-                $this->contentStreamId,
-                $rootNodeAggregate->nodeAggregateId,
-                $rootNodeAggregate->nodeTypeName,
-                $rootNodeAggregate->coveredDimensionSpacePoints,
-                NodeAggregateClassification::CLASSIFICATION_ROOT
-            );
-        }
+        $sourceNode->registerOutgoingReferenceRelation($referenceRelation);
 
-        /** @var array<string,OriginDimensionSpacePointSet> $nodeOccupation occupied dimension space points by node aggregate id */
-        $nodeOccupation = [];
-        foreach ($this->rootNodeAggregates as $rootNodeAggregate) {
-            foreach ($variationGraph->getRootGeneralizations() as $rootGeneralization) {
-                foreach ($variationGraph->getSpecializationSet($rootGeneralization) as $specialization) {
-                    $events = $this->traverseDimensionSpacePoint(
-                        $rootNodeAggregate->nodeAggregateId,
-                        $specialization,
-                        $events,
-                        $variationGraph,
-                        $nodeOccupation,
-                    );
-                }
-            }
-        }
-
-        return Events::fromArray($events);
-    }
-
-    /**
-     * @param array<int,EventInterface> $events
-     * @param array<string,OriginDimensionSpacePointSet> $nodeOccupation,
-     * @return array<int,EventInterface>
-     */
-    private function traverseDimensionSpacePoint(
-        NodeAggregateId $nodeAggregateId,
-        DimensionSpacePoint $dimensionSpacePoint,
-        array $events,
-        InterDimensionalVariationGraph $variationGraph,
-        array &$nodeOccupation
-    ): array {
-        $childNodes = $this->childrenByDimensionSpacePointAndParent[$dimensionSpacePoint->hash][$nodeAggregateId->value];
-        foreach ($childNodes as $childNode) {
-            if ($childNode->originDimensionSpacePoint->equals($childNode->dimensionSpacePoint)) {
-                $childNodeOccupation = $nodeOccupation[$childNode->aggregateId->value] ?? OriginDimensionSpacePointSet::fromArray([]);
-                $interdimensionalSiblings = $this->resolveInterdimensionalSiblings($childNode, $variationGraph, $nodeOccupation);
-                if ($childNodeOccupation->count() === 0) {
-                    $events[] = new NodeAggregateWithNodeWasCreated(
-                        $this->workspaceName,
-                        $this->contentStreamId,
-                        $childNode->aggregateId,
-                        $childNode->nodeTypeName,
-                        $childNode->originDimensionSpacePoint,
-                        $interdimensionalSiblings,
-                        $nodeAggregateId,
-                        $childNode->name,
-                        $childNode->properties->serialized(),
-                        $childNode->classification
-                    );
-                } else {
-                    $referenceDimensionSpacePoints = $childNodeOccupation->getPoints();
-                    $referenceDimensionSpacePoint = reset($referenceDimensionSpacePoints);
-                    assert($referenceDimensionSpacePoint instanceof OriginDimensionSpacePoint);
-
-                    $variantType = $variationGraph->getVariantType(
-                        $childNode->dimensionSpacePoint,
-                        $referenceDimensionSpacePoint->toDimensionSpacePoint(),
-                    );
-                    $events[] = match ($variantType) {
-                        VariantType::TYPE_SPECIALIZATION => new NodeSpecializationVariantWasCreated(
-                            $this->workspaceName,
-                            $this->contentStreamId,
-                            $childNode->aggregateId,
-                            $referenceDimensionSpacePoint,
-                            $childNode->originDimensionSpacePoint,
-                            $interdimensionalSiblings,
-                        ),
-                        VariantType::TYPE_PEER => new NodePeerVariantWasCreated(
-                            $this->workspaceName,
-                            $this->contentStreamId,
-                            $childNode->aggregateId,
-                            $referenceDimensionSpacePoint,
-                            $childNode->originDimensionSpacePoint,
-                            $interdimensionalSiblings,
-                        ),
-                        default => throw new \Exception('Usupported variant type ' . $variantType->value),
-                    };
-                    $events[] = new NodePropertiesWereSet(
-                        $this->workspaceName,
-                        $this->contentStreamId,
-                        $childNode->aggregateId,
-                        $childNode->originDimensionSpacePoint,
-                        $interdimensionalSiblings->toDimensionSpacePointSet(),
-                        $childNode->properties->serialized(),
-                        PropertyNames::createEmpty(),
-                    );
-                }
-                $nodeOccupation[$childNode->aggregateId->value] = $childNodeOccupation->getUnion(new OriginDimensionSpacePointSet([$childNode->originDimensionSpacePoint]));
-
-                $events = $this->traverseDimensionSpacePoint(
-                    $childNode->aggregateId,
-                    $dimensionSpacePoint,
-                    $events,
-                    $variationGraph,
-                    $nodeOccupation
-                );
-            }
-        }
-
-        return $events;
-    }
-
-    /**
-     * @param array<string,OriginDimensionSpacePointSet> $nodeOccupation ,
-     */
-    private function resolveInterdimensionalSiblings(Node $node, InterDimensionalVariationGraph $variationGraph, array $nodeOccupation): InterdimensionalSiblings
-    {
-        $interdimensionalSiblings = [];
-        foreach ($variationGraph->getSpecializationSet($node->dimensionSpacePoint) as $specialization) {
-            $siblings = $this->childrenByDimensionSpacePointAndParent[$specialization->hash][$this->parentByDimensionSpacePointAndChild[$specialization->hash][$node->aggregateId->value]->aggregateId->value];
-            $succeedingSibling = null;
-            $nodeFound = false;
-            foreach ($siblings as $sibling) {
-                if ($nodeFound && ($nodeOccupation[$sibling->aggregateId->value] ?? null)?->contains($sibling->originDimensionSpacePoint)) {
-                    // we only assign succeeding siblings that have already been created
-                    $succeedingSibling = $sibling;
+        foreach ($targetNodeAggregate->getNodes() as $targetNodeCandidate) {
+            foreach ($targetNodeCandidate->getIncomingHierarchyRelations() as $hierarchyRelation) {
+                if ($sourceNode->getIncomingHierarchyRelationInSubgraph($hierarchyRelation->getSubgraph()->getIdentifier())) {
+                    $targetNodeCandidate->registerIncomingReferenceRelation($referenceRelation);
                     break;
                 }
-                if ($sibling->aggregateId->equals($node->aggregateId)) {
-                    $nodeFound = true;
-                }
             }
-            $interdimensionalSiblings[] = new InterdimensionalSibling(
-                $specialization,
-                $succeedingSibling?->aggregateId
-            );
         }
-        return new InterdimensionalSiblings(...$interdimensionalSiblings);
+    }
+
+    public function traverseNodeIndex(callable $callback, bool $includeShadowNodes = false): void
+    {
+        foreach ($this->nodeIndex as $node) {
+            if (!$includeShadowNodes && $node->getNodeData()->isInternal()) {
+                continue;
+            }
+            $continue = $callback($node);
+            if ($continue === false) {
+                break;
+            }
+        }
+    }
+
+    public function traverseSubgraphs(callable $callback): void
+    {
+        foreach ($this->subgraphs as $subgraph) {
+            $subgraph->traverse($callback);
+        }
+    }
+
+    /**
+     * @return array|Node[]
+     */
+    public function getNodes(): array
+    {
+        return $this->nodeIndex;
+    }
+
+    public function getNode(string $nodeIdentifier): ?Node
+    {
+        return $this->nodeIndex[$nodeIdentifier] ?? null;
+    }
+
+    public function registerNode(Node $node): void
+    {
+        $this->nodeIndex[$node->getCacheEntryIdentifier()] = $node;
+    }
+
+    public function unregisterNode(string $nodeIdentifier): void
+    {
+        if (isset($this->nodeIndex[$nodeIdentifier])) {
+            unset($this->nodeIndex[$nodeIdentifier]);
+        }
+    }
+    public function traverseNodeAggregateIndex(callable $callback): void
+    {
+        foreach ($this->nodeAggregateIndex as $nodeAggregate) {
+            $callback($nodeAggregate);
+        }
+    }
+
+    /**
+     * @return array|NodeAggregate[]
+     */
+    public function getNodeAggregates(): array
+    {
+        return $this->nodeAggregateIndex;
+    }
+
+    public function getNodeAggregate(string $nodeAggregateIdentifier): ?NodeAggregate
+    {
+        return $this->nodeAggregateIndex[$nodeAggregateIdentifier] ?? null;
+    }
+
+    public function registerNodeAggregate(NodeAggregate $nodeAggregate): void
+    {
+        $this->nodeAggregateIndex[(string)$nodeAggregate->getIdentifier()] = $nodeAggregate;
+    }
+
+    public function unregisterNodeAggregate(string $nodeAggregateIdentifier): void
+    {
+        if (isset($this->nodeAggregateIndex[$nodeAggregateIdentifier])) {
+            unset($this->nodeAggregateIndex[$nodeAggregateIdentifier]);
+        }
+    }
+
+    /**
+     * @return array|ContentSubgraph[]
+     */
+    public function getSubgraphs(): array
+    {
+        return $this->subgraphs;
+    }
+
+    public function getSubgraphByIdentifier(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?ContentSubgraph
+    {
+        $subgraphIdentifier = new ContentSubgraphIdentifier((string)$contentStreamIdentifier, $dimensionSpacePoint);
+
+        return $this->subgraphs[(string)$subgraphIdentifier] ?? null;
+    }
+
+    public function getContentRepositoryId(): ContentRepositoryId
+    {
+        // TODO: Implement getContentRepositoryId() method.
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        // TODO: Implement getWorkspaceName() method.
+    }
+
+    public function getSubgraph(
+        \Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint $dimensionSpacePoint,
+        VisibilityConstraints $visibilityConstraints
+    ): ContentSubgraphInterface {
+        // TODO: Implement getSubgraph() method.
+    }
+
+    public function findRootNodeAggregateByType(NodeTypeName $nodeTypeName): NodeAggregate
+    {
+        // TODO: Implement findRootNodeAggregateByType() method.
+    }
+
+    public function findRootNodeAggregates(Filter\FindRootNodeAggregatesFilter $filter,): NodeAggregates
+    {
+        // TODO: Implement findRootNodeAggregates() method.
+    }
+
+    public function findNodeAggregatesByType(NodeTypeName $nodeTypeName): NodeAggregates
+    {
+        // TODO: Implement findNodeAggregatesByType() method.
+    }
+
+    public function findNodeAggregateById(NodeAggregateId $nodeAggregateId): ?NodeAggregate
+    {
+        // TODO: Implement findNodeAggregateById() method.
+    }
+
+    public function findUsedNodeTypeNames(): NodeTypeNames
+    {
+        // TODO: Implement findUsedNodeTypeNames() method.
+    }
+
+    public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
+        NodeAggregateId $childNodeAggregateId,
+        OriginDimensionSpacePoint $childOriginDimensionSpacePoint
+    ): ?NodeAggregate {
+        // TODO: Implement findParentNodeAggregateByChildOriginDimensionSpacePoint() method.
+    }
+
+    public function findParentNodeAggregates(NodeAggregateId $childNodeAggregateId): NodeAggregates
+    {
+        // TODO: Implement findParentNodeAggregates() method.
+    }
+
+    public function findChildNodeAggregates(NodeAggregateId $parentNodeAggregateId): NodeAggregates
+    {
+        // TODO: Implement findChildNodeAggregates() method.
+    }
+
+    public function findChildNodeAggregateByName(NodeAggregateId $parentNodeAggregateId, NodeName $name): ?NodeAggregate
+    {
+        // TODO: Implement findChildNodeAggregateByName() method.
+    }
+
+    public function findTetheredChildNodeAggregates(NodeAggregateId $parentNodeAggregateId): NodeAggregates
+    {
+        // TODO: Implement findTetheredChildNodeAggregates() method.
+    }
+
+    public function getDimensionSpacePointsOccupiedByChildNodeName(
+        NodeName $nodeName,
+        NodeAggregateId $parentNodeAggregateId,
+        OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
+        DimensionSpacePointSet $dimensionSpacePointsToCheck
+    ): DimensionSpacePointSet {
+        // TODO: Implement getDimensionSpacePointsOccupiedByChildNodeName() method.
+    }
+
+    public function countNodes(): int
+    {
+        // TODO: Implement countNodes() method.
+    }
+
+    public function getContentStreamId(): ContentStreamId
+    {
+        // TODO: Implement getContentStreamId() method.
     }
 }
