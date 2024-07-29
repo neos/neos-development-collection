@@ -189,7 +189,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             throw new ResolvedSiteNotFoundException(sprintf('No site found for siteNodeName "%s"', $siteDetectionResult->siteNodeName->value));
         }
 
-        $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $resolvedSite->getConfiguration()->uriPathSuffix);
+        $uriPathSuffix = $this->options['uriPathSuffix'] ?? $resolvedSite->getConfiguration()->uriPathSuffix;
+        $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $uriPathSuffix);
 
         $dimensionResolvingResult = $this->delegatingResolver->fromRequestToDimensionSpacePoint(
             RequestToDimensionSpacePointContext::fromUriPathAndRouteParametersAndResolvedSite(
