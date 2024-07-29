@@ -90,10 +90,6 @@ final class ContentRepository
     /**
      * The only API to send commands (mutation intentions) to the system.
      *
-     * The system is ASYNCHRONOUS by default, so that means the projection is not directly up to date. If you
-     * need to be synchronous, call {@see CommandResult::block()} on the returned CommandResult - then the system
-     * waits until the projections are up to date.
-     *
      * @param CommandInterface $command
      * @return CommandResult
      */

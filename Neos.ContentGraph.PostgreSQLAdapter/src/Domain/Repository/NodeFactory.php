@@ -65,8 +65,7 @@ final class NodeFactory
     public function mapNodeRowToNode(
         array $nodeRow,
         VisibilityConstraints $visibilityConstraints,
-        ?DimensionSpacePoint $dimensionSpacePoint = null,
-        ?ContentStreamId $contentStreamId = null
+        ?DimensionSpacePoint $dimensionSpacePoint = null
     ): Node {
         return Node::create(
             $this->contentRepositoryId,
@@ -92,7 +91,6 @@ final class NodeFactory
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
             $visibilityConstraints,
-            $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
         );
     }
 
@@ -101,16 +99,14 @@ final class NodeFactory
      */
     public function mapNodeRowsToNodes(
         array $nodeRows,
-        VisibilityConstraints $visibilityConstraints,
-        ContentStreamId $contentStreamId = null
+        VisibilityConstraints $visibilityConstraints
     ): Nodes {
         $nodes = [];
         foreach ($nodeRows as $nodeRow) {
             $nodes[] = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints,
-                null,
-                $contentStreamId
+                null
             );
         }
 
@@ -122,8 +118,7 @@ final class NodeFactory
      */
     public function mapReferenceRowsToReferences(
         array $referenceRows,
-        VisibilityConstraints $visibilityConstraints,
-        ContentStreamId $contentStreamId = null
+        VisibilityConstraints $visibilityConstraints
     ): References {
         $references = [];
         foreach ($referenceRows as $referenceRow) {
@@ -131,8 +126,7 @@ final class NodeFactory
                 $this->mapNodeRowToNode(
                     $referenceRow,
                     $visibilityConstraints,
-                    null,
-                    $contentStreamId
+                    null
                 ),
                 ReferenceName::fromString($referenceRow['referencename']),
                 $referenceRow['referenceproperties']
@@ -205,8 +199,7 @@ final class NodeFactory
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints,
-                null,
-                $contentStreamId
+                null
             );
             $nodeAggregateId = $nodeAggregateId
                 ?: NodeAggregateId::fromString($nodeRow['nodeaggregateid']);
@@ -247,7 +240,6 @@ final class NodeFactory
             OriginByCoverage::fromArray($occupationByCovered),
             // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregate())
             DimensionSpacePointsBySubtreeTags::create(),
-            $contentStreamId,
         );
     }
 
@@ -292,8 +284,7 @@ final class NodeFactory
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints,
-                null,
-                $contentStreamId
+                null
             );
             $nodeAggregateIds[$key] = NodeAggregateId::fromString(
                 $nodeRow['nodeaggregateid']
@@ -346,7 +337,6 @@ final class NodeFactory
                 OriginByCoverage::fromArray($occupationByCovered[$key]),
                 // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregates())
                 DimensionSpacePointsBySubtreeTags::create(),
-                $contentStreamId,
             );
         }
 

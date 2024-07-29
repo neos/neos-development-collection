@@ -101,7 +101,7 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
       renderer = Neos.Fusion:Loop {
         items = ${props.items}
         itemRenderer = afx`
-          {item.node.nodeAggregateId.value}<Neos.Neos:Test.Menu.ItemStateIndicator state={item.state.value} /> ({item.menuLevel}){String.chr(10)}
+          {q(item.node).id()}<Neos.Neos:Test.Menu.ItemStateIndicator state={item.state.value} /> ({item.menuLevel}){String.chr(10)}
           <Neos.Neos:Test.Menu items={item.subItems} @if={item.subItems} />
         `
       }
