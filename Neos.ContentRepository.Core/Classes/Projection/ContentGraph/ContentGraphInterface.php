@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -59,14 +58,11 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): ContentSubgraphInterface;
 
     /**
-     * Throws exception if no root aggregate of the given type found.
-     *
-     * @throws RootNodeAggregateDoesNotExist
      * @api
      */
     public function findRootNodeAggregateByType(
         NodeTypeName $nodeTypeName
-    ): NodeAggregate;
+    ): ?NodeAggregate;
 
     /**
      * @api
