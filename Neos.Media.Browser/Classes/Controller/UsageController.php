@@ -103,12 +103,6 @@ class UsageController extends ActionController
     public function relatedNodesAction(AssetInterface $asset)
     {
         $userWorkspace = $this->userService->getPersonalWorkspace();
-        $currentAccount = $this->securityContext->getAccount();
-
-        $isPrivilegedRole = false;
-        if ($currentAccount != null) {
-            $isPrivilegedRole = $this->privilegeManager->isPrivilegeTargetGranted('Neos.Media.Browser:WorkspaceName');
-        }
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
         $relatedNodes = [];
@@ -136,6 +130,7 @@ class UsageController extends ActionController
             $workspace = $this->workspaceRepository->findByIdentifier($usage->getWorkspaceName());
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
+            $inaccessibleRelation['label'] = $this->getLabelForInaccessibleWorkspace($workspace);
             $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeIdentifier();
             $inaccessibleRelation['workspaceName'] = $usage->getWorkspaceName();
             $inaccessibleRelation['workspace'] = $workspace;
@@ -186,7 +181,6 @@ class UsageController extends ActionController
             'relatedNodes' => $relatedNodes,
             'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets(),
             'userWorkspace' => $userWorkspace,
-            'isPrivilegedRole' => $isPrivilegedRole,
         ]);
     }
 
@@ -203,5 +197,21 @@ class UsageController extends ActionController
             'removedContentShown' => true
         ]);
         return $context->getNodeByIdentifier($assetUsage->getNodeIdentifier());
+    }
+
+    private function getLabelForInaccessibleWorkspace(Workspace $workspace): string
+    {
+        $currentAccount = $this->securityContext->getAccount();
+
+        if ($currentAccount != null && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Media.Browser:WorkspaceName')) {
+            if ($workspace->isPrivateWorkspace()) {
+                $owner = $workspace->getOwner();
+                return '(' . $owner->getLabel() . ')';
+            } else {
+                return '(' . $workspace->getTitle() . ')';
+            }
+        }
+
+        return '';
     }
 }
