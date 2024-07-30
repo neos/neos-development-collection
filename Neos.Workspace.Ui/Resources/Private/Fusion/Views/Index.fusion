@@ -48,9 +48,7 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
           >
             {props.i18n.id('workspaces.createNewWorkspace')}
           </button>
-          <div class="workspace-count">
-            {props.i18n.id('workspaces.numberOfWorkspaces').arguments({ total: props.workspaceCount.total, internal: props.workspaceCount.internal, private: props.workspaceCount.private })}
-          </div>
+          <Neos.Workspace.Ui:Component.WorkspaceCount workspaceCount={props.workspaceCount} />
         </Neos.Workspace.Ui:Component.Footer>
       </section>
       <section id="popover-container"></section>

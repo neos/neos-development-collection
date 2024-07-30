@@ -1,0 +1,10 @@
+prototype(Neos.Workspace.Ui:Component.WorkspaceCount) < prototype(Neos.Fusion:Component) {
+  /// array{ total: int, privat: int, internal: int }
+  workspaceCount = ${workspaceCount}
+
+  renderer = afx`
+    <div class="workspace-count" hx-swap-oob="true">
+      {props.i18n.id('workspaces.numberOfWorkspaces').arguments({ total: props.workspaceCount.total, internal: props.workspaceCount.internal, private: props.workspaceCount.private })}
+    </div>
+  `
+}
