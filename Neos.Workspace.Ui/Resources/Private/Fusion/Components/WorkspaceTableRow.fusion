@@ -72,6 +72,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
       }
     }
     deleteWorkspacePopoverId = 'workspace-delete-modal'
+    editWorkspacePopoverId = 'workspace-edit-modal'
   }
 
   renderer = afx`
@@ -105,25 +106,25 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           <Neos.Workspace.Ui:Component.Icon icon="review"/>{' '}
           {private.i18n.id('workspaces.reviewWorkspace.label')}
         </a>
-        <a
-          class="neos-button"
+        <Neos.Workspace.Ui:Component.Button
           title={private.i18n.id('workspaces.editWorkspace').arguments([private.workspace.workspaceTitle.value])}
-          href={private.editWorkspaceUri}
+          icon="pencil-alt"
+          attributes.hx-get={private.editWorkspaceUri}
+          attributes.hx-target='#popover-container'
+          attributes.hx-swap='innerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.editWorkspacePopoverId + '").showPopover()'}
           @if={!props.canManage || props.workspaceData.changesCounts == null}
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="pencil-alt"/>
-        </a>
-        <button
-          class="neos-button neos-button-danger"
+        />
+        <Neos.Workspace.Ui:Component.Button
+          isDanger
           title={private.i18n.id('workspaces.deleteWorkspace').arguments([private.workspace.workspaceTitle.value])}
+          icon="trash-alt icon-white"
           disabled={props.workspaceData.changesCounts.total > 0}
-          hx-get={private.deleteWorkspaceUri}
-          hx-target='#popover-container'
-          hx-swap='innerHTML'
-          hx-on--after-request={'document.getElementById("' + private.deleteWorkspacePopoverId + '").showPopover()'}
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="trash-alt icon-white"/>
-        </button>
+          attributes.hx-get={private.deleteWorkspaceUri}
+          attributes.hx-target='#popover-container'
+          attributes.hx-swap='innerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.deleteWorkspacePopoverId + '").showPopover()'}
+        />
       </td>
     </tr>
   `

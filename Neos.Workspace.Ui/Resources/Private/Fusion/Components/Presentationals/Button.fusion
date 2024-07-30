@@ -13,12 +13,14 @@ prototype(Neos.Workspace.Ui:Component.Button) < prototype(Neos.Fusion:Component)
   disabled = false
   /// string
   icon = ''
+  /// array<string,mixed>
+  attributes = Neos.Fusion:DataStructure
 
   renderer = afx`
     <button
       type="button"
       class={['neos-button', props.isDanger && 'neos-button-danger', props.isWarning && 'neos-button-warning', props.isPrimary && 'neos-button-primary']}
-      @apply.props={props}
+      {...props.attributes}
     >
       <Neos.Workspace.Ui:Component.Icon icon={props.icon} @if={props.icon}/>
       {props.label}

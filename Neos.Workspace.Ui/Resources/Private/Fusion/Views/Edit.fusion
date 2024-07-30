@@ -1,147 +1,19 @@
 Neos.Workspace.Ui.WorkspaceController.edit = Neos.Fusion:Component {
-  flashMessages = ${flashMessages}
+  /// array<Neos\ContentRepository\Core\Projection\Workspace\Workspace>
   baseWorkspaceOptions = ${baseWorkspaceOptions}
+  /// boolean
   showOwnerSelector = ${showOwnerSelector}
+  /// array<int|string,string>
   ownerOptions = ${ownerOptions}
+  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
   workspace = ${workspace}
-  i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
-
-  prototype(Neos.Fusion.Form:LabelRenderer) {
-    translationPackage = 'Neos.Workspace.Ui'
-    translationSource = 'Main'
-  }
-
-  prototype(Neos.Fusion.Form:Neos.BackendModule.FieldContainer) {
-    translation.label {
-      package = 'Neos.Workspace.Ui'
-      source = 'Main'
-    }
-  }
 
   renderer = afx`
-    <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages}/>
-    <main>
-      <h2>{props.i18n.id('workspaces.editWorkspace').arguments([props.workspace.workspaceTitle.value])}</h2>
-      <Neos.Fusion.Form:Form form.target.action="update">
-        <Neos.Fusion.Form:Hidden
-          field.name="workspaceName"
-          field.value={props.workspace.workspaceName.value}
-        />
-        <fieldset>
-          <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
-            field.name="title"
-            field.value={props.workspace.workspaceTitle.value}
-            label="workspaces.workspace.title"
-            class="neos-control-group"
-          >
-            <Neos.Fusion.Form:Textfield
-              attributes.required
-              attributes.pattern="/^[\p{L}\p{P}\d \.]{1,200}$/u"
-              attributes.autofocus
-            />
-          </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
-
-          <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
-            field.name="description"
-            field.value={props.workspace.workspaceDescription.value}
-            label="workspaces.workspace.description"
-            class="neos-control-group"
-          >
-            <Neos.Fusion.Form:Textfield
-              attributes.pattern="/^[\p{L}\p{P}\d \.]{0,500}$/u"
-            />
-          </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
-
-          <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
-            field.name="baseWorkspace"
-            field.value={props.workspace.baseWorkspaceName.value}
-            label="workspaces.workspace.baseWorkspace"
-            class="neos-control-group"
-          >
-            <Neos.Fusion.Form:Select
-              attributes.disabled
-            >
-              <Neos.Fusion:Loop items={props.baseWorkspaceOptions} itemName="workspaceTitle" itemKey="workspaceName">
-                <Neos.Fusion.Form:Select.Option
-                  option.value={workspaceName}
-                  attributes.selected={workspaceName == props.workspace.baseWorkspaceName.value}
-                >
-                  {workspaceTitle}
-                </Neos.Fusion.Form:Select.Option>
-              </Neos.Fusion:Loop>
-            </Neos.Fusion.Form:Select>
-          </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
-
-          <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
-            field.name="workspaceOwner"
-            field.value={props.workspace.baseWorkspaceName.value}
-            label="workspaces.workspace.owner"
-            class="neos-control-group"
-            @if={props.showOwnerSelector}
-          >
-            <Neos.Fusion.Form:Select
-              field.value={props.workspace.baseWorkspaceName.value}
-            >
-              <Neos.Fusion:Loop items={props.ownerOptions} itemName="ownerTitle" itemKey="ownerName">
-                <Neos.Fusion.Form:Select.Option option.value={ownerName}>
-                  {ownerTitle}
-                </Neos.Fusion.Form:Select.Option>
-              </Neos.Fusion:Loop>
-            </Neos.Fusion.Form:Select>
-          </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
-        </fieldset>
-        <fieldset>
-          <Neos.Fusion:Fragment
-            @if={Security.hasAccess('Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces')}>
-            <h3 class="neos-control-label">
-              {props.i18n.id('workspaces.workspace.visibility')}
-            </h3>
-            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
-              class="neos-control-group"
-            >
-              <Neos.Fusion.Form:Radio
-                id="visibility.private"
-                field.value="private"
-                attributes.disabled
-                attributes.checked={props.workspace.privateWorkspace}
-              >
-                <span></span>
-                <span>
-                  {props.i18n.id('workspaces.workspace.visibility.private')}
-                  <span class="neos-help-inline">
-                    {props.i18n.id('workspaces.workspace.visibility.private.help')}
-                  </span>
-                </span>
-              </Neos.Fusion.Form:Radio>
-              <br/>
-              <Neos.Fusion.Form:Radio
-                id="visibility.internal"
-                field.value="internal"
-                attributes.disabled
-                attributes.checked={props.workspace.internalWorkspace}
-              >
-                <span></span>
-                <span>
-                  {props.i18n.id('workspaces.workspace.visibility.internal')}
-                  <span class="neos-help-inline">
-                    {props.i18n.id('workspaces.workspace.visibility.internal.help')}
-                  </span>
-                </span>
-              </Neos.Fusion.Form:Radio>
-            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
-          </Neos.Fusion:Fragment>
-
-          <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">
-            {props.i18n.id('applyChanges')}
-          </Neos.Fusion.Form:Button>
-        </fieldset>
-      </Neos.Fusion.Form:Form>
-
-      <Neos.Workspace.Ui:Component.Footer>
-        <Neos.Fusion:Link.Action href.action="index" class="neos-button">
-          {props.i18n.id('cancel')}
-        </Neos.Fusion:Link.Action>
-      </Neos.Workspace.Ui:Component.Footer>
-    </main>
+    <Neos.Workspace.Ui:Component.Modal.Edit
+      workspace={props.workspace}
+      baseWorkspaceOptions={props.baseWorkspaceOptions}
+      showOwnerSelector={props.showOwnerSelector}
+      ownerOptions={props.ownerOptions}
+    />
   `
 }

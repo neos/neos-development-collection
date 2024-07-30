@@ -44,6 +44,7 @@ use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
+use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package\PackageManager;
@@ -77,7 +78,6 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 #[Flow\Scope('singleton')]
 class WorkspaceController extends AbstractModuleController
 {
-    use ModuleTranslationTrait;
     use NodeTypeWithFallbackProvider;
 
     protected $defaultViewObjectName = FusionView::class;
@@ -105,6 +105,9 @@ class WorkspaceController extends AbstractModuleController
 
     #[Flow\Inject]
     protected WorkspaceProvider $workspaceProvider;
+
+    #[Flow\Inject]
+    protected Translator $translator;
 
     /**
      * Display a list of unpublished content
@@ -285,8 +288,17 @@ class WorkspaceController extends AbstractModuleController
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (is_null($workspace)) {
-            // @todo add flash message
-            $this->redirect('index');
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.workspaceDoesNotExist'),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(404, 'Workspace does not exist');
+        }
+
+        if ($this->request->getHttpRequest()->getMethod() === 'POST') {
+            $this->updateAction($workspaceName, WorkspaceTitle::fromString($workspaceName->value), WorkspaceDescription::fromString(''));
+            return;
         }
         $this->view->assign('workspace', $workspace);
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository, $workspace));
@@ -330,7 +342,7 @@ class WorkspaceController extends AbstractModuleController
                 '',
                 Message::SEVERITY_ERROR
             );
-            $this->redirect('index');
+            $this->throwStatus(404, 'Workspace does not exist');
         }
 
         if (!$workspace->workspaceTitle->equals($title) || !$workspace->workspaceDescription->equals($description)) {
@@ -352,15 +364,13 @@ class WorkspaceController extends AbstractModuleController
             );
         }
 
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.workspaceHasBeenUpdated',
-            [$title->value],
-            null,
-            null,
-            'Main',
-            'Neos.Workspace.Ui'
-        ) ?: 'workspaces.workspaceHasBeenUpdated');
-        $this->redirect('index');
+        $this->addFlashMessage(
+            $this->getModuleLabel(
+                'workspaces.workspaceHasBeenUpdated',
+                [$title->value],
+            )
+        );
+        $this->indexAction();
     }
 
     /**
@@ -403,14 +413,10 @@ class WorkspaceController extends AbstractModuleController
                 $dependentWorkspaceTitles[] = $dependentWorkspace->workspaceTitle->value;
             }
 
-            $message = $this->translator->translateById(
+            $message = $this->getModuleLabel(
                 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies',
                 [$workspace->workspaceTitle->value, implode(', ', $dependentWorkspaceTitles)],
-                null,
-                null,
-                'Main',
-                'Neos.Workspace.Ui'
-            ) ?: 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies';
+            );
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->throwStatus(403, 'Workspace has dependencies');
         }
@@ -423,26 +429,19 @@ class WorkspaceController extends AbstractModuleController
                     $workspace->currentContentStreamId
                 );
         } catch (\Exception $exception) {
-            $message = $this->translator->translateById(
+            $message = $this->getModuleLabel(
                 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes',
                 [$workspace->workspaceTitle->value],
-                null,
-                null,
-                'Main',
-                'Neos.Workspace.Ui'
-            ) ?: 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes';
+            );
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->throwStatus(500, 'Error while fetching unpublished nodes');
         }
         if ($nodesCount > 0) {
-            $message = $this->translator->translateById(
+            $message = $this->getModuleLabel(
                 'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes',
                 [$workspace->workspaceTitle->value, $nodesCount],
                 $nodesCount,
-                null,
-                'Main',
-                'Neos.Workspace.Ui'
-            ) ?: 'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes';
+            );
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->throwStatus(403, 'Workspace has unpublished nodes');
         }
@@ -456,14 +455,10 @@ class WorkspaceController extends AbstractModuleController
             );
 
             $this->addFlashMessage(
-                $this->translator->translateById(
+                $this->getModuleLabel(
                     'workspaces.workspaceHasBeenRemoved',
                     [$workspace->workspaceTitle->value],
-                    null,
-                    null,
-                    'Main',
-                    'Neos.Workspace.Ui'
-                ) ?: 'workspaces.workspaceHasBeenRemoved'
+                )
             );
         } else {
             $this->view->assign('workspace', $workspace);
@@ -480,7 +475,9 @@ class WorkspaceController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         // todo legacy uri node address notation used. Should be refactored to use json encoded NodeAddress
-        $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString($targetNode);
+        $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createCoreNodeAddressFromLegacyUriString(
+            $targetNode
+        );
 
         /** @var ?Account $currentAccount */
         $currentAccount = $this->securityContext->getAccount();
@@ -494,14 +491,9 @@ class WorkspaceController extends AbstractModuleController
         /** @todo do something else
          * if ($personalWorkspace !== $targetWorkspace) {
          * if ($this->publishingService->getUnpublishedNodesCount($personalWorkspace) > 0) {
-         * $message = $this->translator->translateById(
+         * $message = $this->getModuleLabel(
          * 'workspaces.cantEditBecauseWorkspaceContainsChanges',
-         * [],
-         * null,
-         * null,
-         * 'Main,
-         * 'Neos.Workspace.Ui
-         * ) ?: 'workspaces.cantEditBecauseWorkspaceContainsChanges';
+         * );
          * $this->addFlashMessage($message, '', Message::SEVERITY_WARNING, [], 1437833387);
          * $this->redirect('show', null, null, ['workspace' => $targetWorkspace]);
          * }
@@ -567,17 +559,9 @@ class WorkspaceController extends AbstractModuleController
                 )
             ),
         );
-        $contentRepository->handle($command)
-            ;
+        $contentRepository->handle($command);
 
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.selectedChangeHasBeenPublished',
-            [],
-            null,
-            null,
-            'Main',
-            'Neos.Workspace.Ui'
-        ) ?: 'workspaces.selectedChangeHasBeenPublished');
+        $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenPublished'));
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
     }
 
@@ -605,17 +589,9 @@ class WorkspaceController extends AbstractModuleController
                 )
             ),
         );
-        $contentRepository->handle($command)
-            ;
+        $contentRepository->handle($command);
 
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.selectedChangeHasBeenDiscarded',
-            [],
-            null,
-            null,
-            'Main',
-            'Neos.Workspace.Ui'
-        ) ?: 'workspaces.selectedChangeHasBeenDiscarded');
+        $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenDiscarded'));
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
     }
 
@@ -649,32 +625,17 @@ class WorkspaceController extends AbstractModuleController
                     $selectedWorkspaceName,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
-                $contentRepository->handle($command)
-                    ;
-                $this->addFlashMessage($this->translator->translateById(
-                    'workspaces.selectedChangesHaveBeenPublished',
-                    [],
-                    null,
-                    null,
-                    'Main',
-                    'Neos.Workspace.Ui'
-                ) ?: 'workspaces.selectedChangesHaveBeenPublished');
+                $contentRepository->handle($command);
+                $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangesHaveBeenPublished')
+                );
                 break;
             case 'discard':
                 $command = DiscardIndividualNodesFromWorkspace::create(
                     $selectedWorkspaceName,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
-                $contentRepository->handle($command)
-                    ;
-                $this->addFlashMessage($this->translator->translateById(
-                    'workspaces.selectedChangesHaveBeenDiscarded',
-                    [],
-                    null,
-                    null,
-                    'Main',
-                    'Neos.Workspace.Ui'
-                ) ?: 'workspaces.selectedChangesHaveBeenDiscarded');
+                $contentRepository->handle($command);
+                $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangesHaveBeenDiscarded'));
                 break;
             default:
                 throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
@@ -703,23 +664,22 @@ class WorkspaceController extends AbstractModuleController
         $workspace->publishAllChanges();
         /** @var WorkspaceName $baseWorkspaceName Otherwise the command handler would have thrown an exception */
         $baseWorkspaceName = $workspace->getCurrentBaseWorkspaceName();
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.allChangesInWorkspaceHaveBeenPublished',
-            [
-                htmlspecialchars($workspace->name->value),
-                htmlspecialchars($baseWorkspaceName->value)
-            ],
-            null,
-            null,
-            'Main',
-            'Neos.Workspace.Ui'
-        ) ?: 'workspaces.allChangesInWorkspaceHaveBeenPublished');
+        $this->addFlashMessage(
+            $this->getModuleLabel(
+                'workspaces.allChangesInWorkspaceHaveBeenPublished',
+                [
+                    htmlspecialchars($workspace->name->value),
+                    htmlspecialchars($baseWorkspaceName->value)
+                ],
+            )
+        );
         $this->redirect('index');
     }
 
     /**
      * Discards content of the whole workspace
      *
+     * TODO: Adjust param to workspaceName
      * @param WorkspaceName $workspace
      */
     public function discardWorkspaceAction(WorkspaceName $workspace): void
@@ -737,14 +697,12 @@ class WorkspaceController extends AbstractModuleController
         );
         $workspace->discardAllChanges();
 
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.allChangesInWorkspaceHaveBeenDiscarded',
-            [htmlspecialchars($workspace->name->value)],
-            null,
-            null,
-            'Main',
-            'Neos.Workspace.Ui'
-        ) ?: 'workspaces.allChangesInWorkspaceHaveBeenDiscarded');
+        $this->addFlashMessage(
+            $this->getModuleLabel(
+                'workspaces.allChangesInWorkspaceHaveBeenDiscarded',
+                [htmlspecialchars($workspace->name->value)],
+            )
+        );
         $this->redirect('index');
     }
 
@@ -840,16 +798,26 @@ class WorkspaceController extends AbstractModuleController
                     $siteNodeName = $siteNode->name->value;
                     // Reverse `$documentPathSegments` to start with the site node.
                     // The paths are used for grouping the nodes and for selecting a tree of nodes.
-                    $documentPath = implode('/', array_reverse(array_map(
-                        fn (NodeName $nodeName): string => $nodeName->value,
-                        $documentPathSegments
-                    )));
+                    $documentPath = implode(
+                        '/',
+                        array_reverse(
+                            array_map(
+                                fn(NodeName $nodeName): string => $nodeName->value,
+                                $documentPathSegments
+                            )
+                        )
+                    );
                     // Reverse `$nodePathSegments` to start with the site node.
                     // The paths are used for grouping the nodes and for selecting a tree of nodes.
-                    $relativePath = implode('/', array_reverse(array_map(
-                        fn (NodeName $nodeName): string => $nodeName->value,
-                        $nodePathSegments
-                    )));
+                    $relativePath = implode(
+                        '/',
+                        array_reverse(
+                            array_map(
+                                fn(NodeName $nodeName): string => $nodeName->value,
+                                $nodePathSegments
+                            )
+                        )
+                    );
                     if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                         $siteChanges[$siteNodeName]['siteNode']
                             = $this->siteRepository->findOneByNodeName(SiteNodeName::fromString($siteNodeName));
@@ -985,8 +953,8 @@ class WorkspaceController extends AbstractModuleController
                         'diff' => $diffArray
                     ];
                 }
-            // The && in belows condition is on purpose as creating a thumbnail for comparison only works
-            // if actually BOTH are ImageInterface (or NULL).
+                // The && in belows condition is on purpose as creating a thumbnail for comparison only works
+                // if actually BOTH are ImageInterface (or NULL).
             } elseif (
                 ($originalPropertyValue instanceof ImageInterface || $originalPropertyValue === null)
                 && ($changedPropertyValue instanceof ImageInterface || $changedPropertyValue === null)
@@ -1121,7 +1089,9 @@ class WorkspaceController extends AbstractModuleController
                 && ($workspace->isPublicWorkspace()
                     || $workspace->isInternalWorkspace()
                     || $this->domainUserService->currentUserCanManageWorkspace($workspace))
-                && (!$excludedWorkspace || $workspaces->getBaseWorkspaces($workspace->workspaceName)->get($excludedWorkspace->workspaceName) === null)
+                && (!$excludedWorkspace || $workspaces->getBaseWorkspaces($workspace->workspaceName)->get(
+                        $excludedWorkspace->workspaceName
+                    ) === null)
             ) {
                 $baseWorkspaceOptions[$workspace->workspaceName->value] = $workspace->workspaceTitle->value;
             }
@@ -1167,5 +1137,20 @@ class WorkspaceController extends AbstractModuleController
         $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($baseWorkspaceName);
 
         return $baseWorkspace;
+    }
+
+    /**
+     * @param array<int|string,mixed> $arguments
+     */
+    public function getModuleLabel(string $id, array $arguments = [], mixed $quantity = null): string
+    {
+        return $this->translator->translateById(
+            $id,
+            $arguments,
+            $quantity,
+            null,
+            'Main',
+            'Neos.Workspace.Ui'
+        ) ?: $id;
     }
 }

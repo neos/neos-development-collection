@@ -1,0 +1,176 @@
+prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Component) {
+  /// array<Neos\ContentRepository\Core\Projection\Workspace\Workspace>
+  baseWorkspaceOptions = ${[]}
+  /// boolean
+  showOwnerSelector = true
+  /// array<int|string,string>
+  ownerOptions = ${[]}
+  /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
+  workspace = null
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'workspace-edit-modal'
+    workspaceTableRowId = ${'workspace-row-' + props.workspace.workspaceName.value}
+  }
+
+  prototype(Neos.Fusion.Form:LabelRenderer) {
+    translationPackage = 'Neos.Workspace.Ui'
+    translationSource = 'Main'
+  }
+
+  prototype(Neos.Fusion.Form:Neos.BackendModule.FieldContainer) {
+    translation.label {
+      package = 'Neos.Workspace.Ui'
+      source = 'Main'
+    }
+  }
+
+  renderer = afx`
+    <div popover id={private.popoverId}>
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          {private.i18n.id('workspaces.editWorkspace').arguments([props.workspace.workspaceTitle.value])}
+        </div>
+      </header>
+      <section>
+        <Neos.Fusion.Form:Form
+          form.target.action="update"
+          form.target.format="htmx"
+          form.target.arguments.workspaceName={props.workspace.workspaceName.value}
+          attributes.class="neos-inline"
+          attributes.hx-post={form.getTarget()}
+          attributes.hx-disabled-elt="find button"
+          attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}
+        >
+          <fieldset>
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="title"
+              field.value={props.workspace.workspaceTitle.value}
+              label="workspaces.workspace.title"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Textfield
+                attributes.required
+                attributes.pattern="/^[\p{L}\p{P}\d \.]{1,200}$/u"
+                attributes.autofocus
+              />
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="description"
+              field.value={props.workspace.workspaceDescription.value}
+              label="workspaces.workspace.description"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Textfield
+                attributes.pattern="/^[\p{L}\p{P}\d \.]{0,500}$/u"
+              />
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="baseWorkspace"
+              field.value={props.workspace.baseWorkspaceName.value}
+              label="workspaces.workspace.baseWorkspace"
+              class="neos-control-group"
+            >
+              <Neos.Fusion.Form:Select
+                attributes.disabled
+              >
+                <Neos.Fusion:Loop items={props.baseWorkspaceOptions} itemName="workspaceTitle" itemKey="workspaceName">
+                  <Neos.Fusion.Form:Select.Option
+                    option.value={workspaceName}
+                    attributes.selected={workspaceName == props.workspace.baseWorkspaceName.value}
+                  >
+                    {workspaceTitle}
+                  </Neos.Fusion.Form:Select.Option>
+                </Neos.Fusion:Loop>
+              </Neos.Fusion.Form:Select>
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+
+            <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+              field.name="workspaceOwner"
+              field.value={props.workspace.baseWorkspaceName.value}
+              label="workspaces.workspace.owner"
+              class="neos-control-group"
+              @if={props.showOwnerSelector}
+            >
+              <Neos.Fusion.Form:Select
+                field.value={props.workspace.baseWorkspaceName.value}
+              >
+                <Neos.Fusion:Loop items={props.ownerOptions} itemName="ownerTitle" itemKey="ownerName">
+                  <Neos.Fusion.Form:Select.Option option.value={ownerName}>
+                    {ownerTitle}
+                  </Neos.Fusion.Form:Select.Option>
+                </Neos.Fusion:Loop>
+              </Neos.Fusion.Form:Select>
+            </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+          </fieldset>
+          <fieldset>
+            <Neos.Fusion:Fragment
+              @if={Security.hasAccess('Neos.Workspace.Ui:Backend.Module.Management.Workspace.ManageInternalWorkspaces')}>
+              <h3 class="neos-control-label">
+                {private.i18n.id('workspaces.workspace.visibility')}
+              </h3>
+              <Neos.Fusion.Form:Neos.BackendModule.FieldContainer
+                class="neos-control-group"
+              >
+                <Neos.Fusion.Form:Radio
+                  id="visibility.private"
+                  field.value="private"
+                  attributes.disabled
+                  attributes.checked={props.workspace.privateWorkspace}
+                >
+                  <span></span>
+                  <span>
+                  {private.i18n.id('workspaces.workspace.visibility.private')}
+                    <span class="neos-help-inline">
+                    {private.i18n.id('workspaces.workspace.visibility.private.help')}
+                  </span>
+                </span>
+                </Neos.Fusion.Form:Radio>
+                <br/>
+                <Neos.Fusion.Form:Radio
+                  id="visibility.internal"
+                  field.value="internal"
+                  attributes.disabled
+                  attributes.checked={props.workspace.internalWorkspace}
+                >
+                  <span></span>
+                  <span>
+                  {private.i18n.id('workspaces.workspace.visibility.internal')}
+                    <span class="neos-help-inline">
+                    {private.i18n.id('workspaces.workspace.visibility.internal.help')}
+                  </span>
+                </span>
+                </Neos.Fusion.Form:Radio>
+              </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>
+            </Neos.Fusion:Fragment>
+
+            <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">
+              {private.i18n.id('applyChanges')}
+            </Neos.Fusion.Form:Button>
+          </fieldset>
+        </Neos.Fusion.Form:Form>
+      </section>
+      <footer>
+        <button
+          type="button"
+          class="neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          {private.i18n.id('cancel', 'Cancel', [])}
+        </button>
+      </footer>
+    </div>
+  `
+}
