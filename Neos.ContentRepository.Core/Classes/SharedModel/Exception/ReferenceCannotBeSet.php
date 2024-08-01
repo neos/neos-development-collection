@@ -26,11 +26,11 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 final class ReferenceCannotBeSet extends \DomainException
 {
     public static function becauseTheNodeTypeDoesNotDeclareIt(
-        ReferenceName $propertyName,
+        ReferenceName $referenceName,
         NodeTypeName $nodeTypeName
     ): self {
         return new self(
-            'Reference "' . $propertyName->value . '" cannot be set because node type "'
+            'Reference "' . $referenceName->value . '" cannot be set because node type "'
                 . $nodeTypeName->value . '" does not declare it.',
             1618670106
         );

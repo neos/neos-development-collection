@@ -14,18 +14,21 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\NodeType;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
  * @api
  */
-final readonly class TetheredNodeTypeDefinition
+final readonly class ReferenceDefinition
 {
-    // todo add static factory
+    /**
+     * @param array<string,mixed> $metadata
+     */
     public function __construct(
-        public NodeName $name,
-        public NodeTypeName $nodeTypeName,
+        public ReferenceName $name,
         public NodeTypeConstraints $nodeTypeConstraints,
+        public int|null $maxItems,
+        public array $metadata,
     ) {
     }
 }

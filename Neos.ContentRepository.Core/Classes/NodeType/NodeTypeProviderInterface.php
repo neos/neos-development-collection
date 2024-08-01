@@ -14,18 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\NodeType;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-
 /**
  * @api
  */
-final readonly class TetheredNodeTypeDefinition
+interface NodeTypeProviderInterface
 {
-    // todo add static factory
-    public function __construct(
-        public NodeName $name,
-        public NodeTypeName $nodeTypeName,
-        public NodeTypeConstraints $nodeTypeConstraints,
-    ) {
-    }
+    public function getNodeTypes(): NodeTypes;
+    public function getNodeType(NodeTypeName $nodeTypeName): ?NodeType;
+
+    public function getSubNodeTypeNames(NodeTypeName $nodeTypeName): NodeTypeNames;
 }

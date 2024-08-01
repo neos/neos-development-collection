@@ -59,8 +59,6 @@ trait NodeCreation
 
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
-    abstract protected function requireNodeTypeToNotBeAbstract(NodeType $nodeType): void;
-
     abstract protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void;
 
     abstract protected function requireNodeTypeNotToDeclareTetheredChildNodeName(NodeTypeName $nodeTypeName, NodeName $nodeName): void;
@@ -135,7 +133,6 @@ trait NodeCreation
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeType = $this->requireNodeType($command->nodeTypeName);
-        $this->requireNodeTypeToNotBeAbstract($nodeType);
         $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
         $this->requireTetheredDescendantNodeTypesToExist($nodeType);
         $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($nodeType);

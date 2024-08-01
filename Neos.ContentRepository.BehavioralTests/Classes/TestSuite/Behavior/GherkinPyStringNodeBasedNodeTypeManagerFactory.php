@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\TestSuite\Behavior;
 
 use Behat\Gherkin\Node\PyStringNode;
+use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
@@ -41,7 +42,9 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
     public static function initializeWithPyStringNode(PyStringNode $nodeTypesToUse): void
     {
         self::$nodeTypesToUse = new NodeTypeManager(
-            fn (): array => Yaml::parse($nodeTypesToUse->getRaw()) ?? []
+            new ClosureNodeTypeProvider(
+                fn (): array => Yaml::parse($nodeTypesToUse->getRaw()) ?? [],
+            )
         );
     }
 

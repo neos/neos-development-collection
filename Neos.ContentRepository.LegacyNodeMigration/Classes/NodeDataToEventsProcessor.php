@@ -347,7 +347,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
 
         foreach ($decodedProperties as $propertyName => $propertyValue) {
-            if ($nodeType->hasReference($propertyName)) {
+            if ($nodeType->referenceDefinitions->contain($propertyName)) {
                 if (!empty($propertyValue)) {
                     if (!is_array($propertyValue)) {
                         $propertyValue = [$propertyValue];

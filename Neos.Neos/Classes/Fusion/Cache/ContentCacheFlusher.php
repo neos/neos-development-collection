@@ -203,6 +203,7 @@ class ContentCacheFlusher
     ): array {
         $tagsToFlush = [];
 
+        /* @todo ask denny if the below is equivalent to his:
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName);
         if ($nodeType) {
             $nodeTypesNamesToFlush = $this->getAllImplementedNodeTypeNames($nodeType);
@@ -210,9 +211,12 @@ class ContentCacheFlusher
             // as a fallback, we flush the single NodeType
             $nodeTypesNamesToFlush = [$nodeTypeName->value];
         }
+        */
 
-        foreach ($nodeTypesNamesToFlush as $nodeTypeNameToFlush) {
-            $nodeTypeNameCacheIdentifier = CacheTag::forNodeTypeName($contentRepositoryId, $workspaceName, NodeTypeName::fromString($nodeTypeNameToFlush));
+        $nodeTypeNamesToFlush = $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName)?->superTypeNames->toArray() ?? [];
+        $nodeTypeNamesToFlush[] = $nodeTypeName;
+        foreach ($nodeTypeNamesToFlush as $nodeTypeNameToFlush) {
+            $nodeTypeNameCacheIdentifier = CacheTag::forNodeTypeName($contentRepositoryId, $workspaceName, $nodeTypeNameToFlush);
             $tagsToFlush[$nodeTypeNameCacheIdentifier->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed and was of type "%s".',
                 $nodeTypeNameCacheIdentifier->value,
@@ -248,25 +252,6 @@ class ContentCacheFlusher
             $this->systemLogger->debug(sprintf('Content cache: Removed %s entries', $affectedEntries));
         }
     }
-
-    /**
-     * @param NodeType $nodeType
-     * @return array<string>
-     */
-    protected function getAllImplementedNodeTypeNames(NodeType $nodeType): array
-    {
-        $self = $this;
-        $types = array_reduce(
-            $nodeType->getDeclaredSuperTypes(),
-            function (array $types, NodeType $superType) use ($self) {
-                return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
-            },
-            [$nodeType->name->value]
-        );
-
-        return array_unique($types);
-    }
-
 
     /**
      * Fetches possible usages of the asset and registers nodes that use the asset as changed.

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Tests\Unit\Feature\NodeCreation\Dto;
 
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
+use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -33,29 +34,31 @@ class NodeAggregateIdsByNodePathsTest extends TestCase
     public function testCompleteForNodeOfType(NodeAggregateIdsByNodePaths $subject, array $expectedNodeAggregateIdsByPath): void
     {
         $nodeTypeManager = new NodeTypeManager(
-            fn (): array => [
-                'Neos.ContentRepository.Testing:Content' => [],
-                'Neos.ContentRepository.Testing:LeafDocument' => [
-                    'childNodes' => [
-                        'grandchild1' => [
-                            'type' => 'Neos.ContentRepository.Testing:Content'
-                        ],
-                        'grandchild2' => [
-                            'type' => 'Neos.ContentRepository.Testing:Content'
+            new ClosureNodeTypeProvider(
+                fn (): array => [
+                    'Neos.ContentRepository.Testing:Content' => [],
+                    'Neos.ContentRepository.Testing:LeafDocument' => [
+                        'childNodes' => [
+                            'grandchild1' => [
+                                'type' => 'Neos.ContentRepository.Testing:Content'
+                            ],
+                            'grandchild2' => [
+                                'type' => 'Neos.ContentRepository.Testing:Content'
+                            ]
+                        ]
+                    ],
+                    'Neos.ContentRepository.Testing:Document' => [
+                        'childNodes' => [
+                            'child1' => [
+                                'type' => 'Neos.ContentRepository.Testing:LeafDocument'
+                            ],
+                            'child2' => [
+                                'type' => 'Neos.ContentRepository.Testing:LeafDocument'
+                            ]
                         ]
                     ]
                 ],
-                'Neos.ContentRepository.Testing:Document' => [
-                    'childNodes' => [
-                        'child1' => [
-                            'type' => 'Neos.ContentRepository.Testing:LeafDocument'
-                        ],
-                        'child2' => [
-                            'type' => 'Neos.ContentRepository.Testing:LeafDocument'
-                        ]
-                    ]
-                ]
-            ]
+            )
         );
 
         $completeSubject = $subject->completeForNodeOfType(

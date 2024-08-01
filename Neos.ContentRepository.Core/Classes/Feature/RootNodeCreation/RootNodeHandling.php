@@ -53,8 +53,6 @@ trait RootNodeHandling
 
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
-    abstract protected function requireNodeTypeToNotBeAbstract(NodeType $nodeType): void;
-
     abstract protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void;
 
     /**
@@ -79,7 +77,6 @@ trait RootNodeHandling
             $command->nodeAggregateId
         );
         $nodeType = $this->requireNodeType($command->nodeTypeName);
-        $this->requireNodeTypeToNotBeAbstract($nodeType);
         $this->requireNodeTypeToBeOfTypeRoot($nodeType);
         $this->requireRootNodeTypeToBeUnoccupied(
             $contentGraph,

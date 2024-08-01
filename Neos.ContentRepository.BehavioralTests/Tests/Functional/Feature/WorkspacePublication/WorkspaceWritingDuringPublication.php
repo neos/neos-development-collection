@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeA
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\NodeType\ClosureNodeTypeProvider;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -78,16 +79,18 @@ class WorkspaceWritingDuringPublication extends FunctionalTestCase
         };
 
         GherkinPyStringNodeBasedNodeTypeManagerFactory::$nodeTypesToUse = new NodeTypeManager(
-            fn (): array => [
-                'Neos.ContentRepository:Root' => [],
-                'Neos.ContentRepository.Testing:Document' => [
-                    'properties' => [
-                        'title' => [
-                            'type' => 'string'
+            new ClosureNodeTypeProvider(
+                fn (): array => [
+                    'Neos.ContentRepository:Root' => [],
+                    'Neos.ContentRepository.Testing:Document' => [
+                        'properties' => [
+                            'title' => [
+                                'type' => 'string'
+                            ]
                         ]
                     ]
-                ]
-            ]
+                ],
+            )
         );
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
 

@@ -60,6 +60,7 @@ enum PropertyScope: string implements \JsonSerializable
         };
     }
 
+    // TODO remove
     public static function tryFromDeclaration(NodeType $nodeType, PropertyName $propertyName): self
     {
         $declaration = $nodeType->getProperties()[$propertyName->value]['scope'] ?? null;

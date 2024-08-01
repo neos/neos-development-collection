@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
+namespace Neos\ContentRepositoryRegistry\Tests\Unit\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
