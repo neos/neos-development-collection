@@ -1,12 +1,10 @@
 Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
   /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
   userWorkspace = ${userWorkspace}
-  /// array
+  /// Neos\Workspace\Ui\Model\WorkspaceDetailsCollection
   workspacesAndChangeCounts = ${workspacesAndChangeCounts}
   /// array
   flashMessages = ${flashMessages}
-  /// array{ total: int, privat: int, internal: int }
-  workspaceCount = ${workspaceCount}
 
   newAction = Neos.Fusion:UriBuilder {
     action = 'new'
@@ -48,7 +46,9 @@ Neos.Workspace.Ui.WorkspaceController.index = Neos.Fusion:Component {
           >
             {props.i18n.id('workspaces.createNewWorkspace')}
           </button>
-          <Neos.Workspace.Ui:Component.WorkspaceCount workspaceCount={props.workspaceCount} />
+          <Neos.Workspace.Ui:Component.WorkspaceCount
+            workspaceCount={props.workspacesAndChangeCounts.counts}
+          />
         </Neos.Workspace.Ui:Component.Footer>
       </section>
       <section id="popover-container"></section>

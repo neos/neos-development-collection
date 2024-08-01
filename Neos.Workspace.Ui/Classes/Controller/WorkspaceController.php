@@ -55,7 +55,6 @@ use Neos\Fusion\View\FusionView;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
-use Neos\Neos\Controller\Module\ModuleTranslationTrait;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -71,6 +70,8 @@ use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
+use Neos\Workspace\Ui\Model\WorkspaceDetails;
+use Neos\Workspace\Ui\Model\WorkspaceDetailsCollection;
 
 /**
  * The Neos Workspace module controller
@@ -117,58 +118,12 @@ class WorkspaceController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-
-        /** @var ?Account $currentAccount */
-        $currentAccount = $this->securityContext->getAccount();
-        if ($currentAccount === null) {
-            throw new \RuntimeException('No account is authenticated', 1710068839);
-        }
-        $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-            WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
-        );
-        if (is_null($userWorkspace)) {
-            throw new \RuntimeException('Current user has no workspace', 1645485990);
-        }
-
-        /** @var array<string, array{workspace: string, changesCounts: array, canPublish: bool, canManage: bool, canDelete: bool, workspaceOwnerHumanReadable: string}> $workspacesAndCounts */
-        $workspacesAndCounts = [
-            $userWorkspace->workspaceName->value => [
-                'workspace' => $userWorkspace,
-                'changesCounts' => $this->computeChangesCount($userWorkspace, $contentRepository),
-                'canPublish' => false,
-                'canManage' => false,
-                'canDelete' => false,
-                'workspaceOwnerHumanReadable' => $userWorkspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(UserId::fromString($userWorkspace->workspaceOwner))?->getLabel() : null
-            ]
-        ];
-
-        foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
-            /** @var \Neos\ContentRepository\Core\Projection\Workspace\Workspace $workspace */
-            // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
-            if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace() || $this->domainUserService->currentUserCanManageWorkspace($workspace))) {
-                $workspaceName = $workspace->workspaceName->value;
-                $workspacesAndCounts[$workspaceName]['workspace'] = $workspace;
-                $workspacesAndCounts[$workspaceName]['changesCounts'] =
-                    $this->computeChangesCount($workspace, $contentRepository);
-                $workspacesAndCounts[$workspaceName]['canPublish']
-                    = $this->domainUserService->currentUserCanPublishToWorkspace($workspace);
-                $workspacesAndCounts[$workspaceName]['canManage']
-                    = $this->domainUserService->currentUserCanManageWorkspace($workspace);
-                $workspacesAndCounts[$workspaceName]['dependentWorkspacesCount'] = count(
-                    $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->workspaceName)
-                );
-                $workspacesAndCounts[$workspaceName]['workspaceOwnerHumanReadable'] = $workspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(UserId::fromString($workspace->workspaceOwner))?->getLabel() : null;
-            }
-        }
+        $userWorkspace = $this->getUserWorkspace($contentRepository);
+        $workspacesAndCounts = $this->getWorkspacesAndChangeCounts($userWorkspace, $contentRepository);
 
         $this->view->assignMultiple([
             'userWorkspace' => $userWorkspace,
             'workspacesAndChangeCounts' => $workspacesAndCounts,
-            'workspaceCount' => [
-                'total' => count($workspacesAndCounts),
-                'internal' => count(array_filter($workspacesAndCounts, static fn($data) => $data['workspace']->isInternalWorkspace())),
-                'private' => count(array_filter($workspacesAndCounts, static fn($data) => $data['workspace']->isPrivateWorkspace())),
-            ],
             'flashMessages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
         ]);
     }
@@ -296,10 +251,6 @@ class WorkspaceController extends AbstractModuleController
             $this->throwStatus(404, 'Workspace does not exist');
         }
 
-        if ($this->request->getHttpRequest()->getMethod() === 'POST') {
-            $this->updateAction($workspaceName, WorkspaceTitle::fromString($workspaceName->value), WorkspaceDescription::fromString(''));
-            return;
-        }
         $this->view->assign('workspace', $workspace);
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository, $workspace));
         // TODO: $this->view->assign('disableBaseWorkspaceSelector',
@@ -315,11 +266,9 @@ class WorkspaceController extends AbstractModuleController
      * Update a workspace
      *
      * @Flow\Validate(argumentName="title", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
-     * @param WorkspaceName $workspaceName
      * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
      * @param string|null $workspaceOwner Id of the owner of the workspace
-     * @return void
      */
     public function updateAction(
         WorkspaceName $workspaceName,
@@ -370,7 +319,17 @@ class WorkspaceController extends AbstractModuleController
                 [$title->value],
             )
         );
-        $this->indexAction();
+
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $userWorkspace = $this->getUserWorkspace($contentRepository);
+        $workspacesAndCounts = $this->getWorkspacesAndChangeCounts($userWorkspace, $contentRepository);
+
+        $this->view->assignMultiple([
+            'userWorkspace' => $userWorkspace,
+            'workspacesAndChangeCounts' => $workspacesAndCounts,
+        ]);
     }
 
     /**
@@ -626,7 +585,8 @@ class WorkspaceController extends AbstractModuleController
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
                 $contentRepository->handle($command);
-                $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangesHaveBeenPublished')
+                $this->addFlashMessage(
+                    $this->getModuleLabel('workspaces.selectedChangesHaveBeenPublished')
                 );
                 break;
             case 'discard':
@@ -1152,5 +1112,55 @@ class WorkspaceController extends AbstractModuleController
             'Main',
             'Neos.Workspace.Ui'
         ) ?: $id;
+    }
+
+    protected function getUserWorkspace(ContentRepository $contentRepository): Workspace
+    {
+        /** @var ?Account $currentAccount */
+        $currentAccount = $this->securityContext->getAccount();
+        if ($currentAccount === null) {
+            throw new \RuntimeException('No account is authenticated', 1710068839);
+        }
+        $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
+            WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
+        );
+        if (is_null($userWorkspace)) {
+            throw new \RuntimeException('Current user has no workspace', 1645485990);
+        }
+        return $userWorkspace;
+    }
+
+    protected function getWorkspacesAndChangeCounts(
+        Workspace $userWorkspace,
+        ContentRepository $contentRepository
+    ): WorkspaceDetailsCollection {
+        $workspacesAndCounts = [];
+        $workspacesAndCounts[$userWorkspace->workspaceName->value] = new WorkspaceDetails(
+            $userWorkspace,
+            $userWorkspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(
+                UserId::fromString($userWorkspace->workspaceOwner)
+            )?->getLabel() : null,
+            $this->computeChangesCount($userWorkspace, $contentRepository),
+        );
+
+        foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+            // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
+            if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace(
+                    ) || $this->domainUserService->currentUserCanManageWorkspace($workspace))) {
+                $workspacesAndCounts[$workspace->workspaceName->value] = new WorkspaceDetails(
+                    $workspace,
+                    $workspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(
+                        UserId::fromString($workspace->workspaceOwner)
+                    )?->getLabel() : null,
+                    $this->computeChangesCount($workspace, $contentRepository),
+                    count(
+                        $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->workspaceName)
+                    ),
+                    $this->domainUserService->currentUserCanPublishToWorkspace($workspace),
+                    $this->domainUserService->currentUserCanManageWorkspace($workspace)
+                );
+            }
+        }
+        return new WorkspaceDetailsCollection($workspacesAndCounts);
     }
 }
