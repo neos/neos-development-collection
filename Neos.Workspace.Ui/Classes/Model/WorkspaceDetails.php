@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.Workspace.Ui package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -24,7 +24,7 @@ final readonly class WorkspaceDetails
     public function __construct(
         public Workspace $workspace,
         public ?string $workspaceOwnerHumanReadable = null,
-        public array $changesCounts = [],
+        public ?ChangesCounts $changesCounts = null,
         public int $dependentWorkspacesCount = 0,
         public bool $canPublish = false,
         public bool $canManage = false,

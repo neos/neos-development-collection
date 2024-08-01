@@ -70,6 +70,7 @@ use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
+use Neos\Workspace\Ui\Model\ChangesCounts;
 use Neos\Workspace\Ui\Model\WorkspaceDetails;
 use Neos\Workspace\Ui\Model\WorkspaceDetailsCollection;
 
@@ -668,11 +669,9 @@ class WorkspaceController extends AbstractModuleController
 
     /**
      * Computes the number of added, changed and removed nodes for the given workspace
-     *
-     * @return array<string,int>
      * @throws \JsonException
      */
-    protected function computeChangesCount(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
+    protected function computeChangesCount(Workspace $selectedWorkspace, ContentRepository $contentRepository): ChangesCounts
     {
         $changesCount = ['new' => 0, 'changed' => 0, 'removed' => 0, 'total' => 0];
         foreach ($this->computeSiteChanges($selectedWorkspace, $contentRepository) as $siteChanges) {
@@ -690,7 +689,7 @@ class WorkspaceController extends AbstractModuleController
             }
         }
 
-        return $changesCount;
+        return new ChangesCounts(...$changesCount);
     }
 
     /**

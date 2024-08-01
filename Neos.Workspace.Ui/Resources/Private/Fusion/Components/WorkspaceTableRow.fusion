@@ -1,10 +1,11 @@
+##
+# Renders a single workspace list item
+#
 prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion:Component) {
   /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
   userWorkspace = ''
-  /// string
-  workspaceName = ''
-  /// array{ workspace, changesCounts, canPublish, canManage, canDelete, workspaceOwnerHumanReadable }
-  workspaceData = ${{}}
+  /// Neos\Workspace\Ui\Model\WorkspaceDetails
+  workspaceDetails = ${{}}
   /// boolean
   canManage = false
   /// integer
@@ -12,11 +13,12 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
-    workspace = ${props.workspaceData.workspace}
-    workspaceTableRowId = ${'workspace-row-' + props.workspaceName}
+    workspace = ${props.workspaceDetails.workspace}
+    workspaceName = ${private.workspace.workspaceName.value}
+    workspaceTableRowId = ${'workspace-row-' + private.workspaceName}
     workspaceStatus = Neos.Fusion:Case {
       personal-workspace {
-        condition = ${props.workspaceName == props.userWorkspace.workspaceName.value}
+        condition = ${private.workspaceName == props.userWorkspace.workspaceName.value}
         renderer = 'personal-workspace'
       }
       stale {
@@ -30,7 +32,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
         renderer = 'with-acl'
       }
       private {
-        condition = ${props.workspaceData.workspace.workspaceOwner}
+        condition = ${props.workspaceDetails.workspace.workspaceOwner}
         renderer = 'private'
       }
       default {
@@ -43,8 +45,8 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
       @default = ${private.i18n.id('table.column.access.internal').value('Internal workspace')}
       personal-workspace = ${private.i18n.id('badge.isPersonalWorkspace').value('This is your personal workspace')}
       stale = ${private.i18n.id('badge.isStale').value('This workspace has not been used for a long time')}
-      with-acl = ${private.i18n.id('table.column.access.acl').value('This workspace is owned by ' + props.workspaceData.workspaceOwnerHumanReadable + ' but allows access to additional users')}
-      private = ${private.i18n.id('table.column.access.private').value('This workspace is owned by ' + props.workspaceData.workspaceOwnerHumanReadable)}
+      with-acl = ${private.i18n.id('table.column.access.acl').value('This workspace is owned by ' + props.workspaceDetails.workspaceOwnerHumanReadable + ' but allows access to additional users')}
+      private = ${private.i18n.id('table.column.access.private').value('This workspace is owned by ' + props.workspaceDetails.workspaceOwnerHumanReadable)}
     }
     workspaceStatusIcon = Neos.Fusion:Match {
       @subject = ${private.workspaceStatus}
@@ -55,20 +57,20 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
     showWorkspaceUri = Neos.Fusion:ActionUri {
       action = 'show'
       arguments {
-        workspace = ${props.workspaceName}
+        workspace = ${private.workspaceName}
       }
     }
     editWorkspaceUri = Neos.Fusion:ActionUri {
       action = 'edit'
       arguments {
-        workspaceName = ${props.workspaceName}
+        workspaceName = ${private.workspaceName}
       }
     }
     deleteWorkspaceUri = Neos.Fusion:ActionUri {
       action = 'delete'
       format = 'htmx'
       arguments {
-        workspaceName = ${props.workspaceName}
+        workspaceName = ${private.workspaceName}
       }
     }
     deleteWorkspacePopoverId = 'workspace-delete-modal'
@@ -85,22 +87,39 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
       </td>
       <td class="workspace-label-column" style={'--indent-level:' + props.level }>
         <Neos.Workspace.Ui:Component.Icon icon="level-up-alt" @if={props.level > 1}/>
-        {props.workspaceData.workspace.workspaceTitle.value}
-        <span class="workspace__info-text" @if={props.workspaceName == props.userWorkspace.workspaceName.value}>
+        {props.workspaceDetails.workspace.workspaceTitle.value}
+        <span class="workspace__info-text" @if={private.workspaceName == props.userWorkspace.workspaceName.value}>
           ({private.i18n.id('workspaces.workspace.userWorkspace')})
         </span>
       </td>
       <td class="workspace-description-column">
-        {props.workspaceData.workspace.workspaceDescription.value || '–'}
+        {props.workspaceDetails.workspace.workspaceDescription.value || '–'}
       </td>
-      <td>{props.workspaceData.workspaceOwnerHumanReadable || '–'}</td>
+      <td>{props.workspaceDetails.workspaceOwnerHumanReadable || '–'}</td>
       <td>–</td>
-      <td>{props.workspaceData.workspace.status.value || '–'}</td>
-      <td>–</td>
+      <td>{props.workspaceDetails.workspace.status.value || '–'}</td>
+      <td>
+        <Neos.Workspace.Ui:Component.Badge
+          label={props.workspaceDetails.changesCounts.new}
+          title={private.i18n.id('workspaces.changes.new').arguments([props.workspaceDetails.changesCounts.new])}
+          type="success"
+        />
+        <Neos.Workspace.Ui:Component.Badge
+          label={props.workspaceDetails.changesCounts.changed}
+          title={private.i18n.id('workspaces.changes.changed').arguments([props.workspaceDetails.changesCounts.changed])}
+          type="warning"
+        />
+        <Neos.Workspace.Ui:Component.Badge
+          label={props.workspaceDetails.changesCounts.removed}
+          title={private.i18n.id('workspaces.changes.removed').arguments([props.workspaceDetails.changesCounts.removed])}
+          type="danger"
+        />
+        <span @if={props.workspaceDetails.changesCounts.total == 0}>&ndash;</span>
+      </td>
       <td class="workspace-action-column">
         <a class="neos-button"
-           title={private.i18n.id(props.workspaceData.changesCounts.total ? 'workspaces.reviewWorkspace' : 'workspaces.reviewWorkspace.noChanges').arguments([private.workspace.workspaceTitle.value])}
-           disabled={props.workspaceData.changesCounts.total == 0}
+           title={private.i18n.id(props.workspaceDetails.changesCounts.total ? 'workspaces.reviewWorkspace' : 'workspaces.reviewWorkspace.noChanges').arguments([private.workspace.workspaceTitle.value])}
+           disabled={props.workspaceDetails.changesCounts.total == 0}
            href={private.showWorkspaceUri}
         >
           <Neos.Workspace.Ui:Component.Icon icon="review"/>{' '}
@@ -113,13 +132,13 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           attributes.hx-target='#popover-container'
           attributes.hx-swap='innerHTML'
           attributes.hx-on--after-request={'document.getElementById("' + private.editWorkspacePopoverId + '").showPopover()'}
-          @if={!props.canManage || props.workspaceData.changesCounts == null}
+          @if={!props.canManage || props.workspaceDetails.changesCounts == null}
         />
         <Neos.Workspace.Ui:Component.Button
           isDanger
           title={private.i18n.id('workspaces.deleteWorkspace').arguments([private.workspace.workspaceTitle.value])}
           icon="trash-alt icon-white"
-          disabled={props.workspaceData.changesCounts.total > 0}
+          disabled={props.workspaceDetails.changesCounts.total > 0}
           attributes.hx-get={private.deleteWorkspaceUri}
           attributes.hx-target='#popover-container'
           attributes.hx-swap='innerHTML'

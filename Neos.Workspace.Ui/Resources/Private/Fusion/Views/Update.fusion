@@ -4,7 +4,7 @@
 Neos.Workspace.Ui.WorkspaceController.update = Neos.Fusion:Component {
   /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
   userWorkspace = ${userWorkspace}
-  /// array
+  /// Neos\Workspace\Ui\Model\WorkspaceDetailsCollection
   workspacesAndChangeCounts = ${workspacesAndChangeCounts}
 
   renderer = afx`

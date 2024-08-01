@@ -1,7 +1,10 @@
+##
+# Renders a list of workspaces
+#
 prototype(Neos.Workspace.Ui:Component.WorkspaceTable) < prototype(Neos.Fusion:Component) {
   /// Neos\ContentRepository\Core\Projection\Workspace\Workspace
-  /// array{ workspace, changesCounts, canPublish, canManage, canDelete, workspaceOwnerHumanReadable }[]
   userWorkspace = null
+  /// Neos\Workspace\Ui\Model\WorkspaceDetailsCollection
   workspacesAndChangeCounts = ${{}}
 
   @private {

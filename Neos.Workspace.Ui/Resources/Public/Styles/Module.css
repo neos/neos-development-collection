@@ -44,6 +44,7 @@ td.workspace-description-column,
 td.workspace-label-column {
   width: 25%;
 }
+
 td.workspace-label-column .fas {
   transform: rotate(90deg);
   vertical-align: middle;
@@ -95,11 +96,40 @@ button .icon:not(:last-child) {
 }
 
 /**
+ * Badges
+ */
+.badge {
+  background-color: var(--grayLight);
+  border-radius: 15%;
+  color: var(--textOnGray);
+  padding: 0.2em 0.5em;
+  user-select: none;
+  cursor: help;
+}
+
+.badge:not(:last-child) {
+  margin-right: 1ch;
+}
+
+.badge--success {
+  background-color: var(--green);
+}
+
+.badge--warning {
+  background-color: var(--warningText);
+}
+
+.badge--danger {
+  background-color: var(--errorText);
+}
+
+/**
  * Workspace entry states and types
  */
 .workspace--stale {
   --column-color: var(--grayDark);
 }
+
 .workspace--personal-workspace {
   --column-color: var(--blueDark);
 }
@@ -188,6 +218,7 @@ button .icon:not(:last-child) {
   position: relative;
   width: 100%;
 }
+
 .loadingIndicator__bar {
   height: 100%;
   position: relative;

@@ -81,6 +81,30 @@
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			</trans-unit>
+      <group id="workspaces.changes.new" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.changes.new[0]" xml:space="preserve">
+          <source>{0} node was added</source>
+        </trans-unit>
+        <trans-unit id="workspaces.changes.new[1]" xml:space="preserve">
+          <source>{0} nodes were added</source>
+        </trans-unit>
+      </group>
+      <group id="workspaces.changes.changed" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.changes.changed[0]" xml:space="preserve">
+          <source>{0} node was changed</source>
+        </trans-unit>
+        <trans-unit id="workspaces.changes.changed[1]" xml:space="preserve">
+          <source>{0} nodes were changed</source>
+        </trans-unit>
+      </group>
+      <group id="workspaces.changes.removed" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.changes.removed[0]" xml:space="preserve">
+          <source>{0} node was removed</source>
+        </trans-unit>
+        <trans-unit id="workspaces.changes.removed[1]" xml:space="preserve">
+          <source>{0} nodes were removed</source>
+        </trans-unit>
+      </group>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			</trans-unit>
