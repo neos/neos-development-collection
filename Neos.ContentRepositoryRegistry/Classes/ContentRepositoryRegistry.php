@@ -85,7 +85,9 @@ final class ContentRepositoryRegistry
 
     public function getContentRepositoryIds(): ContentRepositoryIds
     {
-        return ContentRepositoryIds::fromArray(array_keys($this->settings['contentRepositories'] ?? []));
+        /** @var array<string> $contentRepositoryIds */
+        $contentRepositoryIds = array_keys($this->settings['contentRepositories'] ?? []);
+        return ContentRepositoryIds::fromArray($contentRepositoryIds);
     }
 
     /**
