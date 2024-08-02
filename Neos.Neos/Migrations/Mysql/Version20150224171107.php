@@ -2,8 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Adjust event log table to schema valid table structure
@@ -16,7 +17,7 @@ class Version20150224171107 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP FOREIGN KEY FK_30AB3A75B684C08");
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP PRIMARY KEY");
@@ -39,7 +40,7 @@ class Version20150224171107 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP FOREIGN KEY FK_30AB3A75B684C08");
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP PRIMARY KEY");

@@ -2,9 +2,9 @@
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\Migrations\AbstractMigration,
-
-    Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Adjust some (old) index names to current Doctrine DBAL behavior (see https://jira.neos.io/browse/FLOW-427)
@@ -17,7 +17,7 @@ class Version20160212141533 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         // typo3_neos_domain_model_domain
         $this->addSql("ALTER INDEX IF EXISTS idx_f227e8f6694309e4 RENAME TO IDX_8E49A537694309E4");
@@ -35,7 +35,7 @@ class Version20160212141533 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         // typo3_neos_domain_model_domain
         $this->addSql("ALTER INDEX IF EXISTS IDX_8E49A537694309E4 RENAME TO idx_f227e8f6694309e4");

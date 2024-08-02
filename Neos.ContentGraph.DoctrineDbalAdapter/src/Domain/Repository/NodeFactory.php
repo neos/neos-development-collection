@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
@@ -41,6 +42,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Traversable;
 
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
@@ -62,7 +64,6 @@ final class NodeFactory
     public function mapNodeRowToNode(
         array $nodeRow,
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
@@ -83,8 +84,7 @@ final class NodeFactory
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
-            $visibilityConstraints,
-            $contentStreamId
+            $visibilityConstraints
         );
     }
 
@@ -94,7 +94,6 @@ final class NodeFactory
     public function mapNodeRowsToNodes(
         array $nodeRows,
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Nodes {
@@ -102,7 +101,6 @@ final class NodeFactory
             array_map(fn (array $nodeRow) => $this->mapNodeRowToNode(
                 $nodeRow,
                 $workspaceName,
-                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             ), $nodeRows)
@@ -123,7 +121,6 @@ final class NodeFactory
     public function mapReferenceRowsToReferences(
         array $nodeRows,
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): References {
@@ -132,7 +129,6 @@ final class NodeFactory
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $workspaceName,
-                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             );
@@ -155,7 +151,6 @@ final class NodeFactory
     public function mapNodeRowsToNodeAggregate(
         array $nodeRows,
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
     ): ?NodeAggregate {
         if (empty($nodeRows)) {
@@ -182,7 +177,6 @@ final class NodeFactory
                 $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
                     $workspaceName,
-                    $contentStreamId,
                     $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                     $visibilityConstraints
                 );
@@ -228,21 +222,24 @@ final class NodeFactory
             $nodesByCoveredDimensionSpacePoints,
             OriginByCoverage::fromArray($occupationByCovering),
             $dimensionSpacePointsBySubtreeTags,
-            $contentStreamId,
         );
     }
 
     /**
-     * @param iterable<int,array<string,string>> $nodeRows
-     * @return iterable<int,NodeAggregate>
+     * @param array<int,array<string,string>> $nodeRows
      * @throws NodeTypeNotFound
      */
     public function mapNodeRowsToNodeAggregates(
-        iterable $nodeRows,
+        array $nodeRows,
         WorkspaceName $workspaceName,
-        ContentStreamId $contentStreamId,
         VisibilityConstraints $visibilityConstraints
-    ): iterable {
+    ): NodeAggregates {
+        if (empty($nodeRows)) {
+            return NodeAggregates::createEmpty();
+        }
+
+        $nodeAggregates = [];
+
         $nodeTypeNames = [];
         $nodeNames = [];
         $occupiedDimensionSpacePointsByNodeAggregate = [];
@@ -267,7 +264,6 @@ final class NodeFactory
                     [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                         $nodeRow,
                         $workspaceName,
-                        $contentStreamId,
                         $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                         $visibilityConstraints
                     );
@@ -308,7 +304,7 @@ final class NodeFactory
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateId => $nodes) {
             /** @var string $rawNodeAggregateId */
-            yield NodeAggregate::create(
+            $nodeAggregates[] = NodeAggregate::create(
                 $this->contentRepositoryId,
                 $workspaceName,
                 NodeAggregateId::fromString($rawNodeAggregateId),
@@ -331,9 +327,10 @@ final class NodeFactory
                     $occupationByCoveringByNodeAggregate[$rawNodeAggregateId]
                 ),
                 $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId],
-                $contentStreamId,
             );
         }
+
+        return NodeAggregates::fromArray($nodeAggregates);
     }
 
     public static function extractNodeTagsFromJson(string $subtreeTagsJson): NodeTags

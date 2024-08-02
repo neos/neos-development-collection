@@ -68,6 +68,10 @@ final class SiteNodeUtility
         $rootNodeAggregate = $contentGraph->findRootNodeAggregateByType(
             NodeTypeNameFactory::forSites()
         );
+        if (!$rootNodeAggregate) {
+            throw new \RuntimeException(sprintf('No sites root node found in content repository "%s", while fetching site node "%s"', $contentRepository->id->value, $site->getNodeName()), 1719046570);
+        }
+
         $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($dimensionSpacePoint);
 
         $siteNode = $subgraph->findNodeByPath(

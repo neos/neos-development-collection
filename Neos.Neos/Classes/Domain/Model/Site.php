@@ -273,7 +273,7 @@ class Site
      */
     public function hasActiveDomains()
     {
-        return $this->domains->exists(function ($index, Domain $domain) {
+        return $this->domains->exists(function (int $index, Domain $domain) {
             return $domain->getActive();
         });
     }

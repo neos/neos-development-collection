@@ -14,8 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
@@ -79,7 +80,7 @@ class ProjectionContentGraph
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
                 'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash ?? $originDimensionSpacePoint->hash
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load parent node for content stream %s, child node aggregate id %s, origin dimension space point %s from database: %s', $contentStreamId->value, $childNodeAggregateId->value, $originDimensionSpacePoint->toJson(), $e->getMessage()), 1716475976, $e);
         }
 
@@ -109,7 +110,7 @@ class ProjectionContentGraph
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load node for content stream %s, aggregate id %s and covered dimension space point %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $coveredDimensionSpacePoint->toJson(), $e->getMessage()), 1716474165, $e);
         }
 
@@ -138,7 +139,7 @@ class ProjectionContentGraph
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
                 'contentStreamId' => $contentStreamId->value,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load node anchor points for content stream %s, node aggregate %s and origin dimension space point %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $originDimensionSpacePoint->toJson(), $e->getMessage()), 1716474224, $e);
         }
 
@@ -170,7 +171,7 @@ class ProjectionContentGraph
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'contentStreamId' => $contentStreamId->value,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load node anchor points for content stream %s and node aggregate id %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $e->getMessage()), 1716474706, $e);
         }
 
@@ -192,7 +193,7 @@ class ProjectionContentGraph
             $nodeRow = $this->dbal->fetchAssociative($nodeByAnchorPointStatement, [
                 'relationAnchorPoint' => $nodeRelationAnchorPoint->value,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load node for anchor point %s from database: %s', $nodeRelationAnchorPoint->value, $e->getMessage()), 1716474765, $e);
         }
 
@@ -230,7 +231,7 @@ class ProjectionContentGraph
                     'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]);
-            } catch (DbalException $e) {
+            } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to load succeeding sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474854, $e);
             }
 
@@ -255,7 +256,7 @@ class ProjectionContentGraph
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                     'position' => $succeedingSiblingPosition
                 ]);
-            } catch (DbalException $e) {
+            } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to load preceding sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474957, $e);
             }
             $precedingSiblingPosition = $precedingSiblingData ? ($precedingSiblingData['position'] ?? null) : null;
@@ -287,7 +288,7 @@ class ProjectionContentGraph
                         'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]);
-                } catch (DbalException $e) {
+                } catch (DBALException $e) {
                     throw new \RuntimeException(sprintf('Failed to load child hierarchy relation for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $childAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475001, $e);
                 }
                 $parentAnchorPoint = NodeRelationAnchorPoint::fromInteger(
@@ -310,7 +311,7 @@ class ProjectionContentGraph
                     'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]);
-            } catch (DbalException $e) {
+            } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf('Failed to right most succeeding relation for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475046, $e);
             }
 
@@ -349,7 +350,7 @@ class ProjectionContentGraph
                 'contentStreamId' => $contentStreamId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, parent anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475151, $e);
         }
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
@@ -379,7 +380,7 @@ class ProjectionContentGraph
                 'contentStreamId' => $contentStreamId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, child anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $childAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475151, $e);
         }
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
@@ -411,11 +412,11 @@ class ProjectionContentGraph
         if ($restrictToSet) {
             $ingoingHierarchyRelationsStatement .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
             $parameters['dimensionSpacePointHashes'] = $restrictToSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
+            $types['dimensionSpacePointHashes'] = ArrayParameterType::STRING;
         }
         try {
             $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, $parameters, $types);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, child anchor point %s and dimension space points %s from database: %s', $contentStreamId->value, $childAnchorPoint->value, $restrictToSet?->toJson() ?? '[any]', $e->getMessage()), 1716476299, $e);
         }
         $relations = [];
@@ -451,11 +452,11 @@ class ProjectionContentGraph
         if ($restrictToSet) {
             $outgoingHierarchyRelationsStatement .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
             $parameters['dimensionSpacePointHashes'] = $restrictToSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
+            $types['dimensionSpacePointHashes'] = ArrayParameterType::STRING;
         }
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, $parameters, $types);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, parent anchor point %s and dimension space points %s from database: %s', $contentStreamId->value, $parentAnchorPoint->value, $restrictToSet?->toJson() ?? '[any]', $e->getMessage()), 1716476573, $e);
         }
         $relations = [];
@@ -490,9 +491,9 @@ class ProjectionContentGraph
                 'contentStreamId' => $contentStreamId->value,
                 'dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes()
             ], [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+                'dimensionSpacePointHashes' => ArrayParameterType::STRING
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, node aggregate id %s and dimension space points %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $dimensionSpacePointSet->toJson(), $e->getMessage()), 1716476690, $e);
         }
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
@@ -524,11 +525,11 @@ class ProjectionContentGraph
         if ($dimensionSpacePointSet !== null) {
             $ingoingHierarchyRelationsStatement .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
             $parameters['dimensionSpacePointHashes'] = $dimensionSpacePointSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
+            $types['dimensionSpacePointHashes'] = ArrayParameterType::STRING;
         }
         try {
             $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, $parameters, $types);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, node aggregate id %s and dimension space points %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $dimensionSpacePointSet?->toJson() ?? '[any]', $e->getMessage()), 1716476743, $e);
         }
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
@@ -552,7 +553,7 @@ class ProjectionContentGraph
             $contentStreamIds = $this->dbal->fetchFirstColumn($contentStreamIdsStatement, [
                 'nodeRelationAnchorPoint' => $nodeRelationAnchorPoint->value,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load content stream ids for relation anchor point %s from database: %s', $nodeRelationAnchorPoint->value, $e->getMessage()), 1716478504, $e);
         }
         return array_map(ContentStreamId::fromString(...), $contentStreamIds);
@@ -575,7 +576,7 @@ class ProjectionContentGraph
             $dimensionSpacePointJson = $this->dbal->fetchOne($dimensionSpacePointStatement, [
                 'hash' => $rawData['dimensionspacepointhash']
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load dimension space point for hash %s from database: %s', $rawData['dimensionspacepointhash'], $e->getMessage()), 1716476830, $e);
         }
 

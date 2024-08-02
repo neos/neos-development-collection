@@ -21,7 +21,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * CreateContentStream for creating the FIRST content stream.
  * All other content streams will be FORKED from this FIRST content stream.
  *
- * @api commands are the write-API of the ContentRepository
+ * @internal implementation detail. You must not use this command directly.
+ * Direct use may lead to hard to revert senseless state in your content repository.
+ * Please use the higher level workspace commands instead.
  */
 final readonly class CreateContentStream implements CommandInterface
 {

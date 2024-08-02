@@ -54,7 +54,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
-use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateTypeIsAlreadyOccupied;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -160,12 +159,9 @@ trait ConstraintChecks
         ContentGraphInterface $contentGraph,
         NodeTypeName $nodeTypeName
     ): void {
-        try {
-            $contentGraph->findRootNodeAggregateByType($nodeTypeName);
-        } catch (RootNodeAggregateDoesNotExist $_) {
+        if ($contentGraph->findRootNodeAggregateByType($nodeTypeName) === null) {
             return;
         }
-
         throw RootNodeAggregateTypeIsAlreadyOccupied::butWasExpectedNotTo($nodeTypeName);
     }
 

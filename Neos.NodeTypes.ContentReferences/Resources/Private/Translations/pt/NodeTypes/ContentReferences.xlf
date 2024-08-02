@@ -3,19 +3,19 @@
   <file original="" product-name="Neos.NodeTypes.ContentReferences" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>Insert content references</source>
-        <target state="translated">Inserir referências de conteúdo</target>
+        <source>Insert content references</source>
+        <target state="translated">Inserir as referências do conteúdo</target>
       </trans-unit>
       <trans-unit id="groups.references" xml:space="preserve">
-				<source>References</source>
+        <source>References</source>
         <target state="translated">Referências</target>
       </trans-unit>
       <trans-unit id="properties.references" xml:space="preserve">
-				<source>Select</source>
+        <source>Select</source>
         <target state="translated">Seleccionar</target>
       </trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve">
-				<source>No references selected</source>
+        <source>No references selected</source>
         <target state="translated">Nenhuma referência selecionada</target>
       </trans-unit>
     </body>

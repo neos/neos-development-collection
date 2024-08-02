@@ -110,7 +110,7 @@ class SiteRepository extends Repository
      * To find the correct site node by its descended child node leverage `findClosestNode`:
      * ```php
      * $siteNode = $subgraph->findClosestNode(
-     *     $node->nodeAggregateId,
+     *     $node->aggregateId,
      *     FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE)
      * );
      * ```
