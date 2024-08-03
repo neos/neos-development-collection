@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Projection\ContentGraph;
+namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm;
 
 /**
  * A search term for use in Filters for the {@see ContentSubgraphInterface} API.
