@@ -50,7 +50,7 @@ final readonly class ContentRepositoryIds implements \IteratorAggregate, \Counta
 
     public function getIterator(): \Traversable
     {
-        return yield from $this->ids;
+        yield from $this->ids;
     }
 
     public function count(): int
