@@ -76,8 +76,9 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       | a1              | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a1"}                                                                                                                                                                                       | {}                                       |
       | a2              | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a2"}                                                                                                                                                                                       | {}                                       |
       | a2a             | Neos.ContentRepository.Testing:SpecialPage | a2                     | {"text": "a2a"}                                                                                                                                                                                      | {}                                       |
-      | a2a1            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1", "stringProperty": "the brown fox", "booleanProperty": true, "integerProperty": 33, "floatProperty": 12.345, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13"}} | {}                                       |
+      | a2a1            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1", "stringProperty": "the brown fox likes Äpfel", "booleanProperty": true, "integerProperty": 33, "floatProperty": 12.345, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13"}} | {}                                       |
       | a2a2            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2", "stringProperty": "the red fox", "booleanProperty": false, "integerProperty": 22, "floatProperty": 12.34, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-14"}}   | {}                                       |
+      # Note that this node is disabled! See below.
       | a2a3            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a3", "stringProperty": "the red Bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-12"}}                                                    | {}                                       |
       | a2a4            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a4", "stringProperty": "the brown Bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-12"}}                                                  | {}                                       |
       | a2a5            | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a5", "stringProperty": "the brown bear", "integerProperty": 19, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13"}}                                                  | {}                                       |
@@ -109,7 +110,15 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
 
      # Child nodes filtered by search term
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "brown"}' I expect the nodes "a2a1,a2a4,a2a5" to be returned
+    # The total count highlights that the search is case insensitive
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "bear", "pagination": {"limit": 3, "offset": 1}}' I expect the nodes "a2a5" to be returned and the total count to be 2
+    # Case insensitive multibyte search
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "äpfel"}' I expect the nodes "a2a1" to be returned
+    # Search for numbers (could be considered useless)
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "22"}' I expect the nodes "a2a2" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "12.34"}' I expect the nodes "a2a1,a2a2" to be returned
+    # Search for boolean (could be considered useless)
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "true"}' I expect the nodes "a2a1" to be returned
 
      # Child nodes paginated
     When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"pagination": {"limit": 3}}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
