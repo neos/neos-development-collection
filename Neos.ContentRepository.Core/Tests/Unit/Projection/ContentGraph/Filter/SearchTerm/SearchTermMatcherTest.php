@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class SearchTermMatcherTest extends TestCase
 {
-    public function matchingStringComparisonExamples(): iterable
+    public static function matchingStringComparisonExamples(): iterable
     {
         yield 'string found inside string' => ['brown', self::value('the brown fox')];
         yield 'string found inside string (ci)' => ['BrOWn', self::value('the brown fox')];
@@ -25,7 +25,7 @@ class SearchTermMatcherTest extends TestCase
         yield 'string found inside string with special chars' => ['ä b-c+#@', self::value('the example: "ä b-c+#@"')];
     }
 
-    public function matchingNumberLikeComparisonExamples(): iterable
+    public static function matchingNumberLikeComparisonExamples(): iterable
     {
         yield 'string-number found inside string' => [
             '22',
@@ -58,7 +58,7 @@ class SearchTermMatcherTest extends TestCase
         ];
     }
 
-    public function matchingBooleanLikeComparisonExamples(): iterable
+    public static function matchingBooleanLikeComparisonExamples(): iterable
     {
         yield 'string-boolean inside string' => [
             'true',
@@ -76,6 +76,32 @@ class SearchTermMatcherTest extends TestCase
         ];
     }
 
+    public static function matchingArrayComparisonExamples(): iterable
+    {
+        // automates the following:
+        yield 'inside array: string found inside string' => ['foo', self::value(['foo'])];
+        yield 'inside array-object: string found inside string' => ['foo', self::value(new \ArrayObject(['foo']))];
+
+        foreach([
+            ...iterator_to_array(self::matchingStringComparisonExamples()),
+            ...iterator_to_array(self::matchingNumberLikeComparisonExamples()),
+            ...iterator_to_array(self::matchingBooleanLikeComparisonExamples()),
+        ] as $name => [$searchTerm, $properties]) {
+            /** @var SerializedPropertyValues $properties */
+            yield 'inside nested array: ' . $name => [$searchTerm, SerializedPropertyValues::fromArray(
+                array_map(
+                    fn (SerializedPropertyValue $value) => SerializedPropertyValue::create(
+                        // arbitrary deep nested
+                        [[$value->value]],
+                        'array'
+                    ),
+                    iterator_to_array($properties)
+                )
+            )];
+        }
+    }
+
+
     public function notMatchingExamples(): iterable
     {
         yield 'different chars' => ['aepfel', self::value('äpfel')];
@@ -83,6 +109,9 @@ class SearchTermMatcherTest extends TestCase
         yield 'string not found inside string' => ['reptv', self::value('eras tour')];
         yield 'integer' => ['0999', self::value(999)];
         yield 'float with comma' => ['12,45', self::value(12.34)];
+        yield 'array with unmatched string' => ['hello', self::value(['hi'])];
+        yield 'array key is not considered matching' => ['key', self::value(['key' => 'foo'])];
+        yield 'nested array key is not considered matching' => ['key', self::value([['key' => 'foo']])];
     }
 
     /**
@@ -90,6 +119,7 @@ class SearchTermMatcherTest extends TestCase
      * @dataProvider matchingStringComparisonExamples
      * @dataProvider matchingNumberLikeComparisonExamples
      * @dataProvider matchingBooleanLikeComparisonExamples
+     * @dataProvider matchingArrayComparisonExamples
      */
     public function searchTermMatchesProperties(
         string $searchTerm,
@@ -119,12 +149,12 @@ class SearchTermMatcherTest extends TestCase
         );
     }
 
-    private static function value(string|bool|float|int $value): SerializedPropertyValues
+    private static function value(string|bool|float|int|array|\ArrayObject $value): SerializedPropertyValues
     {
         return SerializedPropertyValues::fromArray([
             'test-property' => SerializedPropertyValue::create(
                 $value,
-                gettype($value)
+                ''
             ),
         ]);
     }
