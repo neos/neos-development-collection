@@ -113,8 +113,8 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     {
         $schemaManager = $this->dbal->createSchemaManager();
         $workspaceTable = new Table($this->tableName, [
-            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
-            (new Column('baseworkspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(WorkspaceName::MAX_LENGTH)->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('baseworkspacename', Type::getType(Types::STRING)))->setLength(WorkspaceName::MAX_LENGTH)->setNotnull(false)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
             (new Column('workspacetitle', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
             (new Column('workspacedescription', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),
             (new Column('workspaceowner', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION),

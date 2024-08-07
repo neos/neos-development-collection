@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry;
@@ -84,7 +85,9 @@ final class ContentRepositoryRegistry
 
     public function getContentRepositoryIds(): ContentRepositoryIds
     {
-        return ContentRepositoryIds::fromArray(array_keys($this->settings['contentRepositories'] ?? []));
+        /** @var array<string> $contentRepositoryIds */
+        $contentRepositoryIds = array_keys($this->settings['contentRepositories'] ?? []);
+        return ContentRepositoryIds::fromArray($contentRepositoryIds);
     }
 
     /**
@@ -136,7 +139,8 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
-    private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory {
+    private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory
+    {
         if (!is_array($this->settings['contentRepositories'] ?? null)) {
             throw InvalidConfigurationException::fromMessage('No Content Repositories are configured');
         }
@@ -208,7 +212,6 @@ final class ContentRepositoryRegistry
             $options['contentDimensions'] = Arrays::arrayMergeRecursiveOverrule($contentRepositorySettings['contentDimensions'], $options['contentDimensions'] ?? []);
         }
         return $contentDimensionSourceFactory->build($contentRepositoryId, $options);
-
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */

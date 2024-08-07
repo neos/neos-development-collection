@@ -31,7 +31,7 @@ final readonly class ContentRepositoryIds implements \IteratorAggregate, \Counta
     }
 
     /**
-     * @param array<mixed> $ids
+     * @param array<ContentRepositoryId|string> $ids
      */
     public static function fromArray(array $ids): self
     {
@@ -50,7 +50,7 @@ final readonly class ContentRepositoryIds implements \IteratorAggregate, \Counta
 
     public function getIterator(): \Traversable
     {
-        return yield from $this->ids;
+        yield from $this->ids;
     }
 
     public function count(): int
