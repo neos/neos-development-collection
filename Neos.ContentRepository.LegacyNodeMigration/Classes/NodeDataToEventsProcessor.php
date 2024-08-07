@@ -169,10 +169,15 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     private function exportEvent(EventInterface $event): void
     {
         $normalizedEvent = $this->eventNormalizer->normalize($event);
+        try {
+            $exportedEventPayload = json_decode($normalizedEvent->data->value, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-decode "%s": %s', $normalizedEvent->data->value, $e->getMessage()), 1723032243, $e);
+        }
         $exportedEvent = new ExportedEvent(
             $normalizedEvent->id->value,
             $normalizedEvent->type->value,
-            json_decode($normalizedEvent->data->value, true),
+            $exportedEventPayload,
             [],
         );
         assert($this->eventFileResource !== null);
@@ -244,7 +249,6 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
      * @param NodeAggregateId $nodeAggregateId
      * @param array<string, mixed> $nodeDataRow
      * @return NodeName[]|void
-     * @throws \JsonException
      */
     public function processNodeDataWithoutFallbackToEmptyDimension(NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, array $nodeDataRow)
     {

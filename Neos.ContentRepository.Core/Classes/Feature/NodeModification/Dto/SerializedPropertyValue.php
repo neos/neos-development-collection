@@ -77,13 +77,17 @@ final readonly class SerializedPropertyValue implements \JsonSerializable
 
     /**
      * @return array<string, string>
-     * @throws \JsonException
      */
     public function __debugInfo(): array
     {
+        try {
+            $valueAsJson = json_encode($this->value, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode %s: %s', self::class, $e->getMessage()), 1723032361, $e);
+        }
         return [
             'type' => $this->type,
-            'value' => json_encode($this->value, JSON_THROW_ON_ERROR)
+            'value' => $valueAsJson,
         ];
     }
 }
