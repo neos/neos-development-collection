@@ -45,7 +45,7 @@ final readonly class WorkspaceListItems implements \IteratorAggregate, \Countabl
 
     public function getIterator(): \Traversable
     {
-        return yield from $this->items;
+        yield from $this->items;
     }
 
     public function count(): int
