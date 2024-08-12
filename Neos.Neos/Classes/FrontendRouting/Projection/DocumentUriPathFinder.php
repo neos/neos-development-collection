@@ -52,7 +52,8 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND siteNodeName = :siteNodeName
                 AND uriPath = :uriPath
-                AND disabled = 0',
+                AND disabled = 0
+                AND isPlaceholder = 0',
             [
                 'dimensionSpacePointHash' => $dimensionSpacePointHash,
                 'siteNodeName' => $siteNodeName->value,

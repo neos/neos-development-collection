@@ -38,7 +38,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Neos\Domain\Model\SiteNodeName;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
 /**
@@ -54,9 +53,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     private ?DocumentUriPathFinder $stateAccessor = null;
 
     /**
-     * @var array<string, array<string, bool>>
+     * @var array<string, DocumentTypeClassification>
      */
-    private array $nodeTypeImplementsRuntimeCache = [];
+    private array $documentTypeClassificationRuntimeCache = [];
 
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
@@ -269,7 +268,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
-        if (!$this->isDocumentNodeType($event->nodeTypeName)) {
+        $documentTypeClassification = $this->getDocumentTypeClassification($event->nodeTypeName);
+        if ($documentTypeClassification === DocumentTypeClassification::CLASSIFICATION_NONE) {
             return;
         }
 
@@ -277,7 +277,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         $uriPathSegment = $propertyValues['uriPathSegment'] ?? '';
 
         $shortcutTarget = null;
-        if ($this->isShortcutNodeType($event->nodeTypeName)) {
+        if ($documentTypeClassification === DocumentTypeClassification::CLASSIFICATION_SHORTCUT) {
             $shortcutTarget = [
                 'mode' => $propertyValues['targetMode'] ?? 'firstChildNode',
                 'target' => $propertyValues['target'] ?? null,
@@ -353,6 +353,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'shortcutTarget' => $shortcutTarget,
                 'nodeTypeName' => $event->nodeTypeName->value,
                 'disabled' => $parentNode->getDisableLevel(),
+                'isPlaceholder' => (int)($documentTypeClassification === DocumentTypeClassification::CLASSIFICATION_UNKNOWN)
             ]);
         }
     }
@@ -362,20 +363,33 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
-        if ($this->isShortcutNodeType($event->newNodeTypeName)) {
-            // The node has been turned into a shortcut node, but since the shortcut mode is not yet set
-            // we'll set it to "firstChildNode" in order to prevent an invalid mode
-            $this->updateNodeQuery('SET shortcuttarget = COALESCE(shortcuttarget,\'{"mode":"firstChildNode","target":null}\'), nodeTypeName=:nodeTypeName
+        switch ($this->getDocumentTypeClassification($event->newNodeTypeName)) {
+            case DocumentTypeClassification::CLASSIFICATION_SHORTCUT:
+                // The node has been turned into a shortcut node, but since the shortcut mode is not yet set
+                // we'll set it to "firstChildNode" in order to prevent an invalid mode
+                $this->updateNodeQuery('SET shortcuttarget = COALESCE(shortcuttarget,\'{"mode":"firstChildNode","target":null}\'), nodeTypeName=:nodeTypeName, isPlaceholder=:isPlaceholder
                 WHERE nodeAggregateId = :nodeAggregateId', [
-                'nodeAggregateId' => $event->nodeAggregateId->value,
-                'nodeTypeName' => $event->newNodeTypeName->value,
-            ]);
-        } elseif ($this->isDocumentNodeType($event->newNodeTypeName)) {
-            $this->updateNodeQuery('SET shortcuttarget = NULL, nodeTypeName=:nodeTypeName
+                    'nodeAggregateId' => $event->nodeAggregateId->value,
+                    'nodeTypeName' => $event->newNodeTypeName->value,
+                    'isPlaceholder' => 0
+                ]);
+                break;
+            case DocumentTypeClassification::CLASSIFICATION_DOCUMENT:
+                $this->updateNodeQuery('SET shortcuttarget = NULL, nodeTypeName=:nodeTypeName, isPlaceholder=:isPlaceholder
                 WHERE nodeAggregateId = :nodeAggregateId', [
-                'nodeAggregateId' => $event->nodeAggregateId->value,
-                'nodeTypeName' => $event->newNodeTypeName->value,
-            ]);
+                    'nodeAggregateId' => $event->nodeAggregateId->value,
+                    'nodeTypeName' => $event->newNodeTypeName->value,
+                    'isPlaceholder' => 0
+                ]);
+                break;
+            case DocumentTypeClassification::CLASSIFICATION_SITE:
+                // Sites cannot be moved or type-changed to anything else, so it must have been a site befor
+                // -> nothing to do
+                break;
+            case DocumentTypeClassification::CLASSIFICATION_UNKNOWN:
+            case DocumentTypeClassification::CLASSIFICATION_NONE:
+                // @todo: probably set to isPlaceholder: true if anything is found
+                break;
         }
     }
 
@@ -561,7 +575,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
             if (
                 $node === null
-                || $this->isSiteNodeType($node->getNodeTypeName())
+                || $this->getDocumentTypeClassification($node->getNodeTypeName())
+                    === DocumentTypeClassification::CLASSIFICATION_SITE
             ) {
                 // probably not a document node
                 continue;
@@ -716,35 +731,19 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         return $node->getDisableLevel() - $parentDisabledLevel !== 0;
     }
 
-    private function isSiteNodeType(NodeTypeName $nodeTypeName): bool
+    private function getDocumentTypeClassification(NodeTypeName $nodeTypeName): DocumentTypeClassification
     {
-        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forSite());
-    }
-
-    private function isDocumentNodeType(NodeTypeName $nodeTypeName): bool
-    {
-        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forDocument());
-    }
-
-    private function isShortcutNodeType(NodeTypeName $nodeTypeName): bool
-    {
-        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forShortcut());
-    }
-
-    private function isNodeTypeOfType(NodeTypeName $nodeTypeName, NodeTypeName $superNodeTypeName): bool
-    {
-        if (!array_key_exists($superNodeTypeName->value, $this->nodeTypeImplementsRuntimeCache)) {
-            $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value] = [];
-        }
-        if (!array_key_exists($nodeTypeName->value, $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value])) {
+        if (!array_key_exists($nodeTypeName->value, $this->documentTypeClassificationRuntimeCache)) {
             // HACK: We consider the currently configured node type of the given node.
             // This is a deliberate side effect of this projector!
             // Note: We could add some hash over all node type decisions to the projected read model
             // to tell whether a replay is required (e.g. if a document node type was changed to a content type vice versa)
             // With https://github.com/neos/neos-development-collection/issues/4468 this can be compared in the `getStatus()` implementation
-            $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value] = $this->nodeTypeManager->getNodeType($nodeTypeName)?->isOfType($superNodeTypeName) ?? false;
+            $this->documentTypeClassificationRuntimeCache[$nodeTypeName->value]
+                = DocumentTypeClassification::forNodeType($nodeTypeName, $this->nodeTypeManager);
         }
-        return $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value];
+
+        return $this->documentTypeClassificationRuntimeCache[$nodeTypeName->value];
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo
@@ -980,7 +979,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                     precedingnodeaggregateid,
                     succeedingnodeaggregateid,
                     shortcuttarget,
-                    nodetypename
+                    nodetypename,
+                    isplaceholder
                 )
                 SELECT
                     nodeaggregateid,
@@ -994,7 +994,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                     precedingnodeaggregateid,
                     succeedingnodeaggregateid,
                     shortcuttarget,
-                    nodetypename
+                    nodetypename,
+                    isplaceholder
                 FROM
                     ' . $this->tableNamePrefix . '_uri
                 WHERE
