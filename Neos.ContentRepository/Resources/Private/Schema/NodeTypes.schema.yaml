@@ -19,7 +19,7 @@ additionalProperties:
 
     'label':
       type: ['string', 'array']
-      description: "An EEL expression for generating a node's of this node type's label. Alternatively an array with the key generatorClass and optional options."
+      description: "An EEL expression for generating a node's of this node type's label. Alternatively an array with the key generatorClass and optional generator options."
 
     'constraints': &constraints
       type: dictionary
@@ -42,6 +42,7 @@ additionalProperties:
             type: dictionary
             additionalProperties: false
             properties:
+              'label': { type: string, description: "A string or an EEL expression for generating a node's of this node type's label. Alternatively an array with the key generatorClass and optional generator options." }
               'type': { type: string, description: "Node Type of this child node." }
               'position':
                 type: ['string', 'null']

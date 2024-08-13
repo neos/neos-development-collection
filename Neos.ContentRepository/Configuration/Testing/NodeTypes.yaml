@@ -205,3 +205,13 @@
 
 'Neos.ContentRepository.Testing:NodeTypeWithEelExpressionLabel':
   label: '${"Test" + " " + "nodetype"}'
+
+'Neos.ContentRepository.Testing:NodeTypeWithPlainLabelInChildNode':
+  childNodes:
+    child:
+      label: 'Test child node'
+
+'Neos.ContentRepository.Testing:NodeTypeWithEelExpressionLabelInChildNode':
+  childNodes:
+    child:
+      label: '${"Test" + " child " + "node"}'
