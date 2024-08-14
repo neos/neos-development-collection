@@ -1743,6 +1743,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         }
         /** @var $childNode Node */
         foreach ($this->getChildNodes() as $childNode) {
+            // Don't copy removed nodes
+            if ($childNode->isRemoved()) {
+                continue;
+            }
             // Prevent recursive copy when copying into itself
             if ($childNode->getIdentifier() !== $copiedNode->getIdentifier()) {
                 $childNode->copyIntoInternal($copiedNode, $childNode->getName(), $detachedCopy);
