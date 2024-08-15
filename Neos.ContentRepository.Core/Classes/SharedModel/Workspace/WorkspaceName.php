@@ -38,7 +38,7 @@ final class WorkspaceName implements \JsonSerializable
         public readonly string $value
     ) {
         if (!self::hasValidFormat($value)) {
-            throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610);
+            throw new \InvalidArgumentException(sprintf('Invalid workspace name "%s" given. A workspace name has to consist of at most %d lower case characters', $value, self::MAX_LENGTH), 1505826610);
         }
     }
 
