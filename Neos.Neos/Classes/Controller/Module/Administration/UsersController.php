@@ -553,7 +553,7 @@ class UsersController extends AbstractModuleController
         $roles = $this->userService->currentUserIsAdministrator() ? $this->policyService->getRoles() : $currentUserRoles;
 
         usort($roles, static function (Role $a, Role $b) {
-            return strcmp($a->getName(), $b->getName());
+            return strcmp($a->getLabel(), $b->getLabel());
         });
 
         return $roles;
