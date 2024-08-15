@@ -367,6 +367,44 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $outputFn(sprintf('Migration applied to %s events.', $numberOfMigratedEvents));
     }
 
+    /**
+     * Rewrites all workspaceNames, that are not matching new constraints.
+     *
+     * Needed for feature "Stabilize WorkspaceName value object": https://github.com/neos/neos-development-collection/pull/5193
+     *
+     * Included in August 2024 - before final Neos 9.0 release
+     *
+     * @param \Closure $outputFn
+     * @return void
+     */
+    public function migratePayloadToValidWorkspaceNames(\Closure $outputFn): void
+    {
+        $backupEventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId) . '_bkp_' . date('Y_m_d_H_i_s');
+        $outputFn('Backup: copying events table to %s', [$backupEventTableName]);
+        $this->copyEventTable($backupEventTableName);
+
+        $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
+        $this->connection->beginTransaction();
+        $statement = <<<SQL
+                UPDATE {$eventTableName}
+                SET
+                  payload = JSON_SET(payload, '$.workspaceName', SUBSTR(MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName'))), 1, 30))
+                WHERE
+                  JSON_EXTRACT(payload, '$.workspaceName') IS NOT NULL
+                  AND JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')) NOT REGEXP '^[a-z][a-z0-9\-]{0,30}$'
+            SQL;
+        $affectedRows = $this->connection->executeStatement($statement);
+        $this->connection->commit();
+
+        if ($affectedRows === 0) {
+            $outputFn('Migration was not necessary.');
+            return;
+        }
+
+        $outputFn();
+        $outputFn(sprintf('Migration applied to %s events.', $affectedRows));
+    }
+
     /** ------------------------ */
 
     /**
