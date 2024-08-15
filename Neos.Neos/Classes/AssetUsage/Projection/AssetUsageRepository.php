@@ -211,7 +211,7 @@ final class AssetUsageRepository
         OriginDimensionSpacePoint $targetOriginDimensionSpacePoint,
     ): void {
         try {
-            $workspaceChain = [$workspaceName, ...$this->getBaseWorkspaces($workspaceName)];
+            $workspaceChain = $this->getWorkspaceChain($workspaceName);
             foreach ($workspaceChain as $baseWorkspace) {
                 $affectedRows = $this->dbal->executeStatement(
                     'INSERT INTO ' . $this->tableNamePrefix . ' (assetid, originalassetid, workspacename, nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, propertyname)'
@@ -319,16 +319,16 @@ final class AssetUsageRepository
      * @param WorkspaceName $workspaceName
      * @return array<WorkspaceName>
      */
-    public function getBaseWorkspaces(WorkspaceName $workspaceName): array
+    public function getWorkspaceChain(WorkspaceName $workspaceName): array
     {
         $baseWorkspaces = $this->dbal->executeQuery(
             'WITH RECURSIVE workspaceChain AS ('
             . 'SELECT * FROM ' . $this->getWorkspacesTableName() . ' w WHERE w.workspacename = :workspaceName'
             . ' UNION'
-            . ' SELECT w.workspacename, w.baseworkspacename from ' . $this->getWorkspacesTableName() . ' w'
+            . ' SELECT w.workspacename from ' . $this->getWorkspacesTableName() . ' w'
             . ' INNER JOIN workspaceChain  ON workspaceChain.baseworkspacename = w.workspacename'
             . ' )'
-            . 'SELECT baseworkspacename FROM workspaceChain WHERE baseworkspacename is not null  ;',
+            . 'SELECT workspacename FROM workspaceChain;',
             [
                 'workspaceName' => $workspaceName->value
             ]
