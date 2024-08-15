@@ -114,7 +114,7 @@ class NodesController extends ActionController
         string $contextNode = null,
         array|string $nodeIdentifiers = []
     ): void {
-        $searchTerm = $searchTerm === '' ? null : SearchTerm::fulltext($searchTerm);
+        $searchTerm = SearchTerm::fulltext($searchTerm);
         $nodeTypeCriteria = NodeTypeCriteria::create(
             NodeTypeNames::fromStringArray($nodeTypes),
             NodeTypeNames::createEmpty()
@@ -176,7 +176,7 @@ class NodesController extends ActionController
                 }
             }
         } else {
-            if (!empty($searchTerm)) {
+            if ($searchTerm->term !== '') {
                 throw new \RuntimeException('Combination of $nodeIdentifiers and $searchTerm not supported');
             }
 

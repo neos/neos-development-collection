@@ -106,6 +106,12 @@ class SearchTermMatcherTest extends TestCase
         }
     }
 
+    public function emptySearchTermAlwaysMatches(): iterable
+    {
+        yield '1 property' => ['', self::value('foo')];
+        yield '1 empty property' => ['', self::value('foo')];
+        yield '0 properties' => ['', SerializedPropertyValues::fromArray([])];
+    }
 
     public function notMatchingExamples(): iterable
     {
@@ -125,6 +131,7 @@ class SearchTermMatcherTest extends TestCase
      * @dataProvider matchingNumberLikeComparisonExamples
      * @dataProvider matchingBooleanLikeComparisonExamples
      * @dataProvider matchingArrayComparisonExamples
+     * @dataProvider emptySearchTermAlwaysMatches
      */
     public function searchTermMatchesProperties(
         string $searchTerm,

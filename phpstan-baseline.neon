@@ -166,11 +166,6 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Module/User/UserSettingsController.php
 
 		-
-			message: "#^Parameter \\#2 \\$searchTerm of static method Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\Filter\\\\SearchTerm\\\\SearchTermMatcher\\:\\:matchesNode\\(\\) expects Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\Filter\\\\SearchTerm\\\\SearchTerm, Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\Filter\\\\SearchTerm\\\\SearchTerm\\|null given\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Service/NodesController.php
-
-		-
 			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\Projection\\\\ContentGraph\\\\Filter\\\\NodeType\\\\ExpandedNodeTypeCriteria\\:\\:matches\" is called\\.$#"
 			count: 1
 			path: Neos.Neos/Classes/Controller/Service/NodesController.php

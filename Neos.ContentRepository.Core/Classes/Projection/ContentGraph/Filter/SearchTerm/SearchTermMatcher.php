@@ -21,6 +21,9 @@ class SearchTermMatcher
 
     public static function matchesSerializedPropertyValues(SerializedPropertyValues $serializedPropertyValues, SearchTerm $searchTerm): bool
     {
+        if ($searchTerm->term === '') {
+            return true;
+        }
         foreach ($serializedPropertyValues as $serializedPropertyValue) {
             if (self::matchesValue($serializedPropertyValue->value, $searchTerm)) {
                 return true;
