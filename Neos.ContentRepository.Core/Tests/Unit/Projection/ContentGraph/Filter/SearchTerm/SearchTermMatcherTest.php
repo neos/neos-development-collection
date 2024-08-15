@@ -74,6 +74,11 @@ class SearchTermMatcherTest extends TestCase
             'false',
             self::value(false),
         ];
+
+        yield 'string part matches boolean' => [
+            'ru',
+            self::value(true),
+        ];
     }
 
     public static function matchingArrayComparisonExamples(): iterable

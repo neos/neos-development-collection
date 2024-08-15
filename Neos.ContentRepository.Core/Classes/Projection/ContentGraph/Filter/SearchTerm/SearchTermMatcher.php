@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm;
 
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
@@ -43,11 +42,11 @@ class SearchTermMatcher
 
         return match (true) {
             is_string($value) => mb_stripos($value, $searchTerm->term) !== false,
-            // the following behaviour might seem odd, but is implemented after how the database filtering should behave
+            // the following behaviour might seem odd, but is implemented after how the doctrine adapter filtering is currently implemented
             is_int($value),
             is_float($value) => str_contains((string)$value, $searchTerm->term),
-            $value === true => $searchTerm->term === 'true',
-            $value === false => $searchTerm->term === 'false',
+            $value === true => str_contains('true', $searchTerm->term),
+            $value === false => str_contains('false', $searchTerm->term),
             default => throw new \InvalidArgumentException(sprintf('Handling for type %s is not implemented.', get_debug_type($value))),
         };
     }
