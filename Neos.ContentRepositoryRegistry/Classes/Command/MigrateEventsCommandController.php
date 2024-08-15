@@ -64,4 +64,20 @@ final class MigrateEventsCommandController extends CommandController
         $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
         $eventMigrationService->migratePayloadToWorkspaceName($this->outputLine(...));
     }
+
+    /**
+     * Rewrites all workspaceNames, that are not matching new constraints.
+     *
+     * Needed for feature "Stabilize WorkspaceName value object": https://github.com/neos/neos-development-collection/pull/5193
+     *
+     * Included in August 2024 - before final Neos 9.0 release
+ *
+     * @param string $contentRepository Identifier of the Content Repository to migrate
+     */
+    public function migratePayloadToValidWorkspaceNamesCommand(string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
+        $eventMigrationService->migratePayloadToValidWorkspaceNames($this->outputLine(...));
+    }
 }
