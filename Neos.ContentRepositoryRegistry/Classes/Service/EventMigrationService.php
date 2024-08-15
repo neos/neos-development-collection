@@ -385,24 +385,35 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
         $this->connection->beginTransaction();
-        $statement = <<<SQL
+        $statementWorkspaceName = <<<SQL
                 UPDATE {$eventTableName}
                 SET
-                  payload = JSON_SET(payload, '$.workspaceName', SUBSTR(MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName'))), 1, 30))
+                  payload = JSON_SET(payload, '$.workspaceName', LEFT(CONCAT('w', MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')))), 30))
                 WHERE
                   JSON_EXTRACT(payload, '$.workspaceName') IS NOT NULL
-                  AND JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')) NOT REGEXP '^[a-z][a-z0-9\-]{0,30}$'
+                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')) NOT REGEXP '^[a-z][a-z0-9\-]{0,30}$'
             SQL;
-        $affectedRows = $this->connection->executeStatement($statement);
+        $affectedRowsWorkspaceName = $this->connection->executeStatement($statementWorkspaceName);
+
+        $statementBaseWorkspaceName = <<<SQL
+                UPDATE {$eventTableName}
+                SET
+                  payload = JSON_SET(payload, '$.baseWorkspaceName', LEFT(CONCAT('w', MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')))), 30))
+                WHERE
+                  JSON_EXTRACT(payload, '$.baseWorkspaceName') IS NOT NULL
+                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')) NOT REGEXP '^[a-z][a-z0-9\-]{0,30}$'
+            SQL;
+        $affectedRowsBaseWorkspaceName = $this->connection->executeStatement($statementBaseWorkspaceName);
         $this->connection->commit();
 
-        if ($affectedRows === 0) {
+        if ($affectedRowsWorkspaceName + $affectedRowsBaseWorkspaceName === 0) {
             $outputFn('Migration was not necessary.');
             return;
         }
 
         $outputFn();
-        $outputFn(sprintf('Migration applied to %s events.', $affectedRows));
+        $outputFn(sprintf('Migration applied to %s events and changed the workspaceName.', $affectedRowsWorkspaceName));
+        $outputFn(sprintf('Migration applied to %s events and changed the baseWorkspaceName.', $affectedRowsBaseWorkspaceName));
     }
 
     /** ------------------------ */
