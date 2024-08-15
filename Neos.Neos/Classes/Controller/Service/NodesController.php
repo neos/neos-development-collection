@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTermMatcher;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -113,6 +114,11 @@ class NodesController extends ActionController
         string $contextNode = null,
         array|string $nodeIdentifiers = []
     ): void {
+        $searchTerm = $searchTerm === '' ? null : SearchTerm::fulltext($searchTerm);
+        $nodeTypeCriteria = NodeTypeCriteria::create(
+            NodeTypeNames::fromStringArray($nodeTypes),
+            NodeTypeNames::createEmpty()
+        );
         $nodeIds = $nodeIds ?: $nodeIdentifiers;
         $nodeIds = is_array($nodeIds) ? $nodeIds : [$nodeIds];
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
@@ -143,6 +149,7 @@ class NodesController extends ActionController
             );
         }
 
+        $nodes = [];
         if ($nodeIds === [] && (!is_null($nodeAddress) || !is_null($nodePath))) {
             if (!is_null($nodeAddress)) {
                 $entryNode = $subgraph->findNodeById($nodeAddress->aggregateId);
@@ -151,33 +158,28 @@ class NodesController extends ActionController
                 $entryNode = $subgraph->findNodeByAbsolutePath($nodePath);
             }
 
-            $nodes = Nodes::createEmpty();
             if (!is_null($entryNode)) {
-                $filter = FindDescendantNodesFilter::create(
-                    nodeTypes: NodeTypeCriteria::create(
-                        NodeTypeNames::fromStringArray($nodeTypes),
-                        NodeTypeNames::createEmpty()
-                    ),
-                    searchTerm: $searchTerm,
+                $nodes = $subgraph->findDescendantNodes(
+                    $entryNode->aggregateId,
+                    FindDescendantNodesFilter::create(
+                        nodeTypes: $nodeTypeCriteria,
+                        searchTerm: $searchTerm,
+                    )
                 );
                 if (
-                    SearchTermMatcher::matchesNode($entryNode, $filter->searchTerm)
-                    && ExpandedNodeTypeCriteria::create($filter->nodeTypes, $contentRepository->getNodeTypeManager())
+                    SearchTermMatcher::matchesNode($entryNode, $searchTerm)
+                    && ExpandedNodeTypeCriteria::create($nodeTypeCriteria, $contentRepository->getNodeTypeManager())
                         ->matches($entryNode->nodeTypeName)
                 ) {
                     // include the starting node if it matches
-                    $nodes = $nodes->append($entryNode);
+                    $nodes = $nodes->prepend($entryNode);
                 }
-                $nodes = $nodes->merge(
-                    $subgraph->findDescendantNodes($entryNode->aggregateId, $filter)
-                );
             }
         } else {
             if (!empty($searchTerm)) {
                 throw new \RuntimeException('Combination of $nodeIdentifiers and $searchTerm not supported');
             }
 
-            $nodes = [];
             foreach ($nodeIds as $nodeAggregateId) {
                 $node = $subgraph->findNodeById(
                     NodeAggregateId::fromString($nodeAggregateId)
