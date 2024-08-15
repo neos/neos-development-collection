@@ -406,7 +406,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $affectedRowsBaseWorkspaceName = $this->connection->executeStatement($statementBaseWorkspaceName);
         $this->connection->commit();
 
-        if ($affectedRowsWorkspaceName + $affectedRowsBaseWorkspaceName === 0) {
+        if ($affectedRowsWorkspaceName === 0 && $affectedRowsBaseWorkspaceName === 0) {
             $outputFn('Migration was not necessary.');
             return;
         }
