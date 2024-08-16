@@ -113,12 +113,40 @@ class UsersController extends AbstractModuleController
      * @param string $sortDirection
      * @return void
      */
-    public function indexAction(string $searchTerm = '', string $sortBy = 'accounts.accountIdentifier', string $sortDirection = QueryInterface::ORDER_ASCENDING): void
-    {
+    public function indexAction(
+        string $searchTerm = '',
+        string $sortBy = 'accounts.accountIdentifier',
+        string $sortDirection = QueryInterface::ORDER_ASCENDING,
+        string $role = null,
+    ): void {
+        $allowedRoles = $this->getAllowedRoles();
+
         if (empty($searchTerm)) {
             $users = $this->userService->getUsers($sortBy, $sortDirection);
         } else {
             $users = $this->userService->searchUsers($searchTerm, $sortBy, $sortDirection);
+        }
+
+        if ($role) {
+            $roleExists = false;
+            foreach ($allowedRoles as $allowedRole) {
+                if ($allowedRole->getIdentifier() === $role) {
+                    $roleExists = true;
+                    break;
+                }
+            }
+            if (!$roleExists) {
+                throw new NoSuchRoleException(sprintf('The role "%s" does not exist.', $role), 1723796893);
+            }
+
+            $query = $users->getQuery();
+            $constraints = $query->getConstraint();
+            $users = $query
+                ->matching($query->logicalAnd(
+                    $constraints,
+                    // FIXME: The like query could yield incorrect results if the role identifier is a substring of another role identifier
+                    $query->like('accounts.roleIdentifiers', '%' . $role . '%', false),
+                ))->execute();
         }
 
         $this->view->assignMultiple([
@@ -127,6 +155,8 @@ class UsersController extends AbstractModuleController
             'searchTerm' => $searchTerm,
             'sortBy' => $sortBy,
             'sortDirection' => $sortDirection,
+            'allowedRoles' => $allowedRoles,
+            'role' => $role,
         ]);
     }
 
