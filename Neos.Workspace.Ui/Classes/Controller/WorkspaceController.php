@@ -263,7 +263,7 @@ class WorkspaceController extends AbstractModuleController
      * @param WorkspaceName $workspaceName
      * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
-     * @param string $workspaceOwner Id of the owner of the workspace
+     * @param string|null $workspaceOwner Id of the owner of the workspace
      * @return void
      */
     public function updateAction(
@@ -329,22 +329,23 @@ class WorkspaceController extends AbstractModuleController
             $this->redirect('index');
         }
 
-        if ($workspace->isPersonalWorkspace()) {
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
+
+        if ($workspaceMetadata->classification === WorkspaceClassification::PERSONAL) {
             $this->redirect('index');
         }
 
-        $dependentWorkspaces = $contentRepository->getWorkspaceFinder()
-            ->findByBaseWorkspace($workspace->workspaceName);
+        $dependentWorkspaces = $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->workspaceName);
         if (count($dependentWorkspaces) > 0) {
             $dependentWorkspaceTitles = [];
-            /** @var Workspace $dependentWorkspace */
             foreach ($dependentWorkspaces as $dependentWorkspace) {
-                $dependentWorkspaceTitles[] = $dependentWorkspace->workspaceTitle->value;
+                $dependentWorkspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $dependentWorkspace->workspaceName);
+                $dependentWorkspaceTitles[] = $dependentWorkspaceMetadata->title->value;
             }
 
             $message = $this->translator->translateById(
                 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies',
-                [$workspace->workspaceTitle->value, implode(', ', $dependentWorkspaceTitles)],
+                [$workspaceMetadata->title->value, implode(', ', $dependentWorkspaceTitles)],
                 null,
                 null,
                 'Main',
@@ -364,7 +365,7 @@ class WorkspaceController extends AbstractModuleController
         } catch (\Exception $exception) {
             $message = $this->translator->translateById(
                 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes',
-                [$workspace->workspaceTitle->value],
+                [$workspaceMetadata->title->value],
                 null,
                 null,
                 'Main',
@@ -376,7 +377,7 @@ class WorkspaceController extends AbstractModuleController
         if ($nodesCount > 0) {
             $message = $this->translator->translateById(
                 'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes',
-                [$workspace->workspaceTitle->value, $nodesCount],
+                [$workspaceMetadata->title->value, $nodesCount],
                 $nodesCount,
                 null,
                 'Main',
@@ -394,7 +395,7 @@ class WorkspaceController extends AbstractModuleController
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenRemoved',
-            [$workspace->workspaceTitle->value],
+            [$workspaceMetadata->title->value],
             null,
             null,
             'Main',
@@ -459,7 +460,6 @@ class WorkspaceController extends AbstractModuleController
                 $targetNodeAddressInPersonalWorkspace->workspaceName
             );
             $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
-            /** @var ActionRequest $mainRequest */
             $this->uriBuilder->setRequest($mainRequest);
 
             $this->redirect(

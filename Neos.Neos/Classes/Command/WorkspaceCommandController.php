@@ -373,8 +373,8 @@ class WorkspaceCommandController extends CommandController
             /* @var Workspace $workspace */
             $tableRows[] = [
                 $workspace->workspaceName->value,
-                $workspaceMetadata->classification->name,
-                $workspace->baseWorkspaceName?->value ?: '',
+                $workspaceMetadata->classification->value,
+                $workspace->baseWorkspaceName?->value ?: '-',
                 $workspaceMetadata->title->value,
                 $workspaceMetadata->description->value,
                 $workspace->status->value,
@@ -382,5 +382,35 @@ class WorkspaceCommandController extends CommandController
             ];
         }
         $this->output->outputTable($tableRows, $headerRow);
+    }
+
+    /**
+     * Display details for the specified workspace
+     *
+     * @param string $workspace Name of the workspace to show
+     * @param string $contentRepository The name of the content repository. (Default: 'default')
+     * @throws StopCommandException
+     */
+    public function showCommand(string $workspace, string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $workspaceName = WorkspaceName::fromString($workspace);
+        $workspacesInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName($workspaceName);
+
+        if ($workspacesInstance === null) {
+            $this->outputLine('Workspace "%s" not found.', [$workspaceName->value]);
+            $this->quit();
+        }
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
+
+        $this->outputFormatted('Name: <b>%s</b>', [$workspacesInstance->workspaceName->value]);
+        $this->outputFormatted('Classification: <b>%s</b>', [$workspaceMetadata->classification->value]);
+        $this->outputFormatted('Base Workspace: <b>%s</b>', [$workspacesInstance->baseWorkspaceName?->value ?: '-']);
+        $this->outputFormatted('Title: <b>%s</b>', [$workspaceMetadata->title->value]);
+        $this->outputFormatted('Description: <b>%s</b>', [$workspaceMetadata->description->value]);
+        $this->outputFormatted('Status: <b>%s</b>', [$workspacesInstance->status->value]);
+        $this->outputFormatted('Content Stream: <b>%s</b>', [$workspacesInstance->currentContentStreamId->value]);
     }
 }

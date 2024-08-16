@@ -279,7 +279,7 @@ final class WorkspaceService
         $role = $this->dbal->fetchOne($query, [
             'contentRepositoryId' => $contentRepositoryId->value,
             'workspaceName' => $workspaceName->value,
-            'subjects' => ['user:' . $userId->value, ...array_map(fn (string $role) => 'group:' . $role, $userRoles)],
+            'subjects' => ['user:' . $userId->value, ...array_map(static fn (string $role) => 'group:' . $role, $userRoles)],
         ], [
             'subjects' => Connection::PARAM_STR_ARRAY,
         ]);

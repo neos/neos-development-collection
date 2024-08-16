@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  *
  * @api
  */
-class Workspace
+final readonly class Workspace
 {
     /**
      * This prefix determines if a given workspace (name) is a user workspace.
@@ -32,23 +32,64 @@ class Workspace
     public const PERSONAL_WORKSPACE_PREFIX = 'user-';
 
     /**
+     * @var WorkspaceName Workspace identifier, unique within one Content Repository instance
+     */
+    public WorkspaceName $workspaceName;
+
+    /**
+     * @var WorkspaceName|null Workspace identifier of the base workspace (i.e. the target when publishing changes) – if null this instance is considered a root (aka public) workspace
+     */
+    public ?WorkspaceName $baseWorkspaceName;
+
+    /**
+     * @deprecated with 9.0.0-beta12 metadata should be assigned to workspaces outside the Content Repository core
+     */
+    public WorkspaceTitle $workspaceTitle;
+
+    /**
+     * @deprecated with 9.0.0-beta12metadata should be assigned to workspaces outside the Content Repository core
+     */
+    public WorkspaceDescription $workspaceDescription;
+
+    /**
+     * The Content Stream this workspace currently points to – usually it is set to a new, empty content stream after publishing/rebasing the workspace
+     */
+    public ContentStreamId $currentContentStreamId;
+
+    /**
+     * The current status of this workspace
+     */
+    public WorkspaceStatus $status;
+
+    /**
+     * @deprecated with 9.0.0-beta12 owners/collaborators should be assigned to workspaces outside the Content Repository core
+     */
+    public string|null $workspaceOwner;
+
+    /**
      * @internal
      */
     public function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly ?WorkspaceName $baseWorkspaceName,
-        public readonly WorkspaceTitle $workspaceTitle,
-        public readonly WorkspaceDescription $workspaceDescription,
-        public readonly ContentStreamId $currentContentStreamId,
-        public readonly WorkspaceStatus $status,
-        public readonly ?string $workspaceOwner
+        WorkspaceName $workspaceName,
+        ?WorkspaceName $baseWorkspaceName,
+        WorkspaceTitle $workspaceTitle,
+        WorkspaceDescription $workspaceDescription,
+        ContentStreamId $currentContentStreamId,
+        WorkspaceStatus $status,
+        ?string $workspaceOwner
     ) {
+        $this->workspaceName = $workspaceName;
+        $this->baseWorkspaceName = $baseWorkspaceName;
+        $this->workspaceTitle = $workspaceTitle;
+        $this->workspaceDescription = $workspaceDescription;
+        $this->currentContentStreamId = $currentContentStreamId;
+        $this->status = $status;
+        $this->workspaceOwner = $workspaceOwner;
     }
-
 
     /**
      * Checks if this workspace is a user's personal workspace
-     * @api
+     * @deprecated with 9.0.0-beta12 owners/collaborators should be assigned to workspaces outside the Content Repository core
      */
     public function isPersonalWorkspace(): bool
     {
@@ -59,7 +100,7 @@ class Workspace
      * Checks if this workspace is shared only across users with access to internal workspaces, for example "reviewers"
      *
      * @return bool
-     * @api
+     * @deprecated with 9.0.0-beta12 owners/collaborators should be assigned to workspaces outside the Content Repository core
      */
     public function isPrivateWorkspace(): bool
     {
@@ -70,6 +111,7 @@ class Workspace
      * Checks if this workspace is shared across all editors
      *
      * @return boolean
+     * @deprecated with 9.0.0-beta12 owners/collaborators should be assigned to workspaces outside the Content Repository core
      */
     public function isInternalWorkspace(): bool
     {
