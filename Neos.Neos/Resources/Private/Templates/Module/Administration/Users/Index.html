@@ -6,9 +6,10 @@
 		<f:form action="index">
 			<div class="neos-search-bar">
 				<f:spaceless>
-					<button class="neos-button"><i class="fas fa-search"></i></button>
 					<f:form.textfield type="search" name="searchTerm" placeholder="{neos:backend.translate(id: 'search', package: 'Neos.Neos')}" value="{searchTerm}" autofocus="autofocus" />
 					<f:link.action action="index" class="neos-button"><i class="fas fa-times"></i></f:link.action>
+					<f:form.select options="{allowedRoles}" name="role" value="{role}" optionLabelField="label" prependOptionLabel="Any role" prependOptionValue="" />
+					<button class="neos-button"><i class="fas fa-search"></i></button>
 				</f:spaceless>
 			</div>
 		</f:form>

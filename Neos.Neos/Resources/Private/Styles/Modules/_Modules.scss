@@ -92,13 +92,8 @@
     }
 
     .neos-search-bar {
-      button.neos-button {
-        border-right: 1px solid $grayDark;
-      }
-
-      a.neos-button {
-        border-left: 1px solid $grayDark;
-      }
+      display: flex;
+      gap: 1px;
     }
   }
 
