@@ -72,7 +72,7 @@ class AssetController extends ActionController
 {
     use BackendUserTranslationTrait;
     use BackendUserTranslationTrait {
-        BackendUserTranslationTrait::initializeObject as BackendUserTranslationTraitInitializeObject;
+        BackendUserTranslationTrait::initializeObject as backendUserTranslationTraitInitializeObject;
     }
     use CreateContentContextTrait;
     use AddTranslatedFlashMessageTrait;
