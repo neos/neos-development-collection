@@ -23,9 +23,9 @@ use Behat\Transliterator\Transliterator;
  */
 final class WorkspaceName implements \JsonSerializable
 {
-    public const MAX_LENGTH = 30;
+    public const MAX_LENGTH = 36;
 
-    private const PATTERN = '/^[a-z][a-z0-9\-]{0,' . (self::MAX_LENGTH - 1) . '}$/';
+    private const PATTERN = '/^[a-z0-9][a-z0-9\-]{0,' . (self::MAX_LENGTH - 1) . '}$/';
 
     public const WORKSPACE_NAME_LIVE = 'live';
 
@@ -89,8 +89,7 @@ final class WorkspaceName implements \JsonSerializable
 
         // If the name is still invalid at this point, we fall back to md5
         if (!self::hasValidFormat($name)) {
-            $prefix = 'workspace-';
-            $name = $prefix . substr(md5($originalName), 0, self::MAX_LENGTH - strlen($prefix));
+            $name = substr(md5($originalName), 0, self::MAX_LENGTH);
         }
 
         return self::fromString($name);

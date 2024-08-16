@@ -388,20 +388,34 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $statementWorkspaceName = <<<SQL
                 UPDATE {$eventTableName}
                 SET
-                  payload = JSON_SET(payload, '$.workspaceName', LEFT(CONCAT('w', MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')))), 30))
+                    payload = JSON_SET(
+                          payload, 
+                          '$.workspaceName',
+                          IF(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')) REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$',
+                            LOWER(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName'))),
+                            MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')))
+                          )
+                        )
                 WHERE
                   JSON_EXTRACT(payload, '$.workspaceName') IS NOT NULL
-                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')) NOT REGEXP '^[a-z][a-z0-9\-]{0,30}$'
+                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')) NOT REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$'
             SQL;
         $affectedRowsWorkspaceName = $this->connection->executeStatement($statementWorkspaceName);
 
         $statementBaseWorkspaceName = <<<SQL
                 UPDATE {$eventTableName}
                 SET
-                  payload = JSON_SET(payload, '$.baseWorkspaceName', LEFT(CONCAT('w', MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')))), 30))
+                    payload = JSON_SET(
+                          payload, 
+                          '$.baseWorkspaceName',
+                          IF(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')) REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$',
+                            LOWER(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName'))),
+                            MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')))
+                          )
+                        )
                 WHERE
                   JSON_EXTRACT(payload, '$.baseWorkspaceName') IS NOT NULL
-                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')) NOT REGEXP '^[a-z][a-z0-9\-]{0,30}$'
+                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')) NOT REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$'
             SQL;
         $affectedRowsBaseWorkspaceName = $this->connection->executeStatement($statementBaseWorkspaceName);
         $this->connection->commit();
