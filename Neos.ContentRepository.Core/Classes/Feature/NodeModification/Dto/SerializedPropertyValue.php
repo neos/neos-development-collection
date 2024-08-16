@@ -38,8 +38,6 @@ final readonly class SerializedPropertyValue implements \JsonSerializable
     }
 
     /**
-     * If the value is NULL an unset-property instruction will be returned instead.
-     *
      * @param Value $value
      */
     public static function create(
