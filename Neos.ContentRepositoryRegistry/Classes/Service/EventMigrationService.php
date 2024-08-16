@@ -428,6 +428,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $outputFn();
         $outputFn(sprintf('Migration applied to %s events and changed the workspaceName.', $affectedRowsWorkspaceName));
         $outputFn(sprintf('Migration applied to %s events and changed the baseWorkspaceName.', $affectedRowsBaseWorkspaceName));
+        $outputFn(sprintf('You need to replay your projection for workspaces. Please run: ./flow cr:projectionreplay --projection=workspace'));
     }
 
     /** ------------------------ */
