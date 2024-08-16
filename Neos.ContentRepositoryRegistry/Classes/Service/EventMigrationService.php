@@ -389,7 +389,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 UPDATE {$eventTableName}
                 SET
                     payload = JSON_SET(
-                          payload, 
+                          payload,
                           '$.workspaceName',
                           IF(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')) REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$',
                             LOWER(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName'))),
@@ -406,7 +406,7 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                 UPDATE {$eventTableName}
                 SET
                     payload = JSON_SET(
-                          payload, 
+                          payload,
                           '$.baseWorkspaceName',
                           IF(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')) REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$',
                             LOWER(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName'))),
@@ -418,9 +418,43 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
                   AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')) NOT REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$'
             SQL;
         $affectedRowsBaseWorkspaceName = $this->connection->executeStatement($statementBaseWorkspaceName);
+
+        $sourceWorkspaceNameStatement = <<<SQL
+                UPDATE {$eventTableName}
+                SET
+                    payload = JSON_SET(
+                          payload,
+                          '$.sourceWorkspaceName',
+                          IF(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceWorkspaceName')) REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$',
+                            LOWER(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceWorkspaceName'))),
+                            MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceWorkspaceName')))
+                          )
+                        )
+                WHERE
+                  JSON_EXTRACT(payload, '$.sourceWorkspaceName') IS NOT NULL
+                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceWorkspaceName')) NOT REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$'
+            SQL;
+        $sourceWorkspaceAffectedRows = $this->connection->executeStatement($sourceWorkspaceNameStatement);
+
+        $targetWorkspaceNameStatement = <<<SQL
+                UPDATE {$eventTableName}
+                SET
+                    payload = JSON_SET(
+                          payload,
+                          '$.targetWorkspaceName',
+                          IF(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.targetWorkspaceName')) REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$',
+                            LOWER(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.targetWorkspaceName'))),
+                            MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.targetWorkspaceName')))
+                          )
+                        )
+                WHERE
+                  JSON_EXTRACT(payload, '$.targetWorkspaceName') IS NOT NULL
+                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.targetWorkspaceName')) NOT REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$'
+            SQL;
+        $targetWorkspaceAffectedRows = $this->connection->executeStatement($targetWorkspaceNameStatement);
         $this->connection->commit();
 
-        if ($affectedRowsWorkspaceName === 0 && $affectedRowsBaseWorkspaceName === 0) {
+        if ($affectedRowsWorkspaceName === 0 && $affectedRowsBaseWorkspaceName === 0 && $sourceWorkspaceAffectedRows === 0 && $targetWorkspaceAffectedRows === 0) {
             $outputFn('Migration was not necessary.');
             return;
         }
@@ -428,6 +462,8 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
         $outputFn();
         $outputFn(sprintf('Migration applied to %s events and changed the workspaceName.', $affectedRowsWorkspaceName));
         $outputFn(sprintf('Migration applied to %s events and changed the baseWorkspaceName.', $affectedRowsBaseWorkspaceName));
+        $outputFn(sprintf('Migration applied to %s events and changed the sourceWorkspaceName.', $sourceWorkspaceAffectedRows));
+        $outputFn(sprintf('Migration applied to %s events and changed the targetWorkspaceName.', $targetWorkspaceAffectedRows));
         $outputFn(sprintf('You need to replay your projection for workspaces. Please run: ./flow cr:projectionreplay --projection=workspace'));
     }
 
