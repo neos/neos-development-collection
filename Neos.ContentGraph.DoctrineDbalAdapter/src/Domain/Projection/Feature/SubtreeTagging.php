@@ -43,6 +43,8 @@ trait SubtreeTagging
                 FROM
                   cte
                   JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id
+                    AND dh.contentstreamid = :contentStreamId
+                    AND dh.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 WHERE
                   NOT JSON_CONTAINS_PATH(dh.subtreetags, 'one', :tagPath)
               )
@@ -119,7 +121,9 @@ trait SubtreeTagging
                   dh.childnodeanchor
                 FROM
                   cte
-                  JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id
+                  JOIN {$this->tableNames->hierarchyRelation()} dh ON dh.parentnodeanchor = cte.id 
+                    AND dh.contentstreamid = :contentStreamId
+                    AND dh.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 WHERE
                   JSON_EXTRACT(dh.subtreetags, :tagPath) != TRUE
               )

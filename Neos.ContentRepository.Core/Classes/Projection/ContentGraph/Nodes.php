@@ -124,6 +124,16 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return self::fromArray($nodes);
     }
 
+    public function prepend(Node $node): self
+    {
+        return new self([$node, ...$this->nodes]);
+    }
+
+    public function append(Node $node): self
+    {
+        return new self([...$this->nodes, $node]);
+    }
+
     public function reverse(): self
     {
         return new self(array_reverse($this->nodes));
