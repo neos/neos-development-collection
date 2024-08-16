@@ -20,7 +20,7 @@
 		</f:if>
 
 		<f:if condition="{users}">
-			<f:widget.paginate objects="{users}" as="paginatedUsers">
+			<f:widget.paginate objects="{users}" as="paginatedUsers" configuration="{itemsPerPage: usersPerPage}">
 			<table class="neos-table">
 					<thead>
 						<tr>

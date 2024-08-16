@@ -370,6 +370,8 @@ Neos:
               new:
                 label: 'Neos.Neos:Modules:users.actions.new.label'
                 title: 'Neos.Neos:Modules:users.actions.new.title'
+            options:
+              usersPerPage: 10
           packages:
             label: 'Neos.Neos:Modules:packages.label'
             controller: 'Neos\Neos\Controller\Module\Administration\PackagesController'
