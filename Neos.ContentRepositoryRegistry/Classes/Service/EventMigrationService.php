@@ -385,24 +385,86 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
         $this->connection->beginTransaction();
-        $statement = <<<SQL
+        $statementWorkspaceName = <<<SQL
                 UPDATE {$eventTableName}
                 SET
-                  payload = JSON_SET(payload, '$.workspaceName', SUBSTR(MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName'))), 1, 30))
+                    payload = JSON_SET(
+                          payload,
+                          '$.workspaceName',
+                          IF(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')) REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$',
+                            LOWER(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName'))),
+                            MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')))
+                          )
+                        )
                 WHERE
                   JSON_EXTRACT(payload, '$.workspaceName') IS NOT NULL
-                  AND JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')) NOT REGEXP '^[a-z][a-z0-9\-]{0,30}$'
+                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.workspaceName')) NOT REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$'
             SQL;
-        $affectedRows = $this->connection->executeStatement($statement);
+        $affectedRowsWorkspaceName = $this->connection->executeStatement($statementWorkspaceName);
+
+        $statementBaseWorkspaceName = <<<SQL
+                UPDATE {$eventTableName}
+                SET
+                    payload = JSON_SET(
+                          payload,
+                          '$.baseWorkspaceName',
+                          IF(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')) REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$',
+                            LOWER(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName'))),
+                            MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')))
+                          )
+                        )
+                WHERE
+                  JSON_EXTRACT(payload, '$.baseWorkspaceName') IS NOT NULL
+                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.baseWorkspaceName')) NOT REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$'
+            SQL;
+        $affectedRowsBaseWorkspaceName = $this->connection->executeStatement($statementBaseWorkspaceName);
+
+        $sourceWorkspaceNameStatement = <<<SQL
+                UPDATE {$eventTableName}
+                SET
+                    payload = JSON_SET(
+                          payload,
+                          '$.sourceWorkspaceName',
+                          IF(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceWorkspaceName')) REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$',
+                            LOWER(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceWorkspaceName'))),
+                            MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceWorkspaceName')))
+                          )
+                        )
+                WHERE
+                  JSON_EXTRACT(payload, '$.sourceWorkspaceName') IS NOT NULL
+                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.sourceWorkspaceName')) NOT REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$'
+            SQL;
+        $sourceWorkspaceAffectedRows = $this->connection->executeStatement($sourceWorkspaceNameStatement);
+
+        $targetWorkspaceNameStatement = <<<SQL
+                UPDATE {$eventTableName}
+                SET
+                    payload = JSON_SET(
+                          payload,
+                          '$.targetWorkspaceName',
+                          IF(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.targetWorkspaceName')) REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$',
+                            LOWER(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.targetWorkspaceName'))),
+                            MD5(JSON_UNQUOTE(JSON_EXTRACT(payload, '$.targetWorkspaceName')))
+                          )
+                        )
+                WHERE
+                  JSON_EXTRACT(payload, '$.targetWorkspaceName') IS NOT NULL
+                  AND BINARY JSON_UNQUOTE(JSON_EXTRACT(payload, '$.targetWorkspaceName')) NOT REGEXP '^[a-z0-9][a-z0-9\-]{0,35}$'
+            SQL;
+        $targetWorkspaceAffectedRows = $this->connection->executeStatement($targetWorkspaceNameStatement);
         $this->connection->commit();
 
-        if ($affectedRows === 0) {
+        if ($affectedRowsWorkspaceName === 0 && $affectedRowsBaseWorkspaceName === 0 && $sourceWorkspaceAffectedRows === 0 && $targetWorkspaceAffectedRows === 0) {
             $outputFn('Migration was not necessary.');
             return;
         }
 
         $outputFn();
-        $outputFn(sprintf('Migration applied to %s events.', $affectedRows));
+        $outputFn(sprintf('Migration applied to %s events and changed the workspaceName.', $affectedRowsWorkspaceName));
+        $outputFn(sprintf('Migration applied to %s events and changed the baseWorkspaceName.', $affectedRowsBaseWorkspaceName));
+        $outputFn(sprintf('Migration applied to %s events and changed the sourceWorkspaceName.', $sourceWorkspaceAffectedRows));
+        $outputFn(sprintf('Migration applied to %s events and changed the targetWorkspaceName.', $targetWorkspaceAffectedRows));
+        $outputFn(sprintf('You need to replay your projection for workspaces. Please run: ./flow cr:projectionreplay --projection=workspace'));
     }
 
     /** ------------------------ */

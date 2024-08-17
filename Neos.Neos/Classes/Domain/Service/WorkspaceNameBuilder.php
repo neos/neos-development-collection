@@ -30,6 +30,6 @@ final class WorkspaceNameBuilder
                 1645656253
             );
         }
-        return WorkspaceName::fromString($name);
+        return WorkspaceName::transliterateFromString($name);
     }
 }
