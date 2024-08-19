@@ -17,6 +17,9 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Annotations as Flow;
 use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 
+/**
+ * @internal
+ */
 class SiteGeneratorCollectingService
 {
     /**

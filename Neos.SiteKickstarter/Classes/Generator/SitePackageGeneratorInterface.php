@@ -13,6 +13,9 @@ namespace Neos\SiteKickstarter\Generator;
  * source code.
  */
 
+/**
+ * @deprecated with Neos 9. Custom generators for "kickstart:site" are discouraged.
+ */
 interface SitePackageGeneratorInterface
 {
     /**

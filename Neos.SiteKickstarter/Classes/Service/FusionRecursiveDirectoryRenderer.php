@@ -15,6 +15,9 @@ namespace Neos\SiteKickstarter\Service;
 
 use Neos\Flow\Annotations as Flow;
 
+/**
+ * @internal
+ */
 class FusionRecursiveDirectoryRenderer
 {
     /**

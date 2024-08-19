@@ -24,6 +24,7 @@ use Neos\Utility\Files;
 /**
  * Service to generate site packages
  *
+ * @internal
  */
 class AfxTemplateGenerator extends GeneratorService implements SitePackageGeneratorInterface
 {
