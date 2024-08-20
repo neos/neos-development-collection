@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\ViewHelpers\Node;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -7,7 +8,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 
 /**
- *
+ * Viewhelper to render a label for a given Node
  */
 class LabelViewHelper extends AbstractViewHelper
 {
