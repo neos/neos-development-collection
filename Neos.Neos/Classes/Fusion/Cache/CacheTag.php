@@ -23,6 +23,7 @@ class CacheTag
     protected const PREFIX_ANCESTOR = 'Ancestor';
     protected const PREFIX_NODE_TYPE = 'NodeType';
     protected const PREFIX_DYNAMIC_NODE_TAG = 'DynamicNodeTag';
+    protected const PREFIX_WORKSPACE = 'Workspace';
 
     private function __construct(
         public readonly string $value
@@ -124,6 +125,16 @@ class CacheTag
             self::PREFIX_DYNAMIC_NODE_TAG,
             self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId),
             $nodeAggregateId->value,
+        );
+    }
+
+    final public static function forWorkspaceName(
+        ContentRepositoryId $contentRepositoryId,
+        WorkspaceName $workspaceName)
+    {
+        return self::fromSegments(
+            self::PREFIX_WORKSPACE,
+            self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId),
         );
     }
 

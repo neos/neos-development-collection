@@ -40,11 +40,6 @@ class CachingHelper implements ProtectedContextAwareInterface
     protected $contentRepositoryRegistry;
 
     /**
-     * @var array<string, ContentStreamId>
-     */
-    private array $workspaceNameToContentStreamIdMapping = [];
-
-    /**
      * Generate a `@cache` entry tag for a single node, array of nodes or a FlowQuery result
      * A cache entry with this tag will be flushed whenever one of the
      * given nodes (for any variant) is updated.
@@ -60,9 +55,11 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodes = iterator_to_array($nodes);
         }
 
+        $nodesCollection = Nodes::fromArray($nodes);
         return array_merge(
-            CacheTagSet::forNodeAggregatesFromNodes(Nodes::fromArray($nodes))->toStringArray(),
-            CacheTagSet::forNodeAggregatesFromNodesWithoutWorkspace(Nodes::fromArray($nodes))->toStringArray(),
+            CacheTagSet::forNodeAggregatesFromNodes($nodesCollection)->toStringArray(),
+            CacheTagSet::forNodeAggregatesFromNodesWithoutWorkspace($nodesCollection)->toStringArray(),
+            CacheTagSet::forWorkspaceNameFromNodes($nodesCollection)->toStringArray(),
         );
     }
 
@@ -76,11 +73,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      */
     public function entryIdentifierForNode(Node $node): NodeCacheEntryIdentifier
     {
-        // Todo adjust content caching to work with workspaces as entry identifier than the content stream id
-        $currentContentStreamId = $this->workspaceNameToContentStreamIdMapping[$node->contentRepositoryId->value . '@' . $node->workspaceName->value]
-            ??= $this->contentRepositoryRegistry->get($node->contentRepositoryId)->getContentGraph($node->workspaceName)->getContentStreamId();
-
-        return NodeCacheEntryIdentifier::fromNode($node, $currentContentStreamId);
+        return NodeCacheEntryIdentifier::fromNode($node);
     }
 
     /**
@@ -88,15 +81,26 @@ class CachingHelper implements ProtectedContextAwareInterface
      *
      * @param string $identifier
      * @param Node $contextNode
-     * @return string
+     * @return string[]
      */
-    public function nodeTagForIdentifier(string $identifier, Node $contextNode): string
+    public function nodeTagForIdentifier(string $identifier, Node $contextNode): array
     {
-        return CacheTag::forNodeAggregate(
-            $contextNode->contentRepositoryId,
-            $contextNode->workspaceName,
-            NodeAggregateId::fromString($identifier)
-        )->value;
+        return [
+            CacheTag::forNodeAggregate(
+                $contextNode->contentRepositoryId,
+                $contextNode->workspaceName,
+                NodeAggregateId::fromString($identifier)
+            )->value,
+            CacheTag::forNodeAggregate(
+                $contextNode->contentRepositoryId,
+                CacheTagWorkspaceName::ANY,
+                NodeAggregateId::fromString($identifier)
+            )->value,
+            CacheTag::forWorkspaceName(
+                $contextNode->contentRepositoryId,
+                $contextNode->workspaceName
+            )->value
+        ];
     }
 
     /**
@@ -127,6 +131,10 @@ class CachingHelper implements ProtectedContextAwareInterface
                 CacheTagWorkspaceName::ANY,
                 NodeTypeNames::fromStringArray($nodeTypes)
             )->toStringArray(),
+            [CacheTag::forWorkspaceName(
+                $contextNode->contentRepositoryId,
+                $contextNode->workspaceName
+            )->value],
         );
     }
 
@@ -147,9 +155,11 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodes = iterator_to_array($nodes);
         }
 
+        $nodesCollection = Nodes::fromArray($nodes);
         return array_merge(
-            CacheTagSet::forDescendantOfNodesFromNodes(Nodes::fromArray($nodes))->toStringArray(),
-            CacheTagSet::forDescendantOfNodesFromNodesWithoutWorkspace(Nodes::fromArray($nodes))->toStringArray(),
+            CacheTagSet::forDescendantOfNodesFromNodes($nodesCollection)->toStringArray(),
+            CacheTagSet::forDescendantOfNodesFromNodesWithoutWorkspace($nodesCollection)->toStringArray(),
+            CacheTagSet::forWorkspaceNameFromNodes($nodesCollection)->toStringArray(),
         );
     }
 

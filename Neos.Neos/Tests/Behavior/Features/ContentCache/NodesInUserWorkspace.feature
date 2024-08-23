@@ -107,13 +107,13 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
     """
 
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                               | Value                                               |
-      | nodeAggregateId                   | "text-node-middle"                                  |
-      | nodeTypeName                      | "Neos.Neos:Test.TextNode"                           |
-      | parentNodeAggregateId             | "test-document-with-contents--main"                 |
-      | initialPropertyValues             | {"text": "Text Node in the middle of the document"} |
-      | succeedingSiblingNodeAggregateId  | "text-node-end"                                     |
-      | nodeName                          | "text-node-middle"                                  |
+      | Key                              | Value                                               |
+      | nodeAggregateId                  | "text-node-middle"                                  |
+      | nodeTypeName                     | "Neos.Neos:Test.TextNode"                           |
+      | parentNodeAggregateId            | "test-document-with-contents--main"                 |
+      | initialPropertyValues            | {"text": "Text Node in the middle of the document"} |
+      | succeedingSiblingNodeAggregateId | "text-node-end"                                     |
+      | nodeName                         | "text-node-middle"                                  |
     And I execute the following Fusion code:
     """fusion
     test = Neos.Neos:ContentCollection {
@@ -128,6 +128,59 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
     When the command DiscardWorkspace is executed with payload:
       | Key           | Value         |
       | workspaceName | "user-editor" |
+    Then I expect node aggregate identifier "text-node-middle" to lead to no node
+
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:ContentCollection {
+      nodePath = "main"
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    <div class="neos-contentcollection">[Text Node at the start of the document][Text Node at the end of the document]</div>
+    """
+
+  Scenario: ContentCache gets flushed when a node that was just created gets partially discarded
+    Given I have Fusion content cache enabled
+    And I am in workspace "user-editor" and dimension space point {}
+    And the Fusion context node is "test-document-with-contents"
+    And I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:ContentCollection {
+      nodePath = "main"
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    <div class="neos-contentcollection">[Text Node at the start of the document][Text Node at the end of the document]</div>
+    """
+
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                              | Value                                               |
+      | nodeAggregateId                  | "text-node-middle"                                  |
+      | nodeTypeName                     | "Neos.Neos:Test.TextNode"                           |
+      | parentNodeAggregateId            | "test-document-with-contents--main"                 |
+      | initialPropertyValues            | {"text": "Text Node in the middle of the document"} |
+      | succeedingSiblingNodeAggregateId | "text-node-end"                                     |
+      | nodeName                         | "text-node-middle"                                  |
+    And I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:ContentCollection {
+      nodePath = "main"
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    <div class="neos-contentcollection">[Text Node at the start of the document][Text Node in the middle of the document][Text Node at the end of the document]</div>
+    """
+
+    When the command DiscardIndividualNodesFromWorkspace is executed with payload:
+      | Key                | Value                                                                                                                                                                                                                                        |
+      | workspaceName      | "user-editor"                                                                                                                                                                                                                                |
+      | nodesToDiscard     | [{"workspaceName": "user-editor", "dimensionSpacePoint": {}, "nodeAggregateId": "text-node-middle"}] |
+      | newContentStreamId | "user-cs-id-discard"                                                                                                                                                                                                                         |
+
     Then I expect node aggregate identifier "text-node-middle" to lead to no node
 
     When I execute the following Fusion code:

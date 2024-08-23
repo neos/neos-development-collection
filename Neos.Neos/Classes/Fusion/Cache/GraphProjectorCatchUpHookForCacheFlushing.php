@@ -18,10 +18,14 @@ use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggrega
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventEnvelope;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 
 /**
  * Also contains a pragmatic performance booster for some "batch" operations, where the cache flushing
@@ -101,6 +105,24 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 {
     private static bool $enabled = true;
 
+    /**
+     * @var array<string,FlushNodeAggregateRequest>
+     */
+    private array $flushNodeAggregateRequestsOnBeforeBatchCompleted = [];
+    /**
+     * @var array<string,FlushNodeAggregateRequest>
+     */
+    private array $flushNodeAggregateRequestsOnAfterCatchUp = [];
+
+    /**
+     * @var array<string,FlushWorkspaceRequest>
+     */
+    private array $flushWorkspaceRequestsOnBeforeBatchCompleted = [];
+
+    /**
+     * @var array<string,FlushWorkspaceRequest>
+     */
+    private array $flushWorkspaceRequestsOnAfterCatchUp = [];
 
     public static function disabled(\Closure $fn): void
     {
@@ -150,17 +172,11 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
                 $eventInstance->getNodeAggregateId()
             );
             if ($nodeAggregate) {
-                $parentNodeAggregates = $contentGraph->findParentNodeAggregates(
-                    $nodeAggregate->nodeAggregateId
+                $this->scheduleCacheFlushJobForNodeAggregate(
+                    $this->contentRepository,
+                    $workspace->workspaceName,
+                    $nodeAggregate
                 );
-                foreach ($parentNodeAggregates as $parentNodeAggregate) {
-                    assert($parentNodeAggregate instanceof NodeAggregate);
-                    $this->scheduleCacheFlushJobForNodeAggregate(
-                        $this->contentRepository,
-                        $workspace->workspaceName,
-                        $parentNodeAggregate->nodeAggregateId
-                    );
-                }
             }
         }
     }
@@ -173,7 +189,11 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             return;
         }
 
-        if (
+        if ($eventInstance instanceof WorkspaceWasDiscarded
+            || $eventInstance instanceof WorkspaceWasPartiallyDiscarded
+        ) {
+            $this->scheduleCacheFlushJobForWorkspaceName($this->contentRepository, $eventInstance->workspaceName);
+        } elseif (
             !($eventInstance instanceof NodeAggregateWasRemoved)
             && $eventInstance instanceof EmbedsContentStreamAndNodeAggregateId
         ) {
@@ -190,49 +210,78 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
                     $workspace->workspaceName,
-                    $nodeAggregate->nodeAggregateId
+                    $nodeAggregate
                 );
             }
         }
     }
 
-    /**
-     * @var array<string,array<string,mixed>>
-     */
-    private array $cacheFlushesOnBeforeBatchCompleted = [];
-    /**
-     * @var array<string,array<string,mixed>>
-     */
-    private array $cacheFlushesOnAfterCatchUp = [];
-
-    protected function scheduleCacheFlushJobForNodeAggregate(
+    private function scheduleCacheFlushJobForNodeAggregate(
         ContentRepository $contentRepository,
         WorkspaceName $workspaceName,
-        NodeAggregateId $nodeAggregateId
+        NodeAggregate $nodeAggregate
     ): void {
         // we store this in an associative array deduplicate.
-        $this->cacheFlushesOnBeforeBatchCompleted[$workspaceName->value . '__' . $nodeAggregateId->value] = [
-            'cr' => $contentRepository,
-            'wsn' => $workspaceName,
-            'nai' => $nodeAggregateId
-        ];
+        $this->flushNodeAggregateRequestsOnBeforeBatchCompleted[$workspaceName->value . '__' . $nodeAggregate->nodeAggregateId->value] = FlushNodeAggregateRequest::create(
+            $contentRepository->id,
+            $workspaceName,
+            $nodeAggregate->nodeAggregateId,
+            $nodeAggregate->nodeTypeName,
+            $this->determineParentNodeAggregateIds($workspaceName, $nodeAggregate->nodeAggregateId)
+        );
+    }
+
+    private function scheduleCacheFlushJobForWorkspaceName(
+        ContentRepository $contentRepository,
+        WorkspaceName $workspaceName
+    ): void {
+        // we store this in an associative array deduplicate.
+        $this->flushWorkspaceRequestsOnBeforeBatchCompleted[$workspaceName->value] = FlushWorkspaceRequest::create(
+            $contentRepository->id,
+            $workspaceName,
+        );
+    }
+
+    private function determineParentNodeAggregateIds(WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId): NodeAggregateIds
+    {
+        $parentNodeAggregates = $this->contentRepository->getContentGraph($workspaceName)->findParentNodeAggregates($childNodeAggregateId);
+        $parentNodeAggregateIds = NodeAggregateIds::fromArray(
+            array_map(static fn(NodeAggregate $parentNodeAggregate) => $parentNodeAggregate->nodeAggregateId, iterator_to_array($parentNodeAggregates))
+        );
+
+        foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
+            $parentNodeAggregateIds->merge($this->determineParentNodeAggregateIds($workspaceName, $parentNodeAggregateId));
+        }
+
+        return $parentNodeAggregateIds;
     }
 
     public function onBeforeBatchCompleted(): void
     {
-        foreach ($this->cacheFlushesOnBeforeBatchCompleted as $k => $entry) {
-            $this->contentCacheFlusher->flushNodeAggregate($entry['cr'], $entry['wsn'], $entry['nai']);
-            $this->cacheFlushesOnAfterCatchUp[$k] = $entry;
+        foreach ($this->flushNodeAggregateRequestsOnBeforeBatchCompleted as $index => $request) {
+            $this->contentCacheFlusher->flushNodeAggregate($request);
+            $this->flushNodeAggregateRequestsOnAfterCatchUp[$index] = $request;
         }
-        $this->cacheFlushesOnBeforeBatchCompleted = [];
-    }
+        $this->flushNodeAggregateRequestsOnBeforeBatchCompleted = [];
 
+        foreach ($this->flushWorkspaceRequestsOnBeforeBatchCompleted as $index => $request) {
+            $this->contentCacheFlusher->flushWorkspace($request);
+            $this->flushWorkspaceRequestsOnAfterCatchUp[$index] = $request;
+        }
+        $this->flushWorkspaceRequestsOnBeforeBatchCompleted = [];
+
+    }
 
     public function onAfterCatchUp(): void
     {
-        foreach ($this->cacheFlushesOnAfterCatchUp as $entry) {
-            $this->contentCacheFlusher->flushNodeAggregate($entry['cr'], $entry['wsn'], $entry['nai']);
+        foreach ($this->flushNodeAggregateRequestsOnAfterCatchUp as $request) {
+            $this->contentCacheFlusher->flushNodeAggregate($request);
         }
-        $this->cacheFlushesOnAfterCatchUp = [];
+        $this->flushNodeAggregateRequestsOnAfterCatchUp = [];
+
+        foreach ($this->flushWorkspaceRequestsOnAfterCatchUp as $request) {
+            $this->contentCacheFlusher->flushWorkspace($request);
+        }
+        $this->flushWorkspaceRequestsOnAfterCatchUp = [];
     }
 }

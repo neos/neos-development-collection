@@ -58,6 +58,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 
 /**
  * @implements ProjectionInterface<ContentGraphFinder>
@@ -171,6 +173,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             RootNodeAggregateWithNodeWasCreated::class,
             SubtreeWasTagged::class,
             SubtreeWasUntagged::class,
+            WorkspaceWasDiscarded::class,
+            WorkspaceWasPartiallyDiscarded::class
         ]);
     }
 
@@ -195,6 +199,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
+            WorkspaceWasDiscarded::class => null, // only needed for GraphProjectorCatchUpHookForCacheFlushing
+            WorkspaceWasPartiallyDiscarded::class => null, // only needed for GraphProjectorCatchUpHookForCacheFlushing
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }

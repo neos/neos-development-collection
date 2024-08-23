@@ -32,9 +32,9 @@ final readonly class NodeCacheEntryIdentifier implements CacheAwareInterface
     ) {
     }
 
-    public static function fromNode(Node $node, ContentStreamId $contentStreamId): self
+    public static function fromNode(Node $node): self
     {
-        return new self('Node_' . $contentStreamId->value
+        return new self('Node_' . $node->workspaceName->value
             . '_' . $node->dimensionSpacePoint->hash
             . '_' .  $node->aggregateId->value);
     }

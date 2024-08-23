@@ -31,6 +31,7 @@ use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Neos\AssetUsage\GlobalAssetUsageService;
 use Psr\Log\LoggerInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 
 /**
  * This service flushes Fusion content caches triggered by node changes.
@@ -62,17 +63,32 @@ class ContentCacheFlusher
     }
 
     /**
+     * Main entry point to *directly* flush the caches of a given workspaceName
+     */
+    public function flushWorkspace(
+        FlushWorkspaceRequest $flushWorkspaceRequest
+    ): void {
+        $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
+
+        $nodeCacheIdentifier = CacheTag::forWorkspaceName( $flushWorkspaceRequest->contentRepositoryId, $flushWorkspaceRequest->workspaceName);
+        $tagsToFlush[$nodeCacheIdentifier->value] = sprintf(
+            'which were tagged with "%s" because that identifier has changed.',
+            $nodeCacheIdentifier->value
+        );
+
+        $this->flushTags($tagsToFlush);
+    }
+
+    /**
      * Main entry point to *directly* flush the caches of a given NodeAggregate
      */
     public function flushNodeAggregate(
-        ContentRepository $contentRepository,
-        WorkspaceName $workspaceName,
-        NodeAggregateId $nodeAggregateId
+        FlushNodeAggregateRequest $flushNodeAggregateRequest
     ): void {
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
         $tagsToFlush = array_merge(
-            $this->collectTagsForChangeOnNodeAggregate($contentRepository, $workspaceName, $nodeAggregateId, false),
+            $this->collectTagsForChangeOnNodeAggregate($flushNodeAggregateRequest, false),
             $tagsToFlush
         );
 
@@ -86,73 +102,28 @@ class ContentCacheFlusher
      * @return array<string,string>
      */
     private function collectTagsForChangeOnNodeAggregate(
-        ContentRepository $contentRepository,
-        WorkspaceName $workspaceName,
-        NodeAggregateId $nodeAggregateId,
+        FlushNodeAggregateRequest $flushNodeAggregateRequest,
         bool $anyWorkspace,
     ): array {
-        $contentGraph = $contentRepository->getContentGraph($workspaceName);
-
-        $nodeAggregate = $contentGraph->findNodeAggregateById(
-            $nodeAggregateId
-        );
-        if (!$nodeAggregate) {
-            // Node Aggregate was removed in the meantime, so no need to clear caches on this one anymore.
-            return [];
-        }
-        $workspaceNameToFlush = $anyWorkspace ? CacheTagWorkspaceName::ANY : $workspaceName;
-        $tagsToFlush = $this->collectTagsForChangeOnNodeIdentifier($contentRepository->id, $workspaceNameToFlush, $nodeAggregateId);
+        $workspaceNameToFlush = $anyWorkspace ? CacheTagWorkspaceName::ANY : $flushNodeAggregateRequest->workspaceName;
+        $tagsToFlush = $this->collectTagsForChangeOnNodeIdentifier($flushNodeAggregateRequest->contentRepositoryId, $workspaceNameToFlush, $flushNodeAggregateRequest->nodeAggregateId);
 
         $tagsToFlush = array_merge($this->collectTagsForChangeOnNodeType(
-            $nodeAggregate->nodeTypeName,
-            $contentRepository->id,
+            $flushNodeAggregateRequest->nodeTypeName,
+            $flushNodeAggregateRequest->contentRepositoryId,
             $workspaceNameToFlush,
-            $nodeAggregateId,
-            $contentRepository
+            $flushNodeAggregateRequest->nodeAggregateId,
         ), $tagsToFlush);
 
-        $parentNodeAggregates = [];
-        foreach (
-            $contentGraph->findParentNodeAggregates(
-                $nodeAggregateId
-            ) as $parentNodeAggregate
-        ) {
-            $parentNodeAggregates[] = $parentNodeAggregate;
-        }
-        // we do not need these variables anymore here
-        unset($nodeAggregateId);
+        $parentNodeAggregateIds = $flushNodeAggregateRequest->parentNodeAggregateIds;
+        foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
 
-
-        // NOTE: Normally, the content graph cannot contain cycles. However, during the
-        // testcase "Features/ProjectionIntegrityViolationDetection/AllNodesAreConnectedToARootNodePerSubgraph.feature"
-        // and in case of bugs, it could have actually cycles.
-        // We still want the content cache flushing to work, without hanging up in an endless loop.
-        // That's why we track the seen NodeAggregateIds to be sure we don't travers them multiple times.
-        $processedNodeAggregateIds = [];
-
-        while ($nodeAggregate = array_shift($parentNodeAggregates)) {
-            assert($nodeAggregate instanceof NodeAggregate);
-            if (isset($processedNodeAggregateIds[$nodeAggregate->nodeAggregateId->value])) {
-                // we've already processed this NodeAggregateId (i.e. flushed the caches for it);
-                // thus we can skip this one, and thus break the cycle.
-                continue;
-            }
-            $processedNodeAggregateIds[$nodeAggregate->nodeAggregateId->value] = true;
-
-            $tagName = CacheTag::forDescendantOfNode($contentRepository->id, $workspaceName, $nodeAggregate->nodeAggregateId);
+            $tagName = CacheTag::forDescendantOfNode($flushNodeAggregateRequest->contentRepositoryId, $workspaceNameToFlush, $parentNodeAggregateId);
             $tagsToFlush[$tagName->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',
                 $tagName->value,
-                $nodeAggregate->nodeAggregateId->value
+                $parentNodeAggregateId->value
             );
-
-            foreach (
-                $contentGraph->findParentNodeAggregates(
-                    $nodeAggregate->nodeAggregateId
-                ) as $parentNodeAggregate
-            ) {
-                $parentNodeAggregates[] = $parentNodeAggregate;
-            }
         }
 
         return $tagsToFlush;
@@ -198,11 +169,11 @@ class ContentCacheFlusher
         NodeTypeName $nodeTypeName,
         ContentRepositoryId $contentRepositoryId,
         WorkspaceName|CacheTagWorkspaceName $workspaceName,
-        ?NodeAggregateId $referenceNodeIdentifier,
-        ContentRepository $contentRepository
+        ?NodeAggregateId $referenceNodeIdentifier
     ): array {
         $tagsToFlush = [];
 
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName);
         if ($nodeType) {
             $nodeTypesNamesToFlush = $this->getAllImplementedNodeTypeNames($nodeType);
@@ -273,6 +244,7 @@ class ContentCacheFlusher
      *
      * @throws NodeTypeNotFound
      */
+    // TODO: Move out of the ContentCacheFlusher and
     public function registerAssetChange(AssetInterface $asset): void
     {
         // In Nodes only assets are referenced, never asset variants directly. When an asset
@@ -305,12 +277,17 @@ class ContentCacheFlusher
                 }
                 //
 
-                $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryId));
+                $flushNodeAggregateRequest = FlushNodeAggregateRequest::create(
+                    ContentRepositoryId::fromString($contentRepositoryId),
+                    $workspaceName,
+                    $usage->nodeAggregateId,
+                    NodeTypeName::fromString("Neos.Neos:Content"),
+                    NodeAggregateIds::create(),
+                );
+
                 $tagsToFlush = array_merge(
                     $this->collectTagsForChangeOnNodeAggregate(
-                        $contentRepository,
-                        $workspaceName,
-                        $usage->nodeAggregateId,
+                        $flushNodeAggregateRequest,
                         true
                     ),
                     $tagsToFlush
