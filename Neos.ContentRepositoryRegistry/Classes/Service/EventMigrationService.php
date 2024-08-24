@@ -298,7 +298,9 @@ final class EventMigrationService implements ContentRepositoryServiceInterface
 
             // ... and update the event
             // the payload is only used for rebasing where we override the workspace either way:
-            $eventMetaData['commandPayload']['workspaceName'] = 'missing:' . ($eventMetaData['commandPayload']['contentStreamId'] ?? '');
+            $eventMetaData['commandPayload']['workspaceName'] = WorkspaceName::fromString(
+                'missing-' . \mb_substr($eventMetaData['commandPayload']['contentStreamId'] ?? '', 0, 28)
+            )->value;
             unset($eventMetaData['commandPayload']['contentStreamId']);
 
             $outputRewriteNotice(sprintf('Metadata: Added `workspaceName`'));
