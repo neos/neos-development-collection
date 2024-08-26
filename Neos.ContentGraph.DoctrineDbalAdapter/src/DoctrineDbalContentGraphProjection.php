@@ -72,7 +72,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     use NodeRemoval;
     use NodeMove;
 
-
     public const RELATION_DEFAULT_OFFSET = 128;
 
     private DbalCheckpointStorage $checkpointStorage;
@@ -125,6 +124,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         if ($requiredSqlStatements !== []) {
             return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
         }
+
         return ProjectionStatus::ok();
     }
 
@@ -525,12 +525,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             // remove old
             foreach ($event->references->getReferenceNames() as $referenceName) {
                 try {
-                $this->dbal->delete($this->tableNames->referenceRelation(), [
-                    'nodeanchorpoint' => $nodeAnchorPoint?->value,
-                    'name' => $event->referenceName->value
-                ]);
-            } catch (DbalException $e) {
-                throw new \RuntimeException(sprintf('Failed to remove reference relation: %s', $e->getMessage()), 1716486309, $e);
+                    $this->dbal->delete($this->tableNames->referenceRelation(), [
+                        'nodeanchorpoint' => $nodeAnchorPoint?->value,
+                        'name' => $referenceName->value
+                    ]);
+                } catch (DbalException $e) {
+                    throw new \RuntimeException(sprintf('Failed to remove reference relation: %s', $e->getMessage()), 1716486309, $e);
                 }
             }
 
@@ -652,9 +652,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     {
         $this->removeSubtreeTag($event->contentStreamId, $event->nodeAggregateId, $event->affectedDimensionSpacePoints, $event->tag);
     }
-
-
-    /** --------------------------------- */
 
     /**
      * @return array<string>
@@ -942,8 +939,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
         usort(
             $hierarchyRelations,
-            static fn (HierarchyRelation $relationA, HierarchyRelation $relationB): int
-            => $relationA->position <=> $relationB->position
+            static fn(HierarchyRelation $relationA, HierarchyRelation $relationB): int => $relationA->position <=> $relationB->position
         );
 
         foreach ($hierarchyRelations as $relation) {

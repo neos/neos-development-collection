@@ -25,9 +25,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceNameToEmpty;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -40,7 +38,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 trait NodeReferencing
 {
-    use ConstraintChecks, NodeReferencingInternals;
+    use ConstraintChecks;
+    use NodeReferencingInternals;
 
     abstract protected function requireProjectedNodeAggregate(
         ContentGraphInterface $contentGraph,

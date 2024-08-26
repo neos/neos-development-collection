@@ -1,4 +1,17 @@
 <?php
+
+/*
+ * This file is part of the Neos.ContentRepository package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\Core\Feature\Common;
 
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceNameToEmpty;
@@ -15,6 +28,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 trait NodeReferencingInternals
 {
     abstract protected function getPropertyConverter(): PropertyConverter;
+
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
     private function mapNodeReferencesToSerializedNodeReferences(NodeReferencesToWrite $references, NodeTypeName $nodeTypeName): SerializedNodeReferences
@@ -31,10 +45,10 @@ trait NodeReferencingInternals
                 $reference->targetNodeAggregateId,
                 $reference->properties
                     ? $this->getPropertyConverter()->serializeReferencePropertyValues(
-                    $reference->properties,
-                    $this->requireNodeType($nodeTypeName),
-                    $reference->referenceName
-                ) : null
+                        $reference->properties,
+                        $this->requireNodeType($nodeTypeName),
+                        $reference->referenceName
+                    ) : null
             );
         }
 

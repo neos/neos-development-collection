@@ -51,7 +51,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  */
 trait NodeCreation
 {
-    use NodeCreationInternals, NodeReferencingInternals;
+    use NodeCreationInternals;
+    use NodeReferencingInternals;
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 

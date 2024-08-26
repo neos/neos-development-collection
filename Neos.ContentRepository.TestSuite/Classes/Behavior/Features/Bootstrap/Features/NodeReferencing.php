@@ -126,5 +126,4 @@ trait NodeReferencing
 
         return NodeReferencesToWrite::fromReferences($references);
     }
-
 }

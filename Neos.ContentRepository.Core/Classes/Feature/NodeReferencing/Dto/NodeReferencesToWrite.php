@@ -52,7 +52,6 @@ final readonly class NodeReferencesToWrite implements \JsonSerializable, \Iterat
                 $resultingReferences[$reference->referenceName->value] = [];
             }
             $resultingReferences[$reference->referenceName->value][] = $reference;
-
         }
         $this->references = $resultingReferences;
     }
