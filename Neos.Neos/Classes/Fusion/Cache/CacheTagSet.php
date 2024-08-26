@@ -102,7 +102,6 @@ final class CacheTagSet
             ),
             iterator_to_array($nodes)
         ));
-
     }
 
     public function add(CacheTag $cacheTag): self

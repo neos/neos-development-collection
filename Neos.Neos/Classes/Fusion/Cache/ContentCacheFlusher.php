@@ -70,7 +70,7 @@ class ContentCacheFlusher
     ): void {
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
-        $nodeCacheIdentifier = CacheTag::forWorkspaceName( $flushWorkspaceRequest->contentRepositoryId, $flushWorkspaceRequest->workspaceName);
+        $nodeCacheIdentifier = CacheTag::forWorkspaceName($flushWorkspaceRequest->contentRepositoryId, $flushWorkspaceRequest->workspaceName);
         $tagsToFlush[$nodeCacheIdentifier->value] = sprintf(
             'which were tagged with "%s" because that identifier has changed.',
             $nodeCacheIdentifier->value
@@ -117,7 +117,6 @@ class ContentCacheFlusher
 
         $parentNodeAggregateIds = $flushNodeAggregateRequest->parentNodeAggregateIds;
         foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
-
             $tagName = CacheTag::forDescendantOfNode($flushNodeAggregateRequest->contentRepositoryId, $workspaceNameToFlush, $parentNodeAggregateId);
             $tagsToFlush[$tagName->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',

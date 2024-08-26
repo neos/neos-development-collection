@@ -189,7 +189,8 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             return;
         }
 
-        if ($eventInstance instanceof WorkspaceWasDiscarded
+        if (
+            $eventInstance instanceof WorkspaceWasDiscarded
             || $eventInstance instanceof WorkspaceWasPartiallyDiscarded
         ) {
             $this->scheduleCacheFlushJobForWorkspaceName($this->contentRepository, $eventInstance->workspaceName);
@@ -246,11 +247,14 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     {
         $parentNodeAggregates = $this->contentRepository->getContentGraph($workspaceName)->findParentNodeAggregates($childNodeAggregateId);
         $parentNodeAggregateIds = NodeAggregateIds::fromArray(
-            array_map(static fn(NodeAggregate $parentNodeAggregate) => $parentNodeAggregate->nodeAggregateId, iterator_to_array($parentNodeAggregates))
+            array_map(static fn (NodeAggregate $parentNodeAggregate) => $parentNodeAggregate->nodeAggregateId, iterator_to_array($parentNodeAggregates))
         );
 
         foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
-            $parentNodeAggregateIds->merge($this->determineParentNodeAggregateIds($workspaceName, $parentNodeAggregateId));
+            // Prevent infinite loops
+            if (!$parentNodeAggregateIds->contain($parentNodeAggregateId)) {
+                $parentNodeAggregateIds->merge($this->determineParentNodeAggregateIds($workspaceName, $parentNodeAggregateId));
+            }
         }
 
         return $parentNodeAggregateIds;
@@ -269,7 +273,6 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             $this->flushWorkspaceRequestsOnAfterCatchUp[$index] = $request;
         }
         $this->flushWorkspaceRequestsOnBeforeBatchCompleted = [];
-
     }
 
     public function onAfterCatchUp(): void

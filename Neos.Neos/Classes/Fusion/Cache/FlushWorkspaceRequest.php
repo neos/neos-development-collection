@@ -15,7 +15,6 @@ final readonly class FlushWorkspaceRequest
         public ContentRepositoryId $contentRepositoryId,
         public WorkspaceName $workspaceName,
     ) {
-
     }
 
     public static function create(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): self

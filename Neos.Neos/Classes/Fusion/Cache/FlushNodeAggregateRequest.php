@@ -18,7 +18,6 @@ final readonly class FlushNodeAggregateRequest
         public NodeTypeName $nodeTypeName,
         public NodeAggregateIds $parentNodeAggregateIds,
     ) {
-
     }
 
     public static function create(
@@ -28,7 +27,8 @@ final readonly class FlushNodeAggregateRequest
         NodeTypeName $nodeTypeName,
         NodeAggregateIds $parentNodeAggregateIds
     ): self {
-        return new self($contentRepositoryId,
+        return new self(
+            $contentRepositoryId,
             $workspaceName,
             $nodeAggregateId,
             $nodeTypeName,
