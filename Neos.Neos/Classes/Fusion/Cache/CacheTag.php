@@ -131,7 +131,7 @@ class CacheTag
     final public static function forWorkspaceName(
         ContentRepositoryId $contentRepositoryId,
         WorkspaceName $workspaceName
-    ) {
+    ): self {
         return self::fromSegments(
             self::PREFIX_WORKSPACE,
             self::getHashForWorkspaceNameAndContentRepositoryId($workspaceName, $contentRepositoryId),
