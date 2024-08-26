@@ -28,7 +28,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 final readonly class SerializedNodeReferences implements \JsonSerializable, \IteratorAggregate
 {
     /**
-     * @var array<string, array<SerializedNodeReference>>
+     * @var array<string, array<SerializedNodeReference|NodeReferenceNameToEmpty>>
      */
     public array $references;
 
@@ -64,7 +64,7 @@ final readonly class SerializedNodeReferences implements \JsonSerializable, \Ite
     }
 
     /**
-     * @param array<SerializedNodeReference> $references
+     * @param array<SerializedNodeReference|NodeReferenceNameToEmpty> $references
      */
     public static function fromReferences(array $references): self
     {
@@ -87,6 +87,7 @@ final readonly class SerializedNodeReferences implements \JsonSerializable, \Ite
                 ...$result,
                 ...array_map(static function ($serializedReference) use ($name): SerializedNodeReference {
                     $serializedReference['referenceName'] = $name;
+
                     return SerializedNodeReference::fromArray($serializedReference);
                 }, $references)
             ];
@@ -168,6 +169,16 @@ final readonly class SerializedNodeReferences implements \JsonSerializable, \Ite
      */
     public function jsonSerialize(): array
     {
-        return array_map(static fn(array $referenceToWriteObjects) => array_map(static fn(SerializedNodeReference $nodeReference) => $nodeReference->targetAndPropertiesToArray(), $referenceToWriteObjects), $this->references);
+        return array_map(
+            static function (array $referenceToWriteObjects) {
+                return array_map(
+                    static function (SerializedNodeReference|NodeReferenceNameToEmpty $nodeReference) {
+                        return $nodeReference instanceof NodeReferenceNameToEmpty ? [] : $nodeReference->targetAndPropertiesToArray();
+                    },
+                    $referenceToWriteObjects
+                );
+            },
+            $this->references
+        );
     }
 }

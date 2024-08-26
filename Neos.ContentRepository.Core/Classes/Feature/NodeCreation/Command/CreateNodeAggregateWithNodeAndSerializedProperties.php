@@ -148,6 +148,7 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
             $this->succeedingSiblingNodeAggregateId,
             $nodeName,
             $this->tetheredDescendantNodeAggregateIds,
+            $this->references,
         );
     }
 

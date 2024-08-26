@@ -154,7 +154,7 @@ final readonly class CreateNodeAggregateWithNode implements CommandInterface
             $this->succeedingSiblingNodeAggregateId,
             $nodeName,
             $this->tetheredDescendantNodeAggregateIds,
-            $references,
+            $this->references,
         );
     }
 

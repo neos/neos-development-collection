@@ -27,7 +27,6 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNod
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceNameToEmpty;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
@@ -122,7 +121,6 @@ trait NodeReferencing
             $affectedReferences = $command->references->getForReferenceName($referenceName);
 
             foreach ($affectedReferences as $reference) {
-                assert($reference instanceof SerializedNodeReference || $reference instanceof NodeReferenceNameToEmpty);
                 if ($reference instanceof NodeReferenceNameToEmpty) {
                     continue;
                 }
