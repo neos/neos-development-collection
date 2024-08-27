@@ -69,14 +69,15 @@ class AssetChangeHandlerForCacheFlushing
                     $workspaceName,
                     $nodeAggregate->nodeAggregateId,
                     $nodeAggregate->nodeTypeName,
-                    $this->determineParentNodeAggregateIds($contentRepository, $workspaceName, $nodeAggregate->nodeAggregateId),
+                    $this->determineParentNodeAggregateIds($contentRepository, $workspaceName, $nodeAggregate->nodeAggregateId, NodeAggregateIds::createEmpty()),
                 );
+
                 $this->contentCacheFlusher->flushNodeAggregate($flushNodeAggregateRequest, CacheFlushingStrategy::ON_SHUTDOWN);
             }
         }
     }
 
-    private function determineParentNodeAggregateIds(ContentRepository $contentRepository, WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId): NodeAggregateIds
+    private function determineParentNodeAggregateIds(ContentRepository $contentRepository, WorkspaceName $workspaceName, NodeAggregateId $childNodeAggregateId, NodeAggregateIds $collectedParentNodeAggregateIds): NodeAggregateIds
     {
         $parentNodeAggregates = $contentRepository->getContentGraph($workspaceName)->findParentNodeAggregates($childNodeAggregateId);
         $parentNodeAggregateIds = NodeAggregateIds::fromArray(
@@ -85,11 +86,13 @@ class AssetChangeHandlerForCacheFlushing
 
         foreach ($parentNodeAggregateIds as $parentNodeAggregateId) {
             // Prevent infinite loops
-            if (!$parentNodeAggregateIds->contain($parentNodeAggregateId)) {
-                $parentNodeAggregateIds->merge($this->determineParentNodeAggregateIds($contentRepository, $workspaceName, $parentNodeAggregateId));
+            if (!$collectedParentNodeAggregateIds->contain($parentNodeAggregateId)) {
+                $collectedParentNodeAggregateIds = $collectedParentNodeAggregateIds->merge(NodeAggregateIds::create($parentNodeAggregateId));
+                $collectedParentNodeAggregateIds = $this->determineParentNodeAggregateIds($contentRepository, $workspaceName, $parentNodeAggregateId, $collectedParentNodeAggregateIds);
             }
         }
 
-        return $parentNodeAggregateIds;
+
+        return $collectedParentNodeAggregateIds;
     }
 }

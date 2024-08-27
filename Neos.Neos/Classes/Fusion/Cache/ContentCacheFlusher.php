@@ -67,8 +67,9 @@ class ContentCacheFlusher
 
         $nodeCacheIdentifier = CacheTag::forWorkspaceName($flushWorkspaceRequest->contentRepositoryId, $flushWorkspaceRequest->workspaceName);
         $tagsToFlush[$nodeCacheIdentifier->value] = sprintf(
-            'which were tagged with "%s" because that identifier has changed.',
-            $nodeCacheIdentifier->value
+            'which were tagged with "%s" because something on the workspace "%s" has changed.',
+            $nodeCacheIdentifier->value,
+            $flushWorkspaceRequest->workspaceName->value
         );
 
         $this->flushTags($tagsToFlush, $cacheFlushingStrategy);

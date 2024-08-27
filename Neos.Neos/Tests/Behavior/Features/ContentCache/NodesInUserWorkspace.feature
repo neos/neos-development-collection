@@ -193,3 +193,55 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
     """
     <div class="neos-contentcollection">[Text Node at the start of the document][Text Node at the end of the document]</div>
     """
+
+  Scenario: ContentCache gets flushed when a child node that was just created gets changed
+    Given I have Fusion content cache enabled
+    And I am in workspace "user-editor" and dimension space point {}
+    And the Fusion context node is "test-document-with-contents"
+    And I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:ContentCollection {
+      nodePath = "main"
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    <div class="neos-contentcollection">[Text Node at the start of the document][Text Node at the end of the document]</div>
+    """
+
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                              | Value                                               |
+      | nodeAggregateId                  | "text-node-middle"                                  |
+      | nodeTypeName                     | "Neos.Neos:Test.TextNode"                           |
+      | parentNodeAggregateId            | "test-document-with-contents--main"                 |
+      | initialPropertyValues            | {"text": "Text Node in the middle of the document"} |
+      | succeedingSiblingNodeAggregateId | "text-node-end"                                     |
+      | nodeName                         | "text-node-middle"                                  |
+    And I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:ContentCollection {
+      nodePath = "main"
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    <div class="neos-contentcollection">[Text Node at the start of the document][Text Node in the middle of the document][Text Node at the end of the document]</div>
+    """
+
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                            |
+      | nodeAggregateId           | "text-node-middle"               |
+      | originDimensionSpacePoint | {} |
+      | propertyValues            | {"text": "Text Node in the middle of the document has changed"}    |
+
+
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:ContentCollection {
+      nodePath = "main"
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    <div class="neos-contentcollection">[Text Node at the start of the document][Text Node in the middle of the document has changed][Text Node at the end of the document]</div>
+    """
