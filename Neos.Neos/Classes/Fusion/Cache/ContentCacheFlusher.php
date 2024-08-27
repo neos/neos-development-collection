@@ -14,32 +14,27 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Cache;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Fusion\Core\Cache\ContentCache;
-use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\AssetVariantInterface;
-use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
-use Neos\Neos\AssetUsage\GlobalAssetUsageService;
 use Psr\Log\LoggerInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 
 /**
  * This service flushes Fusion content caches triggered by node changes.
  *
  * It is called when the projection changes: In this case, it is triggered by
- * {@see GraphProjectorCatchUpHookForCacheFlushing} which calls this method..
+ * {@see GraphProjectorCatchUpHookForCacheFlushing} which calls this method.
  *   This is the relevant case if publishing a workspace
  *   - where we f.e. need to flush the cache for Live.
+ *
+ * The {@see AssetChangeHandlerForCacheFlushing} also calls this ContentCacheFlusher
+ * to flush the caches of all Nodes using a given asset that has changed.
  *
  */
 #[Flow\Scope('singleton')]
@@ -56,17 +51,17 @@ class ContentCacheFlusher
     public function __construct(
         protected readonly ContentCache $contentCache,
         protected readonly LoggerInterface $systemLogger,
-        protected readonly GlobalAssetUsageService $globalAssetUsageService,
         protected readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         protected readonly PersistenceManagerInterface $persistenceManager,
     ) {
     }
 
     /**
-     * Main entry point to *directly* flush the caches of a given workspaceName
+     * Main entry point to flush the caches of a given workspaceName with a given strategy.
      */
     public function flushWorkspace(
-        FlushWorkspaceRequest $flushWorkspaceRequest
+        FlushWorkspaceRequest $flushWorkspaceRequest,
+        CacheFlushingStrategy $cacheFlushingStrategy
     ): void {
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
@@ -76,14 +71,15 @@ class ContentCacheFlusher
             $nodeCacheIdentifier->value
         );
 
-        $this->flushTags($tagsToFlush);
+        $this->flushTags($tagsToFlush, $cacheFlushingStrategy);
     }
 
     /**
-     * Main entry point to *directly* flush the caches of a given NodeAggregate
+     * Main entry point to flush the caches of a given NodeAggregate with a given strategy.
      */
     public function flushNodeAggregate(
-        FlushNodeAggregateRequest $flushNodeAggregateRequest
+        FlushNodeAggregateRequest $flushNodeAggregateRequest,
+        CacheFlushingStrategy $cacheFlushingStrategy
     ): void {
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
@@ -92,7 +88,7 @@ class ContentCacheFlusher
             $tagsToFlush
         );
 
-        $this->flushTags($tagsToFlush);
+        $this->flushTags($tagsToFlush, $cacheFlushingStrategy);
     }
 
     /**
@@ -194,13 +190,26 @@ class ContentCacheFlusher
         return $tagsToFlush;
     }
 
-
     /**
-     * Flush caches according to the given tags.
+     * Flush caches according to the given tags and strategy.
      *
      * @param array<string,string> $tagsToFlush
      */
-    protected function flushTags(array $tagsToFlush): void
+    protected function flushTags(array $tagsToFlush, CacheFlushingStrategy $cacheFlushingStrategy): void
+    {
+        match ($cacheFlushingStrategy) {
+            CacheFlushingStrategy::IMMEDIATELY => $this->flushTagsImmediately($tagsToFlush),
+            CacheFlushingStrategy::ON_SHUTDOWN => $this->collectTagsForFlushOnShutdown($tagsToFlush)
+        };
+    }
+
+
+    /**
+     * Flush caches according to the given tags immediately.
+     *
+     * @param array<string,string> $tagsToFlush
+     */
+    protected function flushTagsImmediately(array $tagsToFlush): void
     {
         if ($this->debugMode) {
             foreach ($tagsToFlush as $tag => $logMessage) {
@@ -217,6 +226,16 @@ class ContentCacheFlusher
             $affectedEntries = $this->contentCache->flushByTags(array_keys($tagsToFlush));
             $this->systemLogger->debug(sprintf('Content cache: Removed %s entries', $affectedEntries));
         }
+    }
+
+    /**
+     * Collect tags to get flushed on shutdown.
+     *
+     * @param array<string,string> $tagsToFlush
+     */
+    protected function collectTagsForFlushOnShutdown(array $tagsToFlush): void
+    {
+        $this->tagsToFlushAfterPersistance = array_merge($tagsToFlush, $this->tagsToFlushAfterPersistance);
     }
 
     /**
@@ -237,72 +256,12 @@ class ContentCacheFlusher
         return array_unique($types);
     }
 
-
-    /**
-     * Fetches possible usages of the asset and registers nodes that use the asset as changed.
-     *
-     * @throws NodeTypeNotFound
-     */
-    // TODO: Move out of the ContentCacheFlusher and
-    public function registerAssetChange(AssetInterface $asset): void
-    {
-        // In Nodes only assets are referenced, never asset variants directly. When an asset
-        // variant is updated, it is passed as $asset, but since it is never "used" by any node
-        // no flushing of corresponding entries happens. Thus we instead use the original asset
-        // of the variant.
-        if ($asset instanceof AssetVariantInterface) {
-            $asset = $asset->getOriginalAsset();
-        }
-
-        $tagsToFlush = [];
-        $filter = AssetUsageFilter::create()
-            ->withAsset($this->persistenceManager->getIdentifierByObject($asset))
-            ->includeVariantsOfAsset();
-
-
-        $workspaceNamesByContentStreamId = [];
-        foreach ($this->globalAssetUsageService->findByFilter($filter) as $contentRepositoryId => $usages) {
-            foreach ($usages as $usage) {
-                // TODO: Remove when WorkspaceName is part of the AssetUsageProjection
-                $workspaceName = $workspaceNamesByContentStreamId[$contentRepositoryId][$usage->contentStreamId->value] ?? null;
-                if ($workspaceName === null) {
-                    $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryId));
-                    $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->contentStreamId);
-                    if ($workspace === null) {
-                        continue;
-                    }
-                    $workspaceName = $workspace->workspaceName;
-                    $workspaceNamesByContentStreamId[$contentRepositoryId][$usage->contentStreamId->value] = $workspaceName;
-                }
-                //
-
-                $flushNodeAggregateRequest = FlushNodeAggregateRequest::create(
-                    ContentRepositoryId::fromString($contentRepositoryId),
-                    $workspaceName,
-                    $usage->nodeAggregateId,
-                    NodeTypeName::fromString("Neos.Neos:Content"),
-                    NodeAggregateIds::create(),
-                );
-
-                $tagsToFlush = array_merge(
-                    $this->collectTagsForChangeOnNodeAggregate(
-                        $flushNodeAggregateRequest,
-                        true
-                    ),
-                    $tagsToFlush
-                );
-            }
-        }
-
-        $this->tagsToFlushAfterPersistance = array_merge($tagsToFlush, $this->tagsToFlushAfterPersistance);
-    }
-
     /**
      * Flush caches according to the previously registered changes.
      */
     public function flushCollectedTags(): void
     {
-        $this->flushTags($this->tagsToFlushAfterPersistance);
+        $this->flushTagsImmediately($this->tagsToFlushAfterPersistance);
         $this->tagsToFlushAfterPersistance = [];
     }
 

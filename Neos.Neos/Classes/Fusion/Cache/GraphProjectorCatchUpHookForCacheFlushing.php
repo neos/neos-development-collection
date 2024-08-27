@@ -21,7 +21,6 @@ use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
@@ -263,13 +262,13 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     public function onBeforeBatchCompleted(): void
     {
         foreach ($this->flushNodeAggregateRequestsOnBeforeBatchCompleted as $index => $request) {
-            $this->contentCacheFlusher->flushNodeAggregate($request);
+            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATELY);
             $this->flushNodeAggregateRequestsOnAfterCatchUp[$index] = $request;
         }
         $this->flushNodeAggregateRequestsOnBeforeBatchCompleted = [];
 
         foreach ($this->flushWorkspaceRequestsOnBeforeBatchCompleted as $index => $request) {
-            $this->contentCacheFlusher->flushWorkspace($request);
+            $this->contentCacheFlusher->flushWorkspace($request, CacheFlushingStrategy::IMMEDIATELY);
             $this->flushWorkspaceRequestsOnAfterCatchUp[$index] = $request;
         }
         $this->flushWorkspaceRequestsOnBeforeBatchCompleted = [];
@@ -278,12 +277,12 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     public function onAfterCatchUp(): void
     {
         foreach ($this->flushNodeAggregateRequestsOnAfterCatchUp as $request) {
-            $this->contentCacheFlusher->flushNodeAggregate($request);
+            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATELY);
         }
         $this->flushNodeAggregateRequestsOnAfterCatchUp = [];
 
         foreach ($this->flushWorkspaceRequestsOnAfterCatchUp as $request) {
-            $this->contentCacheFlusher->flushWorkspace($request);
+            $this->contentCacheFlusher->flushWorkspace($request, CacheFlushingStrategy::IMMEDIATELY);
         }
         $this->flushWorkspaceRequestsOnAfterCatchUp = [];
     }

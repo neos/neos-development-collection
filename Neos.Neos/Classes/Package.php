@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos;
 
-use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Monitor\FileMonitor;
@@ -26,14 +25,13 @@ use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Controller\Backend\ContentController;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
-use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Neos\Service\EditorContentStreamZookeeper;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Neos\AssetUsage\GlobalAssetUsageService;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Fusion\Cache\AssetChangeHandlerForCacheFlushing;
 
 /**
  * The Neos Package
@@ -102,7 +100,7 @@ class Package extends BasePackage
         $dispatcher->connect(
             AssetService::class,
             'assetUpdated',
-            ContentCacheFlusher::class,
+            AssetChangeHandlerForCacheFlushing::class,
             'registerAssetChange',
             false
         );
