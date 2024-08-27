@@ -19,14 +19,13 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Fusion\Cache\NodeCacheEntryIdentifier;
 use Neos\Neos\Fusion\Cache\CacheTag;
 use Neos\Neos\Fusion\Cache\CacheTagSet;
 use Neos\Neos\Fusion\Cache\CacheTagWorkspaceName;
+use Neos\Neos\Fusion\Cache\NodeCacheEntryIdentifier;
 
 /**
  * Caching helper to make cache tag generation easier.
