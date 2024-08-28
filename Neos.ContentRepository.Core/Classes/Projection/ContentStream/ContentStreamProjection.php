@@ -166,7 +166,6 @@ class ContentStreamProjection implements ProjectionInterface
     {
         if ($event instanceof EmbedsContentStreamId) {
             $this->updateContentStreamVersion($event, $eventEnvelope);
-            return;
         }
         match ($event::class) {
             ContentStreamWasCreated::class => $this->whenContentStreamWasCreated($event, $eventEnvelope),
@@ -183,7 +182,7 @@ class ContentStreamProjection implements ProjectionInterface
             ContentStreamWasReopened::class => $this->whenContentStreamWasReopened($event, $eventEnvelope),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event, $eventEnvelope),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
+            default => $event instanceof EmbedsContentStreamId || throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 
