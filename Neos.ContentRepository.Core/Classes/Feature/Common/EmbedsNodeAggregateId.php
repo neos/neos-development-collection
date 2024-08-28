@@ -14,14 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+
 /**
- * This interface is implemented by **events** which contain ContentStreamId and NodeAggregateId.
+ * This interface is implemented by **events** which contain NodeAggregateId.
  *
  * This is relevant e.g. for content cache flushing as a result of an event.
  *
  * @internal
- * @deprecated Use {@see EmbedsContentStreamId} and/or {@see EmbedsNodeAggregateId} instead. Will be removed with Neos 10.
  */
-interface EmbedsContentStreamAndNodeAggregateId extends EmbedsContentStreamId, EmbedsNodeAggregateId
+interface EmbedsNodeAggregateId
 {
+    public function getNodeAggregateId(): NodeAggregateId;
 }

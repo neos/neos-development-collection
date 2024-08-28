@@ -14,7 +14,8 @@ namespace Neos\Neos\Fusion\Cache;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
@@ -175,7 +176,8 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 
         if (
             !($eventInstance instanceof NodeAggregateWasRemoved)
-            && $eventInstance instanceof EmbedsContentStreamAndNodeAggregateId
+            && $eventInstance instanceof EmbedsNodeAggregateId
+            && $eventInstance instanceof EmbedsContentStreamId
         ) {
             $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($eventInstance->getContentStreamId());
             if ($workspace === null) {

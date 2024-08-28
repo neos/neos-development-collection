@@ -18,6 +18,9 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -30,6 +33,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class NodePeerVariantWasCreated implements
     EventInterface,
     PublishableToWorkspaceInterface,
+    EmbedsContentStreamId,
+    EmbedsNodeAggregateId,
+    EmbedsWorkspaceName,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
@@ -50,6 +56,11 @@ final readonly class NodePeerVariantWasCreated implements
     public function getNodeAggregateId(): NodeAggregateId
     {
         return $this->nodeAggregateId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self
@@ -75,8 +86,8 @@ final readonly class NodePeerVariantWasCreated implements
             array_key_exists('peerSucceedingSiblings', $values)
                 ? InterdimensionalSiblings::fromArray($values['peerSucceedingSiblings'])
                 : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
-                    DimensionSpacePointSet::fromArray($values['peerCoverage']),
-                ),
+                DimensionSpacePointSet::fromArray($values['peerCoverage']),
+            ),
         );
     }
 

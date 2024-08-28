@@ -16,6 +16,9 @@ namespace Neos\ContentRepository\Core\Feature\NodeTypeChange\Event;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -28,6 +31,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class NodeAggregateTypeWasChanged implements
     EventInterface,
     PublishableToWorkspaceInterface,
+    EmbedsContentStreamId,
+    EmbedsNodeAggregateId,
+    EmbedsWorkspaceName,
     EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
@@ -46,6 +52,11 @@ final readonly class NodeAggregateTypeWasChanged implements
     public function getNodeAggregateId(): NodeAggregateId
     {
         return $this->nodeAggregateId;
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public function withWorkspaceNameAndContentStreamId(WorkspaceName $targetWorkspaceName, ContentStreamId $contentStreamId): self

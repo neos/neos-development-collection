@@ -15,13 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentStream;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
@@ -160,12 +159,12 @@ class ContentStreamProjection implements ProjectionInterface
                 ContentStreamWasRemoved::class,
                 DimensionShineThroughWasAdded::class,
             ])
-            || $event instanceof EmbedsContentStreamAndNodeAggregateId;
+            || $event instanceof EmbedsContentStreamId;
     }
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        if ($event instanceof EmbedsContentStreamAndNodeAggregateId) {
+        if ($event instanceof EmbedsContentStreamId) {
             $this->updateContentStreamVersion($event, $eventEnvelope);
             return;
         }
@@ -379,7 +378,7 @@ class ContentStreamProjection implements ProjectionInterface
     }
 
     private function updateContentStreamVersion(
-        EmbedsContentStreamAndNodeAggregateId $eventInstance,
+        EmbedsContentStreamId $eventInstance,
         EventEnvelope $eventEnvelope
     ): void {
         $this->dbal->update($this->tableName, [

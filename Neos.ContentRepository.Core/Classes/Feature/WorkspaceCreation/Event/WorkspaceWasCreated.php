@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -30,7 +31,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  *
  * @api events are the persistence-API of the content repository
  */
-final readonly class WorkspaceWasCreated implements EventInterface
+final readonly class WorkspaceWasCreated implements EventInterface, EmbedsWorkspaceName
 {
     public function __construct(
         public WorkspaceName $workspaceName,
@@ -40,6 +41,11 @@ final readonly class WorkspaceWasCreated implements EventInterface
         public ContentStreamId $newContentStreamId,
         public ?UserId $workspaceOwner = null
     ) {
+    }
+
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
     }
 
     public static function fromArray(array $values): self
