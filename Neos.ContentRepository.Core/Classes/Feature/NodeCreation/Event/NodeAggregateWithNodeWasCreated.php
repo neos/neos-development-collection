@@ -105,11 +105,11 @@ final readonly class NodeAggregateWithNodeWasCreated implements
             array_key_exists('succeedingSiblingsForCoverage', $values)
                 ? InterdimensionalSiblings::fromArray($values['succeedingSiblingsForCoverage'])
                 : InterdimensionalSiblings::fromDimensionSpacePointSetWithSingleSucceedingSiblings(
-                DimensionSpacePointSet::fromArray($values['coveredDimensionSpacePoints']),
-                isset($values['succeedingNodeAggregateId'])
+                    DimensionSpacePointSet::fromArray($values['coveredDimensionSpacePoints']),
+                    isset($values['succeedingNodeAggregateId'])
                     ? NodeAggregateId::fromString($values['succeedingNodeAggregateId'])
                     : null,
-            ),
+                ),
             NodeAggregateId::fromString($values['parentNodeAggregateId']),
             isset($values['nodeName']) ? NodeName::fromString($values['nodeName']) : null,
             SerializedPropertyValues::fromArray($values['initialPropertyValues']),

@@ -88,8 +88,8 @@ final readonly class NodeGeneralizationVariantWasCreated implements
             array_key_exists('variantSucceedingSiblings', $values)
                 ? InterdimensionalSiblings::fromArray($values['variantSucceedingSiblings'])
                 : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
-                DimensionSpacePointSet::fromArray($values['generalizationCoverage']),
-            ),
+                    DimensionSpacePointSet::fromArray($values['generalizationCoverage']),
+                ),
         );
     }
 

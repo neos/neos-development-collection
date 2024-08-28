@@ -86,8 +86,8 @@ final readonly class NodePeerVariantWasCreated implements
             array_key_exists('peerSucceedingSiblings', $values)
                 ? InterdimensionalSiblings::fromArray($values['peerSucceedingSiblings'])
                 : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
-                DimensionSpacePointSet::fromArray($values['peerCoverage']),
-            ),
+                    DimensionSpacePointSet::fromArray($values['peerCoverage']),
+                ),
         );
     }
 

@@ -88,8 +88,8 @@ final readonly class NodeSpecializationVariantWasCreated implements
             array_key_exists('specializationSiblings', $values)
                 ? InterdimensionalSiblings::fromArray($values['specializationSiblings'])
                 : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
-                DimensionSpacePointSet::fromArray($values['specializationCoverage'])
-            ),
+                    DimensionSpacePointSet::fromArray($values['specializationCoverage'])
+                ),
         );
     }
 
