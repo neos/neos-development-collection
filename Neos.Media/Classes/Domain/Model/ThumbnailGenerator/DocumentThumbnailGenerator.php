@@ -60,6 +60,7 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
 
             $width = $thumbnail->getConfigurationValue('width') ?: $thumbnail->getConfigurationValue('maximumWidth');
             $height = $thumbnail->getConfigurationValue('height') ?: $thumbnail->getConfigurationValue('maximumHeight');
+            $imageFormat = $this->getOption('imageFormat') ?? 'png';
 
             $im = new \Imagick();
             $im->setResolution($this->getOption('resolution'), $this->getOption('resolution'));
@@ -82,7 +83,7 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
                     1656518085
                 );
             }
-            $im->setImageFormat('png');
+            $im->setImageFormat($imageFormat);
             $im->setImageBackgroundColor('white');
             $im->setImageCompose(\Imagick::COMPOSITE_OVER);
 
