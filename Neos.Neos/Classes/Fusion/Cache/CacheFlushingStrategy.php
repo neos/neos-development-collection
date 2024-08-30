@@ -6,6 +6,6 @@ namespace Neos\Neos\Fusion\Cache;
 
 enum CacheFlushingStrategy
 {
-    case IMMEDIATELY;
+    case IMMEDIATE;
     case ON_SHUTDOWN;
 }

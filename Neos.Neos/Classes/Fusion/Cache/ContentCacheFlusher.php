@@ -199,7 +199,7 @@ class ContentCacheFlusher
     protected function flushTags(array $tagsToFlush, CacheFlushingStrategy $cacheFlushingStrategy): void
     {
         match ($cacheFlushingStrategy) {
-            CacheFlushingStrategy::IMMEDIATELY => $this->flushTagsImmediately($tagsToFlush),
+            CacheFlushingStrategy::IMMEDIATE => $this->flushTagsImmediately($tagsToFlush),
             CacheFlushingStrategy::ON_SHUTDOWN => $this->collectTagsForFlushOnShutdown($tagsToFlush)
         };
     }

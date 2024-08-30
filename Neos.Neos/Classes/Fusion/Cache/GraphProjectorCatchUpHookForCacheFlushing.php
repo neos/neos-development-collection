@@ -298,13 +298,13 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     public function onBeforeBatchCompleted(): void
     {
         foreach ($this->flushNodeAggregateRequestsOnBeforeBatchCompleted as $index => $request) {
-            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATELY);
+            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATE);
             $this->flushNodeAggregateRequestsOnAfterCatchUp[$index] = $request;
         }
         $this->flushNodeAggregateRequestsOnBeforeBatchCompleted = [];
 
         foreach ($this->flushWorkspaceRequestsOnBeforeBatchCompleted as $index => $request) {
-            $this->contentCacheFlusher->flushWorkspace($request, CacheFlushingStrategy::IMMEDIATELY);
+            $this->contentCacheFlusher->flushWorkspace($request, CacheFlushingStrategy::IMMEDIATE);
             $this->flushWorkspaceRequestsOnAfterCatchUp[$index] = $request;
         }
         $this->flushWorkspaceRequestsOnBeforeBatchCompleted = [];
@@ -313,12 +313,12 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     public function onAfterCatchUp(): void
     {
         foreach ($this->flushNodeAggregateRequestsOnAfterCatchUp as $request) {
-            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATELY);
+            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATE);
         }
         $this->flushNodeAggregateRequestsOnAfterCatchUp = [];
 
         foreach ($this->flushWorkspaceRequestsOnAfterCatchUp as $request) {
-            $this->contentCacheFlusher->flushWorkspace($request, CacheFlushingStrategy::IMMEDIATELY);
+            $this->contentCacheFlusher->flushWorkspace($request, CacheFlushingStrategy::IMMEDIATE);
         }
         $this->flushWorkspaceRequestsOnAfterCatchUp = [];
     }
