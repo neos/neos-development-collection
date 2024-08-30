@@ -71,6 +71,7 @@ Neos:
 
       Neos\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator:
         resolution: 120
+        imageFormat: 'png'
         supportedExtensions:
           - pdf
           - eps
