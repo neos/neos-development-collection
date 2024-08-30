@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeRenaming\Event;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
@@ -33,8 +32,7 @@ final readonly class NodeAggregateNameWasChanged implements
     PublishableToWorkspaceInterface,
     EmbedsContentStreamId,
     EmbedsNodeAggregateId,
-    EmbedsWorkspaceName,
-    EmbedsContentStreamAndNodeAggregateId
+    EmbedsWorkspaceName
 {
     public function __construct(
         public WorkspaceName $workspaceName,
