@@ -6,7 +6,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
@@ -43,6 +42,8 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Infrastructure\DbalCheckpointStorage;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -171,6 +172,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             RootNodeAggregateWithNodeWasCreated::class,
             SubtreeWasTagged::class,
             SubtreeWasUntagged::class,
+            WorkspaceWasDiscarded::class,
+            WorkspaceWasPartiallyDiscarded::class
         ]);
     }
 
@@ -195,6 +198,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
+            WorkspaceWasDiscarded::class => null, // only needed for GraphProjectorCatchUpHookForCacheFlushing
+            WorkspaceWasPartiallyDiscarded::class => null, // only needed for GraphProjectorCatchUpHookForCacheFlushing
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
@@ -924,8 +929,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
         usort(
             $hierarchyRelations,
-            static fn (HierarchyRelation $relationA, HierarchyRelation $relationB): int
-            => $relationA->position <=> $relationB->position
+            static fn (HierarchyRelation $relationA, HierarchyRelation $relationB): int => $relationA->position <=> $relationB->position
         );
 
         foreach ($hierarchyRelations as $relation) {
