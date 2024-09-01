@@ -13,9 +13,11 @@ namespace Neos\Neos\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Neos\Domain\Exception;
 use Neos\Party\Domain\Model\ElectronicAddress;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\User;
@@ -47,7 +49,7 @@ class UserCommandController extends CommandController
      *
      * @return void
      */
-    public function listCommand()
+    public function listCommand(): void
     {
         $users = $this->userService->getUsers();
 
@@ -72,10 +74,11 @@ class UserCommandController extends CommandController
      * will look for an account identified by "username" for that specific provider.
      *
      * @param string $username The username of the user to show. Usually refers to the account identifier of the user's Neos backend account.
-     * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
+     * @param string|null $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
      * @return void
+     * @throws Exception|StopCommandException
      */
-    public function showCommand($username, $authenticationProvider = null)
+    public function showCommand(string $username, string $authenticationProvider = null): void
     {
         $user = $this->userService->getUser($username, $authenticationProvider);
         if (!$user instanceof User) {
