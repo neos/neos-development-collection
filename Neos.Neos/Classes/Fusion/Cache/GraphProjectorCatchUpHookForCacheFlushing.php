@@ -110,7 +110,10 @@ use Neos\EventStore\Model\EventEnvelope;
  * => INVARIANT_2 violated.
  * => this case needs a cache flush at onBeforeBatchCompleted.
  *
- * SUMMARY: we need to flush the cache at BOTH places.
+ * SUMMARY: We need to flush the cache at BOTH places to ensure non of the cases above happens. BUT (!)
+ *          Flushing the cache is a very expensive operation, so we need to reduce them as much as we can.
+ *          So we decided to take the risk of CASE B, which might show an outdated content a bit longer than
+ *          it might be expected.
  *
  * @internal
  */
@@ -121,16 +124,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     /**
      * @var array<string,FlushNodeAggregateRequest>
      */
-    private array $flushNodeAggregateRequestsOnBeforeBatchCompleted = [];
-    /**
-     * @var array<string,FlushNodeAggregateRequest>
-     */
     private array $flushNodeAggregateRequestsOnAfterCatchUp = [];
-
-    /**
-     * @var array<string,FlushWorkspaceRequest>
-     */
-    private array $flushWorkspaceRequestsOnBeforeBatchCompleted = [];
 
     /**
      * @var array<string,FlushWorkspaceRequest>
@@ -257,7 +251,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         NodeAggregate $nodeAggregate
     ): void {
         // we store this in an associative array deduplicate.
-        $this->flushNodeAggregateRequestsOnBeforeBatchCompleted[$workspaceName->value . '__' . $nodeAggregate->nodeAggregateId->value] = FlushNodeAggregateRequest::create(
+        $this->flushNodeAggregateRequestsOnAfterCatchUp[$workspaceName->value . '__' . $nodeAggregate->nodeAggregateId->value] = FlushNodeAggregateRequest::create(
             $contentRepository->id,
             $workspaceName,
             $nodeAggregate->nodeAggregateId,
@@ -271,7 +265,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         WorkspaceName $workspaceName
     ): void {
         // we store this in an associative array deduplicate.
-        $this->flushWorkspaceRequestsOnBeforeBatchCompleted[$workspaceName->value] = FlushWorkspaceRequest::create(
+        $this->flushWorkspaceRequestsOnAfterCatchUp[$workspaceName->value] = FlushWorkspaceRequest::create(
             $contentRepository->id,
             $workspaceName,
         );
@@ -297,17 +291,6 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 
     public function onBeforeBatchCompleted(): void
     {
-        foreach ($this->flushNodeAggregateRequestsOnBeforeBatchCompleted as $index => $request) {
-            $this->contentCacheFlusher->flushNodeAggregate($request, CacheFlushingStrategy::IMMEDIATE);
-            $this->flushNodeAggregateRequestsOnAfterCatchUp[$index] = $request;
-        }
-        $this->flushNodeAggregateRequestsOnBeforeBatchCompleted = [];
-
-        foreach ($this->flushWorkspaceRequestsOnBeforeBatchCompleted as $index => $request) {
-            $this->contentCacheFlusher->flushWorkspace($request, CacheFlushingStrategy::IMMEDIATE);
-            $this->flushWorkspaceRequestsOnAfterCatchUp[$index] = $request;
-        }
-        $this->flushWorkspaceRequestsOnBeforeBatchCompleted = [];
     }
 
     public function onAfterCatchUp(): void
