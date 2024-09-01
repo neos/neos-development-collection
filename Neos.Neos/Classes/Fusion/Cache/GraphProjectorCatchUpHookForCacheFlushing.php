@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
@@ -236,17 +237,16 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             !($eventInstance instanceof NodeAggregateWasRemoved)
             && $eventInstance instanceof EmbedsNodeAggregateId
             && $eventInstance instanceof EmbedsContentStreamId
-            // TODO: We need some interface to ensure workspaceName is present
-            && property_exists($eventInstance, 'workspaceName')
+            && $eventInstance instanceof EmbedsWorkspaceName
         ) {
-            $nodeAggregate = $this->contentRepository->getContentGraph($eventInstance->workspaceName)->findNodeAggregateById(
+            $nodeAggregate = $this->contentRepository->getContentGraph($eventInstance->getWorkspaceName())->findNodeAggregateById(
                 $eventInstance->getNodeAggregateId()
             );
 
             if ($nodeAggregate) {
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
-                    $eventInstance->workspaceName,
+                    $eventInstance->getWorkspaceName(),
                     $nodeAggregate
                 );
             }
