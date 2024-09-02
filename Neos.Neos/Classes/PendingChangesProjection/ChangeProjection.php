@@ -147,8 +147,8 @@ class ChangeProjection implements ProjectionInterface
         ]);
 
         $liveContentStreamsTable = new Table($this->tableNamePrefix . '_livecontentstreams', [
-            DbalSchemaFactory::ColumnForContentStreamId('contentstreamid')->setNotNull(true),
-            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setDefault('')->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION)
+            DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotNull(true),
+            DbalSchemaFactory::columnForWorkspaceName('workspacename')->setDefault('')
         ]);
         $liveContentStreamsTable->setPrimaryKey(['contentstreamid']);
 

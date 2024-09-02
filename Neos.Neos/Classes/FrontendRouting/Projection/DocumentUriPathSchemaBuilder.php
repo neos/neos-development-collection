@@ -63,14 +63,14 @@ class DocumentUriPathSchemaBuilder
                 'precedingnodeaggregateid',
                 'succeedingnodeaggregateid'
             ], 'preceding_succeeding')
-            ->addIndex(['sitenodename', 'uripath'], null, [], ['lengths' => [null,100]]);
+            ->addIndex(['sitenodename', 'uripath'], null, [], ['lengths' => [null, 100]]);
     }
 
     private function createLiveContentStreamsTable(): Table
     {
         $table = new Table($this->tableNamePrefix . '_livecontentstreams', [
             DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotNull(true),
-            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setDefault('')->setNotnull(true)
+            DbalSchemaFactory::columnForWorkspaceName('workspacename')->setDefault('')
         ]);
         return $table->setPrimaryKey(['contentstreamid']);
     }
