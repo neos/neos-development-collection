@@ -166,6 +166,7 @@
 								}
 								var movedOrNewParentDocuments = jQuery(this).closest('table').find('.neos-document[data-ismoved="true"], .neos-document[data-isnew="true"]').filter(nodePathStartsWith(currentNodePath));
 								jQuery(movedOrNewParentDocuments).each(function(index, movedParentDocument) {
+									jQuery('td.check input', movedParentDocument).prop('checked', checked);
 									jQuery('tr.neos-change.document-' + jQuery(movedParentDocument).data('identifier') + ' td.check input').prop('checked', checked);
 								});
 							}
