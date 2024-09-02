@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
@@ -75,7 +75,7 @@ final class NodeRecord
                     'originallastmodified' => Types::DATETIME_IMMUTABLE,
                 ]
             );
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to update node in database: %s', $e->getMessage()), 1716473799, $e);
         }
     }
@@ -157,7 +157,7 @@ final class NodeRecord
                 'lastmodified' => Types::DATETIME_IMMUTABLE,
                 'originallastmodified' => Types::DATETIME_IMMUTABLE,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to add node to database: %s', $e->getMessage()), 1716473919, $e);
         }
 

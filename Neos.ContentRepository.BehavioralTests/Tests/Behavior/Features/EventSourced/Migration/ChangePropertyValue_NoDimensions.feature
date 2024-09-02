@@ -39,7 +39,7 @@ Feature: Change Property
 
 
   Scenario: Fixed newValue
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -57,20 +57,20 @@ Feature: Change Property
     """
     # the original content stream has not been touched
     When I am in workspace "live" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
     # the node type was changed inside the new content stream
-    When I am in content stream "migration-cs" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    When I am in workspace "migration-workspace" and dimension space point {}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value         |
       | text | "fixed value" |
 
   Scenario: Ignoring transformation if property does not exist on node
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -87,14 +87,14 @@ Feature: Change Property
               newSerializedValue: 'fixed value'
     """
     # we did not change anything because notExisting does not exist
-    When I am in content stream "migration-cs" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    When I am in workspace "migration-workspace" and dimension space point {}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
   Scenario: replacement using default currentValuePlaceholder
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -110,14 +110,14 @@ Feature: Change Property
               property: 'text'
               newSerializedValue: 'bla {current}'
     """
-    When I am in content stream "migration-cs" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    When I am in workspace "migration-workspace" and dimension space point {}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value               |
       | text | "bla Original text" |
 
   Scenario: replacement using alternative currentValuePlaceholder
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -134,14 +134,14 @@ Feature: Change Property
               currentValuePlaceholder: '{otherPlaceholder}'
               newSerializedValue: 'bla {otherPlaceholder}'
     """
-    When I am in content stream "migration-cs" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    When I am in workspace "migration-workspace" and dimension space point {}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value               |
       | text | "bla Original text" |
 
   Scenario: using search/replace
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -158,14 +158,14 @@ Feature: Change Property
               search: 'Original'
               replace: 'alternative'
     """
-    When I am in content stream "migration-cs" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    When I am in workspace "migration-workspace" and dimension space point {}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value              |
       | text | "alternative text" |
 
   Scenario: using search/replace including placeholder (all options)
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -183,8 +183,8 @@ Feature: Change Property
               search: 'Original'
               replace: 'alternative'
     """
-    When I am in content stream "migration-cs" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    When I am in workspace "migration-workspace" and dimension space point {}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value                  |
       | text | "bla alternative text" |

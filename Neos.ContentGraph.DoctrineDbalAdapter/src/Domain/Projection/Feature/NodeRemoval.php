@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -65,7 +65,7 @@ trait NodeRemoval
             $this->dbal->executeStatement($deleteRelationsStatement, [
                 'anchorPointForNode' => $ingoingRelation->childNodeAnchor->value,
             ]);
-        } catch (DbalException $e) {
+        } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to remove relations from database: %s', $e->getMessage()), 1716473385, $e);
         }
     }

@@ -222,7 +222,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"     | "lady-eleonode-rootford/shernode-homes/c"    | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: ab(> b1, b2 > b2a)c => a(> b2 > b2a)b(> b1)c (moving b1 below a)
-    And I am in workspace "live" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                | initialPropertyValues     | nodeName |
       | b1              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
@@ -246,7 +245,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | "c"        | "lady-eleonode-rootford/shernode-homes/c"        | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: ab(> b1, b2 > b2a)c => b(> b1, a, b2 > b2a)c (moving a below b)
-    And I am in workspace "live" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                | initialPropertyValues     | nodeName |
       | b1              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |

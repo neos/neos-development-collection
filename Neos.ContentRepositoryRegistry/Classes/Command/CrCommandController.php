@@ -128,7 +128,7 @@ final class CrCommandController extends CommandController
         if (!$quiet) {
             $this->outputLine('Replaying events for projection "%s" of Content Repository "%s" ...', [$projection, $contentRepositoryId->value]);
             $progressBar->start(max($until > 0 ? $until : $projectionService->highestSequenceNumber()->value, 1));
-            $options->with(progressCallback: fn () => $progressBar->advance());
+            $options = $options->with(progressCallback: fn () => $progressBar->advance());
         }
         if ($until > 0) {
             $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));

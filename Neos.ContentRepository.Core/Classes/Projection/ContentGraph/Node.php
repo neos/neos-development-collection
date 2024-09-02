@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
@@ -24,7 +23,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -70,50 +68,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class Node
 {
     /**
-     * This was intermediate part of the node's "Read Model" identity.
-     * Please use {@see $contentRepositoryId} {@see $workspaceName} {@see $dimensionSpacePoint} and {@see $aggregateId} instead,
-     * or see {@see NodeAddress::fromNode()} for passing the identity around.
-     * The visibility-constraints now reside in {@see $visibilityConstraints}.
-     * There is no replacement for the previously attached content-stream-id. Please refactor the code to use the newly available workspace-name.
-     * @deprecated will be removed before the final 9.0 release
-     */
-    public ContentSubgraphIdentity $subgraphIdentity;
-
-    /**
-     * In PHP please use {@see $aggregateId} instead.
-     *
-     * For Fusion please use the upcoming FlowQuery operation:
-     * ```
-     * ${q(node).id()}
-     * ```
-     * @deprecated will be removed before the final 9.0 release
-     */
-    public NodeAggregateId $nodeAggregateId;
-
-    /**
-     * In PHP please use {@see $name} instead.
-     *
-     * For Fusion use:
-     * ```
-     * ${node.name.value}
-     * ```
-     * @deprecated will be removed before the final 9.0 release
-     */
-    public ?NodeName $nodeName;
-
-    /**
-     * In PHP please fetch the NodeType via the NodeTypeManager or the NodeTypeWithFallbackProvider trait instead.
-     * {@see $nodeTypeName}
-     *
-     * For Fusion please use the EEL Helper:
-     * ```
-     * ${Neos.Node.getNodeType(node)}
-     * ```
-     * @deprecated will be removed before the final 9.0 release
-     */
-    public ?NodeType $nodeType;
-
-    /**
      * @param ContentRepositoryId $contentRepositoryId The content-repository this Node belongs to
      * @param WorkspaceName $workspaceName The workspace of this Node
      * @param DimensionSpacePoint $dimensionSpacePoint DimensionSpacePoint a node has been accessed in
@@ -121,7 +75,6 @@ final readonly class Node
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint The DimensionSpacePoint the node originates in. Usually needed to address a Node in a NodeAggregate in order to update it.
      * @param NodeAggregateClassification $classification The classification (regular, root, tethered) of this node
      * @param NodeTypeName $nodeTypeName The node's node type name; always set, even if unknown to the NodeTypeManager
-     * @param NodeType|null $nodeType The node's node type, null if unknown to the NodeTypeManager - @deprecated Don't rely on this too much, as the capabilities of the NodeType here will probably change a lot; Ask the {@see NodeTypeManager} instead
      * @param PropertyCollection $properties All properties of this node. References are NOT part of this API; To access references, {@see ContentSubgraphInterface::findReferences()} can be used; To read the serialized properties use {@see PropertyCollection::serialized()}.
      * @param NodeName|null $name The optional name of the node, describing its relation to its parent
      * @param NodeTags $tags explicit and inherited SubtreeTags of this node
@@ -140,31 +93,19 @@ final readonly class Node
         public ?NodeName $name,
         public NodeTags $tags,
         public Timestamps $timestamps,
-        public VisibilityConstraints $visibilityConstraints,
-        ?NodeType $nodeType,
-        ContentStreamId $contentStreamId
+        public VisibilityConstraints $visibilityConstraints
     ) {
         if ($this->classification->isTethered() && $this->name === null) {
             throw new \InvalidArgumentException('The NodeName must be set if the Node is tethered.', 1695118377);
         }
-        // legacy to be removed before Neos9
-        $this->nodeAggregateId = $this->aggregateId;
-        $this->nodeName = $this->name;
-        $this->nodeType = $nodeType;
-        $this->subgraphIdentity = ContentSubgraphIdentity::create(
-            $contentRepositoryId,
-            $contentStreamId,
-            $dimensionSpacePoint,
-            $visibilityConstraints
-        );
     }
 
     /**
      * @internal The signature of this method can change in the future!
      */
-    public static function create(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $aggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, PropertyCollection $properties, ?NodeName $nodeName, NodeTags $tags, Timestamps $timestamps, VisibilityConstraints $visibilityConstraints, ?NodeType $nodeType, ContentStreamId $contentStreamId): self
+    public static function create(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateId $aggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, PropertyCollection $properties, ?NodeName $name, NodeTags $tags, Timestamps $timestamps, VisibilityConstraints $visibilityConstraints): self
     {
-        return new self($contentRepositoryId, $workspaceName, $dimensionSpacePoint, $aggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $properties, $nodeName, $tags, $timestamps, $visibilityConstraints, $nodeType, $contentStreamId);
+        return new self($contentRepositoryId, $workspaceName, $dimensionSpacePoint, $aggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $properties, $name, $tags, $timestamps, $visibilityConstraints);
     }
 
     /**
@@ -191,28 +132,6 @@ final readonly class Node
     public function hasProperty(PropertyName|string $propertyName): bool
     {
         return $this->properties->offsetExists($propertyName instanceof PropertyName ? $propertyName->value : $propertyName);
-    }
-
-    /**
-     * Returned the node label as generated by the configured node label generator.
-     *
-     * In PHP please use Neos' {@see NodeLabelGeneratorInterface} instead.
-     *
-     * For Fusion please use the FlowQuery operation:
-     * ```
-     * ${q(node).label()}
-     * ```
-     *
-     * @deprecated will be removed before the final 9.0 release
-     */
-    public function getLabel(): string
-    {
-        if (!class_exists(\Neos\Neos\Domain\NodeLabel\DelegatingNodeLabelRenderer::class)) {
-            throw new \BadMethodCallException('node labels are removed from standalone cr.');
-        }
-        // highly illegal
-        /** @phpstan-ignore-next-line */
-        return (new \Neos\Neos\Domain\NodeLabel\DelegatingNodeLabelRenderer())->getLabel($this);
     }
 
     /**

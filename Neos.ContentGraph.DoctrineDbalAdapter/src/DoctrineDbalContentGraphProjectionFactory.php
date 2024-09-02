@@ -38,7 +38,6 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
 
         $nodeFactory = new NodeFactory(
             $projectionFactoryDependencies->contentRepositoryId,
-            $projectionFactoryDependencies->nodeTypeManager,
             $projectionFactoryDependencies->propertyConverter,
             $dimensionSpacePointsRepository
         );

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;

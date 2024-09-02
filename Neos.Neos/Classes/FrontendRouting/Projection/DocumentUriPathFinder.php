@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -52,7 +52,8 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND siteNodeName = :siteNodeName
                 AND uriPath = :uriPath
-                AND disabled = 0',
+                AND disabled = 0
+                AND isPlaceholder = 0',
             [
                 'dimensionSpacePointHash' => $dimensionSpacePointHash,
                 'siteNodeName' => $siteNodeName->value,
@@ -224,7 +225,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     {
         if ($this->liveContentStreamIdRuntimeCache === null) {
             try {
-                $contentStreamId = $this->dbal->fetchColumn(
+                $contentStreamId = $this->dbal->fetchOne(
                     'SELECT contentStreamId FROM '
                         . $this->tableNamePrefix . '_livecontentstreams LIMIT 1'
                 );

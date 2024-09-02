@@ -54,12 +54,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class NodeAggregate
 {
     /**
-     * This was intermediate part of the node aggregate. Please use {@see $workspaceName} instead.
-     * @deprecated will be removed before the final 9.0 release
-     */
-    public ContentStreamId $contentStreamId;
-
-    /**
      * @param ContentRepositoryId $contentRepositoryId The content-repository this node aggregate belongs to
      * @param WorkspaceName $workspaceName The workspace of this node aggregate
      * @param NodeAggregateId $nodeAggregateId ID of this node aggregate
@@ -88,9 +82,7 @@ final readonly class NodeAggregate
         private array $nodesByCoveredDimensionSpacePoint,
         private OriginByCoverage $occupationByCovered,
         private DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
-        ContentStreamId $contentStreamId,
     ) {
-        $this->contentStreamId = $contentStreamId;
     }
 
     /**
@@ -112,7 +104,6 @@ final readonly class NodeAggregate
         array $nodesByCoveredDimensionSpacePoint,
         OriginByCoverage $occupationByCovered,
         DimensionSpacePointsBySubtreeTags $dimensionSpacePointsBySubtreeTags,
-        ContentStreamId $contentStreamId,
     ): self {
         return new self(
             $contentRepositoryId,
@@ -128,7 +119,6 @@ final readonly class NodeAggregate
             $nodesByCoveredDimensionSpacePoint,
             $occupationByCovered,
             $dimensionSpacePointsBySubtreeTags,
-            $contentStreamId,
         );
     }
 

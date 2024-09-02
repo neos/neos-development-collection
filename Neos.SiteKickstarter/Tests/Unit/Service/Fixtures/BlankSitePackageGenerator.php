@@ -21,7 +21,7 @@ use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
  */
 class BlankSitePackageGenerator implements SitePackageGeneratorInterface
 {
-    public function generateSitePackage(string $packageKey, string $siteName): array
+    public function generateSitePackage(string $packageKey): array
     {
         // just a dummy
     }

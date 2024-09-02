@@ -14,19 +14,20 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Cache;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The cache entry identifier data transfer object for nodes
  *
  * @Flow\Proxy(false)
+ * @internal
  */
-final class NodeCacheEntryIdentifier implements CacheAwareInterface
+final readonly class NodeCacheEntryIdentifier implements CacheAwareInterface
 {
     private function __construct(
-        private readonly string $value
+        private string $value
     ) {
     }
 

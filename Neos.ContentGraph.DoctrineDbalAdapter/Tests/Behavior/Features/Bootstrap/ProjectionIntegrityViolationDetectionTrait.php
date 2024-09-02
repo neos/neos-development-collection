@@ -16,7 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstra
 
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;

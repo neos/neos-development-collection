@@ -71,10 +71,11 @@ class PrevUntilOperation extends AbstractOperation
         $output = [];
         $outputNodeIdentifiers = [];
 
+        /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $prevNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                 ->findPrecedingSiblingNodes(
-                    $contextNode->nodeAggregateId,
+                    $contextNode->aggregateId,
                     FindPrecedingSiblingNodesFilter::create()
                 );
             if (isset($arguments[0]) && !empty($arguments[0])) {

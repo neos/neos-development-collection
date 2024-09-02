@@ -66,8 +66,8 @@ class ParentOperation extends AbstractOperation
     {
         $output = [];
         $outputNodeAggregateIds = [];
+        /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            /* @var $contextNode Node */
             $parentNode = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                 ->findParentNode($contextNode->aggregateId);
             if ($parentNode === null) {

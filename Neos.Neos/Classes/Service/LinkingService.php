@@ -14,15 +14,18 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Exception as HttpException;
+use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Property\PropertyMapper;
@@ -33,7 +36,6 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
@@ -306,7 +308,7 @@ class LinkingService
                     $controllerContext->getRequest()->getHttpRequest()
                 )->contentRepositoryId;
                 $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-                $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
+                $nodeAddress = NodeAddress::fromJsonString($nodeString);
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
                 $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
                     $nodeAddress->dimensionSpacePoint,
@@ -314,7 +316,7 @@ class LinkingService
                         ? VisibilityConstraints::withoutRestrictions()
                         : VisibilityConstraints::frontend()
                 );
-                $node = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+                $node = $subgraph->findNodeById($nodeAddress->aggregateId);
             } catch (\Throwable $exception) {
                 if ($baseNode === null) {
                     throw new NeosException(
@@ -352,7 +354,7 @@ class LinkingService
         $mainRequest = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($mainRequest);
-        $action = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::disabled()) ? 'show' : 'preview';
+        $createLiveUri = $workspace && $workspace->isPublicWorkspace() && $node->tags->contain(SubtreeTag::disabled());
 
         if ($addQueryString === true) {
             // legacy feature see https://github.com/neos/neos-development-collection/issues/5076
@@ -365,13 +367,27 @@ class LinkingService
             }
         }
 
+        if (!$createLiveUri) {
+            $previewActionUri = $uriBuilder
+                ->reset()
+                ->setSection($section)
+                ->setArguments($arguments)
+                ->setFormat($format ?: $mainRequest->getFormat())
+                ->setCreateAbsoluteUri($absolute)
+                ->uriFor('preview', [], 'Frontend\Node', 'Neos.Neos');
+            return (string)UriHelper::uriWithAdditionalQueryParameters(
+                new Uri($previewActionUri),
+                ['node' => NodeAddress::fromNode($node)->toJson()]
+            );
+        }
+
         return $uriBuilder
             ->reset()
             ->setSection($section)
             ->setArguments($arguments)
             ->setFormat($format ?: $mainRequest->getFormat())
             ->setCreateAbsoluteUri($absolute)
-            ->uriFor($action, ['node' => $node], 'Frontend\Node', 'Neos.Neos');
+            ->uriFor('show', ['node' => NodeAddress::fromNode($node)], 'Frontend\Node', 'Neos.Neos');
     }
 
     /**

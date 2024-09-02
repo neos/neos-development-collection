@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry;
@@ -17,6 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryIds;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
@@ -81,6 +83,13 @@ final class ContentRepositoryRegistry
         return $this->getFactory($contentRepositoryId)->getOrBuild();
     }
 
+    public function getContentRepositoryIds(): ContentRepositoryIds
+    {
+        /** @var array<string> $contentRepositoryIds */
+        $contentRepositoryIds = array_keys($this->settings['contentRepositories'] ?? []);
+        return ContentRepositoryIds::fromArray($contentRepositoryIds);
+    }
+
     /**
      * @internal for test cases only
      */
@@ -130,7 +139,8 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
-    private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory {
+    private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory
+    {
         if (!is_array($this->settings['contentRepositories'] ?? null)) {
             throw InvalidConfigurationException::fromMessage('No Content Repositories are configured');
         }
@@ -202,7 +212,6 @@ final class ContentRepositoryRegistry
             $options['contentDimensions'] = Arrays::arrayMergeRecursiveOverrule($contentRepositorySettings['contentDimensions'], $options['contentDimensions'] ?? []);
         }
         return $contentDimensionSourceFactory->build($contentRepositoryId, $options);
-
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */

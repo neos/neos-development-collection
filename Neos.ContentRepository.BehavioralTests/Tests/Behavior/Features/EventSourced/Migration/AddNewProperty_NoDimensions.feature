@@ -47,7 +47,7 @@ Feature: Add New Property
 
 
   Scenario: Fixed newValue
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
     """yaml
     migration:
       -
@@ -72,17 +72,17 @@ Feature: Add New Property
     """
     # the original content stream has not been touched
     When I am in workspace "live" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
+    Then I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
 
-    When I am in content stream "migration-cs" and dimension space point {}
-    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{}
+    When I am in workspace "migration-workspace" and dimension space point {}
+    Then I expect a node identified by migration-cs;sir-david-nodenborough;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key  | Value           |
       | text | "Original text" |
-    Then I expect node aggregate identifier "other" to lead to node migration-cs;other;{}
+    Then I expect a node identified by migration-cs;other;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key                | Value                          |
       | text               | "fixed value"                  |
