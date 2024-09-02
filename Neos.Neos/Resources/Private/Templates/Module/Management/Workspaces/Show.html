@@ -29,7 +29,7 @@
 						<f:for each="{siteChanges}" as="site">
 							<f:for each="{site.documents}" key="dimension" as="dimensions">
 								<f:for each="{dimensions}" key="documentPath" as="document">
-									<tr class="neos-document" data-nodepath="{document.documentNode.path}" data-ismoved="{f:if(condition: document.isMoved, then: 'true', else: 'false')}" data-isnew="{f:if(condition: document.isNew, then: 'true', else: 'false')}">
+									<tr class="neos-document" data-nodepath="{document.documentNode.path}" data-identifier="{document.documentNode.identifier}" data-ismoved="{f:if(condition: document.isMoved, then: 'true', else: 'false')}" data-isnew="{f:if(condition: document.isNew, then: 'true', else: 'false')}">
 										<td class="check neos-priority1">
 											<label for="check-document-{document.documentNode.identifier}" class="neos-checkbox"><f:form.checkbox id="check-document-{document.documentNode.identifier}" class="neos-check-document" value="{document.documentNode.identifier}"/><span></span></label>
 										</td>
@@ -166,7 +166,7 @@
 								}
 								var movedOrNewParentDocuments = jQuery(this).closest('table').find('.neos-document[data-ismoved="true"], .neos-document[data-isnew="true"]').filter(nodePathStartsWith(currentNodePath));
 								jQuery(movedOrNewParentDocuments).each(function(index, movedParentDocument) {
-									jQuery('tr[data-nodepath^="' + jQuery(movedParentDocument).data('nodepath') + '"] td.check input').prop('checked', checked);
+									jQuery('tr.neos-change.document-' + jQuery(movedParentDocument).data('identifier') + ' td.check input').prop('checked', checked);
 								});
 							}
 
