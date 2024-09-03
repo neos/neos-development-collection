@@ -17,6 +17,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Provide doctrine DBAL column schema definitions for common types in the content repository to
@@ -26,6 +27,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class DbalSchemaFactory
 {
+    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
+
     // This class only contains static members and should not be constructed
     private function __construct()
     {
@@ -86,7 +89,7 @@ final class DbalSchemaFactory
     {
         return (new Column($columnName, Type::getType(Types::TEXT)))
             ->setDefault('{}')
-            ->setPlatformOption('collation', 'utf8mb4_unicode_520_ci');
+            ->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION);
     }
 
     /**
@@ -116,6 +119,17 @@ final class DbalSchemaFactory
             ->setNotnull(true)
             ->setPlatformOption('charset', 'ascii')
             ->setPlatformOption('collation', 'ascii_general_ci');
+    }
+
+    /**
+     * @see WorkspaceName
+     */
+    public static function columnForWorkspaceName(string $columnName): Column
+    {
+        return (new Column($columnName, Type::getType(Types::STRING)))
+            ->setLength(WorkspaceName::MAX_LENGTH)
+            ->setNotnull(true)
+            ->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION);
     }
 
     /**
