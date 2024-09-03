@@ -55,8 +55,6 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 class ChangeProjection implements ProjectionInterface
 {
-    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
-
     /**
      * @var ChangeFinder|null Cache for the ChangeFinder returned by {@see getState()},
      * so that always the same instance is returned
@@ -147,8 +145,8 @@ class ChangeProjection implements ProjectionInterface
         ]);
 
         $liveContentStreamsTable = new Table($this->tableNamePrefix . '_livecontentstreams', [
-            DbalSchemaFactory::ColumnForContentStreamId('contentstreamid')->setNotNull(true),
-            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setDefault('')->setNotnull(true)->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION)
+            DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotNull(true),
+            DbalSchemaFactory::columnForWorkspaceName('workspacename')->setDefault('')
         ]);
         $liveContentStreamsTable->setPrimaryKey(['contentstreamid']);
 

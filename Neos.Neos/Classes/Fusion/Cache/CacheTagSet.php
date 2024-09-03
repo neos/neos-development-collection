@@ -93,6 +93,17 @@ final class CacheTagSet
         ));
     }
 
+    public static function forWorkspaceNameFromNodes(Nodes $nodes): self
+    {
+        return new self(...array_map(
+            static fn (Node $node): CacheTag => CacheTag::forWorkspaceName(
+                $node->contentRepositoryId,
+                $node->workspaceName,
+            ),
+            iterator_to_array($nodes)
+        ));
+    }
+
     public function add(CacheTag $cacheTag): self
     {
         $tags = $this->tags;
@@ -106,9 +117,11 @@ final class CacheTagSet
      */
     public function toStringArray(): array
     {
-        return array_map(
-            static fn (CacheTag $tag): string => $tag->value,
-            array_values($this->tags)
+        return array_unique(
+            array_map(
+                static fn (CacheTag $tag): string => $tag->value,
+                array_values($this->tags)
+            )
         );
     }
 
