@@ -27,6 +27,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class DbalSchemaFactory
 {
+    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
+
     // This class only contains static members and should not be constructed
     private function __construct()
     {
@@ -87,7 +89,7 @@ final class DbalSchemaFactory
     {
         return (new Column($columnName, Type::getType(Types::TEXT)))
             ->setDefault('{}')
-            ->setPlatformOption('collation', 'utf8mb4_unicode_520_ci');
+            ->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION);
     }
 
     /**
@@ -127,7 +129,7 @@ final class DbalSchemaFactory
         return (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(WorkspaceName::MAX_LENGTH)
             ->setNotnull(true)
-            ->setPlatformOption('collation', 'utf8mb4_unicode_520_ci');
+            ->setPlatformOption('collation', self::DEFAULT_TEXT_COLLATION);
     }
 
     /**

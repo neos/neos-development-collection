@@ -55,8 +55,6 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 class ChangeProjection implements ProjectionInterface
 {
-    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
-
     /**
      * @var ChangeFinder|null Cache for the ChangeFinder returned by {@see getState()},
      * so that always the same instance is returned
