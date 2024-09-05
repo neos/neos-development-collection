@@ -87,7 +87,7 @@ class AssetChangeHandlerForCacheFlushing
             $nodeAggregate = array_shift($stack);
 
             // Prevent infinite loops
-            if (!in_array($nodeAggregate->nodeAggregateId, $ancestorNodeAggregateIds, true)) {
+            if (!in_array($nodeAggregate->nodeAggregateId, $ancestorNodeAggregateIds, false)) {
                 $ancestorNodeAggregateIds[] = $nodeAggregate->nodeAggregateId;
                 array_push($stack, ...iterator_to_array($contentGraph->findParentNodeAggregates($nodeAggregate->nodeAggregateId)));
             }
