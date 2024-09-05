@@ -69,7 +69,7 @@ class AssetChangeHandlerForCacheFlushing
                     $workspaceName,
                     $nodeAggregate->nodeAggregateId,
                     $nodeAggregate->nodeTypeName,
-                    $this->determineAncestorNodeAggregateIds($contentRepository, $workspaceName, $nodeAggregate->nodeAggregateId, NodeAggregateIds::createEmpty()),
+                    $this->determineAncestorNodeAggregateIds($contentRepository, $workspaceName, $nodeAggregate->nodeAggregateId),
                 );
 
                 $this->contentCacheFlusher->flushNodeAggregate($flushNodeAggregateRequest, CacheFlushingStrategy::ON_SHUTDOWN);
