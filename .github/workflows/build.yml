@@ -285,7 +285,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: matrix.parallel-parts == 'escr-behavioral'
         with:
-          name: database-dumps
+          name: database-dumps-${{ matrix.php-versions }}-${{ matrix.dependencies }}-${{ matrix.parallel-parts }}
           path: Data/DebugDatabaseDumps
 
       - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
