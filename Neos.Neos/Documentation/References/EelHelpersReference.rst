@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2024-08-16
+This reference was automatically generated from code on 2024-09-05
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -1634,7 +1634,7 @@ NodeInfo.renderNodeWithPropertiesAndChildrenInformation(node, controllerContext,
 
 * ``node`` (NodeInterface)
 * ``controllerContext`` (ControllerContext|null, *optional*)
-* ``nodeTypeFilterOverride`` (string, *optional*)
+* ``nodeTypeFilterOverride`` (string|null, *optional*)
 
 **Return** (array|null)
 
