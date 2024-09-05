@@ -198,8 +198,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
-            WorkspaceWasDiscarded::class => null, // only needed for GraphProjectorCatchUpHookForCacheFlushing
-            WorkspaceWasPartiallyDiscarded::class => null, // only needed for GraphProjectorCatchUpHookForCacheFlushing
+            // the following two events are not actually handled, but we need to include them in {@see canHandle()} in order
+            // to trigger the catchup hooks for those (i.e. {@see GraphProjectorCatchUpHookForCacheFlushing}). This can
+            // be removed with https://github.com/neos/neos-development-collection/issues/4992
+            WorkspaceWasDiscarded::class => null,
+            WorkspaceWasPartiallyDiscarded::class => null,
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
