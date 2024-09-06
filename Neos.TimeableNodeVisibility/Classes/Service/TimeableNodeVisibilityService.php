@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\TimeableNodeVisibility\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
