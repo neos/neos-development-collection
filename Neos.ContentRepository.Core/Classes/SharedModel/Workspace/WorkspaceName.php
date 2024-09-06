@@ -114,4 +114,9 @@ final class WorkspaceName implements \JsonSerializable
     {
         return preg_match(self::PATTERN, $value) === 1;
     }
+
+    public function __toString(): string
+    {
+        return $this->value;
+    }
 }
