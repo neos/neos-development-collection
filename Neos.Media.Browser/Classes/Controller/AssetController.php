@@ -72,7 +72,6 @@ class AssetController extends ActionController
     use BackendUserTranslationTrait {
         BackendUserTranslationTrait::initializeObject as backendUserTranslationTraitInitializeObject;
     }
-    use CreateContentContextTrait;
     use AddTranslatedFlashMessageTrait;
 
     protected const TAG_GIVEN = 0;
