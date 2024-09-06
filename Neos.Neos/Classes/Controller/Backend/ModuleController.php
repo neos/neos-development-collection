@@ -112,6 +112,7 @@ class ModuleController extends ActionController
         $moduleResponse = new ActionResponse();
 
         $this->dispatcher->dispatch($moduleRequest, $moduleResponse);
+        $moduleResponse->mergeIntoParentResponse($this->response);
 
         if ($moduleResponse->getRedirectUri() !== null) {
             $this->redirectToUri($moduleResponse->getRedirectUri(), 0, $moduleResponse->getStatusCode());
