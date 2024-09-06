@@ -106,7 +106,7 @@ jobs:
         working-directory: .
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: ${{ env.NEOS_FOLDER }}
 
@@ -118,7 +118,7 @@ jobs:
           ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
 
       - name: Checkout development distribution
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: neos/neos-development-distribution
           ref: ${{ env.NEOS_TARGET_VERSION }}
@@ -135,7 +135,7 @@ jobs:
 
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         timeout-minutes: 30
         with:
           path: |
