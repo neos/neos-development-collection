@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\Utility;
 
 use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
