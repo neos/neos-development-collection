@@ -159,7 +159,7 @@ class ContentCacheFlusher
     {
         // Ensure that we're dealing with the variant of the given node that actually
         // lives in the given workspace
-        if ($node->getWorkspace()->getName() !== $workspace->getName()) {
+        if ($node->isRemoved() === false && $node->getWorkspace()->getName() !== $workspace->getName()) {
             $workspaceContext = $this->contextFactory->create(
                 array_merge(
                     $node->getContext()->getProperties(),
