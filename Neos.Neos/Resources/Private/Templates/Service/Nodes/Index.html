@@ -25,7 +25,7 @@
                                 </f:else>
                             </f:if>
                         </f:alias>
-                        <label class="node-label">{node.label}</label>
+                        <label class="node-label">{neos:node.label(node: node)}</label>
                         (<span class="node-identifier">{node.aggregateId.value}</span>)
                         [<span class="node-type">{node.nodeTypeName.value}</span>]
                         <f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.aggregateId.value}" format="html">{neos:backend.translate(id: 'service.nodes.show', value: 'Show')}</f:link.action>
@@ -35,4 +35,5 @@
         </div>
     </body>
 </html>
-<f:section name="breadcrumb"><f:if condition="{node.parent} && {node.parent.depth} > 1"><f:render section="breadcrumb" arguments="{node: node.parent}" /> &gt; </f:if>{node.label}</f:section>
+<f:section name="breadcrumb"><f:if condition="{node.parent} && {node.parent.depth} > 1"><f:render section="breadcrumb" arguments="{node: node.parent}" /> &gt; </f:if>{neos:node.label(node: node)}</f:section>
+

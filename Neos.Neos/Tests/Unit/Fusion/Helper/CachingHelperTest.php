@@ -57,6 +57,7 @@ class CachingHelperTest extends UnitTestCase
                 [
                     'NodeType_364cfc8e70b2baa23dbd14503d2bd00e063829e7_Neos_Neos-Foo',
                     'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Foo',
+                    'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
                 ]
             ],
             [[$nodeTypeName1, $nodeTypeName2, $nodeTypeName3],
@@ -67,6 +68,7 @@ class CachingHelperTest extends UnitTestCase
                     'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Foo',
                     'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Bar',
                     'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Moo',
+                    'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
                 ]
             ],
             [(new \ArrayObject([$nodeTypeName1, $nodeTypeName2, $nodeTypeName3])),
@@ -77,6 +79,7 @@ class CachingHelperTest extends UnitTestCase
                     'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Foo',
                     'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Bar',
                     'NodeType_7505d64a54e061b7acd54ccd58b49dc43500b635_Neos_Neos-Moo',
+                    'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
                 ]
             ],
         ];
@@ -113,22 +116,26 @@ class CachingHelperTest extends UnitTestCase
             [$node1, [
                 'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
             ]],
             [[$node1], [
                 'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
             ]],
             [[$node1, $node2], [
                 'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a',
                 'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_7005c7cf-4d19-ce36-0873-476b6cadb71a',
+                'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
             ]],
             [(new \ArrayObject([$node1, $node2])), [
                 'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a',
                 'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_7005c7cf-4d19-ce36-0873-476b6cadb71a',
+                'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
             ]]
         ];
     }
@@ -159,7 +166,11 @@ class CachingHelperTest extends UnitTestCase
 
         $actual = $helper->nodeTagForIdentifier($nodeIdentifier, $node);
 
-        self::assertEquals('Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306', $actual);
+        self::assertEquals([
+            'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+            'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+            'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
+        ], $actual);
     }
 
     /**
@@ -173,7 +184,11 @@ class CachingHelperTest extends UnitTestCase
         $contextNode = $this->createNode(NodeAggregateId::fromString("na"));
 
         $actual = $helper->nodeTagForIdentifier($identifier, $contextNode);
-        self::assertEquals('Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_some-uuid-identifier', $actual);
+        self::assertEquals([
+            'Node_364cfc8e70b2baa23dbd14503d2bd00e063829e7_some-uuid-identifier',
+            'Node_7505d64a54e061b7acd54ccd58b49dc43500b635_some-uuid-identifier',
+            'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
+        ], $actual);
     }
 
     public function descendantOfDataProvider()
@@ -189,22 +204,26 @@ class CachingHelperTest extends UnitTestCase
             [$node1, [
                 'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
             ]],
             [[$node1], [
                 'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
+                'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
             ]],
             [[$node1, $node2], [
                 'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a',
                 'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_7005c7cf-4d19-ce36-0873-476b6cadb71a',
+                'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
             ]],
             [(new \ArrayObject([$node1, $node2])), [
                 'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'DescendantOf_364cfc8e70b2baa23dbd14503d2bd00e063829e7_7005c7cf-4d19-ce36-0873-476b6cadb71a',
                 'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_ca511a55-c5c0-f7d7-8d71-8edeffc75306',
                 'DescendantOf_7505d64a54e061b7acd54ccd58b49dc43500b635_7005c7cf-4d19-ce36-0873-476b6cadb71a',
+                'Workspace_364cfc8e70b2baa23dbd14503d2bd00e063829e7',
             ]]
         ];
     }
